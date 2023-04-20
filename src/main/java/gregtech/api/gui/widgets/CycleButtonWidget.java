@@ -9,6 +9,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.BooleanConsumer;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -29,7 +30,7 @@ public class CycleButtonWidget extends Widget {
 
     protected TextureArea buttonTexture = GuiTextures.VANILLA_BUTTON.getSubArea(0.0, 0.0, 1.0, 0.5);
     private final String[] optionNames;
-    private int textColor = 0xFFFFFF;
+    private int textColor = ConfigHolder.client.machineUILightTextColor;
     private final IntSupplier currentOptionSupplier;
     private final IntConsumer setOptionExecutor;
     protected int currentOption;

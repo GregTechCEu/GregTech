@@ -19,6 +19,7 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTLog;
 import gregtech.client.utils.RenderUtil;
+import gregtech.common.ConfigHolder;
 import gregtech.common.covers.CoverDigitalInterface;
 import gregtech.common.gui.widget.WidgetARGB;
 import gregtech.common.gui.widget.monitor.WidgetCoverList;
@@ -497,7 +498,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                     .widget(new ClickButtonWidget(50, 50, 20, 20, "-1", (data) -> setConfig(this.slot, ((float) Math.round((scale - (data.isShiftClick ? 1.0f : 0.1f)) * 10) / 10), this.frameColor)))
                     .widget(new ClickButtonWidget(130, 50, 20, 20, "+1", (data) -> setConfig(this.slot, ((float) Math.round((scale + (data.isShiftClick ? 1.0f : 0.1f)) * 10) / 10), this.frameColor)))
                     .widget(new ImageWidget(70, 50, 60, 20, GuiTextures.DISPLAY))
-                    .widget(new SimpleTextWidget(100, 60, "", 16777215, () -> Float.toString(scale)))
+                    .widget(new SimpleTextWidget(100, 60, "", ConfigHolder.client.machineUILightTextColor, () -> Float.toString(scale)))
 
                     .widget(new LabelWidget(15, 85, "monitor.gui.title.argb", 0xFFFFFFFF))
                     .widget(new WidgetARGB(50, 80, 20, this.frameColor, (color) -> setConfig(this.slot, this.scale, color)))
@@ -506,7 +507,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                     .widget(new ClickButtonWidget(50, 105, 20, 20, "-1", (data) -> setConfig(this.slot - 1, this.scale, this.frameColor)))
                     .widget(new ClickButtonWidget(130, 105, 20, 20, "+1", (data) -> setConfig(this.slot + 1, this.scale, this.frameColor)))
                     .widget(new ImageWidget(70, 105, 60, 20, GuiTextures.DISPLAY))
-                    .widget(new SimpleTextWidget(100, 115, "", 16777215, () -> Integer.toString(slot)))
+                    .widget(new SimpleTextWidget(100, 115, "", ConfigHolder.client.machineUILightTextColor, () -> Integer.toString(slot)))
 
                     .widget(new LabelWidget(15, 135, "monitor.gui.title.plugin", 0xFFFFFFFF))
                     .widget(new SlotWidget(inventory, 0, 50, 130, true, true)

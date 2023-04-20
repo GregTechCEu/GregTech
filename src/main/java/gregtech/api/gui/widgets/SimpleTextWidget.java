@@ -4,6 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -47,7 +48,7 @@ public class SimpleTextWidget extends Widget {
     }
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, Supplier<String> textSupplier) {
-        this(xPosition, yPosition, formatLocale, 0x404040, textSupplier, false);
+        this(xPosition, yPosition, formatLocale, ConfigHolder.client.machineUIDarkTextColor, textSupplier, false);
     }
 
     public SimpleTextWidget setShadow(boolean shadow) {

@@ -9,6 +9,7 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.common.ConfigHolder;
 import gregtech.common.covers.filter.FluidFilter;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -328,7 +329,7 @@ public class CoverFluidRegulator extends CoverPump {
                 .setMaxLength(10)
                 .setScale(0.6f));
 
-        stackSizeGroup.addWidget(new SimpleTextWidget(129, 78, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
+        stackSizeGroup.addWidget(new SimpleTextWidget(129, 78, "", ConfigHolder.client.machineUILightTextColor, () -> bucketMode.localeName).setScale(0.6f));
 
         return super.buildUI(builder.widget(filterGroup).widget(stackSizeGroup), player);
     }

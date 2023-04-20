@@ -1,6 +1,7 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import net.minecraftforge.common.config.Config;
 
 @Config(modid = GTValues.MODID)
@@ -119,7 +120,7 @@ public class ConfigHolder {
 
         /**
          * <strong>Addons mods should not reference this config directly.</strong>
-         * Use {@link gregtech.api.GregTechAPI#highTier} instead.
+         * Use {@link GregTechAPI#isHighTier()} instead.
          */
         @Config.Comment({"If High Tier (>UV-tier) GT content should be registered.",
                 "Items and Machines enabled with this config will have missing recipes by default.",
@@ -330,15 +331,33 @@ public class ConfigHolder {
         @Config.RequiresMcRestart
         public int maxNumSounds = 512;
 
-        @Config.Comment({"The default color to overlay onto machines.", "16777215 (0xFFFFFF in decimal) is no coloring (like GTCE).",
-                "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
+        @Config.Comment({"The default color to overlay onto machines.",
+                "16777215 (0xFFFFFF) is no coloring (like GTCE).",
+                "13819135 (0xD2DCFF) is the classic blue from GT5 (default)."})
         @Config.RangeInt(min = 0, max = 0xFFFFFF)
         public int defaultPaintingColor = 0xD2DCFF;
 
-        @Config.Comment({"The default color to overlay onto Machine (and other) UIs.", "16777215 (0xFFFFFF) is no coloring (like GTCE).",
-                "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
+        @Config.Comment({"The default color to overlay onto Machine (and other) UIs.",
+                "16777215 (0xFFFFFF) is no coloring (like GTCE).",
+                "13819135 (0xD2DCFF) is the classic blue from GT5 (default)."})
         @Config.RangeInt(min = 0, max = 0xFFFFFF)
         public int defaultUIColor = 0xD2DCFF;
+
+        @Config.Comment({"The default color used for dark text in Machine (and other) UIs.",
+                "4210752 (0x404040) is the default MC Gui color (default)."})
+        @Config.RangeInt(min = 0, max = 0xFFFFFF)
+        public int machineUIDarkTextColor = 0x404040;
+
+        @Config.Comment({"The default color used for light text in Machine (and other) UIs.",
+                "Default: 16777215 (0xFFFFFF)."})
+        @Config.RangeInt(min = 0, max = 0xFFFFFF)
+        public int machineUILightTextColor = 0xFFFFFF;
+
+        @Config.Comment({"The default color used for text in JEI UIs.",
+                "4210752 (0x404040) is the default MC GUI color (default).",
+                "1118481 (0x111111) is the classic darker GT text color."})
+        @Config.RangeInt(min = 0, max = 0xFFFFFF)
+        public int jeiUITextColor = 0x404040;
 
         // requires mc restart, color is set upon jei plugin registration
         @Config.Comment({"The color to use as a background for the Multiblock Preview JEI Page.",

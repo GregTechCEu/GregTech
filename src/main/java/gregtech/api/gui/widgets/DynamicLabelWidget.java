@@ -3,6 +3,7 @@ package gregtech.api.gui.widgets;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,7 +24,7 @@ public class DynamicLabelWidget extends Widget {
     private final int color;
 
     public DynamicLabelWidget(int xPosition, int yPosition, Supplier<String> text) {
-        this(xPosition, yPosition, text, 0x404040);
+        this(xPosition, yPosition, text, ConfigHolder.client.machineUIDarkTextColor);
     }
 
     public DynamicLabelWidget(int xPosition, int yPosition, Supplier<String> text, int color) {

@@ -6,6 +6,7 @@ import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
+import gregtech.common.ConfigHolder;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
@@ -94,37 +95,37 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
         // Vein Weight information
         String veinWeight = I18n.format("gregtech.jei.fluid.vein_weight", weight);
         weightLength = minecraft.fontRenderer.getStringWidth(veinWeight);
-        minecraft.fontRenderer.drawString(veinWeight, textStartX, startPosY, 0x111111);
+        minecraft.fontRenderer.drawString(veinWeight, textStartX, startPosY, ConfigHolder.client.jeiUITextColor);
 
         // Vein Minimum Yield information
         String veinMinYield = I18n.format("gregtech.jei.fluid.min_yield", yields[0]);
         minYieldLength = minecraft.fontRenderer.getStringWidth(veinMinYield);
-        minecraft.fontRenderer.drawString(veinMinYield, textStartX, startPosY + FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinMinYield, textStartX, startPosY + FONT_HEIGHT + 1, ConfigHolder.client.jeiUITextColor);
 
         // Vein Maximum Yield information
         String veinMaxYield = I18n.format("gregtech.jei.fluid.max_yield", yields[1]);
         maxYieldLength = minecraft.fontRenderer.getStringWidth(veinMaxYield);
-        minecraft.fontRenderer.drawString(veinMaxYield, textStartX, startPosY + 2 * FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinMaxYield, textStartX, startPosY + 2 * FONT_HEIGHT + 1, ConfigHolder.client.jeiUITextColor);
 
         // Vein Depletion Chance information
         String veinDepletionChance = I18n.format("gregtech.jei.fluid.depletion_chance", depletionChance);
         depletionChanceLength = minecraft.fontRenderer.getStringWidth(veinDepletionChance);
-        minecraft.fontRenderer.drawString(veinDepletionChance, textStartX, startPosY + 3 * FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinDepletionChance, textStartX, startPosY + 3 * FONT_HEIGHT + 1, ConfigHolder.client.jeiUITextColor);
 
         // Vein Depletion Amount information
         String veinDepletionAmount = I18n.format("gregtech.jei.fluid.depletion_amount", depletionAmount);
         depletionAmountLength = minecraft.fontRenderer.getStringWidth(veinDepletionAmount);
-        minecraft.fontRenderer.drawString(veinDepletionAmount, textStartX, startPosY + 4 * FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinDepletionAmount, textStartX, startPosY + 4 * FONT_HEIGHT + 1, ConfigHolder.client.jeiUITextColor);
 
         // Vein Depleted Yield information
         String veinDepletedYield = I18n.format("gregtech.jei.fluid.depleted_rate", depletedYield);
         depletedYieldLength = minecraft.fontRenderer.getStringWidth(veinDepletedYield);
-        minecraft.fontRenderer.drawString(veinDepletedYield, textStartX, startPosY + 5 * FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinDepletedYield, textStartX, startPosY + 5 * FONT_HEIGHT + 1, ConfigHolder.client.jeiUITextColor);
 
         // Vein Dimensions information
         String veinDimension = I18n.format("gregtech.jei.fluid.dimension") + " ";
         int dimensionLength = minecraft.fontRenderer.getStringWidth(veinDimension);
-        minecraft.fontRenderer.drawString(veinDimension, textStartX, startPosY + 6 * FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinDimension, textStartX, startPosY + 6 * FONT_HEIGHT + 1, ConfigHolder.client.jeiUITextColor);
 
         GTJEIUtility.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimensions.get(), minecraft.fontRenderer, textStartX,  startPosY + 6 * FONT_HEIGHT + 1, textStartX + dimensionLength);
 

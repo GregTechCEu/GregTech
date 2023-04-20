@@ -391,8 +391,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.extendedBuilder();
         builder.image(7, 4, 162, 121, GuiTextures.DISPLAY);
-        builder.label(11, 9, getMetaFullName(), 0xFFFFFF);
-        builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
+        builder.label(11, 9, getMetaFullName(), ConfigHolder.client.machineUILightTextColor);
+        builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, ConfigHolder.client.machineUILightTextColor)
                 .setMaxWidthLimit(156)
                 .setClickHandler(this::handleDisplayClick));
         if (shouldShowVoidingModeButton()) {

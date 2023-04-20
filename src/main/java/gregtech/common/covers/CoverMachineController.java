@@ -14,6 +14,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -120,7 +121,7 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
                 .widget(new SliderWidget("cover.machine_controller.redstone", 10, 24, 156, 20, 1.0f, 15.0f,
                         minRedstoneStrength, it -> setMinRedstoneStrength((int) it)))
                 .widget(new ClickButtonWidget(10, 48, 134, 18, "", data -> cycleNextControllerMode()))
-                .widget(new SimpleTextWidget(77, 58, "", 0xFFFFFF, () -> getControllerMode().getName()).setShadow(true))
+                .widget(new SimpleTextWidget(77, 58, "", ConfigHolder.client.machineUILightTextColor, () -> getControllerMode().getName()).setShadow(true))
                 .widget(new SlotWidget(displayInventory, 0, 148, 48, false, false)
                         .setBackgroundTexture(GuiTextures.SLOT))
                 .widget(new CycleButtonWidget(48, 70, 80, 18, this::isInverted, this::setInverted,

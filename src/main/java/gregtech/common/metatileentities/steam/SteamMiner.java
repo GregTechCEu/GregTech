@@ -128,9 +128,9 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
 
         builder.image(7, 16, 105, 75, GuiTextures.DISPLAY_STEAM.get(false))
                 .label(6, 6, getMetaFullName());
-        builder.widget(new AdvancedTextWidget(10, 19, this::addDisplayText, 0xFFFFFF)
+        builder.widget(new AdvancedTextWidget(10, 19, this::addDisplayText, ConfigHolder.client.machineUILightTextColor)
                 .setMaxWidthLimit(84));
-        builder.widget(new AdvancedTextWidget(70, 19, this::addDisplayText2, 0xFFFFFF)
+        builder.widget(new AdvancedTextWidget(70, 19, this::addDisplayText2, ConfigHolder.client.machineUILightTextColor)
                 .setMaxWidthLimit(84));
 
 

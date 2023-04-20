@@ -8,6 +8,7 @@ import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.items.MetaItems;
@@ -99,6 +100,6 @@ public final class GTStringUtils {
         //Ensure that the string is centered
         int startPosition = (maxLength - fontRenderer.getStringWidth(stringToDraw)) / 2;
 
-        fontRenderer.drawString(stringToDraw, startPosition, 1, 0x111111);
+        fontRenderer.drawString(stringToDraw, startPosition, 1, ConfigHolder.client.jeiUITextColor);
     }
 }

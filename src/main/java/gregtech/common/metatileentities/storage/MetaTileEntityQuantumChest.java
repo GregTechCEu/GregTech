@@ -24,6 +24,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -309,7 +310,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         Builder builder = ModularUI.defaultBuilder();
         int leftButtonStartX = 7;
         builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
-        builder.widget(new AdvancedTextWidget(11, 20, this::addDisplayInformation, 0xFFFFFF));
+        builder.widget(new AdvancedTextWidget(11, 20, this::addDisplayInformation, ConfigHolder.client.machineUILightTextColor));
         return builder.label(6, 6, getMetaFullName())
                 .widget(new SlotWidget(importItems, 0, 90, 17, true, true)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))

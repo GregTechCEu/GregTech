@@ -8,6 +8,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -93,7 +94,7 @@ public class IncrementButtonWidget extends Widget {
             text = "+" + text;
         drawText(text,
                 position.x + size.width / 2f - (fontRenderer.getStringWidth(text) / 2f) * textScale,
-                position.y + size.height / 2f - (fontRenderer.FONT_HEIGHT / 2f) * textScale, textScale, 0xFFFFFF);
+                position.y + size.height / 2f - (fontRenderer.FONT_HEIGHT / 2f) * textScale, textScale, ConfigHolder.client.machineUILightTextColor);
     }
 
     @Override

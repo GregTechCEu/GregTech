@@ -394,8 +394,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                             .setButtonTexture(GuiTextures.MAINTENANCE_ICON).setTooltipText("gregtech.machine.maintenance_hatch_tool_slot.tooltip"));
         }
         if (isConfigurable) {
-            builder.widget(new AdvancedTextWidget(5, 25, getTextWidgetText("duration", this::getDurationMultiplier), 0x404040))
-                    .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", this::getTimeMultiplier), 0x404040))
+            builder.widget(new AdvancedTextWidget(5, 25, getTextWidgetText("duration", this::getDurationMultiplier), ConfigHolder.client.machineUIDarkTextColor))
+                    .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", this::getTimeMultiplier), ConfigHolder.client.machineUIDarkTextColor))
                     .widget(new ClickButtonWidget(9, 18 * 3 + 16 - 18, 12, 12, "-", this::decInternalMultiplier))
                     .widget(new ClickButtonWidget(9 + 18 * 2, 18 * 3 + 16 - 18, 12, 12, "+", this::incInternalMultiplier));
         }

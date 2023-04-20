@@ -8,6 +8,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.FloatConsumer;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -26,7 +27,7 @@ public class SliderWidget extends Widget {
     private TextureArea backgroundArea = GuiTextures.SLIDER_BACKGROUND;
     private TextureArea sliderIcon = GuiTextures.SLIDER_ICON;
     private final BiFunction<String, Float, String> textSupplier = DEFAULT_TEXT_SUPPLIER;
-    private int textColor = 0xFFFFFF;
+    private int textColor = ConfigHolder.client.machineUILightTextColor;
 
     private final float min;
     private final float max;

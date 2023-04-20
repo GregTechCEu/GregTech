@@ -23,6 +23,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -298,10 +299,10 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
         return ModularUI.defaultBuilder()
                 .widget(new ImageWidget(7, 16, 81, 46, GuiTextures.DISPLAY))
-                .widget(new LabelWidget(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF))
+                .widget(new LabelWidget(11, 20, "gregtech.gui.fluid_amount", ConfigHolder.client.machineUILightTextColor))
                 .widget(tankWidget)
-                .dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF)
-                .dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF)
+                .dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, ConfigHolder.client.machineUILightTextColor)
+                .dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, ConfigHolder.client.machineUILightTextColor)
                 .label(6, 6, getMetaFullName())
                 .widget(new FluidContainerSlotWidget(importItems, 0, 90, 17, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))

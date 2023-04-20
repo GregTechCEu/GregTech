@@ -17,6 +17,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 import net.minecraft.client.resources.I18n;
@@ -114,7 +115,7 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implem
         TankWidget tankWidget = new TankWidget(fluidTank, 69, 52, 18, 18)
                 .setHideTooltip(true).setAlwaysShowFull(true);
         builder.widget(tankWidget);
-        builder.label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF);
+        builder.label(11, 20, "gregtech.gui.fluid_amount", ConfigHolder.client.machineUILightTextColor);
         builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
         builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
         return builder.label(6, 6, title)

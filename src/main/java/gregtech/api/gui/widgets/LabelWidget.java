@@ -4,6 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -27,7 +28,7 @@ public class LabelWidget extends Widget {
     private List<String> texts;
 
     public LabelWidget(int xPosition, int yPosition, String text, Object... formatting) {
-        this(xPosition, yPosition, text, 0x404040, formatting);
+        this(xPosition, yPosition, text, ConfigHolder.client.machineUIDarkTextColor, formatting);
     }
 
     public LabelWidget(int xPosition, int yPosition, String text, int color) {

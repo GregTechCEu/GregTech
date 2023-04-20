@@ -2,6 +2,7 @@ package gregtech.api.gui.widgets;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -42,7 +43,7 @@ public class TextFieldWidget2 extends Widget {
     private Function<String, String> validator = s -> s;
     private boolean initialised = false;
     private boolean centered;
-    private int textColor = 0xFFFFFF;
+    private int textColor = ConfigHolder.client.machineUILightTextColor;
     private int markedColor = 0x2F72A8;
     private boolean postFixRight = false;
     private int maxLength = 32;
@@ -465,7 +466,7 @@ public class TextFieldWidget2 extends Widget {
     }
 
     /**
-     * @param textColor text color. Default is 0xFFFFFF (white)
+     * @param textColor text color. Default is {@link ConfigHolder.ClientOptions#machineUILightTextColor}
      */
     public TextFieldWidget2 setTextColor(int textColor) {
         this.textColor = textColor;

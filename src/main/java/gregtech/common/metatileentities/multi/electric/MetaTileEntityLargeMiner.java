@@ -31,6 +31,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.core.sound.GTSoundEvents;
@@ -338,11 +339,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.extendedBuilder();
         builder.image(7, 4, 162, 121, GuiTextures.DISPLAY);
-        builder.label(11, 9, this.getMetaFullName(), 0xFFFFFF);
+        builder.label(11, 9, this.getMetaFullName(), ConfigHolder.client.machineUILightTextColor);
         builder.widget((new AdvancedTextWidget(11, 19, this::addDisplayText,
-                0xFFFFFF)).setMaxWidthLimit(139).setClickHandler(this::handleDisplayClick));
+                ConfigHolder.client.machineUILightTextColor)).setMaxWidthLimit(139).setClickHandler(this::handleDisplayClick));
         builder.widget((new AdvancedTextWidget(63, 30, this::addDisplayText2,
-                0xFFFFFF)).setMaxWidthLimit(68).setClickHandler(this::handleDisplayClick));
+                ConfigHolder.client.machineUILightTextColor)).setMaxWidthLimit(68).setClickHandler(this::handleDisplayClick));
         builder.bindPlayerInventory(entityPlayer.inventory, 134);
 
         builder.widget(new ToggleButtonWidget(133, 107, 18, 18,

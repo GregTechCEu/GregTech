@@ -130,9 +130,9 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
                 .setHideTooltip(true).setAlwaysShowFull(true);
         builder.widget(tankWidget);
         builder.shouldColor(false);
-        builder.label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF);
-        builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
-        builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
+        builder.label(11, 20, "gregtech.gui.fluid_amount", ConfigHolder.client.machineUILightTextColor);
+        builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, ConfigHolder.client.machineUILightTextColor);
+        builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, ConfigHolder.client.machineUILightTextColor);
         return builder.label(6, 6, title)
                 .widget(new FluidContainerSlotWidget(importItems, 0, 90, 17, false)
                         .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(IS_STEEL), GuiTextures.IN_SLOT_OVERLAY_STEAM.get(IS_STEEL)))

@@ -10,6 +10,7 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.*;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
+import gregtech.common.ConfigHolder;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -287,7 +288,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                 GlStateManager.scale(0.5, 0.5, 1);
                 String s = TextFormattingUtil.formatLongToCompactString(lastFluidStack.amount, 4) + "L";
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3F)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3F) + 6) * 2, 0xFFFFFF);
+                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3F)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3F) + 6) * 2, ConfigHolder.client.machineUILightTextColor);
                 GlStateManager.popMatrix();
             }
             GlStateManager.enableBlend();

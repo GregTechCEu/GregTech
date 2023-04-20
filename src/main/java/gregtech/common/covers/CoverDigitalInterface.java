@@ -23,6 +23,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
+import gregtech.common.ConfigHolder;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -465,12 +466,12 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         primaryGroup.addWidget(new ClickButtonWidget(40, 45, 20, 20, "-1", (data) -> setMode(slot - (data.isShiftClick ? 10 : 1))));
         primaryGroup.addWidget(new ClickButtonWidget(140, 45, 20, 20, "+1", (data) -> setMode(slot + (data.isShiftClick ? 10 : 1))));
         primaryGroup.addWidget(new ImageWidget(60, 45, 80, 20, GuiTextures.DISPLAY));
-        primaryGroup.addWidget(new SimpleTextWidget(100, 55, "", 16777215, () -> Integer.toString(this.slot)));
+        primaryGroup.addWidget(new SimpleTextWidget(100, 55, "", ConfigHolder.client.machineUILightTextColor, () -> Integer.toString(this.slot)));
 
         primaryGroup.addWidget(new LabelWidget(10, 75, "metaitem.cover.digital.title.spin", 0));
         primaryGroup.addWidget(new ClickButtonWidget(40, 70, 20, 20, "R", (data) -> setMode(this.spin.rotateY())));
         primaryGroup.addWidget(new ImageWidget(60, 70, 80, 20, GuiTextures.DISPLAY));
-        primaryGroup.addWidget(new SimpleTextWidget(100, 80, "", 16777215, () -> this.spin.toString()));
+        primaryGroup.addWidget(new SimpleTextWidget(100, 80, "", ConfigHolder.client.machineUILightTextColor, () -> this.spin.toString()));
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 202).widget(primaryGroup).bindPlayerInventory(player.inventory, GuiTextures.SLOT, 8, 120);
         return builder.build(this, player);
     }

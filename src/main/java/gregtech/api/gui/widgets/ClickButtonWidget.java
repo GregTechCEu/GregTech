@@ -9,6 +9,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -25,7 +26,7 @@ public class ClickButtonWidget extends Widget {
 
     protected TextureArea buttonTexture = GuiTextures.VANILLA_BUTTON.getSubArea(0.0, 0.0, 1.0, 0.5);
     protected final String displayText;
-    protected int textColor = 0xFFFFFF;
+    protected int textColor = ConfigHolder.client.machineUILightTextColor;
     protected final Consumer<ClickData> onPressCallback;
     protected boolean shouldClientCallback;
     protected Supplier<Boolean> shouldDisplay;

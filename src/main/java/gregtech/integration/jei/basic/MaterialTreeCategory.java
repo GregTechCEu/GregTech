@@ -7,6 +7,7 @@ import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.common.ConfigHolder;
 import gregtech.integration.jei.utils.render.DrawableRegistry;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
@@ -257,30 +258,30 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
         int linesDrawn = 0;
         if (minecraft.fontRenderer.getStringWidth(materialName) > 176) {
             minecraft.fontRenderer.drawString(minecraft.fontRenderer.trimStringToWidth(materialName, 171) + "...",
-                    0, 0, 0x111111);
+                    0, 0, ConfigHolder.client.jeiUITextColor);
             linesDrawn++;
-        } else if (materialName.length() != 0) {
-            minecraft.fontRenderer.drawString(materialName, 0, 0, 0x111111);
+        } else if (!materialName.isEmpty()) {
+            minecraft.fontRenderer.drawString(materialName, 0, 0, ConfigHolder.client.jeiUITextColor);
             linesDrawn++;
         }
         if (minecraft.fontRenderer.getStringWidth(materialFormula) > 176) {
             minecraft.fontRenderer.drawString(minecraft.fontRenderer.trimStringToWidth(materialFormula, 171) + "...",
-                    0, FONT_HEIGHT * linesDrawn, 0x111111);
+                    0, FONT_HEIGHT * linesDrawn, ConfigHolder.client.jeiUITextColor);
             linesDrawn++;
-        } else if (materialFormula.length() != 0) {
-            minecraft.fontRenderer.drawString(materialFormula, 0, FONT_HEIGHT * linesDrawn, 0x111111);
+        } else if (!materialFormula.isEmpty()) {
+            minecraft.fontRenderer.drawString(materialFormula, 0, FONT_HEIGHT * linesDrawn, ConfigHolder.client.jeiUITextColor);
             linesDrawn++;
         }
         // don't think theres a good way to get the coil tier other than this
         if (materialBFTemp != 0) {
-            TemperatureProperty.getInstance().drawInfo(minecraft, 0, FONT_HEIGHT * linesDrawn, 0x111111, materialBFTemp);
+            TemperatureProperty.getInstance().drawInfo(minecraft, 0, FONT_HEIGHT * linesDrawn, ConfigHolder.client.jeiUITextColor, materialBFTemp);
             linesDrawn++;
         }
-        minecraft.fontRenderer.drawString(materialAvgM, 0, FONT_HEIGHT * linesDrawn, 0x111111);
+        minecraft.fontRenderer.drawString(materialAvgM, 0, FONT_HEIGHT * linesDrawn, ConfigHolder.client.jeiUITextColor);
         linesDrawn++;
-        minecraft.fontRenderer.drawString(materialAvgN, 0, FONT_HEIGHT * linesDrawn, 0x111111);
+        minecraft.fontRenderer.drawString(materialAvgN, 0, FONT_HEIGHT * linesDrawn, ConfigHolder.client.jeiUITextColor);
         linesDrawn++;
-        minecraft.fontRenderer.drawString(materialAvgP, 0, FONT_HEIGHT * linesDrawn, 0x111111);
+        minecraft.fontRenderer.drawString(materialAvgP, 0, FONT_HEIGHT * linesDrawn, ConfigHolder.client.jeiUITextColor);
     }
 
     // a couple wrappers to make the code look less terrible

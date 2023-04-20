@@ -1,6 +1,5 @@
 package gregtech.common.covers;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -12,12 +11,11 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -188,7 +186,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                 .setMaxLength(10)
                 .setScale(0.6f));
 
-        stackSizeGroup.addWidget(new SimpleTextWidget(129, 47, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
+        stackSizeGroup.addWidget(new SimpleTextWidget(129, 47, "", ConfigHolder.client.machineUILightTextColor, () -> bucketMode.localeName).setScale(0.6f));
 
         stackSizeGroup.addWidget(new CycleButtonWidget(114, 53, 30, 20,
                 BucketMode.class, this::getBucketMode, mode -> {

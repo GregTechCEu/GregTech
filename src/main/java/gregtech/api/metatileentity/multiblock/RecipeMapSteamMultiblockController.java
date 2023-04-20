@@ -177,8 +177,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks), 176, 216);
         builder.shouldColor(false);
         builder.image(7, 4, 162, 121, GuiTextures.DISPLAY_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks));
-        builder.label(11, 9, getMetaFullName(), 0xFFFFFF);
-        builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
+        builder.label(11, 9, getMetaFullName(), ConfigHolder.client.machineUILightTextColor);
+        builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, ConfigHolder.client.machineUILightTextColor)
                 .setMaxWidthLimit(156)
                 .setClickHandler(this::handleDisplayClick));
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks), 7, 134);

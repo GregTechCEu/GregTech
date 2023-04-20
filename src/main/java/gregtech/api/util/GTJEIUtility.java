@@ -1,6 +1,7 @@
 package gregtech.api.util;
 
 import gregtech.api.worldgen.config.OreDepositDefinition;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -117,7 +118,7 @@ public class GTJEIUtility {
                 dimDisplayPosX = dimStartXPos;
             }
 
-            fontRenderer.drawString(fullDimName, dimDisplayPosX, dimStartYPos, 0x111111);
+            fontRenderer.drawString(fullDimName, dimDisplayPosX, dimStartYPos, ConfigHolder.client.jeiUITextColor);
 
             //Increment the dimension name display position
             dimDisplayPosX = dimDisplayPosX + dimDisplayLength;
