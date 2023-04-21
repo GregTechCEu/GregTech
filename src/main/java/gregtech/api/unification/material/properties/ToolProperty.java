@@ -74,7 +74,7 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     /**
      * Enchantment to be applied to tools made from this Material.
      */
-    private final Object2ObjectMap<Enchantment, EnchantmentLevel> enchantments = new Object2ObjectArrayMap();
+    private final Object2ObjectMap<Enchantment, EnchantmentLevel> enchantments = new Object2ObjectArrayMap<>();
 
     public ToolProperty(float harvestSpeed, float attackDamage, int durability, int harvestLevel) {
         this.harvestSpeed = harvestSpeed;

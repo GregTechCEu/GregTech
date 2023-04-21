@@ -182,7 +182,7 @@ public class ToolDefinitionBuilder {
     }
 
     public ToolDefinitionBuilder defaultEnchantment(Enchantment enchantment, int level) {
-        return this.defaultEnchantment(enchantment, (double) level, 0);
+        return this.defaultEnchantment(enchantment, level, 0);
     }
 
     public ToolDefinitionBuilder defaultEnchantment(Enchantment enchantment, double level, double growth) {
