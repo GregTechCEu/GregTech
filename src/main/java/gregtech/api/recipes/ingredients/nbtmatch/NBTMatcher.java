@@ -108,7 +108,7 @@ public interface NBTMatcher {
      * Return true if tag has an entry where the value is equal to the condition's value.
      * If NBTTagCompound is found, evaluates recursively.
      */
-    public static final NBTMatcher RECURSIVE_EQUAL_TO = new NBTMatcher() {
+    NBTMatcher RECURSIVE_EQUAL_TO = new NBTMatcher() {
         @Override
         public boolean evaluate(@Nullable NBTTagCompound tag, @Nullable NBTCondition condition)  {
             if (condition == null || condition.tagType == null) {
