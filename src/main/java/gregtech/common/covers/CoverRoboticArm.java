@@ -68,13 +68,15 @@ public class CoverRoboticArm extends CoverConveyor {
         while (iterator.hasNext()) {
             TypeItemInfo sourceInfo = sourceItemAmount.get(iterator.next());
             int itemAmount = sourceInfo.totalCount;
-
-            // get the max we can extract from the item filter variable
             int itemToMoveAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
-            int maxMultiplier = Math.floorDiv(Math.min(itemAmount, maxTransferAmount), itemToMoveAmount);
 
-            // multiply up to the total count of all the items
-            itemToMoveAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+            if (maxTransferAmount > 1) {
+                // get the max we can extract from the item filter variable
+                int maxMultiplier = Math.floorDiv(Math.min(itemAmount, maxTransferAmount), itemToMoveAmount);
+
+                // multiply up to the total count of all the items
+                itemToMoveAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+            }
 
             if (itemAmount >= itemToMoveAmount) {
                 sourceInfo.totalCount = itemToMoveAmount;
@@ -114,11 +116,13 @@ public class CoverRoboticArm extends CoverConveyor {
             GroupItemInfo sourceInfo = sourceItemAmounts.get(filterSlotIndex);
             int itemToKeepAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
 
-            // get the max we can keep from the item filter variable
-            int maxMultiplier = Math.floorDiv(sourceInfo.totalCount, itemToKeepAmount);
+            if (maxTransferAmount > 1) {
+                // get the max we can keep from the item filter variable
+                int maxMultiplier = Math.floorDiv(sourceInfo.totalCount, itemToKeepAmount);
 
-            // multiply up to the total count of all the items
-            itemToKeepAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+                // multiply up to the total count of all the items
+                itemToKeepAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+            }
 
             int itemAmount = 0;
             if (currentItemAmount.containsKey(filterSlotIndex)) {
