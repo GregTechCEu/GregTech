@@ -764,10 +764,10 @@ public class MachineRecipeLoader {
                 .fluidOutputs(SulfurDioxide.getFluid(2000))
                 .buildAndRegister();
 
-        BLAST_RECIPES.recipeBuilder().duration(240).EUt(VA[MV]).blastFurnaceTemp(1200)
+        BLAST_RECIPES.recipeBuilder().duration(240).EUt(VA[MV]).blastFurnaceTemp(2273)
                 .input(dust, SiliconDioxide)
                 .input(dust, Carbon, 2)
-                .output(ingot, Silicon)
+                .output(ingotHot, Silicon)
                 .output(dustTiny, Ash)
                 .fluidOutputs(CarbonMonoxide.getFluid(2000))
                 .buildAndRegister();

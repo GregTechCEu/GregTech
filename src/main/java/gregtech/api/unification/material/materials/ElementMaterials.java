@@ -662,7 +662,7 @@ public class ElementMaterials {
                 .color(0x3C3C50).iconSet(METALLIC)
                 .flags(GENERATE_FOIL)
                 .element(Elements.Si)
-                .blastTemp(1687) // no gas tier for silicon
+                .blastTemp(2273) // no gas tier for silicon
                 .build();
 
         Silver = new Material.Builder(100, "silver")
