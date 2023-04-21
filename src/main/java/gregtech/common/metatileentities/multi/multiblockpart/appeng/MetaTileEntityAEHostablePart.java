@@ -40,22 +40,22 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     protected static final IStorageChannel<IAEItemStack> ITEM_NET = AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class);
     protected static final IStorageChannel<IAEFluidStack> FLUID_NET = AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class);
 
-    private final static int PUSH_INTERVAL = ConfigHolder.compat.ae2.pushIntervals;
+    private final static int ME_UPDATE_INTERVAL = ConfigHolder.compat.ae2.updateIntervals;
     private AENetworkProxy aeProxy;
-    private int pushTick;
+    private int meUpdateTick;
     protected boolean isOnline;
     private final static int ONLINE_ID = 6666;
 
     public MetaTileEntityAEHostablePart(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
-        this.pushTick = 0;
+        this.meUpdateTick = 0;
     }
 
     @Override
     public void update() {
         super.update();
         if (!this.getWorld().isRemote) {
-            this.pushTick++;
+            this.meUpdateTick++;
         }
     }
 
@@ -70,7 +70,7 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         } else {
             buf.writeBoolean(false);
         }
-        buf.writeInt(this.pushTick);
+        buf.writeInt(this.meUpdateTick);
         buf.writeBoolean(this.isOnline);
     }
 
@@ -83,7 +83,7 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
             } catch (IOException ignore) {
             }
         }
-        this.pushTick = buf.readInt();
+        this.meUpdateTick = buf.readInt();
         this.isOnline = buf.readBoolean();
     }
 
@@ -151,8 +151,8 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         return this.isOnline;
     }
 
-    protected boolean shouldPush() {
-        return this.pushTick % PUSH_INTERVAL == 0;
+    protected boolean shouldSyncME() {
+        return this.meUpdateTick % ME_UPDATE_INTERVAL == 0;
     }
 
     protected IActionSource getActionSource() {

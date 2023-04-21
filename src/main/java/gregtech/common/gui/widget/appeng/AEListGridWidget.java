@@ -66,7 +66,7 @@ public abstract class AEListGridWidget<T extends IAEStack<T>> extends Scrollable
         super.readUpdateInfo(id, buffer);
         if (id == ROW_CHANGE_ID) {
             int slotsToAdd = buffer.readVarInt();
-            modifySlotRows(slotsToAdd);
+            this.modifySlotRows(slotsToAdd);
         }
         if (id == CONTENT_CHANGE_ID) {
             this.readListChange(buffer);

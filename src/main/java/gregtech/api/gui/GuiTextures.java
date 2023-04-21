@@ -259,7 +259,9 @@ public class GuiTextures {
     public static final TextureArea LAMP_NO_BLOOM = TextureArea.fullImage("textures/gui/item_overlay/lamp_no_bloom.png");
     public static final TextureArea LAMP_NO_LIGHT = TextureArea.fullImage("textures/gui/item_overlay/lamp_no_light.png");
 
-    // Number background
+    // ME hatch/bus
     public static final TextureArea NUMBER_BACKGROUND = TextureArea.fullImage("textures/gui/widget/number_background.png");
+    public static final TextureArea CONFIG_ARROW = TextureArea.fullImage("textures/gui/widget/config_arrow.png");
+    public static final TextureArea SELECT_BOX = TextureArea.fullImage("textures/gui/widget/select_box.png");
 
 }

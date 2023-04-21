@@ -65,7 +65,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart impl
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && this.workingEnabled && this.shouldPush()) {
+        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME()) {
             if (this.updateMEStatus()) {
                 if (!this.internalBuffer.isEmpty()) {
                     try {

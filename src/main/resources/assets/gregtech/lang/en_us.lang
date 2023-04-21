@@ -4786,8 +4786,10 @@ gregtech.machine.fluid_tank.fluid=Contains %s L of %s
 
 gregtech.machine.me_export_fluid_hatch.name=ME Output Hatch
 gregtech.machine.me_export_item_bus.name=ME Output Bus
+gregtech.machine.me_import_fluid_hatch.name=ME Input Hatch
 gregtech.machine.me.fluid_export.tooltip=Stores fluid directly into ME network.
 gregtech.machine.me.item_export.tooltip=Stores item directly into ME network.
+gregtech.machine.me.fluid_import.tooltip=Fetch fluids from ME network automatically.
 gregtech.machine.me.export.tooltip=It has infinite capacity before connecting to ME network.
 
 # Universal tooltips

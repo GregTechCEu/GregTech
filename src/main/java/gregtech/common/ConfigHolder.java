@@ -268,9 +268,9 @@ public class ConfigHolder {
         }
 
         public static class AE2CompatOptions {
-            @Config.Comment({"The interval between every push from ME Output Hatch/Bus.", "It may cause lag if the interval is too small.", "Default: 2 sec"})
+            @Config.Comment({"The interval between ME Hatch/Bus interact ME network.", "It may cause lag if the interval is too small.", "Default: 2 sec"})
             @Config.RangeInt(min = 1, max = 80)
-            public int pushIntervals = 40;
+            public int updateIntervals = 40;
 
             @Config.Comment({"The energy consumption of ME Hatch/Bus.", "Default: 1.0AE/t"})
             @Config.RangeDouble(min = 0.0, max = 10.0)
