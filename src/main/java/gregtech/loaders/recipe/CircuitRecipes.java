@@ -432,6 +432,13 @@ public class CircuitRecipes {
                 .output(SMD_RESISTOR, 16)
                 .duration(160).EUt(VA[HV]).buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(dust, Carbon)
+                .input(wireFine, Tantalum, 4)
+                .fluidInputs(Polyethylene.getFluid(L * 2))
+                .output(SMD_RESISTOR, 32)
+                .duration(160).EUt(VA[HV]).buildAndRegister();
+
         // SMD Diode
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, GalliumArsenide)
@@ -446,6 +453,13 @@ public class CircuitRecipes {
                 .input(wireFine, AnnealedCopper, 8)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .output(SMD_TRANSISTOR, 16)
+                .duration(160).EUt(VA[HV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(foil, Gallium)
+                .input(wireFine, Tantalum, 8)
+                .fluidInputs(Polyethylene.getFluid(L))
+                .output(SMD_TRANSISTOR, 32)
                 .duration(160).EUt(VA[HV]).buildAndRegister();
 
         // SMD Capacitor
@@ -485,6 +499,13 @@ public class CircuitRecipes {
                 .output(SMD_INDUCTOR, 16)
                 .duration(160).EUt(VA[HV]).buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ring, NickelZincFerrite)
+                .input(wireFine, Tantalum, 4)
+                .fluidInputs(Polyethylene.getFluid(L))
+                .output(SMD_INDUCTOR, 32)
+                .duration(160).EUt(VA[HV]).buildAndRegister();
+
         // Advanced SMD Resistor
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Graphene)
@@ -495,11 +516,11 @@ public class CircuitRecipes {
 
         // Advanced SMD Diode
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(dustSmall, IndiumGalliumPhosphide)
-                .input(wireFine, NiobiumTitanium, 4)
-                .fluidInputs(Polybenzimidazole.getFluid(L / 2))
-                .output(ADVANCED_SMD_DIODE, 16)
-                .EUt(3840).duration(150).buildAndRegister();
+                .input(dust, IndiumGalliumPhosphide)
+                .input(wireFine, NiobiumTitanium, 16)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 2))
+                .output(ADVANCED_SMD_DIODE, 64)
+                .EUt(3840).duration(640).buildAndRegister();
 
         // Advanced SMD Transistor
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -670,10 +691,10 @@ public class CircuitRecipes {
         // Phenolic Board
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Wood)
-                .notConsumable(SHAPE_MOLD_PLATE)
+                .circuitMeta(1)
                 .fluidInputs(Glue.getFluid(50))
                 .output(PHENOLIC_BOARD)
-                .duration(30).EUt(VA[ULV]).buildAndRegister();
+                .duration(150).EUt(VA[LV]).buildAndRegister();
 
         // Good Circuit Board
         ModHandler.addShapedRecipe("good_circuit_board", GOOD_CIRCUIT_BOARD.getStackForm(),
@@ -809,7 +830,7 @@ public class CircuitRecipes {
         // Multi-Layer Fiber Reinforced Epoxy Board
         CHEMICAL_RECIPES.recipeBuilder().duration(500).EUt(VA[HV])
                 .input(FIBER_BOARD, 2)
-                .input(foil, Platinum, 8)
+                .input(foil, Palladium, 8)
                 .fluidInputs(SulfuricAcid.getFluid(500))
                 .output(MULTILAYER_FIBER_BOARD)
                 .cleanroom(CleanroomType.CLEANROOM)

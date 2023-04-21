@@ -695,7 +695,7 @@ public class ElementMaterials {
         Tantalum = new Material.Builder(104, "tantalum")
                 .ingot().fluid()
                 .color(0x78788c).iconSet(METALLIC)
-                .flags(STD_METAL, GENERATE_FOIL)
+                .flags(STD_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Ta)
                 .fluidTemp(3290)
                 .build();
