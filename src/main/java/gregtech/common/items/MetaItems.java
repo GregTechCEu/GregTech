@@ -279,11 +279,11 @@ public final class MetaItems {
     public static final Map<MarkerMaterial, MetaValueItem> GLASS_LENSES = new HashMap<>();
 
     public static MetaItem<?>.MetaValueItem SILICON_BOULE;
-    public static MetaItem<?>.MetaValueItem GLOWSTONE_BOULE;
+    public static MetaItem<?>.MetaValueItem PHOSPHORUS_BOULE;
     public static MetaItem<?>.MetaValueItem NAQUADAH_BOULE;
     public static MetaItem<?>.MetaValueItem NEUTRONIUM_BOULE;
     public static MetaItem<?>.MetaValueItem SILICON_WAFER;
-    public static MetaItem<?>.MetaValueItem GLOWSTONE_WAFER;
+    public static MetaItem<?>.MetaValueItem PHOSPHORUS_WAFER;
     public static MetaItem<?>.MetaValueItem NAQUADAH_WAFER;
     public static MetaItem<?>.MetaValueItem NEUTRONIUM_WAFER;
 

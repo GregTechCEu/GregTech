@@ -462,6 +462,13 @@ public class SeparationRecipes {
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(64).EUt(VA[LV]).buildAndRegister();
 
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(dust, Apatite, 9)
+                .output(dust, Calcium, 5)
+                .output(dust, Phosphorus, 3)
+                .fluidOutputs(Chlorine.getFluid(1000))
+                .duration(288).EUt(60).buildAndRegister();
+
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
