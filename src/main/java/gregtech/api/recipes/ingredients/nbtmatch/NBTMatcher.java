@@ -12,6 +12,7 @@ import java.util.Objects;
 /**
  * This class is used to match NBT tags. Used to match a MapItemStackNBTIngredient NBT tag to a given NBT tag value.
  */
+@SuppressWarnings("unused")
 public interface NBTMatcher {
 
     static boolean hasKey(NBTTagCompound tag, String key, int tagType) {
@@ -30,6 +31,9 @@ public interface NBTMatcher {
      * Return true if tag has an entry where the value is less than the condition's value
      */
     NBTMatcher LESS_THAN = (tag, condition) -> {
+        if (condition == null || condition.tagType == null) {
+            return false;
+        }
         if (hasKey(tag, condition.nbtKey, condition.tagType.typeId)) {
             if (NBTTagType.isNumeric(condition.tagType)) {
                 return tag.getLong(condition.nbtKey) < (long) condition.value;
@@ -42,6 +46,9 @@ public interface NBTMatcher {
      * Return true if tag has an entry where the value is less than or equal to the condition's value
      */
     NBTMatcher LESS_THAN_OR_EQUAL_TO = (tag, condition) -> {
+        if (condition == null || condition.tagType == null) {
+            return false;
+        }
         if (hasKey(tag, condition.nbtKey, condition.tagType.typeId)) {
             if (NBTTagType.isNumeric(condition.tagType)) {
                 return tag.getLong(condition.nbtKey) <= (long) condition.value;
@@ -54,6 +61,9 @@ public interface NBTMatcher {
      * Return true if tag has an entry where the value is greater than the condition's value
      */
     NBTMatcher GREATER_THAN = (tag, condition) -> {
+        if (condition == null || condition.tagType == null) {
+            return false;
+        }
         if (hasKey(tag, condition.nbtKey, condition.tagType.typeId)) {
             if (NBTTagType.isNumeric(condition.tagType)) {
                 return tag.getLong(condition.nbtKey) > (long) condition.value;
@@ -66,6 +76,9 @@ public interface NBTMatcher {
      * Return true if tag has an entry where the value is greater than or equal to the condition's value
      */
     NBTMatcher GREATER_THAN_OR_EQUAL_TO = (tag, condition) -> {
+        if (condition == null || condition.tagType == null) {
+            return false;
+        }
         if (hasKey(tag, condition.nbtKey, condition.tagType.typeId)) {
             if (NBTTagType.isNumeric(condition.tagType)) {
                 return tag.getLong(condition.nbtKey) >= (long) condition.value;
@@ -78,6 +91,9 @@ public interface NBTMatcher {
      * Return true if tag has an entry where the value is equal to the condition's value
      */
     NBTMatcher EQUAL_TO = (tag, condition) -> {
+        if (condition == null || condition.tagType == null) {
+            return false;
+        }
         if (hasKey(tag, condition.nbtKey, condition.tagType.typeId)) {
             if (NBTTagType.isNumeric(condition.tagType)) {
                 return tag.getLong(condition.nbtKey) == (long) condition.value;
@@ -149,7 +165,7 @@ public interface NBTMatcher {
      * Return true if NBT isn't present or the value matches with the default value in the tag.
      */
     NBTMatcher NOT_PRESENT_OR_DEFAULT = (tag, condition) -> {
-        if (tag == null) {
+        if (tag == null || condition == null || condition.tagType == null) {
             return true;
         }
         if (NBTTagType.isNumeric(condition.tagType)) {
@@ -180,7 +196,7 @@ public interface NBTMatcher {
      * Return true if NBT isn't present or is the provided key is present
      */
     NBTMatcher NOT_PRESENT_OR_HAS_KEY = (tag, condition) -> {
-        if (tag == null) {
+        if (tag == null || condition == null || condition.tagType == null) {
             return true;
         }
 
