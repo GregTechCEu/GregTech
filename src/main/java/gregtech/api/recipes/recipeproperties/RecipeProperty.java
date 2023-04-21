@@ -18,7 +18,7 @@ public abstract class RecipeProperty<T> {
     @SideOnly(Side.CLIENT)
     public abstract void drawInfo(Minecraft minecraft, int x, int y, int color, Object value);
 
-    public int getDrawHeight(Object value) {
+    public int getInfoHeight(Object value) {
         return 10; // GTRecipeWrapper#LINE_HEIGHT
     }
 

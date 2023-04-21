@@ -5,7 +5,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
@@ -132,7 +131,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             if (!propertyEntry.getKey().isHidden()) {
                 RecipeProperty<?> property = propertyEntry.getKey();
                 Object value = propertyEntry.getValue();
-                property.drawInfo(minecraft, 0, yPosition += property.getDrawHeight(value), 0x111111, value);
+                property.drawInfo(minecraft, 0, yPosition += property.getInfoHeight(value), 0x111111, value);
             }
         }
     }
