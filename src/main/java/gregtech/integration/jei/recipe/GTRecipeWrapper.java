@@ -131,7 +131,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             if (!propertyEntry.getKey().isHidden()) {
                 RecipeProperty<?> property = propertyEntry.getKey();
                 Object value = propertyEntry.getValue();
-                property.drawInfo(minecraft, 0, yPosition += property.getInfoHeight(value), 0x111111, value);
+                property.drawInfo(minecraft, 0, yPosition += property.getInfoHeight(value), 0x111111, value, mouseX, mouseY);
             }
         }
     }
