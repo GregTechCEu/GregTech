@@ -1,7 +1,6 @@
 package gregtech.common.gui.widget.appeng.slot;
 
 import appeng.api.storage.data.IAEItemStack;
-import appeng.util.item.AEItemStack;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.util.Position;
@@ -9,6 +8,7 @@ import gregtech.api.util.Size;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.gui.widget.appeng.AEConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
@@ -61,6 +61,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
+        super.drawInForeground(mouseX, mouseY);
         IAEItemStack item = null;
         IConfigurableSlot<IAEItemStack> slot = this.parentWidget.getDisplay(this.index);
         if (mouseOverConfig(mouseX, mouseY)) {
@@ -107,7 +108,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         if (id == UPDATE_ID) {
             try {
                 ItemStack item = buffer.readItemStack();
-                slot.setConfig(AEItemStack.fromItemStack(item));
+                slot.setConfig(WrappedItemStack.fromItemStack(item));
                 this.parentWidget.enableAmount(this.index);
                 if (!item.isEmpty()) {
                     writeUpdateInfo(UPDATE_ID, buf -> buf.writeItemStack(item));
@@ -127,7 +128,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         if (id == UPDATE_ID) {
             try {
                 ItemStack item = buffer.readItemStack();
-                slot.setConfig(AEItemStack.fromItemStack(item));
+                slot.setConfig(WrappedItemStack.fromItemStack(item));
             } catch (IOException ignored) {
             }
         }

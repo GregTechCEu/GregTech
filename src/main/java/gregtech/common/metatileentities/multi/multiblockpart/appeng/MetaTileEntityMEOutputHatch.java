@@ -186,7 +186,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart im
 
     @Override
     public void registerAbilities(List<IFluidTank> list) {
-        list.add(new InaccessibleInfiniteTank(this.internalBuffer, this));
+        list.add(new InaccessibleInfiniteTank(this.internalBuffer, this.getController()));
     }
 
     private static class InaccessibleInfiniteTank implements IFluidTank, INotifiableHandler {

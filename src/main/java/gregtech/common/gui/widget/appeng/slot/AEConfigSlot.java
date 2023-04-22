@@ -5,6 +5,12 @@ import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.gui.widget.appeng.AEConfigWidget;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author GlodBlock
@@ -23,6 +29,19 @@ public class AEConfigSlot<T extends IAEStack<T>> extends Widget {
         super(pos, size);
         this.parentWidget = widget;
         this.index = index;
+    }
+
+    @Override
+    public void drawInForeground(int mouseX, int mouseY) {
+        super.drawInForeground(mouseX, mouseY);
+        IConfigurableSlot<T> slot = this.parentWidget.getDisplay(this.index);
+        if (slot.getConfig() == null && mouseOverConfig(mouseX, mouseY)) {
+            List<String> hoverStringList = new ArrayList<>();
+            hoverStringList.add(I18n.format("gregtech.gui.config_slot"));
+            hoverStringList.add(I18n.format("gregtech.gui.config_slot.set"));
+            hoverStringList.add(I18n.format("gregtech.gui.config_slot.remove"));
+            drawHoveringText(ItemStack.EMPTY, hoverStringList, -1, mouseX, mouseY);
+        }
     }
 
     public void setSelect(boolean val) {

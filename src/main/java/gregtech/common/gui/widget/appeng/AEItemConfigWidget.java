@@ -1,10 +1,10 @@
 package gregtech.common.gui.widget.appeng;
 
 import appeng.api.storage.data.IAEItemStack;
-import appeng.util.item.AEItemStack;
 import gregtech.common.gui.widget.appeng.slot.AEItemConfigSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputBus;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 import net.minecraft.network.PacketBuffer;
 
 /**
@@ -41,12 +41,12 @@ public class AEItemConfigWidget extends AEConfigWidget<IAEItemStack> {
                 int index = buffer.readVarInt();
                 IConfigurableSlot<IAEItemStack> slot = this.displayList[index];
                 if (buffer.readBoolean()) {
-                    slot.setConfig(AEItemStack.fromPacket(buffer));
+                    slot.setConfig(WrappedItemStack.fromPacket(buffer));
                 } else {
                     slot.setConfig(null);
                 }
                 if (buffer.readBoolean()) {
-                    slot.setStock(AEItemStack.fromPacket(buffer));
+                    slot.setStock(WrappedItemStack.fromPacket(buffer));
                 } else {
                     slot.setStock(null);
                 }

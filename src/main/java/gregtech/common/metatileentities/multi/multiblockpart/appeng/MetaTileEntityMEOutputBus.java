@@ -184,7 +184,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart impl
 
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
-        abilityList.add(new InaccessibleInfiniteSlot(this.internalBuffer, this));
+        abilityList.add(new InaccessibleInfiniteSlot(this.internalBuffer, this.getController()));
     }
 
     private static class InaccessibleInfiniteSlot implements IItemHandlerModifiable, INotifiableHandler {

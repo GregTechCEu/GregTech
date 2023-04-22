@@ -4,14 +4,13 @@ import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.me.GridAccessException;
-import appeng.util.item.AEItemStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.INotifiableHandler;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -20,6 +19,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -35,9 +35,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @Author GlodBlock
@@ -51,9 +50,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
     private final static int CONFIG_SIZE = 16;
     private boolean workingEnabled;
     private ExportOnlyAEItem[] aeItemSlots;
+    private ExportOnlyAEItemList aeItemHandler;
 
     public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.UHV, true);
+        super(metaTileEntityId, GTValues.UHV, false);
         this.workingEnabled = true;
     }
 
@@ -61,9 +61,19 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
     protected void initializeInventory() {
         this.aeItemSlots = new ExportOnlyAEItem[CONFIG_SIZE];
         for (int i = 0; i < CONFIG_SIZE; i ++) {
-            this.aeItemSlots[i] = new ExportOnlyAEItem(null, null, this);
+            this.aeItemSlots[i] = new ExportOnlyAEItem(null, null);
         }
+        this.aeItemHandler = new ExportOnlyAEItemList(this.aeItemSlots, this.getController());
         super.initializeInventory();
+    }
+
+    protected IItemHandlerModifiable createImportItemHandler() {
+        return this.aeItemHandler;
+    }
+
+    public IItemHandlerModifiable getImportItems() {
+        this.importItems = this.aeItemHandler;
+        return super.getImportItems();
     }
 
     @Override
@@ -188,6 +198,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
                 slot.deserializeNBT(slotTag.getCompoundTag("stack"));
             }
         }
+        this.importItems = createImportItemHandler();
     }
 
     @Override
@@ -213,15 +224,92 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
 
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> list) {
-        list.addAll(Arrays.asList(this.aeItemSlots));
+        list.add(this.aeItemHandler);
     }
 
-    public static class ExportOnlyAEItem extends ExportOnlyAESlot<IAEItemStack> implements IItemHandlerModifiable, INotifiableHandler {
-        private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
+    private static class ExportOnlyAEItemList extends NotifiableItemStackHandler {
 
-        public ExportOnlyAEItem(IAEItemStack config, IAEItemStack stock, MetaTileEntity mte) {
+        ExportOnlyAEItem[] inventory;
+
+        public ExportOnlyAEItemList(ExportOnlyAEItem[] slots, MetaTileEntity entityToNotify) {
+            super(slots.length, entityToNotify, false);
+            this.inventory = slots;
+            for (ExportOnlyAEItem slot : this.inventory) {
+                slot.trigger = this::onContentsChanged;
+            }
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            for (int index = 0; index < CONFIG_SIZE; index ++) {
+                if (nbt.hasKey("#" + index)) {
+                    NBTTagCompound slotTag = nbt.getCompoundTag("#" + index);
+                    this.inventory[index].deserializeNBT(slotTag);
+                }
+            }
+        }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            NBTTagCompound nbt = new NBTTagCompound();
+            for (int index = 0; index < CONFIG_SIZE; index ++) {
+                NBTTagCompound slot = this.inventory[index].serializeNBT();
+                nbt.setTag("#" + index, slot);
+            }
+            return nbt;
+        }
+
+        @Override
+        public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+            // NO-OP
+        }
+
+        @Override
+        public int getSlots() {
+            return MetaTileEntityMEInputBus.CONFIG_SIZE;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            if (slot >= 0 && slot < CONFIG_SIZE) {
+                return this.inventory[slot].getStackInSlot(0);
+            }
+            return ItemStack.EMPTY;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            return stack;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (slot >= 0 && slot < CONFIG_SIZE) {
+                return this.inventory[slot].extractItem(0, amount, simulate);
+            }
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return Integer.MAX_VALUE;
+        }
+
+        @Override
+        protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+            return Integer.MAX_VALUE;
+        }
+
+    }
+
+    public static class ExportOnlyAEItem extends ExportOnlyAESlot<IAEItemStack> implements IItemHandlerModifiable {
+        private Consumer<Integer> trigger;
+
+        public ExportOnlyAEItem(IAEItemStack config, IAEItemStack stock) {
             super(config, stock);
-            this.notifiableEntities.add(mte);
         }
 
         public ExportOnlyAEItem() {
@@ -231,28 +319,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
             if (nbt.hasKey(CONFIG_TAG)) {
-                this.config = AEItemStack.fromNBT(nbt.getCompoundTag(CONFIG_TAG));
+                this.config = WrappedItemStack.fromNBT(nbt.getCompoundTag(CONFIG_TAG));
             }
             if (nbt.hasKey(STOCK_TAG)) {
-                this.stock = AEItemStack.fromNBT(nbt.getCompoundTag(STOCK_TAG));
-            }
-        }
-
-        @Override
-        public void addNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-            this.notifiableEntities.add(metaTileEntity);
-        }
-
-        @Override
-        public void removeNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-            this.notifiableEntities.remove(metaTileEntity);
-        }
-
-        private void trigger() {
-            for (MetaTileEntity metaTileEntity : this.notifiableEntities) {
-                if (metaTileEntity != null && metaTileEntity.isValid()) {
-                    this.addToNotifiedList(metaTileEntity, this, true);
-                }
+                this.stock = WrappedItemStack.fromNBT(nbt.getCompoundTag(STOCK_TAG));
             }
         }
 
@@ -260,8 +330,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         public ExportOnlyAEItem copy() {
             return new ExportOnlyAEItem(
                     this.config == null ? null : this.config.copy(),
-                    this.stock == null ? null : this.stock.copy(),
-                    null
+                    this.stock == null ? null : this.stock.copy()
             );
         }
 
@@ -279,7 +348,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         @Override
         public ItemStack getStackInSlot(int slot) {
             if (slot == 0 && this.stock != null) {
-                return this.stock.createItemStack();
+                return this.stock.getDefinition();
             }
             return ItemStack.EMPTY;
         }
@@ -302,11 +371,43 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
                     if (this.stock.getStackSize() == 0) {
                         this.stock = null;
                     }
-                    trigger();
+                }
+                if (this.trigger != null) {
+                    this.trigger.accept(0);
                 }
                 return result;
             }
             return ItemStack.EMPTY;
+        }
+
+        @Override
+        public IAEItemStack requestStack() {
+            IAEItemStack result = super.requestStack();
+            if (result instanceof WrappedItemStack) {
+                return ((WrappedItemStack) result).getAEStack();
+            } else {
+                return result;
+            }
+        }
+
+        @Override
+        public IAEItemStack exceedStack() {
+            IAEItemStack result = super.exceedStack();
+            if (result instanceof WrappedItemStack) {
+                return ((WrappedItemStack) result).getAEStack();
+            } else {
+                return result;
+            }
+        }
+
+        @Override
+        public void addStack(IAEItemStack stack) {
+            if (this.stock == null) {
+                this.stock = WrappedItemStack.fromItemStack(stack.createItemStack());
+            } else {
+                this.stock.add(stack);
+            }
+            this.trigger.accept(0);
         }
 
         @Override

@@ -12,7 +12,6 @@ import javax.annotation.Nullable;
  * @date 2023/4/22-13:42
  */
 public abstract class ExportOnlyAESlot<T extends IAEStack<T>> implements IConfigurableSlot<T>, INBTSerializable<NBTTagCompound> {
-
     protected final static String CONFIG_TAG = "config";
     protected final static String STOCK_TAG = "stock";
     protected T config;
@@ -29,6 +28,9 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>> implements IConfig
 
     @Nullable
     public T requestStack() {
+        if (this.stock != null && !this.stock.isMeaningful()) {
+            this.stock = null;
+        }
         if (this.config == null || (this.stock != null && !this.config.equals(this.stock))) {
             return null;
         }
@@ -43,6 +45,9 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>> implements IConfig
 
     @Nullable
     public T exceedStack() {
+        if (this.stock != null && !this.stock.isMeaningful()) {
+            this.stock = null;
+        }
         if (this.config == null && this.stock != null) {
             return this.stock.copy();
         }
@@ -57,13 +62,7 @@ public abstract class ExportOnlyAESlot<T extends IAEStack<T>> implements IConfig
         return null;
     }
 
-    public void addStack(T item) {
-        if (this.stock == null) {
-            this.stock = item.copy();
-        } else {
-            this.stock.add(item);
-        }
-    }
+    abstract void addStack(T stack);
 
     @Override
     public NBTTagCompound serializeNBT() {

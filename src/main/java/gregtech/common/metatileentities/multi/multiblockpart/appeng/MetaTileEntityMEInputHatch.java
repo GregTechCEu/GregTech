@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEFluidStack;
-import appeng.fluids.util.AEFluidStack;
 import appeng.me.GridAccessException;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -12,6 +11,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.INotifiableHandler;
+import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -20,6 +20,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEFluidConfigWidget;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -34,6 +35,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,7 +59,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
     private ExportOnlyAEFluid[] aeFluidTanks;
 
     public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.UHV, true);
+        super(metaTileEntityId, GTValues.UHV, false);
         this.workingEnabled = true;
     }
 
@@ -63,9 +67,14 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
     protected void initializeInventory() {
         this.aeFluidTanks = new ExportOnlyAEFluid[CONFIG_SIZE];
         for (int i = 0; i < CONFIG_SIZE; i ++) {
-            this.aeFluidTanks[i] = new ExportOnlyAEFluid(null, null, this);
+            this.aeFluidTanks[i] = new ExportOnlyAEFluid(null, null, this.getController());
         }
         super.initializeInventory();
+    }
+
+    @Override
+    protected FluidTankList createImportFluidHandler() {
+        return new FluidTankList(false, this.aeFluidTanks);
     }
 
     @Override
@@ -218,7 +227,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         list.addAll(Arrays.asList(this.aeFluidTanks));
     }
 
-    public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack> implements IFluidTank, INotifiableHandler {
+    public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack> implements IFluidTank, IFluidHandler, INotifiableHandler {
         private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
 
         public ExportOnlyAEFluid(IAEFluidStack config, IAEFluidStack stock, MetaTileEntity mte) {
@@ -231,20 +240,50 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         }
 
         @Override
+        public IAEFluidStack requestStack() {
+            IAEFluidStack result = super.requestStack();
+            if (result instanceof WrappedFluidStack) {
+                return ((WrappedFluidStack) result).getAEStack();
+            } else {
+                return result;
+            }
+        }
+
+        @Override
+        public IAEFluidStack exceedStack() {
+            IAEFluidStack result = super.exceedStack();
+            if (result instanceof WrappedFluidStack) {
+                return ((WrappedFluidStack) result).getAEStack();
+            } else {
+                return result;
+            }
+        }
+
+        @Override
+        public void addStack(IAEFluidStack stack) {
+            if (this.stock == null) {
+                this.stock = WrappedFluidStack.fromFluidStack(stack.getFluidStack());
+            } else {
+                this.stock.add(stack);
+            }
+            trigger();
+        }
+
+        @Override
         public void deserializeNBT(NBTTagCompound nbt) {
             if (nbt.hasKey(CONFIG_TAG)) {
-                this.config = AEFluidStack.fromNBT(nbt.getCompoundTag(CONFIG_TAG));
+                this.config = WrappedFluidStack.fromNBT(nbt.getCompoundTag(CONFIG_TAG));
             }
             if (nbt.hasKey(STOCK_TAG)) {
-                this.stock = AEFluidStack.fromNBT(nbt.getCompoundTag(STOCK_TAG));
+                this.stock = WrappedFluidStack.fromNBT(nbt.getCompoundTag(STOCK_TAG));
             }
         }
 
         @Nullable
         @Override
         public FluidStack getFluid() {
-            if (this.stock != null) {
-                return this.stock.getFluidStack();
+            if (this.stock != null && this.stock instanceof WrappedFluidStack) {
+                return ((WrappedFluidStack) this.stock).getDelegate();
             }
             return null;
         }
@@ -266,8 +305,24 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         }
 
         @Override
+        public IFluidTankProperties[] getTankProperties() {
+            return new IFluidTankProperties[] {
+                    new FluidTankProperties(this.getFluid(), 0)
+            };
+        }
+
+        @Override
         public int fill(FluidStack resource, boolean doFill) {
             return 0;
+        }
+
+        @Nullable
+        @Override
+        public FluidStack drain(FluidStack resource, boolean doDrain) {
+            if (this.getFluid() != null && this.getFluid().isFluidEqual(resource)) {
+                return this.drain(resource.amount, doDrain);
+            }
+            return null;
         }
 
         @Nullable
@@ -301,7 +356,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         private void trigger() {
             for (MetaTileEntity metaTileEntity : this.notifiableEntities) {
                 if (metaTileEntity != null && metaTileEntity.isValid()) {
-                    this.addToNotifiedList(metaTileEntity, this, true);
+                    this.addToNotifiedList(metaTileEntity, this, false);
                 }
             }
         }

@@ -72,7 +72,7 @@ public abstract class AEConfigWidget<T extends IAEStack<T>> extends AbstractWidg
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         this.changeMap.clear();
-        for (int index = 1; index < this.config.length; index ++) {
+        for (int index = 0; index < this.config.length; index ++) {
             IConfigurableSlot<T> newSlot = this.config[index];
             IConfigurableSlot<T> oldSlot = this.cached[index];
             T nConfig = newSlot.getConfig();

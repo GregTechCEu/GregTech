@@ -1,13 +1,11 @@
 package gregtech.common.gui.widget.appeng;
 
 import appeng.api.storage.data.IAEFluidStack;
-import appeng.fluids.util.AEFluidStack;
 import gregtech.common.gui.widget.appeng.slot.AEFluidConfigSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 import net.minecraft.network.PacketBuffer;
-
-import java.io.IOException;
 
 /**
  * @Author GlodBlock
@@ -38,23 +36,20 @@ public class AEFluidConfigWidget extends AEConfigWidget<IAEFluidStack> {
     public void readUpdateInfo(int id, PacketBuffer buffer) {
         super.readUpdateInfo(id, buffer);
         if (id == UPDATE_ID) {
-            try {
-                int size = buffer.readVarInt();
-                for (int i = 0; i < size; i ++) {
-                    int index = buffer.readVarInt();
-                    IConfigurableSlot<IAEFluidStack> slot = this.displayList[index];
-                    if (buffer.readBoolean()) {
-                        slot.setConfig(AEFluidStack.fromPacket(buffer));
-                    } else {
-                        slot.setConfig(null);
-                    }
-                    if (buffer.readBoolean()) {
-                        slot.setStock(AEFluidStack.fromPacket(buffer));
-                    } else {
-                        slot.setStock(null);
-                    }
+            int size = buffer.readVarInt();
+            for (int i = 0; i < size; i ++) {
+                int index = buffer.readVarInt();
+                IConfigurableSlot<IAEFluidStack> slot = this.displayList[index];
+                if (buffer.readBoolean()) {
+                    slot.setConfig(WrappedFluidStack.fromPacket(buffer));
+                } else {
+                    slot.setConfig(null);
                 }
-            } catch (IOException ignored) {
+                if (buffer.readBoolean()) {
+                    slot.setStock(WrappedFluidStack.fromPacket(buffer));
+                } else {
+                    slot.setStock(null);
+                }
             }
         }
     }

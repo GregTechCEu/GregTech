@@ -1,7 +1,6 @@
 package gregtech.common.gui.widget.appeng.slot;
 
 import appeng.api.storage.data.IAEFluidStack;
-import appeng.fluids.util.AEFluidStack;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.util.FluidTooltipUtil;
@@ -11,6 +10,7 @@ import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.gui.widget.appeng.AEConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -63,6 +63,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
+        super.drawInForeground(mouseX, mouseY);
         IAEFluidStack fluid = null;
         boolean displayAmt = false;
         IConfigurableSlot<IAEFluidStack> slot = this.parentWidget.getDisplay(this.index);
@@ -126,7 +127,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
         }
         if (id == UPDATE_ID) {
             FluidStack fluid = FluidRegistry.getFluidStack(buffer.readString(Integer.MAX_VALUE / 16), buffer.readVarInt());
-            slot.setConfig(AEFluidStack.fromFluidStack(fluid));
+            slot.setConfig(WrappedFluidStack.fromFluidStack(fluid));
             this.parentWidget.enableAmount(this.index);
             if (fluid != null) {
                 writeUpdateInfo(UPDATE_ID, buf -> {
@@ -146,7 +147,7 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
         }
         if (id == UPDATE_ID) {
             FluidStack fluid = FluidRegistry.getFluidStack(buffer.readString(Integer.MAX_VALUE / 16), buffer.readVarInt());
-            slot.setConfig(AEFluidStack.fromFluidStack(fluid));
+            slot.setConfig(WrappedFluidStack.fromFluidStack(fluid));
         }
     }
 
