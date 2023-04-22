@@ -1365,6 +1365,17 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return "RecipeMap{" + "unlocalizedName='" + unlocalizedName + '\'' + '}';
     }
 
+    @Override
+    public int hashCode() {
+        return unlocalizedName.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof RecipeMap)) return false;
+        return ((RecipeMap<?>) obj).unlocalizedName.equals(this.unlocalizedName);
+    }
+
     @FunctionalInterface
     @ZenClass("mods.gregtech.recipe.IChanceFunction")
     @ZenRegister
