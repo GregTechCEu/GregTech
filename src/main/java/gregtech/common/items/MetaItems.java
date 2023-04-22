@@ -55,7 +55,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem SHAPE_EMPTY;
 
-    public static final MetaItem<?>.MetaValueItem[] SHAPE_MOLDS = new MetaValueItem[13];
+    public static final MetaItem<?>.MetaValueItem[] SHAPE_MOLDS = new MetaValueItem[14];
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_CREDIT;
@@ -69,6 +69,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_NAME;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROTOR;
+    public static MetaItem<?>.MetaValueItem SHAPE_MOLD_CHUNK;
 
     public static final MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[27];
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PLATE;
@@ -566,7 +567,7 @@ public final class MetaItems {
         orePrefixes.add(OrePrefix.dustPure);
         orePrefixes.add(OrePrefix.crushed);
         orePrefixes.add(OrePrefix.crushedPurified);
-        orePrefixes.add(OrePrefix.crushedCentrifuged);
+        orePrefixes.add(OrePrefix.crushedRefined);
         orePrefixes.add(OrePrefix.gem);
         orePrefixes.add(OrePrefix.gemChipped);
         orePrefixes.add(OrePrefix.gemFlawed);
@@ -583,6 +584,7 @@ public final class MetaItems {
         orePrefixes.add(OrePrefix.bolt);
         orePrefixes.add(OrePrefix.screw);
         orePrefixes.add(OrePrefix.ring);
+        orePrefixes.add(OrePrefix.chunk);
         orePrefixes.add(OrePrefix.nugget);
         orePrefixes.add(OrePrefix.round);
         orePrefixes.add(OrePrefix.spring);

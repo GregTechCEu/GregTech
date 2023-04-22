@@ -33,7 +33,7 @@ public class MaterialIconType {
 
     public static final MaterialIconType crushed = new MaterialIconType("crushed");
     public static final MaterialIconType crushedPurified = new MaterialIconType("crushedPurified");
-    public static final MaterialIconType crushedCentrifuged = new MaterialIconType("crushedCentrifuged");
+    public static final MaterialIconType crushedRefined = new MaterialIconType("crushedRefined");
 
     public static final MaterialIconType gem = new MaterialIconType("gem");
     public static final MaterialIconType gemChipped = new MaterialIconType("gemChipped");
@@ -42,6 +42,7 @@ public class MaterialIconType {
     public static final MaterialIconType gemExquisite = new MaterialIconType("gemExquisite");
 
     public static final MaterialIconType nugget = new MaterialIconType("nugget");
+    public static final MaterialIconType chunk = new MaterialIconType("chunk");
 
     public static final MaterialIconType ingot = new MaterialIconType("ingot");
     public static final MaterialIconType ingotHot = new MaterialIconType("ingotHot");

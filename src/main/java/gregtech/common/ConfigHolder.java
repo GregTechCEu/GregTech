@@ -222,6 +222,15 @@ public class ConfigHolder {
 
         @Config.Comment({"Whether to make the recipe for the EBF Controller harder.", "Default: false"})
         public boolean harderEBFControllerRecipe = false;
+
+        @Config.Comment({"Whether the smelting of Ores should be nerfed to promote extended Ore Processing.",
+                "It is STRONGLY recommended that you leave this config ON, as ore processing is balanced around it.",
+                "Default: true"})
+        public boolean harderOreProcessing = true;
+
+        @Config.Comment({"Whether Ore Byproducts should get a chance boost the higher the tier of the machine",
+                "Default: false"})
+        public boolean oreByproductChancePerTier = false;
     }
 
     public static class CompatibilityOptions {

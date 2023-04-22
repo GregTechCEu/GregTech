@@ -236,6 +236,48 @@ public class Material implements Comparable<Material> {
         return false;
     }
 
+    public boolean isElement() {
+        return materialInfo.element != null;
+    }
+
+    /**
+     * Return the total number of ELEMENTS (or unknown materials) in this material.
+     * For example:
+     * - Chalcopyrite (CuFeS2) would return 4.
+     * - Aqua Regia (1 part Nitric Acid HNO3, 2 parts Hydrochloric Acid HCl) would return 9.
+     */
+    public int getNumComponents() {
+        int numComponents = 0;
+        if (isElement() || getMaterialComponents().isEmpty()) return 1;
+        for (MaterialStack m : materialInfo.componentList) {
+            if (m.material.isElement() || m.material.getMaterialComponents().isEmpty()) {
+                numComponents += m.amount;
+            } else {
+                numComponents += m.material.getNumComponents() * m.amount;
+            }
+        }
+        return numComponents;
+    }
+
+    /**
+     * Return how many components in the list are the specified Material, including sub-materials in the list.
+     * For example:
+     * - Chalcopyrite (CuFeS2), if asked for Sulfur, would return 2.
+     * - Aqua Regia (1 part Nitric Acid HNO3, 2 parts Hydrochloric Acid HCl), if asked for Hydrogen would return 3.
+     */
+    public int getNumComponentsOf(Material material) {
+        int numComponents = 0;
+        if (isElement() || getMaterialComponents().isEmpty()) return this == material ? 1 : 0;
+        for (MaterialStack m : materialInfo.componentList) {
+            if (m.material == material) {
+                numComponents += m.amount;
+            } else if (!m.material.isElement() && m.material.getMaterialComponents().isEmpty()) {
+                numComponents += m.material.getNumComponentsOf(material) * m.amount;
+            }
+        }
+        return numComponents;
+    }
+
     @ZenGetter("protons")
     public long getProtons() {
         if (materialInfo.element != null)
@@ -332,15 +374,15 @@ public class Material implements Comparable<Material> {
         return properties;
     }
 
-    public <T extends IMaterialProperty<T>> boolean hasProperty(PropertyKey<T> key) {
+    public <T extends IMaterialProperty> boolean hasProperty(PropertyKey<T> key) {
         return getProperty(key) != null;
     }
 
-    public <T extends IMaterialProperty<T>> T getProperty(PropertyKey<T> key) {
+    public <T extends IMaterialProperty> T getProperty(PropertyKey<T> key) {
         return properties.getProperty(key);
     }
 
-    public <T extends IMaterialProperty<T>> void setProperty(PropertyKey<T> key, IMaterialProperty<T> property) {
+    public <T extends IMaterialProperty> void setProperty(PropertyKey<T> key, IMaterialProperty property) {
         if (GregTechAPI.MATERIAL_REGISTRY.isFrozen()) {
             throw new IllegalStateException("Cannot add properties to a Material when registry is frozen!");
         }
@@ -770,46 +812,28 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder ore() {
-            properties.ensureSet(PropertyKey.ORE);
+            properties.setProperty(PropertyKey.ORE, new OreProperty(1));
             return this;
         }
 
         public Builder ore(boolean emissive) {
-            properties.setProperty(PropertyKey.ORE, new OreProperty(1, 1, emissive));
+            properties.setProperty(PropertyKey.ORE, new OreProperty(1, emissive));
             return this;
         }
 
-        public Builder ore(int oreMultiplier, int byproductMultiplier) {
-            properties.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier));
+        public Builder ore(int oreMultiplier) {
+            properties.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier));
             return this;
         }
 
-        public Builder ore(int oreMultiplier, int byproductMultiplier, boolean emissive) {
-            properties.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier, emissive));
+        public Builder ore(int oreMultiplier, boolean emissive) {
+            properties.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, emissive));
             return this;
         }
 
         public Builder fluidTemp(int temp) {
             properties.ensureSet(PropertyKey.FLUID);
             properties.getProperty(PropertyKey.FLUID).setFluidTemperature(temp);
-            return this;
-        }
-
-        public Builder washedIn(Material m) {
-            properties.ensureSet(PropertyKey.ORE);
-            properties.getProperty(PropertyKey.ORE).setWashedIn(m);
-            return this;
-        }
-
-        public Builder washedIn(Material m, int washedAmount) {
-            properties.ensureSet(PropertyKey.ORE);
-            properties.getProperty(PropertyKey.ORE).setWashedIn(m, washedAmount);
-            return this;
-        }
-
-        public Builder separatedInto(Material... m) {
-            properties.ensureSet(PropertyKey.ORE);
-            properties.getProperty(PropertyKey.ORE).setSeparatedInto(m);
             return this;
         }
 

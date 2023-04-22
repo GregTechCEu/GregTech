@@ -147,7 +147,7 @@ public class SeparationRecipes {
                 .chancedOutput(dustSmall, Magnesia, 6000, 0)
                 .chancedOutput(dustTiny, PhosphorusPentoxide, 500, 0)
                 .chancedOutput(dustTiny, SodaAsh, 5000, 0)
-                .chancedOutput(dustTiny, BandedIron, 2500, 0)
+                .chancedOutput(dustTiny, Hematite, 2500, 0)
                 .buildAndRegister();
 
 
@@ -277,7 +277,7 @@ public class SeparationRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(1000).EUt(900)
                 .input(dust, MetalMixture)
-                .output(dustSmall, BandedIron)
+                .output(dustSmall, Hematite)
                 .output(dustSmall, Bauxite)
                 .output(dustTiny, Pyrolusite, 2)
                 .output(dustTiny, Barite)
@@ -308,12 +308,6 @@ public class SeparationRecipes {
                 .output(dust, Silver)
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(VA[LV])
-                .input(dust, Electrotine, 8)
-                .output(dust, Redstone)
-                .output(dust, Electrum)
-                .buildAndRegister();
-
         CENTRIFUGE_RECIPES.recipeBuilder().duration(51).EUt(VA[LV])
                 .fluidInputs(SaltWater.getFluid(1000))
                 .output(dust, Salt, 2)
@@ -328,6 +322,12 @@ public class SeparationRecipes {
                 .duration(150).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(dust, PotassiumBisulfate, 7)
+                .fluidOutputs(PotassiumPersulfate.getFluid(500))
+                .fluidOutputs(Hydrogen.getFluid(1000))
+                .duration(150).EUt(VA[LV]).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(SaltWater.getFluid(1000))
                 .output(dust, SodiumHydroxide, 3)
                 .fluidOutputs(Chlorine.getFluid(1000))
@@ -335,14 +335,8 @@ public class SeparationRecipes {
                 .duration(720).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Sphalerite, 2)
-                .output(dust, Zinc)
-                .output(dust, Sulfur)
-                .chancedOutput(dustSmall, Gallium, 2000, 1000)
-                .duration(200).EUt(VA[LV]).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Water.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(Oxygen.getFluid(1000))
                 .duration(1500).EUt(VA[LV]).buildAndRegister();
@@ -426,23 +420,6 @@ public class SeparationRecipes {
                 .duration(270).EUt(VA[LV] * 2).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Zeolite, 41)
-                .output(dust, Sodium)
-                .output(dust, Calcium, 4)
-                .output(dust, Silicon, 27)
-                .output(dust, Aluminium, 9)
-                .duration(656).EUt(VA[MV]).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Bentonite, 30)
-                .output(dust, Sodium)
-                .output(dust, Magnesium, 6)
-                .output(dust, Silicon, 12)
-                .fluidOutputs(Water.getFluid(5000))
-                .fluidOutputs(Hydrogen.getFluid(6000))
-                .duration(480).EUt(VA[MV]).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, TungsticAcid, 7)
                 .output(dust, Tungsten)
                 .fluidOutputs(Hydrogen.getFluid(2000))
@@ -461,6 +438,101 @@ public class SeparationRecipes {
                 .output(dust, Carbon)
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(64).EUt(VA[LV]).buildAndRegister();
+
+        // Vitriols
+        // Follows the formula:
+        // ?SO4 + H2O -> H2SO4 + O + ?
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .fluidInputs(BlueVitriol.getFluid(1000))
+                .fluidInputs(Water.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, Copper)
+                .fluidOutputs(SulfuricAcid.getFluid(1000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .fluidInputs(GreenVitriol.getFluid(1000))
+                .fluidInputs(Water.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, Iron)
+                .fluidOutputs(SulfuricAcid.getFluid(1000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .fluidInputs(RedVitriol.getFluid(1000))
+                .fluidInputs(Water.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, Cobalt)
+                .fluidOutputs(SulfuricAcid.getFluid(1000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .fluidInputs(PinkVitriol.getFluid(1000))
+                .fluidInputs(Water.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, Magnesium)
+                .fluidOutputs(SulfuricAcid.getFluid(1000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .fluidInputs(CyanVitriol.getFluid(1000))
+                .fluidInputs(Water.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, Nickel)
+                .fluidOutputs(SulfuricAcid.getFluid(1000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .fluidInputs(WhiteVitriol.getFluid(1000))
+                .fluidInputs(Water.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, Zinc)
+                .fluidOutputs(SulfuricAcid.getFluid(1000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .fluidInputs(GrayVitriol.getFluid(1000))
+                .fluidInputs(Water.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, Manganese)
+                .fluidOutputs(SulfuricAcid.getFluid(1000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .buildAndRegister();
+
+        // Al2(SO4)3 + 3H2O -> 3H2SO4 + Al2O3
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .fluidInputs(ClayVitriol.getFluid(1000))
+                .fluidInputs(Water.getFluid(3000))
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, Alumina, 5)
+                .fluidOutputs(SulfuricAcid.getFluid(3000))
+                .buildAndRegister();
+
+        // HAuCl4 + 1.5H2O -> Au + 4HCl + 1.5O
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .fluidInputs(ChloroauricAcid.getFluid(1000))
+                .fluidInputs(Water.getFluid(1500))
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, Gold)
+                .fluidOutputs(HydrochloricAcid.getFluid(4000))
+                .fluidOutputs(Oxygen.getFluid(1500))
+                .buildAndRegister();
+
+        // H2PtCl6 + 2H2O -> Pt + 6HCl + 2O
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .fluidInputs(ChloroplatinicAcid.getFluid(1000))
+                .fluidInputs(Water.getFluid(2000))
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, Platinum)
+                .fluidOutputs(HydrochloricAcid.getFluid(6000))
+                .fluidOutputs(Oxygen.getFluid(2000))
+                .buildAndRegister();
 
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()

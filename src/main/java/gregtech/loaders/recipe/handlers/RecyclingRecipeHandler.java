@@ -22,7 +22,7 @@ public class RecyclingRecipeHandler {
             OrePrefix.frameGt, OrePrefix.plateDense, OrePrefix.spring,
             OrePrefix.springSmall, OrePrefix.block, OrePrefix.wireFine,
             OrePrefix.rotor, OrePrefix.lens, OrePrefix.turbineBlade,
-            OrePrefix.round, OrePrefix.plateDouble, OrePrefix.dust,
+            OrePrefix.round, OrePrefix.plateDouble, OrePrefix.dust, OrePrefix.chunk,
             (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("toolHead"),
             (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("gem"),
             (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("cableGt"),
@@ -31,7 +31,7 @@ public class RecyclingRecipeHandler {
     );
 
     private static final List<OrePrefix> IGNORE_ARC_SMELTING = Arrays.asList(
-            OrePrefix.ingot, OrePrefix.gem, OrePrefix.nugget);
+            OrePrefix.ingot, OrePrefix.gem, OrePrefix.nugget, OrePrefix.chunk);
 
     public static void register() {
         //registers universal maceration recipes for specified ore prefixes

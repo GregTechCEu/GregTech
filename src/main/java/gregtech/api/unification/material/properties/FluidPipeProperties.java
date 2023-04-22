@@ -2,7 +2,7 @@ package gregtech.api.unification.material.properties;
 
 import java.util.Objects;
 
-public class FluidPipeProperties implements IMaterialProperty<FluidPipeProperties> {
+public class FluidPipeProperties implements IMaterialProperty {
 
     private int throughput;
     private final int tanks;

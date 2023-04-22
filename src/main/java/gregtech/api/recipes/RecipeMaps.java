@@ -283,7 +283,8 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_BATH_RECIPES = new RecipeMap<>("chemical_bath", 1, 6, 1, 1, new SimpleRecipeBuilder(), false)
+
+    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_BATH_RECIPES = new RecipeMap<>("chemical_bath", 1, 6, 1, 3, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, true, GuiTextures.BREWER_OVERLAY)
             .setSlotOverlay(true, false, false, GuiTextures.DUST_OVERLAY)
             .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
@@ -550,10 +551,10 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> ELECTROLYZER_RECIPES = new RecipeMap<>("electrolyzer", 2, 6, 1, 6, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> ELECTROLYZER_RECIPES = new RecipeMap<>("electrolyzer", 2, 6, 2, 6, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, false, GuiTextures.LIGHTNING_OVERLAY_1)
             .setSlotOverlay(false, false, true, GuiTextures.CANISTER_OVERLAY)
-            .setSlotOverlay(false, true, true, GuiTextures.LIGHTNING_OVERLAY_2)
+            .setSlotOverlay(false, true, GuiTextures.LIGHTNING_OVERLAY_2)
             .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.ELECTROLYZER);
 
@@ -571,7 +572,7 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> ELECTROMAGNETIC_SEPARATOR_RECIPES = new RecipeMap<>("electromagnetic_separator", 1, 3, 0, 0, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> ELECTROMAGNETIC_SEPARATOR_RECIPES = new RecipeMap<>("electromagnetic_separator", 1, 6, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_MAGNET, MoveType.HORIZONTAL)
@@ -632,6 +633,13 @@ public class RecipeMaps {
             .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.CHEMICAL_REACTOR);
+
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> FLOTATION_RECIPES = new RecipeMap<>("flotation_cell", 1, 2, 0, 3, 0, 1, 0, 1, new SimpleRecipeBuilder().duration(7200).EUt(2), false)
+            .setSlotOverlay(false, false, true, GuiTextures.DUST_OVERLAY)
+            .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, MoveType.VERTICAL)
+            .setSound(SoundEvents.BLOCK_SAND_PLACE);
 
     /**
      * Example:
@@ -923,7 +931,7 @@ public class RecipeMaps {
     /**
      * Example:
      * <pre>
-     * 		RecipeMap.ORE_WASHER_RECIPES.recipeBuilder()
+     * 		RecipeMap.SLUICE_RECIPES.recipeBuilder()
      * 				.input(OrePrefix.crushed, Materials.Aluminum)
      * 				.circuitMeta(2))
      * 				.fluidInputs(Materials.Water.getFluid(100))
@@ -935,7 +943,7 @@ public class RecipeMaps {
      * Any Recipe added to the Ore Washer not specifying a <B>duration</B> value will default to 400.
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> ORE_WASHER_RECIPES = new RecipeMap<>("ore_washer", 2, 3, 1, 0, new SimpleRecipeBuilder().duration(400).EUt(16), false)
+    public static final RecipeMap<SimpleRecipeBuilder> SLUICE_RECIPES = new RecipeMap<>("sluice", 1, 3, 1, 1, new SimpleRecipeBuilder().duration(400).EUt(16), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.CIRCULAR)

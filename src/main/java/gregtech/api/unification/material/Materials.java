@@ -272,7 +272,7 @@ public class Materials {
     public static Material AnnealedCopper;
     public static Material Asbestos;
     public static Material Ash;
-    public static Material BandedIron;
+    public static Material Hematite;
     public static Material BatteryAlloy;
     public static Material BlueTopaz;
     public static Material Bone;
@@ -389,12 +389,6 @@ public class Materials {
     public static Material PotassiumDichromate;
     public static Material ChromiumTrioxide;
     public static Material AntimonyTrioxide;
-    public static Material Zincite;
-    public static Material CupricOxide;
-    public static Material CobaltOxide;
-    public static Material ArsenicTrioxide;
-    public static Material Massicot;
-    public static Material Ferrosilite;
     public static Material MetalMixture;
     public static Material SodiumHydroxide;
     public static Material SodiumPersulfate;
@@ -407,6 +401,8 @@ public class Materials {
     public static Material Mica;
     public static Material Barite;
     public static Material Alunite;
+    public static Material PotassiumBisulfate;
+    public static Material PotassiumPersulfate;
     public static Material Talc;
     public static Material Soapstone;
     public static Material Kyanite;
@@ -466,6 +462,25 @@ public class Materials {
     public static Material EnrichedNaquadahSulfate;
     public static Material NaquadriaSulfate;
     public static Material Pyrochlore;
+
+    // New Ore Processing Additions
+    public static Material BlueVitriol;
+    public static Material GreenVitriol;
+    public static Material RedVitriol;
+    public static Material PinkVitriol;
+    public static Material CyanVitriol;
+    public static Material WhiteVitriol;
+    public static Material GrayVitriol;
+    public static Material ClayVitriol;
+    public static Material ChloroauricAcid;
+    public static Material ChloroplatinicAcid;
+    public static Material CarbonDisulfide;
+    public static Material SodiumEthylXanthate;
+    public static Material SodiumCyanide;
+    public static Material SodiumGoldCyanide;
+    public static Material Alumina;
+    public static Material GraniticMineralSand;
+    public static Material BasalticMineralSand;
 
     /**
      * Organic chemistry
@@ -648,9 +663,6 @@ public class Materials {
     public static Material TreatedWood;
     public static Material Paper;
     public static Material FishOil;
-    public static Material RubySlurry;
-    public static Material SapphireSlurry;
-    public static Material GreenSapphireSlurry;
     public static Material DyeBlack;
     public static Material DyeRed;
     public static Material DyeGreen;
@@ -678,6 +690,10 @@ public class Materials {
     public static Material NaquadriaWaste;
     public static Material Lapotron;
     public static Material UUMatter;
+
+    public static Material SluiceJuice;
+    public static Material SluiceSand;
+    public static Material FlotationWaste;
 
     /**
      * Second Degree Compounds
@@ -735,6 +751,7 @@ public class Materials {
     public static Material SaltWater;
     public static Material Clay;
     public static Material Redstone;
+    public static Material PlatinumGroupSlurry;
 
     /**
      * Third Degree Materials
@@ -745,7 +762,6 @@ public class Materials {
     public static Material RedSteel;
     public static Material BlueSteel;
     public static Material Basalt;
-    public static Material GraniticMineralSand;
     public static Material Redrock;
     public static Material GarnetSand;
     public static Material HSSG;
@@ -760,7 +776,6 @@ public class Materials {
      */
     public static Material RedAlloy;
     public static Material BlueAlloy;
-    public static Material BasalticMineralSand;
     public static Material HSSE;
     public static Material HSSS;
 }

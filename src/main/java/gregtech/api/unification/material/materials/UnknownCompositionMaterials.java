@@ -288,6 +288,7 @@ public class UnknownCompositionMaterials {
         RareEarth = new Material.Builder(1598, "rare_earth")
                 .dust(0)
                 .color(0x808064).iconSet(FINE)
+                .flags(MAGNETIC_ORE)
                 .build();
 
         Stone = new Material.Builder(1599, "stone")
@@ -393,14 +394,11 @@ public class UnknownCompositionMaterials {
                 .flags(STICKY, FLAMMABLE)
                 .build();
 
-        RubySlurry = new Material.Builder(1620, "ruby_slurry")
-                .fluid().color(0xff6464).build();
+        // FREE ID 1620
 
-        SapphireSlurry = new Material.Builder(1621, "sapphire_slurry")
-                .fluid().color(0x6464c8).build();
+        // FREE ID 1621
 
-        GreenSapphireSlurry = new Material.Builder(1622, "green_sapphire_slurry")
-                .fluid().color(0x64c882).build();
+        // FREE ID 1622
 
         // These colors are much nicer looking than those in MC's EnumDyeColor
         DyeBlack = new Material.Builder(1623, "dye_black")
@@ -488,5 +486,11 @@ public class UnknownCompositionMaterials {
                 .build();
 
         UUMatter = new Material.Builder(1649, "uu_matter").fluid().fluidTemp(300).build();
+
+        SluiceJuice = new Material.Builder(1650, "sluice_juice").fluid().color(0x5C3C24).build();
+
+        SluiceSand = new Material.Builder(1651, "sluice_sand").dust().color(0xA5A578).iconSet(FINE).build();
+
+        FlotationWaste = new Material.Builder(1652, "flotation_waste").fluid().color(0x3D1E10).build();
     }
 }

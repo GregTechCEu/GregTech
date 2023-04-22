@@ -77,7 +77,6 @@ public class CommonProxy {
         StoneType.init();
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-
             if (material.hasProperty(PropertyKey.ORE)) {
                 createOreBlock(material);
             }
@@ -351,6 +350,11 @@ public class CommonProxy {
                 event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onMissingMappings(RegistryEvent.MissingMappings<Item> event) {
+        // todo crushedCentrifuged -> crushedRefined
     }
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {

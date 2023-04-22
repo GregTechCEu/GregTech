@@ -1,5 +1,7 @@
 package gregtech.loaders.recipe.handlers;
 
+import gregtech.loaders.recipe.handlers.oreproc.*;
+
 public class RecipeHandlerList {
 
     public static void register() {

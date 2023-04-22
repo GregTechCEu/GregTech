@@ -167,23 +167,9 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder ore(@Optional int oreMultiplier, @Optional int byproductMultiplier, @Optional boolean emissive) {
+    public CTMaterialBuilder ore(@Optional int oreMultiplier, @Optional boolean emissive) {
         if (oreMultiplier == 0) oreMultiplier = 1;
-        if (byproductMultiplier == 0) byproductMultiplier = 1;
-        backingBuilder.ore(oreMultiplier, byproductMultiplier, emissive);
-        return this;
-    }
-
-    @ZenMethod
-    public CTMaterialBuilder washedIn(Material m, @Optional int washedAmount) {
-        if (washedAmount == 0) washedAmount = 100;
-        if (m != null) backingBuilder.washedIn(m, washedAmount);
-        return this;
-    }
-
-    @ZenMethod
-    public CTMaterialBuilder separatedInto(Material... materials) {
-        if (materials != null) backingBuilder.separatedInto(materials);
+        backingBuilder.ore(oreMultiplier, emissive);
         return this;
     }
 

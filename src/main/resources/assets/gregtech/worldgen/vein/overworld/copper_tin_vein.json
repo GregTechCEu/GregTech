@@ -1,5 +1,5 @@
 {
-  "weight": 50,
+  "weight": 70,
   "density": 0.2,
   "max_height": 160,
   "min_height": 40,
@@ -18,13 +18,13 @@
     "type": "layered",
     "values": [
       {
-        "primary": "ore:chalcopyrite"
+        "primary": "ore:cassiterite"
       },
       {
         "secondary": "ore:zeolite"
       },
       {
-        "between": "ore:cassiterite"
+        "between": "ore:copper"
       },
       {
         "sporadic": "ore:realgar"

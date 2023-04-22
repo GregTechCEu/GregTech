@@ -14,10 +14,24 @@ public class HigherDegreeMaterials {
 
     public static void register() {
 
+        // MATERIALS MIGRATED UP FROM SECOND DEGREE
+        // These IDs are from the Second Degree block,
+        // but had to be left as-is when moved to
+        // avoid voiding items in worlds.
+
+
+
+
+
+        ////////////////////////////
+        // Start of new Materials //
+        ////////////////////////////
+
+
         Electrotine = new Material.Builder(2507, "electrotine")
-                .dust().ore(5, 1, true)
+                .dust().ore(true)
                 .color(0x3CB4C8).iconSet(SHINY)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING, PURIFY_BY_SIFTING)
                 .components(Redstone, 1, Electrum, 1)
                 .build();
 
@@ -30,7 +44,7 @@ public class HigherDegreeMaterials {
         Diatomite = new Material.Builder(2509, "diatomite")
                 .dust(1).ore()
                 .color(0xE1E1E1)
-                .components(Flint, 8, BandedIron, 1, Sapphire, 1)
+                .components(Flint, 8, Hematite, 1, Sapphire, 1)
                 .build();
 
         RedSteel = new Material.Builder(2510, "red_steel")
@@ -60,12 +74,7 @@ public class HigherDegreeMaterials {
                 .components(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4)
                 .build();
 
-        GraniticMineralSand = new Material.Builder(2513, "granitic_mineral_sand")
-                .dust(1).ore()
-                .color(0x283C3C).iconSet(SAND)
-                .components(Magnetite, 1, GraniteBlack, 1)
-                .flags(BLAST_FURNACE_CALCITE_DOUBLE)
-                .build();
+        // ID 2513 RESERVED: GraniticMineralSand
 
         Redrock = new Material.Builder(2514, "redrock")
                 .dust(1)
@@ -100,12 +109,7 @@ public class HigherDegreeMaterials {
                 .fluidTemp(1400)
                 .build();
 
-        BasalticMineralSand = new Material.Builder(2518, "basaltic_mineral_sand")
-                .dust(1).ore()
-                .color(0x283228).iconSet(SAND)
-                .components(Magnetite, 1, Basalt, 1)
-                .flags(BLAST_FURNACE_CALCITE_DOUBLE)
-                .build();
+        // ID 2518 RESERVED: BasalticMineralSand
 
         HSSE = new Material.Builder(2519, "hsse")
                 .ingot(4).fluid()

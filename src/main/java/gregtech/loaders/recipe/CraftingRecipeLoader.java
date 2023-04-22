@@ -74,7 +74,7 @@ public class CraftingRecipeLoader {
         ModHandler.addSmeltingRecipe(COMPRESSED_COKE_CLAY.getStackForm(), COKE_OVEN_BRICK.getStackForm(), 0.3f);
         ModHandler.addSmeltingRecipe(COMPRESSED_FIRECLAY.getStackForm(), FIRECLAY_BRICK.getStackForm(), 0.3f);
 
-        ModHandler.addSmeltingRecipe(new UnificationEntry(OrePrefix.nugget, Materials.Iron), OreDictUnifier.get(OrePrefix.nugget, Materials.WroughtIron));
+        ModHandler.addSmeltingRecipe(new UnificationEntry(OrePrefix.chunk, Materials.Iron), OreDictUnifier.get(OrePrefix.chunk, Materials.WroughtIron));
 
         ModHandler.addShapedRecipe("clipboard", CLIPBOARD.getStackForm(), " Sd", "BWR", "PPP", 'P', Items.PAPER, 'R', new UnificationEntry(OrePrefix.springSmall, Iron), 'B', new UnificationEntry(OrePrefix.bolt, Iron), 'S', new UnificationEntry(OrePrefix.screw, Iron), 'W', new UnificationEntry(OrePrefix.plate, Wood));
 
@@ -141,6 +141,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("shape_mold_credit", SHAPE_MOLD_CREDIT.getStackForm(), "h  ", " S ", "   ", 'S', SHAPE_EMPTY.getStackForm());
         ModHandler.addShapedRecipe("shape_mold_gear", SHAPE_MOLD_GEAR.getStackForm(), "   ", " Sh", "   ", 'S', SHAPE_EMPTY.getStackForm());
         ModHandler.addShapedRecipe("shape_mold_plate", SHAPE_MOLD_PLATE.getStackForm(), " h ", " S ", "   ", 'S', SHAPE_EMPTY.getStackForm());
+        ModHandler.addShapedRecipe("shape_mold_chunk", SHAPE_MOLD_CHUNK.getStackForm(), "S  ", "   ", "  h", 'S', SHAPE_EMPTY.getStackForm());
 
         ///////////////////////////////////////////////////
         //                   Credits                     //
