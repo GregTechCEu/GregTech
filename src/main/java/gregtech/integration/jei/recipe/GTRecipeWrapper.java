@@ -5,7 +5,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
@@ -123,7 +122,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     @Override
     public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
-        int yPosition = recipeHeight - getPropertyListHeight();
+        int yPosition = recipeHeight - recipeMap.getPropertyListHeight(recipe);
         if (!recipe.hasProperty(PrimitiveProperty.getInstance())) {
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, ConfigHolder.client.jeiUITextColor);
             minecraft.fontRenderer.drawString(I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]), 0, yPosition += LINE_HEIGHT, ConfigHolder.client.jeiUITextColor);
@@ -131,7 +130,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", recipe.getDuration() / 20f), 0, yPosition += LINE_HEIGHT, ConfigHolder.client.jeiUITextColor);
         for (Map.Entry<RecipeProperty<?>, Object> propertyEntry : recipe.getPropertyValues()) {
             if (!propertyEntry.getKey().isHidden()) {
-                propertyEntry.getKey().drawInfo(minecraft, 0, yPosition += LINE_HEIGHT, ConfigHolder.client.jeiUITextColor, propertyEntry.getValue());
+                RecipeProperty<?> property = propertyEntry.getKey();
+                Object value = propertyEntry.getValue();
+                property.drawInfo(minecraft, 0, yPosition += property.getInfoHeight(value), ConfigHolder.client.jeiUITextColor, value, mouseX, mouseY);
             }
         }
     }
@@ -175,11 +176,5 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     public boolean isNotConsumedFluid(int slot) {
         if (slot >= recipe.getFluidInputs().size()) return false;
         return recipe.getFluidInputs().get(slot).isNonConsumable();
-    }
-
-    private int getPropertyListHeight() {
-        if (recipeMap == RecipeMaps.COKE_OVEN_RECIPES)
-            return LINE_HEIGHT - 6; // fun hack TODO Make this easier to position
-        return (recipe.getUnhiddenPropertyCount() + 3) * LINE_HEIGHT - 3;
     }
 }
