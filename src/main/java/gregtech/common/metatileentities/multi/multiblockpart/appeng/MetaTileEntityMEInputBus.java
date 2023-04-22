@@ -2,9 +2,9 @@ package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
-import appeng.api.storage.data.IAEFluidStack;
-import appeng.fluids.util.AEFluidStack;
+import appeng.api.storage.data.IAEItemStack;
 import appeng.me.GridAccessException;
+import appeng.util.item.AEItemStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -19,7 +19,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.gui.widget.appeng.AEFluidConfigWidget;
+import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -31,9 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,27 +41,27 @@ import java.util.List;
 
 /**
  * @Author GlodBlock
- * @Description The Input Hatch that can auto fetch fluid ME storage network.
- * @Date 2023/4/20-21:21
+ * @Description The Input Bus that can auto fetch item ME storage network.
+ * @Date 2023/4/22-13:34
  */
-public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart implements IMultiblockAbilityPart<IFluidTank> {
+public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
-    public final static String FLUID_BUFFER_TAG = "FluidTanks";
+    public final static String ITEM_BUFFER_TAG = "ItemSlots";
     public final static String WORKING_TAG = "WorkingEnabled";
     private final static int CONFIG_SIZE = 16;
     private boolean workingEnabled;
-    private ExportOnlyAEFluid[] aeFluidTanks;
+    private ExportOnlyAEItem[] aeItemSlots;
 
-    public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId) {
+    public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.UHV, true);
         this.workingEnabled = true;
     }
 
     @Override
     protected void initializeInventory() {
-        this.aeFluidTanks = new ExportOnlyAEFluid[CONFIG_SIZE];
+        this.aeItemSlots = new ExportOnlyAEItem[CONFIG_SIZE];
         for (int i = 0; i < CONFIG_SIZE; i ++) {
-            this.aeFluidTanks[i] = new ExportOnlyAEFluid(null, null, this);
+            this.aeItemSlots[i] = new ExportOnlyAEItem(null, null, this);
         }
         super.initializeInventory();
     }
@@ -74,26 +72,26 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME()) {
             if (this.updateMEStatus()) {
                 try {
-                    IMEMonitor<IAEFluidStack> aeNetwork = this.getProxy().getStorage().getInventory(FLUID_NET);
-                    for (ExportOnlyAEFluid aeTank : this.aeFluidTanks) {
-                        // Try to clear the wrong fluid
-                        IAEFluidStack exceedFluid = aeTank.exceedStack();
-                        if (exceedFluid != null) {
-                            long total = exceedFluid.getStackSize();
-                            IAEFluidStack notInserted = aeNetwork.injectItems(exceedFluid, Actionable.MODULATE, this.getActionSource());
+                    IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
+                    for (ExportOnlyAEItem aeSlot : this.aeItemSlots) {
+                        // Try to clear the wrong item
+                        IAEItemStack exceedItem = aeSlot.exceedStack();
+                        if (exceedItem != null) {
+                            long total = exceedItem.getStackSize();
+                            IAEItemStack notInserted = aeNetwork.injectItems(exceedItem, Actionable.MODULATE, this.getActionSource());
                             if (notInserted != null && notInserted.getStackSize() > 0) {
-                                aeTank.drain((int) (total - notInserted.getStackSize()), true);
+                                aeSlot.extractItem(0, (int) (total - notInserted.getStackSize()), false);
                                 continue;
                             } else {
-                                aeTank.drain((int) total, true);
+                                aeSlot.extractItem(0, (int) total, false);
                             }
                         }
                         // Fill it
-                        IAEFluidStack reqFluid = aeTank.requestStack();
-                        if (reqFluid != null) {
-                            IAEFluidStack extracted = aeNetwork.extractItems(reqFluid, Actionable.MODULATE, this.getActionSource());
+                        IAEItemStack reqItem = aeSlot.requestStack();
+                        if (reqItem != null) {
+                            IAEItemStack extracted = aeNetwork.extractItems(reqItem, Actionable.MODULATE, this.getActionSource());
                             if (extracted != null) {
-                                aeTank.addStack(extracted);
+                                aeSlot.addStack(extracted);
                             }
                         }
                     }
@@ -105,7 +103,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityMEInputHatch(this.metaTileEntityId);
+        return new MetaTileEntityMEInputBus(this.metaTileEntityId);
     }
 
     @Override
@@ -120,7 +118,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
                 0xFFFFFFFF);
 
         // Config slots
-        builder.widget(new AEFluidConfigWidget(16, 25, this.aeFluidTanks));
+        builder.widget(new AEItemConfigWidget(16, 25, this.aeItemSlots));
 
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder.build(this.getHolder(), entityPlayer);
@@ -164,15 +162,15 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean(WORKING_TAG, this.workingEnabled);
-        NBTTagList tanks = new NBTTagList();
+        NBTTagList slots = new NBTTagList();
         for (int i = 0; i < CONFIG_SIZE; i ++) {
-            ExportOnlyAEFluid tank = this.aeFluidTanks[i];
-            NBTTagCompound tankTag = new NBTTagCompound();
-            tankTag.setInteger("slot", i);
-            tankTag.setTag("tank", tank.serializeNBT());
-            tanks.appendTag(tankTag);
+            ExportOnlyAEItem slot = this.aeItemSlots[i];
+            NBTTagCompound slotTag = new NBTTagCompound();
+            slotTag.setInteger("slot", i);
+            slotTag.setTag("stack", slot.serializeNBT());
+            slots.appendTag(slotTag);
         }
-        data.setTag(FLUID_BUFFER_TAG, tanks);
+        data.setTag(ITEM_BUFFER_TAG, slots);
         return data;
     }
 
@@ -182,12 +180,12 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         if (data.hasKey(WORKING_TAG)) {
             this.workingEnabled = data.getBoolean(WORKING_TAG);
         }
-        if (data.hasKey(FLUID_BUFFER_TAG, 9)) {
-            NBTTagList tanks = (NBTTagList) data.getTag(FLUID_BUFFER_TAG);
-            for (NBTBase nbtBase : tanks) {
-                NBTTagCompound tankTag = (NBTTagCompound) nbtBase;
-                ExportOnlyAEFluid tank = this.aeFluidTanks[tankTag.getInteger("slot")];
-                tank.deserializeNBT(tankTag.getCompoundTag("tank"));
+        if (data.hasKey(ITEM_BUFFER_TAG, 9)) {
+            NBTTagList slots = (NBTTagList) data.getTag(ITEM_BUFFER_TAG);
+            for (NBTBase nbtBase : slots) {
+                NBTTagCompound slotTag = (NBTTagCompound) nbtBase;
+                ExportOnlyAEItem slot = this.aeItemSlots[slotTag.getInteger("slot")];
+                slot.deserializeNBT(slotTag.getCompoundTag("stack"));
             }
         }
     }
@@ -196,96 +194,48 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            Textures.ME_INPUT_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            Textures.ME_INPUT_BUS.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.fluid_hatch.import.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.me.fluid_import.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.item_import.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
     @Override
-    public MultiblockAbility<IFluidTank> getAbility() {
-        return MultiblockAbility.IMPORT_FLUIDS;
+    public MultiblockAbility<IItemHandlerModifiable> getAbility() {
+        return MultiblockAbility.IMPORT_ITEMS;
     }
 
     @Override
-    public void registerAbilities(List<IFluidTank> list) {
-        list.addAll(Arrays.asList(this.aeFluidTanks));
+    public void registerAbilities(List<IItemHandlerModifiable> list) {
+        list.addAll(Arrays.asList(this.aeItemSlots));
     }
 
-    public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack> implements IFluidTank, INotifiableHandler {
+    public static class ExportOnlyAEItem extends ExportOnlyAESlot<IAEItemStack> implements IItemHandlerModifiable, INotifiableHandler {
         private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
 
-        public ExportOnlyAEFluid(IAEFluidStack config, IAEFluidStack stock, MetaTileEntity mte) {
+        public ExportOnlyAEItem(IAEItemStack config, IAEItemStack stock, MetaTileEntity mte) {
             super(config, stock);
             this.notifiableEntities.add(mte);
         }
 
-        public ExportOnlyAEFluid() {
+        public ExportOnlyAEItem() {
             super();
         }
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
             if (nbt.hasKey(CONFIG_TAG)) {
-                this.config = AEFluidStack.fromNBT(nbt.getCompoundTag(CONFIG_TAG));
+                this.config = AEItemStack.fromNBT(nbt.getCompoundTag(CONFIG_TAG));
             }
             if (nbt.hasKey(STOCK_TAG)) {
-                this.stock = AEFluidStack.fromNBT(nbt.getCompoundTag(STOCK_TAG));
+                this.stock = AEItemStack.fromNBT(nbt.getCompoundTag(STOCK_TAG));
             }
-        }
-
-        @Nullable
-        @Override
-        public FluidStack getFluid() {
-            if (this.stock != null) {
-                return this.stock.getFluidStack();
-            }
-            return null;
-        }
-
-        @Override
-        public int getFluidAmount() {
-            return this.stock != null ? (int) this.stock.getStackSize() : 0;
-        }
-
-        @Override
-        public int getCapacity() {
-            // Its capacity is always 0.
-            return 0;
-        }
-
-        @Override
-        public FluidTankInfo getInfo() {
-            return new FluidTankInfo(this);
-        }
-
-        @Override
-        public int fill(FluidStack resource, boolean doFill) {
-            return 0;
-        }
-
-        @Nullable
-        @Override
-        public FluidStack drain(int maxDrain, boolean doDrain) {
-            if (this.stock == null) {
-                return null;
-            }
-            int drained = (int) Math.min(this.stock.getStackSize(), maxDrain);
-            FluidStack result = new FluidStack(this.stock.getFluid(), drained);
-            if (doDrain) {
-                this.stock.decStackSize(drained);
-                if (this.stock.getStackSize() == 0) {
-                    this.stock = null;
-                }
-                trigger();
-            }
-            return result;
         }
 
         @Override
@@ -307,12 +257,61 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         }
 
         @Override
-        public ExportOnlyAEFluid copy() {
-            return new ExportOnlyAEFluid(
+        public ExportOnlyAEItem copy() {
+            return new ExportOnlyAEItem(
                     this.config == null ? null : this.config.copy(),
                     this.stock == null ? null : this.stock.copy(),
                     null
             );
+        }
+
+        @Override
+        public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+            // NO-OP
+        }
+
+        @Override
+        public int getSlots() {
+            return 1;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            if (slot == 0 && this.stock != null) {
+                return this.stock.createItemStack();
+            }
+            return ItemStack.EMPTY;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            return stack;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (slot == 0 && this.stock != null) {
+                int extracted = (int) Math.min(this.stock.getStackSize(), amount);
+                ItemStack result = this.stock.createItemStack();
+                result.setCount(extracted);
+                if (!simulate) {
+                    this.stock.decStackSize(extracted);
+                    if (this.stock.getStackSize() == 0) {
+                        this.stock = null;
+                    }
+                    trigger();
+                }
+                return result;
+            }
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return Integer.MAX_VALUE;
         }
     }
 

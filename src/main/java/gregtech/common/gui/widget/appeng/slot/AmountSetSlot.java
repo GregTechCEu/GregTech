@@ -1,6 +1,6 @@
 package gregtech.common.gui.widget.appeng.slot;
 
-import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IAEStack;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -15,13 +15,13 @@ import net.minecraft.network.PacketBuffer;
  * @Description The amount set widget for config slot
  * @Date 2023/4/21-21:20
  */
-public class AmountSetSlot extends Widget {
+public class AmountSetSlot<T extends IAEStack<T>> extends Widget {
 
     private int index = -1;
-    private TextFieldWidget2 amountText;
-    private final AEConfigWidget<IAEFluidStack> parentWidget;
+    private final TextFieldWidget2 amountText;
+    private final AEConfigWidget<T> parentWidget;
 
-    public AmountSetSlot(int x, int y, AEConfigWidget<IAEFluidStack> widget) {
+    public AmountSetSlot(int x, int y, AEConfigWidget<T> widget) {
         super(x, y, 80, 30);
         this.parentWidget = widget;
         this.amountText = new TextFieldWidget2(x + 3, y + 14, 60, 15, this::getAmountStr, this::setNewAmount)
@@ -41,7 +41,7 @@ public class AmountSetSlot extends Widget {
         if (this.index < 0) {
             return "0";
         }
-        IConfigurableSlot<IAEFluidStack> slot = this.parentWidget.getConfig(this.index);
+        IConfigurableSlot<T> slot = this.parentWidget.getConfig(this.index);
         if (slot.getConfig() != null) {
             return String.valueOf(slot.getConfig().getStackSize());
         }
@@ -65,7 +65,7 @@ public class AmountSetSlot extends Widget {
             if (this.index < 0) {
                 return;
             }
-            IConfigurableSlot<IAEFluidStack> slot = this.parentWidget.getConfig(this.index);
+            IConfigurableSlot<T> slot = this.parentWidget.getConfig(this.index);
             long newAmt = buffer.readVarLong();
             if (newAmt > 0 && slot.getConfig() != null) {
                 slot.getConfig().setStackSize(newAmt);

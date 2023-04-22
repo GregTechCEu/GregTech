@@ -262,6 +262,7 @@ public class GuiTextures {
     // ME hatch/bus
     public static final TextureArea NUMBER_BACKGROUND = TextureArea.fullImage("textures/gui/widget/number_background.png");
     public static final TextureArea CONFIG_ARROW = TextureArea.fullImage("textures/gui/widget/config_arrow.png");
+    public static final TextureArea CONFIG_ARROW_DARK = TextureArea.fullImage("textures/gui/widget/config_arrow_dark.png");
     public static final TextureArea SELECT_BOX = TextureArea.fullImage("textures/gui/widget/select_box.png");
 
 }

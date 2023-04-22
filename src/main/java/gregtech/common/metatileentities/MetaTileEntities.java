@@ -27,6 +27,7 @@ import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEn
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.common.metatileentities.multi.multiblockpart.*;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
@@ -230,6 +231,7 @@ public class MetaTileEntities {
     public static MetaTileEntity FLUID_EXPORT_HATCH_ME;
     public static MetaTileEntity ITEM_EXPORT_BUS_ME;
     public static MetaTileEntity FLUID_IMPORT_HATCH_ME;
+    public static MetaTileEntity ITEM_IMPORT_BUS_ME;
 
     public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[4][GTValues.V.length];
 
@@ -755,6 +757,7 @@ public class MetaTileEntities {
             FLUID_EXPORT_HATCH_ME = registerMetaTileEntity(1730, new MetaTileEntityMEOutputHatch(gregtechId("me_export_fluid_hatch")));
             ITEM_EXPORT_BUS_ME = registerMetaTileEntity(1731, new MetaTileEntityMEOutputBus(gregtechId("me_export_item_bus")));
             FLUID_IMPORT_HATCH_ME = registerMetaTileEntity(1732, new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch")));
+            ITEM_IMPORT_BUS_ME = registerMetaTileEntity(1733, new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus")));
         }
 
         /*

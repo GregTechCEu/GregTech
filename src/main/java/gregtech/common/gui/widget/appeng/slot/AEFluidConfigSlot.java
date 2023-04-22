@@ -4,7 +4,6 @@ import appeng.api.storage.data.IAEFluidStack;
 import appeng.fluids.util.AEFluidStack;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.Widget;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -26,18 +25,10 @@ import java.util.List;
  * @Description A configurable slot for {@link IAEFluidStack}
  * @Date 2023/4/21-0:50
  */
-public class AEFluidConfigSlot extends Widget {
-
-    private final AEConfigWidget<IAEFluidStack> parentWidget;
-    private final int index;
-    private final static int REMOVE_ID = 1000;
-    private final static int UPDATE_ID = 1001;
-    private boolean select = false;
+public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
 
     public AEFluidConfigSlot(int x, int y, AEConfigWidget<IAEFluidStack> widget, int index) {
-        super(new Position(x, y), new Size(18, 18 * 2));
-        this.parentWidget = widget;
-        this.index = index;
+        super(new Position(x, y), new Size(18, 18 * 2), widget, index);
     }
 
     @Override
@@ -124,10 +115,6 @@ public class AEFluidConfigSlot extends Widget {
         return false;
     }
 
-    public void setSelect(boolean val) {
-        this.select = val;
-    }
-
     @Override
     public void handleClientAction(int id, PacketBuffer buffer) {
         super.handleClientAction(id, buffer);
@@ -161,16 +148,6 @@ public class AEFluidConfigSlot extends Widget {
             FluidStack fluid = FluidRegistry.getFluidStack(buffer.readString(Integer.MAX_VALUE / 16), buffer.readVarInt());
             slot.setConfig(AEFluidStack.fromFluidStack(fluid));
         }
-    }
-
-    protected boolean mouseOverConfig(int mouseX, int mouseY) {
-        Position position = getPosition();
-        return isMouseOver(position.x, position.y, 18, 18, mouseX, mouseY);
-    }
-
-    protected boolean mouseOverStock(int mouseX, int mouseY) {
-        Position position = getPosition();
-        return isMouseOver(position.x, position.y + 18, 18, 18, mouseX, mouseY);
     }
 
 }
