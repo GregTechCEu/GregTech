@@ -858,6 +858,32 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
+     * This height is used to determine size of background texture on JEI.
+     */
+    public int getPropertyHeightShift() {
+        int maxPropertyCount = 0;
+        if (shouldShiftWidgets()) {
+            for (Recipe recipe : getRecipeList()) {
+                if (recipe.getPropertyCount() > maxPropertyCount)
+                    maxPropertyCount = recipe.getPropertyCount();
+            }
+        }
+        return maxPropertyCount * 10; // GTRecipeWrapper#LINE_HEIGHT
+    }
+
+    private boolean shouldShiftWidgets() {
+        return getMaxInputs() + getMaxOutputs() >= 6 ||
+                getMaxFluidInputs() + getMaxFluidOutputs() >= 6;
+    }
+
+    /**
+     * This height is used to determine Y position to start drawing info on JEI.
+     */
+    public int getPropertyListHeight(Recipe recipe) {
+        return (recipe.getUnhiddenPropertyCount() + 3) * 10 - 3; // GTRecipeWrapper#LINE_HEIGHT
+    }
+
+    /**
      * Adds a recipe to the map. (recursive part)
      *
      * @param recipe      the recipe to add.
