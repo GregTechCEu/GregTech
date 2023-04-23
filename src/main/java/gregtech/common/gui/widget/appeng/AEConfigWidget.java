@@ -31,7 +31,7 @@ public abstract class AEConfigWidget<T extends IAEStack<T>> extends AbstractWidg
         super(new Position(x, y), new Size(config.length * 18, 18 * 2));
         this.config = config;
         this.init();
-        this.amountSetWidget = new AmountSetSlot<>(80, -32, this);
+        this.amountSetWidget = new AmountSetSlot<>(80, -40, this);
         this.addWidget(this.amountSetWidget);
         this.addWidget(this.amountSetWidget.getText());
         this.amountSetWidget.setVisible(false);

@@ -25,7 +25,8 @@ public class AmountSetSlot<T extends IAEStack<T>> extends Widget {
         super(x, y, 80, 30);
         this.parentWidget = widget;
         this.amountText = new TextFieldWidget2(x + 3, y + 14, 60, 15, this::getAmountStr, this::setNewAmount)
-                .setNumbersOnly(0, Integer.MAX_VALUE);
+                .setNumbersOnly(0, Integer.MAX_VALUE)
+                .setMaxLength(10);
     }
 
     public void setSlotIndex(int slotIndex) {
@@ -79,7 +80,7 @@ public class AmountSetSlot<T extends IAEStack<T>> extends Widget {
         Position position = getPosition();
         GuiTextures.BACKGROUND.draw(position.x, position.y, 80, 30);
         drawStringSized("Amount", position.x + 3, position.y + 3, 0x404040, false, 1f, false);
-        GuiTextures.DISPLAY.draw(position.x + 3, position.y + 11, 50, 14);
+        GuiTextures.DISPLAY.draw(position.x + 3, position.y + 11, 65, 14);
     }
 
 }
