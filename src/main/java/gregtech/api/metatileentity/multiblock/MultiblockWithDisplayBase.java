@@ -542,12 +542,12 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     @Override
     public boolean canVoidRecipeFluidOutputs() {
-        return voidingFluids | fluidInfSink;
+        return voidingFluids || fluidInfSink;
     }
 
     @Override
     public boolean canVoidRecipeItemOutputs() {
-        return voidingItems | itemInfSink;
+        return voidingItems || itemInfSink;
     }
 
     public void checkStructurePattern() {
