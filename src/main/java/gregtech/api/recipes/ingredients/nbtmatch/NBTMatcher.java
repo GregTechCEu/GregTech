@@ -7,6 +7,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * This class is used to match NBT tags. Used to match a MapItemStackNBTIngredient NBT tag to a given NBT tag value.
@@ -117,6 +118,47 @@ public interface NBTMatcher {
             }
         }
         return false;
+    };
+
+    /**
+     * Return true if tag has an entry where the value is equal to the condition's value.
+     * If NBTTagCompound is found, evaluates recursively.
+     */
+    NBTMatcher RECURSIVE_EQUAL_TO = new NBTMatcher() {
+        @Override
+        public boolean evaluate(@Nullable NBTTagCompound tag, @Nullable NBTCondition condition)  {
+            if (condition == null || condition.tagType == null) {
+                return false;
+            }
+            if (NBTMatcher.hasKey(tag, condition.nbtKey, condition.tagType.typeId)) {
+                if (NBTTagType.isNumeric(condition.tagType)) {
+                    return Objects.equals(tag.getLong(condition.nbtKey), ((Number) condition.value).longValue());
+                }
+                switch (condition.tagType) {
+                    case BYTE_ARRAY:
+                        return tag.getByteArray(condition.nbtKey).equals(condition.value);
+                    case STRING:
+                        return tag.getString(condition.nbtKey).equals(condition.value);
+                    case LIST:
+                        if (condition instanceof ListNBTCondition) {
+                            return tag.getTagList(condition.nbtKey, ((ListNBTCondition) condition).listTagType.typeId).tagList.equals(condition.value);
+                        } else {
+                            return false;
+                        }
+                    case COMPOUND:
+                        if (condition.value instanceof NBTCondition) {
+                            return evaluate(tag.getCompoundTag(condition.nbtKey), (NBTCondition) condition.value);
+                        } else {
+                            return tag.getCompoundTag(condition.nbtKey).equals(condition.value);
+                        }
+                    case INT_ARRAY:
+                        return tag.getIntArray(condition.nbtKey).equals(condition.value);
+                    case LONG_ARRAY:
+                        return ((NBTTagLongArray) tag.getTag(condition.nbtKey)).data.equals(condition.value);
+                }
+            }
+            return false;
+        }
     };
 
     /**
