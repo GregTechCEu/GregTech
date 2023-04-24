@@ -28,6 +28,8 @@ public class WorldGeneratorImpl implements IWorldGenerator {
     public static final WorldGeneratorImpl INSTANCE = new WorldGeneratorImpl();
 
     private static final Set<EventType> ORE_EVENT_TYPES = ImmutableSet.of(COAL, DIAMOND, GOLD, IRON, LAPIS, REDSTONE, QUARTZ, EMERALD);
+    private static final Set<EventType> STONE_EVENT_TYPES = ImmutableSet.of(DIRT, GRAVEL, DIORITE, GRANITE, ANDESITE, SILVERFISH);
+
     public static final int GRID_SIZE_X = 3;
     public static final int GRID_SIZE_Z = 3;
 
@@ -37,6 +39,12 @@ public class WorldGeneratorImpl implements IWorldGenerator {
     public static void onOreGenerate(OreGenEvent.GenerateMinable event) {
         EventType eventType = event.getType();
         if (ConfigHolder.worldgen.disableVanillaOres && ORE_EVENT_TYPES.contains(eventType)) {
+            event.setResult(Result.DENY);
+            return;
+        }
+
+        // clean up the new terrain gen
+        if (STONE_EVENT_TYPES.contains(eventType)) {
             event.setResult(Result.DENY);
         }
     }
