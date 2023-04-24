@@ -5,6 +5,14 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.sync.GuiSyncHandler;
+import com.cleanroommc.modularui.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
@@ -21,6 +29,9 @@ import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CoverStorage extends CoverBehavior implements CoverWithUI {
 
@@ -71,6 +82,37 @@ public class CoverStorage extends CoverBehavior implements CoverWithUI {
         builder.bindPlayerInventory(player.inventory, (MAX_HEIGHT - SLOT_SIZE * 2) / 2 - 1);
 
         return builder.build(this, player);
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel createUIPanel(GuiContext context, EntityPlayer player) {
+        int rowSize = this.storageHandler.getSlots();
+        List<List<IWidget>> widgets = new ArrayList<>();
+        widgets.add(new ArrayList<>());
+        for (int j = 0; j < rowSize; j++) {
+            widgets.get(0).add(new ItemSlot().setSynced(j));
+        }
+        return ModularPanel.defaultPanel(context, MAX_WIDTH, MAX_HEIGHT)
+                .child(IKey.lang("cover.storage.title").asWidget().pos(5, 5))
+                .bindPlayerInventory()
+                .child(new Grid()
+                        .top((MAX_HEIGHT - SLOT_SIZE * 5) / 2).left(7).right(7).height(18)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .matrix(widgets));
+    }
+
+    @Override
+    public void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer entityPlayer) {
+        for (int i = 0; i < this.storageHandler.getSlots(); i++) {
+            guiSyncHandler.syncValue(i, SyncHandlers.itemSlot(this.storageHandler, i).slotGroup("item_inv"));
+        }
+        guiSyncHandler.registerSlotGroup("item_inv", this.storageHandler.getSlots());
     }
 
     @Override

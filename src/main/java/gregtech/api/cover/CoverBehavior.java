@@ -55,6 +55,10 @@ public abstract class CoverBehavior implements IUIHolder {
         return coverDefinition;
     }
 
+    public final EnumFacing getAttachedSide() {
+        return attachedSide;
+    }
+
     public final void setRedstoneSignalOutput(int redstoneSignalOutput) {
         this.redstoneSignalOutput = redstoneSignalOutput;
         coverHolder.notifyBlockUpdate();
