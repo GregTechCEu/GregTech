@@ -1,5 +1,14 @@
 package gregtech.common.items.behaviors;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
+import gregtech.api.gui.GTGuis;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
@@ -20,7 +29,9 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubItemHandler {
 
@@ -47,8 +58,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote) {
-            PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
-            holder.openUI();
+            GTGuis.getMetaItemUiInfo(hand).open(player);
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
     }
@@ -63,6 +73,37 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                 .widget(new ClickButtonWidget(104, 24, 20, 20, "+1", data -> IntCircuitIngredient.adjustConfiguration(holder, +1)))
                 .widget(new ClickButtonWidget(141, 24, 20, 20, "+5", data -> IntCircuitIngredient.adjustConfiguration(holder, +5)))
                 .build(holder, entityPlayer);
+    }
+
+    @Override
+    public ModularPanel createUIPanel(GuiContext context, EntityPlayer player, ItemStack stack) {
+        List<List<IWidget>> options = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            options.add(new ArrayList<>());
+            for (int j = 0; j < 9; j++) {
+                int index = i * 9 + j;
+                if (index > 32) break;
+                options.get(i).add(new ButtonWidget<>()
+                        .size(18)
+                        .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT, new ItemDrawable(IntCircuitIngredient.getIntegratedCircuit(index)).asIcon().size(16))
+                        .onMousePressed(button -> {
+                            // TODO send click to server so it actually works
+                            IntCircuitIngredient.setCircuitConfiguration(stack, index);
+                            return true;
+                        }));
+            }
+        }
+        return ModularPanel.defaultPanel(context, 176, 120)
+                .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
+                .child(new ItemDrawable(stack).asWidget()
+                        .size(16)
+                        .top(19).alignX(0.5f)
+                        .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT.asIcon().size(18)))
+                .child(new Grid()
+                        .left(7).right(7).top(41).height(4 * 18)
+                        .matrix(options)
+                        .minColWidth(18).minRowHeight(18)
+                        .minElementMargin(0, 0));
     }
 
     @Override

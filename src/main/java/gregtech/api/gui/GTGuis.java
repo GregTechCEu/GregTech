@@ -1,14 +1,18 @@
 package gregtech.api.gui;
 
+import com.cleanroommc.modularui.api.IItemGuiHolder;
 import com.cleanroommc.modularui.manager.GuiInfo;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 
 import java.util.EnumMap;
 
@@ -31,6 +35,33 @@ public class GTGuis {
                 }
             })
             .build();
+
+    public static final GuiInfo PLAYER_META_ITEM_MAIN_HAND = GuiInfo.builder()
+            .clientGui(context -> {
+                ItemStack itemStack = context.getMainHandItem();
+                return getGuiHolder(itemStack).createGuiScreen(context.getPlayer(), itemStack);
+
+            })
+            .serverGui((context, guiSyncHandler) -> {
+                ItemStack itemStack = context.getMainHandItem();
+                getGuiHolder(itemStack).buildSyncHandler(guiSyncHandler, context.getPlayer(), itemStack);
+            })
+            .build();
+
+    public static final GuiInfo PLAYER_META_ITEM_OFF_HAND = GuiInfo.builder()
+            .clientGui(context -> {
+                ItemStack itemStack = context.getOffHandItem();
+                return getGuiHolder(itemStack).createGuiScreen(context.getPlayer(), itemStack);
+            })
+            .serverGui((context, guiSyncHandler) -> {
+                ItemStack itemStack = context.getOffHandItem();
+                getGuiHolder(itemStack).buildSyncHandler(guiSyncHandler, context.getPlayer(), itemStack);
+            })
+            .build();
+
+    public static GuiInfo getMetaItemUiInfo(EnumHand hand) {
+        return hand == EnumHand.MAIN_HAND ? PLAYER_META_ITEM_MAIN_HAND : PLAYER_META_ITEM_OFF_HAND;
+    }
 
     public static GuiInfo getCoverUiInfo(EnumFacing facing) {
         return COVERS.get(facing);
@@ -63,5 +94,15 @@ public class GTGuis {
                     ((CoverWithUI) cover).buildSyncHandler(syncHandler, context.getPlayer());
                 })
                 .build();
+    }
+
+    private static IItemGuiHolder getGuiHolder(ItemStack stack) {
+        if (stack.getItem() instanceof MetaItem) {
+            MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
+            if (valueItem != null && valueItem.getUIManager() != null) {
+                return valueItem.getUIManager();
+            }
+        }
+        throw new IllegalStateException();
     }
 }
