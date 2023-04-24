@@ -11,6 +11,11 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.sync.GuiSyncHandler;
 import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
@@ -24,6 +29,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverIO;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GTGuis;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -86,7 +92,7 @@ import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class MetaTileEntity implements ICoverable, IVoidable {
+public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolder {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
@@ -213,7 +219,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
     }
 
-    /** Override this to completely remove the "Tool Info" tooltip section */
+    /**
+     * Override this to completely remove the "Tool Info" tooltip section
+     */
     public boolean showToolUsages() {
         return true;
     }
@@ -311,7 +319,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      *
      * @param creativeTab The creative tab to check
      * @return Whether this MTE belongs in the creative tab or not
-     *
      * @see gregtech.api.block.machines.MachineItemBlock#addCreativeTab(CreativeTabs) MachineItemBlock#addCreativeTab(CreativeTabs)
      */
     public boolean isInCreativeTab(CreativeTabs creativeTab) {
@@ -372,6 +379,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     /**
      * Get a trait by name
+     *
      * @param name the name of the trait
      * @return the trait associated with the name
      */
@@ -406,10 +414,31 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @param entityPlayer player opening inventory
      * @return freshly created UI instance
      */
+    @Deprecated
     protected abstract ModularUI createUI(EntityPlayer entityPlayer);
 
+    @Deprecated
     public ModularUI getModularUI(EntityPlayer entityPlayer) {
         return createUI(entityPlayer);
+    }
+
+    // TODO: Temporary to figure wich ui system to use for this mte. Remove when no longer needed!
+    public boolean usesMui2() {
+        return false;
+    }
+
+    @Override
+    public ModularScreen createClientGui(EntityPlayer entityPlayer) {
+        return ModularScreen.simple(this.metaTileEntityId.getNamespace(), this.metaTileEntityId.getPath(), context -> createUIPanel(context, entityPlayer));
+    }
+
+    // TODO: make abstract
+    protected ModularPanel createUIPanel(GuiContext context, EntityPlayer player) {
+        return ModularPanel.defaultPanel(context);
+    }
+
+    @Override
+    public void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer entityPlayer) {
     }
 
     public final void onCoverLeftClick(EntityPlayer playerIn, CuboidRayTraceResult result) {
@@ -427,7 +456,11 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
-                MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                if (usesMui2()) {
+                    GTGuis.MTE.open(playerIn, getWorld(), getPos());
+                } else {
+                    MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                }
             }
             return true;
         } else {
@@ -440,8 +473,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
             if (result == EnumActionResult.SUCCESS) {
                 return true;
-            }
-            else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
+            } else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
                 result = coverBehavior.onScrewdriverClick(playerIn, hand, hitResult);
 
                 return result == EnumActionResult.SUCCESS;
@@ -456,7 +488,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      *
      * @return true if something happened, so tools will get damaged and animations will be played
      */
-    public final boolean onToolClick(EntityPlayer playerIn, @Nonnull Set<String> toolClasses, EnumHand hand, CuboidRayTraceResult hitResult)  {
+    public final boolean onToolClick(EntityPlayer playerIn, @Nonnull Set<String> toolClasses, EnumHand hand, CuboidRayTraceResult hitResult) {
         // the side hit from the machine grid
         EnumFacing gridSideHit = ICoverable.determineGridSideHit(hitResult);
         CoverBehavior coverBehavior = gridSideHit == null ? null : getCoverAtSide(gridSideHit);

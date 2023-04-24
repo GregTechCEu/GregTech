@@ -126,6 +126,8 @@ dependencies {
     // the CCL deobf jar uses very old MCP mappings, making it error at runtime in runClient/runServer
     // therefore we manually deobf the regular jar
     implementation fg.deobf("curse.maven:codechicken-lib-1-8-${ccl_pid}:${ccl_fid}")
+    //implementation fg.deobf("curse.maven:modularui-${mui_pid}:${mui_fid}")
+    implementation files("libs/modularui-2.0.3.jar")
 
     // Soft Dependencies
     implementation "mezz.jei:jei_1.12.2:${project.jei_version}"
