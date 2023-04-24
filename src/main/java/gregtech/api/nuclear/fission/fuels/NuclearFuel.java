@@ -40,11 +40,11 @@ public class NuclearFuel {
         return this;
     }
 
-    Double[][] getDelayedNeutronsGroups() {
+    public Double[][] getDelayedNeutronsGroups() {
         return delayedNeutronsGroups;
     }
 
-    double getTemperatureCoefficient() {
+    public double getTemperatureCoefficient() {
         return temperatureCoefficient;
     }
 
