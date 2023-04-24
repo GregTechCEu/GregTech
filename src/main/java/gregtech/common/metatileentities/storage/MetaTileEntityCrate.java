@@ -4,6 +4,13 @@ import codechicken.lib.colour.ColourRGBA;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.sync.GuiSyncHandler;
+import com.cleanroommc.modularui.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -29,24 +36,30 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityCrate extends MetaTileEntity {
 
     private final Material material;
     private final int inventorySize;
+    private final int rowSize;
     private ItemStackHandler inventory;
 
-    public MetaTileEntityCrate(ResourceLocation metaTileEntityId, Material material, int inventorySize) {
+    public MetaTileEntityCrate(ResourceLocation metaTileEntityId, Material material, int inventorySize, int rowSize) {
         super(metaTileEntityId);
+        if (inventorySize % rowSize != 0) {
+            throw new IllegalArgumentException("Row size should chosen so that all rows are filled! Currently the last row would only have " + inventorySize % rowSize + " of " + rowSize + " slots.");
+        }
         this.material = material;
         this.inventorySize = inventorySize;
+        this.rowSize = rowSize;
         initializeInventory();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityCrate(metaTileEntityId, material, inventorySize);
+        return new MetaTileEntityCrate(metaTileEntityId, material, inventorySize, rowSize);
     }
 
     @Override
@@ -119,6 +132,38 @@ public class MetaTileEntityCrate extends MetaTileEntity {
         }
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7 + (factor == 18 ? 88 : 0), 18 + inventorySize / factor * 18 + 11);
         return builder.build(getHolder(), entityPlayer);
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    protected ModularPanel createUIPanel(GuiContext context, EntityPlayer player) {
+        int rows = this.inventorySize / this.rowSize;
+        List<List<IWidget>> widgets = new ArrayList<>();
+        for (int i = 0; i < rows; i++) {
+            widgets.add(new ArrayList<>());
+            for (int j = 0; j < this.rowSize; j++) {
+                widgets.get(i).add(new ItemSlot().setSynced(i * this.rowSize + j));
+            }
+        }
+        return ModularPanel.defaultPanel(context, this.rowSize * 18 + 14, 7 + 4 * 18 + 5 + 14 + 18 * rows)
+                .bindPlayerInventory()
+                .child(new Grid()
+                        .top(7).left(7).right(7).height(rows * 18)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .matrix(widgets));
+    }
+
+    @Override
+    public void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer entityPlayer) {
+        for (int i = 0; i < this.inventory.getSlots(); i++) {
+            guiSyncHandler.syncValue(i, SyncHandlers.itemSlot(this.inventory, i).slotGroup("item_inv"));
+        }
+        guiSyncHandler.registerSlotGroup("item_inv", this.rowSize);
     }
 
     @Override
