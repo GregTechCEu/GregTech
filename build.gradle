@@ -1,58 +1,61 @@
-import com.gtnewhorizons.retrofuturagradle.mcp.ReobfuscatedJar
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.gradle.ext.Gradle
 
 plugins {
-    id("java")
-    id("java-library")
-    id("maven-publish")
-    id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
-    id("eclipse")
-    id("com.gtnewhorizons.retrofuturagradle") version "1.3.2"
-    id("com.matthewprenger.cursegradle") version "1.4.0"
+    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+    id 'eclipse'
+    id 'org.jetbrains.gradle.plugin.idea-ext' version "${idea_ext_version}"
+    id 'com.gtnewhorizons.retrofuturagradle' version "${rfg_version}"
 }
 
-version = mod_version
-group = "${mod_group}"
-ext.version = "${mod_version}"
-ext.id = "${mod_id}"
-ext.name = "${mod_name}"
-ext.author = "${mod_author}"
-ext.description = "${mod_description}"
-ext.url = "${mod_url}"
-ext.loader = "${loader_version.replaceAll("\\..*", "")}"
-ext.forge = "${loader_version}"
-ext.mc = "${mc_version}"
+version = project.mod_version
+group = project.maven_group
+archivesBaseName = project.archives_base_name
 
 // Set the toolchain version to decouple the Java we run Gradle with from the Java used to compile and run the mod
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
         // Azul covers the most platforms for Java 8 toolchains, crucially including MacOS arm64
-        vendor.set(org.gradle.jvm.toolchain.JvmVendorSpec.AZUL)
+        vendor.set(JvmVendorSpec.AZUL)
+        languageVersion.set(JavaLanguageVersion.of(project.java_version))
     }
+
     // Generate sources and javadocs jars when building and publishing
     withSourcesJar()
     withJavadocJar()
 }
 
-minecraft {
-    mcVersion = "1.12.2"
-
-    injectedTags.put("VERSION", project.version)
-
-    extraRunJvmArguments.addAll("-ea:${project.group}", "-Dmixin.debug.export=true")
+tasks.withType(JavaCompile).configureEach {
+    options.encoding 'UTF-8'
 }
 
+configurations {
+    embed
+    implementation.extendsFrom(embed)
+}
+
+minecraft {
+    mcVersion = project.mc_version
+    def args = [
+            "-ea:${project.group}",
+            "-Dfml.coreMods.load=${coremod_plugin_class_name}"
+    ]
+    extraRunJvmArguments.addAll(args)
+
+    injectedTags.put('VERSION', project.version)
+}
+
+// Generate a my.project.Tags class with the version number as a field
 tasks.injectTags.configure {
     outputClassName.set("${project.group}.Tags")
 }
 
-tasks.deobfuscateMergedJarToSrg.configure {
-    accessTransformerFiles.from("src/main/resources/META-INF/${mod_id}_at.cfg")
-}
-
 repositories {
     maven {
+        // MixinBooter
         name 'Cleanroom Maven'
         url 'https://maven.cleanroommc.com'
     }
@@ -67,6 +70,7 @@ repositories {
         url 'https://maven.blamejared.com'
     }
     maven {
+        // TOP, CTM, GRS, AE2
         name 'Curse Maven'
         url 'https://www.cursemaven.com'
         content {
@@ -74,14 +78,11 @@ repositories {
         }
     }
     maven {
+        // Mixin
         name 'Sponge Maven'
         url 'https://repo.spongepowered.org/maven'
     }
-    maven {
-        name 'Maven Maven'
-        url 'https://maven.cil.li/'
-    }
-    mavenLocal()
+    mavenLocal() // Must be last for caching to work
 }
 
 dependencies {
@@ -95,6 +96,7 @@ dependencies {
     implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-${project.crt_version}"
     implementation rfg.deobf("curse.maven:top-${top_pid}:${top_fid}")
     implementation rfg.deobf("curse.maven:ctm-${ctm_pid}:${ctm_fid}")
+
     // use a local jar for GroovyScript to avoid a bug from Mixin and ForgeGradle,
     // causing crashes at run-time when deobfuscated
     implementation files("libs/groovyscript-0.4.0.jar")
@@ -102,153 +104,117 @@ dependencies {
     implementation rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
 
     // Tests
-    testImplementation("org.junit.jupiter:junit-jupiter:${junit_version}")
-    testImplementation("org.hamcrest:hamcrest:${hamcrest_version}")
+    testImplementation "org.junit.jupiter:junit-jupiter:${junit_version}"
+    testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
 
     // Compile-Time Dependencies
 
     // GroovyScript dependency
     implementation "zone.rong:mixinbooter:${mixinbooter_version}"
 
-    // Mixin dependency
-    implementation ("org.spongepowered:mixin:${mixin_annotations_version}") {
+    // Mixin dependencies
+    api ("org.spongepowered:mixin:${mixin_version}") {
         transitive = false
     }
-//    implementation 'org.spongepowered:mixin:0.8.5'
-}
-
-def mixinConfigRefMap = 'mixins.' + project.ext.id + '.refmap.json'
-def mixinTmpDir = buildDir.path + File.separator + 'tmp' + File.separator + 'mixins'
-def refMap = "${mixinTmpDir}" + File.separator + mixinConfigRefMap
-def mixinSrg = "${mixinTmpDir}" + File.separator + "mixins.srg"
-
-tasks.named("reobfJar", ReobfuscatedJar).configure {
-    extraSrgFiles.from(mixinSrg)
-}
-
-tasks.named("compileJava", JavaCompile).configure {
-    doFirst {
-        new File(mixinTmpDir).mkdirs()
+    annotationProcessor ("org.spongepowered:mixin:${mixin_version}") {
+        transitive = false
     }
-    options.compilerArgs += [
-        "-AreobfSrgFile=${tasks.reobfJar.srg.get().asFile}",
-        "-AoutSrgFile=${mixinSrg}",
-        "-AoutRefMapFile=${refMap}",
-    ]
+
+    annotationProcessor "org.ow2.asm:asm-debug-all:${asm_debug_version}"
+    annotationProcessor "com.google.guava:guava:${guava_version}-jre"
+    annotationProcessor "com.google.code.gson:gson:${gson_version}"
+}
+
+//noinspection ConfigurationAvoidance
+for (File at : sourceSets.getByName('main').resources.files) {
+    if (at.name.toLowerCase().endsWith('_at.cfg')) {
+        tasks.deobfuscateMergedJarToSrg.accessTransformerFiles.from at
+        tasks.srgifyBinpatchedJar.accessTransformerFiles.from at
+    }
 }
 
 processResources {
     // this will ensure that this task is redone when the versions change.
-    inputs.property "mod_id", project.ext.id
-    inputs.property "mod_name", project.ext.name
-    inputs.property "mod_name2", project.ext.name.replaceAll("\\s", "")
-    inputs.property "mod_version", project.ext.version
-    inputs.property "mod_group", project.group
-    inputs.property "mod_url", project.ext.url
-    inputs.property "mod_description", project.ext.description
-    inputs.property "mod_author", project.ext.author
-    inputs.property "loader_version", project.ext.loader
-    inputs.property "forge_version", project.ext.forge
-    inputs.property "mc_version", project.ext.mc
-
-    // replace stuff in mcmod.info and pack.mcmeta
+    inputs.property 'version', project.version
+    inputs.property 'mcversion', project.minecraft.version
+    // replace stuff in mcmod.info, nothing else
     filesMatching(['mcmod.info', 'pack.mcmeta']) { fcd ->
+        include 'mcmod.info'
+        // replace version and mcversion
         fcd.expand (
-                'mod_id': project.ext.id,
-                'mod_name': project.ext.name,
-                'mod_name2': project.ext.name.replaceAll("\\s", ""),
-                'mod_version': project.ext.version,
-                'mod_group': project.group,
-                'mod_url': project.ext.url,
-                'mod_description': project.ext.description,
-                'mod_author': project.ext.author,
-                'loader_version': project.ext.loader,
-                'forge_version': project.ext.forge,
-                'mc_version': project.ext.mc
+            'version': project.version,
+            'mcversion': project.minecraft.version
         )
     }
 
-    // Embed mixin refmap
-    from refMap
-    dependsOn("compileJava")
+    rename '(.+_at.cfg)', 'META-INF/$1' // Access Transformers
 }
 
 jar {
     manifest {
-        attributes "FMLCorePlugin": project.group + ".core." + project.ext.name.replaceAll("\\s", "") + "Core"
-        attributes "FMLCorePluginContainsFMLMod": "true"
-        attributes "ForceLoadAsMod": "true"
+        def attribute_map = [:]
+        attribute_map['FMLCorePlugin'] = project.coremod_plugin_class_name
+        attribute_map['FMLCorePluginContainsFMLMod'] = true
+        attribute_map['ForceLoadAsMod'] = project.gradle.startParameter.taskNames[0] == 'build'
+        attribute_map['FMLAT'] = project.archives_base_name + '_at.cfg'
+        attributes(attribute_map)
+    }
+
+    // Add all embedded dependencies into the jar
+    from provider {
+        configurations.embed.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
     }
 }
 
-publishing {
-
-    publications {
-
-        mavenJava (MavenPublication) {
-
-//            artifact sourceJar
-//            artifact javadocJar
-            from components.java
-        }
+test {
+    testLogging {
+        events TestLogEvent.STARTED, TestLogEvent.PASSED, TestLogEvent.FAILED
+        exceptionFormat TestExceptionFormat.FULL
+        showExceptions true
+        showStackTraces true
+        showCauses true
+        showStandardStreams true
     }
+
+    useJUnitPlatform()
 }
 
 idea {
-    module { inheritOutputDirs = true }
-    project { settings {
-        runConfigurations {
-            "1. Run Client"(Gradle) {
-                taskNames = ["runClient"]
+    module {
+        inheritOutputDirs = true
+    }
+    project {
+        settings {
+            runConfigurations {
+                '1. Run Client'(Gradle) {
+                    taskNames = ['runClient']
+                }
+                '2. Run Server'(Gradle) {
+                    taskNames = ['runServer']
+                }
+                '3. Run Obfuscated Client'(Gradle) {
+                    taskNames = ['runObfClient']
+                }
+                '4. Run Obfuscated Server'(Gradle) {
+                    taskNames = ['runObfServer']
+                }
             }
-            "2. Run Server"(Gradle) {
-                taskNames = ["runServer"]
-            }
-            "3. Run Obfuscated Client"(Gradle) {
-                taskNames = ["runObfClient"]
-            }
-            "4. Run Obfuscated Server"(Gradle) {
-                taskNames = ["runObfServer"]
+            compiler.javac {
+                afterEvaluate {
+                    javacAdditionalOptions = '-encoding utf8'
+                    moduleJavacAdditionalOptions = [
+                            (project.name + '.main'): tasks.compileJava.options.compilerArgs.collect {
+                                '"' + it + '"'
+                            }.join(' ')
+                    ]
+                }
             }
         }
-        compiler.javac {
-            afterEvaluate {
-                javacAdditionalOptions = "-encoding utf8"
-                moduleJavacAdditionalOptions = [
-                        (project.name + ".main"): tasks.compileJava.options.compilerArgs.collect { '"' + it + '"' }.join(' ')
-                ]
-            }
-        }
-    }}
+    }
 }
 
-tasks.named("processIdeaSettings").configure {
-    dependsOn("injectTags")
+tasks.named('processIdeaSettings').configure {
+    dependsOn('injectTags')
 }
-
-//curseforge {
-//    if (!file('CHANGELOG.md').canRead()) { throw new FileNotFoundException("Could not read changelog file") }
-//    apiKey = project.hasProperty('CURSEFORGE_TOKEN') ? project.findProperty('CURSEFORGE_TOKEN') : (System.getenv("CURSEFORGE_TOKEN") != null ? System.getenv("CURSEFORGE_TOKEN") : '')
-//    project {
-//        id = project_curse_id
-//        changelogType = 'markdown'
-//        changelog = file('CHANGELOG.md')
-//        releaseType = project_release_type
-//        addGameVersion 'Forge'
-//        // add supported game versions separated by comma
-//        project_game_versions.split(",").each {
-//            addGameVersion it.trim()
-//        }
-//        mainArtifact(jar) {
-//            displayName = "[FORGE] [${mc_version}] ${rootProject.name}-v${mod_version}"
-//            relations {
-//                requiredDependency 'mixinbootstrap'
-//                optionalDependency 'mixin-booter'
-//            }
-//        }
-//    }
-//    options {
-//        javaVersionAutoDetect = false
-//        forgeGradleIntegration = false
-//    }
-//}
