@@ -5499,7 +5499,6 @@ metaitem.cover.fluid.voiding.advanced.tooltip=Удаляет §fЖидкости
 metaitem.cover.item.voiding.advanced.tooltip=Удаляет §fПредметы§7 с контролем количества как §fУлучшение механизма§7./nТребуется активация с помощью §fКиянки§7 после установки.
 metaarmor.nms.share.error=NanoMuscle™ броня: §cНедостаточно энергии для зарядки!
 metaarmor.qts.share.error=QuarkTech™ броня: §cНедостаточно энергии для зарядки!
-metaitem.cover.drain.name=Слив (Улучшение)
 metaitem.cover.fluid.voiding.name=Удаление жидкостей (Улучшение)
 metaitem.cover.fluid.voiding.advanced.name=Улучшенное удаление жидкостей (Улучшение)
 metaitem.cover.item.voiding.name=Удаление предметов (Улучшение)
