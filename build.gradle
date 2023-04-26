@@ -1,3 +1,7 @@
+//file:noinspection DependencyNotationArgument
+// TODO remove when fixed in RFG ^
+
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.gradle.ext.Gradle
@@ -9,6 +13,8 @@ plugins {
     id 'eclipse'
     id 'org.jetbrains.gradle.plugin.idea-ext' version "${idea_ext_version}"
     id 'com.gtnewhorizons.retrofuturagradle' version "${rfg_version}"
+    id 'net.darkhax.curseforgegradle' version "${curseforge_gradle_version}" apply false
+    id 'com.modrinth.minotaur' version "${minotaur_version}" apply false
 }
 
 version = project.mod_version
@@ -23,9 +29,10 @@ java {
         languageVersion.set(JavaLanguageVersion.of(project.java_version))
     }
 
-    // Generate sources and javadocs jars when building and publishing
+    // Generate sources when building and publishing
     withSourcesJar()
-    withJavadocJar()
+    // javadoc jar throws errors on incomplete docs
+    // docs are also contained in the sources jar, so omit the javadoc-only jar
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -183,7 +190,9 @@ test {
 
 idea {
     module {
-        inheritOutputDirs = true
+        inheritOutputDirs true
+        downloadJavadoc true
+        downloadSources true
     }
     project {
         settings {
@@ -205,13 +214,25 @@ idea {
                 afterEvaluate {
                     javacAdditionalOptions = '-encoding utf8'
                     moduleJavacAdditionalOptions = [
-                            (project.name + '.main'): tasks.compileJava.options.compilerArgs.collect {
-                                '"' + it + '"'
-                            }.join(' ')
+                        (project.name + '.main'): tasks.compileJava.options.compilerArgs.collect {
+                            '"' + it + '"'
+                        }.join(' ')
                     ]
                 }
             }
         }
+    }
+}
+
+// Create API library jar
+tasks.register('apiJar', Jar) {
+    archiveClassifier.set 'api'
+    from(sourceSets.main.java) {
+        include 'gregtech/api/**'
+    }
+
+    from(sourceSets.main.output) {
+        include 'gregtech/api/**'
     }
 }
 
@@ -227,3 +248,72 @@ sourceSets {
 tasks.named('processIdeaSettings').configure {
     dependsOn('injectTags')
 }
+
+// Deployment
+
+final boolean is_ci_env = providers.environmentVariable('CI').getOrElse('false').toBoolean()
+final boolean deployment_debug = providers.environmentVariable('DEPLOYMENT_DEBUG').getOrElse('false').toBoolean()
+
+if (is_ci_env || deployment_debug) {
+    artifacts {
+        archives jar
+        archives apiJar
+        archives sourcesJar
+    }
+}
+
+def final cf_api_key = providers.environmentVariable('CURSEFORGE_API_KEY')
+if (cf_api_key.isPresent() || deployment_debug) {
+    apply plugin: 'net.darkhax.curseforgegradle'
+    tasks.register('curseforge', TaskPublishCurseForge) {
+        apiToken = cf_api_key.get()
+        def final projectId = providers.environmentVariable('CURSEFORGE_PROJECT_ID').get()
+
+        def mainFile = upload(projectId, build)
+        mainFile.releaseType = providers.environmentVariable('RELEASE_TYPE').get()
+        mainFile.changelog = providers.environmentVariable('CHANGELOG_LOCATION').get()
+        mainFile.changelogType = 'markdown'
+        mainFile.addRequirement 'codechicken-lib-1-8'
+        mainFile.addIncompatibility 'gregtechce'
+        mainFile.addModLoader 'Forge'
+        mainFile.addJavaVersion "${java_version}"
+        mainFile.addGameVersion "${minecraft_version}"
+
+        def sourcesFile = mainFile.withAdditionalFile(sourcesJar)
+        sourcesFile.changelog = providers.environmentVariable('CHANGELOG_LOCATION').get()
+
+        def devFile = mainFile.withAdditionalFile(jar)
+        devFile.changelog = providers.environmentVariable('CHANGELOG_LOCATION').get()
+
+        disableVersionDetection()
+    }
+
+    tasks.curseforge.dependsOn(build)
+}
+
+def final modrinth_api_key = providers.environmentVariable('MODRINTH_API_KEY')
+if (modrinth_api_key.isPresent() || deployment_debug) {
+    apply plugin: 'com.modrinth.minotaur'
+
+    modrinth {
+        token = modrinth_api_key.get()
+        projectId = providers.environmentVariable("MODRINTH_PROJECT_ID").get()
+        changelog = providers.environmentVariable("CHANGELOG_LOCATION").get()
+        versionType = providers.environmentVariable("RELEASE_TYPE").get()
+
+        versionNumber = getVersionFromJava(false)
+        gameVersions = ["${minecraft_version}"]
+
+        def main_artifact = "${archivesBaseName}-${version}.jar"
+        uploadFile = file("build/libs/${main_artifact}")
+        file('build/libs/').eachFile { file ->
+            if (file.name.endsWith('.jar') && file.name != main_artifact) {
+                additionalFiles.add file
+            }
+        }
+
+        debugMode = "${project.deployment_debug}".toBoolean() || deployment_debug
+    }
+    tasks.modrinth.dependsOn(build)
+}
+
