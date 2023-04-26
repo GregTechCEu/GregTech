@@ -215,6 +215,15 @@ idea {
     }
 }
 
+sourceSets {
+    test {
+        java {
+            compileClasspath += sourceSets.patchedMc.output + sourceSets.mcLauncher.output
+            runtimeClasspath += sourceSets.patchedMc.output + sourceSets.mcLauncher.output
+        }
+    }
+}
+
 tasks.named('processIdeaSettings').configure {
     dependsOn('injectTags')
 }
