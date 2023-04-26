@@ -55,9 +55,9 @@ minecraft {
     injectedTags.put('VERSION', project.version)
 }
 
-// Generate a my.project.Tags class with the version number as a field
+// Generate the InternalTags class with the version number as a field
 tasks.injectTags.configure {
-    outputClassName.set("${project.group}.Tags")
+    outputClassName.set("${project.group}.InternalTags")
 }
 
 repositories {
@@ -120,10 +120,10 @@ dependencies {
     implementation "zone.rong:mixinbooter:${mixinbooter_version}"
 
     // Mixin dependencies
-    api ("org.spongepowered:mixin:${mixin_version}") {
+    api("org.spongepowered:mixin:${mixin_version}") {
         transitive = false
     }
-    annotationProcessor ("org.spongepowered:mixin:${mixin_version}") {
+    annotationProcessor("org.spongepowered:mixin:${mixin_version}") {
         transitive = false
     }
 
@@ -148,9 +148,9 @@ processResources {
     filesMatching(['mcmod.info', 'pack.mcmeta']) { fcd ->
         include 'mcmod.info'
         // replace version and mcversion
-        fcd.expand (
-            'version': project.version,
-            'mcversion': project.minecraft.version
+        fcd.expand(
+                'version': project.version,
+                'mcversion': project.minecraft.version
         )
     }
 
@@ -214,9 +214,9 @@ idea {
                 afterEvaluate {
                     javacAdditionalOptions = '-encoding utf8'
                     moduleJavacAdditionalOptions = [
-                        (project.name + '.main'): tasks.compileJava.options.compilerArgs.collect {
-                            '"' + it + '"'
-                        }.join(' ')
+                            (project.name + '.main'): tasks.compileJava.options.compilerArgs.collect {
+                                '"' + it + '"'
+                            }.join(' ')
                     ]
                 }
             }
@@ -252,7 +252,7 @@ tasks.named('processIdeaSettings').configure {
 // Deployment
 
 final boolean is_ci_env = providers.environmentVariable('CI').getOrElse('false').toBoolean()
-final boolean deployment_debug = providers.environmentVariable('DEPLOYMENT_DEBUG').getOrElse('false').toBoolean()
+final boolean deployment_debug = providers.environmentVariable('DEPLOYMENT_DEBUG').getOrElse("${deployment_debug}").toBoolean()
 
 if (is_ci_env || deployment_debug) {
     artifacts {
@@ -301,7 +301,7 @@ if (modrinth_api_key.isPresent() || deployment_debug) {
         changelog = providers.environmentVariable("CHANGELOG_LOCATION").get()
         versionType = providers.environmentVariable("RELEASE_TYPE").get()
 
-        versionNumber = getVersionFromJava(false)
+        versionNumber = "${version}".split('-')[0] // strip out the EXTRA field, if present
         gameVersions = ["${minecraft_version}"]
 
         def main_artifact = "${archivesBaseName}-${version}.jar"
@@ -312,7 +312,7 @@ if (modrinth_api_key.isPresent() || deployment_debug) {
             }
         }
 
-        debugMode = "${project.deployment_debug}".toBoolean() || deployment_debug
+        debugMode = deployment_debug
     }
     tasks.modrinth.dependsOn(build)
 }
