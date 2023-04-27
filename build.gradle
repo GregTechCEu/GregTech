@@ -142,14 +142,14 @@ for (File at : sourceSets.getByName('main').resources.files) {
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property 'version', project.version
-    inputs.property 'mcversion', project.minecraft.version
+    inputs.property 'mcversion', minecraft.getMcVersion()
     // replace stuff in mcmod.info, nothing else
     filesMatching(['mcmod.info', 'pack.mcmeta']) { fcd ->
         include 'mcmod.info'
         // replace version and mcversion
         fcd.expand(
                 'version': project.version,
-                'mcversion': project.minecraft.version
+                'mcversion': minecraft.getMcVersion()
         )
     }
 
@@ -159,10 +159,10 @@ processResources {
 jar {
     manifest {
         def attribute_map = [:]
-        attribute_map['FMLCorePlugin'] = project.coremod_plugin_class_name
+        attribute_map['FMLCorePlugin'] = coremod_plugin_class_name
         attribute_map['FMLCorePluginContainsFMLMod'] = true
         attribute_map['ForceLoadAsMod'] = project.gradle.startParameter.taskNames[0] == 'build'
-        attribute_map['FMLAT'] = project.archives_base_name + '_at.cfg'
+        attribute_map['FMLAT'] = archives_base_name + '_at.cfg'
         attributes(attribute_map)
     }
 
@@ -238,8 +238,8 @@ tasks.register('apiJar', Jar) {
 sourceSets {
     test {
         java {
-            compileClasspath += sourceSets.patchedMc.output + sourceSets.mcLauncher.output
-            runtimeClasspath += sourceSets.patchedMc.output + sourceSets.mcLauncher.output
+            compileClasspath += patchedMc.output + mcLauncher.output
+            runtimeClasspath += patchedMc.output + mcLauncher.output
         }
     }
 }
