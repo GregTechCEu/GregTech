@@ -1,7 +1,6 @@
 //file:noinspection DependencyNotationArgument
 // TODO remove when fixed in RFG ^
 
-import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.gradle.ext.Gradle
@@ -265,7 +264,8 @@ if (is_ci_env || deployment_debug) {
 def final cf_api_key = providers.environmentVariable('CURSEFORGE_API_KEY')
 if (cf_api_key.isPresent() || deployment_debug) {
     apply plugin: 'net.darkhax.curseforgegradle'
-    tasks.register('curseforge', TaskPublishCurseForge) {
+    //noinspection UnnecessaryQualifiedReference
+    tasks.register('curseforge', net.darkhax.curseforgegradle.TaskPublishCurseForge) {
         apiToken = cf_api_key.get()
         def final projectId = providers.environmentVariable('CURSEFORGE_PROJECT_ID').get()
 
