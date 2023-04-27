@@ -147,13 +147,13 @@ for (File at : sourceSets.getByName('main').resources.files) {
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property 'version', project.version
-    inputs.property 'mcversion', minecraft.getMcVersion()
+    inputs.property 'mcversion', project.minecraft.version
     // replace stuff in mcmod.info, nothing else
     filesMatching(['mcmod.info', 'pack.mcmeta']) { fcd ->
         // replace version and mcversion
         fcd.expand(
                 'version': project.version,
-                'mcversion': minecraft.getMcVersion()
+                'mcversion': project.minecraft.version
         )
     }
 
