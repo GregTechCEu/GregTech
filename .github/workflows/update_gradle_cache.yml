@@ -6,9 +6,9 @@ on:
     branches:
       - master
     paths:
-      - "gradle**" # covers gradle folder, gradle.properties.old, gradlew
-      - "build.gradle.old*"
-      - "settings.gradle.old*"
+      - "gradle**" # covers gradle folder, gradle.properties, gradlew
+      - "build.gradle*"
+      - "settings.gradle*"
       - "src/main/resources/META-INF/*_at.cfg" # access transformers
 
 jobs:

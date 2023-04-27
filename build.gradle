@@ -269,15 +269,15 @@ if (cf_api_key.isPresent() || deployment_debug) {
         apiToken = cf_api_key.get()
         def final projectId = providers.environmentVariable('CURSEFORGE_PROJECT_ID').get()
 
-        def mainFile = upload(projectId, build)
+        def mainFile = upload(projectId, reobfJar)
         mainFile.releaseType = providers.environmentVariable('RELEASE_TYPE').get()
         mainFile.changelog = providers.environmentVariable('CHANGELOG_LOCATION').get()
         mainFile.changelogType = 'markdown'
         mainFile.addRequirement 'codechicken-lib-1-8'
         mainFile.addIncompatibility 'gregtechce'
         mainFile.addModLoader 'Forge'
-        mainFile.addJavaVersion "${java_version}"
-        mainFile.addGameVersion "${minecraft_version}"
+        mainFile.addJavaVersion "Java ${java_version}"
+        mainFile.addGameVersion "${mc_version}"
 
         def sourcesFile = mainFile.withAdditionalFile(sourcesJar)
         sourcesFile.changelog = providers.environmentVariable('CHANGELOG_LOCATION').get()
@@ -302,7 +302,7 @@ if (modrinth_api_key.isPresent() || deployment_debug) {
         versionType = providers.environmentVariable("RELEASE_TYPE").get()
 
         versionNumber = "${version}".split('-')[0] // strip out the EXTRA field, if present
-        gameVersions = ["${minecraft_version}"]
+        gameVersions = ["${mc_version}"]
 
         def main_artifact = "${archivesBaseName}-${version}.jar"
         uploadFile = file("build/libs/${main_artifact}")
@@ -316,4 +316,3 @@ if (modrinth_api_key.isPresent() || deployment_debug) {
     }
     tasks.modrinth.dependsOn(build)
 }
-
