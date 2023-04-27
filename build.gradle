@@ -10,10 +10,10 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'eclipse'
-    id 'org.jetbrains.gradle.plugin.idea-ext' version "${idea_ext_version}"
-    id 'com.gtnewhorizons.retrofuturagradle' version "${rfg_version}"
-    id 'net.darkhax.curseforgegradle' version "${curseforge_gradle_version}" apply false
-    id 'com.modrinth.minotaur' version "${minotaur_version}" apply false
+    id 'org.jetbrains.gradle.plugin.idea-ext' version "$idea_ext_version"
+    id 'com.gtnewhorizons.retrofuturagradle' version "$rfg_version"
+    id 'net.darkhax.curseforgegradle' version "$curseforge_gradle_version" apply false
+    id 'com.modrinth.minotaur' version "$minotaur_version" apply false
 }
 
 version = project.mod_version
@@ -50,6 +50,8 @@ minecraft {
             "-Dfml.coreMods.load=${coremod_plugin_class_name}"
     ]
     extraRunJvmArguments.addAll(args)
+
+    useDependencyAccessTransformers = true
 
     injectedTags.put('VERSION', project.version)
 }
@@ -148,7 +150,6 @@ processResources {
     inputs.property 'mcversion', minecraft.getMcVersion()
     // replace stuff in mcmod.info, nothing else
     filesMatching(['mcmod.info', 'pack.mcmeta']) { fcd ->
-        include 'mcmod.info'
         // replace version and mcversion
         fcd.expand(
                 'version': project.version,
@@ -211,6 +212,9 @@ idea {
                 '4. Run Obfuscated Server'(Gradle) {
                     taskNames = ['runObfServer']
                 }
+                '5. Run Tests'(Gradle) {
+                    taskNames = ['test']
+                }
             }
             compiler.javac {
                 afterEvaluate {
@@ -254,7 +258,7 @@ tasks.named('processIdeaSettings').configure {
 // Deployment
 
 final boolean is_ci_env = providers.environmentVariable('CI').getOrElse('false').toBoolean()
-final boolean deployment_debug = providers.environmentVariable('DEPLOYMENT_DEBUG').getOrElse("${deployment_debug}").toBoolean()
+final boolean deployment_debug = providers.environmentVariable('DEPLOYMENT_DEBUG').getOrElse("$deployment_debug").toBoolean()
 
 if (is_ci_env || deployment_debug) {
     artifacts {
@@ -280,7 +284,7 @@ if (cf_api_key.isPresent() || deployment_debug) {
         mainFile.addIncompatibility 'gregtechce'
         mainFile.addModLoader 'Forge'
         mainFile.addJavaVersion "Java ${java_version}"
-        mainFile.addGameVersion "${mc_version}"
+        mainFile.addGameVersion "$mc_version"
 
         def sourcesFile = mainFile.withAdditionalFile(sourcesJar)
         sourcesFile.changelog = providers.environmentVariable('CHANGELOG_LOCATION').get()
@@ -304,8 +308,8 @@ if (modrinth_api_key.isPresent() || deployment_debug) {
         changelog = providers.environmentVariable("CHANGELOG_LOCATION").get()
         versionType = providers.environmentVariable("RELEASE_TYPE").get()
 
-        versionNumber = "${version}".split('-')[0] // strip out the EXTRA field, if present
-        gameVersions = ["${mc_version}"]
+        versionNumber = "$version".split('-')[0] // strip out the EXTRA field, if present
+        gameVersions = ["$mc_version"]
 
         def main_artifact = "${archivesBaseName}-${version}.jar"
         uploadFile = file("build/libs/${main_artifact}")
