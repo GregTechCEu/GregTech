@@ -107,11 +107,14 @@ dependencies {
     // causing crashes at run-time when deobfuscated
     implementation files("libs/groovyscript-0.4.0.jar")
     //implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
-    implementation rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
+    compileOnly rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
 
     // Tests
     testImplementation "org.junit.jupiter:junit-jupiter:${junit_version}"
     testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
+
+    // ae2 is a transitive dependency for MTE, so it's also needed at test-time
+    testImplementation rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
 
     // Compile-Time Dependencies
 
