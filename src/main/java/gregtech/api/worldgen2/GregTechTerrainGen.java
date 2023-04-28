@@ -1,8 +1,11 @@
 package gregtech.api.worldgen2;
 
+import gregtech.api.util.BlockStateHashStrategy;
 import gregtech.api.util.PerlinNoise;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.StoneVariantBlock;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.block.BlockStone;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -16,25 +19,30 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class GregTechTerrainGen {
 
-    private static List<IBlockState> stoneTypes;
+    private static Map<IBlockState, List<IBlockState>> stoneTypes;
     private static PerlinNoise noise;
 
     private GregTechTerrainGen() {}
 
     public static void init() {
-        stoneTypes = new ArrayList<>();
+        stoneTypes = new Object2ObjectOpenCustomHashMap<>(BlockStateHashStrategy.STRATEGY);
+
+        List<IBlockState> states = new ObjectArrayList<>();
+
         for (StoneVariantBlock.StoneType type : StoneVariantBlock.StoneType.values()) {
-            stoneTypes.add(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH).getState(type));
+            states.add(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH).getState(type));
         }
-        stoneTypes.add(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.STONE));
-        stoneTypes.add(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.ANDESITE));
-        stoneTypes.add(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.GRANITE));
-        stoneTypes.add(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.DIORITE));
+        states.add(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.STONE));
+        states.add(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.ANDESITE));
+        states.add(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.GRANITE));
+        states.add(Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.DIORITE));
+
+        stoneTypes.put(Blocks.STONE.getDefaultState(), states);
 
         MinecraftForge.EVENT_BUS.register(GregTechTerrainGen.class);
     }
@@ -80,11 +88,12 @@ public final class GregTechTerrainGen {
 
                     IBlockState state = storage.get(xOffset, storageY, zOffset);
                     if (state.getBlock().isAir(state, world, pos)) continue;
-                    if (!(state.getBlock() instanceof BlockStone)) continue;
+                    List<IBlockState> candidates = stoneTypes.get(state);
+                    if (candidates == null) continue;
 
                     final int surfaceY = getWorldSurfaceFast(world, chunk, xOffset, zOffset);
-                    final IBlockState toSet = getStateFor(x, y, z, surfaceY);
-                    if (toSet.getBlock().isAir(toSet, world, pos)) continue;
+                    final IBlockState toSet = getStateFor(candidates, x, y, z, surfaceY);
+                    if (toSet == state || toSet.getBlock().isAir(toSet, world, pos)) continue;
 
                     storage.set(xOffset, storageY, zOffset, toSet);
                 }
@@ -99,7 +108,8 @@ public final class GregTechTerrainGen {
     }
 
     /**
-     * Faster way to retrieve the surface level of a world. Skips chunk loading checks.
+     * Faster way to retrieve the surface level of a world than {@link World#getHeight(int, int)}.
+     * Skips chunk loading checks.
      *
      * @param world the world containing the chunk
      * @param chunk the chunk containing the coordinates
@@ -116,11 +126,11 @@ public final class GregTechTerrainGen {
     }
 
     @Nonnull
-    private static IBlockState getStateFor(int x, int y, int z, int surfaceY) {
+    private static IBlockState getStateFor(@Nonnull List<IBlockState> candidates, int x, int y, int z, int surfaceY) {
         assert noise != null;
         // need abs() for x and y, when generating blobs between - and + coords
         float noiseValue = noise.noise(Math.abs(x * 0.01F), y * 1.0F / surfaceY, Math.abs(z * 0.01F), 4, 0.1F);
-        return stoneTypes.get((int) (stoneTypes.size() * noiseValue));
+        return candidates.get((int) (candidates.size() * noiseValue));
     }
 }
 
