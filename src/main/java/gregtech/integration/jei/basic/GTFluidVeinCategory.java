@@ -19,6 +19,10 @@ import java.util.List;
 
 public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GTFluidVeinInfo> {
 
+    private static final int SLOT_CENTER = 79;
+    private static final int TEXT_START_X = 5;
+    private static final int START_POS_Y = 40;
+
     protected final IDrawable slot;
     private String veinName;
     private int weight;
@@ -26,16 +30,13 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
     private int depletionAmount; // amount of fluid the vein gets drained by
     private int depletionChance; // the chance [0, 100] that the vein will deplete by 1
     private int depletedYield; // yield after the vein is depleted
-    private final int SLOT_CENTER = 79;
     private int[] dimensions;
-    private final int textStartX = 5;
     private int weightLength;
     private int minYieldLength;
     private int maxYieldLength;
     private int depletionChanceLength;
     private int depletionAmountLength;
     private int depletedYieldLength;
-    private final int startPosY = 40;
 
     public GTFluidVeinCategory(IGuiHelper guiHelper) {
         super("fluid_spawn_location",
@@ -81,60 +82,60 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
         // Vein Weight information
         String veinWeight = I18n.format("gregtech.jei.fluid.vein_weight", weight);
         weightLength = minecraft.fontRenderer.getStringWidth(veinWeight);
-        minecraft.fontRenderer.drawString(veinWeight, textStartX, startPosY, 0x111111);
+        minecraft.fontRenderer.drawString(veinWeight, TEXT_START_X, START_POS_Y, 0x111111);
 
         // Vein Minimum Yield information
         String veinMinYield = I18n.format("gregtech.jei.fluid.min_yield", yields[0]);
         minYieldLength = minecraft.fontRenderer.getStringWidth(veinMinYield);
-        minecraft.fontRenderer.drawString(veinMinYield, textStartX, startPosY + FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinMinYield, TEXT_START_X, START_POS_Y + FONT_HEIGHT + 1, 0x111111);
 
         // Vein Maximum Yield information
         String veinMaxYield = I18n.format("gregtech.jei.fluid.max_yield", yields[1]);
         maxYieldLength = minecraft.fontRenderer.getStringWidth(veinMaxYield);
-        minecraft.fontRenderer.drawString(veinMaxYield, textStartX, startPosY + 2 * FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinMaxYield, TEXT_START_X, START_POS_Y + 2 * FONT_HEIGHT + 1, 0x111111);
 
         // Vein Depletion Chance information
         String veinDepletionChance = I18n.format("gregtech.jei.fluid.depletion_chance", depletionChance);
         depletionChanceLength = minecraft.fontRenderer.getStringWidth(veinDepletionChance);
-        minecraft.fontRenderer.drawString(veinDepletionChance, textStartX, startPosY + 3 * FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinDepletionChance, TEXT_START_X, START_POS_Y + 3 * FONT_HEIGHT + 1, 0x111111);
 
         // Vein Depletion Amount information
         String veinDepletionAmount = I18n.format("gregtech.jei.fluid.depletion_amount", depletionAmount);
         depletionAmountLength = minecraft.fontRenderer.getStringWidth(veinDepletionAmount);
-        minecraft.fontRenderer.drawString(veinDepletionAmount, textStartX, startPosY + 4 * FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinDepletionAmount, TEXT_START_X, START_POS_Y + 4 * FONT_HEIGHT + 1, 0x111111);
 
         // Vein Depleted Yield information
         String veinDepletedYield = I18n.format("gregtech.jei.fluid.depleted_rate", depletedYield);
         depletedYieldLength = minecraft.fontRenderer.getStringWidth(veinDepletedYield);
-        minecraft.fontRenderer.drawString(veinDepletedYield, textStartX, startPosY + 5 * FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinDepletedYield, TEXT_START_X, START_POS_Y + 5 * FONT_HEIGHT + 1, 0x111111);
 
         // Vein Dimensions information
         String veinDimension = I18n.format("gregtech.jei.fluid.dimension") + " ";
         int dimensionLength = minecraft.fontRenderer.getStringWidth(veinDimension);
-        minecraft.fontRenderer.drawString(veinDimension, textStartX, startPosY + 6 * FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinDimension, TEXT_START_X, START_POS_Y + 6 * FONT_HEIGHT + 1, 0x111111);
 
         JEIResourceDepositCategoryUtils.drawMultiLineCommaSeparatedDimensionList(WorldGenRegistry.getNamedDimensions(),
                 dimensions,
                 minecraft.fontRenderer,
-                textStartX,
-                startPosY + 6 * FONT_HEIGHT + 1,
-                textStartX + dimensionLength);
+                TEXT_START_X,
+                START_POS_Y + 6 * FONT_HEIGHT + 1,
+                TEXT_START_X + dimensionLength);
     }
 
     @Nonnull
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
-        if (isPointWithinRange(textStartX, startPosY, weightLength, FONT_HEIGHT, mouseX, mouseY)) {
+        if (isPointWithinRange(TEXT_START_X, START_POS_Y, weightLength, FONT_HEIGHT, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.weight_hover"));
-        } else if (isPointWithinRange(textStartX, startPosY + FONT_HEIGHT + 1, minYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
+        } else if (isPointWithinRange(TEXT_START_X, START_POS_Y + FONT_HEIGHT + 1, minYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.min_hover"));
-        } else if (isPointWithinRange(textStartX, startPosY + 2 * FONT_HEIGHT + 1, maxYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
+        } else if (isPointWithinRange(TEXT_START_X, START_POS_Y + 2 * FONT_HEIGHT + 1, maxYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.max_hover"));
-        } else if (isPointWithinRange(textStartX, startPosY + 3 * FONT_HEIGHT + 1, depletionChanceLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
+        } else if (isPointWithinRange(TEXT_START_X, START_POS_Y + 3 * FONT_HEIGHT + 1, depletionChanceLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_chance_hover"));
-        } else if (isPointWithinRange(textStartX, startPosY + 4 * FONT_HEIGHT + 1, depletionAmountLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
+        } else if (isPointWithinRange(TEXT_START_X, START_POS_Y + 4 * FONT_HEIGHT + 1, depletionAmountLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_amount_hover"));
-        } else if (isPointWithinRange(textStartX, startPosY + 5 * FONT_HEIGHT + 1, depletedYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
+        } else if (isPointWithinRange(TEXT_START_X, START_POS_Y + 5 * FONT_HEIGHT + 1, depletedYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_yield_hover"));
         }
 

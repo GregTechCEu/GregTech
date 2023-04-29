@@ -18,6 +18,10 @@ import javax.annotation.Nonnull;
 
 public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
+    private static final int NUM_OF_SLOTS = 5;
+    private static final int SLOT_WIDTH = 18;
+    private static final int SLOT_HEIGHT = 18;
+
     protected final IDrawable slot;
     protected OreDepositDefinition definition;
     protected String veinName;
@@ -26,9 +30,6 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
     protected int outputCount;
     protected int weight;
     private int[] dimension;
-    private final int NUM_OF_SLOTS = 5;
-    private final int SLOT_WIDTH = 18;
-    private final int SLOT_HEIGHT = 18;
 
     public GTOreCategory(IGuiHelper guiHelper) {
         super("ore_spawn_location",
