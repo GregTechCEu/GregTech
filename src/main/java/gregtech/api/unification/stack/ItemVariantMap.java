@@ -1,7 +1,6 @@
 package gregtech.api.unification.stack;
 
 import gregtech.api.GTValues;
-import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -70,7 +69,7 @@ public interface ItemVariantMap<E> {
      * the item, {@code false} otherwise.
      */
     default boolean has(@Nonnull ItemStack stack) {
-        return has((short) GTUtility.getActualItemDamageFromStack(stack));
+        return has((short) stack.getItemDamage());
     }
 
     /**
@@ -84,7 +83,7 @@ public interface ItemVariantMap<E> {
      */
     @Nullable
     default E get(@Nonnull ItemStack stack) {
-        return get((short) GTUtility.getActualItemDamageFromStack(stack));
+        return get((short) stack.getItemDamage());
     }
 
     /**
@@ -147,7 +146,7 @@ public interface ItemVariantMap<E> {
          */
         @Nullable
         default E put(@Nonnull ItemStack stack, @Nullable E e) {
-            return put((short) GTUtility.getActualItemDamageFromStack(stack), e);
+            return put((short) stack.getItemDamage(), e);
         }
     }
 }

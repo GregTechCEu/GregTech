@@ -177,7 +177,7 @@ public class OreDictUnifier {
         if (itemStack.isEmpty()) return Collections.emptySet();
         ItemVariantMap<Set<String>> nameEntry = stackOreDictName.get(itemStack.getItem());
         if (nameEntry == null) return Collections.emptySet();
-        short itemDamage = (short) GTUtility.getActualItemDamageFromStack(itemStack);
+        short itemDamage = (short) itemStack.getItemDamage();
         Set<String> names = nameEntry.get(itemDamage);
         Set<String> wildcardNames = itemDamage == GTValues.W ? null : nameEntry.get(GTValues.W);
         if (names == null) {
@@ -210,7 +210,7 @@ public class OreDictUnifier {
         ItemVariantMap<Set<String>> nameEntry = stackOreDictName.get(itemStack.getItem());
         if (nameEntry == null) return false;
 
-        short itemDamage = (short) GTUtility.getActualItemDamageFromStack(itemStack);
+        short itemDamage = (short) itemStack.getItemDamage();
         Set<String> names = nameEntry.get(itemDamage);
         if (names != null && names.contains(oreDictName)) return true;
 
