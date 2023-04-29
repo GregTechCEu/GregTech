@@ -143,8 +143,6 @@ dependencies {
     testImplementation("org.hamcrest:hamcrest:${hamcrest_version}")
 
     // Compile-Time Dependencies
-    compileOnly "org.projectlombok:lombok:${lombok_version}"
-    annotationProcessor "org.projectlombok:lombok:${lombok_version}"
 
     // GroovyScript dependency
     implementation "zone.rong:mixinbooter:${mixinbooter_version}"
@@ -295,6 +293,11 @@ if (cf_api_key.isPresent()) {
             releaseType = providers.environmentVariable('RELEASE_TYPE').get()
 
             addGameVersion "${minecraft_version}"
+
+            relations {
+                requiredDependency 'codechicken-lib-1-8'
+                incompatible 'gregtechce'
+            }
 
             def main_artifact = "${archivesBaseName}-${version}.jar"
             mainArtifact file("build/libs/${main_artifact}")

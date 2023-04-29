@@ -4,7 +4,6 @@ import codechicken.lib.vec.Vector3;
 import gregtech.api.block.ICustomParticleBlock;
 import gregtech.api.network.IClientExecutor;
 import gregtech.api.network.IPacket;
-import lombok.NoArgsConstructor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -15,12 +14,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@NoArgsConstructor
 public class PacketBlockParticle implements IPacket, IClientExecutor {
 
     private BlockPos blockPos;
     private Vector3 entityPos;
     private int particlesAmount;
+
+    @SuppressWarnings("unused")
+    public PacketBlockParticle() {}
 
     public PacketBlockParticle(BlockPos blockPos, Vector3 entityPos, int particlesAmount) {
         this.blockPos = blockPos;
