@@ -15,7 +15,6 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nonnull;
-import java.util.Map;
 
 public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
@@ -26,7 +25,6 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
     protected int maxHeight;
     protected int outputCount;
     protected int weight;
-    protected final Map<Integer, String> namedDimensions = WorldGenRegistry.getNamedDimensions();
     private int[] dimension;
     private final int NUM_OF_SLOTS = 5;
     private final int SLOT_WIDTH = 18;
@@ -43,7 +41,6 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, GTOreInfo recipeWrapper, @Nonnull IIngredients ingredients) {
-
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         int baseYPos = 19;
 
@@ -82,7 +79,6 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
     @Override
     public void drawExtras(@Nonnull Minecraft minecraft) {
-
         int baseXPos = 70;
         int baseYPos = 19;
         int dimDisplayPos = 70;
@@ -123,10 +119,14 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
         //Create the Dimensions
         minecraft.fontRenderer.drawString("Dimensions: ", baseXPos, baseYPos + (2 * FONT_HEIGHT), 0x111111);
 
-        JEIResourceDepositCategoryUtils.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimension, minecraft.fontRenderer, baseXPos, baseYPos + 3 * FONT_HEIGHT, dimDisplayPos);
+        JEIResourceDepositCategoryUtils.drawMultiLineCommaSeparatedDimensionList(WorldGenRegistry.getNamedDimensions(),
+                dimension,
+                minecraft.fontRenderer,
+                baseXPos,
+                baseYPos + 3 * FONT_HEIGHT,
+                dimDisplayPos);
 
         //Label the Surface Identifier
         minecraft.fontRenderer.drawSplitString("SurfaceMaterial", 15, 92, minecraft.fontRenderer.getStringWidth("Surface"), 0x111111);
-
     }
 }

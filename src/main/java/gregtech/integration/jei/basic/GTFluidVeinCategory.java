@@ -16,7 +16,6 @@ import net.minecraft.client.resources.I18n;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GTFluidVeinInfo> {
 
@@ -28,7 +27,6 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
     private int depletionChance; // the chance [0, 100] that the vein will deplete by 1
     private int depletedYield; // yield after the vein is depleted
     private final int SLOT_CENTER = 79;
-    protected final Map<Integer, String> namedDimensions = WorldGenRegistry.getNamedDimensions();
     private int[] dimensions;
     private final int textStartX = 5;
     private int weightLength;
@@ -39,7 +37,6 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
     private int depletedYieldLength;
     private final int startPosY = 40;
 
-
     public GTFluidVeinCategory(IGuiHelper guiHelper) {
         super("fluid_spawn_location",
                 "fluid.spawnlocation.name",
@@ -47,12 +44,10 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
                 guiHelper);
 
         this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
-
     }
 
     @Override
     public void setRecipe(@Nonnull IRecipeLayout recipeLayout, GTFluidVeinInfo gtFluidVeinInfo, @Nonnull IIngredients ingredients) {
-
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
 
         fluidStackGroup.init(0, true, SLOT_CENTER, 19, 16, 16, 1, false, null);
@@ -79,7 +74,6 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
 
     @Override
     public void drawExtras(@Nonnull Minecraft minecraft) {
-
         GTStringUtils.drawCenteredStringWithCutoff(veinName, minecraft.fontRenderer, 176);
 
         this.slot.draw(minecraft, SLOT_CENTER - 1, 18);
@@ -119,13 +113,17 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
         int dimensionLength = minecraft.fontRenderer.getStringWidth(veinDimension);
         minecraft.fontRenderer.drawString(veinDimension, textStartX, startPosY + 6 * FONT_HEIGHT + 1, 0x111111);
 
-        JEIResourceDepositCategoryUtils.drawMultiLineCommaSeparatedDimensionList(namedDimensions, dimensions, minecraft.fontRenderer, textStartX, startPosY + 6 * FONT_HEIGHT + 1, textStartX + dimensionLength);
+        JEIResourceDepositCategoryUtils.drawMultiLineCommaSeparatedDimensionList(WorldGenRegistry.getNamedDimensions(),
+                dimensions,
+                minecraft.fontRenderer,
+                textStartX,
+                startPosY + 6 * FONT_HEIGHT + 1,
+                textStartX + dimensionLength);
     }
 
     @Nonnull
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
-
         if (isPointWithinRange(textStartX, startPosY, weightLength, FONT_HEIGHT, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.weight_hover"));
         } else if (isPointWithinRange(textStartX, startPosY + FONT_HEIGHT + 1, minYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {

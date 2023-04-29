@@ -2,6 +2,7 @@ package gregtech.integration.jei.utils;
 
 import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.OreDepositDefinition;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
@@ -87,7 +88,7 @@ public class JEIResourceDepositCategoryUtils {
      * @param dimStartYPos    The Starting Y Position of the displayed dimension names
      * @param dimDisplayPosX  The Starting X Position of the displayed dimension names
      */
-    public static void drawMultiLineCommaSeparatedDimensionList(Map<Integer, String> namedDimensions,
+    public static void drawMultiLineCommaSeparatedDimensionList(Int2ObjectMap<String> namedDimensions,
                                                                 int[] dimensionIDs,
                                                                 FontRenderer fontRenderer,
                                                                 int dimStartXPos,

@@ -11,7 +11,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.WeightedRandom;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.FluidStack;
@@ -478,11 +477,10 @@ public class SeparationRecipes {
                 .fluidOutputs(Helium.getFluid(200))
                 .duration(64).EUt(64).buildAndRegister();
 
-        List<Tuple<ItemStack, Integer>> seedEntries = getGrassSeedEntries();
-        for (Tuple<ItemStack, Integer> seedEntry : seedEntries) {
+        for (ItemStack seed : getGrassSeedItems()) {
             EXTRACTOR_RECIPES.recipeBuilder()
                     .duration(32).EUt(2)
-                    .inputs(seedEntry.getFirst())
+                    .inputs(GTUtility.copy(1, seed))
                     .fluidOutputs(SeedOil.getFluid(10))
                     .buildAndRegister();
         }
@@ -571,20 +569,21 @@ public class SeparationRecipes {
     }
 
     @SuppressWarnings("unchecked")
-    private static List<Tuple<ItemStack, Integer>> getGrassSeedEntries() {
-        ArrayList<Tuple<ItemStack, Integer>> result = new ArrayList<>();
+    private static List<ItemStack> getGrassSeedItems() {
+        List<ItemStack> result = new ArrayList<>();
         try {
             Field seedListField = ForgeHooks.class.getDeclaredField("seedList");
             seedListField.setAccessible(true);
             Class<?> seedEntryClass = Class.forName("net.minecraftforge.common.ForgeHooks$SeedEntry");
             Field seedField = seedEntryClass.getDeclaredField("seed");
             seedField.setAccessible(true);
+
             List<WeightedRandom.Item> seedList = (List<WeightedRandom.Item>) seedListField.get(null);
             for (WeightedRandom.Item seedEntryObject : seedList) {
                 ItemStack seedStack = (ItemStack) seedField.get(seedEntryObject);
-                int chanceValue = seedEntryObject.itemWeight;
-                if (!seedStack.isEmpty())
-                    result.add(new Tuple<>(seedStack, chanceValue));
+                if (!seedStack.isEmpty()) {
+                    result.add(seedStack);
+                }
             }
         } catch (ReflectiveOperationException exception) {
             GTLog.logger.error("Failed to get forge grass seed list", exception);
