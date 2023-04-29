@@ -7,19 +7,12 @@ import com.google.common.collect.Table;
 import gregtech.api.GTValues;
 import gregtech.api.gui.resources.ResourceHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
-@EventBusSubscriber(modid = GTValues.MODID, value = Side.CLIENT)
 public class MaterialIconType {
 
     public static final Map<String, MaterialIconType> ICON_TYPES = new HashMap<>();
@@ -180,9 +173,8 @@ public class MaterialIconType {
         return this.name;
     }
 
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void beforeTextureStitch(TextureStitchEvent.Pre event) {
+    @SuppressWarnings("unused") // Called from ASM-injected code
+    public static void clearCache() {
         ITEM_MODEL_CACHE.clear();
         BLOCK_TEXTURE_CACHE.clear();
         BLOCK_MODEL_CACHE.clear();
