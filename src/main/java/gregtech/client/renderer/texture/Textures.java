@@ -10,6 +10,8 @@ import codechicken.lib.vec.TransformationList;
 import codechicken.lib.vec.uv.IconTransformation;
 import codechicken.lib.vec.uv.UVTransformationList;
 import gregtech.api.GTValues;
+import gregtech.api.unification.material.info.MaterialIconSet;
+import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.ICubeRenderer;
@@ -45,6 +47,7 @@ public class Textures {
     public static final DrumRenderer DRUM = new DrumRenderer("storage/drums/drum");
     public static final SafeRenderer SAFE = new SafeRenderer("storage/safe");
     public static final LargeTurbineRenderer LARGE_TURBINE_ROTOR_RENDERER = new LargeTurbineRenderer();
+    public static final QuantumStorageRenderer QUANTUM_STORAGE_RENDERER = new QuantumStorageRenderer();
 
     // Simple Cube Renderers
     public static final SimpleOverlayRenderer BRONZE_PLATED_BRICKS = new SimpleOverlayRenderer("casings/solid/machine_bronze_plated_bricks");
@@ -324,6 +327,10 @@ public class Textures {
         PIPE_NORMAL_WOOD = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_normal_in_wood"));
         PIPE_LARGE_WOOD = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_large_in_wood"));
         PIPE_SIDE_WOOD = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_side_wood"));
+
+        for (MaterialIconSet iconSet : MaterialIconSet.ICON_SETS.values()) {
+            textureMap.registerSprite(MaterialIconType.frameGt.getBlockTexturePath(iconSet));
+        }
     }
 
     @SideOnly(Side.CLIENT)

@@ -10,7 +10,8 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
-import gregtech.common.blocks.*;
+import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.StoneVariantBlock;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -23,7 +24,7 @@ public class OreDictionaryLoader {
 
     public static final String OREDICT_FUEL_COKE = "fuelCoke";
     public static final String OREDICT_BLOCK_FUEL_COKE = "blockFuelCoke";
-    
+
     public static void init() {
         GTLog.logger.info("Registering OreDict entries.");
 
@@ -103,12 +104,11 @@ public class OreDictionaryLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONE, 1, 6), OrePrefix.stone, Materials.Andesite);
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONE, 1, 3), OrePrefix.stone, Materials.Diorite);
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONE, 1, 4), OrePrefix.stone, Materials.Diorite);
-        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.BLACK_GRANITE, 1), OrePrefix.stone, Materials.GraniteBlack);
-        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.RED_GRANITE, 1), OrePrefix.stone, Materials.GraniteRed);
-        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.MARBLE, 1), OrePrefix.stone, Materials.Marble);
-        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.BASALT, 1), OrePrefix.stone, Materials.Basalt);
-        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.CONCRETE_LIGHT, 1), OrePrefix.block, Materials.Concrete);
-        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.CONCRETE_DARK, 1), OrePrefix.block, Materials.Concrete);
+
+        for (StoneVariantBlock.StoneType type : StoneVariantBlock.StoneType.values()) {
+            ItemStack item = MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH).getItemVariant(type);
+            OreDictUnifier.registerOre(item, type.getOrePrefix(), type.getMaterial());
+        }
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.ANVIL), "craftingAnvil");
         OreDictUnifier.registerOre(new ItemStack(Blocks.OBSIDIAN, 1, W), OrePrefix.stone, Materials.Obsidian);

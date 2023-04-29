@@ -3,7 +3,6 @@ package gregtech.api.gui.widgets;
 import com.google.common.collect.Lists;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.client.utils.RenderUtil;
@@ -13,16 +12,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
@@ -31,25 +32,31 @@ import static gregtech.api.capability.GregtechDataCodes.*;
  */
 public class PhantomTankWidget extends TankWidget implements IGhostIngredientTarget {
 
-    private final FluidTank phantomTank;
+    private final Supplier<FluidStack> phantomFluidGetter;
+    private final Consumer<FluidStack> phantomFluidSetter;
 
+    @Nullable
     protected FluidStack lastPhantomStack;
 
-    public PhantomTankWidget(IFluidTank fluidTank, int x, int y, int width, int height, FluidTank phantomTank) {
+    public PhantomTankWidget(IFluidTank fluidTank, int x, int y, int width, int height, Supplier<FluidStack> phantomFluidGetter, Consumer<FluidStack> phantomFluidSetter) {
         super(fluidTank, x, y, width, height);
-        this.phantomTank = phantomTank;
+        this.phantomFluidGetter = phantomFluidGetter;
+        this.phantomFluidSetter = phantomFluidSetter;
+        setLastPhantomStack(this.phantomFluidGetter.get());
     }
 
-    @Override
-    public PhantomTankWidget setClient() {
-        super.setClient();
-        this.lastPhantomStack = phantomTank != null ? phantomTank.getFluid() != null ? phantomTank.getFluid().copy() : null : null;
-        return this;
+    protected void setLastPhantomStack(FluidStack fluid) {
+        if (fluid != null) {
+            this.lastPhantomStack = fluid.copy();
+            this.lastPhantomStack.amount = 1;
+        } else {
+            this.lastPhantomStack = null;
+        }
     }
 
     @Override
     public List<Target<?>> getPhantomTargets(Object ingredient) {
-        if (lastFluidInTank != null || (!(ingredient instanceof FluidStack) && drainFrom(ingredient) == null)) {
+        if (lastFluidInTank != null || getFluidFromIngredient(ingredient) == null) {
             return Collections.emptyList();
         }
 
@@ -64,39 +71,43 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
 
             @Override
             public void accept(@Nonnull Object ingredient) {
-                FluidStack stack;
-                if (ingredient instanceof FluidStack) {
-                    stack = (FluidStack) ingredient;
-                } else {
-                    stack = drainFrom(ingredient);
-                }
+                FluidStack stack = getFluidFromIngredient(ingredient);
 
                 if (stack != null) {
                     NBTTagCompound compound = stack.writeToNBT(new NBTTagCompound());
                     writeClientAction(LOAD_PHANTOM_FLUID_STACK_FROM_NBT, buf -> buf.writeCompoundTag(compound));
                 }
 
-                if (isClient) {
-                    phantomTank.setFluid(stack);
-                }
+                phantomFluidSetter.accept(stack);
             }
         });
     }
 
+    @Nullable
+    private static FluidStack getFluidFromIngredient(Object ingredient) {
+        if (ingredient instanceof FluidStack) {
+            return (FluidStack) ingredient;
+        } else if (ingredient instanceof ItemStack) {
+            ItemStack itemStack = (ItemStack) ingredient;
+            IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            if (fluidHandler != null)
+                return fluidHandler.drain(Integer.MAX_VALUE, false);
+        }
+        return null;
+    }
+
     @Override
     public void handleClientAction(int id, PacketBuffer buf) {
-        super.handleClientAction(id, buf);
-        if (id == VOID_PHANTOM_FLUID) {
+        if (id == SET_PHANTOM_FLUID) {
             ItemStack stack = gui.entityPlayer.inventory.getItemStack().copy();
-            if (!stack.isEmpty()) {
+            if (stack.isEmpty()) {
+                phantomFluidSetter.accept(null);
+            } else {
                 stack.setCount(1);
                 IFluidHandlerItem fluidHandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
                 if (fluidHandler != null) {
-                    FluidStack resultStack = fluidHandler.drain(Integer.MAX_VALUE, false);
-                    phantomTank.setFluid(resultStack);
+                    phantomFluidSetter.accept(fluidHandler.drain(Integer.MAX_VALUE, false));
                 }
-            } else {
-                phantomTank.setFluid(null);
             }
         } else if (id == LOAD_PHANTOM_FLUID_STACK_FROM_NBT) {
             FluidStack stack;
@@ -105,14 +116,14 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            phantomTank.setFluid(stack);
-        }
+            phantomFluidSetter.accept(stack);
+        } else super.handleClientAction(id, buf);
     }
 
     @Override
     public Object getIngredientOverMouse(int mouseX, int mouseY) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            return lastFluidInTank == null ? lastPhantomStack : lastFluidInTank;
+            return lastFluidInTank == null ? phantomFluidGetter.get() : lastFluidInTank;
         }
         return null;
     }
@@ -120,23 +131,11 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            writeClientAction(VOID_PHANTOM_FLUID, buf -> {});
-            if (isClient) {
-                phantomTank.setFluid(null);
-            }
+            writeClientAction(SET_PHANTOM_FLUID, buf -> {
+            });
             return true;
         }
         return false;
-    }
-
-    private static FluidStack drainFrom(Object ingredient) {
-        if (ingredient instanceof ItemStack) {
-            ItemStack itemStack = (ItemStack) ingredient;
-            IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-            if (fluidHandler != null)
-                return fluidHandler.drain(Integer.MAX_VALUE, false);
-        }
-        return null;
     }
 
     @Override
@@ -147,13 +146,10 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
         }
         Position pos = getPosition();
         Size size = getSize();
-        if (lastPhantomStack != null && !gui.isJEIHandled) {
+        FluidStack fluid = phantomFluidGetter.get();
+        if (fluid != null && !gui.isJEIHandled) {
             GlStateManager.disableBlend();
-            FluidStack stackToDraw = lastPhantomStack;
-            if (stackToDraw.amount == 0) {
-                stackToDraw = GTUtility.copyAmount(1, stackToDraw);
-            }
-            RenderUtil.drawFluidForGui(stackToDraw, 1,
+            RenderUtil.drawFluidForGui(fluid, fluid.amount,
                     pos.x + fluidRenderOffset, pos.y + fluidRenderOffset,
                     size.width - fluidRenderOffset, size.height - fluidRenderOffset);
             GlStateManager.enableBlend();
@@ -167,46 +163,26 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
     }
 
     @Override
-    public void updateScreen() {
-        super.updateScreen();
-        if (isClient) {
-            FluidStack stack = phantomTank.getFluid();
-            if (stack == null && lastPhantomStack != null) {
-                lastPhantomStack = null;
-            } else if (stack != null) {
-                if (!stack.isFluidEqual(lastPhantomStack)) {
-                    lastPhantomStack = stack.copy();
-                } else if (stack.amount != 0) {
-                    lastPhantomStack.amount = 0;
-                }
-            }
-        }
-    }
-
-    @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        FluidStack stack = phantomTank.getFluid();
-        if (stack == null && lastPhantomStack != null) {
-            lastPhantomStack = null;
-            writeUpdateInfo(REMOVE_PHANTOM_FLUID_TYPE, buf -> {});
-        } else if (stack != null) {
-            if (!stack.isFluidEqual(lastPhantomStack)) {
-                lastPhantomStack = stack.copy();
-                NBTTagCompound stackTag = stack.writeToNBT(new NBTTagCompound());
-                writeUpdateInfo(CHANGE_PHANTOM_FLUID, buf -> buf.writeCompoundTag(stackTag));
-            } else if (stack.amount != 0) {
-                lastPhantomStack.amount = 0;
-                writeUpdateInfo(VOID_PHANTOM_FLUID, buf -> {});
+        FluidStack stack = phantomFluidGetter.get();
+        if (stack == null) {
+            if (lastPhantomStack != null) {
+                setLastPhantomStack(null);
+                writeUpdateInfo(REMOVE_PHANTOM_FLUID_TYPE, buf -> {
+                });
             }
+        } else if (lastPhantomStack == null || !stack.isFluidEqual(lastPhantomStack)) {
+            setLastPhantomStack(stack);
+            NBTTagCompound stackTag = stack.writeToNBT(new NBTTagCompound());
+            writeUpdateInfo(CHANGE_PHANTOM_FLUID, buf -> buf.writeCompoundTag(stackTag));
         }
     }
 
     @Override
     public void readUpdateInfo(int id, PacketBuffer buf) {
-        super.readUpdateInfo(id, buf);
         if (id == REMOVE_PHANTOM_FLUID_TYPE) {
-            lastPhantomStack = null;
+            phantomFluidSetter.accept(null);
         } else if (id == CHANGE_PHANTOM_FLUID) {
             NBTTagCompound stackTag;
             try {
@@ -214,23 +190,16 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
             } catch (IOException ignored) {
                 return;
             }
-            lastPhantomStack = FluidStack.loadFluidStackFromNBT(stackTag);
-        } else if (id == VOID_PHANTOM_FLUID) {
-            lastPhantomStack.amount = 0;
-        }
+            phantomFluidSetter.accept(FluidStack.loadFluidStackFromNBT(stackTag));
+        } else super.readUpdateInfo(id, buf);
     }
 
-    public String getFormattedFluidAmount() {
-        if (lastFluidInTank == null) {
-            return "0";
-        }
-        return super.getFormattedFluidAmount();
-    }
-
+    @Override
     public String getFluidLocalizedName() {
-        if (lastFluidInTank == null) {
-            return lastPhantomStack == null ? "" : lastPhantomStack.getLocalizedName();
+        if (lastFluidInTank != null) {
+            return lastFluidInTank.getLocalizedName();
         }
-        return super.getFluidLocalizedName();
+        FluidStack fluid = phantomFluidGetter.get();
+        return fluid == null ? "" : fluid.getLocalizedName();
     }
 }

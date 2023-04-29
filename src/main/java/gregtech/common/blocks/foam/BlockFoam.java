@@ -1,6 +1,5 @@
 package gregtech.common.blocks.foam;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.Block;
@@ -40,14 +39,13 @@ public class BlockFoam extends BlockColored {
         setHardness(0.5f);
         setLightOpacity(0);
         setTickRandomly(true);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH);
         this.isReinforced = isReinforced;
     }
 
     @Override
     public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stackInHand = playerIn.getHeldItem(hand);
-        if (!stackInHand.isEmpty() && OreDictUnifier.getOreDictionaryNames(stackInHand).contains("sand")) {
+        if (!stackInHand.isEmpty() && OreDictUnifier.hasOreDictionary(stackInHand, "sand")) {
             worldIn.setBlockState(pos, getPetrifiedBlock(state));
             worldIn.playSound(playerIn, pos, SoundEvents.BLOCK_SAND_PLACE, SoundCategory.BLOCKS, 1.0f, 1.0f);
             if (!playerIn.capabilities.isCreativeMode)

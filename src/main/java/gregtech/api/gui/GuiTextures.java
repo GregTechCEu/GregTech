@@ -219,6 +219,16 @@ public class GuiTextures {
     // Covers
     public static final TextureArea COVER_MACHINE_CONTROLLER = TextureArea.fullImage("textures/items/metaitems/cover.controller.png");
 
+    // Ore Filter
+    public static final TextureArea ORE_FILTER_INFO = TextureArea.fullImage("textures/gui/widget/ore_filter/info.png");
+    public static final TextureArea ORE_FILTER_SUCCESS = TextureArea.fullImage("textures/gui/widget/ore_filter/success.png");
+    public static final TextureArea ORE_FILTER_ERROR = TextureArea.fullImage("textures/gui/widget/ore_filter/error.png");
+    public static final TextureArea ORE_FILTER_WARN = TextureArea.fullImage("textures/gui/widget/ore_filter/warn.png");
+    public static final TextureArea ORE_FILTER_WAITING = TextureArea.fullImage("textures/gui/widget/ore_filter/waiting.png");
+
+    public static final TextureArea ORE_FILTER_MATCH = TextureArea.fullImage("textures/gui/widget/ore_filter/match.png");
+    public static final TextureArea ORE_FILTER_NO_MATCH = TextureArea.fullImage("textures/gui/widget/ore_filter/no_match.png");
+
     //Terminal
     public static final TextureArea ICON_REMOVE = TextureArea.fullImage("textures/gui/terminal/icon/remove_hover.png");
     public static final TextureArea ICON_UP = TextureArea.fullImage("textures/gui/terminal/icon/up_hover.png");
@@ -244,4 +254,8 @@ public class GuiTextures {
     public static final TextureArea BUTTON_INTERFACE = TextureArea.fullImage("textures/blocks/cover/cover_interface_computer_button.png");
     public static final TextureArea COVER_INTERFACE_MACHINE_ON_PROXY = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_on_proxy.png");
     public static final TextureArea COVER_INTERFACE_MACHINE_OFF_PROXY = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_off_proxy.png");
+
+    // Lamp item overlay
+    public static final TextureArea LAMP_NO_BLOOM = TextureArea.fullImage("textures/gui/item_overlay/lamp_no_bloom.png");
+    public static final TextureArea LAMP_NO_LIGHT = TextureArea.fullImage("textures/gui/item_overlay/lamp_no_light.png");
 }

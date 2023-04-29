@@ -19,12 +19,14 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTTransferUtils;
-import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,7 +45,6 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -177,7 +178,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         return Collections.emptyMap();
     }
 
-    protected Map<ItemStackKey, TypeItemInfo> doCountSourceInventoryItemsByType(IItemHandler itemHandler, IItemHandler myItemHandler) {
+    protected Map<ItemStack, TypeItemInfo> doCountSourceInventoryItemsByType(IItemHandler itemHandler, IItemHandler myItemHandler) {
         if (conveyorMode == ConveyorMode.IMPORT) {
             return countInventoryItemsByType(itemHandler);
         } else if (conveyorMode == ConveyorMode.EXPORT) {
@@ -338,18 +339,19 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     protected static class GroupItemInfo {
         public final Object filterSlot;
-        public final Set<ItemStackKey> itemStackTypes;
+        public final Set<ItemStack> itemStackTypes;
         public int totalCount;
 
-        public GroupItemInfo(Object filterSlot, Set<ItemStackKey> itemStackTypes, int totalCount) {
+        public GroupItemInfo(Object filterSlot, Set<ItemStack> itemStackTypes, int totalCount) {
             this.filterSlot = filterSlot;
             this.itemStackTypes = itemStackTypes;
             this.totalCount = totalCount;
         }
     }
 
-    protected Map<ItemStackKey, TypeItemInfo> countInventoryItemsByType(IItemHandler inventory) {
-        Map<ItemStackKey, TypeItemInfo> result = new Object2ObjectOpenHashMap<>();
+    @Nonnull
+    protected Map<ItemStack, TypeItemInfo> countInventoryItemsByType(@Nonnull IItemHandler inventory) {
+        Map<ItemStack, TypeItemInfo> result = new Object2ObjectOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
         for (int srcIndex = 0; srcIndex < inventory.getSlots(); srcIndex++) {
             ItemStack itemStack = inventory.getStackInSlot(srcIndex);
             if (itemStack.isEmpty()) {
@@ -359,14 +361,13 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (transferSlotIndex == null) {
                 continue;
             }
-            ItemStackKey itemStackKey = new ItemStackKey(itemStack);
-            if (!result.containsKey(itemStackKey)) {
+            if (!result.containsKey(itemStack)) {
                 TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), transferSlotIndex, new TIntArrayList(), 0);
                 itemInfo.totalCount += itemStack.getCount();
                 itemInfo.slots.add(srcIndex);
-                result.put(itemStackKey, itemInfo);
+                result.put(itemStack.copy(), itemInfo);
             } else {
-                TypeItemInfo itemInfo = result.get(itemStackKey);
+                TypeItemInfo itemInfo = result.get(itemStack);
                 itemInfo.totalCount += itemStack.getCount();
                 itemInfo.slots.add(srcIndex);
             }
@@ -374,7 +375,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         return result;
     }
 
-    protected Map<Object, GroupItemInfo> countInventoryItemsByMatchSlot(IItemHandler inventory) {
+    @Nonnull
+    protected Map<Object, GroupItemInfo> countInventoryItemsByMatchSlot(@Nonnull IItemHandler inventory) {
         Map<Object, GroupItemInfo> result = new Object2ObjectOpenHashMap<>();
         for (int srcIndex = 0; srcIndex < inventory.getSlots(); srcIndex++) {
             ItemStack itemStack = inventory.getStackInSlot(srcIndex);
@@ -385,15 +387,14 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (transferSlotIndex == null) {
                 continue;
             }
-            ItemStackKey itemStackKey = new ItemStackKey(itemStack);
             if (!result.containsKey(transferSlotIndex)) {
-                GroupItemInfo itemInfo = new GroupItemInfo(transferSlotIndex, new HashSet<>(), 0);
-                itemInfo.itemStackTypes.add(itemStackKey);
+                GroupItemInfo itemInfo = new GroupItemInfo(transferSlotIndex, new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount()), 0);
+                itemInfo.itemStackTypes.add(itemStack.copy());
                 itemInfo.totalCount += itemStack.getCount();
                 result.put(transferSlotIndex, itemInfo);
             } else {
                 GroupItemInfo itemInfo = result.get(transferSlotIndex);
-                itemInfo.itemStackTypes.add(itemStackKey);
+                itemInfo.itemStackTypes.add(itemStack.copy());
                 itemInfo.totalCount += itemStack.getCount();
             }
         }

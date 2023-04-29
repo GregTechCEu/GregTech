@@ -145,11 +145,6 @@ public class GTValues {
      */
     public static final int FALLBACK = -1;
 
-    /**
-     * Used to tell if any high-tier machine (UHV+) was registered.
-     */
-    public static boolean HT = false;
-
     public static Supplier<Boolean> FOOLS = () -> {
         String[] yearMonthDay = LocalDate.now().toString().split("-");
         return yearMonthDay[1].equals("04") && yearMonthDay[2].equals("01");

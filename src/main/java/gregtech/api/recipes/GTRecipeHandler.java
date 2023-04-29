@@ -55,7 +55,8 @@ public class GTRecipeHandler {
             }
         }
 
-        boolean wasRemoved = map.removeRecipe(map.findRecipe(Long.MAX_VALUE, itemIn, fluidIn, Integer.MAX_VALUE));
+        Recipe recipeFound = map.findRecipe(Long.MAX_VALUE, itemIn, fluidIn);
+        boolean wasRemoved = recipeFound != null && map.removeRecipe(recipeFound);
         if (ConfigHolder.misc.debug) {
             if (wasRemoved)
                 GTLog.logger.info("Removed Recipe for inputs: Items: {} Fluids: {}", itemNames, fluidNames);

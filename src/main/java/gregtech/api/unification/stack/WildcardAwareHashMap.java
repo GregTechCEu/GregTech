@@ -4,13 +4,21 @@ import gregtech.api.GTValues;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * HashMap-based implementation of map with key type {@link ItemAndMetadata}
  * This map automatically takes care of wildcard item stacks as keys
  *
  * @param <V> value type
+ * @deprecated Faulty implementation. If wildcard entry is inserted, all read access
+ * will be redirected to wildcard entry. This behavior breaks some functions such as
+ * {@link Map#computeIfAbsent(Object, Function)}. Not to mention this implementation
+ * violates the contract of {@link Map} class.
+ * <p>
+ * Any usage of this class should be replaced by plain maps.
  */
+@Deprecated
 public class WildcardAwareHashMap<V> extends Object2ObjectOpenHashMap<ItemAndMetadata, V> {
 
     public WildcardAwareHashMap(int initialCapacity, float loadFactor) {

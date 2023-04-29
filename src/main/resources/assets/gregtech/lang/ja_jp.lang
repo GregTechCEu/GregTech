@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & GTModpackTeam
 # 日本語ローカライズ担当： MrKo_no & GTModpackTeam
-# Corresponding Version: 2.5.2 - beta
-# 対応バージョン: 2.5.2 - beta
+# Corresponding Version: 2.5.5 - beta
+# 対応バージョン: 2.5.5 - beta
 
 death.attack.heat=%s は熱さを感じなくなった。
 death.attack.frost=%s のふとんがふっとんだ。
@@ -518,7 +518,7 @@ metaitem.tool.datastick.tooltip=低容量データストレージ
 metaitem.tool.dataorb.name=データオーブ
 metaitem.tool.dataorb.tooltip=高容量データストレージ
 metaitem.circuit.integrated.name=プログラム回路
-metaitem.circuit.integrated.tooltip=使うと設定画面を開く
+metaitem.circuit.integrated.tooltip=使うと設定画面を開く/n/nプログラム回路スロットを持つ機械に/nシフト右クリックをすると/nこの回路の番号に設定される/n
 metaitem.circuit.integrated.gui=プログラム回路設定
 metaitem.circuit.integrated.jei_description=JEIでは設定した番号のレシピのみが表示されます。/n番号はプログラム回路の一覧タブで選択できます。
 
@@ -830,6 +830,8 @@ metaitem.cover.item.voiding.name=アイテム消去カバー
 metaitem.cover.item.voiding.tooltip=§fアイテム§7を消去する§fカバー§7。/n設置後に§fソフトマレット§7で有効化する必要がある。
 metaitem.cover.item.voiding.advanced.name=発展型アイテム消去カバー
 metaitem.cover.item.voiding.advanced.tooltip=§fアイテム§7を消去する量を制御できる§fカバー§7。/n設置後に§fソフトマレット§7で有効化する必要がある。
+metaitem.cover.storage.name=収納カバー
+metaitem.cover.storage.tooltip=小物用の収納スペースを持つカバー
 
 metaitem.cover.facade.name=%sの外装
 metaitem.cover.facade.tooltip=カーブルを装飾する§fカバー§7
@@ -899,7 +901,7 @@ metaitem.brick.coke.name=コークス炉用レンガ
 metaitem.wooden_form.empty.name=木枠
 metaitem.wooden_form.brick.name=レンガ型の木枠
 
-item.gt.tool.replace_tool_head=ツールの先端とクラフトすると修理できる
+item.gt.tool.replace_tool_head=ツールの先端とクラフトすると先端を置き換える
 item.gt.tool.usable_as=§f%s§7として使用可能
 item.gt.tool.behavior.silk_ice=§b製氷: §f氷をシルクタッチ回収
 item.gt.tool.behavior.torch_place=§e採掘者: §f右クリックで松明設置
@@ -977,7 +979,7 @@ item.gt.tool.tooltip.harvest_level_extra=§e採掘レベル %s §f(%s§f)
 item.gt.tool.harvest_level.0=§8木 §f/ §8Wood
 item.gt.tool.harvest_level.1=§7石 §f/ §7Stone
 item.gt.tool.harvest_level.2=§a鉄 §f/ §aIron
-item.gt.tool.harvest_level.3=§bダイヤモンド §f/ §bDiamond§
+item.gt.tool.harvest_level.3=§bダイヤモンド §f/ §bDiamond
 item.gt.tool.harvest_level.4=§dアルティメット §f/ §dUltimet
 item.gt.tool.harvest_level.5=§9デュラニウム §f/ §9Duranium
 item.gt.tool.harvest_level.6=§cニュートロニウム §f/ §cNeutronium
@@ -1222,12 +1224,16 @@ cover.ender_fluid_link.private.tooltip.enabled=公開タンクモードに切り
 cover.ender_fluid_link.incomplete_hex=入力した色が不完全です!/n8桁の16進数すべてが入力されると反映されます。/nGUIを閉じると編集内容が失われます!
 
 cover.advanced_energy_detector.label=発展型エネルギー検出器
-cover.advanced_energy_detector.min=最小EU
-cover.advanced_energy_detector.max=最大EU
+cover.advanced_energy_detector.min=最小
+cover.advanced_energy_detector.max=最大
 cover.advanced_energy_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、信号は最小EUを下回った時に出力され、最大EUを上回った時に信号出力が停止します。
 cover.advanced_energy_detector.invert_label=反転:
 cover.advanced_energy_detector.normal=しない
 cover.advanced_energy_detector.inverted=する
+cover.advanced_energy_detector.modes_tooltip=装置の蓄電量に対する最大/最小の比較を、EU値を数値で直接指定するまたは最大蓄電量に対する割合を使用するかどうかを切り替える。
+cover.advanced_energy_detector.modes_label=モード:
+cover.advanced_energy_detector.mode_eu=数値
+cover.advanced_energy_detector.mode_percent=割合
 
 cover.advanced_fluid_detector.label=発展型液体検出器
 cover.advanced_fluid_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、最小液体量を下回った時に信号が停止し、最大液体量を上回った時に信号が出力されます。
@@ -1237,6 +1243,8 @@ cover.advanced_item_detector.label=発展型アイテム検出器
 cover.advanced_item_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、最小アイテム量を下回った時に信号が停止し、最大アイテム量を上回った時に信号が出力されます。 
 cover.advanced_item_detector.max=最大アイテム量:
 cover.advanced_item_detector.min=最小アイテム量:
+
+cover.storage.title=収納カバー
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=%s鉱石 (黒色花崗岩)
@@ -2216,6 +2224,14 @@ tile.rubber_sapling.name=ゴムの木の苗
 
 tile.planks.rubber.name=ゴムの木材
 tile.planks.treated.name=防腐木材
+tile.wood_slab.rubber.name=ゴムの木材のハーフブロック
+tile.wood_slab.treated.name=防腐木材のハーフブロック
+tile.rubber_wood_stairs.name=ゴムの木材の階段
+tile.treated_wood_stairs.name=防腐木材の階段
+tile.rubber_wood_fence.name=ゴムの木材のフェンス
+tile.treated_wood_fence.name=防腐木材のフェンス
+tile.rubber_wood_fence_gate.name=ゴムの木材のフェンスゲート
+tile.treated_wood_fence_gate.name=防腐木材のフェンスゲート
 
 tile.brittle_charcoal.name=脆い木炭
 tile.brittle_charcoal.tooltip.1=炭窯で製造される。
@@ -2273,6 +2289,13 @@ metaitem.item_magnet.lv.name=LV磁石
 metaitem.item_magnet.hv.name=HV磁石
 behavior.item_magnet.enabled=§aアイテムを引き寄せる
 behavior.item_magnet.disabled=§cアイテムを引き寄せない
+
+metaitem.rubber_wood_boat.name=ゴムの木材のボート
+metaitem.treated_wood_boat.name=防腐木材のボート
+metaitem.rubber_wood_door.name=ゴムの木材のドア
+metaitem.treated_wood_door.name=防腐木材のドア
+
+entity.GTBoat.name=ボート
 
 metaitem.terminal.name=ターミナル
 metaitem.terminal.tooltip=良い仕事をする賢い道具
@@ -2436,8 +2459,13 @@ tile.transparent_casing.cleanroom_glass.name=クリーンルーム用ガラス
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
-itemGroup.gregtech.materials=Materials (GT)
-itemGroup.gregtech.ores=Ores (GT)
+itemGroup.gregtech.machines=GregTech - 機械
+itemGroup.gregtech.cables=GregTecg - ケーブル
+itemGroup.gregtech.pipes=GregTech - パイプ
+itemGroup.gregtech.tools=GregTech - 道具
+itemGroup.gregtech.materials=GregTech - マテリアル
+itemGroup.gregtech.ores=GregTech - 鉱石
+itemGroup.gregtech.decorations=GregTech - 装飾品
 
 # Drums
 gregtech.machine.drum.wood.name=木製バレル
@@ -2468,7 +2496,7 @@ gregtech.machine.locked_safe.requirements=§7要交換部品:
 # Workbench
 gregtech.machine.workbench.name=クラフティングステーション
 gregtech.machine.workbench.tooltip1=Forestryのワークベンチより優秀
-gregtech.machine.workbench.tooltip2=アイテム / ツール用のストレージを持ち、隣接インベントリのアイテムを認識し、レシピを記憶する。
+gregtech.machine.workbench.tooltip2=アイテムとツール用のストレージを持ち、隣接インベントリのアイテムを認識し、レシピを記憶する。
 gregtech.machine.workbench.tab.workbench=クラフト
 gregtech.machine.workbench.tab.item_list=ストレージ
 gregtech.machine.workbench.storage_note_1=(隣接ストレージのアイテムを
@@ -2653,9 +2681,9 @@ gregtech.machine.steam_alloy_smelter_bronze.tooltip=合体製錬
 gregtech.machine.steam_alloy_smelter_steel.name=高圧蒸気式合金精錬機
 gregtech.machine.steam_alloy_smelter_steel.tooltip=合体製錬
 gregtech.machine.steam_rock_breaker_bronze.name=蒸気式破砕機
-gregtech.machine.steam_rock_breaker_bronze.tooltip=水と溶岩に水平に隣接させて設置
+gregtech.machine.steam_rock_breaker_bronze.tooltip=§b水§7と§c溶岩§7を側面に隣接させて設置
 gregtech.machine.steam_rock_breaker_steel.name=高圧蒸気式破砕機
-gregtech.machine.steam_rock_breaker_steel.tooltip=水と溶岩に水平に隣接させて設置
+gregtech.machine.steam_rock_breaker_steel.tooltip=§b水§7と§c溶岩§7を側面に隣接させて設置
 gregtech.machine.steam_miner.name=蒸気式採掘機
 gregtech.machine.steam_miner.tooltip=採掘機より下§bのみ§7採掘!
 
@@ -4063,13 +4091,13 @@ gregtech.machine.gas_collector.opv.tooltip=宇宙からディメンション依�
 
 #Rock Breakers
 gregtech.machine.rock_breaker.lv.name=基本型破砕機
-gregtech.machine.rock_breaker.lv.tooltip=水と溶岩に水平に隣接させて設置
+gregtech.machine.rock_breaker.lv.tooltip=§b水§7と§c溶岩§7を側面に隣接させて設置
 gregtech.machine.rock_breaker.mv.name=発展型破砕機
-gregtech.machine.rock_breaker.mv.tooltip=水と溶岩に水平に隣接させて設置
+gregtech.machine.rock_breaker.mv.tooltip=§b水§7と§c溶岩§7を側面に隣接させて設置
 gregtech.machine.rock_breaker.hv.name=発展型破砕機 II
-gregtech.machine.rock_breaker.hv.tooltip=水と溶岩に水平に隣接させて設置
+gregtech.machine.rock_breaker.hv.tooltip=§b水§7と§c溶岩§7を側面に隣接させて設置
 gregtech.machine.rock_breaker.ev.name=発展型破砕機 III
-gregtech.machine.rock_breaker.ev.tooltip=水と溶岩に水平に隣接させて設置
+gregtech.machine.rock_breaker.ev.tooltip=§b水§7と§c溶岩§7を側面に隣接させて設置
 gregtech.machine.rock_breaker.iv.name=精鋭型破砕機
 gregtech.machine.rock_breaker.iv.tooltip=極低温マグマ凝固装置 R-8200
 gregtech.machine.rock_breaker.luv.name=精鋭型破砕機 II
@@ -4348,6 +4376,7 @@ behaviour.paintspray.green.tooltip=様々なものを緑色に着色できる
 behaviour.paintspray.red.tooltip=様々なものを赤色に着色できる
 behaviour.paintspray.black.tooltip=様々なものを黒色に着色できる
 behaviour.paintspray.uses=残り使用回数: %,d
+behaviour.paintspray.offhand=オフハンドに持つと設置と同時に着色できる
 behaviour.prospecting=鉱石探知に
 
 # Multiblock machine controllers
@@ -4406,6 +4435,7 @@ gregtech.machine.miner.multi.modes=シルクタッチとチャンク整列モー
 gregtech.machine.miner.multi.production=§f粉砕機§7の§f3倍§7以上の砕いた鉱石を生産。
 gregtech.machine.miner.fluid_usage=§f%,d L/t§7で§f%s§7を消費する。オーバークロックごとに液体消費が2倍になる。
 gregtech.machine.miner.multi.description=広い面積をカバーし、大量の鉱石を生産するマルチブロック採掘機。
+gregtech.machine.miner.multi.needsfluid=掘削油が必要
 
 gregtech.machine.miner.startx=開始X: %d
 gregtech.machine.miner.starty=開始Y: %d
@@ -4414,6 +4444,8 @@ gregtech.machine.miner.minex=採掘X: %d
 gregtech.machine.miner.miney=採掘Y: %d
 gregtech.machine.miner.minez=採掘Z: %d
 gregtech.machine.miner.radius=半径: %dブロック
+gregtech.machine.miner.working_area=稼働範囲: %dx%d ブロック
+gregtech.machine.miner.working_area_chunks=稼働範囲: %dx%d チャンク
 gregtech.machine.miner.chunkradius=半径: %dチャンク
 
 gregtech.machine.fluid_drilling_rig.mv.name=基本型液体採掘機
@@ -4500,7 +4532,7 @@ gregtech.machine.fusion_reactor.zpm.tooltip=太陽はいくつあっても足り
 gregtech.machine.fusion_reactor.uv.tooltip=宇宙の秩序をおひとついかが?
 gregtech.machine.large_chemical_reactor.tooltip=回収されたブラックボックス
 gregtech.machine.steam_oven.tooltip=マルチスメルターの弟子
-gregtech.machine.steam_grinder.tooltip=今ならなんと副産物が100%オフ!
+gregtech.machine.steam_grinder.tooltip=今ならなんと副産物が100%%オフ!
 gregtech.machine.large_miner.ev.tooltip=鉱石掘りに飽きた日に
 gregtech.machine.large_miner.iv.tooltip=バイオーム掘削機
 gregtech.machine.large_miner.luv.tooltip=バイオーム破壊装置
@@ -4718,12 +4750,12 @@ gregtech.universal.tooltip.voltage_out=§a出力電圧: §f%,d EU/t (%s§f)
 gregtech.universal.tooltip.max_voltage_out=§a最大出力電圧: §f%,d (%s§f)
 gregtech.universal.tooltip.voltage_in_out=§a入出力電圧: §f%,d EU/t (%s§f)
 gregtech.universal.tooltip.max_voltage_in_out=§a最大入出力電圧: §f%,d EU/t (%s§f)
-gregtech.universal.tooltip.amperage_in=§e許容入力電流: §f%,dA
-gregtech.universal.tooltip.amperage_in_till=§e許容入力電流: §f%,dA
-gregtech.universal.tooltip.amperage_out=§e許容出力電流: §f%,dA
-gregtech.universal.tooltip.amperage_out_till=§e許容出力電流: §f%,dA
-gregtech.universal.tooltip.amperage_in_out=§e許容入出力電流: §f%,dA
-gregtech.universal.tooltip.amperage_in_out_till=§e許容入出力電流: §f%,dA
+gregtech.universal.tooltip.amperage_in=§e入力電流: §f%,dA
+gregtech.universal.tooltip.amperage_in_till=§e最大入力電流: §f%,dA
+gregtech.universal.tooltip.amperage_out=§e出力電流: §f%,dA
+gregtech.universal.tooltip.amperage_out_till=§e最大出力電流: §f%,dA
+gregtech.universal.tooltip.amperage_in_out=§e入出力電流: §f%,dA
+gregtech.universal.tooltip.amperage_in_out_till=§e最大入出力電流: §f%,dA
 gregtech.universal.tooltip.energy_storage_capacity=§c蓄電量: §r%,d EU
 gregtech.universal.tooltip.energy_tier_range=§a許容電圧: §f%s §f- %s
 gregtech.universal.tooltip.item_storage_capacity=§6アイテムスロット数: §f%,d
@@ -4740,12 +4772,12 @@ gregtech.universal.tooltip.working_area=§b稼働範囲: §f%,dx%,d
 gregtech.universal.tooltip.working_area_max=§b最大稼働範囲: §f%,dx%,d
 gregtech.universal.tooltip.working_area_chunks_max=§b最大稼働範囲: §f%,dx%,dチャンク
 gregtech.universal.tooltip.uses_per_tick=稼働に§f%,d EU/t §7消費
-gregtech.universal.tooltip.uses_per_tick_steam=稼働に蒸気を§f%毎秒,d L§7消費
-gregtech.universal.tooltip.uses_per_hour_lubricant=稼働に潤滑油を§f%毎時間,d L§7消費
-gregtech.universal.tooltip.uses_per_second=稼働に§f%毎秒,d EU§7消費
+gregtech.universal.tooltip.uses_per_tick_steam=稼働に蒸気を§f毎秒%,d L§7消費
+gregtech.universal.tooltip.uses_per_hour_lubricant=稼働に潤滑油を§f毎時間%,d L§7消費
+gregtech.universal.tooltip.uses_per_second=稼働に§f毎秒%,d EU§7消費
 gregtech.universal.tooltip.uses_per_op=§f動作ごとに%,d EU§7消費
 gregtech.universal.tooltip.base_production_eut=§e基礎発電量: §f%,d EU/t
-gregtech.universal.tooltip.base_production_fluid=§eB基礎生産量: §f%,d L/t
+gregtech.universal.tooltip.base_production_fluid=§e基礎生産量: §f%,d L/t
 gregtech.universal.tooltip.produces_fluid=§e生産量: §f%,d L/t
 gregtech.universal.tooltip.terrain_resist=この機械は環境の影響で爆発しません
 gregtech.universal.tooltip.requires_redstone=§4赤石信号が必要
@@ -4775,6 +4807,7 @@ gregtech.tool_action.screwdriver.toggle_mode_covers=§8スクリュードライ�
 gregtech.tool_action.screwdriver.access_covers=§8スクリュードライバーでカバーにアクセスできます。
 gregtech.tool_action.screwdriver.auto_collapse=§8スクリュードライバーでバス内の整頓を切替できます。
 gregtech.tool_action.screwdriver.auto_output=§8スクリュードライバーで自動搬出を切替できます。
+gregtech.tool_action.screwdriver.auto_output_down=§8スクリュードライバーで下面からの自動搬出を切替できます。
 gregtech.tool_action.screwdriver.toggle_mode=§8スクリュードライバーでモードを切替できます。
 gregtech.tool_action.wrench.set_facing=§8レンチを使うと向きを変更できます。
 gregtech.tool_action.wrench.connect=§8レンチで接続を設定でき、スニークで接続をブロックできます。
@@ -4804,18 +4837,16 @@ gregtech.gui.overclock.disabled=オーバークロックが無効。/nクリッ�
 gregtech.gui.overclock.description=この機械はこの電圧までオーバークロックされる。/nXはオーバークロックがされていない。
 gregtech.gui.overclock.off=X
 gregtech.gui.sort=ソート
-gregtech.gui.fluid_auto_output.tooltip.enabled=液体自動搬出が有効
-gregtech.gui.fluid_auto_output.tooltip.disabled=液体自動搬出が無効
-gregtech.gui.item_auto_output.tooltip.enabled=アイテム自動搬出が有効
-gregtech.gui.item_auto_output.tooltip.disabled=アイテム自動搬出が無効
+gregtech.gui.fluid_auto_output.tooltip.enabled=液体自動搬出を無効化 (現在は有効)
+gregtech.gui.fluid_auto_output.tooltip.disabled=液体自動搬出を有効化 (現在は無効)
+gregtech.gui.item_auto_output.tooltip.enabled=アイテム自動搬出を無効化 (現在は有効)
+gregtech.gui.item_auto_output.tooltip.disabled=アイテム自動搬出を有効化 (現在は無効)
 gregtech.gui.charger_slot.tooltip=§f充電スロット§r/n%s§7バッテリーからエネルギーを吸い取る。§r/n%s§7の電動ツールとバッテリーを充電できる。
-gregtech.gui.configurator_slot.tooltip=§f設定用スロット§r/n§6プログラム回路§7 をここに置くと/n§7番号を変更できる。/n§7§6シフトを押しながら§7ボタンを押すと§65§7ずつ変更できる。/n§aこのスロットのプログラム回路もレシピに認識される。§r
-gregtech.gui.fluid_lock.tooltip.enabled=液体ロックが有効
-gregtech.gui.fluid_lock.tooltip.disabled=液体ロックが無効
-gregtech.gui.fluid_voiding_partial.tooltip.enabled=%d%%以上の液体廃棄が有効
-gregtech.gui.fluid_voiding_partial.tooltip.disabled=%d%%以上の液体廃棄が無効
-gregtech.gui.fluid_voiding_all.tooltip.enabled=全ての液体廃棄が有効
-gregtech.gui.fluid_voiding_all.tooltip.disabled=全ての液体廃棄が無効
+gregtech.gui.configurator_slot.tooltip=§fプログラム回路スロット§r/n/n§7左クリックでゴースト回路を追加する。/n§7右クリックでゴースト回路を削除する。/n/n§6プログラム回路§7を持ちながら左クリックをすると/n§7スロットの番号に変更できる。/n/n§7シフトを押しながら§7ボタンを押すと5ずつ変更できる。§r
+gregtech.gui.fluid_lock.tooltip.enabled=液体ロックを無効化 (現在は有効)
+gregtech.gui.fluid_lock.tooltip.disabled=液体ロックを有効化 (現在は無効)
+gregtech.gui.fluid_voiding.tooltip.enabled=超過分の廃棄を無効化 (現在は有効)
+gregtech.gui.fluid_voiding.tooltip.disabled=超過分の廃棄を有効化 (現在は無効)
 gregtech.gui.silktouch.enabled=シルクタッチが有効: クリックで無効化。/n§7切り替えには機械の一時停止が必要です。
 gregtech.gui.silktouch.disabled=シルクタッチが無効: クリックで有効化。/n§7切り替えには機械の一時停止が必要です。
 gregtech.gui.chunkmode.enabled=チャンクモードが有効: クリックで無効化。/n§7切り替えには機械の一時停止が必要です。
@@ -4828,8 +4859,8 @@ gregtech.gui.multiblock_no_voiding=消去モード/n§7何も消去しない
 ore.spawnlocation.name=鉱脈情報
 gregtech.jei.ore.surface_rock_1=地表にある小石は鉱脈の生成位置を示します。
 gregtech.jei.ore.surface_rock_2=破壊すると極小の粉を3個入手できる。また、幸運エンチャントが適用される。
-gregtech.jei.ore.biome_weighting_title=§dバイオームによる倍率がかかった生成頻度の合計：
-gregtech.jei.ore.biome_weighting=§d%sの生成頻度: §3%d
+gregtech.jei.ore.biome_weighting_title=§dバイオームによる影響を考慮した生成頻度：
+gregtech.jei.ore.biome_weighting=§d%sでの生成頻度: §3%d
 gregtech.jei.ore.biome_weighting_no_spawn=§d%sの生成頻度: §c生成されない
 gregtech.jei.ore.ore_weight=鉱脈内での割合: %d%%
 gregtech.jei.ore.primary_1=上層の鉱石
@@ -4845,14 +4876,14 @@ fluid.spawnlocation.name=液体脈情報
 gregtech.jei.fluid.vein_weight=生成頻度: %d
 gregtech.jei.fluid.min_yield=最小収量: %d
 gregtech.jei.fluid.max_yield=最大収量: %d
-gregtech.jei.fluid.depletion_chance=枯渇率: %d%%
+gregtech.jei.fluid.depletion_chance=枯渇率: %d% %
 gregtech.jei.fluid.depletion_amount=枯渇量: %d
 gregtech.jei.fluid.depleted_rate=枯渇時収量: %d
 gregtech.jei.fluid.dimension=ディメンション:
-gregtech.jei.fluid.weight_hover=液体脈の生成頻度。液体をマウスオーバーすることでバイオームによる倍率の影響を確認できる。
+gregtech.jei.fluid.weight_hover=液体脈の生成頻度。液体をマウスオーバーすることでバイオームによる生成頻度の影響を確認できる。
 gregtech.jei.fluid.min_hover=任意のこの液体脈の最小収量
 gregtech.jei.fluid.max_hover=任意のこの液体脈の最大収量
-gregtech.jei.fluid.dep_chance_hover=採掘による液体脈の枯渇確率 [%]
+gregtech.jei.fluid.dep_chance_hover=採掘による液体脈の枯渇確率
 gregtech.jei.fluid.dep_amount_hover=鉱脈の枯渇する量
 gregtech.jei.fluid.dep_yield_hover=液体脈が枯渇した時の最大収量
 
@@ -4963,15 +4994,13 @@ gregtech.multiblock.large_boiler.rate_tooltip=§f石炭1つ§7から§f%d L§7�
 gregtech.multiblock.large_boiler.heat_time_tooltip=§7予熱に§f%,d 秒§7必要
 gregtech.multiblock.large_boiler.explosion_tooltip=水がない状態で燃料を入れると爆発する。
 
-gregtech.multiblock.large_miner.done=終了!
-gregtech.multiblock.large_miner.working=稼働中...
-gregtech.multiblock.large_miner.invfull=インベントリが満タン!
-gregtech.multiblock.large_miner.needspower=エネルギー不足!
-gregtech.multiblock.large_miner.vent=排気がブロックされた!
-gregtech.multiblock.large_miner.steam=蒸気不足!
-gregtech.multiblock.large_miner.radius=半径: §a%d§rブロック
-gregtech.multiblock.large_miner.errorradius=§c動作中は変更できない!
-gregtech.multiblock.large_miner.needsfluid=掘削油が必要
+gregtech.machine.miner.done=終了!
+gregtech.machine.miner.working=稼働中...
+gregtech.machine.miner.invfull=インベントリが満タン!
+gregtech.machine.miner.needspower=エネルギー不足!
+gregtech.machine.steam_miner.vent=排気がブロックされた!
+gregtech.machine.steam_miner.steam=蒸気不足!
+gregtech.machine.miner.errorradius=§c動作中は変更できない!
 
 gregtech.multiblock.pyrolyse_oven.speed=処理速度: %s%%
 
@@ -5008,20 +5037,8 @@ gregtech.chat.cape=§5おめでとうございます: 新しいマントを解�
 
 gregtech.universal.clear_nbt_recipe.tooltip=§cこれによりすべてのコンテンツが破棄されます!
 
-gregtech.cover.energy_detector.message_electricity_storage_normal=通常
-gregtech.cover.energy_detector.message_electricity_storage_inverted=反転
-
-gregtech.cover.fluid_detector.message_fluid_storage_normal=通常
-gregtech.cover.fluid_detector.message_fluid_storage_inverted=反転
-
-gregtech.cover.item_detector.message_item_storage_normal=通常
-gregtech.cover.item_detector.message_item_storage_inverted=反転
-
-gregtech.cover.activity_detector.message_activity_normal=通常
-gregtech.cover.activity_detector.message_activity_inverted=反転
-
-gregtech.cover.activity_detector_advanced.message_activity_normal=通常
-gregtech.cover.activity_detector_advanced.message_activity_inverted=反転
+gregtech.cover.detector_base.message_normal_state=通常
+gregtech.cover.detector_base.message_inverted_state=反転
 
 gregtech.creative.chest.item=アイテム
 gregtech.creative.chest.ipc=アイテム毎サイクル

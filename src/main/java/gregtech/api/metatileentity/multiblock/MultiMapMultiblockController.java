@@ -90,37 +90,25 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
 
         for (RecipeMap<?> recipeMap : getAvailableRecipeMaps()) {
             if (!checkedItemIn && checkItemIn) {
-                if (recipeMap.getMinInputs() > 0) {
-                    checkedItemIn = true;
-                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
-                } else if (recipeMap.getMaxInputs() > 0) {
+                if (recipeMap.getMaxInputs() > 0) {
                     checkedItemIn = true;
                     predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setPreviewCount(1));
                 }
             }
             if (!checkedItemOut && checkItemOut) {
-                if (recipeMap.getMinOutputs() > 0) {
-                    checkedItemOut = true;
-                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
-                } else if (recipeMap.getMaxOutputs() > 0) {
+                if (recipeMap.getMaxOutputs() > 0) {
                     checkedItemOut = true;
                     predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setPreviewCount(1));
                 }
             }
             if (!checkedFluidIn && checkFluidIn) {
-                if (recipeMap.getMinFluidInputs() > 0) {
-                    checkedFluidIn = true;
-                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidInputs()));
-                } else if (recipeMap.getMaxFluidInputs() > 0) {
+                if (recipeMap.getMaxFluidInputs() > 0) {
                     checkedFluidIn = true;
                     predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setPreviewCount(1));
                 }
             }
             if (!checkedFluidOut && checkFluidOut) {
-                if (recipeMap.getMinFluidOutputs() > 0) {
-                    checkedFluidOut = true;
-                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidOutputs()));
-                } else if (recipeMap.getMaxFluidOutputs() > 0) {
+                if (recipeMap.getMaxFluidOutputs() > 0) {
                     checkedFluidOut = true;
                     predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setPreviewCount(1));
                 }

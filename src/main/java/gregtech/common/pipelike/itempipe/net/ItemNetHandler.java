@@ -5,7 +5,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTTransferUtils;
-import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.covers.*;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
@@ -391,12 +391,12 @@ public class ItemNetHandler implements IItemHandler {
 
     public static int countStack(IItemHandler handler, ItemStack stack, CoverRoboticArm arm, boolean isStackSpecific) {
         if (arm == null) return 0;
-        ItemStackKey key = new ItemStackKey(stack);
         int count = 0;
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack slot = handler.getStackInSlot(i);
             if (slot.isEmpty()) continue;
-            if (isStackSpecific ? key.isItemStackEqual(slot) : arm.getItemFilterContainer().testItemStack(slot)) {
+            if (isStackSpecific ? ItemStackHashStrategy.comparingAllButCount().equals(stack, slot) :
+                    arm.getItemFilterContainer().testItemStack(slot)) {
                 count += slot.getCount();
             }
         }

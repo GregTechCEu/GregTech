@@ -376,7 +376,7 @@ public class UnknownCompositionMaterials {
 
         Wood = new Material.Builder(1617, "wood")
                 .dust(0, 300)
-                .color(0x643200).iconSet(WOOD)
+                .color(0x896727).iconSet(WOOD)
                 .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, FLAMMABLE, GENERATE_GEAR, GENERATE_FRAME)
                 .build();
 
@@ -483,7 +483,7 @@ public class UnknownCompositionMaterials {
 
         TreatedWood = new Material.Builder(1648, "treated_wood")
                 .dust(0, 300)
-                .color(0x502800).iconSet(WOOD)
+                .color(0x674A28).iconSet(WOOD)
                 .flags(GENERATE_PLATE, FLAMMABLE, GENERATE_ROD, GENERATE_FRAME)
                 .build();
 

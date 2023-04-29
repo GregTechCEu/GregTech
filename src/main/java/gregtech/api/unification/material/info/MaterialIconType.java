@@ -7,18 +7,12 @@ import com.google.common.collect.Table;
 import gregtech.api.GTValues;
 import gregtech.api.gui.resources.ResourceHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
-@EventBusSubscriber(modid = GTValues.MODID, value = Side.CLIENT)
 public class MaterialIconType {
 
     public static final Map<String, MaterialIconType> ICON_TYPES = new HashMap<>();
@@ -90,10 +84,12 @@ public class MaterialIconType {
     public static final MaterialIconType turbineBlade = new MaterialIconType("turbineBlade");
 
     // BLOCK TEXTURES
-    public static final MaterialIconType block = new MaterialIconType("block");
     public static final MaterialIconType fluid = new MaterialIconType("fluid");
     public static final MaterialIconType ore = new MaterialIconType("ore");
     public static final MaterialIconType oreSmall = new MaterialIconType("oreSmall");
+
+    // BLOCK MODELS
+    public static final MaterialIconType block = new MaterialIconType("block");
     public static final MaterialIconType frameGt = new MaterialIconType("frameGt");
 
     // USED FOR GREGIFICATION ADDON
@@ -103,12 +99,16 @@ public class MaterialIconType {
 
     private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> ITEM_MODEL_CACHE = HashBasedTable.create();
     private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> BLOCK_TEXTURE_CACHE = HashBasedTable.create();
+    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> BLOCK_MODEL_CACHE = HashBasedTable.create();
 
     private static final String BLOCK_TEXTURE_PATH_FULL = "textures/blocks/material_sets/%s/%s.png";
     private static final String BLOCK_TEXTURE_PATH = "blocks/material_sets/%s/%s";
 
     private static final String ITEM_MODEL_PATH_FULL = "models/item/material_sets/%s/%s.json";
     private static final String ITEM_MODEL_PATH = "material_sets/%s/%s";
+
+    private static final String BLOCK_MODEL_PATH_FULL = "models/block/material_sets/%s/%s.json";
+    private static final String BLOCK_MODEL_PATH = "block/material_sets/%s/%s";
 
     public final String name;
     public final int id;
@@ -128,6 +128,11 @@ public class MaterialIconType {
     @Nonnull
     public ResourceLocation getItemModelPath(@Nonnull MaterialIconSet materialIconSet) {
         return recurseIconsetPath(materialIconSet, ITEM_MODEL_CACHE, ITEM_MODEL_PATH_FULL, ITEM_MODEL_PATH);
+    }
+
+    @Nonnull
+    public ResourceLocation getBlockModelPath(@Nonnull MaterialIconSet materialIconSet) {
+        return recurseIconsetPath(materialIconSet, BLOCK_MODEL_CACHE, BLOCK_MODEL_PATH_FULL, BLOCK_MODEL_PATH);
     }
 
     /**
@@ -168,10 +173,10 @@ public class MaterialIconType {
         return this.name;
     }
 
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public static void onModelBake(ModelBakeEvent event) {
+    @SuppressWarnings("unused") // Called from ASM-injected code
+    public static void clearCache() {
         ITEM_MODEL_CACHE.clear();
         BLOCK_TEXTURE_CACHE.clear();
+        BLOCK_MODEL_CACHE.clear();
     }
 }
