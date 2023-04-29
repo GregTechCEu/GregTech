@@ -17,13 +17,13 @@ final class EmptyVariantMap implements ItemVariantMap<Object> {
     }
 
     @Override
-    public boolean hasEntry(short meta) {
+    public boolean has(short meta) {
         return false;
     }
 
     @Nullable
     @Override
-    public Object getEntry(short meta) {
+    public Object get(short meta) {
         return null;
     }
 

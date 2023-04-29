@@ -26,7 +26,7 @@ public final class MultiItemVariantMap<E> implements ItemVariantMap.Mutable<E> {
     }
 
     @Override
-    public boolean hasEntry(short meta) {
+    public boolean has(short meta) {
         if (meta == GTValues.W) {
             return this.wildcardEntry != null;
         } else {
@@ -36,7 +36,7 @@ public final class MultiItemVariantMap<E> implements ItemVariantMap.Mutable<E> {
 
     @Nullable
     @Override
-    public E getEntry(short meta) {
+    public E get(short meta) {
         if (meta == GTValues.W) {
             return this.wildcardEntry;
         } else if (this.itemDamageEntries != null) {
@@ -48,7 +48,7 @@ public final class MultiItemVariantMap<E> implements ItemVariantMap.Mutable<E> {
 
     @Nullable
     @Override
-    public E setEntry(short meta, @Nullable E e) {
+    public E put(short meta, @Nullable E e) {
         if (meta == GTValues.W) {
             E cache = this.wildcardEntry;
             this.wildcardEntry = e;

@@ -24,7 +24,7 @@ public interface ItemVariantMap<E> {
 
     /**
      * @return {@code true} if there's any nonnull value associated with some item
-     * metadata, excluding metadata value of {@code 32767}; i.e. "wildcard".
+     * metadata, excluding metadata value of {@link GTValues#W} {@code (32767)}.
      * @see #hasWildcardEntry()
      */
     boolean hasNonWildcardEntry();
@@ -34,7 +34,7 @@ public interface ItemVariantMap<E> {
      * @return {@code true} if there's a nonnull value associated with given item
      * metadata, {@code false} otherwise.
      */
-    boolean hasEntry(short meta);
+    boolean has(short meta);
 
     /**
      * Get value associated with given item metadata. The associated value is always
@@ -46,7 +46,7 @@ public interface ItemVariantMap<E> {
      * values associated.
      */
     @Nullable
-    E getEntry(short meta);
+    E get(short meta);
 
     /**
      * @return {@code true} if there's no value associated with any item metadata.
@@ -57,11 +57,11 @@ public interface ItemVariantMap<E> {
 
     /**
      * @return {@code true} if there's a nonnull value associated with item
-     * metadata {@code 32767}; i.e. "wildcard".
+     * metadata {@link GTValues#W} {@code (32767)}.
      * @see #hasNonWildcardEntry()
      */
     default boolean hasWildcardEntry() {
-        return hasEntry(GTValues.W);
+        return has(GTValues.W);
     }
 
     /**
@@ -69,8 +69,8 @@ public interface ItemVariantMap<E> {
      * @return {@code true} if there's a nonnull value associated with item damage of
      * the item, {@code false} otherwise.
      */
-    default boolean hasEntry(@Nonnull ItemStack stack) {
-        return hasEntry((short) GTUtility.getActualItemDamageFromStack(stack));
+    default boolean has(@Nonnull ItemStack stack) {
+        return has((short) GTUtility.getActualItemDamageFromStack(stack));
     }
 
     /**
@@ -83,8 +83,8 @@ public interface ItemVariantMap<E> {
      * no values associated.
      */
     @Nullable
-    default E getEntry(@Nonnull ItemStack stack) {
-        return getEntry((short) GTUtility.getActualItemDamageFromStack(stack));
+    default E get(@Nonnull ItemStack stack) {
+        return get((short) GTUtility.getActualItemDamageFromStack(stack));
     }
 
     /**
@@ -133,7 +133,7 @@ public interface ItemVariantMap<E> {
          * there was no such value.
          */
         @Nullable
-        E setEntry(short meta, @Nullable E e);
+        E put(short meta, @Nullable E e);
 
         /**
          * Associates item damage of the item to given value; previous association will be
@@ -146,8 +146,8 @@ public interface ItemVariantMap<E> {
          * there was no such value.
          */
         @Nullable
-        default E setEntry(@Nonnull ItemStack stack, @Nullable E e) {
-            return setEntry((short) GTUtility.getActualItemDamageFromStack(stack), e);
+        default E put(@Nonnull ItemStack stack, @Nullable E e) {
+            return put((short) GTUtility.getActualItemDamageFromStack(stack), e);
         }
     }
 }

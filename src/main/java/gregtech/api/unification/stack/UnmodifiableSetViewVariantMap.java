@@ -21,8 +21,8 @@ final class UnmodifiableSetViewVariantMap<E> implements ItemVariantMap<Set<E>> {
 
     @Nullable
     @Override
-    public Set<E> getEntry(short meta) {
-        Set<E> set = delegate.getEntry(meta);
+    public Set<E> get(short meta) {
+        Set<E> set = delegate.get(meta);
         return set != null ? Collections.unmodifiableSet(set) : null;
     }
 
@@ -32,8 +32,8 @@ final class UnmodifiableSetViewVariantMap<E> implements ItemVariantMap<Set<E>> {
     }
 
     @Override
-    public boolean hasEntry(short meta) {
-        return delegate.hasEntry(meta);
+    public boolean has(short meta) {
+        return delegate.has(meta);
     }
 
     @Override

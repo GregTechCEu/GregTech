@@ -142,7 +142,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
         ItemVariantMap.Mutable<Boolean> cacheEntry = this.matchCache.get(item);
         if (cacheEntry != null) {
-            Boolean cached = cacheEntry.getEntry(itemStack);
+            Boolean cached = cacheEntry.get(itemStack);
             if (cached != null) return cached;
         }
 
@@ -151,7 +151,8 @@ public class OreDictionaryItemFilter extends ItemFilter {
                 // no oredict entries associated
                 Boolean cached = this.noOreDictMatch.getEntry();
                 if (cached == null) {
-                    this.noOreDictMatch.setEntry(cached = this.glob.matches(""));
+                    cached = this.glob.matches("");
+                    this.noOreDictMatch.put(cached);
                 }
                 this.matchCache.put(item, this.noOreDictMatch);
                 return cached;
@@ -163,7 +164,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
             this.matchCache.put(item, cacheEntry);
         }
         boolean matches = this.glob.matches(itemStack);
-        cacheEntry.setEntry(itemStack, matches);
+        cacheEntry.put(itemStack, matches);
         return matches;
     }
 

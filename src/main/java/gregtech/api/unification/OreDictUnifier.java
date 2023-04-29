@@ -13,6 +13,7 @@ import gregtech.api.util.CustomModPriorityComparator;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -108,10 +109,10 @@ public class OreDictUnifier {
         //cache this registration by name
         ItemVariantMap.Mutable<Set<String>> entry = stackOreDictName.computeIfAbsent(event.getOre().getItem(),
                 item -> item.getHasSubtypes() ? new MultiItemVariantMap<>() : new SingleItemVariantMap<>());
-        Set<String> set = entry.getEntry(event.getOre());
+        Set<String> set = entry.get(event.getOre());
         if (set == null) {
-            set = new HashSet<>();
-            entry.setEntry(event.getOre(), set);
+            set = new ObjectOpenHashSet<>();
+            entry.put(event.getOre(), set);
         }
         set.add(oreName);
         List<ItemStack> itemStackListForOreDictName = oreDictNameStacks.computeIfAbsent(oreName, k -> new ArrayList<>());
@@ -177,8 +178,8 @@ public class OreDictUnifier {
         ItemVariantMap<Set<String>> nameEntry = stackOreDictName.get(itemStack.getItem());
         if (nameEntry == null) return Collections.emptySet();
         short itemDamage = (short) GTUtility.getActualItemDamageFromStack(itemStack);
-        Set<String> names = nameEntry.getEntry(itemDamage);
-        Set<String> wildcardNames = itemDamage == GTValues.W ? null : nameEntry.getEntry(GTValues.W);
+        Set<String> names = nameEntry.get(itemDamage);
+        Set<String> wildcardNames = itemDamage == GTValues.W ? null : nameEntry.get(GTValues.W);
         if (names == null) {
             return wildcardNames == null ? Collections.emptySet() : Collections.unmodifiableSet(wildcardNames);
         } else if (wildcardNames == null || names == wildcardNames) { // single variant items have identical entries
@@ -210,12 +211,12 @@ public class OreDictUnifier {
         if (nameEntry == null) return false;
 
         short itemDamage = (short) GTUtility.getActualItemDamageFromStack(itemStack);
-        Set<String> names = nameEntry.getEntry(itemDamage);
+        Set<String> names = nameEntry.get(itemDamage);
         if (names != null && names.contains(oreDictName)) return true;
 
         if (itemDamage == GTValues.W) return false;
 
-        Set<String> wildcardNames = nameEntry.getEntry(GTValues.W);
+        Set<String> wildcardNames = nameEntry.get(GTValues.W);
         return wildcardNames != null && wildcardNames != names && wildcardNames.contains(oreDictName);
     }
 

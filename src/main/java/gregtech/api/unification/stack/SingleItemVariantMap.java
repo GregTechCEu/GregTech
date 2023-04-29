@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 /**
  * {@link ItemVariantMap} implementation which holds one shared value for all
  * variants of an item. All operations, including set accesses like
- * {@link #setEntry(short, Object)}, regardless of the metadata value provided,
+ * {@link #put(short, Object)}, regardless of the metadata value provided,
  * will retrieve or modify the same and only entry of this collection.
  *
  * @param <E> type of the elements
@@ -15,7 +15,7 @@ public final class SingleItemVariantMap<E> implements ItemVariantMap.Mutable<E> 
     @Nullable
     private E entry;
 
-    public boolean hasEntry() {
+    public boolean has() {
         return entry != null;
     }
 
@@ -32,7 +32,7 @@ public final class SingleItemVariantMap<E> implements ItemVariantMap.Mutable<E> 
      * @return previous valued contained, or {@code null} if there was no such value.
      */
     @Nullable
-    public E setEntry(@Nullable E e) {
+    public E put(@Nullable E e) {
         E cache = this.entry;
         this.entry = e;
         return cache;
@@ -44,20 +44,20 @@ public final class SingleItemVariantMap<E> implements ItemVariantMap.Mutable<E> 
     }
 
     @Override
-    public boolean hasEntry(short meta) {
+    public boolean has(short meta) {
         return entry != null;
     }
 
     @Nullable
     @Override
-    public E getEntry(short meta) {
+    public E get(short meta) {
         return entry;
     }
 
     @Nullable
     @Override
-    public E setEntry(short meta, @Nullable E e) {
-        return setEntry(e);
+    public E put(short meta, @Nullable E e) {
+        return put(e);
     }
 
     @Override
