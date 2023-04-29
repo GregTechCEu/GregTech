@@ -107,23 +107,11 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     }
 
     private void setMinValue(String val) {
-        int parsedValue;
-        try {
-            parsedValue = Integer.parseInt(val);
-        } catch (NumberFormatException e) {
-            parsedValue = DEFAULT_MIN;
-        }
-        this.min = Math.min(max - 1, Math.max(0, parsedValue));
+        this.min = CoverDetectorBase.parseCapped(val, 0, max - 1, DEFAULT_MIN);
     }
 
     private void setMaxValue(String val) {
-        int parsedValue;
-        try {
-            parsedValue = Integer.parseInt(val);
-        } catch (NumberFormatException e) {
-            parsedValue = DEFAULT_MAX;
-        }
-        this.max = Math.max(min + 1, parsedValue);
+        this.max = CoverDetectorBase.parseCapped(val, min + 1, Integer.MAX_VALUE, DEFAULT_MAX);
     }
 
     @Override

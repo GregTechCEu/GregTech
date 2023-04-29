@@ -140,24 +140,17 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     private void setMinValue(String val) {
-        long parsedValue;
-        try {
-            parsedValue = Long.parseLong(val);
-        } catch (NumberFormatException e) {
-            parsedValue = usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU;
-        }
-        this.minValue = Math.min(this.maxValue - 1, Math.max(0, parsedValue));
+        this.minValue = CoverDetectorBase.parseCapped(val,
+                0,
+                this.maxValue - 1,
+                usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU);
     }
 
     private void setMaxValue(String val) {
-        long parsedValue;
-        try {
-            parsedValue = Long.parseLong(val);
-        } catch (NumberFormatException e) {
-            parsedValue = usePercent ? DEFAULT_MAX_PERCENT : DEFAULT_MAX_EU;
-        }
-        long maxUpperLimit = usePercent ? 100 : Long.MAX_VALUE;
-        this.maxValue = Math.max(this.minValue + 1, Math.min(parsedValue, maxUpperLimit));
+        this.maxValue = CoverDetectorBase.parseCapped(val,
+                this.minValue + 1,
+                usePercent ? 100 : Long.MAX_VALUE,
+                usePercent ? DEFAULT_MAX_PERCENT : DEFAULT_MAX_EU);
     }
 
     private boolean isUsePercent() {
