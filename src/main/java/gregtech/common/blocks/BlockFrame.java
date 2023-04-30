@@ -52,6 +52,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
     public static BlockFrame create(Material[] materials) {
         PropertyMaterial property = PropertyMaterial.create("variant", materials);
         return new BlockFrame() {
+            @Nonnull
             @Override
             public PropertyMaterial getVariantProperty() {
                 return property;

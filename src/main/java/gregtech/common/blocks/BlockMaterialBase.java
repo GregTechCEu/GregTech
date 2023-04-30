@@ -50,8 +50,10 @@ public abstract class BlockMaterialBase extends Block {
         return getDefaultState().withProperty(getVariantProperty(), material);
     }
 
+    @Nonnull
     public abstract PropertyMaterial getVariantProperty();
 
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, getVariantProperty());

@@ -30,6 +30,7 @@ public abstract class BlockCompressed extends BlockMaterialBase {
     public static BlockCompressed create(Material[] materials) {
         PropertyMaterial property = PropertyMaterial.create("variant", materials);
         return new BlockCompressed() {
+            @Nonnull
             @Override
             public PropertyMaterial getVariantProperty() {
                 return property;

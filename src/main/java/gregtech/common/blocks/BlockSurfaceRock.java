@@ -36,6 +36,7 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
     public static BlockSurfaceRock create(Material[] materials) {
         PropertyMaterial property = PropertyMaterial.create("variant", materials);
         return new BlockSurfaceRock() {
+            @Nonnull
             @Override
             public PropertyMaterial getVariantProperty() {
                 return property;
