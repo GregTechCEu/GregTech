@@ -35,6 +35,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -52,6 +54,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
@@ -300,8 +303,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 .widget(new ImageWidget(7, 16, 81, 46, GuiTextures.DISPLAY))
                 .widget(new LabelWidget(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF))
                 .widget(tankWidget)
-                .dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF)
-                .dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF)
+                .widget(new AdvancedTextWidget(11, 30, getFluidAmountText(tankWidget), 0xFFFFFF))
+                .widget(new AdvancedTextWidget(11, 40, getFluidNameText(tankWidget), 0xFFFFFF))
                 .label(6, 6, getMetaFullName())
                 .widget(new FluidContainerSlotWidget(importItems, 0, 90, 17, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
@@ -321,6 +324,22 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                         .shouldUseBaseBackground())
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
+    }
+
+    private Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
+        return (list) -> {
+            String fluidName = tankWidget.getFluidLocalizedName().isEmpty() ? this.lockedFluid != null ? this.lockedFluid.getLocalizedName() : "" : tankWidget.getFluidLocalizedName();
+            list.add(new TextComponentString(fluidName));
+
+        };
+    }
+
+    private Consumer<List<ITextComponent>> getFluidAmountText(TankWidget tankWidget) {
+        return (list) -> {
+            String fluidAmount = tankWidget.getFormattedFluidAmount().equals("0") ? this.lockedFluid != null ? "0" : "" : tankWidget.getFormattedFluidAmount();
+            list.add(new TextComponentString(fluidAmount));
+
+        };
     }
 
     public EnumFacing getOutputFacing() {
