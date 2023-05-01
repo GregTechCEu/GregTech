@@ -958,8 +958,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             });
 
             // left branches are always either empty or contain recipes.
-            // If there's a recipe present, the addition is finished
-            if (r.left().isPresent()) return true;
+            // If there's a recipe present, the addition is finished for this ingredient
+            // Cannot return here, since each ingredient to add is a separate path to the recipe
+            if (r.left().isPresent()) continue;
 
             // recursive part: apply the addition for the next ingredient in the list, for the right branch.
             // the right branch only contains ingredients, or is empty when the left branch is present
