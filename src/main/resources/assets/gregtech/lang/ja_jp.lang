@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & GTModpackTeam
 # 日本語ローカライズ担当： MrKo_no & GTModpackTeam
-# Corresponding Version: 2.6.0 - beta
-# 対応バージョン: 2.6.0 - beta
+# Corresponding Version: 2.6.2 - beta
+# 対応バージョン: 2.6.2 - beta
 
 death.attack.heat=%s は熱さを感じなくなった。
 death.attack.frost=%s のふとんがふっとんだ。
@@ -4924,7 +4924,7 @@ fluid.spawnlocation.name=液体脈情報
 gregtech.jei.fluid.vein_weight=生成頻度: %d
 gregtech.jei.fluid.min_yield=最小収量: %d
 gregtech.jei.fluid.max_yield=最大収量: %d
-gregtech.jei.fluid.depletion_chance=枯渇率: %d% %
+gregtech.jei.fluid.depletion_chance=枯渇率: %d %%
 gregtech.jei.fluid.depletion_amount=枯渇量: %d
 gregtech.jei.fluid.depleted_rate=枯渇時収量: %d
 gregtech.jei.fluid.dimension=ディメンション:
