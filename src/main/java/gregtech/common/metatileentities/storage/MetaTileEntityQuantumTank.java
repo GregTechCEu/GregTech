@@ -328,17 +328,42 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     private Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
         return (list) -> {
-            String fluidName = tankWidget.getFluidLocalizedName().isEmpty() ? this.lockedFluid != null ? this.lockedFluid.getLocalizedName() : "" : tankWidget.getFluidLocalizedName();
-            list.add(new TextComponentString(fluidName));
+            String fluidName = "";
+            // If there is no fluid in the tank
+            if (tankWidget.getFluidLocalizedName().isEmpty()) {
+                // But there is a locked fluid
+                if (this.lockedFluid != null) {
+                    fluidName = this.lockedFluid.getLocalizedName();
+                }
+            }
+            else {
+                fluidName = tankWidget.getFluidLocalizedName();
+            }
 
+            if (!fluidName.isEmpty()) {
+                list.add(new TextComponentString(fluidName));
+
+            }
         };
     }
 
     private Consumer<List<ITextComponent>> getFluidAmountText(TankWidget tankWidget) {
         return (list) -> {
-            String fluidAmount = tankWidget.getFormattedFluidAmount().equals("0") ? this.lockedFluid != null ? "0" : "" : tankWidget.getFormattedFluidAmount();
-            list.add(new TextComponentString(fluidAmount));
+            String fluidAmount = "";
 
+            // Nothing in the tank
+            if (tankWidget.getFormattedFluidAmount().equals("0")) {
+                // Display Zero to show information about the locked fluid
+                if (this.lockedFluid != null) {
+                    fluidAmount = "0";
+                }
+            }
+            else {
+                fluidAmount = tankWidget.getFormattedFluidAmount();
+            }
+            if (!fluidAmount.isEmpty()) {
+                list.add(new TextComponentString(fluidAmount));
+            }
         };
     }
 
