@@ -2514,6 +2514,7 @@ gregtech.machine.drum.bronze.name=Bronze Drum
 gregtech.machine.drum.steel.name=Steel Drum
 gregtech.machine.drum.aluminium.name=Aluminium Drum
 gregtech.machine.drum.stainless_steel.name=Stainless Steel Drum
+gregtech.machine.drum.gold.name=Gold Drum
 gregtech.machine.drum.titanium.name=Titanium Drum
 gregtech.machine.drum.tungstensteel.name=Tungstensteel Drum
 

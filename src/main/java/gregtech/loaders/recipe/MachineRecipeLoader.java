@@ -656,6 +656,7 @@ public class MachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Steel, 2).input(plate, Steel, 4).outputs(STEEL_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Aluminium, 2).input(plate, Aluminium, 4).outputs(ALUMINIUM_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, StainlessSteel, 2).input(plate, StainlessSteel, 4).outputs(STAINLESS_STEEL_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Gold, 2).input(plate, Gold, 4).outputs(GOLD_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, Polyethylene, 4).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(288)).output(DUCT_TAPE).duration(100).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, SiliconeRubber, 2).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(288)).output(DUCT_TAPE, 2).duration(100).buildAndRegister();
@@ -1016,6 +1017,7 @@ public class MachineRecipeLoader {
         ModHandler.addShapelessNBTClearingRecipe("drum_nbt_steel", MetaTileEntities.STEEL_DRUM.getStackForm(), MetaTileEntities.STEEL_DRUM.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("drum_nbt_aluminium", MetaTileEntities.ALUMINIUM_DRUM.getStackForm(), MetaTileEntities.ALUMINIUM_DRUM.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("drum_nbt_stainless_steel", MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm(), MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("drum_nbt_gold", MetaTileEntities.GOLD_DRUM.getStackForm(), MetaTileEntities.GOLD_DRUM.getStackForm());
 
         // Cells
         ModHandler.addShapedNBTClearingRecipe("cell_nbt_regular", MetaItems.FLUID_CELL.getStackForm(), " C", "  ", 'C', MetaItems.FLUID_CELL.getStackForm());
