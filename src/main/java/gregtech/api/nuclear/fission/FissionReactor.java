@@ -4,16 +4,20 @@ import gregtech.api.nuclear.fission.components.ControlRod;
 import gregtech.api.nuclear.fission.components.CoolantChannel;
 import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.nuclear.fission.components.ReactorComponent;
-import gregtech.api.nuclear.fission.states.IReactorState;
-import gregtech.api.unification.material.properties.CoolantProperty;
-import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 
 import java.util.ArrayList;
 
 public class FissionReactor {
 
-    private IReactorState state;
+    /**
+     * The gas constant in J * K^-1 * mol^-1 if you want to use a different set of units prepare thy life to become the worst of nightmares
+     */
+    public static final double R = 8.31446261815324;
+    /**
+     * Standard pressure in Pascal, corresponds to one standard atmosphere
+     */
+    public static final double standardPressure = 101325;
 
     private ReactorComponent[][] reactorLayout;
     private ArrayList<FuelRod> fuelRods;
@@ -55,35 +59,56 @@ public class FissionReactor {
     /**
      * Thresholds important for determining the evolution of the reactor
      */
-    public final int criticalRodInsertion;
-    public final int criticalPressure;
-    public final double criticalPower;
+    public int criticalRodInsertion;
 
     /**
      * Integers used on variables with direct player control for easier adjustments
      */
     public int controlRodInsertion;
-    public int coolantFlowRate;
-    public int pressure;
 
-    public double powerProductionFactor;
+    public boolean moderatorTipped;
+
+    public double power;
+    public double prevPower;
     public double temperature;
+    public double pressure;
+    public double exteriorPressure;
+    public double coolantBoilingPointStandardPressure;
+    public double coolantHeatOfVaporization;
+    public double coolantBaseTemperature;
     public double fuelDepletion;
-    public double neutronPoisoning;
-
+    public double prevFuelDepletion;
+    public double coolantFlowRate;
+    public double neutronPoisonAmount;
+    public double decayProductsAmount;
     public double envTemperature;
+    public double accumulatedHydrogen;
 
     public double maxTemperature;
+    public double maxPressure;
     public double maxPower;
 
     public double coolingFactor;
 
-    public double decayPower;
+    protected static double responseFunction(double target, double value, double criticalRate, double rate) {
+        if (value <= 0) {
+            if (rate > criticalRate) {
+                return 0;
+            } else {
+                value = 0.1;
+            }
+        }
+        return value * criticalRate/rate * Math.sqrt(target/value);
+    }
+
+    protected static double responseFunctionTemperature(double target, double value, double criticalRate, double rate, double equilibrium) {
+        value = Math.max(0.1, value);
+        rate = Math.max(0.1, rate);
+        return Math.max(value * criticalRate/rate * Math.sqrt(target/value), equilibrium);
+    }
 
     public FissionReactor(int criticalRodInsertion, int criticalPressure, double criticalPower) {
-        this.criticalRodInsertion = criticalRodInsertion;
-        this.criticalPower = criticalPower;
-        this.criticalPressure = criticalPressure;
+
     }
 
     public boolean canCoolantBoil() {
@@ -99,10 +124,10 @@ public class FissionReactor {
     }
 
     public double criticalCoolantFlow() {
-        return this.powerProductionFactor / this.coolingFactor;
+        return this.power / this.coolingFactor;
     }
 
-    public void prepareThermalProperties() {
+    protected void prepareThermalProperties() {
 
         int idRod = 0, idControl = 0, idChannel = 0;
 
@@ -139,7 +164,7 @@ public class FissionReactor {
 
     }
 
-    public void computeGeometry(){
+    protected void computeGeometry(){
 
         double[][] geometricMatrixSlowNeutrons = new double[fuelRods.size()][fuelRods.size()];
         double[][] geometricMatrixFastNeutrons = new double[fuelRods.size()][fuelRods.size()];
@@ -303,7 +328,7 @@ public class FissionReactor {
     /**
      * Loops over all the control rods, determines which ones actually affect reactivity, and gives them a weight depending on how many fuel rods they affect
      */
-    public void computeControlRodWeights() {
+    protected void computeControlRodWeights() {
         for(ControlRod rod : controlRods){
             rod.computeWeightFromFuelRodMap();
             if(rod.getWeight() > 0){
@@ -316,7 +341,7 @@ public class FissionReactor {
     /**
      * Loops over all the coolant channels, determines which ones actually affect reactivity, and gives them a weight depending on how many fuel rods they affect
      */
-    public void computeCoolantChannelWeights() {
+    protected void computeCoolantChannelWeights() {
         for(CoolantChannel channel : coolantChannels) {
             channel.computeWeightFromFuelRodMap();
             if(channel.getWeight() > 0) {
@@ -340,5 +365,63 @@ public class FissionReactor {
         }
     }
 
+    /**
+     * The thermodynamics is not completely realistic, but it's close enough for simple things like this, the boiling point depends on pressure
+     */
+    protected double coolantBoilingPoint() {
+        return 1./(1./this.coolantBoilingPointStandardPressure - R * Math.log(this.pressure/standardPressure)/this.coolantHeatOfVaporization);
+    }
+
+    public void updateTemperature() {
+        this.temperature = responseFunctionTemperature(this.maxTemperature, this.temperature, this.criticalCoolantFlow(), this.coolantFlowRate, this.coolantBaseTemperature);
+    }
+
+    public void updatePressure() {
+        this.pressure = responseFunction(this.temperature <= this.coolantBoilingPoint() ? this.exteriorPressure : 1000. * R * this.temperature, this.pressure, 1., 1.);
+    }
+
+    public void updateNeutronPoisoning() {
+        this.neutronPoisonAmount += Math.max(0., this.prevPower - this.power);
+        this.neutronPoisonAmount *= 0.99;
+    }
+
+    public double getDecayHeat() {
+        return this.neutronPoisonAmount * 0.05 + this.decayProductsAmount * 0.1;
+    }
+
+    public double voidContribution() {
+        return this.voidFactor() * (this.temperature > this.coolantBoilingPoint() ? this.maxPressure : 0.);
+    }
+
+    public void updatePower() {
+        this.prevPower = this.power;
+        this.prevFuelDepletion = this.fuelDepletion;
+        this.power = responseFunction(this.realMaxPower(), this.power, this.criticalRodInsertion + this.voidContribution(), this.controlRodInsertion);
+        this.fuelDepletion = Math.min(this.fuelDepletion + 0.001 * this.power/this.maxPower, 1.);
+        this.decayProductsAmount += Math.max(this.prevFuelDepletion - this.fuelDepletion, 0.);
+        this.decayProductsAmount *= 0.99;
+    }
+
+    public double realMaxPower() {
+        if (this.moderatorTipped && (this.controlRodInsertion <= 9 && this.controlRodInsertion >= 7)) {
+            return this.maxPower * 1.1;
+        } else if (this.controlRodInsertion > this.criticalRodInsertion || this.fuelDepletion >= 1.) {
+            return this.getDecayHeat();
+        } else {
+            return this.maxPower;
+        }
+    }
+
+    public boolean checkForMeltdown() {
+        return this.temperature > this.maxTemperature;
+    }
+
+    public boolean checkForExplosion() {
+        return this.pressure > this.maxPressure;
+    }
+
+    public boolean checkForSecondaryExplosion() {
+        return this.accumulatedHydrogen > 0.;
+    }
 
 }
