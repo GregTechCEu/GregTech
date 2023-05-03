@@ -60,10 +60,15 @@ public class SeparationRecipes {
                 .duration(24).EUt(5).buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder()
-                .input(OrePrefix.ore, Oilsands)
+                .input(ore, Oilsands)
                 .chancedOutput(new ItemStack(Blocks.SAND), 5000, 5000)
-                .fluidOutputs(Oil.getFluid(500))
-                .duration(200).EUt(5).buildAndRegister();
+                .fluidOutputs(OilHeavy.getFluid(2000))
+                .duration(200).EUt(30).buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(7)
+                .input(dust, Oilsands)
+                .fluidOutputs(OilHeavy.getFluid(1000))
+                .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(144).EUt(5)
                 .inputs(new ItemStack(Items.NETHER_WART))
@@ -287,11 +292,6 @@ public class SeparationRecipes {
                 .chancedOutput(dustTiny, Ilmenite, 5000, 500)
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(5)
-                .input(dust, Oilsands)
-                .fluidOutputs(Oil.getFluid(1000))
-                .buildAndRegister();
-
         CENTRIFUGE_RECIPES.recipeBuilder().duration(60).EUt(VA[LV])
                 .input(dust, QuartzSand, 2)
                 .output(dust, Quartzite)
@@ -463,6 +463,13 @@ public class SeparationRecipes {
                 .output(dust, Carbon)
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(64).EUt(VA[LV]).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(dust, Apatite, 9)
+                .output(dust, Calcium, 5)
+                .output(dust, Phosphorus, 3)
+                .fluidOutputs(Chlorine.getFluid(1000))
+                .duration(288).EUt(60).buildAndRegister();
 
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()

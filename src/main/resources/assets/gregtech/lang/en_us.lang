@@ -539,7 +539,7 @@ metaitem.glass_lens.black.name=Glass Lens (Black)
 #CIRCUITS LOCALIZATION
 metaitem.boule.silicon.name=Monocrystalline Silicon Boule
 metaitem.boule.silicon.tooltip=Raw Circuit
-metaitem.boule.glowstone.name=Glowstone-doped Monocrystalline Silicon Boule
+metaitem.boule.glowstone.name=Phosphorus-doped Monocrystalline Silicon Boule
 metaitem.boule.glowstone.tooltip=Raw Circuit
 metaitem.boule.naquadah.name=Naquadah-doped Monocrystalline Silicon Boule
 metaitem.boule.naquadah.tooltip=Raw Circuit
@@ -547,7 +547,7 @@ metaitem.boule.neutronium.name=Neutronium-doped Monocrystalline Silicon Boule
 metaitem.boule.neutronium.tooltip=Raw Circuit
 metaitem.wafer.silicon.name=Silicon Wafer
 metaitem.wafer.silicon.tooltip=Raw Circuit
-metaitem.wafer.glowstone.name=Glowstone-doped Wafer
+metaitem.wafer.glowstone.name=Phosphorus-doped Wafer
 metaitem.wafer.glowstone.tooltip=Raw Circuit
 metaitem.wafer.naquadah.name=Naquadah-doped Wafer
 metaitem.wafer.naquadah.tooltip=Raw Circuit
@@ -2542,6 +2542,7 @@ gregtech.machine.drum.aluminium.name=Aluminium Drum
 gregtech.machine.drum.stainless_steel.name=Stainless Steel Drum
 gregtech.machine.drum.titanium.name=Titanium Drum
 gregtech.machine.drum.tungstensteel.name=Tungstensteel Drum
+gregtech.machine.drum.gold.name=Gold Drum
 
 gregtech.machine.drum.enable_output=Will drain Fluid to downward adjacent Tanks
 gregtech.machine.drum.disable_output=Will not drain Fluid

@@ -667,7 +667,7 @@ public class ElementMaterials {
                 .color(0x3C3C50).iconSet(METALLIC)
                 .flags(GENERATE_FOIL)
                 .element(Elements.Si)
-                .blastTemp(1687) // no gas tier for silicon
+                .blastTemp(2273) // no gas tier for silicon
                 .build();
 
         Silver = new Material.Builder(100, "silver")
@@ -699,8 +699,8 @@ public class ElementMaterials {
 
         Tantalum = new Material.Builder(104, "tantalum")
                 .ingot().fluid()
-                .color(0x78788c).iconSet(METALLIC)
-                .flags(STD_METAL, GENERATE_FOIL)
+                .color(0x69B7FF).iconSet(METALLIC)
+                .flags(STD_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Ta)
                 .fluidTemp(3290)
                 .build();
