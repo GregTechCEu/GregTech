@@ -914,6 +914,27 @@ item.gt.tool.behavior.plunger=§9Plumber: §fDrains Fluids
 item.gt.tool.behavior.block_rotation=§2Mechanic: §fRotates Blocks
 item.gt.tool.behavior.damage_boost=§4Damage Boost: §fExtra damage against %s
 
+gt.tool.class.sword=Sword
+gt.tool.class.pickaxe=Pickaxe
+gt.tool.class.shovel=Shovel
+gt.tool.class.axe=Axe
+gt.tool.class.hoe=Hoe
+gt.tool.class.saw=Saw
+gt.tool.class.hammer=Hammer
+gt.tool.class.mallet=Mallet
+gt.tool.class.wrench=Wrench
+gt.tool.class.file=File
+gt.tool.class.crowbar=Crowbar
+gt.tool.class.screwdriver=Screwdriver
+gt.tool.class.mortar=Mortar
+gt.tool.class.wirecutter=Wirecutter
+gt.tool.class.scythe=Scythe
+gt.tool.class.shears=Shears
+gt.tool.class.knife=Knife
+gt.tool.class.butchery_knife=Butchery Knife
+gt.tool.class.grafter=Grafter
+gt.tool.class.plunger=Plunger
+
 item.gt.tool.sword.name=%s Sword
 item.gt.tool.pickaxe.name=%s Pickaxe
 item.gt.tool.shovel.name=%s Shovel
