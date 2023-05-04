@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gregtech.api.GTValues.V;
+import static gregtech.api.GTValues.*;
 import static org.hamcrest.CoreMatchers.is;
 
 public class EnergyContainerListTest {
@@ -35,8 +35,13 @@ public class EnergyContainerListTest {
 
     @Nonnull
     private static IEnergyContainer createContainer(int amps) {
+        return createContainer(amps, LV);
+    }
+
+    @Nonnull
+    private static IEnergyContainer createContainer(int amps, int tier) {
         return EnergyContainerHandler.receiverContainer(createDummyMTE(),
-                V[gregtech.api.GTValues.LV] * 64L * amps, V[gregtech.api.GTValues.LV], amps);
+                V[tier] * 64L * amps, V[tier], amps);
     }
 
     @Nonnull
@@ -148,6 +153,13 @@ public class EnergyContainerListTest {
 
         // 32A of LV should become 2A of 512
         check(new EnergyContainerList(list), 512, 2);
+
+        list = new ArrayList<>();
+        list.add(createContainer(2));
+        list.add(createContainer(2, MV));
+
+        // 2.5A of MV should become 1A of 320
+        check(new EnergyContainerList(list), 320, 1);
     }
 
     private static void check(@Nonnull EnergyContainerList list, long inputVoltage, long inputAmperage) {
