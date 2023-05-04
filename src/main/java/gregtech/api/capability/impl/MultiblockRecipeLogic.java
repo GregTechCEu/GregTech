@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.standardOverclockingLogic;
-
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     // Used for distinct mode
@@ -251,36 +249,26 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
+    protected void modifyOverclockPre(@Nonnull int[] values, @Nonnull IRecipePropertyStorage storage) {
+        super.modifyOverclockPre(values, storage);
+
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
-        int[] overclock = null;
-        if (maintenanceValues.getSecond() != 1.0)
+        if (maintenanceValues.getSecond() != 1.0) {
+            values[1] = (int) Math.round(values[1] * maintenanceValues.getSecond());
+        }
+    }
 
-            overclock = standardOverclockingLogic(
-                    Math.abs(recipeEUt),
-                    maxVoltage,
-                    (int) Math.round(recipeDuration * maintenanceValues.getSecond()),
-                    amountOC,
-                    getOverclockingDurationDivisor(),
-                    getOverclockingVoltageMultiplier()
-            );
+    @Override
+    protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {
+        super.modifyOverclockPost(overclockResults, storage);
 
-        if (overclock == null)
-            overclock = standardOverclockingLogic(
-                    Math.abs(recipeEUt),
-                    maxVoltage,
-                    recipeDuration,
-                    amountOC,
-                    getOverclockingDurationDivisor(),
-                    getOverclockingVoltageMultiplier()
-            );
-
-        if (maintenanceValues.getFirst() > 0)
-            overclock[1] = (int) (overclock[1] * (1 + 0.1 * maintenanceValues.getFirst()));
-
-        return overclock;
+        // apply maintenance penalties
+        Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
+        if (maintenanceValues.getFirst() > 0) {
+            overclockResults[1] = (int) (overclockResults[1] * (1 + 0.1 * maintenanceValues.getFirst()));
+        }
     }
 
     @Override
@@ -288,6 +276,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         return getMaxVoltage();
     }
 
+    @Nonnull
     protected Tuple<Integer, Double> getMaintenanceValues() {
         MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
         int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() || !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();

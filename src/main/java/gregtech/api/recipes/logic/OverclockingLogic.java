@@ -58,27 +58,28 @@ public class OverclockingLogic {
      * @param requiredTemp the required temperature of the recipe
      * @return the amount of EU/t discounts to apply
      */
-    public static int calculateAmountCoilEUtDiscount(int providedTemp, int requiredTemp) {
+    private static int calculateAmountCoilEUtDiscount(int providedTemp, int requiredTemp) {
         return Math.max(0, (providedTemp - requiredTemp) / COIL_EUT_DISCOUNT_TEMPERATURE);
     }
 
     /**
+     * Handles applying the coil EU/t discount. Call before overclocking.
+     *
      * @param recipeEUt the EU/t of the recipe
-     * @param amountEUtDiscount the amount of discounts to apply
+     * @param providedTemp the temperate provided by the machine
+     * @param requiredTemp the required temperature of the recipe
      * @return the discounted EU/t
      */
-    public static int applyCoilEUtDiscount(int recipeEUt, int amountEUtDiscount) {
+    public static int applyCoilEUtDiscount(int recipeEUt, int providedTemp, int requiredTemp) {
+        if (requiredTemp < OverclockingLogic.COIL_EUT_DISCOUNT_TEMPERATURE) return recipeEUt;
+        int amountEUtDiscount = OverclockingLogic.calculateAmountCoilEUtDiscount(providedTemp, requiredTemp);
         if (amountEUtDiscount < 1) return recipeEUt;
         return (int) (recipeEUt * Math.min(1, Math.pow(0.95, amountEUtDiscount)));
     }
 
     @Nonnull
     public static int[] heatingCoilOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, int maxOverclocks, int currentTemp, int recipeRequiredTemp) {
-        int amountEUtDiscount = calculateAmountCoilEUtDiscount(currentTemp, recipeRequiredTemp);
-        int amountPerfectOC = amountEUtDiscount / 2;
-
-        // apply a multiplicative 95% energy multiplier for every 900k over recipe temperature
-        recipeEUt = applyCoilEUtDiscount(recipeEUt, amountEUtDiscount);
+        int amountPerfectOC = calculateAmountCoilEUtDiscount(currentTemp, recipeRequiredTemp) / 2;
 
         // perfect overclock for every 1800k over recipe temperature
         if (amountPerfectOC > 0) {
