@@ -260,42 +260,35 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(getInventorySize());
-        return createUITemplate(entityPlayer, rowSize, rowSize == 10 ? 9 : 0)
+        return createUITemplate(entityPlayer, rowSize)
                 .build(getHolder(), entityPlayer);
     }
 
-    private ModularUI.Builder createUITemplate(EntityPlayer player, int rowSize, int xOffset) {
-        int half;
-        int extra;
-        int inv;
-        if (rowSize > 7) {
-            half = 124;
-            extra = 72;
-            inv = 36;
-        } else if (rowSize > 5) {
-            half = 106;
-            extra = 36;
-            inv = 18;
-        } else {
-            half = 88;
-            extra = 0;
-            inv = 0;
-        }
-        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + xOffset * 2 + extra, 18 + 18 * rowSize + 94)
+    private ModularUI.Builder createUITemplate(EntityPlayer player, int gridSize) {
+        int backgroundWidth = gridSize > 6 ? 176 + (gridSize - 6) * 18 : 176;
+        int center = backgroundWidth / 2;
+
+        int gridStartX = center - (gridSize * 9);
+
+        int inventoryStartX = center - 9 - 4 * 18;
+        int inventoryStartY = 18 + 18 * gridSize + 12;
+
+        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, backgroundWidth, 18 + 18 * gridSize + 94)
                 .label(10, 5, getMetaFullName());
 
-        for (int y = 0; y < rowSize; y++) {
-            for (int x = 0; x < rowSize; x++) {
-                int index = y * rowSize + x;
+        for (int y = 0; y < gridSize; y++) {
+            for (int x = 0; x < gridSize; x++) {
+                int index = y * gridSize + x;
+
                 builder.widget(new SlotWidget(isExportHatch ? exportItems : importItems, index,
-                        (half - rowSize * 9 + x * 18) + xOffset, 18 + y * 18, true, !isExportHatch)
+                        gridStartX + x * 18, 18 + y * 18, true, !isExportHatch)
                         .setBackgroundTexture(GuiTextures.SLOT));
             }
         }
 
-        if (this.circuitInventory != null && !this.isExportHatch) {
-            final int circuitX = half - rowSize * 9 + (rowSize + 1) * 18 + xOffset;
-            final int circuitY = 18 * rowSize;
+        if (hasGhostCircuitInventory() && this.circuitInventory != null) {
+            int circuitX = gridSize > 6 ? gridStartX + gridSize * 18 + 9 : inventoryStartX + 8 * 18;
+            int circuitY = gridSize * 18;
 
             SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, circuitX, circuitY)
                     .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
@@ -312,7 +305,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                             .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() > IntCircuitIngredient.CIRCUIT_MIN));
         }
 
-        return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7 + xOffset + inv, 18 + 18 * rowSize + 12);
+        return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, inventoryStartX, inventoryStartY);
     }
 
     @Override
