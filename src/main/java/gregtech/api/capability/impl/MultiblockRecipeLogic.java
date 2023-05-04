@@ -1,5 +1,6 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
@@ -7,6 +8,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -358,7 +360,31 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected long getMaxVoltage() {
-        return Math.max(getEnergyContainer().getInputVoltage(), getEnergyContainer().getOutputVoltage());
+        IEnergyContainer energyContainer = getEnergyContainer();
+        if (energyContainer instanceof EnergyContainerList) {
+            long voltage;
+            long amperage;
+            if (energyContainer.getInputVoltage() > energyContainer.getOutputVoltage()) {
+                voltage = energyContainer.getInputVoltage();
+                amperage = energyContainer.getInputAmperage();
+            } else {
+                voltage = energyContainer.getOutputVoltage();
+                amperage = energyContainer.getOutputAmperage();
+            }
+
+            if (amperage == 1) {
+                // amperage is 1 when the energy is not exactly on a tier
+
+                // the voltage for recipe search is always on tier, so take the closest lower tier
+                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+            } else {
+                // amperage != 1 means the voltage is exactly on a tier
+                // ignore amperage, since only the voltage is relevant for recipe search
+                // amps are never > 3 in an EnergyContainerList
+                return voltage;
+            }
+        }
+        return Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
     }
 
     @Nullable
