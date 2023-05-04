@@ -2,6 +2,7 @@ package gregtech.integration.jei.recipe;
 
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
@@ -111,8 +112,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     public void addFluidTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-        boolean notConsumed = input && isNotConsumedFluid(slotIndex);
+        FluidStack fluidStack = (FluidStack) ingredient;
+        TankWidget.addIngotMolFluidTooltip(fluidStack, tooltip);
 
+        boolean notConsumed = input && isNotConsumedFluid(slotIndex);
         if (notConsumed) {
             tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.not_consumed"));
         }
