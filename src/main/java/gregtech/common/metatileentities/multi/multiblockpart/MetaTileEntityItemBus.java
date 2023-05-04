@@ -22,7 +22,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTHashMaps;
-import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.InventoryUtils;
 import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
@@ -39,7 +38,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
@@ -223,20 +221,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
             this.autoCollapse = data.getBoolean("autoCollapse");
         }
         if (this.circuitInventory != null && !this.isExportHatch) {
-            if (data.hasKey("CircuitInventory", Constants.NBT.TAG_COMPOUND)) {
-                // legacy save support - move items in circuit inventory to importItems inventory, if possible
-                ItemStackHandler legacyCircuitInventory = new ItemStackHandler();
-                legacyCircuitInventory.deserializeNBT(data.getCompoundTag("CircuitInventory"));
-                for (int i = 0; i < legacyCircuitInventory.getSlots(); i++) {
-                    ItemStack stack = legacyCircuitInventory.getStackInSlot(i);
-                    if (stack.isEmpty()) continue;
-                    stack = GTTransferUtils.insertItem(this.importItems, stack, false);
-                    // If there's no space left in importItems, just set it as ghost circuit and void the item
-                    this.circuitInventory.setCircuitValueFromStack(stack);
-                }
-            } else {
-                this.circuitInventory.read(data);
-            }
+            this.circuitInventory.read(data);
         }
     }
 
