@@ -27,24 +27,18 @@ public class FissionReactor {
     private ArrayList<CoolantChannel> effectiveCoolantChannels;
     private int reactorDepth;
     private int numberOfComponents;
-    private double averageThermalConductivity;
 
-    private double groupSum;
     private double totNeutronSources;
     private double avgGeometricFactorSlowNeutrons;
     private double avgGeometricFactorFastNeutrons;
-    private double avgTemperatureCoefficient;
     private int geometricIntegrationSteps;
 
-    private double[][] avgDelayedNeutronGroups;
 
-    private double beta;
     private double lSlow;
     private double lFast;
     private double kSlow;
     private double kFast;
     private double k;
-    private double l;
 
     private double avgCoolantTemperature;
     private double controlRodFactor;
@@ -107,7 +101,7 @@ public class FissionReactor {
         return Math.max(value * criticalRate/rate * Math.sqrt(target/value), equilibrium);
     }
 
-    public FissionReactor(int criticalRodInsertion, int criticalPressure, double criticalPower) {
+    public FissionReactor() {
 
     }
 
@@ -136,7 +130,6 @@ public class FissionReactor {
                 if(reactorLayout[i][j].isValid()){
                     reactorLayout[i][j].setPos(i, j);
                     numberOfComponents++;
-                    averageThermalConductivity += reactorLayout[i][j].getThermalConductivity();
                     maxTemperature = Double.min(maxTemperature, reactorLayout[i][j].getMaxTemperature());
 
                     if(reactorLayout[i][j] instanceof FuelRod) {
@@ -159,9 +152,6 @@ public class FissionReactor {
                 }
             }
         }
-
-        averageThermalConductivity /= numberOfComponents;
-
     }
 
     protected void computeGeometry(){
@@ -220,7 +210,7 @@ public class FissionReactor {
                  */
                 if(pathIsClear){
                     mij /= geometricIntegrationSteps;
-                    geometricMatrixSlowNeutrons[i][j] = geometricMatrixFastNeutrons[j][i] = (1. - Math.exp(-mij*fuelRods.get(i).getDistance(fuelRods.get(j))))/fuelRods.get(i).getDistance(fuelRods.get(j));
+                    geometricMatrixSlowNeutrons[i][j] = geometricMatrixSlowNeutrons[j][i] = (1. - Math.exp(-mij*fuelRods.get(i).getDistance(fuelRods.get(j))))/fuelRods.get(i).getDistance(fuelRods.get(j));
                     geometricMatrixFastNeutrons[i][j] = geometricMatrixFastNeutrons[j][i] = 1./fuelRods.get(i).getDistance(fuelRods.get(j)) - geometricMatrixSlowNeutrons[i][j];
 
                     for(ControlRod rod : controlRodsHit) {
@@ -245,8 +235,6 @@ public class FissionReactor {
         double avgHighEnergyCaptureFactor = 0.;
         double avgLowEnergyCaptureFactor = 0.;
 
-        double totFuelStart = 0.;
-
         double avgFuelRodDistance = 0.;
 
         for(FuelRod i : fuelRods) {
@@ -257,25 +245,16 @@ public class FissionReactor {
                 avgFuelRodDistance += i.getDistance(j);
             }
             totNeutronSources += i.getNeutronSourceIntensity();
-            avgTemperatureCoefficient += i.getFuel().getTemperatureCoefficient();
 
             avgHighEnergyFissionFactor += i.getHEFissionFactor();
             avgLowEnergyFissionFactor += i.getLEFissionFactor();
             avgHighEnergyCaptureFactor += i.getHECaptureFactor();
             avgLowEnergyCaptureFactor += i.getLECaptureFactor();
 
-            totFuelStart += i.getFuel().getDuration();
-
-            for(int c = 0; c < avgDelayedNeutronGroups.length; c++){
-                avgDelayedNeutronGroups[c][0] += i.getFuel().getDelayedNeutronsGroups()[c][0];
-                avgDelayedNeutronGroups[c][1] += i.getFuel().getDelayedNeutronsGroups()[c][1];
-            }
         }
 
         avgGeometricFactorSlowNeutrons *= 0.125/fuelRods.size();
         avgGeometricFactorFastNeutrons *= 0.125/fuelRods.size();
-
-        avgTemperatureCoefficient /= fuelRods.size();
 
         avgHighEnergyFissionFactor /= fuelRods.size();
         avgLowEnergyFissionFactor /= fuelRods.size();
@@ -284,12 +263,6 @@ public class FissionReactor {
 
         avgFuelRodDistance /= 2.*fuelRods.size();
 
-        for(int i = 0; i < avgDelayedNeutronGroups.length; i++) {
-            for(int j = 0; j < avgDelayedNeutronGroups.length; j++) {
-                avgDelayedNeutronGroups[i][j] /= fuelRods.size();
-            }
-            beta += avgDelayedNeutronGroups[i][0];
-        }
 
         lSlow = avgFuelRodDistance/(2200. * avgLowEnergyCaptureFactor);
         lFast = avgFuelRodDistance/(15000000. * avgHighEnergyCaptureFactor);
@@ -298,7 +271,6 @@ public class FissionReactor {
         kFast = avgHighEnergyFissionFactor/avgHighEnergyCaptureFactor * avgGeometricFactorFastNeutrons;
 
         k = (kSlow + kFast) * reactorDepth/(1. + reactorDepth);
-        l = (lSlow + lFast)/2.;
 
         /*
         We give each control rod and coolant channel a weight depending on how many fuel rods they affect
@@ -311,7 +283,6 @@ public class FissionReactor {
 
         this.prepareInitialConditions();
 
-        //TODO: Give materials proper coolant properties
         for(CoolantChannel channel : effectiveCoolantChannels) {
             temperature += channel.getCoolant().getFluid().getTemperature() * channel.getWeight();
             avgBoilingPoint += channel.getCoolant().getProperty(PropertyKey.COOLANT).getBoilingPoint() * channel.getWeight();
@@ -319,8 +290,6 @@ public class FissionReactor {
             avgModeration += channel.getCoolant().getProperty(PropertyKey.COOLANT).getModerationFactor() * channel.getWeight();
             avgPressure += channel.getCoolant().getProperty(PropertyKey.COOLANT).getPressure() * channel.getWeight();
         }
-
-        //coolantFactor = Coolant.CoolantTemperatureFactor(T, avgBoilingPoint, avgAbsorption, avgModeration, avgPressure);
 
         kEff = 1. * k;
     }
@@ -354,11 +323,11 @@ public class FissionReactor {
     public void prepareInitialConditions() {
         for(CoolantChannel channel : effectiveCoolantChannels) {
             temperature += channel.getCoolant().getFluid().getTemperature() * channel.getWeight();
-            //TODO: Add boiling point to liquids
-            avgBoilingPoint += channel.getCoolant().getFluid().getTemperature() * channel.getWeight();
-            //TODO: Add neutron absorption coefficients to materials
+            //TODO: Add boiling point values
+            avgBoilingPoint += channel.getCoolant().getProperty(PropertyKey.COOLANT).getBoilingPoint() * channel.getWeight();
+            //TODO: Add neutron absorption values
             avgAbsorption += channel.getCoolant().getProperty(PropertyKey.COOLANT).getAbsorption() * channel.getWeight();
-            //TODO: Add neutron moderation coefficients to materials
+            //TODO: Add neutron moderation values
             avgModeration += channel.getCoolant().getProperty(PropertyKey.COOLANT).getModerationFactor() * channel.getWeight();
             //TODO: Add pressure to coolants
             avgPressure += channel.getCoolant().getProperty(PropertyKey.COOLANT).getPressure() * channel.getWeight();
