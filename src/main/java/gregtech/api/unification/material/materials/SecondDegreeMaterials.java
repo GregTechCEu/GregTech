@@ -482,7 +482,6 @@ public class SecondDegreeMaterials {
 
         LiquidAir = new Material.Builder(2051, "liquid_air")
                 .fluid()
-                .color(0xA9D0F5)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Nitrogen, 70, Oxygen, 22, CarbonDioxide, 5, Helium, 2, Argon, 1, Ice, 1)
                 .fluidTemp(79)

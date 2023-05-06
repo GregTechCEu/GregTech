@@ -37,6 +37,7 @@ import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
@@ -153,7 +154,7 @@ public class GregTechAPI {
         }
 
         @Override
-        public void register(int id, String key, Material value) {
+        public void register(int id, @Nonnull String key, @Nonnull Material value) {
             if (isRegistryClosed) {
                 GTLog.logger.error("Materials cannot be registered in the PostMaterialEvent! Must be added in the MaterialEvent. Skipping material {}...", key);
                 return;

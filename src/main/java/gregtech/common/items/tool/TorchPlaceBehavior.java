@@ -76,8 +76,9 @@ public class TorchPlaceBehavior implements IToolBehavior {
             if (slotItem instanceof ItemBlock) {
                 ItemBlock slotItemBlock = (ItemBlock) slotItem;
                 Block slotBlock = slotItemBlock.getBlock();
-                if (slotBlock == Blocks.TORCH || OreDictUnifier.getOreDictionaryNames(slotStack).stream()
-                        .anyMatch(s -> "torch".equals(s) || "blockTorch".equals(s))) {
+                if (slotBlock == Blocks.TORCH ||
+                        OreDictUnifier.hasOreDictionary(slotStack, "torch") ||
+                        OreDictUnifier.hasOreDictionary(slotStack, "blockTorch")) {
                     IBlockState state = world.getBlockState(pos);
                     Block block = state.getBlock();
                     if (!block.isReplaceable(world, pos)) {

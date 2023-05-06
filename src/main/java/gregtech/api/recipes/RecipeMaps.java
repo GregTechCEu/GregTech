@@ -1137,29 +1137,34 @@ public class RecipeMaps {
     public static final RecipeMap<FuelRecipeBuilder> COMBUSTION_GENERATOR_FUELS = new RecipeMap<>("combustion_generator", 0, 0, 1, 0, new FuelRecipeBuilder(), false)
             .setSlotOverlay(false, true, true, GuiTextures.FURNACE_OVERLAY_2)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
-            .setSound(GTSoundEvents.COMBUSTION);
+            .setSound(GTSoundEvents.COMBUSTION)
+            .allowEmptyOutput();
 
     @ZenProperty
     public static final RecipeMap<FuelRecipeBuilder> GAS_TURBINE_FUELS = new RecipeMap<>("gas_turbine", 0, 0, 1, 0, new FuelRecipeBuilder(), false)
             .setSlotOverlay(false, true, true, GuiTextures.DARK_CANISTER_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR, MoveType.HORIZONTAL)
-            .setSound(GTSoundEvents.TURBINE);
+            .setSound(GTSoundEvents.TURBINE)
+            .allowEmptyOutput();
 
     @ZenProperty
     public static final RecipeMap<FuelRecipeBuilder> STEAM_TURBINE_FUELS = new RecipeMap<>("steam_turbine", 0, 0, 1, 1, new FuelRecipeBuilder(), false)
             .setSlotOverlay(false, true, true, GuiTextures.CENTRIFUGE_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR, MoveType.HORIZONTAL)
-            .setSound(GTSoundEvents.TURBINE);
+            .setSound(GTSoundEvents.TURBINE)
+            .allowEmptyOutput();
 
     @ZenProperty
     public static final RecipeMap<FuelRecipeBuilder> SEMI_FLUID_GENERATOR_FUELS = new RecipeMap<>("semi_fluid_generator", 0, 0, 1, 0, new FuelRecipeBuilder(), false)
             .setSlotOverlay(false, true, true, GuiTextures.FURNACE_OVERLAY_2)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
-            .setSound(GTSoundEvents.COMBUSTION);
+            .setSound(GTSoundEvents.COMBUSTION)
+            .allowEmptyOutput();
 
     @ZenProperty
     public static final RecipeMap<FuelRecipeBuilder> PLASMA_GENERATOR_FUELS = new RecipeMap<>("plasma_generator", 0, 0, 1, 1, new FuelRecipeBuilder(), false)
             .setSlotOverlay(false, true, true, GuiTextures.CENTRIFUGE_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR, MoveType.HORIZONTAL)
-            .setSound(GTSoundEvents.TURBINE);
+            .setSound(GTSoundEvents.TURBINE)
+            .allowEmptyOutput();
 }
