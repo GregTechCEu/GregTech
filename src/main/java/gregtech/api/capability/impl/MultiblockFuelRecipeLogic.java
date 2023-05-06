@@ -29,6 +29,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
+        // duration bonus
         if (maintenanceValues.getSecond() != 1.0) {
             values[1] = (int) Math.round(values[1] / maintenanceValues.getSecond());
         }
@@ -38,6 +39,8 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
+
+        // duration penalty
         if (maintenanceValues.getFirst() > 0) {
             overclockResults[1] = (int) (overclockResults[1] * (1 - 0.1 * maintenanceValues.getFirst()));
         }

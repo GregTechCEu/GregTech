@@ -604,7 +604,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * Method for modifying the overclock results, such as for Multiblock coil bonuses.
      * Is always called, even if no overclocks are performed.
      *
-     * @param overclockResults The overclocked recipe duration and EUt, in format [duration, EUt]
+     * @param overclockResults The overclocked recipe EUt and duration, in format [EUt, duration]
      * @param storage the RecipePropertyStorage of the recipe being processed
      */
     protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {}

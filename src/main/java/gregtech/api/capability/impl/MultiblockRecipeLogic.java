@@ -255,6 +255,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
+        // duration bonus
         if (maintenanceValues.getSecond() != 1.0) {
             values[1] = (int) Math.round(values[1] * maintenanceValues.getSecond());
         }
@@ -266,6 +267,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
+
+        // duration penalty
         if (maintenanceValues.getFirst() > 0) {
             overclockResults[1] = (int) (overclockResults[1] * (1 + 0.1 * maintenanceValues.getFirst()));
         }
