@@ -730,8 +730,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         // valid tools
         tooltip.add(I18n.format("item.gt.tool.usable_as",
                 stack.getItem().getToolClasses(stack).stream()
-                        .map(s -> "gt.tool.class." + s)
-                        .map(I18n::format)
+                        .map(s -> I18n.format("gt.tool.class." + s))
                         .collect(Collectors.joining(", "))
         ));
 
