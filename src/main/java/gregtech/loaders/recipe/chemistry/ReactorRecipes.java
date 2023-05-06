@@ -86,7 +86,7 @@ public class ReactorRecipes {
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Carbon, 2)
-                .input(dust, Rutile)
+                .input(dust, Rutile, 3)
                 .fluidInputs(Chlorine.getFluid(4000))
                 .fluidOutputs(CarbonMonoxide.getFluid(2000))
                 .fluidOutputs(TitaniumTetrachloride.getFluid(1000))
@@ -599,11 +599,10 @@ public class ReactorRecipes {
                 .duration(200).EUt(24).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide, 6)
-                .fluidInputs(Dichlorobenzene.getFluid(1000))
-                .output(dust, Salt, 4)
+                .input(dust, SodiumHydroxide, 3)
+                .fluidInputs(Chlorobenzene.getFluid(1000))
+                .output(dust, Salt, 2)
                 .fluidOutputs(Phenol.getFluid(1000))
-                .fluidOutputs(Oxygen.getFluid(1000))
                 .duration(120).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()

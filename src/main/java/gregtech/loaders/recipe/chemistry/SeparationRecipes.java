@@ -150,7 +150,6 @@ public class SeparationRecipes {
                 .chancedOutput(dustTiny, Hematite, 2500, 0)
                 .buildAndRegister();
 
-
         CENTRIFUGE_RECIPES.recipeBuilder().duration(250).EUt(6)
                 .input(dust, DarkAsh)
                 .output(dust, Ash)
@@ -264,7 +263,6 @@ public class SeparationRecipes {
                 .fluidOutputs(Deuterium.getFluid(1000))
                 .buildAndRegister();
 
-        // Stone Dust
         CENTRIFUGE_RECIPES.recipeBuilder().duration(480).EUt(VA[MV])
                 .input(dust, Stone)
                 .output(dustSmall, Quartzite)

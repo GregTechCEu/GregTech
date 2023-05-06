@@ -104,7 +104,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Cassiterite = new Material.Builder(263, "cassiterite")
-                .dust(1).ore(2)
+                .dust(1).ore()
                 .color(0xDCDCDC).iconSet(METALLIC)
                 .components(Tin, 1, Oxygen, 2)
                 .build();
@@ -397,7 +397,7 @@ public class FirstDegreeMaterials {
 
         RoseGold = new Material.Builder(301, "rose_gold")
                 .ingot().fluid()
-                .color(0xFFE61E).iconSet(SHINY)
+                .color(0xFFC183).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_RING, GENERATE_GEAR)
                 .components(Copper, 1, Gold, 4)
                 .toolStats(ToolProperty.Builder.of(12.0F, 2.0F, 768, 2)

@@ -50,21 +50,21 @@ public class MiscRecipeLoader {
                 new UnificationEntry(dust, Tin),
                 new UnificationEntry(dust, Lead));
 
-        RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
+        MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
                 .input(dust, Sugar)
                 .inputs(new ItemStack(Blocks.BROWN_MUSHROOM))
                 .inputs(new ItemStack(Items.SPIDER_EYE))
                 .outputs(new ItemStack(Items.FERMENTED_SPIDER_EYE))
                 .buildAndRegister();
 
-        RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
+        MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
                 .input(dust, Sugar)
                 .inputs(new ItemStack(Blocks.RED_MUSHROOM))
                 .inputs(new ItemStack(Items.SPIDER_EYE))
                 .outputs(new ItemStack(Items.FERMENTED_SPIDER_EYE))
                 .buildAndRegister();
 
-        RecipeMaps.SIFTER_RECIPES.recipeBuilder().duration(100).EUt(16)
+        SIFTER_RECIPES.recipeBuilder().duration(100).EUt(16)
                 .inputs(new ItemStack(Blocks.GRAVEL))
                 .output(gem, Flint)
                 .chancedOutput(gem, Flint, 9000, 0)
@@ -74,7 +74,7 @@ public class MiscRecipeLoader {
                 .chancedOutput(gem, Flint, 2500, 0)
                 .buildAndRegister();
 
-        RecipeMaps.PACKER_RECIPES.recipeBuilder()
+        PACKER_RECIPES.recipeBuilder()
                 .inputs(TOOL_MATCHES.getStackForm(16))
                 .input(OrePrefix.plate, Materials.Paper)
                 .outputs(TOOL_MATCHBOX.getStackForm())
@@ -82,70 +82,70 @@ public class MiscRecipeLoader {
                 .EUt(16)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.COBBLESTONE))
                 .duration(16)
                 .EUt(VA[ULV])
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.STONE, 1, 0))
                 .outputs(new ItemStack(Blocks.STONE, 1, 0))
                 .duration(16)
                 .EUt(VA[ULV])
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Andesite)
                 .output(stone, Andesite)
                 .duration(16)
                 .EUt(60)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Granite)
                 .output(stone, Granite)
                 .duration(16)
                 .EUt(60)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Diorite)
                 .output(stone, Diorite)
                 .duration(16)
                 .EUt(60)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(dust, Redstone)
                 .outputs(new ItemStack(Blocks.OBSIDIAN, 1))
                 .duration(16)
                 .EUt(240)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Marble)
                 .output(stone, Marble)
                 .duration(16)
                 .EUt(240)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Basalt)
                 .output(stone, Basalt)
                 .duration(16)
                 .EUt(240)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, GraniteRed)
                 .output(stone, GraniteRed)
                 .duration(16)
                 .EUt(960)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, GraniteBlack)
                 .output(stone, GraniteBlack)
                 .duration(16)

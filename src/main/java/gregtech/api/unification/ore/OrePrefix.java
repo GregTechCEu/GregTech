@@ -46,7 +46,7 @@ public class OrePrefix {
     public static final OrePrefix oreMarble = new OrePrefix("oreMarble", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
     public static final OrePrefix oreBasalt = new OrePrefix("oreBasalt", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
 
-    // In case of an Sand-Ores Mod. Ore -> Material is a Oneway Operation!
+    // In case of a Sand-Ores Mod. Ore -> Material is a Oneway Operation!
     public static final OrePrefix oreSand = new OrePrefix("oreSand", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, null);
     public static final OrePrefix oreRedSand = new OrePrefix("oreRedSand", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, null);
 
@@ -55,13 +55,14 @@ public class OrePrefix {
     // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
     public static final OrePrefix oreEndstone = new OrePrefix("oreEndstone", M * 2, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
 
-    // TODO adjust material amount
-    // Third ore processing output from Ore blocks. Worth 1.33 Dust
-    public static final OrePrefix crushedRefined = new OrePrefix("crushedRefined", M * 4 / 3, null, MaterialIconType.crushedRefined, ENABLE_UNIFICATION, hasOreProperty);
-    // Second ore processing output from Ore blocks. Worth 1.16 Dust
-    public static final OrePrefix crushedPurified = new OrePrefix("crushedPurified", M * 7 / 6, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
-    // First ore processing output from Ore blocks. Worth 1 Dust
-    public static final OrePrefix crushed = new OrePrefix("crushed", M, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.crushed.tooltip.purify")));
+    // First ore processing output from Ore blocks. Worth 1.5 Dust
+    public static final OrePrefix crushed = new OrePrefix("crushed", M * 3 / 2, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty));
+    // Second ore processing output from Ore blocks. Worth 2 Dust
+    public static final OrePrefix washed = new OrePrefix("crushedPurified", M * 2, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
+    // Third ore processing output from Ore blocks. Worth 3 Dust
+    public static final OrePrefix purified = new OrePrefix("crushedRefined", M * 3, null, MaterialIconType.crushedRefined, ENABLE_UNIFICATION, hasOreProperty);
+    // Fourth ore processing output from Ore blocks. Worth 4 Dust
+    public static final OrePrefix refined = new OrePrefix("dustPure", M * 4, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty);
 
     // A hot Ingot, which has to be cooled down by a Vacuum Freezer.
     public static final OrePrefix ingotHot = new OrePrefix("ingotHot", M, null, MaterialIconType.ingotHot, ENABLE_UNIFICATION, hasBlastProperty.and(mat -> mat.getProperty(PropertyKey.BLAST).getBlastTemperature() > 1750));
@@ -70,23 +71,19 @@ public class OrePrefix {
 
     // A regular Gem worth one Dust. Introduced by Eloraam
     public static final OrePrefix gem = new OrePrefix("gem", M, null, MaterialIconType.gem, ENABLE_UNIFICATION, hasGemProperty);
-    // A regular Gem worth one small Dust. Introduced by TerraFirmaCraft
+    // A Gem worth one small Dust. Introduced by TerraFirmaCraft
     public static final OrePrefix gemChipped = new OrePrefix("gemChipped", M / 4, null, MaterialIconType.gemChipped, ENABLE_UNIFICATION, hasGemProperty.and(unused -> ConfigHolder.recipes.generateLowQualityGems));
-    // A regular Gem worth two small Dusts. Introduced by TerraFirmaCraft
+    // A Gem worth two small Dusts. Introduced by TerraFirmaCraft
     public static final OrePrefix gemFlawed = new OrePrefix("gemFlawed", M / 2, null, MaterialIconType.gemFlawed, ENABLE_UNIFICATION, hasGemProperty.and(unused -> ConfigHolder.recipes.generateLowQualityGems));
-    // A regular Gem worth two Dusts. Introduced by TerraFirmaCraft
+    // A Gem worth two Dusts. Introduced by TerraFirmaCraft
     public static final OrePrefix gemFlawless = new OrePrefix("gemFlawless", M * 2, null, MaterialIconType.gemFlawless, ENABLE_UNIFICATION, hasGemProperty);
-    // A regular Gem worth four Dusts. Introduced by TerraFirmaCraft
+    // A Gem worth four Dusts. Introduced by TerraFirmaCraft
     public static final OrePrefix gemExquisite = new OrePrefix("gemExquisite", M * 4, null, MaterialIconType.gemExquisite, ENABLE_UNIFICATION, hasGemProperty);
 
     // 1/4th of a Dust.
     public static final OrePrefix dustSmall = new OrePrefix("dustSmall", M / 4, null, MaterialIconType.dustSmall, ENABLE_UNIFICATION, hasDustProperty);
     // 1/9th of a Dust.
     public static final OrePrefix dustTiny = new OrePrefix("dustTiny", M / 9, null, MaterialIconType.dustTiny, ENABLE_UNIFICATION, hasDustProperty);
-    // Dust with impurities. 1 Unit of Main Material and 1/9 - 1/4 Unit of secondary Material
-    public static final OrePrefix dustImpure = new OrePrefix("dustImpure", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify")));
-    // Pure Dust worth of 1.5 Ingot or Gem. Introduced by Alblaka.
-    public static final OrePrefix dustPure = new OrePrefix("dustPure", M * 3 / 2, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify")));
     // Dust worth of one Ingot or Gem
     public static final OrePrefix dust = new OrePrefix("dust", M, null, MaterialIconType.dust, ENABLE_UNIFICATION, hasDustProperty);
 
@@ -130,7 +127,7 @@ public class OrePrefix {
     // Introduced by me because BuildCraft has ruined the gear Prefix...
     public static final OrePrefix gear = new OrePrefix("gear", M * 4, null, MaterialIconType.gear, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_GEAR));
     // 3/4 of a Plate or Gem used to shape a Lens. Normally only used on Transparent Materials.
-    public static final OrePrefix lens = new OrePrefix("lens", (M * 3) / 4, null, MaterialIconType.lens, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_LENS));
+    public static final OrePrefix lens = new OrePrefix("lens", M * 3 / 4, null, MaterialIconType.lens, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_LENS));
 
     // made of 4 Ingots.
     public static final OrePrefix toolHeadBuzzSaw = new OrePrefix("toolHeadBuzzSaw", M * 4, null, MaterialIconType.toolHeadBuzzSaw, ENABLE_UNIFICATION, hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_PLATE)));
@@ -493,7 +490,7 @@ public class OrePrefix {
                 //bone makes 5 bone meal
                 return M * 5;
             }
-        } else if (this == crushed || this == crushedPurified || this == crushedRefined) {
+        } else if (this == crushed || this == washed || this == purified) {
             if (material.hasProperty(PropertyKey.ORE)) {
                 return materialAmount * material.getProperty(PropertyKey.ORE).getOreMultiplier();
             }

@@ -11,8 +11,6 @@ import gregtech.api.util.GTUtility;
 
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.material.info.MaterialFlags.MAGNETIC_ORE;
-import static gregtech.api.unification.material.info.MaterialFlags.PURIFY_BY_SIFTING;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processMetalSmelting;
 
@@ -28,29 +26,19 @@ public class CrushedRecipeHandler {
 
 
         // Forge Hammer recipe
-        // Crushed Ore -> Impure Dust
+        // Crushed Ore -> 1.5 Dust
         FORGE_HAMMER_RECIPES.recipeBuilder()
                 .input(crushed, material)
-                .output(dustImpure, material, property.getOreMultiplier())
+                .output(dustSmall, material, 6 * property.getOreMultiplier())
                 .duration(10).EUt(16).buildAndRegister();
-
-        // Macerator recipe
-        // Crushed Ore -> Dust (without byproduct)
-        MACERATOR_RECIPES.recipeBuilder()
-                .input(crushed, material)
-                .output(dust, material, property.getOreMultiplier())
-                .chancedOutput(dust, Stone, 7500, 0)
-                .duration(256).EUt(2).buildAndRegister();
-
 
         // Sluice recipes
         // Crushed Ore -> Purified Ore + Byproduct Dust (Water)
         SLUICE_RECIPES.recipeBuilder()
                 .input(crushed, material)
                 .fluidInputs(Water.getFluid(1000))
-                .output(crushedPurified, material)
-                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 3750, 0)
-                .output(dust, Stone)
+                .output(washed, material)
+                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 7500, 0)
                 .fluidOutputs(SluiceJuice.getFluid(1000))
                 .duration(256).EUt(16).buildAndRegister();
 
@@ -58,40 +46,25 @@ public class CrushedRecipeHandler {
         if (byproduct.hasProperty(PropertyKey.ORE)) {
             SLUICE_RECIPES.recipeBuilder()
                     .input(crushed, material)
-                    .fluidInputs(SodiumPersulfate.getFluid(125))
-                    .output(crushedPurified, material)
-                    .chancedOutput(crushedPurified, byproduct, byproductMultiplier, 3750, 0)
-                    .output(dust, Stone)
-                    .fluidOutputs(SluiceJuice.getFluid(500))
+                    .fluidInputs(SodiumPersulfate.getFluid(250))
+                    .output(washed, material)
+                    .chancedOutput(washed, byproduct, byproductMultiplier, 7500, 0)
+                    .output(dust, SluiceSand)
                     .duration(256).EUt(64).buildAndRegister();
 
             SLUICE_RECIPES.recipeBuilder()
                     .input(crushed, material)
-                    .fluidInputs(PotassiumPersulfate.getFluid(125))
-                    .output(crushedPurified, material)
-                    .chancedOutput(crushedPurified, byproduct, byproductMultiplier, 3750, 0)
-                    .output(dust, Stone)
-                    .fluidOutputs(SluiceJuice.getFluid(500))
-                    .duration(256).EUt(64).buildAndRegister();
-        }
-
-        // Sifter recipe (for Gems)
-        // TODO remove flawless emerald from mv emitter so that this awkward step isn't needed?
-        if (material.hasProperty(PropertyKey.GEM)) {
-            SIFTER_RECIPES.recipeBuilder()
-                    .input(crushed, material)
-                    .output(crushedRefined, material)
-                    .chancedOutput(gemFlawless, material, property.getOreMultiplier(), 500, 0)
-                    .chancedOutput(gem, material, property.getOreMultiplier(), 1000, 0)
-                    .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 2000, 0)
+                    .fluidInputs(PotassiumPersulfate.getFluid(250))
+                    .output(washed, material)
+                    .chancedOutput(washed, byproduct, byproductMultiplier, 7500, 0)
+                    .output(dust, SluiceSand)
                     .duration(256).EUt(64).buildAndRegister();
         }
 
         // Hard Hammer crafting recipe
-        // Crushed Ore -> Impure Dust
+        // Crushed Ore -> Dust
         ModHandler.addShapelessRecipe(String.format("crushed_ore_to_dust_%s", material),
-                OreDictUnifier.get(dustImpure, material, property.getOreMultiplier()), 'h', new UnificationEntry(crushed, material));
+                OreDictUnifier.get(dust, material, property.getOreMultiplier()), 'h', new UnificationEntry(crushed, material));
 
-        processMetalSmelting(prefix, material, property);
     }
 }

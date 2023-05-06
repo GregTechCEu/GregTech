@@ -169,6 +169,7 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_ARROW = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_arrow.png");
     public static final SteamTexture PROGRESS_BAR_ARROW_STEAM = SteamTexture.fullImage("textures/gui/progress_bar/progress_bar_arrow_%s.png");
     public static final TextureArea PROGRESS_BAR_ARROW_MULTIPLE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_arrow_multiple.png");
+    public static final TextureArea PROGRESS_BAR_ASSEMBLER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_assembler.png");
     public static final TextureArea PROGRESS_BAR_ASSEMBLY_LINE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_assembly_line.png");
     public static final TextureArea PROGRESS_BAR_ASSEMBLY_LINE_ARROW = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_assembly_line_arrow.png");
     public static final TextureArea PROGRESS_BAR_BATH = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_bath.png");
@@ -178,7 +179,6 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_BOILER_HEAT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_boiler_heat.png");
     public static final TextureArea PROGRESS_BAR_CANNER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_canner.png");
     public static final TextureArea PROGRESS_BAR_CIRCUIT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_circuit.png");
-    public static final TextureArea PROGRESS_BAR_CIRCUIT_ASSEMBLER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_circuit_assembler.png");
     public static final TextureArea PROGRESS_BAR_COKE_OVEN = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_coke_oven.png");
     public static final TextureArea PROGRESS_BAR_COMPRESS = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_compress.png");
     public static final SteamTexture PROGRESS_BAR_COMPRESS_STEAM = SteamTexture.fullImage("textures/gui/progress_bar/progress_bar_compress_%s.png");

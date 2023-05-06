@@ -101,7 +101,7 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<AssemblerRecipeBuilder> ASSEMBLER_RECIPES = new RecipeMap<>("assembler", 9, 1, 1, 0, new AssemblerRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT, MoveType.HORIZONTAL)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ASSEMBLER, MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.ASSEMBLER)
             .onRecipeBuild(recipeBuilder -> {
                 recipeBuilder.invalidateOnBuildAction();
@@ -365,7 +365,7 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<CircuitAssemblerRecipeBuilder> CIRCUIT_ASSEMBLER_RECIPES = new RecipeMap<>("circuit_assembler", 6, 1, 1, 0, new CircuitAssemblerRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT_ASSEMBLER, ProgressWidget.MoveType.HORIZONTAL)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT, ProgressWidget.MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.ASSEMBLER)
             .onRecipeBuild(recipeBuilder -> {
                 recipeBuilder.invalidateOnBuildAction();

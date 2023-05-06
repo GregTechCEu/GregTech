@@ -47,9 +47,9 @@ public class OreByProduct implements IRecipeWrapper {
 
     private static final ImmutableList<OrePrefix> IN_PROCESSING_STEPS = ImmutableList.of(
             OrePrefix.crushed,
-            OrePrefix.crushedPurified,
-            OrePrefix.crushedRefined,
-            OrePrefix.dustImpure
+            OrePrefix.washed,
+            OrePrefix.purified,
+            OrePrefix.refined
     );
 
     private final Int2ObjectMap<ChanceEntry> chances = new Int2ObjectOpenHashMap<>();
@@ -199,13 +199,13 @@ public class OreByProduct implements IRecipeWrapper {
 
         int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
 
-        // macerate crushed -> impure
-        addToOutputs(material, OrePrefix.dustImpure, crushedMultiplier);
+        // macerate crushed -> dust
+        addToOutputs(material, OrePrefix.dust, crushedMultiplier);
         addToOutputs(secondaryByproduct, OrePrefix.dust, 1);
         addChance(2000, chancePerTier ? 500 : 0);
 
-        // ore wash crushed -> crushed purified
-        addToOutputs(material, OrePrefix.crushedPurified, 1);
+        // ore wash crushed -> washed
+        addToOutputs(material, OrePrefix.washed, 1);
         addToOutputs(primaryByproduct, OrePrefix.dustTiny, 1);
         fluidInputs.add(Collections.singletonList(Materials.Water.getFluid(1000)));
 
@@ -219,8 +219,8 @@ public class OreByProduct implements IRecipeWrapper {
 
         if (mercuryByproduct != null) {
             fluidInputs.add(Collections.singletonList(Materials.Mercury.getFluid(100)));
-            addToOutputs(material, crushedPurified, 1);
-            addToOutputs(mercuryByproduct, crushedPurified, 1);
+            addToOutputs(material, washed, 1);
+            addToOutputs(mercuryByproduct, washed, 1);
         } else {
             fluidInputs.add(Collections.emptyList());
             addEmptyOutputs(2);
@@ -228,8 +228,8 @@ public class OreByProduct implements IRecipeWrapper {
 
         if (persulfateByproduct != null) {
             fluidInputs.add(Lists.newArrayList(SodiumPersulfate.getFluid(100), PotassiumPersulfate.getFluid(100)));
-            addToOutputs(material, crushedPurified, 1);
-            addToOutputs(persulfateByproduct, crushedPurified, 1);
+            addToOutputs(material, washed, 1);
+            addToOutputs(persulfateByproduct, washed, 1);
         } else {
             fluidInputs.add(Collections.emptyList());
             addEmptyOutputs(2);
@@ -241,15 +241,13 @@ public class OreByProduct implements IRecipeWrapper {
         Material byproduct = GTUtility.getOrDefault(property.getOreByProducts(), 1, material);
         int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
 
-        // macerate purified crushed -> dust
-        addToOutputs(material, dust, crushedMultiplier);
-        addToOutputs(material, dust, crushedMultiplier);
-        addChance(2500, 0);
+        // macerate washed -> dust
+        addToOutputs(material, dust, 2 * crushedMultiplier);
         addToOutputs(byproduct, dust, 1);
         addChance(2000, chancePerTier ? 500 : 0);
 
         // TC crushed purified -> refined
-        addToOutputs(material, OrePrefix.crushedRefined, 1);
+        addToOutputs(material, OrePrefix.purified, 1);
         addToOutputs(byproduct, OrePrefix.dustSmall, 1);
 
         // sifter purified ore -> gems
@@ -292,25 +290,25 @@ public class OreByProduct implements IRecipeWrapper {
         Material vitriol = property.getVitriol();
         if (vitriol != null) {
             fluidInputs.add(Collections.singletonList(SulfuricAcid.getFluid(vitriol == ClayVitriol ? 1500 : 500)));
-            addToOutputs(material, crushedRefined, 1);
-            addToOutputs(material, crushedRefined, 1);
+            addToOutputs(material, purified, 1);
+            addToOutputs(material, purified, 1);
             addChance(5000, 0);
             fluidOutputs.add(Collections.singletonList(vitriol.getFluid(500)));
         } else if (material == Cassiterite || material == CassiteriteSand || material == Tin) {
             fluidInputs.add(Collections.singletonList(SulfuricAcid.getFluid(500)));
-            addToOutputs(material, crushedRefined, 1);
-            addToOutputs(Zinc, crushedRefined, 1);
+            addToOutputs(material, purified, 1);
+            addToOutputs(Zinc, purified, 1);
             addChance(5000, 0);
             fluidOutputs.add(Collections.singletonList(WhiteVitriol.getFluid(500)));
         } else if (material == Copper || material == Gold) {
             fluidInputs.add(Collections.singletonList(AquaRegia.getFluid(6000)));
-            addToOutputs(material, crushedRefined, 1);
-            addToOutputs(material == Copper ? Cobalt : Copper, crushedRefined, 1);
+            addToOutputs(material, purified, 1);
+            addToOutputs(material == Copper ? Cobalt : Copper, purified, 1);
             addChance(5000, 0);
             fluidOutputs.add(Collections.singletonList(ChloroauricAcid.getFluid(500)));
         } else if (material == Cooperite || material == Platinum || material == Palladium) {
             fluidInputs.add(Collections.singletonList(AquaRegia.getFluid(9000)));
-            addToOutputs(material, crushedRefined, 1);
+            addToOutputs(material, purified, 1);
             addToOutputs(PlatinumGroupSludge, dust, 2);
             addChance(5000, 0);
             fluidOutputs.add(Collections.singletonList(ChloroauricAcid.getFluid(500)));
