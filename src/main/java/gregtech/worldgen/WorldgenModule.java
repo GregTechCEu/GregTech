@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.modules.GregTechModule;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
+import gregtech.worldgen.terrain.GTTerrainGenManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import org.apache.logging.log4j.LogManager;
@@ -38,9 +39,9 @@ public final class WorldgenModule extends BaseGregTechModule {
 
     @Override
     public void init(FMLInitializationEvent event) {
-        logger.info("Initializing World Generation");
+        logger.info("Initializing Terrain Generation");
         GTTerrainGenManager.startup();
-        logger.info("World Generation Initialized");
+        logger.info("Terrain Generation Initialized");
     }
 
     @Override

@@ -1,4 +1,4 @@
-package gregtech.worldgen;
+package gregtech.worldgen.terrain;
 
 import gregtech.api.util.WorldgenUtil;
 import net.minecraft.block.state.IBlockState;
@@ -15,9 +15,9 @@ import java.util.List;
  */
 public final class TerrainGenWorker {
 
-    private final StoneTypeMapper mapper;
+    private final IBlockMapper mapper;
 
-    public TerrainGenWorker(@Nonnull StoneTypeMapper mapper) {
+    public TerrainGenWorker(@Nonnull IBlockMapper mapper) {
         this.mapper = mapper;
     }
 

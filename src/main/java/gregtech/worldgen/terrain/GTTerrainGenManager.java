@@ -1,12 +1,12 @@
-package gregtech.worldgen;
+package gregtech.worldgen.terrain;
 
 import gregtech.api.util.PerlinNoise;
+import gregtech.worldgen.config.WorldgenConfigReader;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.IntArraySet;
-import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -20,22 +20,21 @@ public final class GTTerrainGenManager {
 
     private static final Int2ObjectMap<TerrainGenWorker> workers = new Int2ObjectArrayMap<>();
 
-    private static Int2ObjectMap<StoneTypeMapper> stoneTypeMappers = new Int2ObjectArrayMap<>();
-    private static IntSet allowedDimensions = new IntArraySet();
+    private static Int2ObjectMap<IBlockMapper> stoneTypeMappers = new Int2ObjectArrayMap<>();
 
     private GTTerrainGenManager() {}
 
     /**
      * Start the terrain manager. Call when the game is loading.
      */
-    static void startup() {
+    public static void startup() {
         reloadFromConfig();
     }
 
     /**
      * Terminate the terrain manager. Call when the server is stopped.
      */
-    static void terminate() {
+    public static void terminate() {
         // reset noise. It will be re-created when a new world is joined, with the proper seed
         noise = null;
     }
@@ -51,7 +50,7 @@ public final class GTTerrainGenManager {
 
         TerrainGenWorker worker = workers.get(dimension);
         if (worker == null) {
-            StoneTypeMapper typeMapper = getStoneTypeMapper(dimension);
+            IBlockMapper typeMapper = getStoneTypeMapper(dimension);
             if (typeMapper == null) return;
 
             worker = new TerrainGenWorker(typeMapper);
@@ -89,21 +88,12 @@ public final class GTTerrainGenManager {
      * Reload the stone types and dimension from the config
      */
     public static void reloadFromConfig() {
-        stoneTypeMappers = readMappersFromConfig();
-        allowedDimensions = readDimensionsFromConfig();
-    }
-
-    @Nonnull
-    private static Int2ObjectMap<StoneTypeMapper> readMappersFromConfig() {
-        Int2ObjectMap<StoneTypeMapper> map = new Int2ObjectArrayMap<>();
-        return map; //TODO impl
-    }
-
-    @Nonnull
-    private static IntSet readDimensionsFromConfig() {
-        IntSet set = new IntArraySet();
-        set.add(0);
-        return set; //TODO impl
+        stoneTypeMappers = WorldgenConfigReader.readMappersFromConfig();
+        if (stoneTypeMappers == null) {
+            MinecraftForge.EVENT_BUS.unregister(GTTerrainGenManager.class);
+        } else {
+            MinecraftForge.EVENT_BUS.register(GTTerrainGenManager.class);
+        }
     }
 
     /**
@@ -111,7 +101,8 @@ public final class GTTerrainGenManager {
      * @return the stone type mapper associated with the dimension
      */
     @Nullable
-    public static StoneTypeMapper getStoneTypeMapper(int dimension) {
+    public static IBlockMapper getStoneTypeMapper(int dimension) {
+        if (stoneTypeMappers.isEmpty()) return null;
         return stoneTypeMappers.get(dimension);
     }
 
@@ -120,7 +111,7 @@ public final class GTTerrainGenManager {
      * @return if generation is allowed in the dimension
      */
     public static boolean isDimensionAllowed(int dimension) {
-        return allowedDimensions.contains(dimension);
+        return stoneTypeMappers.containsKey(dimension);
     }
 
     /**

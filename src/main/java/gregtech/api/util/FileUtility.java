@@ -5,6 +5,8 @@ import com.google.gson.stream.JsonReader;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import org.apache.commons.io.IOUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,10 +44,10 @@ public class FileUtility {
      * @param filePath path to file
      * @return {@code JsonObject} if extraction succeeds; otherwise {@code null}
      */
-    public static JsonObject tryExtractFromFile(Path filePath) {
-        try (InputStream fileStream = Files.newInputStream(filePath)) {
-            InputStreamReader streamReader = new InputStreamReader(fileStream);
-            return jsonParser.parse(streamReader).getAsJsonObject();
+    @Nullable
+    public static JsonObject tryExtractFromFile(@Nonnull Path filePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath.toFile()))) {
+            return jsonParser.parse(reader).getAsJsonObject();
         } catch (IOException exception) {
             GTLog.logger.error("Failed to read file on path {}", filePath, exception);
         } catch (JsonParseException exception) {
