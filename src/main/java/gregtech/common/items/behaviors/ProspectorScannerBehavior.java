@@ -106,6 +106,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         return electricItem.discharge(amount, Integer.MAX_VALUE, true, false, simulate) >= amount;
     }
 
+    // TODO Implement dark mode setting here with ModularUI rewrite
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, @Nonnull EntityPlayer entityPlayer) {
         int mode = getMode(entityPlayer.getHeldItem(EnumHand.MAIN_HAND));

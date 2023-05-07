@@ -20,11 +20,9 @@ import gregtech.common.terminal.app.guide.SimpleMachineGuideApp;
 import gregtech.common.terminal.app.guide.TutorialGuideApp;
 import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.common.terminal.app.hardwaremanager.HardwareManagerApp;
-import gregtech.common.terminal.app.prospector.ProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
 import gregtech.common.terminal.app.settings.SettingsApp;
 import gregtech.common.terminal.app.teleport.TeleportApp;
-import gregtech.common.terminal.app.worldprospector.WorldProspectorARApp;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
 import net.minecraft.client.Minecraft;
@@ -87,37 +85,6 @@ public class TerminalRegistry {
                 .battery(GTValues.LV, 150)
                 .build();
 
-        AppRegistryBuilder.create(new ProspectorApp(0))
-                .battery(0, GTValues.LV, 640)
-                .battery(1, GTValues.LV, 640)
-                .battery(2, GTValues.MV, 1000)
-                .battery(3, GTValues.HV, 1500)
-                .battery(4, GTValues.HV, 1500)
-                .upgrade(0, MetaItems.SENSOR_LV.getStackForm(1))
-                .upgrade(1, MetaItems.SENSOR_HV.getStackForm(1))
-                .upgrade(2, MetaItems.SENSOR_EV.getStackForm(1))
-                .upgrade(3, MetaItems.SENSOR_IV.getStackForm(1))
-                .upgrade(4, MetaItems.SENSOR_LuV.getStackForm(1))
-                .device(0, DeviceHardware.DEVICE.PROSPECTOR_LV)
-                .device(1, DeviceHardware.DEVICE.PROSPECTOR_LV)
-                .device(2, DeviceHardware.DEVICE.PROSPECTOR_LV)
-                .device(3, DeviceHardware.DEVICE.PROSPECTOR_HV)
-                .device(4, DeviceHardware.DEVICE.PROSPECTOR_HV)
-                .build();
-
-        AppRegistryBuilder.create(new ProspectorApp(1))
-                .battery(0, GTValues.MV, 1000)
-                .battery(1, GTValues.MV, 1000)
-                .battery(2, GTValues.HV, 1500)
-                .battery(3, GTValues.HV, 1500)
-                .battery(4, GTValues.HV, 1500)
-                .upgrade(0, MetaItems.SENSOR_HV.getStackForm(1))
-                .upgrade(1, MetaItems.SENSOR_HV.getStackForm(3))
-                .upgrade(2, MetaItems.SENSOR_EV.getStackForm(1))
-                .upgrade(3, MetaItems.SENSOR_IV.getStackForm(1))
-                .upgrade(4, MetaItems.SENSOR_LuV.getStackForm(1))
-                .device(DeviceHardware.DEVICE.PROSPECTOR_HV)
-                .build();
         if (Loader.isModLoaded(GTValues.MODID_JEI)) {
             AppRegistryBuilder.create(new RecipeChartApp())
                     .battery(GTValues.LV, 160)
@@ -132,13 +99,6 @@ public class TerminalRegistry {
                 .build();
         AppRegistryBuilder.create(new HardwareManagerApp()).defaultApp().build();
         AppRegistryBuilder.create(new AppStoreApp()).defaultApp().build();
-        AppRegistryBuilder.create(new WorldProspectorARApp())
-                .battery(GTValues.LV, 320)
-                .upgrade(0, MetaItems.EMITTER_LV.getStackForm(2))
-                .upgrade(1, MetaItems.EMITTER_MV.getStackForm(2))
-                .upgrade(2, MetaItems.EMITTER_HV.getStackForm(2))
-                .device(DeviceHardware.DEVICE.CAMERA)
-                .build();
         AppRegistryBuilder.create(new VirtualTankApp())
                 .battery(GTValues.MV, 500)
                 .device(DeviceHardware.DEVICE.WIRELESS)
