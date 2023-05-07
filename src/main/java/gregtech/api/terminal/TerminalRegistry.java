@@ -11,7 +11,6 @@ import gregtech.common.terminal.app.VirtualTankApp;
 import gregtech.common.terminal.app.appstore.AppStoreApp;
 import gregtech.common.terminal.app.batterymanager.BatteryManagerApp;
 import gregtech.common.terminal.app.capeselector.CapeSelectorApp;
-import gregtech.common.terminal.app.console.ConsoleApp;
 import gregtech.common.terminal.app.game.maze.MazeApp;
 import gregtech.common.terminal.app.game.minesweeper.MinesweeperApp;
 import gregtech.common.terminal.app.game.pong.PongApp;
@@ -21,7 +20,6 @@ import gregtech.common.terminal.app.guide.SimpleMachineGuideApp;
 import gregtech.common.terminal.app.guide.TutorialGuideApp;
 import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.common.terminal.app.hardwaremanager.HardwareManagerApp;
-import gregtech.common.terminal.app.multiblockhelper.MultiBlockPreviewARApp;
 import gregtech.common.terminal.app.prospector.ProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
 import gregtech.common.terminal.app.settings.SettingsApp;
@@ -120,12 +118,6 @@ public class TerminalRegistry {
                 .upgrade(4, MetaItems.SENSOR_LuV.getStackForm(1))
                 .device(DeviceHardware.DEVICE.PROSPECTOR_HV)
                 .build();
-        AppRegistryBuilder.create(new MultiBlockPreviewARApp())
-                .battery(GTValues.LV, 128)
-                .device(DeviceHardware.DEVICE.CAMERA)
-                .upgrade(1, MetaItems.EMITTER_HV.getStackForm(4), MetaItems.WORKSTATION_EV.getStackForm(2))
-                .defaultApp()
-                .build();
         if (Loader.isModLoaded(GTValues.MODID_JEI)) {
             AppRegistryBuilder.create(new RecipeChartApp())
                     .battery(GTValues.LV, 160)
@@ -135,10 +127,6 @@ public class TerminalRegistry {
                     .upgrade(3, MetaItems.RANDOM_ACCESS_MEMORY.getStackForm(32))
                     .build();
         }
-        AppRegistryBuilder.create(new ConsoleApp())
-                .battery(GTValues.LV, 500)
-                .device(DeviceHardware.DEVICE.WIRELESS)
-                .build();
         AppRegistryBuilder.create(new BatteryManagerApp()).defaultApp()
                 .battery(GTValues.ULV, 0)
                 .build();
