@@ -113,8 +113,6 @@ public final class TerrainGenFileProcessor {
         IBlockState blockState = ConfigUtil.getBlockStateFromName(name);
         if (blockState == null) {
             WorldgenModule.logger.error("Unable to parse replacement BlockState from name {} in file {}. Skipping entry...", name, filePath);
-        } else if (blockState == target) {
-            WorldgenModule.logger.warn("Replacement BlockState with name {} is identical to the target in file {}. Skipping entry...", name, filePath);
         }
         return blockState;
     }

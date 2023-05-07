@@ -1,6 +1,7 @@
 package gregtech.worldgen.config;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.GTValues;
 import gregtech.api.util.FileUtility;
@@ -54,7 +55,8 @@ public final class WorldgenConfigReader {
             JsonObject generationLock = FileUtility.tryExtractFromFile(generationLockPath);
             if (generationLock != null) {
                 boolean needsUpdate = false;
-                if (generationLock.get(TERRAIN_VERSION_KEY).getAsInt() != TerrainGenFileProcessor.TERRAIN_GEN_VERSION) {
+                JsonElement terrainVersionElement = generationLock.get(TERRAIN_VERSION_KEY);
+                if (terrainVersionElement == null || terrainVersionElement.getAsInt() != TerrainGenFileProcessor.TERRAIN_GEN_VERSION) {
                     writeTerrainDefaults(worldgenPath);
                     needsUpdate = true;
                 }

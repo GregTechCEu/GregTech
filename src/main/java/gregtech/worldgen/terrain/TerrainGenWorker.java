@@ -37,7 +37,7 @@ public final class TerrainGenWorker {
         for (int y = 0; y < maxY; y++) {
             final ExtendedBlockStorage storage = storages[y >> 4];
             // out of storages, so immediately exit
-            if (storage == null || storage.isEmpty()) return;
+            if (storage == null || storage.isEmpty()) break;
 
             final int storageY = y & 0xF;
             for (int xOffset = 0; xOffset < 16; xOffset++) {
@@ -56,7 +56,7 @@ public final class TerrainGenWorker {
                         toSet = candidates.get(0);
                     } else {
                         final int surfaceY = WorldgenUtil.getWorldSurfaceFast(world, chunk, xOffset, zOffset);
-                        toSet = GTTerrainGenManager.getStateForPos(candidates, x, y, z, surfaceY);
+                        toSet = getStateForPos(candidates, x, y, z, surfaceY);
                     }
 
                     if (toSet == state || toSet.getBlock().isAir(toSet, world, pos)) continue;
@@ -65,5 +65,21 @@ public final class TerrainGenWorker {
                 }
             }
         }
+    }
+
+    /**
+     *
+     * @param candidates the candidates to select from
+     * @param x the block x coordinate
+     * @param y the block y coordinate
+     * @param z the block z coordinate
+     * @param surfaceY the y value of the world surface
+     * @return the selected BlockState to place
+     */
+    @Nonnull
+    private static IBlockState getStateForPos(@Nonnull List<IBlockState> candidates, int x, int y, int z, int surfaceY) {
+        // need abs() for x and y, when generating blobs between - and + coords
+        float noiseValue = GTTerrainGenManager.noise.noise(Math.abs(x * 0.01F), y * 1.0F / surfaceY, Math.abs(z * 0.01F), 4, 0.1F);
+        return candidates.get((int) (candidates.size() * noiseValue));
     }
 }

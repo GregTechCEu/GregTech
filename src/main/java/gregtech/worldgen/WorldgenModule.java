@@ -5,14 +5,14 @@ import gregtech.api.modules.GregTechModule;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
 import gregtech.worldgen.terrain.GTTerrainGenManager;
+import gregtech.worldgen.terrain.VanillaTerrainHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
 
 @GregTechModule(
         moduleID = GregTechModules.MODULE_WORLDGEN,
@@ -31,16 +31,11 @@ public final class WorldgenModule extends BaseGregTechModule {
         return logger;
     }
 
-    @Nonnull
-    @Override
-    public List<Class<?>> getEventBusSubscribers() {
-        return Collections.singletonList(GTTerrainGenManager.class);
-    }
-
     @Override
     public void init(FMLInitializationEvent event) {
         logger.info("Initializing Terrain Generation");
         GTTerrainGenManager.startup();
+        MinecraftForge.ORE_GEN_BUS.register(VanillaTerrainHandler.class);
         logger.info("Terrain Generation Initialized");
     }
 

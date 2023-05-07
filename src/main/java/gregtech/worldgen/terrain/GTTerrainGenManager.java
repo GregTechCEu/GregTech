@@ -1,10 +1,10 @@
 package gregtech.worldgen.terrain;
 
 import gregtech.api.util.PerlinNoise;
+import gregtech.worldgen.WorldgenModule;
 import gregtech.worldgen.config.WorldgenConfigReader;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -12,11 +12,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 public final class GTTerrainGenManager {
 
-    private static PerlinNoise noise;
+    /**
+     * Shared noise object across all dimensions.
+     * Only one world will ever be loaded at once with GT.
+     */
+    static PerlinNoise noise;
 
     private static final Int2ObjectMap<TerrainGenWorker> workers = new Int2ObjectArrayMap<>();
 
@@ -89,10 +92,14 @@ public final class GTTerrainGenManager {
      */
     public static void reloadFromConfig() {
         stoneTypeMappers = WorldgenConfigReader.readMappersFromConfig();
+        WorldgenModule.logger.info("Loaded terrain generation entries for {} dimensions.", stoneTypeMappers == null ? 0 : stoneTypeMappers.size());
+
         if (stoneTypeMappers == null) {
             MinecraftForge.EVENT_BUS.unregister(GTTerrainGenManager.class);
+            WorldgenModule.logger.info("Disabling terrain generation...");
         } else {
             MinecraftForge.EVENT_BUS.register(GTTerrainGenManager.class);
+            WorldgenModule.logger.info("Enabling terrain generation...");
         }
     }
 
@@ -112,21 +119,5 @@ public final class GTTerrainGenManager {
      */
     public static boolean isDimensionAllowed(int dimension) {
         return stoneTypeMappers.containsKey(dimension);
-    }
-
-    /**
-     *
-     * @param candidates the candidates to select from
-     * @param x the block x coordinate
-     * @param y the block y coordinate
-     * @param z the block z coordinate
-     * @param surfaceY the y value of the world surface
-     * @return the selected blockstate to place
-     */
-    @Nonnull
-    public static IBlockState getStateForPos(@Nonnull List<IBlockState> candidates, int x, int y, int z, int surfaceY) {
-        // need abs() for x and y, when generating blobs between - and + coords
-        float noiseValue = noise.noise(Math.abs(x * 0.01F), y * 1.0F / surfaceY, Math.abs(z * 0.01F), 4, 0.1F);
-        return candidates.get((int) (candidates.size() * noiseValue));
     }
 }

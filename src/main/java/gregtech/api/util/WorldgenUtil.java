@@ -5,7 +5,9 @@ import net.minecraft.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
 
-public class WorldgenUtil {
+public final class WorldgenUtil {
+
+    private WorldgenUtil() {}
 
     /**
      * Faster way to retrieve the surface level of a world than {@link World#getHeight(int, int)}.

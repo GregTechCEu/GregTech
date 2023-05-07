@@ -24,6 +24,7 @@ import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
+import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
@@ -204,7 +205,7 @@ public class CoreModule implements IGregTechModule {
             TheOneProbeCompatibility.registerCompatibility();
         }
 
-//        WorldGenRegistry.INSTANCE.initializeRegistry();
+        WorldGenRegistry.INSTANCE.initializeRegistry();
 
         LootTableHelper.initialize();
         FilterTypeRegistry.init();
