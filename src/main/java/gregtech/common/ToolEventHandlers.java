@@ -155,10 +155,7 @@ public class ToolEventHandlers {
                         // only try once, so future water placement does not get eaten too
                         return false;
                     });
-                    IGTTool igtTool = (IGTTool) stack.getItem();
-                    if (igtTool.canPlaySound(stack) && igtTool.getSound() != null) {
-                        player.world.playSound(null, player.posX, player.posY, player.posZ, igtTool.getSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
-                    }
+                    ((IGTTool) stack.getItem()).playSound(player);
                 }
             }
             if (behaviorTag.getBoolean(ToolHelper.RELOCATE_MINED_BLOCKS_KEY)) {
