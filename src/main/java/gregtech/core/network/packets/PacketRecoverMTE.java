@@ -5,7 +5,6 @@ import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
-import lombok.NoArgsConstructor;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketBlockChange;
@@ -16,11 +15,13 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
-@NoArgsConstructor
 public class PacketRecoverMTE implements IPacket, IServerExecutor {
 
     private int dimension;
     private BlockPos pos;
+
+    @SuppressWarnings("unused")
+    public PacketRecoverMTE() {}
 
     public PacketRecoverMTE(int dimension, BlockPos pos) {
         this.dimension = dimension;

@@ -2,20 +2,20 @@ package gregtech.api.unification;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.ItemAndMetadata;
-import gregtech.api.unification.stack.ItemMaterialInfo;
-import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.unification.stack.*;
 import gregtech.api.util.CustomModPriorityComparator;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.MinecraftForge;
@@ -42,7 +42,7 @@ public class OreDictUnifier {
     private static final Map<ItemAndMetadata, ItemMaterialInfo> materialUnificationInfo = new Object2ObjectOpenHashMap<>();
     private static final Map<ItemAndMetadata, UnificationEntry> stackUnificationInfo = new Object2ObjectOpenHashMap<>();
     private static final Map<UnificationEntry, ArrayList<ItemAndMetadata>> stackUnificationItems = new Object2ObjectOpenHashMap<>();
-    private static final Map<ItemAndMetadata, Set<String>> stackOreDictName = new Object2ObjectOpenHashMap<>();
+    private static final Map<Item, ItemVariantMap.Mutable<Set<String>>> stackOreDictName = new Object2ObjectOpenHashMap<>();
     private static final Map<String, List<ItemStack>> oreDictNameStacks = new Object2ObjectOpenHashMap<>();
 
     @Nullable
@@ -105,10 +105,16 @@ public class OreDictUnifier {
 
     @SubscribeEvent
     public static void onItemRegistration(OreRegisterEvent event) {
-        ItemAndMetadata key = new ItemAndMetadata(event.getOre());
         String oreName = event.getName();
         //cache this registration by name
-        stackOreDictName.computeIfAbsent(key, k -> new HashSet<>()).add(oreName);
+        ItemVariantMap.Mutable<Set<String>> entry = stackOreDictName.computeIfAbsent(event.getOre().getItem(),
+                item -> item.getHasSubtypes() ? new MultiItemVariantMap<>() : new SingleItemVariantMap<>());
+        Set<String> set = entry.get(event.getOre());
+        if (set == null) {
+            set = new ObjectOpenHashSet<>();
+            entry.put(event.getOre(), set);
+        }
+        set.add(oreName);
         List<ItemStack> itemStackListForOreDictName = oreDictNameStacks.computeIfAbsent(oreName, k -> new ArrayList<>());
         addAndSort(itemStackListForOreDictName, event.getOre().copy(), getItemStackComparator());
 
@@ -154,6 +160,7 @@ public class OreDictUnifier {
 
         //finally register item
         if (orePrefix != null && (material != null || orePrefix.isSelfReferencing)) {
+            ItemAndMetadata key = new ItemAndMetadata(event.getOre());
             UnificationEntry unificationEntry = new UnificationEntry(orePrefix, material);
             ArrayList<ItemAndMetadata> itemListForUnifiedEntry = stackUnificationItems.computeIfAbsent(unificationEntry, p -> new ArrayList<>());
             addAndSort(itemListForUnifiedEntry, key, getSimpleItemStackComparator());
@@ -165,18 +172,52 @@ public class OreDictUnifier {
         }
     }
 
-    public static Set<String> getOreDictionaryNames(ItemStack itemStack) {
+    @Nonnull
+    public static Set<String> getOreDictionaryNames(@Nonnull ItemStack itemStack) {
         if (itemStack.isEmpty()) return Collections.emptySet();
-        ItemAndMetadata key = new ItemAndMetadata(itemStack);
-        Set<String> names = stackOreDictName.get(key);
-        Set<String> wildcardNames = key.isWildcard() ? null : stackOreDictName.get(key.toWildcard());
+        ItemVariantMap<Set<String>> nameEntry = stackOreDictName.get(itemStack.getItem());
+        if (nameEntry == null) return Collections.emptySet();
+        short itemDamage = (short) itemStack.getItemDamage();
+        Set<String> names = nameEntry.get(itemDamage);
+        Set<String> wildcardNames = itemDamage == GTValues.W ? null : nameEntry.get(GTValues.W);
         if (names == null) {
             return wildcardNames == null ? Collections.emptySet() : Collections.unmodifiableSet(wildcardNames);
-        } else if (wildcardNames == null) {
+        } else if (wildcardNames == null || names == wildcardNames) { // single variant items have identical entries
             return Collections.unmodifiableSet(names);
         } else {
             return Sets.union(names, wildcardNames);
         }
+    }
+
+    @Nullable
+    public static ItemVariantMap<Set<String>> getOreDictionaryEntry(@Nonnull Item item) {
+        ItemVariantMap.Mutable<Set<String>> entry = stackOreDictName.get(item);
+        return entry == null ? null : ItemVariantMap.unmodifiableSetView(entry);
+    }
+
+    @Nonnull
+    public static ItemVariantMap<Set<String>> getOreDictionaryEntryOrEmpty(@Nonnull Item item) {
+        ItemVariantMap.Mutable<Set<String>> entry = stackOreDictName.get(item);
+        return entry == null ? ItemVariantMap.empty() : ItemVariantMap.unmodifiableSetView(entry);
+    }
+
+    public static boolean hasOreDictionaryEntry(@Nonnull Item item) {
+        return stackOreDictName.containsKey(item);
+    }
+
+    public static boolean hasOreDictionary(@Nonnull ItemStack itemStack, @Nonnull String oreDictName) {
+        if (itemStack.isEmpty()) return false;
+        ItemVariantMap<Set<String>> nameEntry = stackOreDictName.get(itemStack.getItem());
+        if (nameEntry == null) return false;
+
+        short itemDamage = (short) itemStack.getItemDamage();
+        Set<String> names = nameEntry.get(itemDamage);
+        if (names != null && names.contains(oreDictName)) return true;
+
+        if (itemDamage == GTValues.W) return false;
+
+        Set<String> wildcardNames = nameEntry.get(GTValues.W);
+        return wildcardNames != null && wildcardNames != names && wildcardNames.contains(oreDictName);
     }
 
     public static List<ItemStack> getAllWithOreDictionaryName(String oreDictionaryName) {

@@ -3,16 +3,17 @@ package gregtech.core.network.packets;
 import gregtech.api.network.IClientExecutor;
 import gregtech.api.network.IPacket;
 import gregtech.api.util.ClipboardUtil;
-import lombok.NoArgsConstructor;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@NoArgsConstructor
 public class PacketClipboard implements IPacket, IClientExecutor {
 
     private String text;
+
+    @SuppressWarnings("unused")
+    public PacketClipboard() {}
 
     public PacketClipboard(final String text) {
         this.text = text;

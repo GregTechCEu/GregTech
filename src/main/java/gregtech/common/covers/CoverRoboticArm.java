@@ -69,6 +69,15 @@ public class CoverRoboticArm extends CoverConveyor {
             TypeItemInfo sourceInfo = sourceItemAmount.get(iterator.next());
             int itemAmount = sourceInfo.totalCount;
             int itemToMoveAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
+
+            if (itemFilterContainer.getTransferStackSize() > 1 && itemToMoveAmount * 2 <= itemAmount) {
+                // get the max we can extract from the item filter variable
+                int maxMultiplier = Math.floorDiv(Math.min(itemAmount, maxTransferAmount), itemToMoveAmount);
+
+                // multiply up to the total count of all the items
+                itemToMoveAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+            }
+
             if (itemAmount >= itemToMoveAmount) {
                 sourceInfo.totalCount = itemToMoveAmount;
             } else {
@@ -106,6 +115,15 @@ public class CoverRoboticArm extends CoverConveyor {
             Object filterSlotIndex = iterator.next();
             GroupItemInfo sourceInfo = sourceItemAmounts.get(filterSlotIndex);
             int itemToKeepAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
+
+            if (itemFilterContainer.getTransferStackSize() > 1 && itemToKeepAmount * 2 <= sourceInfo.totalCount) {
+                // get the max we can keep from the item filter variable
+                int maxMultiplier = Math.floorDiv(sourceInfo.totalCount, itemToKeepAmount);
+
+                // multiply up to the total count of all the items
+                itemToKeepAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+            }
+
             int itemAmount = 0;
             if (currentItemAmount.containsKey(filterSlotIndex)) {
                 GroupItemInfo destItemInfo = currentItemAmount.get(filterSlotIndex);

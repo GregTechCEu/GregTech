@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -202,10 +203,7 @@ public class BlockLamp extends Block {
     }
 
     public void registerOreDict() {
-        for (int meta = 0; meta < getItemMetadataStates(); meta++) {
-            OreDictUnifier.registerOre(new ItemStack(this, 1, meta),
-                    OrePrefix.lampGt, MarkerMaterials.Color.COLORS.get(color));
-        }
+        OreDictUnifier.registerOre(new ItemStack(this, 1, GTValues.W), OrePrefix.lampGt, MarkerMaterials.Color.COLORS.get(color));
     }
 
     public static boolean isLightActive(IBlockState state) {

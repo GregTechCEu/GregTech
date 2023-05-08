@@ -9,9 +9,7 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -104,7 +102,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        if(this.isActive()) {
+        if (this.isActive()) {
             textList.add(new TextComponentTranslation("gregtech.machine.machine_hatch.locked").setStyle(new Style().setColor(TextFormatting.RED)));
         }
     }
@@ -186,6 +184,12 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         @Override
         public void invalidate() {
             super.invalidate();
+
+            // invalidate mte's cleanroom reference
+            if (mte != null && mte instanceof ICleanroomReceiver){
+                ((ICleanroomReceiver) mte).setCleanroom(null);
+            }
+
             // Reset locally cached variables upon invalidation
             currentMachineStack = ItemStack.EMPTY;
             mte = null;
@@ -247,13 +251,18 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
             if (mte == null) {
                 this.activeRecipeMap = null;
-            }
-            else {
+            } else {
                 this.activeRecipeMap = mte.getRecipeMap();
                 // Set the world for MTEs, as some need it for checking their recipes
                 MetaTileEntityHolder holder = new MetaTileEntityHolder();
                 mte = holder.setMetaTileEntity(mte);
                 holder.setWorld(this.metaTileEntity.getWorld());
+
+                // Set the cleanroom of the MTEs to the PA's cleanroom reference
+                ICleanroomProvider cleanroom = controller.getCleanroom();
+                if (cleanroom != null && mte instanceof ICleanroomReceiver) {
+                    ((ICleanroomReceiver) mte).setCleanroom(cleanroom);
+                }
             }
 
 
