@@ -919,6 +919,27 @@ item.gt.tool.behavior.plunger=§9排水業者: §f液体を回収
 item.gt.tool.behavior.block_rotation=§2メカニック: §fブロックを回転
 item.gt.tool.behavior.damage_boost=§4ダメージブースト: §f%sに対してダメージ増加
 
+gt.tool.class.sword=剣
+gt.tool.class.pickaxe=ピッケル
+gt.tool.class.shovel=シャベル
+gt.tool.class.axe=斧
+gt.tool.class.hoe=クワ
+gt.tool.class.saw=ノコギリ
+gt.tool.class.hammer=ハンマー
+gt.tool.class.mallet=ソフトマレット
+gt.tool.class.wrench=レンチ
+gt.tool.class.file=やすり
+gt.tool.class.crowbar=バール
+gt.tool.class.screwdriver=スクリュードライバー
+gt.tool.class.mortar=すり鉢
+gt.tool.class.wirecutter=ワイヤーカッター
+gt.tool.class.scythe=鎌
+gt.tool.class.shears=ハサミ
+gt.tool.class.knife=ナイフ
+gt.tool.class.butchery_knife=肉切り包丁
+gt.tool.class.grafter=接木小刀
+gt.tool.class.plunger=ラバーカップ
+
 item.gt.tool.sword.name=%s製剣
 item.gt.tool.pickaxe.name=%s製ピッケル
 item.gt.tool.shovel.name=%s製シャベル
