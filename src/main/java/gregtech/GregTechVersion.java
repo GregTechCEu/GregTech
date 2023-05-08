@@ -3,7 +3,7 @@ package gregtech;
 import java.util.regex.Pattern;
 
 /**
- * Use {@link GTInternalTags} instead. Any needed information can be added there
+ * @deprecated Use {@link GTInternalTags} instead. Any needed information can be added there
  */
 @SuppressWarnings("unused")
 @Deprecated
