@@ -585,8 +585,8 @@ public class SeparationRecipes {
                     result.add(seedStack);
                 }
             }
-        } catch (ReflectiveOperationException exception) {
-            GTLog.logger.error("Failed to get forge grass seed list", exception);
+        } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException ex) {
+            GTLog.logger.error("Failed to get forge grass seed list", ex);
         }
         return result;
     }
