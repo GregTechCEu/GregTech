@@ -65,7 +65,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.text.WordUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -729,26 +728,26 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         tooltip.add("");
 
         // valid tools
-        tooltip.add(I18n.format("item.gt.tool.usable_as", stack.getItem().getToolClasses(stack).stream()
-                .map(GTUtility::convertUnderscoreToSpace)
-                .map(WordUtils::capitalize)
-                .collect(Collectors.joining(", "))));
+        tooltip.add(I18n.format("item.gt.tool.usable_as",
+                stack.getItem().getToolClasses(stack).stream()
+                        .map(s -> I18n.format("gt.tool.class." + s))
+                        .collect(Collectors.joining(", "))
+        ));
 
         // repair info
         if (TooltipHelper.isShiftDown()) {
             Material material = getToolMaterial(stack);
-            String materialName = I18n.format(getToolMaterial(stack).getUnlocalizedName());
 
             Collection<String> repairItems = new ArrayList<>();
             if (ModHandler.isMaterialWood(material)) {
-                repairItems.add(I18n.format("item.material.oreprefix.plank", materialName));
+                repairItems.add(OrePrefix.plank.getLocalNameForItem(material));
             } else {
                 if (material.hasProperty(PropertyKey.INGOT)) {
-                    repairItems.add(I18n.format("item.material.oreprefix.ingot", materialName));
+                    repairItems.add(OrePrefix.ingot.getLocalNameForItem(material));
                 } else if (material.hasProperty(PropertyKey.GEM)) {
-                    repairItems.add(I18n.format("item.material.oreprefix.gem", materialName));
+                    repairItems.add(OrePrefix.gem.getLocalNameForItem(material));
                 }
-                repairItems.add(I18n.format("item.material.oreprefix.plate", materialName));
+                repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
             }
             tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", String.join(", ", repairItems)));
 

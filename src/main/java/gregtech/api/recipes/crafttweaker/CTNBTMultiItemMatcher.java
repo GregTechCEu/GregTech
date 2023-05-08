@@ -47,6 +47,8 @@ public class CTNBTMultiItemMatcher implements NBTMatcher {
 
         final Set<Map.Entry<String, NBTBase>> toCheck = tagCompound.tagMap.entrySet();
         for (NBTTagCompound requirement : list) {
+            // special case which considers an empty nbt tag as allowing any or no NBT
+            if (requirement.isEmpty()) return true;
             // return if the tag to check has everything the recipe requires, ignoring extraneous tags on toCheck
             if (toCheck.containsAll(requirement.tagMap.entrySet())) return true;
         }
