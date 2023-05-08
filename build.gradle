@@ -58,7 +58,7 @@ minecraft {
 
 // Generate the InternalTags class with the version number as a field
 tasks.injectTags.configure {
-    outputClassName.set("${project.group}.InternalTags")
+    outputClassName.set("${project.group}.GTInternalTags")
 }
 
 repositories {

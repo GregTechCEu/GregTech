@@ -19,7 +19,10 @@ public class GTValues {
 
     /**
      * Version String for use in addon mods' @Mod(dependencies = "...") block.
+     * <p>
+     * Deprecated, use {@link gregtech.GTInternalTags#VERSION}
      */
+    @Deprecated
     public static final String MOD_VERSION_DEP = "required-after:gregtech@[" + GregTechVersion.DEP_VERSION + ",);";
 
     /**
