@@ -18,6 +18,15 @@ public abstract class RecipeProperty<T> {
     @SideOnly(Side.CLIENT)
     public abstract void drawInfo(Minecraft minecraft, int x, int y, int color, Object value);
 
+    @SideOnly(Side.CLIENT)
+    public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value, int mouseX, int mouseY) {
+        drawInfo(minecraft, x, y, color, value);
+    }
+
+    public int getInfoHeight(Object value) {
+        return 10; // GTRecipeWrapper#LINE_HEIGHT
+    }
+
     public boolean isOfType(Class<?> otherType) {
         return this.type == otherType;
     }

@@ -1,6 +1,7 @@
 package gregtech.api.recipes;
 
 import gregtech.Bootstrap;
+import gregtech.api.GTValues;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.map.AbstractMapIngredient;
 import gregtech.api.recipes.map.MapFluidIngredient;
@@ -248,5 +249,24 @@ public class RecipeMapTest {
         map.put(ing2FromGTRecipeInput, ing2FromGTRecipeInput);
 
         MatcherAssert.assertThat(map.keySet().size(), is(2));
+    }
+
+    @Test
+    public void wildcardInput() {
+        // test that all variants of a wildcard input can be used to find a recipe
+        RecipeMap<?> recipeMap = new RecipeMap<>("test", 1, 4, 0, 0, new SimpleRecipeBuilder(), false);
+        recipeMap.recipeBuilder()
+                .inputs(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, GTValues.W))
+                .outputs(new ItemStack(Blocks.COBBLESTONE, 1))
+                .EUt(1).duration(1)
+                .buildAndRegister();
+
+        for (int i = 0; i < 16; i++) { // Blocks.STAINED_HARDENED_CLAY has 16 variants
+            Recipe recipe = recipeMap.findRecipe(Integer.MAX_VALUE,
+                    Collections.singletonList(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, i)),
+                    Collections.emptyList());
+
+            MatcherAssert.assertThat(recipe, notNullValue());
+        }
     }
 }
