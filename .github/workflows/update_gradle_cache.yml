@@ -2,6 +2,7 @@
 name: Update Gradle Cache
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
