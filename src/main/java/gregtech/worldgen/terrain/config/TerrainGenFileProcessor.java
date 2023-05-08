@@ -3,26 +3,21 @@ package gregtech.worldgen.terrain.config;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.util.BlockStateHashStrategy;
-import gregtech.api.util.ConfigUtil;
 import gregtech.api.util.FileUtility;
 import gregtech.worldgen.WorldgenModule;
 import gregtech.worldgen.terrain.BlockMapper;
 import gregtech.worldgen.terrain.IBlockMapper;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.AbstractObject2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -42,17 +37,21 @@ public final class TerrainGenFileProcessor {
 
     // replacement_entries.json content constants
     private static final String REPLACEMENT_ENTRIES = "replacement_entries";
-    private static final String TARGET = "target";
-    private static final String REPLACEMENTS = "replacements";
 
+    /**
+     * The path to the terrain folder
+     */
     private final Path terrainFolderPath;
     /**
-     * Map containing file names without extensions mapped to a list of entries for a BlockMapper
+     * Map containing file names without extensions mapped to a Parsed Mapper Entry
      */
-    private final Map<String, Map.Entry<IBlockState, List<IBlockState>>> fileToMapperEntry = new Object2ObjectOpenHashMap<>();
+    private final Map<String, ParsedBlockMapping> fileToParsedMapping = new Object2ObjectOpenHashMap<>();
+    /**
+     * Map containing the block mappers for each dimension
+     */
     private final Int2ObjectMap<IBlockMapper> dimensionToBlockMapper = new Int2ObjectOpenHashMap<>();
     /**
-     * The json in the replacement_entries file
+     * The json of the replacement_entries file
      */
     private JsonObject replacementEntriesJson;
     /**
@@ -62,59 +61,6 @@ public final class TerrainGenFileProcessor {
 
     public TerrainGenFileProcessor(@Nonnull Path terrainFolderPath) {
         this.terrainFolderPath = terrainFolderPath;
-    }
-
-    /**
-     * Parses an entry for a BlockMapper from json
-     *
-     * @param json     the json to parse from
-     * @param filePath the path to the json file, for logging
-     * @return the entry
-     */
-    @Nullable
-    private static Map.Entry<IBlockState, List<IBlockState>> parseMapperEntryFromJson(@Nonnull JsonObject json, @Nonnull String filePath) {
-        JsonElement element = json.get(TARGET);
-        String blockName = element.getAsString();
-        IBlockState target = ConfigUtil.getBlockStateFromName(blockName);
-        if (target == null) {
-            WorldgenModule.logger.error("Unable to parse target BlockState from name {}. Skipping file {}", blockName, filePath);
-            return null;
-        }
-
-        element = json.get(REPLACEMENTS);
-        if (element.isJsonArray()) { // array of replacements
-            List<IBlockState> list = new ArrayList<>();
-            for (JsonElement jsonElement : element.getAsJsonArray()) {
-                IBlockState blockState = parseReplacementBlockStateFromName(jsonElement.getAsString(), target, filePath);
-                if (blockState != null) list.add(blockState);
-            }
-
-            return new AbstractObject2ObjectMap.BasicEntry<>(target, list);
-        } else { // single replacement entry
-            IBlockState blockState = parseReplacementBlockStateFromName(element.getAsString(), target, filePath);
-            if (blockState != null) {
-                return new AbstractObject2ObjectMap.BasicEntry<>(target, Collections.singletonList(blockState));
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Handles logging for a parsed BlockState
-     *
-     * @param name     the name of the BlockState to parse
-     * @param target   the target BlockState to replace, used for logging
-     * @param filePath the path to the file, used for logging
-     * @return the parsed BlockState
-     */
-    @Nullable
-    private static IBlockState parseReplacementBlockStateFromName(@Nonnull String name, @Nonnull IBlockState target,
-                                                                  @Nonnull String filePath) {
-        IBlockState blockState = ConfigUtil.getBlockStateFromName(name);
-        if (blockState == null) {
-            WorldgenModule.logger.error("Unable to parse replacement BlockState from name {} in file {}. Skipping entry...", name, filePath);
-        }
-        return blockState;
     }
 
     /**
@@ -159,12 +105,11 @@ public final class TerrainGenFileProcessor {
                 continue;
             }
 
-            // store each mapper entry by its file name without the extension
-            JsonObject json = FileUtility.tryExtractFromFile(path);
-            if (json == null) continue;
-            Map.Entry<IBlockState, List<IBlockState>> parsed = parseMapperEntryFromJson(json, path.toString());
+            JsonBlockMapping jsonBlockMapper = FileUtility.tryExtractFromFile(path, JsonBlockMapping.class);
+            if (jsonBlockMapper == null) continue;
+            ParsedBlockMapping parsed = jsonBlockMapper.toParsed(path.toString());
             if (parsed == null) continue;
-            fileToMapperEntry.put(DOT_PATTERN.split(fileName)[0], parsed);
+            fileToParsedMapping.put(DOT_PATTERN.split(fileName)[0], parsed);
         }
 
         if (replacementEntriesJson == null) {
@@ -209,11 +154,16 @@ public final class TerrainGenFileProcessor {
      * @param fileName the file name containing the mapper
      */
     private void addMapperEntryToMap(@Nonnull Map<IBlockState, List<IBlockState>> map, @Nonnull String fileName) {
-        Map.Entry<IBlockState, List<IBlockState>> mapperEntry = fileToMapperEntry.get(fileName);
+        ParsedBlockMapping mapperEntry = fileToParsedMapping.get(fileName);
         if (mapperEntry == null) {
-            WorldgenModule.logger.error("Unable to find Block Mapper for file name {} in entries file. Skipping...", fileName);
+            WorldgenModule.logger.error("Unable to find Block Mapping for file name {} in entries file. Skipping...", fileName);
             return;
         }
-        map.put(mapperEntry.getKey(), mapperEntry.getValue());
+
+        // merge mappers mapping the same block together
+        map.merge(mapperEntry.target, mapperEntry.replacements, (key, value) -> {
+                    value.addAll(mapperEntry.replacements);
+                    return value;
+        });
     }
 }

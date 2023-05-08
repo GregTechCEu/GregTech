@@ -46,7 +46,7 @@ public class FileUtility {
      */
     @Nullable
     public static JsonObject tryExtractFromFile(@Nonnull Path filePath) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath.toFile()))) {
+        try (BufferedReader reader = Files.newBufferedReader(filePath)) {
             return jsonParser.parse(reader).getAsJsonObject();
         } catch (IOException exception) {
             GTLog.logger.error("Failed to read file on path {}", filePath, exception);
@@ -56,6 +56,20 @@ public class FileUtility {
             GTLog.logger.error("Failed to extract json from file on path {}", filePath, exception);
         }
 
+        return null;
+    }
+
+    @Nullable
+    public static <T> T tryExtractFromFile(@Nonnull Path filePath, Class<T> clazz) {
+        try {
+            return gson.fromJson(Files.newBufferedReader(filePath), clazz);
+        } catch (IOException exception) {
+            GTLog.logger.error("Failed to read file on path {}", filePath, exception);
+        } catch (JsonParseException exception) {
+            GTLog.logger.error("Failed to extract json from file", exception);
+        } catch (Exception exception) {
+            GTLog.logger.error("Failed to extract json from file on path {}", filePath, exception);
+        }
         return null;
     }
 
