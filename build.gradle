@@ -17,7 +17,6 @@ plugins {
 }
 
 version = project.mod_version
-var dep_string = "required-after:gregtech@[" + version + ",);"
 group = project.maven_group
 archivesBaseName = project.archives_base_name
 
@@ -55,7 +54,7 @@ minecraft {
     useDependencyAccessTransformers = true
 
     injectedTags.put('VERSION', project.version)
-    injectedTags.put("DEP_VERSION_STRING", dep_string)
+    injectedTags.put("DEP_VERSION_STRING", "required-after:gregtech@[" + project.version + ",);")
 }
 
 // Generate the InternalTags class with the version number as a field
