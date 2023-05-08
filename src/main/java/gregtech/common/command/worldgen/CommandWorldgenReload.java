@@ -1,7 +1,9 @@
 package gregtech.common.command.worldgen;
 
+import com.google.common.base.Stopwatch;
 import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.WorldGenRegistry;
+import gregtech.worldgen.terrain.GTTerrainGenManager;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -11,6 +13,7 @@ import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class CommandWorldgenReload extends CommandBase {
 
@@ -28,6 +31,7 @@ public class CommandWorldgenReload extends CommandBase {
 
     @Override
     public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             WorldGenRegistry.INSTANCE.reinitializeRegisteredVeins();
             sender.sendMessage(new TextComponentTranslation("gregtech.command.worldgen.reload.success")
@@ -37,5 +41,10 @@ public class CommandWorldgenReload extends CommandBase {
             sender.sendMessage(new TextComponentTranslation("gregtech.command.worldgen.reload.failed")
                     .setStyle(new Style().setColor(TextFormatting.RED)));
         }
+
+        GTTerrainGenManager.terminate();
+        GTTerrainGenManager.startup();
+        sender.sendMessage(new TextComponentTranslation("gregtech.command.worldgen.reload.time",
+                stopwatch.elapsed(TimeUnit.MILLISECONDS)));
     }
 }

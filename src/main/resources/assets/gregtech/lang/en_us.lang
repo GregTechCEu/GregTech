@@ -5079,6 +5079,7 @@ gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=Worldgen successfully reloaded from config.
+gregtech.command.worldgen.reload.time=Reload time: %sms
 gregtech.command.worldgen.reload.failed=Worldgen reload failed. Check console for errors.
 gregtech.command.hand.groovy=Consider using §6/gs hand
 gregtech.command.hand.usage=Usage: /gregtech hand

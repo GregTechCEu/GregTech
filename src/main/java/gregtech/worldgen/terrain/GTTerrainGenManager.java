@@ -28,18 +28,19 @@ public final class GTTerrainGenManager {
     private GTTerrainGenManager() {}
 
     /**
-     * Start the terrain manager. Call when the game is loading.
+     * Start the terrain manager. Call when the game is loading or when reloading world generation data.
      */
     public static void startup() {
         reloadFromConfig();
     }
 
     /**
-     * Terminate the terrain manager. Call when the server is stopped.
+     * Terminate the terrain manager. Call when the server is stopped or when reloading world generation data.
      */
     public static void terminate() {
         // reset noise. It will be re-created when a new world is joined, with the proper seed
         noise = null;
+        workers.clear();
     }
 
     @SubscribeEvent
