@@ -575,7 +575,8 @@ public class FirstDegreeMaterials {
         StainlessSteel = new Material.Builder(323, "stainless_steel")
                 .ingot(3).fluid()
                 .color(0xC8C8DC).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_LONG_ROD, GENERATE_FOIL, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_LONG_ROD,
+                        GENERATE_FOIL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Iron, 6, Chrome, 1, Manganese, 1, Nickel, 1)
                 .toolStats(ToolProperty.Builder.of(7.0F, 5.0F, 1024, 3)
                         .enchantability(14).build())
@@ -589,7 +590,8 @@ public class FirstDegreeMaterials {
                 .ingot(3).fluid()
                 .color(0x808080).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_SPRING,
-                        GENERATE_SPRING_SMALL, GENERATE_FRAME, DISABLE_DECOMPOSITION, GENERATE_FINE_WIRE, GENERATE_GEAR)
+                        GENERATE_SPRING_SMALL, GENERATE_FRAME, DISABLE_DECOMPOSITION, GENERATE_FINE_WIRE, GENERATE_GEAR,
+                        GENERATE_DOUBLE_PLATE)
                 .components(Iron, 1)
                 .toolStats(ToolProperty.Builder.of(5.0F, 3.0F, 512, 3)
                         .enchantability(14).build())
@@ -679,7 +681,8 @@ public class FirstDegreeMaterials {
         WroughtIron = new Material.Builder(335, "wrought_iron")
                 .ingot().fluid()
                 .color(0xC8B4B4).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE)
+                .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD,
+                        GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE, GENERATE_DOUBLE_PLATE)
                 .components(Iron, 1)
                 .toolStats(ToolProperty.Builder.of(2.0F, 2.0F, 384, 2)
                         .attackSpeed(-0.2F).enchantability(5).build())
@@ -758,7 +761,8 @@ public class FirstDegreeMaterials {
         Osmiridium = new Material.Builder(344, "osmiridium")
                 .ingot(3).fluid()
                 .color(0x6464FF).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_ROTOR, GENERATE_ROUND, GENERATE_FINE_WIRE, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_ROTOR, GENERATE_ROUND,
+                        GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Iridium, 3, Osmium, 1)
                 .rotorStats(9.0f, 3.0f, 3152)
                 .itemPipeProperties(64, 32)
@@ -1068,7 +1072,7 @@ public class FirstDegreeMaterials {
         TungstenCarbide = new Material.Builder(396, "tungsten_carbide")
                 .ingot(4).fluid()
                 .color(0x330066).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR, DECOMPOSITION_BY_CENTRIFUGING, GENERATE_DOUBLE_PLATE)
                 .components(Tungsten, 1, Carbon, 1)
                 .toolStats(ToolProperty.Builder.of(60.0F, 2.0F, 1024, 4)
                         .enchantability(21).build())

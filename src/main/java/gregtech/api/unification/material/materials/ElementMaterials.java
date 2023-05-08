@@ -23,7 +23,8 @@ public class ElementMaterials {
         Aluminium = new Material.Builder(2, "aluminium")
                 .ingot().fluid().ore()
                 .color(0x80C8F0)
-                .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE)
+                .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME, GENERATE_SPRING,
+                        GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Al)
                 .toolStats(ToolProperty.Builder.of(6.0F, 7.5F, 768, 2)
                         .enchantability(14).build())
@@ -83,7 +84,7 @@ public class ElementMaterials {
         Beryllium = new Material.Builder(10, "beryllium")
                 .ingot().fluid().ore()
                 .color(0x64B464).iconSet(METALLIC)
-                .flags(STD_METAL)
+                .flags(STD_METAL, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Be)
                 .fluidTemp(1560)
                 .build();
@@ -197,7 +198,7 @@ public class ElementMaterials {
         Darmstadtium = new Material.Builder(27, "darmstadtium")
                 .ingot().fluid()
                 .color(0x578062)
-                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR)
+                .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR)
                 .element(Elements.Ds)
                 .build();
 
@@ -331,7 +332,7 @@ public class ElementMaterials {
         Iridium = new Material.Builder(50, "iridium")
                 .ingot(3).fluid()
                 .color(0xA1E4E4).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .element(Elements.Ir)
                 .rotorStats(7.0f, 3.0f, 2560)
                 .fluidPipeProperties(3398, 250, true, false, true, false)
@@ -559,7 +560,7 @@ public class ElementMaterials {
         Plutonium241 = new Material.Builder(82, "plutonium_241")
                 .ingot(3).fluid()
                 .color(0xFA4646).iconSet(SHINY)
-                .flags(EXT_METAL)
+                .flags(EXT_METAL, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Pu241)
                 .fluidTemp(913)
                 .build();
@@ -668,7 +669,7 @@ public class ElementMaterials {
         Silver = new Material.Builder(100, "silver")
                 .ingot().fluid().ore()
                 .color(0xDCDCFF).iconSet(SHINY)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING)
+                .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING)
                 .element(Elements.Ag)
                 .cableProperties(GTValues.V[3], 1, 1)
                 .fluidTemp(1235)
@@ -751,7 +752,7 @@ public class ElementMaterials {
         Titanium = new Material.Builder(113, "titanium") // todo Ore? Look at EBF recipe here if we do Ti ores
                 .ingot(3).fluid()
                 .color(0xDCA0F0).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_FRAME)
+                .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_FRAME)
                 .element(Elements.Ti)
                 .toolStats(ToolProperty.Builder.of(8.0F, 6.0F, 1536, 3)
                         .enchantability(14).build())
@@ -854,7 +855,7 @@ public class ElementMaterials {
         Naquadria = new Material.Builder(126, "naquadria")
                 .ingot(3).fluid()
                 .color(0x1E1E1E, false).iconSet(SHINY)
-                .flags(EXT_METAL, GENERATE_FOIL, GENERATE_GEAR, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW)
+                .flags(EXT_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FOIL, GENERATE_GEAR, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW)
                 .element(Elements.Nq2)
                 .blastTemp(9000, GasTier.HIGH, VA[ZPM], 1200)
                 .build();
@@ -862,7 +863,7 @@ public class ElementMaterials {
         Neutronium = new Material.Builder(127, "neutronium")
                 .ingot(6).fluid()
                 .color(0xFAFAFA)
-                .flags(EXT_METAL, GENERATE_BOLT_SCREW, GENERATE_FRAME, GENERATE_GEAR, GENERATE_LONG_ROD)
+                .flags(EXT_METAL, GENERATE_BOLT_SCREW, GENERATE_FRAME, GENERATE_GEAR, GENERATE_LONG_ROD, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Nt)
                 .toolStats(ToolProperty.Builder.of(180.0F, 100.0F, 65535, 6)
                         .attackSpeed(0.5F).enchantability(33).magnetic().unbreakable().build())
