@@ -65,7 +65,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.text.WordUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -729,10 +728,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         tooltip.add("");
 
         // valid tools
-        tooltip.add(I18n.format("item.gt.tool.usable_as", stack.getItem().getToolClasses(stack).stream()
-                .map(GTUtility::convertUnderscoreToSpace)
-                .map(WordUtils::capitalize)
-                .collect(Collectors.joining(", "))));
+        tooltip.add(I18n.format("item.gt.tool.usable_as",
+                stack.getItem().getToolClasses(stack).stream()
+                        .map(s -> I18n.format("gt.tool.class." + s))
+                        .collect(Collectors.joining(", "))
+        ));
 
         // repair info
         if (TooltipHelper.isShiftDown()) {
