@@ -13,6 +13,8 @@ public class OverclockingLogic {
     public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = ConfigHolder.machines.overclockDivisor;
     public static final double PERFECT_OVERCLOCK_DURATION_DIVISOR = 4.0;
 
+    public static final int COIL_EUT_DISCOUNT_TEMPERATURE = 900;
+
     /**
      * applies standard logic for overclocking, where each overclock modifies energy and duration
      *
@@ -51,13 +53,32 @@ public class OverclockingLogic {
         return new int[]{(int) resultVoltage, (int) resultDuration};
     }
 
+    /**
+     * @param providedTemp the temperate provided by the machine
+     * @param requiredTemp the required temperature of the recipe
+     * @return the amount of EU/t discounts to apply
+     */
+    public static int calculateAmountCoilEUtDiscount(int providedTemp, int requiredTemp) {
+        return Math.max(0, (providedTemp - requiredTemp) / COIL_EUT_DISCOUNT_TEMPERATURE);
+    }
+
+    /**
+     * @param recipeEUt the EU/t of the recipe
+     * @param amountEUtDiscount the amount of discounts to apply
+     * @return the discounted EU/t
+     */
+    public static int applyCoilEUtDiscount(int recipeEUt, int amountEUtDiscount) {
+        if (amountEUtDiscount < 1) return recipeEUt;
+        return (int) (recipeEUt * Math.min(1, Math.pow(0.95, amountEUtDiscount)));
+    }
+
     @Nonnull
     public static int[] heatingCoilOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, int maxOverclocks, int currentTemp, int recipeRequiredTemp) {
-        int amountEUDiscount = Math.max(0, (currentTemp - recipeRequiredTemp) / 900);
-        int amountPerfectOC = amountEUDiscount / 2;
+        int amountEUtDiscount = calculateAmountCoilEUtDiscount(currentTemp, recipeRequiredTemp);
+        int amountPerfectOC = amountEUtDiscount / 2;
 
         // apply a multiplicative 95% energy multiplier for every 900k over recipe temperature
-        recipeEUt *= Math.min(1, Math.pow(0.95, amountEUDiscount));
+        recipeEUt = applyCoilEUtDiscount(recipeEUt, amountEUtDiscount);
 
         // perfect overclock for every 1800k over recipe temperature
         if (amountPerfectOC > 0) {

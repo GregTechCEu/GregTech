@@ -196,11 +196,17 @@ public class MaterialExpansion {
     @ZenMethod
     @net.minecraftforge.fml.common.Optional.Method(modid = GTValues.MODID_CT)
     public static void addToolEnchantment(Material m, IEnchantment enchantment) {
+        addScaledToolEnchantment(m, enchantment, 0);
+    }
+
+    @ZenMethod
+    @net.minecraftforge.fml.common.Optional.Method(modid = GTValues.MODID_CT)
+    public static void addScaledToolEnchantment(Material m, IEnchantment enchantment, double levelGrowth) {
         if (checkFrozen("add tool enchantment")) return;
         ToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             Enchantment enchantmentType = (Enchantment) enchantment.getDefinition().getInternal();
-            prop.addEnchantmentForTools(enchantmentType, enchantment.getLevel());
+            prop.addEnchantmentForTools(enchantmentType, enchantment.getLevel(), levelGrowth);
         } else logError(m, "change tool enchantments", "Tool");
     }
 

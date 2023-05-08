@@ -1,5 +1,6 @@
 package gregtech.common.blocks.wood;
 
+import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -22,6 +23,7 @@ public class BlockWoodenDoor extends BlockDoor {
         setHardness(3);
         setSoundType(SoundType.WOOD);
         disableStats();
+        setHarvestLevel(ToolClasses.AXE, 0);
     }
 
     @Override

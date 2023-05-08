@@ -4,12 +4,13 @@ import gregtech.api.gui.resources.ShaderTexture;
 import gregtech.api.network.IClientExecutor;
 import gregtech.api.network.IPacket;
 import gregtech.client.shader.Shaders;
-import lombok.NoArgsConstructor;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.PacketBuffer;
 
-@NoArgsConstructor
 public class PacketReloadShaders implements IPacket, IClientExecutor {
+
+    @SuppressWarnings("unused")
+    public PacketReloadShaders() {}
 
     @Override
     public void encode(PacketBuffer buf) {

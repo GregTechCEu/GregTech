@@ -5,8 +5,8 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.client.utils.BloomEffectUtil;
-import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
+import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.event.*;
 @Mod(modid = GTValues.MODID,
         name = "GregTech",
         acceptedMinecraftVersions = "[1.12.2,1.13)",
-        version = GregTechVersion.VERSION,
+        version = GTInternalTags.VERSION,
         dependencies = "required:forge@[14.23.5.2847,);"
                 + "required-after:codechickenlib@[3.2.3,);"
                 + "after:forestry;"
