@@ -153,16 +153,16 @@ public class CoverEnderItemLink extends CoverEnderLinkBase<IItemHandlerModifiabl
         widgetGroup.addWidget(new CycleButtonWidget(92, 42, 75, 18,
                 this::isIoEnabled, this::setIoEnabled, "cover.ender_item_link.iomode.disabled", "cover.ender_item_link.iomode.enabled"));
         this.itemFilter.initUI(65, widgetGroup::addWidget);
-
+/*
         WidgetGroup containerGroup = new WidgetGroup(widgetGroup.getPosition().add(new Position(18 + 5, 0)));
         for (int i = 0; i < ROW * COL; i++) {
-            containerGroup.addWidget(new SlotWidget(this.linkedShim, i, 154 + (i % COL) * 18, 10 + Math.floorDiv(i, COL) * 18, false, false)
+            containerGroup.addWidget(new SlotWidget(this.linkedShim, i, 154 + (i % COL) * 18, 10 + Math.floorDiv(i, COL) * 18, true, true)
                     .setBackgroundTexture(GuiTextures.SLOT_DARKENED));
-        }
+        }*/
 
         return ModularUI.builder(GuiTextures.BACKGROUND, 100 + (16 * 9), 221)
                 .widget(widgetGroup)
-                .widget(containerGroup)
+                // .widget(containerGroup)
                 .bindPlayerInventory(player.inventory, 139)
                 .build(this, player);
     }
