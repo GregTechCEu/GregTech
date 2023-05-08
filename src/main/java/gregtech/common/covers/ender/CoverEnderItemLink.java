@@ -160,10 +160,10 @@ public class CoverEnderItemLink extends CoverEnderLinkBase<IItemHandlerModifiabl
                     .setBackgroundTexture(GuiTextures.SLOT_DARKENED));
         }*/
 
-        return ModularUI.builder(GuiTextures.BACKGROUND, 100 + (16 * 9), 221)
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 221 + 24)
                 .widget(widgetGroup)
                 // .widget(containerGroup)
-                .bindPlayerInventory(player.inventory, 139)
+                .bindPlayerInventory(player.inventory, 139 + 24)
                 .build(this, player);
     }
 
