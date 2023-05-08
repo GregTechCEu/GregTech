@@ -308,6 +308,7 @@ if (modrinth_api_key.isPresent() || deployment_debug) {
 
         versionNumber = "$version".split('-')[0] // strip out the EXTRA field, if present
         gameVersions = ["$mc_version"]
+        loaders = ["forge"]
 
         def main_artifact = "${archivesBaseName}-${version}.jar"
         uploadFile = file("build/libs/${main_artifact}")
