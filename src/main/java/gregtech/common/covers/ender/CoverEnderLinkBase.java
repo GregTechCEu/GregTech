@@ -70,7 +70,7 @@ public abstract class CoverEnderLinkBase<T> extends CoverBehavior implements Cov
         return identifier + Integer.toHexString(this.color).toUpperCase();
     }
     protected UUID getUUID() {
-        return isPrivate ? playerUUID : null;
+        return this.isPrivate() ? this.playerUUID : null;
     }
 
     protected void updateColor(String str) {
