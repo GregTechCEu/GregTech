@@ -108,7 +108,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
         if (ModHandler.isMaterialWood(material)) {
             return net.minecraft.block.material.Material.WOOD;
         }
-        return net.minecraft.block.material.Material.IRON;
+        return super.getMaterial(state);
     }
 
     @Override
