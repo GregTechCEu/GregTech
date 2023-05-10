@@ -123,6 +123,7 @@ public class CommonProxy {
         registry.register(CLEANROOM_CASING);
         registry.register(COMPUTER_CASING);
         registry.register(BATTERY_BLOCK);
+        registry.register(FISSION_CASING);
         registry.register(FOAM);
         registry.register(REINFORCED_FOAM);
         registry.register(PETRIFIED_FOAM);
@@ -263,6 +264,7 @@ public class CommonProxy {
             registry.register(createItemBlock(block, LampItemBlock::new));
         }
         registry.register(createItemBlock(ASPHALT, VariantItemBlock::new));
+        registry.register(createItemBlock(FISSION_CASING, VariantItemBlock::new));
         for (StoneVariantBlock block : STONE_BLOCKS.values()) {
             registry.register(createItemBlock(block, VariantItemBlock::new));
         }

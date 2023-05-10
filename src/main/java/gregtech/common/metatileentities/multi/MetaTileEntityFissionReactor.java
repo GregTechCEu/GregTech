@@ -26,7 +26,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase {
 
     @Override
     protected void updateFormedValid() {
-
     }
 
     @Nonnull
