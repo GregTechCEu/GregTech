@@ -109,32 +109,14 @@ public class PartsRecipeHandler {
                     OreDictUnifier.get(foilPrefix, material, 2),
                     "hP ", 'P', new UnificationEntry(plate, material));
 
-        RecipeMaps.BENDER_RECIPES.recipeBuilder()
-                .input(plate, material)
-                .output(foilPrefix, material, 4)
-                .duration((int) material.getMass())
-                .EUt(24)
-                .circuitMeta(1)
-                .buildAndRegister();
-
-        if (material.hasFlag(NO_SMASHING)) {
-            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(ingot, material)
-                    .notConsumable(MetaItems.SHAPE_EXTRUDER_FOIL)
-                    .output(foilPrefix, material, 4)
-                    .duration((int) material.getMass())
-                    .EUt(24)
-                    .buildAndRegister();
-
-            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(dust, material)
-                    .notConsumable(MetaItems.SHAPE_EXTRUDER_FOIL)
-                    .output(foilPrefix, material, 4)
-                    .duration((int) material.getMass())
-                    .EUt(24)
-                    .buildAndRegister();
-        }
-    }
+        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+							.input(plate, material)
+							.notConsumable(MetaItems.SHAPE_EXTRUDER_FOIL)
+							.output(foilPrefix, material, 4)
+							.duration((int) material.getMass())
+							.EUt(24)
+							.buildAndRegister();
+	}
 
     public static void processFineWire(OrePrefix fineWirePrefix, Material material, IngotProperty property) {
         if (!OreDictUnifier.get(foil, material).isEmpty())

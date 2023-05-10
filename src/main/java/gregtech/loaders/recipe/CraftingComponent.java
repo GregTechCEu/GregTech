@@ -166,7 +166,7 @@ public class CraftingComponent {
                 {2, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Copper)},
                 {3, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Gold)},
                 {4, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Aluminium)},
-                {5, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Tungsten)},
+                {5, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Platinum)},
                 {6, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.NiobiumTitanium)},
                 {7, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.VanadiumGallium)},
                 {8, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.YttriumBariumCuprate)},
@@ -180,7 +180,7 @@ public class CraftingComponent {
                 {2, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Copper)},
                 {3, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Gold)},
                 {4, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Aluminium)},
-                {5, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Tungsten)},
+                {5, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Platinum)},
                 {6, new UnificationEntry(OrePrefix.wireGtOctal, Materials.NiobiumTitanium)},
                 {7, new UnificationEntry(OrePrefix.wireGtOctal, Materials.VanadiumGallium)},
                 {8, new UnificationEntry(OrePrefix.wireGtOctal, Materials.YttriumBariumCuprate)},
@@ -194,7 +194,7 @@ public class CraftingComponent {
                 {2, new UnificationEntry(OrePrefix.wireGtHex, Materials.Copper)},
                 {3, new UnificationEntry(OrePrefix.wireGtHex, Materials.Gold)},
                 {4, new UnificationEntry(OrePrefix.wireGtHex, Materials.Aluminium)},
-                {5, new UnificationEntry(OrePrefix.wireGtHex, Materials.Tungsten)},
+                {5, new UnificationEntry(OrePrefix.wireGtHex, Materials.Platinum)},
                 {6, new UnificationEntry(OrePrefix.wireGtHex, Materials.NiobiumTitanium)},
                 {7, new UnificationEntry(OrePrefix.wireGtHex, Materials.VanadiumGallium)},
                 {8, new UnificationEntry(OrePrefix.wireGtHex, Materials.YttriumBariumCuprate)},
@@ -203,7 +203,7 @@ public class CraftingComponent {
 
         CABLE = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.cableGtSingle, Materials.RedAlloy)},
+                {0, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Lead)},
                 {1, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin)},
                 {2, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper)},
                 {3, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold)},
@@ -218,7 +218,7 @@ public class CraftingComponent {
 
         CABLE_QUAD = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.RedAlloy)},
+                {0, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Lead)},
                 {1, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Tin)},
                 {2, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Copper)},
                 {3, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Gold)},
@@ -233,7 +233,7 @@ public class CraftingComponent {
 
         CABLE_OCT = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.cableGtOctal, Materials.RedAlloy)},
+                {0, new UnificationEntry(OrePrefix.cableGtOctal, Materials.Lead)},
                 {1, new UnificationEntry(OrePrefix.cableGtOctal, Materials.Tin)},
                 {2, new UnificationEntry(OrePrefix.cableGtOctal, Materials.Copper)},
                 {3, new UnificationEntry(OrePrefix.cableGtOctal, Materials.Gold)},
@@ -248,7 +248,7 @@ public class CraftingComponent {
 
         CABLE_HEX = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.cableGtHex, Materials.RedAlloy)},
+                {0, new UnificationEntry(OrePrefix.cableGtHex, Materials.Lead)},
                 {1, new UnificationEntry(OrePrefix.cableGtHex, Materials.Tin)},
                 {2, new UnificationEntry(OrePrefix.cableGtHex, Materials.Copper)},
                 {3, new UnificationEntry(OrePrefix.cableGtHex, Materials.Gold)},
@@ -781,7 +781,7 @@ public class CraftingComponent {
                 {2, new UnificationEntry(OrePrefix.spring, Materials.Copper)},
                 {3, new UnificationEntry(OrePrefix.spring, Materials.Gold)},
                 {4, new UnificationEntry(OrePrefix.spring, Materials.Aluminium)},
-                {5, new UnificationEntry(OrePrefix.spring, Materials.Tungsten)},
+                {5, new UnificationEntry(OrePrefix.spring, Materials.Platinum)},
                 {6, new UnificationEntry(OrePrefix.spring, Materials.NiobiumTitanium)},
                 {7, new UnificationEntry(OrePrefix.spring, Materials.VanadiumGallium)},
                 {8, new UnificationEntry(OrePrefix.spring, Materials.YttriumBariumCuprate)},

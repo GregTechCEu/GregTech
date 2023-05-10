@@ -313,10 +313,10 @@ public class MaterialRecipeHandler {
             if (!material.hasFlag(NO_SMASHING)) {
                 ItemStack plateStack = OreDictUnifier.get(OrePrefix.plate, material);
                 if (!plateStack.isEmpty()) {
-                    RecipeMaps.BENDER_RECIPES.recipeBuilder()
-                            .circuitMeta(1)
+                    RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder()
                             .input(ingotPrefix, material)
-                            .outputs(plateStack)
+                            .notConsumable(MetaItems.SHAPE_MOLD_PLATE.getStackForm())
+							.outputs(plateStack)
                             .EUt(24).duration((int) (material.getMass()))
                             .buildAndRegister();
 
