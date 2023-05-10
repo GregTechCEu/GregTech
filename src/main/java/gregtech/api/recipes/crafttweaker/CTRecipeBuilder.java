@@ -13,6 +13,8 @@ import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.GTRecipeItemInput;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.util.ItemStackHashStrategy;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import net.minecraft.item.ItemStack;
@@ -148,6 +150,10 @@ public class CTRecipeBuilder {
     @Nonnull
     private static GTRecipeInput tryConstructNBTInput(@Nonnull GTRecipeInput input, @Nullable NBTTagCompound compound) {
         if (compound == null) return input; // do not use nbt matching, if there is no tag to check
+        if (compound.isEmpty()) {
+            // special case which considers an empty nbt tag as allowing any or no NBT
+            return input.setNBTMatchingCondition(NBTMatcher.ANY, NBTCondition.ANY);
+        }
         return input.setNBTMatchingCondition(new CTNBTMatcher(compound), null);
     }
 

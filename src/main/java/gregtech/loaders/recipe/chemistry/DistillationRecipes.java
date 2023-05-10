@@ -1,11 +1,9 @@
 package gregtech.loaders.recipe.chemistry;
 
-import gregtech.api.unification.material.Materials;
 import gregtech.common.items.MetaItems;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.DISTILLATION_RECIPES;
-import static gregtech.api.recipes.RecipeMaps.DISTILLERY_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 
@@ -70,12 +68,6 @@ public class DistillationRecipes {
                 .fluidInputs(Water.getFluid(576))
                 .fluidOutputs(DistilledWater.getFluid(520))
                 .duration(160).EUt(VA[MV]).buildAndRegister();
-
-        DISTILLERY_RECIPES.recipeBuilder()
-                .fluidInputs(Water.getFluid(5))
-                .circuitMeta(5)
-                .fluidOutputs(Materials.DistilledWater.getFluid(5))
-                .duration(16).EUt(10).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(Acetone.getFluid(1000))

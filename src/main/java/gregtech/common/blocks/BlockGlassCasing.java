@@ -21,13 +21,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.CasingType> {
 
     public BlockGlassCasing() {
-        super(Material.IRON);
+        super(Material.GLASS);
         setTranslationKey("transparent_casing");
         setHardness(5.0F);
         setResistance(5.0F);
         setSoundType(SoundType.GLASS);
         setHarvestLevel(ToolClasses.PICKAXE, 1);
         setDefaultState(getState(CasingType.TEMPERED_GLASS));
+        this.useNeighborBrightness = true;
     }
 
     @Override
@@ -47,7 +48,6 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
     public boolean isOpaqueCube(IBlockState state) {
         return false;

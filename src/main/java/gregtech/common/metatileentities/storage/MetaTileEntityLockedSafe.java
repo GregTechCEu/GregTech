@@ -409,7 +409,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     @Override
-    public boolean canRenderMachineGrid() {
+    public boolean canRenderMachineGrid(@Nonnull ItemStack mainHandStack, @Nonnull ItemStack offHandStack) {
         return false;
     }
 

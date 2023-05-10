@@ -28,6 +28,7 @@ import gregtech.loaders.recipe.chemistry.AssemblerRecipeLoader;
 import gregtech.loaders.recipe.chemistry.ChemistryRecipes;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -50,8 +51,7 @@ import static gregtech.loaders.OreDictionaryLoader.OREDICT_FUEL_COKE;
 
 public class MachineRecipeLoader {
 
-    private MachineRecipeLoader() {
-    }
+    private MachineRecipeLoader() {}
 
     public static void init() {
         ChemistryRecipes.init();
@@ -403,6 +403,40 @@ public class MachineRecipeLoader {
                     .outputs(MetaItems.SPRAY_CAN_DYES[i].getStackForm())
                     .EUt(VA[ULV]).duration(200)
                     .buildAndRegister();
+
+            EnumDyeColor color = EnumDyeColor.byMetadata(i);
+            BlockLamp lamp = MetaBlocks.LAMPS.get(color);
+            for (int lampMeta = 0; lampMeta < lamp.getItemMetadataStates(); lampMeta++) {
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .input(plate, Glass, 6)
+                        .input(dust, Glowstone, 1)
+                        .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
+                        .outputs(new ItemStack(lamp, 6, lampMeta))
+                        .circuitMeta(lampMeta + 1).EUt(VA[ULV]).duration(40)
+                        .buildAndRegister();
+
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .input(lampGt, MarkerMaterials.Color.COLORS.get(color))
+                        .outputs(new ItemStack(lamp, 1, lampMeta))
+                        .circuitMeta(lampMeta + 1).EUt(VA[ULV]).duration(10)
+                        .buildAndRegister();
+            }
+            lamp = MetaBlocks.BORDERLESS_LAMPS.get(color);
+            for (int lampMeta = 0; lampMeta < lamp.getItemMetadataStates(); lampMeta++) {
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .input(plate, Glass, 6)
+                        .input(dust, Glowstone, 1)
+                        .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
+                        .outputs(new ItemStack(lamp, 6, lampMeta))
+                        .circuitMeta(lampMeta + 9).EUt(VA[ULV]).duration(40)
+                        .buildAndRegister();
+
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .input(lampGt, MarkerMaterials.Color.COLORS.get(color))
+                        .outputs(new ItemStack(lamp, 1, lampMeta))
+                        .circuitMeta(lampMeta + 9).EUt(VA[ULV]).duration(10)
+                        .buildAndRegister();
+            }
         }
 
         CANNER_RECIPES.recipeBuilder()

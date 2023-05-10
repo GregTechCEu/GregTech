@@ -151,6 +151,9 @@ public class CommonProxy {
         registry.register(TREATED_WOOD_DOOR);
         registry.register(BRITTLE_CHARCOAL);
 
+        for (BlockLamp block : LAMPS.values()) registry.register(block);
+        for (BlockLamp block : BORDERLESS_LAMPS.values()) registry.register(block);
+
         COMPRESSED.values().stream().distinct().forEach(registry::register);
         FRAMES.values().stream().distinct().forEach(registry::register);
         SURFACE_ROCK.values().stream().distinct().forEach(registry::register);
@@ -228,6 +231,12 @@ public class CommonProxy {
         registry.register(createItemBlock(FUSION_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN_1, VariantItemBlock::new));
+        for (BlockLamp block : LAMPS.values()) {
+            registry.register(createItemBlock(block, LampItemBlock::new));
+        }
+        for (BlockLamp block : BORDERLESS_LAMPS.values()) {
+            registry.register(createItemBlock(block, LampItemBlock::new));
+        }
         registry.register(createItemBlock(ASPHALT, VariantItemBlock::new));
         for (StoneVariantBlock block : STONE_BLOCKS.values()) {
             registry.register(createItemBlock(block, VariantItemBlock::new));

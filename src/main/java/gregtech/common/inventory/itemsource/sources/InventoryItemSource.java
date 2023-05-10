@@ -1,25 +1,21 @@
 package gregtech.common.inventory.itemsource.sources;
 
-import gregtech.api.recipes.KeySharedStack;
-import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.inventory.itemsource.ItemSource;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.EmptyHandler;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class InventoryItemSource extends ItemSource {
 
     protected final World world;
     protected final int priority;
     protected IItemHandler itemHandler = EmptyHandler.INSTANCE;
-    private Map<ItemStackKey, Integer> itemStackByAmountMap = new LinkedHashMap<>();
+    private Object2IntMap<ItemStack> itemStackByAmountMap = new Object2IntLinkedOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
 
     public InventoryItemSource(World world, int priority) {
         this.world = world;
@@ -47,10 +43,10 @@ public class InventoryItemSource extends ItemSource {
     /**
      * @return amount of items inserted into the inventory
      */
-    public int insertItem(ItemStackKey itemStackKey, int amount, boolean simulate, Object2IntMap<ItemSource> insertedMap) {
+    public int insertItem(ItemStack stack, int amount, boolean simulate, Object2IntMap<ItemSource> insertedMap) {
         int itemsInserted = 0;
         if (itemHandler == null) return itemsInserted;
-        ItemStack itemStack = itemStackKey.getItemStack();
+        ItemStack itemStack = stack.copy();
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             itemStack.setCount(amount - itemsInserted);
             ItemStack remainderStack = itemHandler.insertItem(i, itemStack, simulate);
@@ -68,13 +64,13 @@ public class InventoryItemSource extends ItemSource {
     /**
      * @return amount of items extracted from the inventory
      */
-    public int extractItem(ItemStackKey itemStackKey, int amount, boolean simulate, Object2IntMap<ItemSource> extractedMap) {
+    public int extractItem(ItemStack stack, int amount, boolean simulate, Object2IntMap<ItemSource> extractedMap) {
         int itemsExtracted = 0;
         if (itemHandler == null) return itemsExtracted;
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack stackInSlot = itemHandler.getStackInSlot(i);
             if (stackInSlot.isEmpty()) continue;
-            if (!itemStackKey.isItemStackEqual(stackInSlot)) continue;
+            if (!ItemStackHashStrategy.comparingAllButCount().equals(stack, stackInSlot)) continue;
             ItemStack extractedStack = itemHandler.extractItem(i, amount - itemsExtracted, simulate);
             if (!extractedStack.isEmpty()) {
                 itemsExtracted += extractedStack.getCount();
@@ -90,12 +86,12 @@ public class InventoryItemSource extends ItemSource {
     }
 
     @Override
-    public Map<ItemStackKey, Integer> getStoredItems() {
-        return Collections.unmodifiableMap(itemStackByAmountMap);
+    public Object2IntMap<ItemStack> getStoredItems() {
+        return Object2IntMaps.unmodifiable(itemStackByAmountMap);
     }
 
     private void recomputeItemStackCount() {
-        HashMap<ItemStackKey, Integer> amountMap = new LinkedHashMap<>();
+        Object2IntMap<ItemStack> amountMap = new Object2IntLinkedOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
         if (itemHandler == null) {
             this.itemStackByAmountMap = amountMap;
             return;
@@ -103,8 +99,7 @@ public class InventoryItemSource extends ItemSource {
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack itemStack = itemHandler.extractItem(i, Integer.MAX_VALUE, true);
             if (itemStack.isEmpty()) continue;
-            ItemStackKey stackKey = KeySharedStack.getRegisteredStack(itemStack);
-            amountMap.put(stackKey, amountMap.getOrDefault(stackKey, 0) + itemStack.getCount());
+            amountMap.put(itemStack, amountMap.getInt(itemStack) + itemStack.getCount());
         }
         this.itemStackByAmountMap = amountMap;
     }

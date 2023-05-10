@@ -127,6 +127,9 @@ public class GregtechDataCodes {
     // Quantum Chest
     public static final int UPDATE_ITEM_COUNT = 14;
 
+    // Detector Covers
+    public static final int UPDATE_INVERTED = 100;
+
     // NBT Keys
 
     // From MetaTileEntityHolder

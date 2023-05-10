@@ -229,7 +229,7 @@ public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
     private static void itemFilterText(@Nonnull IProbeInfo probeInfo, @Nullable ItemFilter filter) {
         String label = TextStyleClass.INFO + "{*gregtech.top.filter.label*} ";
         if (filter instanceof OreDictionaryItemFilter) {
-            String expression = ((OreDictionaryItemFilter) filter).getOreDictFilterExpression();
+            String expression = ((OreDictionaryItemFilter) filter).getExpression();
             if (!expression.isEmpty()) probeInfo.text(label + expression);
         } else if (filter instanceof SmartItemFilter) {
             probeInfo.text(label + IProbeInfo.STARTLOC + ((SmartItemFilter) filter).getFilteringMode().getName() + IProbeInfo.ENDLOC);

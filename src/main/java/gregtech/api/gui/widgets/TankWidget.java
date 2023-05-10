@@ -1,5 +1,6 @@
 package gregtech.api.gui.widgets;
 
+import gregtech.api.GTValues;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
@@ -16,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -171,6 +173,9 @@ public class TankWidget extends Widget implements IIngredientSlot {
                         tooltips.add(s);
                     }
                 }
+
+                // Add tooltip showing how many "ingot moles" (increments of 144) this fluid is if shift is held
+                addIngotMolFluidTooltip(lastFluidInTank, tooltips);
 
             } else {
                 tooltips.add(LocalizationUtils.format("gregtech.fluid.empty"));
@@ -346,5 +351,18 @@ public class TankWidget extends Widget implements IIngredientSlot {
             }
         }
         return false;
+    }
+
+    public static void addIngotMolFluidTooltip(FluidStack fluidStack, List<String> tooltip) {
+        // Add tooltip showing how many "ingot moles" (increments of 144) this fluid is if shift is held
+        if (TooltipHelper.isShiftDown() && fluidStack.amount > GTValues.L) {
+            int numIngots = fluidStack.amount / GTValues.L;
+            int extra = fluidStack.amount % GTValues.L;
+            String fluidAmount = String.format(" %,d L = %,d * %d L", fluidStack.amount, numIngots, GTValues.L);
+            if (extra != 0) {
+                fluidAmount += String.format(" + %d L", extra);
+            }
+            tooltip.add(TextFormatting.GRAY + LocalizationUtils.format("gregtech.gui.amount_raw") + fluidAmount);
+        }
     }
 }

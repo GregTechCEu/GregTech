@@ -15,6 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -55,11 +56,14 @@ public class TextFieldWidget2 extends Widget {
     private int cursorTime = 0;
     private boolean drawCursor = true;
 
+    @Nullable
+    private Boolean unicodeMode;
+
     public TextFieldWidget2(int x, int y, int width, int height, Supplier<String> supplier, Consumer<String> setter) {
         super(x, y, width, height);
         this.supplier = supplier;
         this.setter = setter;
-        this.text = supplier.get();
+        this.setText(supplier.get());
     }
 
     @Override
@@ -81,21 +85,29 @@ public class TextFieldWidget2 extends Widget {
     @Override
     public void detectAndSendChanges() {
         String t = supplier.get();
-        if (!initialised || (!focused && !text.equals(t))) {
-            text = t;
-            writeUpdateInfo(-2, buf -> buf.writeString(text));
+        if (!initialised || (!focused && !getText().equals(t))) {
+            setText(t);
+            writeUpdateInfo(-2, buf -> buf.writeString(t));
             initialised = true;
         }
     }
 
-    private int getTextX() {
+    protected int getTextX() {
         if (centered) {
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-            int w = getSize().width;
-            float textW = fontRenderer.getStringWidth(text) * scale;
+            boolean prevUnicode = fontRenderer.getUnicodeFlag();
+            if (this.unicodeMode != null) {
+                fontRenderer.setUnicodeFlag(this.unicodeMode);
+            }
+
+            float textW = fontRenderer.getStringWidth(getRenderText()) * scale;
             if (localisedPostFix != null && !localisedPostFix.isEmpty())
                 textW += 3 + fontRenderer.getStringWidth(localisedPostFix) * scale;
-            return (int) (w / 2f - textW / 2f + getPosition().x);
+            int x = (int) (getSize().width / 2f - textW / 2f + getPosition().x);
+            if (this.unicodeMode != null) {
+                fontRenderer.setUnicodeFlag(prevUnicode);
+            }
+            return x;
         }
         return getPosition().x + 1;
     }
@@ -106,14 +118,21 @@ public class TextFieldWidget2 extends Widget {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         int y = getPosition().y;
         int textX = getTextX();
+
+        boolean prevUnicode = fontRenderer.getUnicodeFlag();
+        if (this.unicodeMode != null) {
+            fontRenderer.setUnicodeFlag(this.unicodeMode);
+        }
+
         GlStateManager.disableBlend();
         GlStateManager.pushMatrix();
         GlStateManager.scale(scale, scale, 0);
         float scaleFactor = 1 / scale;
         y *= scaleFactor;
+        String text = getRenderText();
         if (cursorPos != cursorPos2) {
             // render marked text background
-            float startX = fontRenderer.getStringWidth(text.substring(0, Math.min(cursorPos, cursorPos2))) * scale + textX;
+            float startX = fontRenderer.getStringWidth(text.substring(0, toRenderTextIndex(Math.min(cursorPos, cursorPos2)))) * scale + textX;
             String marked = getSelectedText();
             float width = fontRenderer.getStringWidth(marked);
             drawSelectionBox(startX * scaleFactor, y, width);
@@ -129,13 +148,17 @@ public class TextFieldWidget2 extends Widget {
         }
         if (focused && drawCursor) {
             // render cursor
-            String sub = text.substring(0, cursorPos);
+            String sub = text.substring(0, toRenderTextIndex(cursorPos));
             float x = fontRenderer.getStringWidth(sub) * scale + textX;
             x *= scaleFactor;
             drawCursor(x, y);
         }
         GlStateManager.popMatrix();
         GlStateManager.enableBlend();
+
+        if (this.unicodeMode != null) {
+            fontRenderer.setUnicodeFlag(prevUnicode);
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -193,13 +216,12 @@ public class TextFieldWidget2 extends Widget {
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
-
             focused = true;
             if (onFocus != null) {
                 onFocus.accept(this);
             }
             if (clickTime < 5) {
-                cursorPos = text.length();
+                cursorPos = getText().length();
                 cursorPos2 = 0;
             } else {
                 cursorPos = getCursorPosFromMouse(mouseX);
@@ -225,19 +247,33 @@ public class TextFieldWidget2 extends Widget {
 
     private int getCursorPosFromMouse(int mouseX) {
         int base = mouseX - getTextX();
-        float x = 1;
         int i = 0;
-        while (x < base) {
-            if (i == text.length())
-                break;
-            x += (Minecraft.getMinecraft().fontRenderer.getCharWidth(text.charAt(i))) * scale;
-            i++;
+        String renderText = getRenderText();
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        boolean bold = false;
+        // Determine width of string, copied from FontRenderer#getStringWidth
+        for (float x = 0; i < renderText.length() && x < base; i++) {
+            char c = renderText.charAt(i);
+            int cw = fontRenderer.getCharWidth(c);
+            // char width of the formatting character (U+167) is -1, for some reason
+            if (cw < 0 && i < renderText.length() - 1) {
+                cw = 0;
+                char c2 = renderText.charAt(++i);
+                if (c2 != 'l' && c2 != 'L') {
+                    if (c2 == 'r' || c2 == 'R') {
+                        bold = false;
+                    }
+                } else {
+                    bold = true;
+                }
+            }
+            x += (bold && cw > 0 ? cw + 1 : cw) * scale;
         }
-        return i;
+        return toOriginalTextIndex(i);
     }
 
     public String getSelectedText() {
-        return text.substring(Math.min(cursorPos, cursorPos2), Math.max(cursorPos, cursorPos2));
+        return getText().substring(Math.min(cursorPos, cursorPos2), Math.max(cursorPos, cursorPos2));
     }
 
     @Override
@@ -252,7 +288,7 @@ public class TextFieldWidget2 extends Widget {
                 return true;
             }
             if (GuiScreen.isKeyComboCtrlA(keyCode)) {
-                cursorPos = text.length();
+                cursorPos = getText().length();
                 cursorPos2 = 0;
                 return true;
             }
@@ -261,7 +297,7 @@ public class TextFieldWidget2 extends Widget {
                 return true;
             } else if (GuiScreen.isKeyComboCtrlV(keyCode)) {
                 String clip = GuiScreen.getClipboardString();
-                if (text.length() + clip.length() > maxLength || !isAllowed(clip))
+                if (getText().length() + clip.length() > maxLength || !isAllowed(clip))
                     return true;
                 replaceMarkedText(clip);
                 return true;
@@ -270,81 +306,82 @@ public class TextFieldWidget2 extends Widget {
                 replaceMarkedText(null);
                 return true;
             }
-            if (keyCode == Keyboard.KEY_LEFT && cursorPos > 0) {
-                int amount = 1;
-                int pos = cursorPos;
-                if (isCtrlDown()) {
-                    for (int i = pos - 1; i >= 0; i--) {
-                        if (i == 0 || text.charAt(i) == ' ') {
-                            amount = pos - i;
-                            break;
+            if (keyCode == Keyboard.KEY_LEFT) {
+                if (cursorPos > 0) {
+                    int amount = 1;
+                    int pos = cursorPos;
+                    if (isCtrlDown()) {
+                        for (int i = pos - 1; i >= 0; i--) {
+                            if (i == 0 || getText().charAt(i) == ' ') {
+                                amount = pos - i;
+                                break;
+                            }
                         }
                     }
-                }
-                cursorPos -= amount;
-                if (cursorPos < 0)
-                    cursorPos = 0;
-                if (!isShiftDown()) {
-                    cursorPos2 = cursorPos;
-                }
-                return true;
-            }
-            if (keyCode == Keyboard.KEY_RIGHT && cursorPos < text.length()) {
-                int amount = 1;
-                int pos = cursorPos;
-                if (isCtrlDown()) {
-                    for (int i = pos + 1; i < text.length(); i++) {
-                        if (i == text.length() - 1 || text.charAt(i) == ' ') {
-                            amount = i - pos;
-                            break;
-                        }
+                    cursorPos -= amount;
+                    if (cursorPos < 0)
+                        cursorPos = 0;
+                    if (!isShiftDown()) {
+                        cursorPos2 = cursorPos;
                     }
                 }
-                cursorPos += amount;
-                if (cursorPos > text.length())
-                    cursorPos = text.length();
-                if (!isShiftDown()) {
-                    cursorPos2 = cursorPos;
+                return true;
+            }
+            if (keyCode == Keyboard.KEY_RIGHT) {
+                if (cursorPos < getText().length()) {
+                    int amount = 1;
+                    int pos = cursorPos;
+                    if (isCtrlDown()) {
+                        for (int i = pos + 1; i < getText().length(); i++) {
+                            if (i == getText().length() - 1 || getText().charAt(i) == ' ') {
+                                amount = i - pos;
+                                break;
+                            }
+                        }
+                    }
+                    cursorPos = Math.min(cursorPos + amount, getText().length());
+                    if (!isShiftDown()) {
+                        cursorPos2 = cursorPos;
+                    }
                 }
                 return true;
             }
-            if (keyCode == Keyboard.KEY_BACK && text.length() > 0) {
-                if (cursorPos != cursorPos2) {
-                    replaceMarkedText(null);
-                } else if (cursorPos > 0) {
-                    String t1 = text.substring(0, cursorPos - 1);
-                    String t2 = text.substring(cursorPos);
-                    text = t1 + t2;
-                    cursorPos--;
-                    cursorPos2 = cursorPos;
+            if (keyCode == Keyboard.KEY_BACK) {
+                if (getText().length() > 0) {
+                    if (cursorPos != cursorPos2) {
+                        replaceMarkedText(null);
+                    } else if (cursorPos > 0) {
+                        setText(getText().substring(0, cursorPos - 1) + getText().substring(cursorPos));
+                        cursorPos--;
+                        cursorPos2 = cursorPos;
+                    }
                 }
                 return true;
             }
-            if (keyCode == Keyboard.KEY_DELETE && text.length() > 0) {
-                if (cursorPos != cursorPos2) {
-                    replaceMarkedText(null);
-                } else if (cursorPos < text.length()) {
-                    String t1 = text.substring(0, cursorPos);
-                    String t2 = text.substring(cursorPos + 1);
-                    text = t1 + t2;
-                    cursorPos2 = cursorPos;
+            if (keyCode == Keyboard.KEY_DELETE) {
+                if (getText().length() > 0) {
+                    if (cursorPos != cursorPos2) {
+                        replaceMarkedText(null);
+                    } else if (cursorPos < getText().length()) {
+                        setText(getText().substring(0, cursorPos) + getText().substring(cursorPos + 1));
+                    }
                 }
+                return true;
             }
-            if (charTyped != Character.MIN_VALUE && text.length() < maxLength) {
+            if (charTyped != Character.MIN_VALUE && getText().length() < maxLength) {
                 int min = Math.min(cursorPos, cursorPos2);
                 int max = Math.max(cursorPos, cursorPos2);
-                String t1 = text.substring(0, min);
-                String t2 = text.substring(max);
-                t1 += charTyped;
-                if (isAllowed(t1 + t2)) {
-                    text = t1 + t2;
-                    cursorPos = t1.length();
+                String newText = getText().substring(0, min) + charTyped + getText().substring(max);
+                if (isAllowed(newText)) {
+                    setText(newText);
+                    cursorPos = min + 1;
                     cursorPos2 = cursorPos;
-                    return true;
                 }
             }
+            return true;
+        } else {
+            return false;
         }
-        return focused;
     }
 
     private boolean isAllowed(String t) {
@@ -354,17 +391,17 @@ public class TextFieldWidget2 extends Widget {
     private void replaceMarkedText(String replacement) {
         int min = Math.min(cursorPos, cursorPos2);
         int max = Math.max(cursorPos, cursorPos2);
-        String t1 = text.substring(0, min);
-        String t2 = text.substring(max);
+        String t1 = getText().substring(0, min);
+        String t2 = getText().substring(max);
         if (replacement != null) {
             if (t1.length() + t2.length() + replacement.length() > maxLength)
                 return;
         }
         if (replacement == null) {
-            text = t1 + t2;
+            setText(t1 + t2);
             cursorPos = min;
         } else {
-            text = t1 + replacement + t2;
+            setText(t1 + replacement + t2);
             cursorPos = t1.length() + replacement.length();
         }
         cursorPos2 = cursorPos;
@@ -374,36 +411,55 @@ public class TextFieldWidget2 extends Widget {
         return text;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    protected String getRenderText() {
+        return this.getText();
+    }
+
+    protected int toOriginalTextIndex(int renderTextIndex) {
+        return renderTextIndex;
+    }
+
+    protected int toRenderTextIndex(int originalTextIndex) {
+        return originalTextIndex;
+    }
+
+    public boolean isFocused() {
+        return focused;
+    }
+
     public void unFocus() {
         if (!focused) return;
         cursorPos2 = cursorPos;
-        text = validator.apply(text);
-        setter.accept(text);
+        String t = validator.apply(getText());
+        setText(t);
+        setter.accept(t);
         focused = false;
-        writeClientAction(-1, buf -> {
-            buf.writeString(text);
-        });
+        writeClientAction(-1, buf -> buf.writeString(t));
     }
 
     @Override
     public void handleClientAction(int id, PacketBuffer buffer) {
         if (id == -1) {
-            text = buffer.readString(maxLength);
-            setter.accept(text);
+            setText(buffer.readString(maxLength));
+            setter.accept(getText());
         }
     }
 
     @Override
     public void readUpdateInfo(int id, PacketBuffer buffer) {
         if (id == -2) {
-            text = buffer.readString(maxLength);
-            setter.accept(text);
+            setText(buffer.readString(maxLength));
+            setter.accept(getText());
             initialised = true;
-            if (cursorPos > text.length()) {
-                cursorPos = text.length();
+            if (cursorPos > getText().length()) {
+                cursorPos = getText().length();
             }
-            if (cursorPos2 > text.length()) {
-                cursorPos2 = text.length();
+            if (cursorPos2 > getText().length()) {
+                cursorPos2 = getText().length();
             }
         }
     }
@@ -445,10 +501,7 @@ public class TextFieldWidget2 extends Widget {
      */
     public TextFieldWidget2 setNumbersOnly(int min, int max) {
         if (this.regex == null) {
-            if (min < 0)
-                regex = WHOLE_NUMS;
-            else
-                regex = NATURAL_NUMS;
+            regex = min < 0 ? WHOLE_NUMS : NATURAL_NUMS;
         }
         setValidator(val -> {
             if (val.isEmpty()) {
@@ -469,11 +522,11 @@ public class TextFieldWidget2 extends Widget {
             }
             if (num < min) {
                 return String.valueOf(min);
-            }
-            if (num > max) {
+            } else if (num > max) {
                 return String.valueOf(max);
+            } else {
+                return val;
             }
-            return val;
         });
         return this;
     }
@@ -535,6 +588,15 @@ public class TextFieldWidget2 extends Widget {
      */
     public TextFieldWidget2 setOnFocus(Consumer<TextFieldWidget2> onFocus) {
         this.onFocus = onFocus;
+        return this;
+    }
+
+    /**
+     * @param unicodeMode If specified, the text will be rendered with unicode / non-unicode fonts on
+     *                    {@code true} / {@code false} respectively.
+     */
+    public TextFieldWidget2 setUnicodeMode(@Nullable Boolean unicodeMode) {
+        this.unicodeMode = unicodeMode;
         return this;
     }
 }

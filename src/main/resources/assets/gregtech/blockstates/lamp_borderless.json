@@ -1,0 +1,112 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "active": {
+      "true": {
+        "model": "gregtech:lamp_borderless"
+      },
+      "false": {
+        "model": "gregtech:lamp_borderless_off"
+      }
+    },
+    "color": {
+      "white": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/white_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/white_off_borderless"
+        }
+      },
+      "orange": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/orange_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/orange_off_borderless"
+        }
+      },
+      "magenta": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/magenta_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/magenta_off_borderless"
+        }
+      },
+      "light_blue": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/light_blue_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/light_blue_off_borderless"
+        }
+      },
+      "yellow": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/yellow_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/yellow_off_borderless"
+        }
+      },
+      "lime": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/lime_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/lime_off_borderless"
+        }
+      },
+      "pink": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/pink_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/pink_off_borderless"
+        }
+      },
+      "gray": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/gray_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/gray_off_borderless"
+        }
+      },
+      "silver": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/silver_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/silver_off_borderless"
+        }
+      },
+      "cyan": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/cyan_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/cyan_off_borderless"
+        }
+      },
+      "purple": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/purple_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/purple_off_borderless"
+        }
+      },
+      "blue": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/blue_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/blue_off_borderless"
+        }
+      },
+      "brown": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/brown_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/brown_off_borderless"
+        }
+      },
+      "green": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/green_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/green_off_borderless"
+        }
+      },
+      "red": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/red_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/red_off_borderless"
+        }
+      },
+      "black": {
+        "textures": {
+          "active": "gregtech:blocks/lamps/black_borderless_emissive",
+          "inactive": "gregtech:blocks/lamps/black_off_borderless"
+        }
+      }
+    }
+  }
+}
+

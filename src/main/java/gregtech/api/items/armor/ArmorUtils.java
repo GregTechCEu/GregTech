@@ -3,8 +3,10 @@ package gregtech.api.items.armor;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,8 +26,9 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ArmorUtils {
 
@@ -177,26 +180,26 @@ public class ArmorUtils {
      * @return Formated list
      */
     public static List<ItemStack> format(List<ItemStack> input) {
-        Map<ItemStackKey, Integer> items = new HashMap<>();
+        Object2IntMap<ItemStack> items = new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
         List<ItemStack> output = new ArrayList<>();
         for (ItemStack itemStack : input) {
-            ItemStackKey current = new ItemStackKey(itemStack);
-            if (items.containsKey(current)) {
-                int amount = items.get(current);
-                items.replace(current, ++amount);
+            if (items.containsKey(itemStack)) {
+                int amount = items.get(itemStack);
+                items.replace(itemStack, ++amount);
             } else {
-                items.put(current, 1);
+                items.put(itemStack, 1);
             }
         }
-        for (Entry<ItemStackKey, Integer> entry : items.entrySet()) {
-            ItemStack stack = entry.getKey().getItemStack();
-            stack.setCount(entry.getValue());
+        for (Object2IntMap.Entry<ItemStack> entry : items.object2IntEntrySet()) {
+            ItemStack stack = entry.getKey().copy();
+            stack.setCount(entry.getIntValue());
             output.add(stack);
         }
         return output;
     }
 
 
+    @Nonnull
     public static String format(long value) {
         return new DecimalFormat("###,###.##").format(value);
     }
@@ -214,7 +217,7 @@ public class ArmorUtils {
     public static class ModularHUD {
         private byte stringAmount = 0;
         private final List<String> stringList;
-        private final static Minecraft mc = Minecraft.getMinecraft();
+        private static final Minecraft mc = Minecraft.getMinecraft();
 
         public ModularHUD() {
             this.stringList = new ArrayList<>();

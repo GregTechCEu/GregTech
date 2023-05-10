@@ -6,8 +6,10 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.ore.StoneTypes;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.IBlockOre;
+import gregtech.api.worldgen.config.OreConfigUtils;
 import gregtech.client.model.OreBakedModel;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.properties.PropertyStoneType;
@@ -17,13 +19,14 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -32,6 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class BlockOre extends Block implements IBlockOre {
@@ -73,9 +77,31 @@ public class BlockOre extends Block implements IBlockOre {
         setDefaultState(stateContainer.getBaseState());
     }
 
+    @Nonnull
+    @Override
+    public Item getItemDropped(@Nonnull IBlockState state, @Nonnull Random rand, int fortune) {
+        StoneType stoneType = state.getValue(STONE_TYPE);
+        // if the stone type should be dropped as an item, or if it is within the first 16 block states
+        // don't do any special handling
+        if (stoneType.shouldBeDroppedAsItem || StoneType.STONE_TYPE_REGISTRY.getIDForObject(stoneType) < 16) {
+            return super.getItemDropped(state, rand, fortune);
+        }
+
+        // always drop StoneTypes.STONE as the default
+        // this prevents stone types of id>15 from dropping the meta=0 variant of the block,
+        // which might not be the block with the vanilla stone type
+        IBlockState stoneOre = OreConfigUtils.getOreForMaterial(this.material).get(StoneTypes.STONE);
+        return Item.getItemFromBlock(stoneOre.getBlock());
+    }
+
     @Override
     public int damageDropped(@Nonnull IBlockState state) {
-        return getMetaFromState(state);
+        StoneType stoneType = state.getValue(STONE_TYPE);
+        if (stoneType.shouldBeDroppedAsItem) {
+            return getMetaFromState(state);
+        } else {
+            return 0;
+        }
     }
 
     @Nonnull
@@ -118,34 +144,10 @@ public class BlockOre extends Block implements IBlockOre {
     }
 
     @Override
-    public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
-        StoneType stoneType = state.getValue(STONE_TYPE);
-        if (stoneType.shouldBeDroppedAsItem) {
-            super.getDrops(drops, world, pos, state, fortune);
-        } else {
-            super.getDrops(drops, world, pos, this.getDefaultState(), fortune);
-        }
-    }
-
-    @Override
-    @Nonnull
     @SuppressWarnings("deprecation")
-    public ItemStack getItem(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
-        StoneType stoneType = state.getValue(STONE_TYPE);
-        if (stoneType.shouldBeDroppedAsItem) {
-            return super.getItem(worldIn, pos, state);
-        }
-        return new ItemStack(this, 1, 0);
-    }
-
-    @Override
-    @Nonnull
-    protected ItemStack getSilkTouchDrop(IBlockState state) {
-        StoneType stoneType = state.getValue(STONE_TYPE);
-        if (stoneType.shouldBeDroppedAsItem) {
-            return super.getSilkTouchDrop(state);
-        }
-        return super.getSilkTouchDrop(this.getDefaultState());
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        // Still get correct block even if shouldBeDroppedAsItem is false
+        return BlockOre.getItem(state);
     }
 
     @Override

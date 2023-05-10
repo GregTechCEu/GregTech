@@ -35,6 +35,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -154,6 +155,7 @@ public class ToolEventHandlers {
                         // only try once, so future water placement does not get eaten too
                         return false;
                     });
+                    ((IGTTool) stack.getItem()).playSound(player);
                 }
             }
             if (behaviorTag.getBoolean(ToolHelper.RELOCATE_MINED_BLOCKS_KEY)) {
@@ -289,11 +291,8 @@ public class ToolEventHandlers {
 
         if (tile instanceof IGregTechTileEntity) {
             MetaTileEntity mte = ((IGregTechTileEntity) tile).getMetaTileEntity();
-            if (mte != null && mte.canRenderMachineGrid()) {
-                if (ToolHelper.isTool(mainHand, ToolClasses.WRENCH, ToolClasses.SCREWDRIVER) ||
-                        ToolHelper.isTool(offHand, ToolClasses.WRENCH, ToolClasses.SCREWDRIVER)) {
-                    return true;
-                }
+            if (mte != null && mte.canRenderMachineGrid(mainHand, offHand)) {
+                return true;
             }
         }
         ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);

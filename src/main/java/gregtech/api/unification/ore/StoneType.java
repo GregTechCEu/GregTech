@@ -96,4 +96,31 @@ public class StoneType implements Comparable<StoneType> {
         return null;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StoneType stoneType = (StoneType) o;
+
+        if (shouldBeDroppedAsItem != stoneType.shouldBeDroppedAsItem) return false;
+        if (!name.equals(stoneType.name)) return false;
+        if (!processingPrefix.equals(stoneType.processingPrefix)) return false;
+        if (!stoneMaterial.equals(stoneType.stoneMaterial)) return false;
+        if (!stone.equals(stoneType.stone)) return false;
+        if (!soundType.equals(stoneType.soundType)) return false;
+        return predicate.equals(stoneType.predicate);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + processingPrefix.hashCode();
+        result = 31 * result + stoneMaterial.hashCode();
+        result = 31 * result + stone.hashCode();
+        result = 31 * result + soundType.hashCode();
+        result = 31 * result + predicate.hashCode();
+        result = 31 * result + (shouldBeDroppedAsItem ? 1 : 0);
+        return result;
+    }
 }
