@@ -136,6 +136,7 @@ public class CommonProxy {
         registry.register(RUBBER_WOOD_DOOR);
         registry.register(TREATED_WOOD_DOOR);
         registry.register(BRITTLE_CHARCOAL);
+        registry.register(FISSION_CASING);
 
         for (BlockLamp block : LAMPS.values()) registry.register(block);
         for (BlockLamp block : BORDERLESS_LAMPS.values()) registry.register(block);
@@ -224,6 +225,7 @@ public class CommonProxy {
             registry.register(createItemBlock(block, LampItemBlock::new));
         }
         registry.register(createItemBlock(ASPHALT, VariantItemBlock::new));
+        registry.register(createItemBlock(FISSION_CASING, VariantItemBlock::new));
         for (StoneVariantBlock block : STONE_BLOCKS.values()) {
             registry.register(createItemBlock(block, VariantItemBlock::new));
         }
