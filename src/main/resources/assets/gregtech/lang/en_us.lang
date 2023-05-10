@@ -5078,6 +5078,7 @@ gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=Supply
 gregtech.multiblock.large_combustion_engine.obstructed=Engine Intakes Obstructed.
 
 gregtech.multiblock.turbine.fuel_amount=Fuel Amount: %sL (%s)
+gregtech.multiblock.turbine.fuel_needed=Needed Amount: %dL of %s per %s ticks
 gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=Rotor Durability: %s%%
 gregtech.multiblock.turbine.efficiency=Turbine Efficiency: %s%%

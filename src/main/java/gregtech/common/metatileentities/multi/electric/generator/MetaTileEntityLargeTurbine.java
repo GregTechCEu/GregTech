@@ -100,7 +100,21 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
             FluidStack fuelStack = ((LargeTurbineWorkableHandler) recipeMapWorkable).getInputFluidStack();
             int fuelAmount = fuelStack == null ? 0 : fuelStack.amount;
 
+            // energy output (recipeMapWorkable.getRecipeEUt())
+            // recipe fluid (recipeMapWorkable.getPreviousRecipe().fluidInputs)
+            // recipe eut (recipeMapWorkable.getPreviousRecipe().EUt)
+            // recipe duration (recipeMapWorkable.getPreviousRecipe().duration)
+            // recipeMapWorkable.getPreviousRecipe().EUt * recipeMapWorkable.getPreviousRecipe().duration / recipeMapWorkable.getPreviousRecipe().fluidInputs.get(0).amount
             ITextComponent fuelName = new TextComponentTranslation(fuelAmount == 0 ? "gregtech.fluid.empty" : fuelStack.getUnlocalizedName());
+
+            Recipe recipe = recipeMapWorkable.getPreviousRecipe();
+            if (recipe != null) {
+                FluidStack recipeFuel = recipe.getFluidInputs().get(0).getInputFluidStack();
+                int fuelEnergyValue = recipeFuel.amount / -(recipe.getEUt());
+                int requiredFluidAmount = (int) Math.floor(fuelEnergyValue * (((LargeTurbineWorkableHandler) recipeMapWorkable).getMaxVoltage() / (rotorHolder.getTotalEfficiency() / 100f)));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed", requiredFluidAmount, fuelName, recipe.getDuration()));
+            }
+
             textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", fuelAmount, fuelName));
 
             if (rotorHolder.getRotorEfficiency() > 0) {
