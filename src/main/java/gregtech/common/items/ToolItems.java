@@ -190,7 +190,7 @@ public final class ToolItems {
                 .symbol('k')
                 .toolClasses(ToolClasses.KNIFE, ToolClasses.SWORD));
         BUTCHERY_KNIFE = register(ItemGTSword.Builder.of(GTValues.MODID, "butchery_knife")
-                .toolStats(b -> b.crafting().attacking()
+                .toolStats(b -> b.attacking()
                         .attackDamage(1.5F).attackSpeed(-1.3F).defaultEnchantment(Enchantments.LOOTING, 3))
                 .oreDict(ToolOreDict.toolButcheryKnife)
                 .secondaryOreDicts("craftingToolButcheryKnife")
