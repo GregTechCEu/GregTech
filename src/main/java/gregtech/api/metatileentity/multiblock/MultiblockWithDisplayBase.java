@@ -408,7 +408,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return voidingMode.ordinal();
     }
 
-    private void setVoidingMode(int mode) {
+    protected void setVoidingMode(int mode) {
         this.voidingMode = VoidingMode.VALUES[mode];
 
         this.voidingFluids = mode >= 2;
@@ -424,7 +424,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         markDirty();
     }
 
-    private static String getVoidingModeTooltip(int mode) {
+    protected static String getVoidingModeTooltip(int mode) {
         return VoidingMode.VALUES[mode].getName();
     }
 

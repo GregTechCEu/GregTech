@@ -3,19 +3,26 @@ package gregtech.common.metatileentities.multi.electric.generator;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IRotorHolder;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -142,6 +149,23 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
             }
         }
         super.addDisplayText(textList);
+    }
+
+    @Override
+    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
+        ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 176 + 90, 216);
+        builder.image(7, 4, 162 + 90, 121 + 6, GuiTextures.DISPLAY);
+        builder.label(11, 9, getMetaFullName(), 0xFFFFFF);
+        builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
+                .setMaxWidthLimit(156 + 90)
+                .setClickHandler(this::handleDisplayClick));
+        if (shouldShowVoidingModeButton()) {
+            builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
+                    4, this::getVoidingMode, this::setVoidingMode)
+                    .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
+        }
+        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7 + 45, 134);
+        return builder;
     }
 
     @Override
