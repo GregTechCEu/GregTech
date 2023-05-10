@@ -21,7 +21,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
@@ -544,7 +543,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         if (item == null) return;
         String unlocalizedTooltip = "metaitem." + item.unlocalizedName + ".tooltip";
         if (I18n.hasKey(unlocalizedTooltip)) {
-            lines.addAll(Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(unlocalizedTooltip))));
+            Collections.addAll(lines, LocalizationUtils.formatLines(unlocalizedTooltip));
         }
 
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);

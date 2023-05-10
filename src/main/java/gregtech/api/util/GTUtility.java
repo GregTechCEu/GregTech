@@ -56,15 +56,12 @@ import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 import static gregtech.api.GTValues.V;
 
 public class GTUtility {
 
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
-
-    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("/n");
 
     public static <T> String[] mapToString(T[] array, Function<T, String> mapper) {
         String[] result = new String[array.length];
@@ -742,11 +739,6 @@ public class GTUtility {
             return true;
         }
         return false;
-    }
-
-    @Nonnull
-    public static Pattern getForwardNewLineRegex() {
-        return NEW_LINE_PATTERN;
     }
 
     /**

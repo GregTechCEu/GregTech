@@ -1,7 +1,7 @@
 package gregtech.api.block;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block implements IWalkingSpeedBonus {
@@ -86,11 +86,11 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
         //tier less tooltip like: tile.turbine_casing.tooltip
         String unlocalizedVariantTooltip = getTranslationKey() + ".tooltip";
         if (I18n.hasKey(unlocalizedVariantTooltip))
-            tooltip.addAll(Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(unlocalizedVariantTooltip))));
+            Collections.addAll(tooltip, LocalizationUtils.formatLines(unlocalizedVariantTooltip));
         //item specific tooltip: tile.turbine_casing.bronze_gearbox.tooltip
         String unlocalizedTooltip = stack.getTranslationKey() + ".tooltip";
         if (I18n.hasKey(unlocalizedTooltip))
-            tooltip.addAll(Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(unlocalizedTooltip))));
+            Collections.addAll(tooltip, LocalizationUtils.formatLines(unlocalizedTooltip));
     }
 
     @Override
