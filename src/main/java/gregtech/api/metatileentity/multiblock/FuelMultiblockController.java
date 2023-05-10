@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -63,6 +64,10 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                 textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
                 int currentProgress = (int) (recipeMapWorkable.getProgressPercent() * 100);
                 textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
+            } else if (recipeMapWorkable.getPreviousRecipe() != null) {
+                Recipe recipe = recipeMapWorkable.getPreviousRecipe();
+                // add check for not enough fluid or item inputs
+
             } else {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
             }
