@@ -155,6 +155,8 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.Naquadria, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Ice, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.UUMatter, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.Toluene, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.LiquidAir, FluidTypes.LIQUID);
     }
 
     private static void setCustomTooltips() {

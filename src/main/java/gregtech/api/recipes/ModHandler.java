@@ -162,7 +162,7 @@ public final class ModHandler {
     public static ItemStack getBurningFuelRemainder(ItemStack fuelStack) {
         float remainderChance;
         ItemStack remainder;
-        if (OreDictUnifier.getOreDictionaryNames(fuelStack).contains("fuelCoke")) {
+        if (OreDictUnifier.hasOreDictionary(fuelStack, "fuelCoke")) {
             remainder = OreDictUnifier.get(OrePrefix.dust, Materials.Ash);
             remainderChance = 0.5f;
         } else {
