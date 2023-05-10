@@ -136,6 +136,7 @@ public class MetaBlocks {
     public static BlockCleanroomCasing CLEANROOM_CASING;
     public static BlockComputerCasing COMPUTER_CASING;
     public static BlockBatteryPart BATTERY_BLOCK;
+    public static BlockFissionCasing FISSION_CASING;
 
     public static final EnumMap<EnumDyeColor, BlockLamp> LAMPS = new EnumMap<>(EnumDyeColor.class);
     public static final EnumMap<EnumDyeColor, BlockLamp> BORDERLESS_LAMPS = new EnumMap<>(EnumDyeColor.class);
@@ -256,6 +257,8 @@ public class MetaBlocks {
         COMPUTER_CASING.setRegistryName("computer_casing");
         BATTERY_BLOCK = new BlockBatteryPart();
         BATTERY_BLOCK.setRegistryName("battery_block");
+        FISSION_CASING = new BlockFissionCasing();
+        FISSION_CASING.setRegistryName("fission_casing");
 
         for (EnumDyeColor color : EnumDyeColor.values()) {
             BlockLamp block = new BlockLamp(color);
@@ -455,6 +458,7 @@ public class MetaBlocks {
         registerItemModel(COMPUTER_CASING);
         registerItemModel(BATTERY_BLOCK);
         registerItemModel(ASPHALT);
+        registerItemModel(FISSION_CASING);
         for (StoneVariantBlock block : STONE_BLOCKS.values())
             registerItemModel(block);
         registerItemModelWithOverride(RUBBER_LOG, ImmutableMap.of(BlockLog.LOG_AXIS, EnumAxis.Y));
