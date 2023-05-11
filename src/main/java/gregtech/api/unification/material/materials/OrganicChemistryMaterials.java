@@ -409,7 +409,8 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Toluene = new Material.Builder(1055, "toluene")
-                .fluid()
+                .fluid(new MaterialFluidDefinition.Builder(FluidTypes.LIQUID, FluidState.LIQUID)
+                        .customTexture().build())
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 7, Hydrogen, 8)
                 .build();
