@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.fluids.info.FluidTag;
-import gregtech.api.fluids.info.FluidTags;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
@@ -32,7 +31,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         if (allowedTags != null) {
             NBTTagCompound data = new NBTTagCompound();
             for (FluidTag fluidTag : allowedTags) {
-                if (fluidTag.requiresChecking()) {
+                if (fluidTag.requiresContainmentCheck()) {
                     data.setBoolean(fluidTag.getName(), true);
                 }
             }
@@ -57,7 +56,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
             NBTTagCompound allowedTags = tagCompound.getCompoundTag("allowed_tags");
             for (String key : allowedTags.getKeySet()) {
                 if (allowedTags.getBoolean(key)) {
-                    tags.add(FluidTags.getTagByName(key));
+                    tags.add(FluidTag.getTagByName(key));
                 }
             }
         } else tags = null;

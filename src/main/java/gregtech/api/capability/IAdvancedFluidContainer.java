@@ -1,7 +1,6 @@
 package gregtech.api.capability;
 
-import gregtech.api.fluids.fluid.AdvancedFluid;
-import gregtech.api.fluids.fluid.IAdvancedFluid;
+import gregtech.api.fluids.fluid.IExtendedFluid;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidTag;
 import gregtech.api.fluids.info.FluidTags;
@@ -26,14 +25,14 @@ public interface IAdvancedFluidContainer {
         if (stack == null || stack.getFluid() == null) return false;
 
         Fluid fluid = stack.getFluid();
-        if (fluid instanceof AdvancedFluid) {
-            IAdvancedFluid advanced = (IAdvancedFluid) fluid;
+        if (fluid instanceof IExtendedFluid) {
+            IExtendedFluid advanced = (IExtendedFluid) fluid;
             FluidState state = advanced.getState();
             if (!this.canHandleState(state)) return false;
             if (!this.canHandleTemperature(state, fluid.getTemperature(stack))) return false;
 
             for (FluidTag tag : advanced.getTags()) {
-                if (tag.requiresChecking() && !this.canHandleTag(tag)) return false;
+                if (tag.requiresContainmentCheck() && !this.canHandleTag(tag)) return false;
             }
         } else {
             FluidState state = FluidState.LIQUID;

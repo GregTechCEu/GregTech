@@ -1,11 +1,12 @@
 package gregtech.api.fluids;
 
+import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.block.GTFluidMaterial;
 import gregtech.api.fluids.block.MaterialFluidBlock;
 import gregtech.api.fluids.definition.FluidDefinition;
 import gregtech.api.fluids.definition.MaterialFluidDefinition;
-import gregtech.api.fluids.fluid.IAdvancedFluid;
+import gregtech.api.fluids.fluid.IExtendedFluid;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidType;
 import gregtech.api.fluids.info.FluidTypes;
@@ -74,6 +75,7 @@ public final class GTFluidRegistrator {
      * @param fluid    the fluid to use
      */
     public static void overrideMaterialFluid(@Nonnull Material material, @Nonnull FluidType type, @Nonnull Fluid fluid) {
+        Preconditions.checkArgument(material.hasProperty(PropertyKey.FLUID), "Material must have a FluidProperty");
         material.getProperty(PropertyKey.FLUID).setFluid(type, fluid);
         FluidTooltipUtil.registerTooltip(fluid, createMaterialFluidTooltip(material, fluid));
     }
@@ -201,7 +203,6 @@ public final class GTFluidRegistrator {
      * @param property the FluidProperty of the material
      */
     public static void registerMaterialFluid(@Nonnull Material material, @Nonnull FluidProperty property) {
-        Set<String> seenNames = new ObjectOpenHashSet<>();
         for (MaterialFluidDefinition definition : property.getDefinitions()) {
             String fluidName = definition.getRegistryName(material);
 
@@ -216,7 +217,6 @@ public final class GTFluidRegistrator {
                 registerFluidTexture(definition.getStill());
                 registerFluidTexture(definition.getFlowing());
             }
-            seenNames.add(fluidName);
 
             // store the fluid in the property
             property.setFluid(definition.getType(), fluid);
@@ -266,8 +266,8 @@ public final class GTFluidRegistrator {
         List<String> tooltip = new ArrayList<>();
         final int temperature = fluid.getTemperature();
         tooltip.add(LocalizationUtils.format("gregtech.fluid.temperature", temperature));
-        if (fluid instanceof IAdvancedFluid) {
-            IAdvancedFluid advanced = (IAdvancedFluid) fluid;
+        if (fluid instanceof IExtendedFluid) {
+            IExtendedFluid advanced = (IExtendedFluid) fluid;
             tooltip.add(I18n.format(advanced.getState().getTooltipTranslationKey()));
             advanced.getTags().forEach(tag -> tag.appendTooltips(tooltip));
         } else {

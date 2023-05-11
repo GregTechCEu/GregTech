@@ -12,7 +12,7 @@ import java.util.Collection;
  * <p>
  * Implement this on an {@link Fluid} or {@link gregtech.api.fluids.definition.FluidDefinition}
  */
-public interface IAdvancedFluid {
+public interface IExtendedFluid {
 
     /**
      * @return the fluid state for this fluid
@@ -29,7 +29,7 @@ public interface IAdvancedFluid {
     /**
      * New implementations of this should not return values less than or equal to 0.
      * <p>
-     * Note that calling {@link Fluid#getTemperature()} or equivalent on an object which is not an IAdvancedFluid,
+     * Note that calling {@link Fluid#getTemperature()} or equivalent on an object which is not an IExtendedFluid,
      * can return values below zero.
      * </p>
      * @return the temperature of the fluid in Kelvin.

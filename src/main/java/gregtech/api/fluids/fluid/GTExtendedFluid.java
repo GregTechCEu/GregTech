@@ -12,7 +12,7 @@ import java.util.Collection;
 /**
  * An advanced fluid with additional capabilities within the GregTech fluid-handling ecosystem
  */
-public class AdvancedFluid extends Fluid implements IAdvancedFluid {
+public class GTExtendedFluid extends Fluid implements IExtendedFluid {
 
     private final FluidDefinition definition;
 
@@ -22,7 +22,7 @@ public class AdvancedFluid extends Fluid implements IAdvancedFluid {
      * @param color       an RGB color value for the fluid
      * @param definition  the definition for the fluid
      */
-    public AdvancedFluid(@Nonnull String name, int color, @Nonnull FluidDefinition definition) {
+    public GTExtendedFluid(@Nonnull String name, int color, @Nonnull FluidDefinition definition) {
         super(name, definition.getStill(), definition.getFlowing(), GTUtility.convertRGBtoOpaqueRGBA_MC(color));
         this.definition = definition;
         this.temperature = definition.getTemperature();

@@ -2,7 +2,7 @@ package gregtech.api.fluids.definition;
 
 import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidConstants;
-import gregtech.api.fluids.fluid.AdvancedMaterialFluid;
+import gregtech.api.fluids.fluid.GTMaterialFluid;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidTag;
 import gregtech.api.fluids.info.FluidType;
@@ -41,7 +41,7 @@ public class MaterialFluidDefinition extends FluidDefinition {
      * @param hasCustomTexture if the fluid has a custom texture
      * @see Builder
      */
-    public MaterialFluidDefinition(@Nonnull FluidType type, @Nonnull FluidState state, @Nonnull Collection<FluidTag> tags,
+    protected MaterialFluidDefinition(@Nonnull FluidType type, @Nonnull FluidState state, @Nonnull Collection<FluidTag> tags,
                                    @Nonnull String translationKey, @Nonnull MaterialIconType stillIconType,
                                    @Nonnull MaterialIconType flowingIconType, int color, int temperature,
                                    boolean hasBlock, boolean hasCustomTexture, @Nullable String registryNameOverride) {
@@ -62,7 +62,7 @@ public class MaterialFluidDefinition extends FluidDefinition {
      * @return the fluid for the material
      */
     @Nonnull
-    public AdvancedMaterialFluid constructFluid(@Nonnull Material material, @Nonnull String fluidName) {
+    public GTMaterialFluid constructFluid(@Nonnull Material material, @Nonnull String fluidName) {
         if (this.hasCustomTexture) {
             ResourceLocation textureLocation = new ResourceLocation(GTValues.MODID, "blocks/fluids/fluid." + material);
             this.setStill(textureLocation);
@@ -112,7 +112,7 @@ public class MaterialFluidDefinition extends FluidDefinition {
 
         if (this.color == -1) this.color = material.getMaterialRGB();
 
-        return new AdvancedMaterialFluid(fluidName, material, this);
+        return new GTMaterialFluid(fluidName, material, this);
     }
 
     /**
@@ -202,7 +202,7 @@ public class MaterialFluidDefinition extends FluidDefinition {
             super(state);
             this.type = type;
             this.stillIconType = state.getStillIconType();
-            this.flowingIconType = state.getStillIconType();
+            this.flowingIconType = state.getFlowingIconType();
         }
 
         /**
@@ -229,11 +229,9 @@ public class MaterialFluidDefinition extends FluidDefinition {
 
         /**
          * Sets the still and flowing textures to {@code "blocks/fluids/fluid.material_name"}
-         *
-         * @param hasCustomTexture if a custom texture should be applied
          */
         @Nonnull
-        public Builder customTexture(boolean hasCustomTexture) {
+        public Builder customTexture() {
             this.hasCustomTexture = true;
             return this;
         }

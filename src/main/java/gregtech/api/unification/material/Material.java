@@ -504,22 +504,6 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add a {@link FluidProperty} to this Material.
-         *
-         * @param definitions the definitions to add
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
-         */
-        public Builder fluid(@Nonnull MaterialFluidDefinition.Builder... definitions) {
-            properties.ensureSet(PropertyKey.FLUID);
-            FluidProperty property = properties.getProperty(PropertyKey.FLUID);
-            for (MaterialFluidDefinition.Builder builder : definitions) {
-                property.addDefinition(builder.build());
-            }
-
-            return this;
-        }
-
-        /**
          * Add a {@link DustProperty} to this Material.<br>
          * Will be created with a Harvest Level of 2 and no Burn Time (Furnace Fuel).
          *

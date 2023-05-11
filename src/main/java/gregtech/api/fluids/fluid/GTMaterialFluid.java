@@ -10,7 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 
-public class AdvancedMaterialFluid extends AdvancedFluid {
+public class GTMaterialFluid extends GTExtendedFluid {
 
     private static long AIR_MASS = -1;
 
@@ -22,7 +22,7 @@ public class AdvancedMaterialFluid extends AdvancedFluid {
      * @param material   the fluid's backing material
      * @param definition the fluid's definition
      */
-    public AdvancedMaterialFluid(@Nonnull String name, @Nonnull Material material, @Nonnull MaterialFluidDefinition definition) {
+    public GTMaterialFluid(@Nonnull String name, @Nonnull Material material, @Nonnull MaterialFluidDefinition definition) {
         super(name, definition.getColor() == -1 ? material.getMaterialRGB() : definition.getColor(), definition);
         this.material = material;
         if (AIR_MASS == -1) AIR_MASS = Materials.Air.getMass();

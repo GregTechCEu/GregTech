@@ -9,7 +9,11 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * A key for storing fluids of various types.
+ * FluidType is a class denoting a type, or category of fluids.
+ * It is primarily used as a key to retrieve fluids with from a {@link Material}.
+ * <p>
+ * FluidType allows for storing different fluids, beyond the standard Liquid/Gas/Plasma categories,
+ * while not requiring a new {@link gregtech.api.unification.material.properties.IMaterialProperty} to do so.
  */
 public final class FluidType {
 

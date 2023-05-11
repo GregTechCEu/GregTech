@@ -1,21 +1,28 @@
 package gregtech.api.fluids.info;
 
+import gregtech.api.fluids.fluid.IExtendedFluid;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Class representing abstract data for fluid
+ * FluidTag is a class representing abstract boolean data for fluid. They can be thought of like MC1.16+ Tags.
+ * <p>
+ * A Fluid can be checked for tags, and different behavior can happen depending on which are present.
+ * @see IExtendedFluid
+ * @see gregtech.api.capability.IAdvancedFluidContainer
  */
 public class FluidTag {
 
-    static final Map<String, FluidTag> TAGS = new Object2ObjectOpenHashMap<>();
+    private static final Map<String, FluidTag> TAGS = new Object2ObjectOpenHashMap<>();
 
     private final String name;
-    private final boolean requiresChecking;
+    private final boolean requiresContainmentCheck;
     private final List<String> tooltips;
 
     /**
@@ -27,13 +34,13 @@ public class FluidTag {
     }
 
     /**
-     * @param name             the name of the tag
-     * @param requiresChecking if this tag must be checked in order to be contained
-     * @param tooltips         the tooltips the tag adds
+     * @param name                     the name of the tag
+     * @param requiresContainmentCheck if this tag must be checked in order to be contained
+     * @param tooltips                 the tooltips the tag adds
      */
-    public FluidTag(@Nonnull String name, boolean requiresChecking, @Nonnull List<String> tooltips) {
+    public FluidTag(@Nonnull String name, boolean requiresContainmentCheck, @Nonnull List<String> tooltips) {
         this.name = name;
-        this.requiresChecking = requiresChecking;
+        this.requiresContainmentCheck = requiresContainmentCheck;
         this.tooltips = tooltips;
         if (TAGS.containsKey(name)) throw new IllegalArgumentException("FluidTag " + name + " already exists!");
         else TAGS.put(name, this);
@@ -50,8 +57,8 @@ public class FluidTag {
     /**
      * @return if the tag must be checked in order to be contained
      */
-    public boolean requiresChecking() {
-        return this.requiresChecking;
+    public boolean requiresContainmentCheck() {
+        return this.requiresContainmentCheck;
     }
 
     /**
@@ -63,5 +70,23 @@ public class FluidTag {
         for (String line : tooltips) {
             tooltip.add(I18n.format(line));
         }
+    }
+
+    /**
+     * @param name the name of the tag
+     * @return the tag with the provided name
+     */
+    @Nullable
+    public static FluidTag getTagByName(@Nonnull String name) {
+        return TAGS.get(name);
+    }
+
+    /**
+     * @return all created Fluid Tags
+     */
+    @SuppressWarnings("unused")
+    @Nonnull
+    public static Collection<FluidTag> getAllTags() {
+        return TAGS.values();
     }
 }

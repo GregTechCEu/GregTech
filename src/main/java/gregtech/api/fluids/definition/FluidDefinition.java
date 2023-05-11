@@ -2,8 +2,8 @@ package gregtech.api.fluids.definition;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.fluids.FluidConstants;
-import gregtech.api.fluids.fluid.AdvancedFluid;
-import gregtech.api.fluids.fluid.IAdvancedFluid;
+import gregtech.api.fluids.fluid.GTExtendedFluid;
+import gregtech.api.fluids.fluid.IExtendedFluid;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidTag;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -16,7 +16,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
-public class FluidDefinition implements IAdvancedFluid {
+public class FluidDefinition implements IExtendedFluid {
+
+    protected static final int INFER_TEMPERATURE = -1;
+    protected static final int INFER_COLOR = -1;
 
     protected final FluidState state;
     protected final Collection<FluidTag> tags;
@@ -38,7 +41,7 @@ public class FluidDefinition implements IAdvancedFluid {
      * @param hasBlock       if the fluid has a block
      * @see FluidDefinition.Builder
      */
-    public FluidDefinition(@Nonnull FluidState state, @Nonnull Collection<FluidTag> tags,
+    protected FluidDefinition(@Nonnull FluidState state, @Nonnull Collection<FluidTag> tags,
                            @Nonnull String translationKey, @Nullable ResourceLocation still, @Nullable ResourceLocation flowing,
                            int color, int temperature, boolean hasBlock) {
         this.state = state;
@@ -47,7 +50,7 @@ public class FluidDefinition implements IAdvancedFluid {
         this.still = still;
         this.flowing = flowing;
         this.color = color;
-        if (temperature == -1) {
+        if (temperature == INFER_TEMPERATURE) {
             this.temperature = getInferredTemperature();
         } else {
             this.temperature = temperature;
@@ -68,8 +71,8 @@ public class FluidDefinition implements IAdvancedFluid {
      */
     @Nonnull
     public Fluid constructFluid(@Nonnull String fluidName) {
-        if (this.color == -1) this.color = 0xFFFFFF;
-        return new AdvancedFluid(fluidName, color, this);
+        if (this.color == INFER_COLOR) this.color = 0xFFFFFF;
+        return new GTExtendedFluid(fluidName, color, this);
     }
 
     @Nonnull
@@ -107,9 +110,9 @@ public class FluidDefinition implements IAdvancedFluid {
      * @param temperature the temperature to set
      */
     public void setTemperature(int temperature) {
-        Preconditions.checkArgument(temperature > 0 || temperature == -1,
-                "Temperature must be > 0, or -1 for inferred values.");
-        if (temperature == -1) this.temperature = getInferredTemperature();
+        Preconditions.checkArgument(temperature > 0 || temperature == INFER_TEMPERATURE,
+                "Temperature must be > 0, or " + INFER_TEMPERATURE + " for inferred values.");
+        if (temperature == INFER_TEMPERATURE) this.temperature = getInferredTemperature();
         else this.temperature = temperature;
     }
 
@@ -208,8 +211,8 @@ public class FluidDefinition implements IAdvancedFluid {
         protected final FluidState state;
         protected final Collection<FluidTag> tags = new ObjectOpenHashSet<>();
         protected String translationKey;
-        protected int color = -1;
-        protected int temperature = -1;
+        protected int color = INFER_COLOR;
+        protected int temperature = INFER_TEMPERATURE;
         protected ResourceLocation still = null;
         protected ResourceLocation flowing = null;
         protected boolean hasBlock = false;
@@ -255,7 +258,8 @@ public class FluidDefinition implements IAdvancedFluid {
          */
         @Nonnull
         public B temperature(int temperature) {
-            Preconditions.checkArgument(temperature > 0 || temperature == -1, "Temperature must be > 0, or -1 for inferred values.");
+            Preconditions.checkArgument(temperature > 0 || temperature == INFER_TEMPERATURE,
+                    "Temperature must be > 0, or " + INFER_TEMPERATURE + " for inferred values.");
             this.temperature = temperature;
             return (B) this;
         }

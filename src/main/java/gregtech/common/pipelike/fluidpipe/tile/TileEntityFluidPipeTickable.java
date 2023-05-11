@@ -1,9 +1,8 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.cover.CoverBehavior;
-import gregtech.api.fluids.fluid.IAdvancedFluid;
+import gregtech.api.fluids.fluid.IExtendedFluid;
 import gregtech.api.fluids.info.FluidState;
 import gregtech.api.fluids.info.FluidTags;
 import gregtech.api.metatileentity.IDataInfoProvider;
@@ -202,8 +201,8 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         boolean shattering = !getNodeData().isCryoProof() && GTUtility.isTemperatureCryogenic(fluid.getTemperature());
         boolean corroding = false;
         boolean melting = false;
-        if (fluid instanceof IAdvancedFluid) {
-            IAdvancedFluid advancedFluid = (IAdvancedFluid) fluid;
+        if (fluid instanceof IExtendedFluid) {
+            IExtendedFluid advancedFluid = (IExtendedFluid) fluid;
             corroding = (!getNodeData().isAcidProof() && advancedFluid.getTags().contains(FluidTags.ACID)) ||
                     (!getNodeData().isSuperAcidProof() && advancedFluid.getTags().contains(FluidTags.SUPERACID));
             melting = !getNodeData().isPlasmaProof() && advancedFluid.getState() == FluidState.PLASMA;
