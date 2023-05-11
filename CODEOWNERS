@@ -1,5 +1,5 @@
 # Default code owner
-* @GregTechCEu/gregtech-1.12-devs
+* @GregTechCEu/gregtech-1\.12-devs
 
 # GitHub actions changes require admin approval
 /.github/** @GregTechCEu/admin
