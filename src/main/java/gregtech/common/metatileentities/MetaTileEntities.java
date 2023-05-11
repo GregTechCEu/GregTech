@@ -198,6 +198,7 @@ public class MetaTileEntities {
     public static MetaTileEntityFluidDrill ADVANCED_FLUID_DRILLING_RIG;
     public static MetaTileEntityCleanroom CLEANROOM;
     public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
+    public static MetaTileEntityFissionReactor FISSION_REACTOR;
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -515,6 +516,8 @@ public class MetaTileEntities {
         CLEANROOM = registerMetaTileEntity(1035, new MetaTileEntityCleanroom(gregtechId("cleanroom")));
 
         CHARCOAL_PILE_IGNITER = registerMetaTileEntity(1036, new MetaTileEntityCharcoalPileIgniter(gregtechId("charcoal_pile")));
+
+        FISSION_REACTOR = registerMetaTileEntity(1037, new MetaTileEntityFissionReactor(gregtechId("fission_reactor")));
 
         // MISC MTE's START: IDs 1150-2000
 
