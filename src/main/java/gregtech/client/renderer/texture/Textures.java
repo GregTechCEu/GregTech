@@ -87,6 +87,7 @@ public class Textures {
             "casings/pipe/machine_casing_grate");
     public static final SimpleOverlayRenderer HIGH_POWER_CASING = new SimpleOverlayRenderer(
             "casings/computer/high_power_casing");
+    public static final SimpleOverlayRenderer FISSION_REACTOR_TEXTURE = new SimpleOverlayRenderer("casings/fission/reactor_vessel");
 
     // Simple Sided Cube Renderers
     public static final SimpleSidedCubeRenderer STEAM_CASING_BRONZE = new SimpleSidedCubeRenderer(

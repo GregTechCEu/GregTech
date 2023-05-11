@@ -25,7 +25,6 @@ public class FissionReactor {
     private ArrayList<CoolantChannel> coolantChannels;
     private ArrayList<ControlRod> effectiveControlRods;
     private ArrayList<CoolantChannel> effectiveCoolantChannels;
-    private int reactorDepth;
     private int numberOfComponents;
 
     private double totNeutronSources;
@@ -59,6 +58,8 @@ public class FissionReactor {
      * Integers used on variables with direct player control for easier adjustments
      */
     public int controlRodInsertion;
+    public int reactorDepth;
+    public int reactorRadius;
 
     public boolean moderatorTipped;
 
