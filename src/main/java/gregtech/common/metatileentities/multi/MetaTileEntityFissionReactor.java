@@ -81,7 +81,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase {
         int heightTop = this.getWorld() != null ? this.findHeight(true) : 4;
         int heightBottom = this.getWorld() != null ? this.findHeight(false) : 0;
 
-        int height = heightTop + heightBottom + 1;
+        int height = Math.max(Math.min(heightTop + heightBottom + 1, 13), 5);
 
         int diameter = this.getWorld() != null ? Math.max(Math.min(this.findDiameter(), 15), 5) : 7;
 
@@ -93,6 +93,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase {
         String[] controllerSlice = new String[diameter];
         String[] topSlice = new String[diameter];
         String[] bottomSlice = new String[diameter];
+
+        GTLog.logger.info(diameter);
+        GTLog.logger.info('A');
 
         // First loop over the matrix
         for (int i = 0; i < diameter; i++) {
@@ -106,7 +109,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase {
             }
 
             interiorSlice[i] = interiorBuilder.toString();
-            GTLog.logger.info(interiorSlice[0].length());
+            GTLog.logger.info(interiorSlice[i]);
+            GTLog.logger.info(interiorSlice[i].length());
             interiorBuilder.setLength(0);
         }
 /*
