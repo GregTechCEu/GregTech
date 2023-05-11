@@ -1,5 +1,17 @@
-# Default code owner
+# All other changes require the primary team
 * @GregTechCEu/gregtech-1-12-devs
 
-# GitHub actions changes require admin approval
+# GitHub Actions changes require admin approval
 /.github/** @GregTechCEu/admin
+
+# Specific files requiring admin approval
+CHANGELOG.md @GregTechCEu/admin
+CHANGELOG-GTCEU.md @GregTechCEu/admin
+CODEOWNERS @GregTechCEu/admin
+CODESTYLE.md @GregTechCEu/admin
+LICENSE @GregTechCEu/admin
+README.md @GregTechCEu/admin
+permission*.png @GregTechCEu/admin
+
+# Gradle changes require specific reviewers
+**gradle** @TechLord22 @ALongStringOfNumbers
