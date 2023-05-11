@@ -41,7 +41,6 @@ public class MetaItemBracketHandler implements IBracketHandler {
         this.method = CraftTweakerAPI.getJavaMethod(MetaItemBracketHandler.class, "getCtMetaItem", String.class);
     }
 
-    @SuppressWarnings("ConstantConditions")
     public static void rebuildComponentRegistry() {
         metaItemNames.clear();
         for (MetaItem<?> item : MetaItem.getMetaItems()) {

@@ -254,9 +254,9 @@ public class CommandRecipeCheck extends CommandBase {
             Block block = Block.getBlockFromItem(stack.getItem());
             String id = null;
             if (block instanceof BlockCompressed) {
-                id = "block" + ((BlockCompressed) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+                id = "block" + ((BlockCompressed) block).getGtMaterial(stack).toCamelCaseString();
             } else if (block instanceof BlockFrame) {
-                id = "frame" + ((BlockFrame) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+                id = "frame" + ((BlockFrame) block).getGtMaterial(stack).toCamelCaseString();
             } else if (block instanceof BlockMaterialPipe) {
                 id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
             }

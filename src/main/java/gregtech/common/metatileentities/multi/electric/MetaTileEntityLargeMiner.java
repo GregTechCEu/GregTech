@@ -125,7 +125,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     public int getEnergyTier() {
         if (energyContainer == null) return this.tier;
-        return Math.min(this.tier + 1 , Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
+        return Math.min(this.tier + 1, Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
     }
 
     @Override
@@ -170,7 +170,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     protected BlockPattern createStructurePattern() {
-        return material == null ? null : FactoryBlockPattern.start()
+        return FactoryBlockPattern.start()
                 .aisle("XXX", "#F#", "#F#", "#F#", "###", "###", "###")
                 .aisle("XXX", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
                 .aisle("XSX", "#F#", "#F#", "#F#", "###", "###", "###")
@@ -250,11 +250,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private void addDisplayText2(List<ITextComponent> textList) {
         if (this.isStructureFormed()) {
             ITextComponent mCoords = new TextComponentString("    ")
-                .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()))
-                .appendText("\n    ")
-                .appendSibling(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()))
-                .appendText("\n    ")
-                .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
+                    .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()))
+                    .appendText("\n    ")
+                    .appendSibling(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()))
+                    .appendText("\n    ")
+                    .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
             textList.add(mCoords);
         }
     }

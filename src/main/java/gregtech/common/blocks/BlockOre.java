@@ -52,6 +52,7 @@ public class BlockOre extends Block implements IBlockOre {
         this.material = Objects.requireNonNull(material, "Material in BlockOre can not be null!");
         STONE_TYPE = PropertyStoneType.create("stone_type", allowedValues);
         initBlockState();
+        setCreativeTab(GregTechAPI.TAB_GREGTECH_ORES);
     }
 
     @Nonnull
@@ -139,15 +140,10 @@ public class BlockOre extends Block implements IBlockOre {
         return STONE_TYPE.getAllowedValues().indexOf(state.getValue(STONE_TYPE));
     }
 
-    public static ItemStack getItem(IBlockState blockState) {
-        return GTUtility.toItem(blockState);
-    }
-
     @Override
-    @SuppressWarnings("deprecation")
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         // Still get correct block even if shouldBeDroppedAsItem is false
-        return BlockOre.getItem(state);
+        return GTUtility.toItem(state);
     }
 
     @Override
@@ -164,7 +160,7 @@ public class BlockOre extends Block implements IBlockOre {
         if (tab == CreativeTabs.SEARCH || tab == GregTechAPI.TAB_GREGTECH_ORES) {
             blockState.getValidStates().stream()
                     .filter(state -> state.getValue(STONE_TYPE).shouldBeDroppedAsItem)
-                    .forEach(blockState -> list.add(getItem(blockState)));
+                    .forEach(blockState -> list.add(GTUtility.toItem(blockState)));
         }
     }
 
