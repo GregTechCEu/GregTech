@@ -404,7 +404,7 @@ public class GTUtility {
     }
 
     /**
-     * @deprecated Ambiguous naming; use either {@link #copy(ItemStack)} or {@link #copyAny(ItemStack...)}
+     * @deprecated Ambiguous naming; use either {@link #copy(ItemStack)} or {@link #copyFirst(ItemStack...)}
      */
     @Deprecated
     @Nonnull
@@ -447,7 +447,7 @@ public class GTUtility {
      * @throws IllegalArgumentException if {@code stacks} is empty
      */
     @Nonnull
-    public static ItemStack copyAny(@Nonnull ItemStack... stacks) {
+    public static ItemStack copyFirst(@Nonnull ItemStack... stacks) {
         if (stacks.length == 0) {
             throw new IllegalArgumentException("Empty ItemStack candidates");
         }
@@ -467,7 +467,7 @@ public class GTUtility {
      * @throws IllegalArgumentException if {@code stacks} is empty
      */
     @Nonnull
-    public static ItemStack copyAny(int newCount, @Nonnull ItemStack... stacks) {
+    public static ItemStack copyFirst(int newCount, @Nonnull ItemStack... stacks) {
         if (stacks.length == 0) {
             throw new IllegalArgumentException("Empty ItemStack candidates");
         }
@@ -487,7 +487,7 @@ public class GTUtility {
     @Deprecated
     @Nonnull
     public static ItemStack copyAmount(int amount, @Nonnull ItemStack stack) {
-        return copyAny(amount, stack);
+        return copy(amount, stack);
     }
 
     public static int getExplosionPower(long voltage) {

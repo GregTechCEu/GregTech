@@ -120,7 +120,7 @@ public class OreRecipeHandler {
 
         //fallback for dirtyGravel, shard & clump
         if (impureDustStack.isEmpty()) {
-            impureDustStack = GTUtility.copyAny(
+            impureDustStack = GTUtility.copyFirst(
                     OreDictUnifier.get(OrePrefix.dirtyGravel, material),
                     OreDictUnifier.get(OrePrefix.shard, material),
                     OreDictUnifier.get(OrePrefix.clump, material),
@@ -140,10 +140,10 @@ public class OreRecipeHandler {
                 .chancedOutput(OreDictUnifier.get(OrePrefix.dust, byproductMaterial, property.getByProductMultiplier()), 1400, 850)
                 .buildAndRegister();
 
-        ItemStack crushedPurifiedOre = GTUtility.copyAny(
+        ItemStack crushedPurifiedOre = GTUtility.copyFirst(
                 OreDictUnifier.get(OrePrefix.crushedPurified, material),
                 OreDictUnifier.get(OrePrefix.dust, material));
-        ItemStack crushedCentrifugedOre = GTUtility.copyAny(
+        ItemStack crushedCentrifugedOre = GTUtility.copyFirst(
                 OreDictUnifier.get(OrePrefix.crushedCentrifuged, material),
                 OreDictUnifier.get(OrePrefix.dust, material));
 
@@ -344,7 +344,7 @@ public class OreRecipeHandler {
 
         if (dustStack.isEmpty()) {
             //fallback for reduced & cleanGravel
-            dustStack = GTUtility.copyAny(
+            dustStack = GTUtility.copyFirst(
                     OreDictUnifier.get(OrePrefix.reduced, material),
                     OreDictUnifier.get(OrePrefix.cleanGravel, material));
         }
