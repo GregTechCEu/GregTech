@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi;
 
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -7,7 +8,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.nuclear.fission.FissionReactor;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -17,13 +18,21 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase {
+public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase implements IDataInfoProvider {
 
     private FissionReactor fissionReactor;
+    private int diameter;
+    private int height;
 
     public MetaTileEntityFissionReactor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -78,30 +87,27 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase {
     @Override
     protected BlockPattern createStructurePattern() {
 
-        int heightTop = this.getWorld() != null ? this.findHeight(true) : 4;
-        int heightBottom = this.getWorld() != null ? this.findHeight(false) : 0;
+        int heightTop = Math.max(Math.min(this.getWorld() != null ? this.findHeight(true) : 4, 7), 1);
+        int heightBottom = Math.max(Math.min(this.getWorld() != null ? this.findHeight(false) : 1, 7), 1);
 
-        int height = Math.max(Math.min(heightTop + heightBottom + 1, 13), 5);
+        this.height = heightTop + heightBottom + 1;
 
-        int diameter = this.getWorld() != null ? Math.max(Math.min(this.findDiameter(), 15), 5) : 7;
+        this.diameter = this.getWorld() != null ? Math.max(Math.min(this.findDiameter(), 15), 5) : 5;
 
-        int radius = diameter % 2 == 0 ? (int) Math.floor(diameter / 2.f) : Math.round((diameter - 1)/2.f);
+        int radius = this.diameter % 2 == 0 ? (int) Math.floor(this.diameter / 2.f) : Math.round((this.diameter - 1)/2.f);
 
         StringBuilder interiorBuilder = new StringBuilder();
 
-        String[] interiorSlice = new String[diameter];
-        String[] controllerSlice = new String[diameter];
-        String[] topSlice = new String[diameter];
-        String[] bottomSlice = new String[diameter];
-
-        GTLog.logger.info(diameter);
-        GTLog.logger.info('A');
+        String[] interiorSlice = new String[this.diameter];
+        String[] controllerSlice;
+        String[] topSlice;
+        String[] bottomSlice;
 
         // First loop over the matrix
-        for (int i = 0; i < diameter; i++) {
-            for (int j = 0; j < diameter; j++) {
+        for (int i = 0; i < this.diameter; i++) {
+            for (int j = 0; j < this.diameter; j++) {
 
-                if (Math.pow(i - Math.floor(diameter/2.), 2) + Math.pow(j - Math.floor(diameter/2.), 2) < Math.pow(radius + 0.5f, 2)) {
+                if (Math.pow(i - Math.floor(this.diameter/2.), 2) + Math.pow(j - Math.floor(this.diameter/2.), 2) < Math.pow(radius + 0.5f, 2)) {
                     interiorBuilder.append('A');
                 } else {
                     interiorBuilder.append(' ');
@@ -109,35 +115,55 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase {
             }
 
             interiorSlice[i] = interiorBuilder.toString();
-            GTLog.logger.info(interiorSlice[i]);
-            GTLog.logger.info(interiorSlice[i].length());
             interiorBuilder.setLength(0);
         }
-/*
+
         //Second loop is to detect where to put walls, the controller and I/O, two less iterations are needed because two strings always represent two walls on opposite sides
-        interiorSlice[diameter - 1] = interiorSlice[0] = interiorSlice[0].replace('A', 'B');
-        for (int i = 1; i < diameter - 1; i++) {
-            for (int j = 0; j < diameter; j++) {
-                if (j > 0 && j + 1 < diameter) {
+        interiorSlice[this.diameter - 1] = interiorSlice[0] = interiorSlice[0].replace('A', 'B');
+        for (int i = 1; i < this.diameter - 1; i++) {
+            for (int j = 0; j < this.diameter; j++) {
+                if (j > 0 && j + 1 < this.diameter) {
                     if ((interiorSlice[i].charAt(j) == 'A' && interiorSlice[i].charAt(j - 1) == ' ') || (interiorSlice[i].charAt(j) == 'A' && interiorSlice[i].charAt(j + 1) == ' ')) {
                         interiorSlice[i] = interiorSlice[i].substring(0, j) + 'B' + interiorSlice[i].substring(j + 1);
                     }
                 } else if (j == 0 && interiorSlice[i].charAt(0) == 'A') {
                     interiorSlice[i] = 'B' + interiorSlice[i].substring(1);
-                } else if (j == diameter - 1 && interiorSlice[i].charAt(diameter - 1) == 'A') {
-                    interiorSlice[i] = interiorSlice[i].substring(0, diameter - 1) + 'B';
+                } else if (j == this.diameter - 1 && interiorSlice[i].charAt(this.diameter - 1) == 'A') {
+                    interiorSlice[i] = interiorSlice[i].substring(0, this.diameter - 1) + 'B';
                 }
             }
         }
-*/
+
+        controllerSlice = interiorSlice.clone();
+        topSlice = interiorSlice.clone();
+        bottomSlice = interiorSlice.clone();
+        controllerSlice[0] = controllerSlice[0].substring(0, (int) Math.floor(this.diameter/2.)) + 'S' + controllerSlice[0].substring((int) Math.floor(this.diameter/2.) + 1);
+        for (int i = 0; i < this.diameter; i++) {
+            topSlice[i] = topSlice[i].replace('A', 'I');
+            bottomSlice[i] = bottomSlice[i].replace('A', 'O');
+        }
 
         return FactoryBlockPattern.start(RelativeDirection.RIGHT, RelativeDirection.FRONT, RelativeDirection.UP)
-                .aisle("BBBSBBB", "BBBBBBB", "BBBBBBB", "BBBBBBB", "BBBBBBB", "BBBBBBB", "BBBBBBB")
+                .aisle(bottomSlice)
+                .aisle(interiorSlice).setRepeatable(heightBottom)
+                .aisle(controllerSlice)
                 .aisle(interiorSlice).setRepeatable(heightTop)
+                .aisle(topSlice)
                 .where('S', selfPredicate())
-                .where('A', states(getFuelChannelState()))
-                .where('B', states(getVesselState()))
+                .where('A', states(getFuelChannelState()))              //A for interior components
+                .where('I', states(getCoolantChannelState()))           //I for the inputs on the top
+                .where('O', states(getControlRodChannelState()))        //O for the outputs on the bottom
+                .where('B', states(getVesselState()))                   //B for the vessel blocks on the walls
                 .build();
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = new ArrayList<>();
+        list.add(new TextComponentTranslation("gregtech.multiblock.fission_reactor.diameter",
+                new TextComponentTranslation(GTUtility.formatNumbers(diameter) + "m").setStyle(new Style().setColor(TextFormatting.YELLOW))));
+        return list;
     }
 
     @Nonnull
@@ -148,6 +174,15 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase {
     @Nonnull
     protected IBlockState getFuelChannelState() {
         return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.FUEL_CHANNEL);
+    }
+
+    @Nonnull
+    protected IBlockState getControlRodChannelState() {
+        return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.CONTROL_ROD_CHANNEL);
+    }
+
+    @Nonnull IBlockState getCoolantChannelState() {
+        return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL);
     }
 
     @Override
