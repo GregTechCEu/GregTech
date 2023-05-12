@@ -72,7 +72,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             if (this.isBlockEdge(this.getWorld(), new BlockPos.MutableBlockPos(this.getPos()), top ? EnumFacing.UP : EnumFacing.DOWN, i)) break;
             i++;
         }
-        return i;
+        return i - 1;
     }
 
     @Override
@@ -87,7 +87,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     @Override
     protected BlockPattern createStructurePattern() {
 
-        int heightTop = Math.max(Math.min(this.getWorld() != null ? this.findHeight(true) : 4, 7), 1);
+        int heightTop = Math.max(Math.min(this.getWorld() != null ? this.findHeight(true) : 1, 7), 1);
         int heightBottom = Math.max(Math.min(this.getWorld() != null ? this.findHeight(false) : 1, 7), 1);
 
         this.height = heightTop + heightBottom + 1;
@@ -145,15 +145,16 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
         return FactoryBlockPattern.start(RelativeDirection.RIGHT, RelativeDirection.FRONT, RelativeDirection.UP)
                 .aisle(bottomSlice)
-                .aisle(interiorSlice).setRepeatable(heightBottom)
+                .aisle(interiorSlice).setRepeatable(heightBottom - 1)
                 .aisle(controllerSlice)
-                .aisle(interiorSlice).setRepeatable(heightTop)
+                .aisle(interiorSlice).setRepeatable(heightTop - 1)
                 .aisle(topSlice)
                 .where('S', selfPredicate())
                 .where('A', states(getFuelChannelState()))              //A for interior components
                 .where('I', states(getCoolantChannelState()))           //I for the inputs on the top
                 .where('O', states(getControlRodChannelState()))        //O for the outputs on the bottom
                 .where('B', states(getVesselState()))                   //B for the vessel blocks on the walls
+                .where(' ', any())
                 .build();
     }
 
@@ -162,7 +163,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
         list.add(new TextComponentTranslation("gregtech.multiblock.fission_reactor.diameter",
-                new TextComponentTranslation(GTUtility.formatNumbers(diameter) + "m").setStyle(new Style().setColor(TextFormatting.YELLOW))));
+                new TextComponentTranslation(GTUtility.formatNumbers(this.diameter) + "m").setStyle(new Style().setColor(TextFormatting.YELLOW))));
+        list.add(new TextComponentTranslation("gregtech.multiblock.fission_reactor.height",
+                new TextComponentTranslation(GTUtility.formatNumbers(this.height) + "m").setStyle(new Style().setColor(TextFormatting.YELLOW))));
         return list;
     }
 
