@@ -136,7 +136,7 @@ public class ReactorRecipes {
         // KCl + H2SO4 -> KHSO4 + HCl
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, RockSalt, 2)
-                .notConsumable(new IntCircuitIngredient(1))
+                .circuitMeta(1)
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .output(dust, PotassiumBisulfate, 7)
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))

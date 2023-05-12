@@ -15,25 +15,20 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
-import net.minecraft.block.BlockCauldron;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -201,34 +196,6 @@ public class MetaPrefixItem extends StandardMetaItem {
             ToolProperty property = material.getProperty(PropertyKey.TOOL);
             return property != null && property.getToolHarvestLevel() >= 2;
         }
-        return false;
-    }
-
-    @Override
-    public boolean onEntityItemUpdate(EntityItem itemEntity) {
-        int damage = itemEntity.getItem().getMetadata();
-        if (itemEntity.getEntityWorld().isRemote)
-            return false;
-
-        Material material = GregTechAPI.MATERIAL_REGISTRY.getObjectById(damage);
-        if (!purifyMap.containsKey(this.prefix))
-            return false;
-
-        BlockPos blockPos = new BlockPos(itemEntity);
-        IBlockState blockState = itemEntity.getEntityWorld().getBlockState(blockPos);
-
-        if (!(blockState.getBlock() instanceof BlockCauldron))
-            return false;
-
-        int waterLevel = blockState.getValue(BlockCauldron.LEVEL);
-        if (waterLevel == 0)
-            return false;
-
-        itemEntity.getEntityWorld().setBlockState(blockPos,
-                blockState.withProperty(BlockCauldron.LEVEL, waterLevel - 1));
-        ItemStack replacementStack = OreDictUnifier.get(purifyMap.get(prefix), material,
-                itemEntity.getItem().getCount());
-        itemEntity.setItem(replacementStack);
         return false;
     }
 

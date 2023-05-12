@@ -56,7 +56,7 @@ public class OrePrefix {
     public static final OrePrefix oreEndstone = new OrePrefix("oreEndstone", M * 2, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
 
     // First ore processing output from Ore blocks. Worth 1.5 Dust
-    public static final OrePrefix crushed = new OrePrefix("crushed", M * 3 / 2, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty));
+    public static final OrePrefix crushed = new OrePrefix("crushed", M * 3 / 2, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty);
     // Second ore processing output from Ore blocks. Worth 2 Dust
     public static final OrePrefix washed = new OrePrefix("crushedPurified", M * 2, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
     // Third ore processing output from Ore blocks. Worth 3 Dust

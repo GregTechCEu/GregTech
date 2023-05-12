@@ -236,10 +236,6 @@ public class Material implements Comparable<Material> {
         return false;
     }
 
-    public boolean isElement() {
-        return materialInfo.element != null;
-    }
-
     /**
      * Return the total number of ELEMENTS (or unknown materials) in this material.
      * For example:
@@ -545,7 +541,7 @@ public class Material implements Comparable<Material> {
          * Will be created with no Burn Time (Furnace Fuel).<br>
          * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
          *
-         * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require a iron tool.<br>
+         * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require an iron tool.<br>
          *                     If this Material also has a {@link ToolProperty}, this value will
          *                     also be used to determine the tool's Mining level (-1). So 2 will make the tool harvest diamonds.<br>
          *                     If this Material already had a Harvest Level defined, it will be overridden.
@@ -559,7 +555,7 @@ public class Material implements Comparable<Material> {
          * Add an {@link IngotProperty} to this Material.<br>
          * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
          *
-         * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require a iron tool.<br>
+         * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require an iron tool.<br>
          *                     If this Material also has a {@link ToolProperty}, this value will
          *                     also be used to determine the tool's Mining level (-1). So 2 will make the tool harvest diamonds.<br>
          *                     If this Material already had a Harvest Level defined, it will be overridden.
@@ -958,7 +954,7 @@ public class Material implements Comparable<Material> {
          * The IconSet of this Material.
          * <p>
          * Default: - GEM_VERTICAL if it has GemProperty.
-         * - DULL if has DustProperty or IngotProperty.
+         * - DULL if it has DustProperty or IngotProperty.
          * - FLUID or GAS if only has FluidProperty or PlasmaProperty, depending on {@link FluidType}.
          */
         private MaterialIconSet iconSet;

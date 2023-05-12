@@ -780,7 +780,7 @@ public class MachineRecipeLoader {
         if (!OreDictionary.getOres("stoneSoapstone").isEmpty())
             MACERATOR_RECIPES.recipeBuilder()
                     .input(stone, Soapstone)
-                    .output(dustImpure, Talc)
+                    .output(dust, Soapstone)
                     .chancedOutput(dustTiny, Chromite, 1000, 280)
                     .buildAndRegister();
 
