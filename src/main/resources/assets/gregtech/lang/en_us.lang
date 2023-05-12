@@ -5663,6 +5663,8 @@ gregtech.multiblock.large_boiler.explosion_tooltip=Will explode if provided Fuel
 gregtech.multiblock.large_boiler.water_bar_hover=Water: %s
 gregtech.multiblock.large_boiler.no_water=No Water!
 
+gregtech.multiblock.fission_reactor.diameter=Diameter: %s
+
 gregtech.machine.miner.done=Done!
 gregtech.machine.miner.working=Working...
 gregtech.machine.miner.invfull=Inventory Full!
