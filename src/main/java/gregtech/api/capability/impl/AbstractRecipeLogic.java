@@ -658,6 +658,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         int recipeTier = GTUtility.getTierByVoltage(recipeEUt);
         int maximumTier = getOverclockForTier(getMaximumOverclockVoltage());
+        if (maximumTier <= GTValues.LV) return 0;
 
         // The maximum number of overclocks is determined by the difference between the tier the recipe is running at,
         // and the maximum tier that the machine can overclock to.

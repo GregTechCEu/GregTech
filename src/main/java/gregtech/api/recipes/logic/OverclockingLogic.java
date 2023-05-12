@@ -71,8 +71,8 @@ public class OverclockingLogic {
      * @return the discounted EU/t
      */
     public static int applyCoilEUtDiscount(int recipeEUt, int providedTemp, int requiredTemp) {
-        if (requiredTemp < OverclockingLogic.COIL_EUT_DISCOUNT_TEMPERATURE) return recipeEUt;
-        int amountEUtDiscount = OverclockingLogic.calculateAmountCoilEUtDiscount(providedTemp, requiredTemp);
+        if (requiredTemp < COIL_EUT_DISCOUNT_TEMPERATURE) return recipeEUt;
+        int amountEUtDiscount = calculateAmountCoilEUtDiscount(providedTemp, requiredTemp);
         if (amountEUtDiscount < 1) return recipeEUt;
         return (int) (recipeEUt * Math.min(1, Math.pow(0.95, amountEUtDiscount)));
     }
