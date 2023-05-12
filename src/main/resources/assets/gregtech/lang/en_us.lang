@@ -5064,6 +5064,7 @@ gregtech.multiblock.large_boiler.heat_time_tooltip=§7Takes §f%,d seconds §7to
 gregtech.multiblock.large_boiler.explosion_tooltip=Will explode if provided Fuel with no Water
 
 gregtech.multiblock.fission_reactor.diameter=Diameter: %s
+gregtech.multiblock.fission_reactor.height=Height: %s
 
 gregtech.machine.miner.done=Done!
 gregtech.machine.miner.working=Working...
