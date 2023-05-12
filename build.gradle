@@ -54,11 +54,12 @@ minecraft {
     useDependencyAccessTransformers = true
 
     injectedTags.put('VERSION', project.version)
+    injectedTags.put("DEP_VERSION_STRING", "required-after:gregtech@[" + project.version + ",);")
 }
 
 // Generate the InternalTags class with the version number as a field
 tasks.injectTags.configure {
-    outputClassName.set("${project.group}.InternalTags")
+    outputClassName.set("${project.group}.GTInternalTags")
 }
 
 repositories {
@@ -109,7 +110,7 @@ dependencies {
     // causing crashes at run-time when deobfuscated
     implementation files("libs/groovyscript-0.4.0.jar")
     //implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
-    compileOnly rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
+    compileOnlyApi rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
 
     // Tests
     testImplementation "org.junit.jupiter:junit-jupiter:${junit_version}"
@@ -307,6 +308,7 @@ if (modrinth_api_key.isPresent() || deployment_debug) {
 
         versionNumber = "$version".split('-')[0] // strip out the EXTRA field, if present
         gameVersions = ["$mc_version"]
+        loaders = ["forge"]
 
         def main_artifact = "${archivesBaseName}-${version}.jar"
         uploadFile = file("build/libs/${main_artifact}")
