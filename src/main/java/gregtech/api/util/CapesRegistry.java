@@ -45,6 +45,11 @@ public class CapesRegistry {
         unlockCape(UUID.fromString("aaf70ec1-ac70-494f-9966-ea5933712750"), Textures.GREGTECH_CAPE_TEXTURE); // Bruberu
         unlockCape(UUID.fromString("a24a9108-23d2-43fc-8db7-43f809d017db"), Textures.GREGTECH_CAPE_TEXTURE); // ALongString
         unlockCape(UUID.fromString("77e2129d-8f68-4025-9394-df946f1f3aee"), Textures.GREGTECH_CAPE_TEXTURE); // Brachy84
+        unlockCape(UUID.fromString("5d7073e3-882f-4c4a-94b3-0e5ba1c11e02"), Textures.GREGTECH_CAPE_TEXTURE); // htmlcsjs
+        unlockCape(UUID.fromString("4a57640e-c1b1-4413-a6ab-e9a8b60ec167"), Textures.GREGTECH_CAPE_TEXTURE); // PrototypeTrouser
+        unlockCape(UUID.fromString("12892f29-9eef-47ed-b8fb-df3e0e90db0c"), Textures.GREGTECH_CAPE_TEXTURE); // Quarri6343
+        unlockCape(UUID.fromString("44f38ff8-aad7-49c3-acb3-d92317af9078"), Textures.GREGTECH_CAPE_TEXTURE); // LAGIdiot
+        unlockCape(UUID.fromString("e6e784af-bd04-46ad-8141-47b8b9102cb9"), Textures.GREGTECH_CAPE_TEXTURE); // Tictim
         save();
     }
 
