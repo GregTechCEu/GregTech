@@ -497,7 +497,7 @@ public class SeparationRecipes {
                 .fluidOutputs(Oxygen.getFluid(1000))
                 .buildAndRegister();
 
-        // Al2(SO4)3 + 3H2O -> 3H2SO4 + Al2O3
+        // Al2(SO4)3 + 3H2O -> Al2O3 + 3H2SO4
         ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .fluidInputs(ClayVitriol.getFluid(1000))
                 .fluidInputs(Water.getFluid(3000))
@@ -505,6 +505,16 @@ public class SeparationRecipes {
                 .output(dust, Alumina, 5)
                 .fluidOutputs(SulfuricAcid.getFluid(3000))
                 .buildAndRegister();
+
+		ELECTROLYZER_RECIPES.recipeBuilder()
+				.fluidInputs(LeadZincConcentrate.getFluid(1000))
+				.fluidInputs(Water.getFluid(2000))
+				.circuitMeta(2)
+				.output(dust, Lead)
+				.output(dust, Zinc)
+				.fluidOutputs(SulfuricAcid.getFluid(2000))
+				.fluidOutputs(Oxygen.getFluid(2000))
+				.buildAndRegister();
 
         // HAuCl4 + 1.5H2O -> Au + 4HCl + 1.5O
         ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])

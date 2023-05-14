@@ -41,9 +41,9 @@ public class MetaTileEntityFlotationCell extends RecipeMapMultiblockController {
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("FXXXF", "FXXXF", "FXXXF", "FXXXF", "FXXXF")
-                .aisle("XXXXX", "X   X", "X   X", "X   X", "X P X")
-                .aisle("XXXXX", "X P X", "X P X", "X P X", "XPPPX")
-                .aisle("XXXXX", "X   X", "X   X", "X   X", "X P X")
+                .aisle("XXXXX", "X   X", "X P X", "X   X", "X P X")
+                .aisle("XXXXX", "X P X", "XPPPX", "X P X", "XPPPX")
+                .aisle("XXXXX", "X   X", "X P X", "X   X", "X P X")
                 .aisle("FXXXF", "FXXXF", "FXSXF", "FXXXF", "FXXXF")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(57).or(autoAbilities()))

@@ -342,7 +342,7 @@ public class ReactorRecipes {
                 .input(dust, Aluminium, 2)
                 .fluidInputs(IndiumConcentrate.getFluid(1000))
                 .output(dustSmall, Indium)
-                .fluidOutputs(LeadZincSolution.getFluid(1000))
+                .fluidOutputs(LeadZincConcentrate.getFluid(1000))
                 .fluidOutputs(ClayVitriol.getFluid(1000))
                 .duration(50).EUt(600).buildAndRegister();
 

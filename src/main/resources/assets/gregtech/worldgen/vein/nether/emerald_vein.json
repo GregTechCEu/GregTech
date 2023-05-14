@@ -5,7 +5,7 @@
   "max_height": 30,
   "vein_populator": {
     "type": "surface_rock",
-    "material": "beryllium"
+    "material": "emerald"
   },
   "dimension_filter": [
     "is_nether"
@@ -21,10 +21,10 @@
     "type": "layered",
     "values": [
       {
-        "primary": "ore:beryllium"
+        "primary": "ore:emerald"
       },
       {
-        "secondary": "ore:beryllium"
+        "secondary": "ore:emerald"
       },
       {
         "between": "ore:emerald"

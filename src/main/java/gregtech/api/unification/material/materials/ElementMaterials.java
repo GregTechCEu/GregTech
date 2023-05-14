@@ -81,7 +81,7 @@ public class ElementMaterials {
                 .build();
 
         Beryllium = new Material.Builder(10, "beryllium")
-                .ingot().fluid().ore()
+                .ingot().fluid()
                 .color(0x64B464).iconSet(METALLIC)
                 .flags(STD_METAL)
                 .element(Elements.Be)

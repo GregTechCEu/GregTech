@@ -19,7 +19,7 @@ public class MaterialFlagAddition {
     private static final ArrayList<Object> GRAY_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, GrayVitriol, 1000, Hydrogen, 2000));
     private static final ArrayList<Object> CLAY_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1500, ClayVitriol, 500, Hydrogen, 3000));
     private static final ArrayList<Object> SODIUM_GOLD_CYANIDE = new ArrayList<>(Arrays.asList(SodiumCyanide, 2000, SodiumGoldCyanide, 1000));
-    private static final ArrayList<Object> INDIUM_CONCENTRATE = new ArrayList<>(Arrays.asList(SulfuricAcid, 3000, IndiumConcentrate, 1000));
+    private static final ArrayList<Object> INDIUM_CONCENTRATE = new ArrayList<>(Arrays.asList(SulfuricAcid, 2500, IndiumConcentrate, 500, Hydrogen, 5000));
     private static final ArrayList<Object> PGS_CHLOROPLATINIC_ACID = new ArrayList<>(Arrays.asList(AquaRegia, 2000, PlatinumGroupSlurry, 1000, ChloroplatinicAcid, 1000));
 
 

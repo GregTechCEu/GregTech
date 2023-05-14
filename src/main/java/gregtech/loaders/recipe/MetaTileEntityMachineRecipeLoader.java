@@ -134,13 +134,13 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ModHandler.addShapedRecipe(true, "energy_hatch.ulv", ENERGY_INPUT_HATCH[ULV].getStackForm(),
                 " V ", "CHC", "   ",
-                'C', new UnificationEntry(cableGtSingle, RedAlloy),
+                'C', new UnificationEntry(cableGtSingle, Lead),
                 'V', VOLTAGE_COIL_ULV.getStackForm(),
                 'H', HULL[ULV].getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[ULV])
-                .input(cableGtSingle, RedAlloy, 2)
+                .input(cableGtSingle, Lead, 2)
                 .input(VOLTAGE_COIL_ULV)
                 .output(ENERGY_INPUT_HATCH[ULV])
                 .duration(200).EUt(VA[ULV]).buildAndRegister();

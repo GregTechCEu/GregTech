@@ -699,7 +699,6 @@ public class Materials {
      * Second Degree Compounds
      */
     public static Material Glass;
-    public static Material Perlite;
     public static Material Borax;
     public static Material Olivine;
     public static Material Opal;
@@ -734,9 +733,7 @@ public class Materials {
     public static Material Potin;
     public static Material BorosilicateGlass;
     public static Material NaquadahAlloy;
-    public static Material SulfuricNickelSolution;
-    public static Material SulfuricCopperSolution;
-    public static Material LeadZincSolution;
+    public static Material LeadZincConcentrate;
     public static Material NitrationMixture;
     public static Material DilutedSulfuricAcid;
     public static Material DilutedHydrochloricAcid;

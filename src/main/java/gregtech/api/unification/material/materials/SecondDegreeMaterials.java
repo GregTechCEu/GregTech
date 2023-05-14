@@ -127,11 +127,7 @@ public class SecondDegreeMaterials {
                 .fluidTemp(1200)
                 .build();
 
-        Perlite = new Material.Builder(2001, "perlite")
-                .dust(1)
-                .color(0x1E141E)
-                .components(Obsidian, 2, Water, 1)
-                .build();
+        // FREE ID 2001
 
         Borax = new Material.Builder(2002, "borax")
                 .dust(1)
@@ -428,11 +424,12 @@ public class SecondDegreeMaterials {
 
         //FREE ID 2044
 
-        LeadZincSolution = new Material.Builder(2045, "lead_zinc_solution")
+        LeadZincConcentrate = new Material.Builder(2045, "lead_zinc_concentrate")
                 .fluid()
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Lead, 1, Silver, 1, Zinc, 1, Water, 1)
-                .build();
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Lead, 1, Zinc, 1, Sulfur, 2, Oxygen, 8)
+                .build()
+				.setFormula("(PbSO4)(ZnSO4)", true);
 
         NitrationMixture = new Material.Builder(2046, "nitration_mixture")
                 .fluid(FluidTypes.ACID)
