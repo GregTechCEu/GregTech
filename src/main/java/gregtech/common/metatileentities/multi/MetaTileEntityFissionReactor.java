@@ -15,6 +15,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -32,6 +33,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
     private FissionReactor fissionReactor;
     private int diameter;
+    private int heightTop;
+    private int heightBottom;
     private int height;
 
     public MetaTileEntityFissionReactor(ResourceLocation metaTileEntityId) {
@@ -87,8 +90,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     @Override
     protected BlockPattern createStructurePattern() {
 
-        int heightTop = Math.max(Math.min(this.getWorld() != null ? this.findHeight(true) : 1, 7), 1);
-        int heightBottom = Math.max(Math.min(this.getWorld() != null ? this.findHeight(false) : 1, 7), 1);
+        this.heightTop = Math.max(Math.min(this.getWorld() != null ? this.findHeight(true) : 1, 7), 1);
+        this.heightBottom = Math.max(Math.min(this.getWorld() != null ? this.findHeight(false) : 1, 7), 1);
 
         this.height = heightTop + heightBottom + 1;
 
@@ -197,5 +200,22 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.ASSEMBLER_OVERLAY;
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        data.setInteger("diameter", this.diameter);
+        data.setInteger("heightTop", this.heightTop);
+        data.setInteger("heightBottom", this.heightBottom);
+        return super.writeToNBT(data);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.diameter = data.getInteger("diameter");
+        this.heightTop = data.getInteger("heightTop");
+        this.heightBottom = data.getInteger("heightBottom");
+        this.height = this.heightTop + this.heightBottom + 1;
     }
 }
