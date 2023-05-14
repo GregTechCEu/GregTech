@@ -1,9 +1,7 @@
 package gregtech.api.unification.material.properties;
 
 @FunctionalInterface
-public interface IMaterialProperty {
+public interface IMaterialProperty<T> {
 
     void verifyProperty(MaterialProperties properties);
-
-    default void verifyPropertyLate(MaterialProperties properties) { }
 }

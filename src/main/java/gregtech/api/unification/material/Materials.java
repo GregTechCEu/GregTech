@@ -150,7 +150,7 @@ public class Materials {
     public static Material Cadmium;
     public static Material Cerium;
     public static Material Chlorine;
-    public static Material Chrome;
+    public static Material Chromium;
     public static Material Cobalt;
     public static Material Copernicium;
     public static Material Copper;
@@ -278,7 +278,7 @@ public class Materials {
     public static Material Bone;
     public static Material Brass;
     public static Material Bronze;
-    public static Material BrownLimonite;
+    public static Material Goethite;
     public static Material Calcite;
     public static Material Cassiterite;
     public static Material CassiteriteSand;
@@ -326,7 +326,7 @@ public class Materials {
     public static Material Pyrite;
     public static Material Pyrolusite;
     public static Material Pyrope;
-    public static Material RockSalt;
+    public static Material Sylvite;
     public static Material Ruridit;
     public static Material Rubber;
     public static Material Ruby;
@@ -356,7 +356,7 @@ public class Materials {
     public static Material VanadiumGallium;
     public static Material WroughtIron;
     public static Material Wulfenite;
-    public static Material YellowLimonite;
+    public static Material Limonite;
     public static Material YttriumBariumCuprate;
     public static Material NetherQuartz;
     public static Material CertusQuartz;
@@ -401,8 +401,6 @@ public class Materials {
     public static Material Mica;
     public static Material Barite;
     public static Material Alunite;
-    public static Material PotassiumBisulfate;
-    public static Material PotassiumPersulfate;
     public static Material Talc;
     public static Material Soapstone;
     public static Material Kyanite;
@@ -559,7 +557,7 @@ public class Materials {
     public static Material RarestMetalMixture;
     public static Material AmmoniumChloride;
     public static Material AcidicOsmiumSolution;
-    public static Material RhodiumPlatedPalladium;
+    public static Material Rhodallium;
     public static Material Butyraldehyde;
     public static Material PolyvinylButyral;
 
@@ -663,6 +661,8 @@ public class Materials {
     public static Material TreatedWood;
     public static Material Paper;
     public static Material FishOil;
+    public static Material CopperSlag;
+    public static Material NickelSlag;
     public static Material DyeBlack;
     public static Material DyeRed;
     public static Material DyeGreen;

@@ -3,7 +3,6 @@ package gregtech.loaders.recipe.chemistry;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.washed;
 import static gregtech.api.unification.ore.OrePrefix.dust;
 
 public class PlatGroupMetalsRecipes {
@@ -13,47 +12,19 @@ public class PlatGroupMetalsRecipes {
         // Primary Chain
 
         // Platinum Group Sludge Production
-        CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
-                .input(washed, Chalcopyrite)
-                .fluidInputs(NitricAcid.getFluid(100))
-                .output(dust, PlatinumGroupSludge, 2)
-                .fluidOutputs(SulfuricCopperSolution.getFluid(1000))
-                .buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, CopperSlag)
+                .fluidInputs(SulfuricAcid.getFluid(1000))
+                .output(dust, PlatinumGroupSludge)
+                .fluidOutputs(BlueVitriol.getFluid(1000))
+                .duration(50).EUt(30).buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
-                .input(washed, Chalcocite)
-                .fluidInputs(NitricAcid.getFluid(100))
-                .output(dust, PlatinumGroupSludge, 2)
-                .fluidOutputs(SulfuricCopperSolution.getFluid(1000))
-                .buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
-                .input(washed, Bornite)
-                .fluidInputs(NitricAcid.getFluid(100))
-                .output(dust, PlatinumGroupSludge, 2)
-                .fluidOutputs(SulfuricCopperSolution.getFluid(1000))
-                .buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
-                .input(washed, Tetrahedrite)
-                .fluidInputs(NitricAcid.getFluid(100))
-                .output(dust, PlatinumGroupSludge, 2)
-                .fluidOutputs(SulfuricCopperSolution.getFluid(1000))
-                .buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
-                .input(washed, Pentlandite)
-                .fluidInputs(NitricAcid.getFluid(100))
-                .output(dust, PlatinumGroupSludge, 2)
-                .fluidOutputs(SulfuricNickelSolution.getFluid(1000))
-                .buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
-                .input(washed, Cooperite)
-                .fluidInputs(NitricAcid.getFluid(100))
-                .output(dust, PlatinumGroupSludge, 4)
-                .fluidOutputs(SulfuricNickelSolution.getFluid(1000))
-                .buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, NickelSlag)
+                .fluidInputs(SulfuricAcid.getFluid(1000))
+                .output(dust, PlatinumGroupSludge)
+                .fluidOutputs(CyanVitriol.getFluid(1000))
+                .duration(50).EUt(30).buildAndRegister();
 
         // Aqua Regia
         // HNO3 + HCl -> [HNO3 + HCl]

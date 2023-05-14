@@ -34,14 +34,7 @@ public class SpecialRecipeHandler {
         addRoastingRecipe(Tetrahedrite);
         addRoastingRecipe(Chalcocite);
         addRoastingRecipe(Bornite);
-
-        // Pentlandite done separately because of its formula
-        ARC_FURNACE_RECIPES.recipeBuilder()
-                .input(dust, Pentlandite, 2)
-                .fluidInputs(Oxygen.getFluid(2000))
-                .output(ingot, Nickel)
-                .fluidOutputs(SulfurDioxide.getFluid(1000))
-                .duration(200).EUt(VA[LV]).buildAndRegister();
+        addRoastingRecipe(Pentlandite);
 
         // Realgar done separately because of its formula
         ARC_FURNACE_RECIPES.recipeBuilder()
@@ -124,7 +117,7 @@ public class SpecialRecipeHandler {
                 .chancedOutput(dust, Mica, 3, 7500, 0)
                 .chancedOutput(dust, Gypsum, 6, 5000, 0)
                 .chancedOutput(dustTiny, Monazite, 6, 2500, 0)
-                .chancedOutput(dustTiny, Barium, 12, 2500, 0)
+                .chancedOutput(dustTiny, Barite, 12, 2500, 0)
                 .chancedOutput(dustTiny, Rutile, 3, 2500, 0)
                 .buildAndRegister();
 
@@ -158,7 +151,7 @@ public class SpecialRecipeHandler {
                 .output(dust, Stone)
                 .chancedOutput(dust, Iron, 400, 0)
                 .chancedOutput(dust, Neodymium, 200, 0)
-                .chancedOutput(dust, Chrome, 200, 0)
+                .chancedOutput(dust, Chromium, 200, 0)
                 .chancedOutput(dust, Manganese, 200, 0)
                 .chancedOutput(dust, Alumina, 200, 0)
                 .buildAndRegister();
@@ -172,7 +165,7 @@ public class SpecialRecipeHandler {
      * - Output the Sulfur as SO2
      * - Output the other parts as Ingots if possible (Dusts if Ingot is unavailable or requires EBF)
      * - 30 EU/t, 10 seconds
-     *
+     * - If material includes copper or nickel, output corresponding slag
      * Designed for ONLY FIRST DEGREE MATERIALS!!
      */
     private static void addRoastingRecipe(Material input) {
@@ -194,6 +187,8 @@ public class SpecialRecipeHandler {
                 builder.output(prefix, ms.material, (int) ms.amount);
             }
         }
+        if (input.getNumComponentsOf(Copper) > 0) builder.output(dust, CopperSlag);
+        if (input.getNumComponentsOf(Nickel) > 0) builder.output(dust, NickelSlag);
         builder.buildAndRegister();
     }
 }

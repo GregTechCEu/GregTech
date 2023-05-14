@@ -1,6 +1,6 @@
 package gregtech.api.unification.material.properties;
 
-public class PropertyKey<T extends IMaterialProperty> {
+public class PropertyKey<T extends IMaterialProperty<T>> {
 
     public static final PropertyKey<BlastProperty> BLAST = new PropertyKey<>("blast", BlastProperty.class);
     public static final PropertyKey<DustProperty> DUST = new PropertyKey<>("dust", DustProperty.class);
@@ -39,7 +39,7 @@ public class PropertyKey<T extends IMaterialProperty> {
         }
     }
 
-    public T cast(IMaterialProperty property) {
+    public T cast(IMaterialProperty<?> property) {
         return this.type.cast(property);
     }
 
@@ -61,7 +61,7 @@ public class PropertyKey<T extends IMaterialProperty> {
         return key;
     }
 
-    private static class EmptyProperty implements IMaterialProperty {
+    private static class EmptyProperty implements IMaterialProperty<EmptyProperty> {
 
         @Override
         public void verifyProperty(MaterialProperties properties) {

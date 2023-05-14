@@ -40,7 +40,7 @@ public class CrushedRecipeHandler {
                 .output(washed, material)
                 .chancedOutput(byproductPrefix, byproduct, byproductMultiplier, 7500, 0)
                 .fluidOutputs(SluiceJuice.getFluid(1000))
-                .duration(256).EUt(16).buildAndRegister();
+                .duration(200).EUt(16).buildAndRegister();
 
         // Crushed Ore -> Purified Ore + Byproduct Purified Ore (Persulfate)
         if (byproduct.hasProperty(PropertyKey.ORE)) {
@@ -50,21 +50,7 @@ public class CrushedRecipeHandler {
                     .output(washed, material)
                     .chancedOutput(washed, byproduct, byproductMultiplier, 7500, 0)
                     .output(dust, SluiceSand)
-                    .duration(256).EUt(64).buildAndRegister();
-
-            SLUICE_RECIPES.recipeBuilder()
-                    .input(crushed, material)
-                    .fluidInputs(PotassiumPersulfate.getFluid(250))
-                    .output(washed, material)
-                    .chancedOutput(washed, byproduct, byproductMultiplier, 7500, 0)
-                    .output(dust, SluiceSand)
-                    .duration(256).EUt(64).buildAndRegister();
+                    .duration(200).EUt(64).buildAndRegister();
         }
-
-        // Hard Hammer crafting recipe
-        // Crushed Ore -> Dust
-        ModHandler.addShapelessRecipe(String.format("crushed_ore_to_dust_%s", material),
-                OreDictUnifier.get(dust, material, property.getOreMultiplier()), 'h', new UnificationEntry(crushed, material));
-
     }
 }

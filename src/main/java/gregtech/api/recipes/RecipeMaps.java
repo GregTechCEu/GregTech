@@ -635,7 +635,7 @@ public class RecipeMaps {
             .setSound(GTSoundEvents.CHEMICAL_REACTOR);
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> FLOTATION_RECIPES = new RecipeMap<>("flotation_cell", 1, 2, 0, 3, 0, 1, 0, 1, new SimpleRecipeBuilder().duration(7200).EUt(2), false)
+    public static final RecipeMap<SimpleRecipeBuilder> FLOTATION_RECIPES = new RecipeMap<>("flotation_cell", 1, 2, 1, 1, new SimpleRecipeBuilder().duration(7200).EUt(2), false)
             .setSlotOverlay(false, false, true, GuiTextures.DUST_OVERLAY)
             .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, MoveType.VERTICAL)
@@ -664,7 +664,7 @@ public class RecipeMaps {
     /**
      * Example:
      * <pre>
-     *  	RecipeMap.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+     *  	RecipeMap.FLUID_SOLIDIFICATION_RECIPES.recipeBuilder()
      * 				.notConsumable(MetaItems.SHAPE_MOLD_CYLINDER)
      * 				.fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L / 8))
      * 				.output(MetaItems.PETRI_DISH, 2)
@@ -674,7 +674,7 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> FLUID_SOLIDFICATION_RECIPES = new RecipeMap<>("fluid_solidifier", 1, 1, 1, 0, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> FLUID_SOLIDIFICATION_RECIPES = new RecipeMap<>("fluid_solidifier", 1, 1, 1, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.SOLIDIFIER_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.COOLING);

@@ -58,11 +58,11 @@ public class OrePrefix {
     // First ore processing output from Ore blocks. Worth 1.5 Dust
     public static final OrePrefix crushed = new OrePrefix("crushed", M * 3 / 2, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty);
     // Second ore processing output from Ore blocks. Worth 2 Dust
-    public static final OrePrefix washed = new OrePrefix("crushedPurified", M * 2, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix washed = new OrePrefix("washed", M * 2, null, MaterialIconType.washed, ENABLE_UNIFICATION, hasOreProperty);
     // Third ore processing output from Ore blocks. Worth 3 Dust
-    public static final OrePrefix purified = new OrePrefix("crushedRefined", M * 3, null, MaterialIconType.crushedRefined, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix purified = new OrePrefix("purified", M * 3, null, MaterialIconType.purified, ENABLE_UNIFICATION, hasOreProperty);
     // Fourth ore processing output from Ore blocks. Worth 4 Dust
-    public static final OrePrefix refined = new OrePrefix("dustPure", M * 4, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix refined = new OrePrefix("refined", M * 4, null, MaterialIconType.refined, ENABLE_UNIFICATION, hasOreProperty);
 
     // A hot Ingot, which has to be cooled down by a Vacuum Freezer.
     public static final OrePrefix ingotHot = new OrePrefix("ingotHot", M, null, MaterialIconType.ingotHot, ENABLE_UNIFICATION, hasBlastProperty.and(mat -> mat.getProperty(PropertyKey.BLAST).getBlastTemperature() > 1750));
@@ -521,7 +521,7 @@ public class OrePrefix {
         return oreProcessingHandlers.addAll(Arrays.asList(processingHandler));
     }
 
-    public <T extends IMaterialProperty> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {
+    public <T extends IMaterialProperty<T>> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
             if (material.hasProperty(propertyKey) && !material.hasFlag(NO_UNIFICATION)) {
                 handler.accept(orePrefix, material, material.getProperty(propertyKey));

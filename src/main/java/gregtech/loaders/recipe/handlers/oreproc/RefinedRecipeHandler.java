@@ -24,7 +24,7 @@ public class RefinedRecipeHandler {
         CENTRIFUGE_RECIPES.recipeBuilder()
                 .input(refined, material)
                 .output(dust, material, 4 * property.getOreMultiplier())
-                .duration(256).EUt(VA[ULV]).buildAndRegister();
+                .duration(200).EUt(VA[ULV]).buildAndRegister();
 
         // Flotation recipe
         if (byproduct.hasProperty(PropertyKey.ORE)) {

@@ -4,7 +4,7 @@ import gregtech.api.unification.material.Material;
 
 import javax.annotation.Nullable;
 
-public class IngotProperty implements IMaterialProperty {
+public class IngotProperty implements IMaterialProperty<IngotProperty> {
 
     /**
      * Specifies a material into which this material parts turn when heated

@@ -16,7 +16,6 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.ConfigHolder;
 import gregtech.common.crafting.ToolHeadReplaceRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
@@ -465,7 +464,7 @@ public class ToolRecipeHandler {
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",
                     'E', MetaItems.EMITTER_LuV.getStackForm(),
-                    'P', new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium),
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.Rhodallium),
                     'S', MetaItems.SENSOR_LuV.getStackForm(),
                     'D', MetaItems.COVER_SCREEN.getStackForm(),
                     'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.LuV),

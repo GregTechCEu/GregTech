@@ -227,7 +227,7 @@ public class OreByProduct implements IRecipeWrapper {
         }
 
         if (persulfateByproduct != null) {
-            fluidInputs.add(Lists.newArrayList(SodiumPersulfate.getFluid(100), PotassiumPersulfate.getFluid(100)));
+            fluidInputs.add(Lists.newArrayList(SodiumPersulfate.getFluid(100)));
             addToOutputs(material, washed, 1);
             addToOutputs(persulfateByproduct, washed, 1);
         } else {

@@ -176,7 +176,7 @@ public class PartsRecipeHandler {
 
         if (material.hasFluid()) {
             boolean isSmall = gearPrefix == OrePrefix.gearSmall;
-            RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+            RecipeMaps.FLUID_SOLIDIFICATION_RECIPES.recipeBuilder()
                     .notConsumable(isSmall ? MetaItems.SHAPE_MOLD_GEAR_SMALL : MetaItems.SHAPE_MOLD_GEAR)
                     .fluidInputs(material.getFluid(L * (isSmall ? 1 : 4)))
                     .outputs(stack)
@@ -258,7 +258,7 @@ public class PartsRecipeHandler {
 
     public static void processPlate(OrePrefix platePrefix, Material material, DustProperty property) {
         if (material.hasFluid()) {
-            RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+            RecipeMaps.FLUID_SOLIDIFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_PLATE)
                     .fluidInputs(material.getFluid(L))
                     .outputs(OreDictUnifier.get(platePrefix, material))
@@ -370,7 +370,7 @@ public class PartsRecipeHandler {
                 'R', new UnificationEntry(ring, material));
 
         if (material.hasFluid()) {
-            RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+            RecipeMaps.FLUID_SOLIDIFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_ROTOR)
                     .fluidInputs(material.getFluid(L * 4))
                     .outputs(GTUtility.copy(stack))

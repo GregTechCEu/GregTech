@@ -4,7 +4,7 @@ import crafttweaker.CraftTweakerAPI;
 
 import javax.annotation.Nonnull;
 
-public class BlastProperty implements IMaterialProperty {
+public class BlastProperty implements IMaterialProperty<BlastProperty> {
 
     /**
      * Blast Furnace Temperature of this Material.

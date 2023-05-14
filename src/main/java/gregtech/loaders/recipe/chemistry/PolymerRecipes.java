@@ -464,7 +464,7 @@ public class PolymerRecipes {
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(60).duration(100)
-                .input(dust, Chrome)
+                .input(dust, Chromium)
                 .fluidInputs(Oxygen.getFluid(3000))
                 .output(dust, ChromiumTrioxide, 4)
                 .buildAndRegister();

@@ -8,7 +8,7 @@ import net.minecraft.enchantment.Enchantment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ToolProperty implements IMaterialProperty {
+public class ToolProperty implements IMaterialProperty<ToolProperty> {
 
     /**
      * Harvest speed of tools made from this Material.

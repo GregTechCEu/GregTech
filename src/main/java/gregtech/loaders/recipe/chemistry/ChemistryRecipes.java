@@ -135,12 +135,13 @@ public class ChemistryRecipes {
                 .duration(80).EUt(VA[MV])
                 .buildAndRegister();
 
-        // C2H5OH + Na + CS2 -> C3H5OS2Na
+        // C2H5OH + NaOH + CS2 -> C3H5OS2Na + H2O
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, Sodium)
+                .input(dust, SodiumHydroxide, 3)
                 .fluidInputs(Ethanol.getFluid(1000))
                 .fluidInputs(CarbonDisulfide.getFluid(1000))
                 .fluidOutputs(SodiumEthylXanthate.getFluid(1000))
+                .fluidOutputs(Water.getFluid(1000))
                 .duration(60).EUt(VA[HV]).buildAndRegister();
     }
 }

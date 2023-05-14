@@ -2,7 +2,7 @@ package gregtech.api.unification.material.properties;
 
 import gregtech.api.unification.material.info.MaterialFlags;
 
-public class PolymerProperty implements IMaterialProperty {
+public class PolymerProperty implements IMaterialProperty<PolymerProperty> {
 
 
     @Override

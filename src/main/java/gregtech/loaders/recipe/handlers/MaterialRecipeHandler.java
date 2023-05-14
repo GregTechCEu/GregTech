@@ -107,8 +107,8 @@ public class MaterialRecipeHandler {
                 int blastTemp = mat.getBlastTemperature();
 
                 if (blastTemp <= 0) {
-                    // smelting magnetic dusts is handled elsewhere
-                    if (!mat.hasFlag(IS_MAGNETIC)) {
+                    // smelting magnetic and ore dusts is handled elsewhere
+                    if (!mat.hasFlag(IS_MAGNETIC) && oreProperty == null) {
                         // do not register inputs by ore dict here. Let other mods register their own dust -> ingots
                         ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), ingotStack);
                     }
@@ -129,17 +129,6 @@ public class MaterialRecipeHandler {
                         .inputs(dustStack)
                         .outputs(OreDictUnifier.get(OrePrefix.plate, mat))
                         .buildAndRegister();
-            }
-
-            // Some Ores with Direct Smelting Results have neither ingot nor gem properties
-            if (oreProperty != null) {
-                Material smeltingResult = oreProperty.getDirectSmeltResult();
-                if (smeltingResult != null) {
-                    ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingResult);
-                    if (!ingotStack.isEmpty()) {
-                        ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), ingotStack);
-                    }
-                }
             }
         }
     }
@@ -264,7 +253,7 @@ public class MaterialRecipeHandler {
         }
 
         if (material.hasFluid()) {
-            RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+            RecipeMaps.FLUID_SOLIDIFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT)
                     .fluidInputs(material.getFluid(L))
                     .outputs(OreDictUnifier.get(ingotPrefix, material))
@@ -313,10 +302,9 @@ public class MaterialRecipeHandler {
             if (!material.hasFlag(NO_SMASHING)) {
                 ItemStack plateStack = OreDictUnifier.get(OrePrefix.plate, material);
                 if (!plateStack.isEmpty()) {
-                    RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder()
+                    RecipeMaps.BENDER_RECIPES.recipeBuilder()
                             .input(ingotPrefix, material)
-                            .notConsumable(MetaItems.SHAPE_MOLD_PLATE.getStackForm())
-							.outputs(plateStack)
+                            .outputs(plateStack)
                             .EUt(24).duration((int) (material.getMass()))
                             .buildAndRegister();
 
@@ -415,7 +403,7 @@ public class MaterialRecipeHandler {
                     .buildAndRegister();
 
             if (material.hasFluid()) {
-                RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+                RecipeMaps.FLUID_SOLIDIFICATION_RECIPES.recipeBuilder()
                         .notConsumable(MetaItems.SHAPE_MOLD_NUGGET)
                         .fluidInputs(material.getFluid(L))
                         .outputs(OreDictUnifier.get(orePrefix, material, 9))
@@ -461,7 +449,7 @@ public class MaterialRecipeHandler {
                 .buildAndRegister();
 
         if (material.hasFluid()) {
-            FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+            FLUID_SOLIDIFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_CHUNK)
                     .fluidInputs(material.getFluid(L))
                     .output(orePrefix, material, 4)
@@ -492,7 +480,7 @@ public class MaterialRecipeHandler {
         ItemStack blockStack = OreDictUnifier.get(blockPrefix, material);
         long materialAmount = blockPrefix.getMaterialAmount(material);
         if (material.hasFluid()) {
-            RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+            RecipeMaps.FLUID_SOLIDIFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_BLOCK)
                     .fluidInputs(material.getFluid((int) (materialAmount * L / M)))
                     .outputs(blockStack)

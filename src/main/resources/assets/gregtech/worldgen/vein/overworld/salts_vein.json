@@ -18,7 +18,7 @@
     "type": "layered",
     "values": [
       {
-        "primary": "ore:rock_salt"
+        "primary": "ore:sylvite"
       },
       {
         "secondary": "ore:salt"

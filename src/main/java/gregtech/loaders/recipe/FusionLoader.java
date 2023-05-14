@@ -74,7 +74,7 @@ public class FusionLoader {
 
         RecipeMaps.FUSION_RECIPES.recipeBuilder()
                 .fluidInputs(Materials.Lutetium.getFluid(32))
-                .fluidInputs(Materials.Chrome.getFluid(32))
+                .fluidInputs(Materials.Chromium.getFluid(32))
                 .fluidOutputs(Materials.Americium.getFluid(32))
                 .duration(64)
                 .EUt(49152)
@@ -138,7 +138,7 @@ public class FusionLoader {
         RecipeMaps.FUSION_RECIPES.recipeBuilder()
                 .fluidInputs(Materials.Hydrogen.getFluid(125))
                 .fluidInputs(Materials.Vanadium.getFluid(16))
-                .fluidOutputs(Materials.Chrome.getFluid(16))
+                .fluidOutputs(Materials.Chromium.getFluid(16))
                 .duration(64)
                 .EUt(24576)
                 .EUToStart(140_000_000)

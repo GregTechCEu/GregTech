@@ -66,7 +66,7 @@ public class SecondDegreeMaterials {
                 .gem().ore()
                 .color(0xFF6464).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS, DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Alumina, 5, Chrome, 1)
+                .components(Alumina, 5, Chromium, 1)
                 .build().setFormula("(Al2O3)Cr", true);
 
         Spessartine = new Material.Builder(321, "spessartine")
@@ -375,7 +375,7 @@ public class SecondDegreeMaterials {
                 .ingot(3).fluid()
                 .color(0xc0c0c0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR)
-                .components(Vanadium, 1, Chrome, 1, Steel, 7)
+                .components(Vanadium, 1, Chromium, 1, Steel, 7)
                 .toolStats(ToolProperty.Builder.of(3.0F, 3.0F, 1536, 3)
                         .attackSpeed(-0.2F).enchantability(5).build())
                 .rotorStats(7.0f, 3.0f, 1920)
@@ -424,22 +424,14 @@ public class SecondDegreeMaterials {
                 .blastTemp(7200, GasTier.HIGH, VA[LuV], 1000)
                 .build();
 
-        SulfuricNickelSolution = new Material.Builder(2043, "sulfuric_nickel_solution")
-                .fluid(FluidTypes.ACID)
-                .color(0x3EB640)
-                .components(Nickel, 1, Oxygen, 1, SulfuricAcid, 1)
-                .build();
+        //FREE ID 2043
 
-        SulfuricCopperSolution = new Material.Builder(2044, "sulfuric_copper_solution")
-                .fluid(FluidTypes.ACID)
-                .color(0x48A5C0)
-                .components(Copper, 1, Oxygen, 1, SulfuricAcid, 1)
-                .build();
+        //FREE ID 2044
 
         LeadZincSolution = new Material.Builder(2045, "lead_zinc_solution")
                 .fluid()
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Lead, 1, Silver, 1, Zinc, 1, Sulfur, 3, Water, 1)
+                .components(Lead, 1, Silver, 1, Zinc, 1, Water, 1)
                 .build();
 
         NitrationMixture = new Material.Builder(2046, "nitration_mixture")
@@ -559,7 +551,7 @@ public class SecondDegreeMaterials {
                 .components(Osmium, 1, Oxygen, 4, Water, 1, HydrochloricAcid, 1)
                 .build();
 
-        RhodiumPlatedPalladium = new Material.Builder(2062, "rhodium_plated_palladium")
+        Rhodallium = new Material.Builder(2062, "rhodallium")
                 .ingot().fluid()
                 .color(0xDAC5C5).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR)
@@ -588,7 +580,7 @@ public class SecondDegreeMaterials {
                 .fluid()
                 .color(0x2F3030)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(PlatinumGroupSludge, 1)
+                .components(PlatinumGroupSludge, 1, Water, 1)
                 .build();
 
         Bentonite = new Material.Builder(2026, "bentonite")

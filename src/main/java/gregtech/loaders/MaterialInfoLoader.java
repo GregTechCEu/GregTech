@@ -94,7 +94,7 @@ public class MaterialInfoLoader {
                 new MaterialStack(Materials.Rubber, M * 2))); // plate
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[6].getStackForm(), new ItemMaterialInfo(
-                new MaterialStack(Materials.RhodiumPlatedPalladium, M * 8), // plate
+                new MaterialStack(Materials.Rhodallium, M * 8), // plate
                 new MaterialStack(Materials.NiobiumTitanium, M), // single cable
                 new MaterialStack(Materials.Rubber, M * 2))); // plate
 

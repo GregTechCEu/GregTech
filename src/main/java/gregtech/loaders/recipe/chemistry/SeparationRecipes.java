@@ -320,12 +320,6 @@ public class SeparationRecipes {
                 .duration(150).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, PotassiumBisulfate, 7)
-                .fluidOutputs(PotassiumPersulfate.getFluid(500))
-                .fluidOutputs(Hydrogen.getFluid(1000))
-                .duration(150).EUt(VA[LV]).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(SaltWater.getFluid(1000))
                 .output(dust, SodiumHydroxide, 3)
                 .fluidOutputs(Chlorine.getFluid(1000))
@@ -531,12 +525,6 @@ public class SeparationRecipes {
                 .fluidOutputs(HydrochloricAcid.getFluid(6000))
                 .fluidOutputs(Oxygen.getFluid(2000))
                 .buildAndRegister();
-
-        // Thermal Centrifuge
-        THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
-                .output(dust, Stone)
-                .duration(500).EUt(48).buildAndRegister();
 
         // Extractor
         EXTRACTOR_RECIPES.recipeBuilder()

@@ -6,8 +6,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 
-import static gregtech.api.GTValues.LV;
-import static gregtech.api.GTValues.VA;
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processMetalSmelting;
@@ -27,12 +26,12 @@ public class PurifiedRecipeHandler {
         if (tertiaryByproduct.hasProperty(PropertyKey.ORE))
             tertiaryByproductMultiplier = tertiaryByproduct.getProperty(PropertyKey.ORE).getOreMultiplier();
 
-        // Forge Hammer recipe
-        // Purified Ore -> Dust
-        FORGE_HAMMER_RECIPES.recipeBuilder()
+        // Centrifuge recipe
+        // Purified Ore -> 3 Dust
+        CENTRIFUGE_RECIPES.recipeBuilder()
                 .input(purified, material)
-                .output(dust, material, property.getOreMultiplier())
-                .duration(10).EUt(16).buildAndRegister();
+                .output(dust, material, property.getOreMultiplier() * 3)
+                .duration(200).EUt(VA[ULV]).buildAndRegister();
 
         // Thermal Centrifuge recipes
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
@@ -40,7 +39,7 @@ public class PurifiedRecipeHandler {
                 .output(refined, material)
                 .output(dust, primaryByproduct, primaryByproductMultiplier)
                 .chancedOutput(dust, tertiaryByproduct, tertiaryByproductMultiplier, 3000, 0)
-                .duration(256).EUt(64).buildAndRegister();
+                .duration(200).EUt(256).buildAndRegister();
 
         // Chemical Bath recipes
         if (property.getBathOutputs() != null) {
@@ -50,7 +49,7 @@ public class PurifiedRecipeHandler {
                     .output(refined, material)
                     .output(dust, primaryByproduct, primaryByproductMultiplier)
                     .fluidOutputs(property.getBathOutputStacks())
-                    .duration(256).EUt(VA[LV]).buildAndRegister();
+                    .duration(200).EUt(256).buildAndRegister();
         }
     }
 }

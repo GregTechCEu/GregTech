@@ -22,8 +22,8 @@ public class OreRecipeHandler {
 
     public static void register() {
         ore.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
-        oreEndstone.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
         oreNetherrack.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
+        oreEndstone.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
         if (ConfigHolder.worldgen.allUniqueStoneTypes) {
             oreGranite.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
             oreDiorite.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
@@ -60,11 +60,11 @@ public class OreRecipeHandler {
 
         // Hard Hammer crafting recipe. Outputs a Gem if possible
         if(hasGem(material)) {
-            ModHandler.addShapelessRecipe(String.format("ore_to_gem_%s", material),
-                    OreDictUnifier.get(gem, material, property.getOreMultiplier()), 'h', new UnificationEntry(ore, material));
+            ModHandler.addShapelessRecipe(String.format(prefix.name().toLowerCase() + "_to_gem_%s", material),
+                    OreDictUnifier.get(gem, material, property.getOreMultiplier()), 'h', new UnificationEntry(prefix, material));
         } else {
-            ModHandler.addShapelessRecipe(String.format("ore_to_dust_%s", material),
-                    OreDictUnifier.get(dust, material, property.getOreMultiplier()), 'h', new UnificationEntry(ore, material));
+            ModHandler.addShapelessRecipe(String.format(prefix.name().toLowerCase() + "_to_dust_%s", material),
+                    OreDictUnifier.get(dust, material, property.getOreMultiplier()), 'h', new UnificationEntry(prefix, material));
         }
 
         // Forge Hammer recipe
@@ -89,11 +89,10 @@ public class OreRecipeHandler {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(prefix, material)
                 .output(crushed, material, oreTypeMultiplier)
-                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier * oreTypeMultiplier, 2000)
+                .chancedOutput(byproductPrefix, byproduct, byproductMultiplier * oreTypeMultiplier, 2000, 0)
                 .chancedOutput(stoneTypeDust, 5000, 0)
-                .duration(256 * oreTypeMultiplier).EUt(2)
+                .duration(200 * oreTypeMultiplier).EUt(2)
                 .buildAndRegister();
-
     }
 
     ////////////////////////////////////////

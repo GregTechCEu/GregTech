@@ -6,7 +6,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 
-public class PlasmaProperty implements IMaterialProperty {
+public class PlasmaProperty implements IMaterialProperty<PlasmaProperty> {
 
     /**
      * Internal material plasma fluid field

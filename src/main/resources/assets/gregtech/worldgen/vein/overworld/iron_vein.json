@@ -18,10 +18,10 @@
     "type": "layered",
     "values": [
       {
-        "primary": "ore:brown_limonite"
+        "primary": "ore:goethite"
       },
       {
-        "secondary": "ore:yellow_limonite"
+        "secondary": "ore:limonite"
       },
       {
         "between": "ore:hematite"

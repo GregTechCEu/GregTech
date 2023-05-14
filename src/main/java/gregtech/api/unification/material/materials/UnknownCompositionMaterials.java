@@ -396,9 +396,15 @@ public class UnknownCompositionMaterials {
 
         // FREE ID 1620
 
-        // FREE ID 1621
+        CopperSlag = new Material.Builder(1621, "copper_slag")
+                .dust()
+                .color(0xA65537).iconSet(ROUGH)
+                .build();
 
-        // FREE ID 1622
+        NickelSlag = new Material.Builder(1622, "nickel_slag")
+                .dust()
+                .color(0x7A858E).iconSet(ROUGH)
+                .build();
 
         // These colors are much nicer looking than those in MC's EnumDyeColor
         DyeBlack = new Material.Builder(1623, "dye_black")

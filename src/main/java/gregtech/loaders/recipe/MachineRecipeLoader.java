@@ -307,13 +307,6 @@ public class MachineRecipeLoader {
 //            .duration(72000).EUt(VA[HV]).buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                .input(OrePrefix.washed, Materials.Sphalerite)
-                .input(OrePrefix.washed, Materials.Galena)
-                .fluidInputs(Materials.SulfuricAcid.getFluid(4000))
-                .fluidOutputs(Materials.IndiumConcentrate.getFluid(1000))
-                .duration(60).EUt(150).buildAndRegister();
-
-        RecipeMaps.MIXER_RECIPES.recipeBuilder()
                 .input(dust, Coal)
                 .fluidInputs(Concrete.getFluid(L))
                 .outputs(MetaBlocks.ASPHALT.getItemVariant(BlockAsphalt.BlockType.ASPHALT))
@@ -582,7 +575,7 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, StainlessSteel, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.HV)).circuitMeta(8).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Titanium, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.EV)).circuitMeta(8).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, TungstenSteel, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.IV)).circuitMeta(8).duration(50).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, RhodiumPlatedPalladium, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.LuV)).circuitMeta(8).duration(50).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Rhodallium, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.LuV)).circuitMeta(8).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, NaquadahAlloy, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ZPM)).circuitMeta(8).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Darmstadtium, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UV)).circuitMeta(8).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Neutronium, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UHV)).circuitMeta(8).duration(50).buildAndRegister();
@@ -879,14 +872,14 @@ public class MachineRecipeLoader {
                 .circuitMeta(1)
                 .fluidOutputs(Water.getFluid(L)).buildAndRegister();
 
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+        FLUID_SOLIDIFICATION_RECIPES.recipeBuilder()
                 .fluidInputs(Toluene.getFluid(100))
                 .notConsumable(SHAPE_MOLD_BALL)
                 .output(GELLED_TOLUENE)
                 .duration(100).EUt(16).buildAndRegister();
 
         for (int i = 0; i < Materials.CHEMICAL_DYES.length; i++) {
-            FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+            FLUID_SOLIDIFICATION_RECIPES.recipeBuilder()
                     .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 2))
                     .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
                     .outputs(MetaItems.DYE_ONLY_ITEMS[i].getStackForm())

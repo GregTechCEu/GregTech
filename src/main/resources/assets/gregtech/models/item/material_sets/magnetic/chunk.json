@@ -1,5 +1,5 @@
 {
-  "parent": "gregtech:item/material_sets/dull/crushed",
+  "parent": "gregtech:item/material_sets/dull/chunk",
   "textures": {
     "layer1": "gregtech:items/material_sets/magnetic/magnetic_overlay"
   }

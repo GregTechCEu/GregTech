@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FOIL;
 
-public class WireProperties implements IMaterialProperty {
+public class WireProperties implements IMaterialProperty<WireProperties> {
 
     private int voltage;
     private int amperage;

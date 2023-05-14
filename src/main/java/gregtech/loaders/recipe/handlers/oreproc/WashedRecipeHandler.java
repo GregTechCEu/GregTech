@@ -44,7 +44,7 @@ public class WashedRecipeHandler {
                     .chancedOutput(gem, material, property.getOreMultiplier(), 2000, 0)
                     .chancedOutput(gemFlawless, material, property.getOreMultiplier(), 1000, 0)
                     .chancedOutput(gemExquisite, material, property.getOreMultiplier(), 500, 0)
-                    .duration(256).EUt(16).buildAndRegister();
+                    .duration(200).EUt(64).buildAndRegister();
         } else if (material.hasFlag(PURIFY_BY_SIFTING)) {
             // Certain ores flagged to be in Sifter
             SIFTER_RECIPES.recipeBuilder()
@@ -52,7 +52,7 @@ public class WashedRecipeHandler {
                     .output(purified, material)
                     .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 4000, 0)
                     .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier, 6000, 0)
-                    .duration(256).EUt(16).buildAndRegister();
+                    .duration(200).EUt(64).buildAndRegister();
         } else if (material.hasFlag(MAGNETIC_ORE) || primaryByproduct.hasFlag(MAGNETIC_ORE)) {
             // Magnetic Materials or Byproducts go in the Magnetic Separator
             ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
@@ -60,7 +60,7 @@ public class WashedRecipeHandler {
                     .output(purified, material)
                     .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 4000, 0)
                     .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier, 6000, 0)
-                    .duration(256).EUt(16).buildAndRegister();
+                    .duration(200).EUt(64).buildAndRegister();
         }
         // Anything can go in the Centrifuge
         CENTRIFUGE_RECIPES.recipeBuilder()
@@ -68,7 +68,6 @@ public class WashedRecipeHandler {
                 .output(purified, material)
                 .chancedOutput(primaryByproductPrefix, primaryByproduct, primaryByproductMultiplier, 3000, 0)
                 .chancedOutput(secondaryByproductPrefix, secondaryByproduct, secondaryByproductMultiplier, 4000, 0)
-                .duration(256).EUt(16).buildAndRegister();
-
+                .duration(200).EUt(64).buildAndRegister();
     }
 }

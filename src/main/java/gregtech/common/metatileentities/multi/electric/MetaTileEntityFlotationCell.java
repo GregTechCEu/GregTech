@@ -40,15 +40,14 @@ public class MetaTileEntityFlotationCell extends RecipeMapMultiblockController {
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("FXXXF", "FXAXF", "FAAAF", "FXAXF", "FXXXF")
-                .aisle("XXXXX", "X   X", "A   A", "X   X", "X P X")
-                .aisle("XXXXX", "A P A", "A P A", "A P A", "APPPA")
-                .aisle("XXXXX", "X   X", "A   A", "X   X", "X P X")
-                .aisle("FXXXF", "FXAXF", "FASAF", "FXAXF", "FXXXF")
+                .aisle("FXXXF", "FXXXF", "FXXXF", "FXXXF", "FXXXF")
+                .aisle("XXXXX", "X   X", "X   X", "X   X", "X P X")
+                .aisle("XXXXX", "X P X", "X P X", "X P X", "XPPPX")
+                .aisle("XXXXX", "X   X", "X   X", "X   X", "X P X")
+                .aisle("FXXXF", "FXXXF", "FXSXF", "FXXXF", "FXXXF")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(36).or(autoAbilities()))
+                .where('X', states(getCasingState()).setMinGlobalLimited(57).or(autoAbilities()))
                 .where('F', frames(Materials.Titanium))
-                .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID)))
                 .where('P', states(MetaBlocks.BOILER_CASING.getState(BlockBoilerCasing.BoilerCasingType.POLYTETRAFLUOROETHYLENE_PIPE)))
                 .where(' ', air())
                 .build();

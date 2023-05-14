@@ -153,7 +153,7 @@ public class ElementMaterials {
                 .element(Elements.Cl)
                 .build();
 
-        Chrome = new Material.Builder(22, "chrome")
+        Chromium = new Material.Builder(22, "chromium")
                 .ingot(3).fluid()
                 .color(0xEAC4D8).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_ROTOR)

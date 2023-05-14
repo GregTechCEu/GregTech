@@ -163,9 +163,6 @@ public class GregTechAPI {
         }
 
         public void closeRegistry() {
-            for (Material material : MATERIAL_REGISTRY) {
-                material.getProperties().verifyLate();
-            }
             this.isRegistryClosed = true;
         }
 

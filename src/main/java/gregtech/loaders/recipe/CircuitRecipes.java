@@ -236,7 +236,7 @@ public class CircuitRecipes {
                 .output(GLASS_TUBE)
                 .duration(160).EUt(16).buildAndRegister();
 
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+        FLUID_SOLIDIFICATION_RECIPES.recipeBuilder()
                 .fluidInputs(Glass.getFluid(GTValues.L))
                 .notConsumable(SHAPE_MOLD_BALL)
                 .output(GLASS_TUBE)
@@ -831,13 +831,13 @@ public class CircuitRecipes {
 
         // Wetware Board
 
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
+        FLUID_SOLIDIFICATION_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
                 .notConsumable(SHAPE_MOLD_CYLINDER)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L / 4))
                 .output(PETRI_DISH)
                 .buildAndRegister();
 
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(40).EUt(VA[HV])
+        FLUID_SOLIDIFICATION_RECIPES.recipeBuilder().duration(40).EUt(VA[HV])
                 .notConsumable(SHAPE_MOLD_CYLINDER)
                 .fluidInputs(Polybenzimidazole.getFluid(L / 8))
                 .output(PETRI_DISH, 2)

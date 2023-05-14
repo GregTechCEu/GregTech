@@ -167,11 +167,5 @@ public class DistillationRecipes {
                 .chancedOutput(dustTiny, EnderPearl, 9000, 0)
                 .disableDistilleryRecipes()
                 .duration(2000).EUt(VA[IV]).buildAndRegister();
-
-        DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(SluiceJuice.getFluid(1000))
-                .output(dust, SluiceSand)
-                .fluidOutputs(Water.getFluid(500))
-                .duration(100).EUt(16).buildAndRegister();
     }
 }

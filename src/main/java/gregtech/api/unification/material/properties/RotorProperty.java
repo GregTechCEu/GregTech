@@ -2,7 +2,7 @@ package gregtech.api.unification.material.properties;
 
 import javax.annotation.Nonnull;
 
-public class RotorProperty implements IMaterialProperty {
+public class RotorProperty implements IMaterialProperty<RotorProperty> {
 
     /**
      * Speed of rotors made from this Material.

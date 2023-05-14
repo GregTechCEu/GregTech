@@ -133,15 +133,6 @@ public class ReactorRecipes {
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .duration(60).EUt(VA[LV]).buildAndRegister();
 
-        // KCl + H2SO4 -> KHSO4 + HCl
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, RockSalt, 2)
-                .circuitMeta(1)
-                .fluidInputs(SulfuricAcid.getFluid(1000))
-                .output(dust, PotassiumBisulfate, 7)
-                .fluidOutputs(HydrochloricAcid.getFluid(1000))
-                .duration(60).EUt(VA[LV]).buildAndRegister();
-
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Iron)
                 .fluidInputs(HydrochloricAcid.getFluid(3000))
@@ -348,11 +339,11 @@ public class ReactorRecipes {
                 .duration(480).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, Aluminium, 4)
+                .input(dust, Aluminium, 2)
                 .fluidInputs(IndiumConcentrate.getFluid(1000))
                 .output(dustSmall, Indium)
-                .output(dust, AluminiumSulfite, 4)
                 .fluidOutputs(LeadZincSolution.getFluid(1000))
+                .fluidOutputs(ClayVitriol.getFluid(1000))
                 .duration(50).EUt(600).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
@@ -680,7 +671,7 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Potassium)
                 .fluidInputs(Chlorine.getFluid(1000))
-                .output(dust, RockSalt, 2)
+                .output(dust, Sylvite, 2)
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()

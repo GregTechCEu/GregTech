@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "gregtech:items/material_sets/shiny/chunk"
+    "layer0": "gregtech:items/material_sets/shiny/chunk",
+	"layer1": "gregtech:items/material_sets/shiny/chunk_overlay"
   }
 }

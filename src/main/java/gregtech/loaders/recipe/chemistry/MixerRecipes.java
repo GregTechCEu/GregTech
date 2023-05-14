@@ -110,13 +110,7 @@ public class MixerRecipes {
                 .output(dust, EnderPearl, 10)
                 .buildAndRegister();
 
-       MIXER_RECIPES.recipeBuilder().duration(100).EUt(16)
-               .input(dust, SluiceSand)
-               .fluidInputs(Water.getFluid(1000))
-               .fluidOutputs(SluiceJuice.getFluid(1000))
-               .buildAndRegister();
-
-        // Alloys
+       // Alloys
         ModHandler.addShapelessRecipe("dust_brass", OreDictUnifier.get(dust, Brass, 3),
                 new UnificationEntry(dust, Copper),
                 new UnificationEntry(dust, Copper),
@@ -306,14 +300,14 @@ public class MixerRecipes {
         MIXER_RECIPES.recipeBuilder().duration(300).EUt(VA[MV])
                 .input(dust, Iron)
                 .input(dust, Aluminium)
-                .input(dust, Chrome)
+                .input(dust, Chromium)
                 .circuitMeta(1)
                 .output(dust, Kanthal, 3)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(500).EUt(VA[MV])
                 .input(dust, Nickel, 4)
-                .input(dust, Chrome)
+                .input(dust, Chromium)
                 .circuitMeta(2)
                 .output(dust, Nichrome, 5)
                 .buildAndRegister();
@@ -329,7 +323,7 @@ public class MixerRecipes {
                 .input(dust, Iron, 4)
                 .input(dust, Invar, 3)
                 .input(dust, Manganese)
-                .input(dust, Chrome)
+                .input(dust, Chromium)
                 .circuitMeta(1)
                 .output(dust, StainlessSteel, 9)
                 .buildAndRegister();
@@ -338,7 +332,7 @@ public class MixerRecipes {
                 .input(dust, Iron, 6)
                 .input(dust, Nickel)
                 .input(dust, Manganese)
-                .input(dust, Chrome)
+                .input(dust, Chromium)
                 .circuitMeta(3)
                 .output(dust, StainlessSteel, 9)
                 .buildAndRegister();
@@ -354,14 +348,14 @@ public class MixerRecipes {
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(VA[MV])
                 .input(dust, Steel, 7)
                 .input(dust, Vanadium)
-                .input(dust, Chrome)
+                .input(dust, Chromium)
                 .circuitMeta(1)
                 .output(dust, VanadiumSteel, 9)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(900).EUt(VA[HV])
                 .input(dust, Cobalt, 5)
-                .input(dust, Chrome, 2)
+                .input(dust, Chromium, 2)
                 .input(dust, Nickel)
                 .input(dust, Molybdenum)
                 .circuitMeta(1)
@@ -391,7 +385,7 @@ public class MixerRecipes {
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(VA[EV])
                 .input(dust, TungstenSteel, 5)
-                .input(dust, Chrome)
+                .input(dust, Chromium)
                 .input(dust, Molybdenum, 2)
                 .input(dust, Vanadium)
                 .circuitMeta(1)
@@ -450,7 +444,7 @@ public class MixerRecipes {
                 .input(dust, Palladium, 3)
                 .input(dust, Rhodium)
                 .circuitMeta(1)
-                .output(dust, RhodiumPlatedPalladium, 4)
+                .output(dust, Rhodallium, 4)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])

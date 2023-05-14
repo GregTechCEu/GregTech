@@ -14,7 +14,7 @@ import java.util.List;
 
 import static gregtech.api.unification.material.Materials.*;
 
-public class OreProperty implements IMaterialProperty {
+public class OreProperty implements IMaterialProperty<OreProperty> {
 
     /**
      * List of Ore byproducts.
@@ -333,21 +333,5 @@ public class OreProperty implements IMaterialProperty {
         if (directSmeltResult != null) directSmeltResult.getProperties().ensureSet(PropertyKey.INGOT, true);
         if (vitriol != null) vitriol.getProperties().ensureSet(PropertyKey.FLUID, true);
     }
-
-    @Override
-    public void verifyPropertyLate(MaterialProperties properties) {
-        for (int i = 0; i < oreByProducts.size(); i++) {
-            Material byproduct = oreByProducts.get(i);
-            if (byproduct == null) {
-                byproduct = properties.getMaterial();
-                oreByProducts.set(i, byproduct);
-            } else if (!byproduct.hasProperty(PropertyKey.DUST)) {
-                throw new IllegalArgumentException(
-                        "Ore Byproduct " + byproduct +
-                                " does not have a Dust property, which is not allowed!");
-            }
-        }
-    }
-
 
 }

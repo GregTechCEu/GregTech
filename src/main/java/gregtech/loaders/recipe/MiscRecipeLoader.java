@@ -5,7 +5,6 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.unification.OreDictUnifier;
@@ -166,7 +165,7 @@ public class MiscRecipeLoader {
                 .inputs(ELECTRIC_MOTOR_HV.getStackForm())
                 .input(ring, StainlessSteel, 2)
                 .input(stick, StainlessSteel)
-                .input(rotor, Chrome)
+                .input(rotor, Chromium)
                 .input(cableGtSingle, Gold, 2)
                 .outputs(POWER_THRUSTER_ADVANCED.getStackForm())
                 .buildAndRegister();
@@ -236,7 +235,7 @@ public class MiscRecipeLoader {
                 .input(plateDouble, Iridium, 4)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
                 .input(circuit, MarkerMaterials.Tier.ZPM)
-                .input(plateDense, RhodiumPlatedPalladium, 2)
+                .input(plateDense, Rhodallium, 2)
                 .inputs(ENERGY_LAPOTRONIC_ORB_CLUSTER.getStackForm())
                 .inputs(FIELD_GENERATOR_LuV.getStackForm(2))
                 .inputs(ELECTRIC_MOTOR_LuV.getStackForm(2))
