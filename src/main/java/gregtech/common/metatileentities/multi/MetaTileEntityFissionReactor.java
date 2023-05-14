@@ -16,6 +16,7 @@ import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -203,6 +204,14 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     }
 
     @Override
+    public void checkStructurePattern() {
+        if (!this.isStructureFormed()) {
+            reinitializeStructurePattern();
+        }
+        super.checkStructurePattern();
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         data.setInteger("diameter", this.diameter);
         data.setInteger("heightTop", this.heightTop);
@@ -217,5 +226,21 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         this.heightTop = data.getInteger("heightTop");
         this.heightBottom = data.getInteger("heightBottom");
         this.height = this.heightTop + this.heightBottom + 1;
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeInt(this.diameter);
+        buf.writeInt(this.heightTop);
+        buf.writeInt(this.heightBottom);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.diameter = buf.readInt();
+        this.heightTop = buf.readInt();
+        this.heightBottom = buf.readInt();
     }
 }
