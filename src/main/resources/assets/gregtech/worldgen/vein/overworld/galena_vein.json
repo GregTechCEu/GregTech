@@ -21,13 +21,13 @@
         "primary": "ore:galena"
       },
       {
-        "secondary": "ore:galena"
+        "secondary": "ore:sphalerite"
       },
       {
         "between": "ore:silver"
       },
       {
-        "sporadic": "ore:lead"
+        "sporadic": "ore:silver"
       }
     ]
   }

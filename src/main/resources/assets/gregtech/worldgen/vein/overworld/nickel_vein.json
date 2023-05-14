@@ -5,7 +5,7 @@
   "min_height": 10,
   "vein_populator": {
     "type": "surface_rock",
-    "material": "nickel"
+    "material": "garnierite"
   },
   "generator": {
     "type": "layered",
@@ -21,7 +21,7 @@
         "primary": "ore:garnierite"
       },
       {
-        "secondary": "ore:nickel"
+        "secondary": "ore:pentlandite"
       },
       {
         "between": "ore:cobaltite"

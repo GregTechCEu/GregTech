@@ -21,7 +21,7 @@
     "type": "layered",
     "values": [
       {
-        "primary": "ore:saltpeter"
+        "primary": "ore:pollucite"
       },
       {
         "secondary": "ore:diatomite"

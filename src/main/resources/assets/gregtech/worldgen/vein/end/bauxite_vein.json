@@ -5,7 +5,7 @@
   "max_height": 80,
   "vein_populator": {
     "type": "surface_rock",
-    "material": "aluminium"
+    "material": "bauxite"
   },
   "dimension_filter": [
     "name:the_end"
@@ -27,7 +27,7 @@
         "secondary": "ore:ilmenite"
       },
       {
-        "between": "ore:aluminium"
+        "between": "ore:bauxite"
       },
       {
         "sporadic": "ore:ilmenite"

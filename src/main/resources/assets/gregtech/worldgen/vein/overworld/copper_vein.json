@@ -21,7 +21,7 @@
         "primary": "ore:chalcopyrite"
       },
       {
-        "secondary": "ore:iron"
+        "secondary": "ore:pyrite"
       },
       {
         "between": "ore:copper"

@@ -24,7 +24,7 @@
         "secondary": "ore:salt"
       },
       {
-        "between": "ore:lepidolite"
+        "between": "ore:saltpeter"
       },
       {
         "sporadic": "ore:spodumene"

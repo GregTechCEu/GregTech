@@ -5,7 +5,7 @@
   "max_height": 60,
   "vein_populator": {
     "type": "surface_rock",
-    "material": "lithium"
+    "material": "tungstate"
   },
   "dimension_filter": [
     "name:the_end"
@@ -30,7 +30,7 @@
         "between": "ore:tungstate"
       },
       {
-        "sporadic": "ore:lithium"
+        "sporadic": "ore:tungstate"
       }
     ]
   }

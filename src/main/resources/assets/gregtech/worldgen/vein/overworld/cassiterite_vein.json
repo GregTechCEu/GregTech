@@ -18,16 +18,16 @@
     "type": "layered",
     "values": [
       {
-        "primary": "ore:tin"
+        "primary": "ore:cassiterite"
       },
       {
-        "secondary": "ore:tin"
+        "secondary": "ore:cassiterite"
       },
       {
         "between": "ore:cassiterite"
       },
       {
-        "sporadic": "ore:tin"
+        "sporadic": "ore:cassiterite"
       }
     ]
   }
