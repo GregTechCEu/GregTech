@@ -22,6 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -30,15 +31,15 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class ProspectorApp extends AbstractApplication implements SearchComponent.IWidgetSearch<String> {
-    WidgetOreList widgetOreList;
-    WidgetProspectingMap widgetProspectingMap;
-    ColorRectTexture background;
+    private WidgetOreList widgetOreList;
+    private WidgetProspectingMap widgetProspectingMap;
+    private ColorRectTexture background;
     @SideOnly(Side.CLIENT)
-    Table<Integer, Integer, PacketProspecting> persist;
-    final int mode;
+    private Table<Integer, Integer, PacketProspecting> persist;
+    private final ProspectorMode mode;
 
-    public ProspectorApp(int mode) {
-        super(mode == 0 ? "ore_prospector" : "fluid_prospector");
+    public ProspectorApp(@Nonnull ProspectorMode mode) {
+        super(mode.terminalName);
         this.mode = mode;
     }
 

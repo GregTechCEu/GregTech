@@ -1,9 +1,9 @@
 package gregtech.common.terminal.app.prospector;
 
-import gregtech.core.network.packets.PacketProspecting;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.client.utils.RenderUtil;
+import gregtech.core.network.packets.PacketProspecting;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -22,7 +22,9 @@ import java.util.HashMap;
 
 public class ProspectingTexture extends AbstractTexture {
 
-    private String selected = "[all]";
+    public static final String SELECTED_ALL = "[all]";
+
+    private String selected = SELECTED_ALL;
     private boolean darkMode;
     private int imageWidth = -1;
     private int imageHeight = -1;
@@ -30,25 +32,27 @@ public class ProspectingTexture extends AbstractTexture {
     public static HashMap<Byte, String> emptyTag = new HashMap<>();
     private int playerXGui;
     private int playerYGui;
-    private final int mode;
+    private final ProspectorMode mode;
     private final int radius;
 
-    public ProspectingTexture(int mode, int radius, boolean darkMode) {
+    public ProspectingTexture(ProspectorMode mode, int radius, boolean darkMode) {
         this.darkMode = darkMode;
         this.radius = radius;
         this.mode = mode;
-        if (this.mode == 1)
+        if (this.mode == ProspectorMode.FLUID) {
+            //noinspection unchecked
             map = new HashMap[(radius * 2 - 1)][(radius * 2 - 1)];
-        else
+        } else {
+            //noinspection unchecked
             map = new HashMap[(radius * 2 - 1) * 16][(radius * 2 - 1) * 16];
+        }
     }
 
     public void updateTexture(PacketProspecting packet) {
-
         int playerChunkX = packet.playerChunkX;
         int playerChunkZ = packet.playerChunkZ;
-        playerXGui = packet.posX - (playerChunkX - this.radius + 1) * 16;
-        playerYGui = packet.posZ - (playerChunkZ - this.radius + 1) * 16;
+        playerXGui = packet.posX - (playerChunkX - this.radius + 1) * 16 + (packet.posX > 0 ? 1 : 0);
+        playerYGui = packet.posZ - (playerChunkZ - this.radius + 1) * 16 + (packet.posX > 0 ? 1 : 0);
 
         int ox;
         if ((packet.chunkX > 0 && playerChunkX > 0) || (packet.chunkX < 0 && playerChunkX < 0)) {
@@ -71,25 +75,12 @@ public class ProspectingTexture extends AbstractTexture {
         }
 
         int currentColumn = (this.radius - 1) + ox;
-        /*
-        if (currentColumn < 0) {
-            for (int i = map.length - 1; i > 0 ; i--) {
-                map[i] = map[i-1];
-            }
-            if (this.mode == 1)
-                map[0] = new HashMap[(radius * 2 - 1)];
-            else
-                map[0] = new HashMap[(radius * 2 - 1) * 16];
-            currentColumn = 0;
-        }
-        */
-
         int currentRow = (this.radius - 1) + oy;
         if (currentRow < 0) {
             return;
         }
 
-        if (this.mode == 1) {
+        if (this.mode == ProspectorMode.FLUID) {
             map[currentColumn][currentRow] = packet.map[0][0] == null ?
                     emptyTag : packet.map[0][0];
         } else {
@@ -110,13 +101,13 @@ public class ProspectingTexture extends AbstractTexture {
 
         for (int i = 0; i < wh; i++) {
             for (int j = 0; j < wh; j++) {
-                HashMap<Byte, String> data = this.map[this.mode == 0 ? i : i / 16][this.mode == 0 ? j : j / 16];
+                HashMap<Byte, String> data = this.map[this.mode == ProspectorMode.ORE ? i : i / 16][this.mode == ProspectorMode.ORE ? j : j / 16];
                 // draw bg
                 image.setRGB(i, j, ((data == null) ^ darkMode) ? Color.darkGray.getRGB() : Color.WHITE.getRGB());
                 //draw ore
-                if (this.mode == 0 && data != null) {
+                if (this.mode == ProspectorMode.ORE && data != null) {
                     for (String orePrefix : data.values()) {
-                        if (!selected.equals("[all]") && !selected.equals(orePrefix)) continue;
+                        if (!selected.equals(SELECTED_ALL) && !selected.equals(orePrefix)) continue;
                         MaterialStack mterialStack = OreDictUnifier.getMaterial(OreDictUnifier.get(orePrefix));
                         image.setRGB(i, j, mterialStack == null ? orePrefix.hashCode() : mterialStack.material.getMaterialRGB() | 0XFF000000);
                         break;
@@ -161,12 +152,12 @@ public class ProspectingTexture extends AbstractTexture {
         if (this.glTextureId < 0) return;
         GlStateManager.bindTexture(this.getGlTextureId());
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
-        if (this.mode == 1) { // draw fluids in grid
+        if (this.mode == ProspectorMode.FLUID) { // draw fluids in grid
             for (int cx = 0; cx < this.radius * 2 - 1; cx++) {
                 for (int cz = 0; cz < this.radius * 2 - 1; cz++) {
                     if (this.map[cx][cz] != null && !this.map[cx][cz].isEmpty()) {
                         Fluid fluid = FluidRegistry.getFluid(this.map[cx][cz].get((byte) 1));
-                        if (selected.equals("[all]") || selected.equals(fluid.getName())) {
+                        if (selected.equals(SELECTED_ALL) || selected.equals(fluid.getName())) {
                             RenderUtil.drawFluidForGui(new FluidStack(fluid, 1), 1, x + cx * 16 + 1, y + cz * 16 + 1, 16, 16);
                         }
                     }

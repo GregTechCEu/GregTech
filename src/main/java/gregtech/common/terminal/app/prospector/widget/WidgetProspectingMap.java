@@ -1,7 +1,8 @@
 package gregtech.common.terminal.app.prospector.widget;
 
-import com.mamiyaotaru.voxelmap.VoxelMap;
+import com.mamiyaotaru.voxelmap.interfaces.AbstractVoxelMap;
 import com.mamiyaotaru.voxelmap.interfaces.IWaypointManager;
+import gregtech.api.GTValues;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.unification.OreDictUnifier;
@@ -17,6 +18,7 @@ import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.api.worldgen.filler.FillerEntry;
 import gregtech.common.terminal.app.prospector.ProspectingTexture;
+import gregtech.common.terminal.app.prospector.ProspectorMode;
 import gregtech.core.network.packets.PacketProspecting;
 import gregtech.integration.xaero.ColorUtility;
 import journeymap.client.model.Waypoint;
@@ -33,6 +35,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -44,6 +47,7 @@ import xaero.common.XaeroMinimapSession;
 import xaero.common.minimap.waypoints.WaypointSet;
 import xaero.common.minimap.waypoints.WaypointWorld;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
@@ -53,9 +57,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 public class WidgetProspectingMap extends Widget {
+
     private final int chunkRadius;
     private final WidgetOreList oreList;
-    private final int mode;
+    private final ProspectorMode mode;
     private final int scanTick;
     private boolean darkMode = false;
     private int chunkIndex = 0;
@@ -64,16 +69,14 @@ public class WidgetProspectingMap extends Widget {
     private ProspectingTexture texture;
     @SideOnly(Side.CLIENT)
     private Consumer<PacketProspecting> onPacketReceived;
-    Queue<PacketProspecting> packetQueue = new LinkedBlockingQueue<>();
+    private final Queue<PacketProspecting> packetQueue = new LinkedBlockingQueue<>();
 
-    public static final int ORE_PROSPECTING_MODE = 0;
-    public static final int FLUID_PROSPECTING_MODE = 1;
     private long lastClicked;
 
     private final List<String> hoveredNames = new ArrayList<>();
     private int color;
 
-    public WidgetProspectingMap(int xPosition, int yPosition, int chunkRadius, WidgetOreList widgetOreList, int mode, int scanTick) {
+    public WidgetProspectingMap(int xPosition, int yPosition, int chunkRadius, WidgetOreList widgetOreList, @Nonnull ProspectorMode mode, int scanTick) {
         super(new Position(xPosition, yPosition), new Size(16 * (chunkRadius * 2 - 1), 16 * (chunkRadius * 2 - 1)));
         this.chunkRadius = chunkRadius;
         this.mode = mode;
@@ -89,9 +92,8 @@ public class WidgetProspectingMap extends Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    public WidgetProspectingMap setOnPacketReceived(Consumer<PacketProspecting> onPacketReceived) {
+    public void setOnPacketReceived(Consumer<PacketProspecting> onPacketReceived) {
         this.onPacketReceived = onPacketReceived;
-        return this;
     }
 
     @SideOnly(Side.CLIENT)
@@ -128,7 +130,7 @@ public class WidgetProspectingMap extends Widget {
             PacketProspecting packet = new PacketProspecting(playerChunkX + ox, playerChunkZ + oz, playerChunkX, playerChunkZ, (int) player.posX, (int) player.posZ, this.mode);
 
             switch (mode) {
-                case ORE_PROSPECTING_MODE:
+                case ORE:
                     BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
                     for (int x = 0; x < 16; x++) {
                         for (int z = 0; z < 16; z++) {
@@ -143,18 +145,20 @@ public class WidgetProspectingMap extends Widget {
                                             .findFirst()
                                             .orElse("");
                                     OrePrefix prefix = OreDictUnifier.getPrefix(itemBlock);
-                                    for (StoneType type : StoneType.STONE_TYPE_REGISTRY) {
-                                        if (type.processingPrefix == prefix && type.shouldBeDroppedAsItem) {
-                                            packet.addBlock(x, y, z, oreDictString);
-                                            added = true;
-                                            break;
-                                        } else if (type.processingPrefix == prefix) {
-                                            MaterialStack materialStack = OreDictUnifier.getMaterial(itemBlock);
-                                            if (materialStack != null) {
-                                                String oreDict = "ore" + oreDictString.replaceFirst(prefix.name(), "");
-                                                packet.addBlock(x, y, z, oreDict);
+                                    if (prefix != null) {
+                                        for (StoneType type : StoneType.STONE_TYPE_REGISTRY) {
+                                            if (type.processingPrefix == prefix && type.shouldBeDroppedAsItem) {
+                                                packet.addBlock(x, y, z, oreDictString);
                                                 added = true;
                                                 break;
+                                            } else if (type.processingPrefix == prefix) {
+                                                MaterialStack materialStack = OreDictUnifier.getMaterial(itemBlock);
+                                                if (materialStack != null) {
+                                                    String oreDict = "ore" + oreDictString.replaceFirst(prefix.name(), "");
+                                                    packet.addBlock(x, y, z, oreDict);
+                                                    added = true;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
@@ -168,22 +172,22 @@ public class WidgetProspectingMap extends Widget {
                         }
                     }
                     break;
-                case FLUID_PROSPECTING_MODE:
+                case FLUID:
                     BedrockFluidVeinHandler.FluidVeinWorldEntry fStack = BedrockFluidVeinHandler.getFluidVeinWorldEntry(world, chunk.x, chunk.z);
                     if (fStack != null && fStack.getDefinition() != null) {
                         packet.addBlock(0, 3, 0, GTUtility.formatNumbers(100.0 * BedrockFluidVeinHandler.getOperationsRemaining(world, chunk.x, chunk.z)
                                 / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS));
                         packet.addBlock(0, 2, 0, String.valueOf(BedrockFluidVeinHandler.getFluidYield(world, chunk.x, chunk.z)));
-                        packet.addBlock(0, 1, 0, BedrockFluidVeinHandler.getFluidInChunk(world, chunk.x, chunk.z).getName());
+                        Fluid fluid = BedrockFluidVeinHandler.getFluidInChunk(world, chunk.x, chunk.z);
+                        if (fluid != null) {
+                            packet.addBlock(0, 1, 0, fluid.getName());
+                        }
                     }
                     break;
                 default:
                     break;
             }
             writeUpdateInfo(2, packet::writePacketData);
-//            if (oreList != null) {
-//                oreList.addOres(packet.ores, packet.mode);
-//            }
             chunkIndex++;
         }
     }
@@ -255,7 +259,7 @@ public class WidgetProspectingMap extends Widget {
             //pick the color of the highest element for the waypoint color
             final int[] maxAmount = {0};
 
-            if (this.mode == 0) { // draw ore
+            if (this.mode == ProspectorMode.ORE) { // draw ore
                 tooltips.add(I18n.format("terminal.prospector.ore"));
                 HashMap<String, Integer> oreInfo = new HashMap<>();
                 for (int i = 0; i < 16; i++) {
@@ -263,7 +267,7 @@ public class WidgetProspectingMap extends Widget {
                         if (texture.map[cX * 16 + i][cZ * 16 + j] != null) {
                             texture.map[cX * 16 + i][cZ * 16 + j].values().forEach(dict -> {
                                 String name = OreDictUnifier.get(dict).getDisplayName();
-                                if (texture.getSelected().equals("[all]") || texture.getSelected().equals(dict)) {
+                                if (ProspectingTexture.SELECTED_ALL.equals(texture.getSelected()) || texture.getSelected().equals(dict)) {
                                     oreInfo.put(name, oreInfo.getOrDefault(name, 0) + 1);
                                     if (oreInfo.get(name) > maxAmount[0]) {
                                         maxAmount[0] = oreInfo.get(name);
@@ -281,25 +285,31 @@ public class WidgetProspectingMap extends Widget {
                     tooltips.add(name + " --- " + count);
                     hoveredNames.add(name);
                 });
-            } else if (this.mode == 1) {
+            } else if (this.mode == ProspectorMode.FLUID) {
                 tooltips.add(I18n.format("terminal.prospector.fluid"));
                 if (texture.map[cX][cZ] != null && !texture.map[cX][cZ].isEmpty()) {
-                    if (texture.getSelected().equals("[all]") || texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {
+                    if (ProspectingTexture.SELECTED_ALL.equals(texture.getSelected()) || texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {
                         FluidStack fluidStack = FluidRegistry.getFluidStack(texture.map[cX][cZ].get((byte) 1), 1);
-                        tooltips.add(I18n.format("terminal.prospector.fluid.info",
-                                fluidStack.getLocalizedName(),
-                                texture.map[cX][cZ].get((byte) 2),
-                                texture.map[cX][cZ].get((byte) 3)));
-                        hoveredNames.add(fluidStack.getLocalizedName());
-                        int amount = Integer.parseInt(texture.map[cX][cZ].get((byte) 2));
-                        if (amount > maxAmount[0]) {
-                            maxAmount[0] = amount;
-                            color = fluidStack.getFluid().getColor(fluidStack);
+                        if (fluidStack != null) {
+                            tooltips.add(I18n.format("terminal.prospector.fluid.info",
+                                    fluidStack.getLocalizedName(),
+                                    texture.map[cX][cZ].get((byte) 2),
+                                    texture.map[cX][cZ].get((byte) 3)));
+                            hoveredNames.add(fluidStack.getLocalizedName());
+                            int amount = Integer.parseInt(texture.map[cX][cZ].get((byte) 2));
+                            if (amount > maxAmount[0]) {
+                                maxAmount[0] = amount;
+                                color = fluidStack.getFluid().getColor(fluidStack);
+                            }
                         }
                     }
                 }
             }
-            tooltips.add(I18n.format("terminal.prospector.waypoint.add"));
+
+            if (Loader.isModLoaded(GTValues.MODID_JOURNEYMAP) || Loader.isModLoaded(GTValues.MODID_VOXELMAP) ||
+                    Loader.isModLoaded(GTValues.MODID_XAERO_MINIMAP)) {
+                tooltips.add(I18n.format("terminal.prospector.waypoint.add"));
+            }
             this.drawHoveringText(ItemStack.EMPTY, tooltips, 300, mouseX, mouseY);
             GlStateManager.color(1.0F, 1.0F, 1.0F);
         }
@@ -307,7 +317,6 @@ public class WidgetProspectingMap extends Widget {
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-
         int cX = (mouseX - this.getPosition().x) / 16;
         int cZ = (mouseY - this.getPosition().y) / 16;
 
@@ -325,11 +334,11 @@ public class WidgetProspectingMap extends Widget {
             boolean added = false;
             trimHoveredNames();
 
-            if (Loader.isModLoaded("journeymap")) {
+            if (Loader.isModLoaded(GTValues.MODID_JOURNEYMAP)) {
                 added = addJourneymapWaypoint(b);
-            } else if (Loader.isModLoaded("voxelmap")) {
+            } else if (Loader.isModLoaded(GTValues.MODID_VOXELMAP)) {
                 added = addVoxelMapWaypoint(b);
-            } else if (Loader.isModLoaded("xaerominimap")) {
+            } else if (Loader.isModLoaded(GTValues.MODID_XAERO_MINIMAP)) {
                 added = addXaeroMapWaypoint(b);
             }
             if (added) {
@@ -340,11 +349,11 @@ public class WidgetProspectingMap extends Widget {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    void trimHoveredNames() {
+    private void trimHoveredNames() {
         List<OreDepositDefinition> oreVeins = WorldGenRegistry.getOreDeposits();
         for (OreDepositDefinition odd : oreVeins) {
             for (FillerEntry fillerEntry : odd.getBlockFiller().getAllPossibleStates()) {
-                List<String> matches = new ArrayList<>();
+                Collection<String> matches = new ArrayList<>();
                 Collection<IBlockState> pr = fillerEntry.getPossibleResults();
                 for (IBlockState bs : pr) {
                     Set<String> ores = OreDictUnifier.getOreDictionaryNames(new ItemStack(bs.getBlock()));
@@ -363,9 +372,16 @@ public class WidgetProspectingMap extends Widget {
         }
     }
 
-    @Optional.Method(modid = "journeymap")
-    boolean addJourneymapWaypoint(BlockPos b) {
-        journeymap.client.model.Waypoint journeyMapWaypoint = new Waypoint(hoveredNames.toString(),
+    @Nonnull
+    private String createVeinName() {
+        // remove the [] surrounding the array
+        String s = hoveredNames.toString();
+        return s.substring(1, s.length() - 1);
+    }
+
+    @Optional.Method(modid = GTValues.MODID_JOURNEYMAP)
+    private boolean addJourneymapWaypoint(BlockPos b) {
+        Waypoint journeyMapWaypoint = new Waypoint(createVeinName(),
                 b,
                 new Color(color),
                 Waypoint.Type.Normal,
@@ -377,14 +393,14 @@ public class WidgetProspectingMap extends Widget {
         return false;
     }
 
-    @Optional.Method(modid = "voxelmap")
-    boolean addVoxelMapWaypoint(BlockPos b) {
+    @Optional.Method(modid = GTValues.MODID_VOXELMAP)
+    private boolean addVoxelMapWaypoint(@Nonnull BlockPos b) {
         Color c = new Color(color);
         TreeSet<Integer> world = new TreeSet<>();
         world.add(Minecraft.getMinecraft().world.provider.getDimension());
 
-        IWaypointManager waypointManager = VoxelMap.getInstance().getWaypointManager();
-        com.mamiyaotaru.voxelmap.util.Waypoint voxelMapWaypoint = new com.mamiyaotaru.voxelmap.util.Waypoint(hoveredNames.toString(),
+        IWaypointManager waypointManager = AbstractVoxelMap.getInstance().getWaypointManager();
+        com.mamiyaotaru.voxelmap.util.Waypoint voxelMapWaypoint = new com.mamiyaotaru.voxelmap.util.Waypoint(createVeinName(),
                 b.getX(),
                 b.getZ(),
                 Minecraft.getMinecraft().world.getHeight(b.getX(), b.getZ()),
@@ -404,11 +420,11 @@ public class WidgetProspectingMap extends Widget {
         return false;
     }
 
-    @Optional.Method(modid = "xaerominimap")
-    boolean addXaeroMapWaypoint(BlockPos b) {
-        int red = clamp(color >> 16 & 0xFF);
-        int green = clamp(color >> 8 & 0xFF);
-        int blue = clamp(color & 0xFF);
+    @Optional.Method(modid = GTValues.MODID_XAERO_MINIMAP)
+    private boolean addXaeroMapWaypoint(@Nonnull BlockPos b) {
+        int red = clampColor(color >> 16 & 0xFF);
+        int green = clampColor(color >> 8 & 0xFF);
+        int blue = clampColor(color & 0xFF);
 
         Color wpc = new Color(red, green, blue);
         double[] labWPC = ColorUtility.getLab(wpc);
@@ -435,7 +451,7 @@ public class WidgetProspectingMap extends Widget {
                 b.getX(),
                 Minecraft.getMinecraft().world.getHeight(b.getX(), b.getZ()),
                 b.getZ(),
-                hoveredNames.toString(), hoveredNames.get(0).substring(0, 1), bestColorIndex);
+                createVeinName(), hoveredNames.get(0).substring(0, 1), bestColorIndex);
 
         for (xaero.common.minimap.waypoints.Waypoint xwp : wps.getList()) {
             if (xwp.getX() == xaeroWaypoint.getX() &&
@@ -453,7 +469,7 @@ public class WidgetProspectingMap extends Widget {
         return true;
     }
 
-    private int clamp(int color) {
+    private static int clampColor(int color) {
         if (color < 32) {
             return 0;
         } else if (color < 128) {
@@ -465,7 +481,7 @@ public class WidgetProspectingMap extends Widget {
         }
     }
 
-    private final double[][] xaerosColors = new double[][]{
+    private final double[][] xaerosColors = {
             ColorUtility.getLab(new Color(0, 0, 0)),
             ColorUtility.getLab(new Color(0, 0, 128)),
             ColorUtility.getLab(new Color(0, 128, 0)),

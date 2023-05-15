@@ -1,5 +1,6 @@
 package gregtech.core.network.packets;
 
+import gregtech.common.terminal.app.prospector.ProspectorMode;
 import io.netty.buffer.Unpooled;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -15,14 +16,14 @@ public class PacketProspecting {
     public int playerChunkZ;
     public int posX;
     public int posZ;
-    public int mode;
+    public ProspectorMode mode;
     public HashMap<Byte, String>[][] map;
     public Set<String> ores;
 
     @SuppressWarnings("unused")
     public PacketProspecting() {}
 
-    public PacketProspecting(int chunkX, int chunkZ, int playerChunkX, int playerChunkZ, int posX, int posZ, int mode) {
+    public PacketProspecting(int chunkX, int chunkZ, int playerChunkX, int playerChunkZ, int posX, int posZ, ProspectorMode mode) {
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
         this.playerChunkX = playerChunkX;
@@ -30,20 +31,23 @@ public class PacketProspecting {
         this.posX = posX;
         this.posZ = posZ;
         this.mode = mode;
-        if (mode == 1)
+        if (mode == ProspectorMode.FLUID) {
+            //noinspection unchecked
             map = new HashMap[1][1];
-        else
+        } else {
+            //noinspection unchecked
             map = new HashMap[16][16];
+        }
 
         ores = new HashSet<>();
     }
 
     public static PacketProspecting readPacketData(PacketBuffer buffer) {
-        PacketProspecting packet = new PacketProspecting(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt());
+        PacketProspecting packet = new PacketProspecting(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), ProspectorMode.VALUES[buffer.readInt()]);
         int aSize = 0;
-        if (packet.mode == 0)
+        if (packet.mode == ProspectorMode.ORE)
             aSize = 16;
-        else if (packet.mode == 1)
+        else if (packet.mode == ProspectorMode.FLUID)
             aSize = 1;
         int checkOut = 0;
         for (int i = 0; i < aSize; i++)
@@ -55,7 +59,7 @@ public class PacketProspecting {
                     byte y = buffer.readByte();
                     String name = buffer.readString(1000);
                     packet.map[i][j].put(y, name);
-                    if (packet.mode != 1 || y == 1)
+                    if (packet.mode == ProspectorMode.ORE || y == 1)
                         packet.ores.add(name);
                     checkOut++;
                 }
@@ -91,11 +95,11 @@ public class PacketProspecting {
         buffer.writeInt(playerChunkZ);
         buffer.writeInt(posX);
         buffer.writeInt(posZ);
-        buffer.writeInt(mode);
+        buffer.writeInt(mode.ordinal());
         int aSize = 0;
-        if (this.mode == 0)
+        if (this.mode == ProspectorMode.ORE)
             aSize = 16;
-        else if (this.mode == 1)
+        else if (this.mode == ProspectorMode.FLUID)
             aSize = 1;
         int checkOut = 0;
         for (int i = 0; i < aSize; i++)
@@ -115,12 +119,12 @@ public class PacketProspecting {
     }
 
     public void addBlock(int x, int y, int z, String orePrefix) {
-        if (this.mode == 0) {
+        if (this.mode == ProspectorMode.ORE) {
             if (map[x][z] == null)
                 map[x][z] = new HashMap<>();
             map[x][z].put((byte) y, orePrefix);
             ores.add(orePrefix);
-        } else if (this.mode == 1) {
+        } else if (this.mode == ProspectorMode.FLUID) {
             if (map[x][z] == null)
                 map[x][z] = new HashMap<>();
             map[x][z].put((byte) y, orePrefix);

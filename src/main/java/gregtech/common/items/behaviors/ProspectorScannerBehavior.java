@@ -11,6 +11,7 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.GTUtility;
+import gregtech.common.terminal.app.prospector.ProspectorMode;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.SearchComponent;
@@ -53,9 +54,9 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         if (!world.isRemote) {
             if (player.isSneaking()) {
                 ItemStack stack = player.getHeldItem(hand);
-                int mode = getMode(stack);
-                int nextMode = getNextMode(mode);
-                if (nextMode == WidgetProspectingMap.FLUID_PROSPECTING_MODE) {
+                ProspectorMode mode = getMode(stack);
+                ProspectorMode nextMode = mode.next();
+                if (nextMode == ProspectorMode.FLUID) {
                     if (tier >= FLUID_PROSPECTION_THRESHOLD) {
                         setMode(stack, nextMode);
                         player.sendStatusMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"), true);
@@ -73,27 +74,24 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
     }
 
-    private static int getMode(ItemStack stack) {
+    @Nonnull
+    private static ProspectorMode getMode(ItemStack stack) {
         if (stack == ItemStack.EMPTY) {
-            return 0;
+            return ProspectorMode.ORE;
         }
         NBTTagCompound tag = stack.getTagCompound();
         if (tag == null) {
-            return 0;
+            return ProspectorMode.ORE;
         }
         if (tag.hasKey("Mode", Constants.NBT.TAG_INT)) {
-            return tag.getInteger("Mode");
+            return ProspectorMode.VALUES[tag.getInteger("Mode")];
         }
-        return 0;
+        return ProspectorMode.ORE;
     }
 
-    private static int getNextMode(int mode) {
-        return mode == WidgetProspectingMap.ORE_PROSPECTING_MODE ? 1 : 0;
-    }
-
-    private static void setMode(ItemStack stack, int mode) {
+    private static void setMode(ItemStack stack, @Nonnull ProspectorMode mode) {
         NBTTagCompound tagCompound = GTUtility.getOrCreateNbtCompound(stack);
-        tagCompound.setInteger("Mode", mode);
+        tagCompound.setInteger("Mode", mode.ordinal());
     }
 
     private boolean checkCanUseScanner(ItemStack stack, @Nonnull EntityPlayer player, boolean simulate) {
@@ -109,16 +107,16 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
 
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, @Nonnull EntityPlayer entityPlayer) {
-        int mode = getMode(entityPlayer.getHeldItem(EnumHand.MAIN_HAND));
+        ProspectorMode mode = getMode(entityPlayer.getHeldItem(EnumHand.MAIN_HAND));
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 332, 200);
         this.widgetOreList = new WidgetOreList(32 * radius - 6, 18, 332 - 32 * radius, 176);
         builder.widget(this.widgetOreList);
         builder.widget(new WidgetProspectingMap(6, 18, radius, this.widgetOreList, mode, 1));
         //Cardinal directions
-        builder.widget(new LabelWidget(3 + (16 * (radius * 2 - 1)) / 2, 14, "N", 0x404040).setShadow(true));
-        builder.widget(new LabelWidget(3 + (16 * (radius * 2 - 1)) / 2, 14 + 16 * (radius * 2 - 1), "S", 0x404040).setShadow(true));
-        builder.widget(new LabelWidget(3, 15 + (16 * (radius * 2 - 1)) / 2, "W", 0x404040).setShadow(true));
-        builder.widget(new LabelWidget(3 + 16 * (radius * 2 - 1), 15 + (16 * (radius * 2 - 1)) / 2, "E", 0x404040).setShadow(true));
+        builder.widget(new LabelWidget(3 + (16 * (radius * 2 - 1)) / 2, 14, "N", 0xAAAAAA).setShadow(true));
+        builder.widget(new LabelWidget(3 + (16 * (radius * 2 - 1)) / 2, 14 + 16 * (radius * 2 - 1), "S", 0xAAAAAA).setShadow(true));
+        builder.widget(new LabelWidget(3, 15 + (16 * (radius * 2 - 1)) / 2, "W", 0xAAAAAA).setShadow(true));
+        builder.widget(new LabelWidget(3 + 16 * (radius * 2 - 1), 15 + (16 * (radius * 2 - 1)) / 2, "E", 0xAAAAAA).setShadow(true));
         return builder.label(6, 6, getTranslationKey()).build(holder, entityPlayer);
     }
 
@@ -132,7 +130,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
 
         if (tier >= FLUID_PROSPECTION_THRESHOLD) {
             lines.add(I18n.format("metaitem.prospector.tooltip.fluids", radius));
-            lines.add(I18n.format(getMode(itemStack) == WidgetProspectingMap.ORE_PROSPECTING_MODE ? "metaitem.prospector.mode.ores" : "metaitem.prospector.mode.fluid"));
+            lines.add(I18n.format(getMode(itemStack).unlocalizedName));
         } else {
             lines.add(I18n.format("metaitem.prospector.tooltip.ores", radius));
         }
