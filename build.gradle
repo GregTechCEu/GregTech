@@ -105,15 +105,16 @@ dependencies {
     implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-${project.crt_version}"
     implementation rfg.deobf("curse.maven:top-${top_pid}:${top_fid}")
     implementation rfg.deobf("curse.maven:ctm-${ctm_pid}:${ctm_fid}")
-    compileOnly "curse.maven:journeymap-${jm_pid}:${jm_fid}"
-    compileOnly "curse.maven:voxelmap-${voxel_pid}:${voxel_fid}"
-    compileOnly "curse.maven:xaeros-${xaeros_pid}:${xaeros_fid}"
 
     // use a local jar for GroovyScript to avoid a bug from Mixin and ForgeGradle,
     // causing crashes at run-time when deobfuscated
     implementation files("libs/groovyscript-0.4.0.jar")
     //implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
     compileOnlyApi rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
+
+    compileOnlyApi "curse.maven:journeymap-${jm_pid}:${jm_fid}"
+    compileOnlyApi "curse.maven:voxelmap-${voxel_pid}:${voxel_fid}"
+    compileOnlyApi "curse.maven:xaeros-${xaeros_pid}:${xaeros_fid}"
 
     // Tests
     testImplementation "org.junit.jupiter:junit-jupiter:${junit_version}"
