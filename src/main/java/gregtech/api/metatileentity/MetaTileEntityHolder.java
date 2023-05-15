@@ -126,7 +126,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             if (sampleMetaTileEntity != null) {
                 setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
                 /* Note: NBTs need to be read before onAttached is run, since NBTs may contain important information
-                * about the composition of the BlockPattern that onAttached may generate. */
+                 * about the composition of the BlockPattern that onAttached may generate. */
                 this.metaTileEntity.readFromNBT(metaTileEntityData);
                 // TODO remove this method call after v2.5.0. This is a deprecated method is set for removal.
                 this.metaTileEntity.onAttached();
@@ -423,7 +423,9 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                     if (nameTagParticle == null) {
                         nameTagParticle = new GTNameTagParticle(world, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, getName());
                         nameTagParticle.setOnUpdate(p -> {
-                            if (isInvalid() || !GTUtility.isPosChunkLoaded(getWorld(), getPos())) p.setExpired();
+                            if (isInvalid() || !world.isBlockLoaded(pos, false)) {
+                                p.setExpired();
+                            }
                         });
                         GTParticleManager.INSTANCE.addEffect(nameTagParticle);
                     } else {

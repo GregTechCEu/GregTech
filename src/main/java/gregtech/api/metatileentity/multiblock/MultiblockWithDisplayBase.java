@@ -16,7 +16,6 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -40,7 +39,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
@@ -232,14 +230,14 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      */
     public void outputRecoveryItems() {
         IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
-        muffler.recoverItemsTable(GTUtility.copyStackList(recoveryItems));
+        muffler.recoverItemsTable(recoveryItems);
     }
 
     public void outputRecoveryItems(int parallel) {
         IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
-        ArrayList<ItemStack> parallelRecover = new ArrayList<>();
-        IntStream.range(0, parallel).forEach(value -> parallelRecover.addAll(recoveryItems));
-        muffler.recoverItemsTable(GTUtility.copyStackList(parallelRecover));
+        for (int i = 0; i < parallel; i++) {
+            muffler.recoverItemsTable(recoveryItems);
+        }
     }
 
     /**

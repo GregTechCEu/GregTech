@@ -13,13 +13,16 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 
 import javax.annotation.Nonnull;
 
@@ -35,7 +38,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     private boolean usePercent;
     private WidgetGroup widgetsToUpdate;
 
-    public CoverDetectorEnergyAdvanced (ICoverable coverHolder, EnumFacing attachedSide) {
+    public CoverDetectorEnergyAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         this.minValue = DEFAULT_MIN_EU;
         this.maxValue = DEFAULT_MAX_EU;
@@ -49,7 +52,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult){
+    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!this.coverHolder.getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
@@ -65,15 +68,13 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
             if (usePercent) {
                 if (energyContainer.getEnergyCapacity() > 0) {
                     float ratio = (float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity();
-                    this.outputAmount = GTUtility.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue, this.minValue, this.isInverted, this.outputAmount);
-                    // compareValue((float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() * 100, maxValue, minValue);
+                    this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue, this.minValue, isInverted(), this.outputAmount);
                 } else {
-                    this.outputAmount = isInverted ? 0 : 15;
+                    this.outputAmount = isInverted() ? 0 : 15;
                 }
             } else {
-                this.outputAmount = GTUtility.computeLatchedRedstoneBetweenValues(energyContainer.getEnergyStored(),
-                        this.maxValue, this.minValue, this.isInverted, this.outputAmount);
-                // compareValue(energyContainer.getEnergyStored(), maxValue, minValue);
+                this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(energyContainer.getEnergyStored(),
+                        this.maxValue, this.minValue, isInverted(), this.outputAmount);
             }
         }
         setRedstoneSignalOutput(outputAmount);
@@ -81,7 +82,6 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-
         WidgetGroup group = new WidgetGroup();
         group.addWidget(new LabelWidget(10, 8, "cover.advanced_energy_detector.label"));
 
@@ -139,35 +139,28 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         return String.valueOf(maxValue);
     }
 
-    private void setMinValue(String val){
-        long parsedValue = GTUtility.tryParseLong(val, usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU);
-
-        this.minValue = Math.min(this.maxValue - 1, Math.max(0, parsedValue));
+    private void setMinValue(String val) {
+        this.minValue = CoverDetectorBase.parseCapped(val,
+                0,
+                this.maxValue - 1,
+                usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU);
     }
 
-    private void setMaxValue(String val){
-        long parsedValue = GTUtility.tryParseLong(val, usePercent ? DEFAULT_MAX_PERCENT : DEFAULT_MAX_EU);
-        long maxUpperLimit = usePercent ? 100 : Long.MAX_VALUE;
-
-        this.maxValue = Math.max(this.minValue + 1, Math.min(parsedValue, maxUpperLimit));
+    private void setMaxValue(String val) {
+        this.maxValue = CoverDetectorBase.parseCapped(val,
+                this.minValue + 1,
+                usePercent ? 100 : Long.MAX_VALUE,
+                usePercent ? DEFAULT_MAX_PERCENT : DEFAULT_MAX_EU);
     }
 
-    private boolean isInverted(){
-        return this.isInverted;
-    }
-
-    private void setInverted(boolean b){
-        this.isInverted = b;
-    }
-
-    private boolean isUsePercent(){
+    private boolean isUsePercent() {
         return this.usePercent;
     }
 
-    private void setUsePercent(boolean b){
-        this.usePercent =  b;
+    private void setUsePercent(boolean b) {
+        this.usePercent = b;
 
-        if (this.usePercent){ // using percent
+        if (this.usePercent) { // using percent
             this.minValue = DEFAULT_MIN_PERCENT;
             this.maxValue = DEFAULT_MAX_PERCENT;
         } else { // using discrete EU
@@ -186,7 +179,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         }
     }
 
-    private String getPostFix(){
+    private String getPostFix() {
         return usePercent ? " %" : " EU";
     }
 
@@ -201,8 +194,8 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         tagCompound.setLong("maxEU", this.maxValue);
         tagCompound.setLong("minEU", this.minValue);
         tagCompound.setInteger("outputAmount", this.outputAmount);
-        tagCompound.setBoolean("inverted", this.isInverted);
         tagCompound.setBoolean("usePercent", this.usePercent);
+
         return tagCompound;
     }
 
@@ -212,8 +205,17 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         this.minValue = tagCompound.getLong("minEU");
         this.maxValue = tagCompound.getLong("maxEU");
         this.outputAmount = tagCompound.getInteger("outputAmount");
-        this.isInverted = tagCompound.getBoolean("inverted");
         this.usePercent = tagCompound.getBoolean("usePercent");
+
+        readDeprecatedInvertedKeyFromNBT(tagCompound);
+    }
+
+    //inverted here was saved using different key, now it is normalized but construction is for compatibility
+    private void readDeprecatedInvertedKeyFromNBT(@Nonnull NBTTagCompound tagCompound) {
+        String oldInvertedKey = "inverted";
+        if (!tagCompound.hasKey(NBT_KEY_IS_INVERTED) && tagCompound.hasKey(oldInvertedKey)) {
+            setInverted(tagCompound.getBoolean(oldInvertedKey));
+        }
     }
 
     @Override
@@ -222,7 +224,6 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         packetBuffer.writeLong(this.minValue);
         packetBuffer.writeLong(this.maxValue);
         packetBuffer.writeInt(this.outputAmount);
-        packetBuffer.writeBoolean(this.isInverted);
         packetBuffer.writeBoolean(this.usePercent);
     }
 
@@ -232,7 +233,6 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         this.minValue = packetBuffer.readLong();
         this.maxValue = packetBuffer.readLong();
         this.outputAmount = packetBuffer.readInt();
-        this.isInverted = packetBuffer.readBoolean();
         this.usePercent = packetBuffer.readBoolean();
     }
 }

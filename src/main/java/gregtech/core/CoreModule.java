@@ -3,6 +3,7 @@ package gregtech.core;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.GregTechAPIInternal;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
@@ -19,7 +20,6 @@ import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
-import gregtech.api.util.NBTUtil;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -91,6 +91,7 @@ public class CoreModule implements IGregTechModule {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
+        GregTechAPIInternal.preInit();
         GregTechAPI.advancementManager = AdvancementManager.getInstance();
         AdvancementTriggers.register();
 
@@ -137,7 +138,6 @@ public class CoreModule implements IGregTechModule {
         /* End Material Registration */
 
         OreDictUnifier.init();
-        NBTUtil.registerSerializers();
 
         MetaBlocks.init();
         MetaItems.init();

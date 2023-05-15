@@ -1,24 +1,24 @@
 package gregtech.common.inventory;
 
-import gregtech.api.util.ItemStackKey;
+import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Set;
 
 public interface IItemList {
 
-    Set<ItemStackKey> getStoredItems();
+    Set<ItemStack> getStoredItems();
 
     @Nullable
-    IItemInfo getItemInfo(ItemStackKey stackKey);
+    IItemInfo getItemInfo(ItemStack stack);
 
-    default boolean hasItemStored(ItemStackKey itemStackKey) {
-        return getItemInfo(itemStackKey) != null;
+    default boolean hasItemStored(ItemStack stack) {
+        return getItemInfo(stack) != null;
     }
 
-    int insertItem(ItemStackKey itemStack, int amount, boolean simulate, InsertMode insertMode);
+    int insertItem(ItemStack itemStack, int amount, boolean simulate, InsertMode insertMode);
 
-    int extractItem(ItemStackKey itemStack, int amount, boolean simulate);
+    int extractItem(ItemStack itemStack, int amount, boolean simulate);
 
     enum InsertMode {
         LOWEST_PRIORITY,

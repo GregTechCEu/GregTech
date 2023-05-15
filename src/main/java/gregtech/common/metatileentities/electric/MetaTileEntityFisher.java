@@ -9,11 +9,10 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.util.GTTransferUtils;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.common.ConfigHolder;
+import gregtech.api.util.GTTransferUtils;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.resources.I18n;
@@ -61,7 +60,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
         int rowSize = (int) Math.sqrt(inventorySize);
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                18 + 18 * rowSize + 94)
+                        18 + 18 * rowSize + 94)
                 .label(10, 5, getMetaFullName())
                 .widget(new SlotWidget(importItems, 0, 18, 18, true, true)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.STRING_SLOT_OVERLAY));
@@ -117,7 +116,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
             @Nonnull
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                if (OreDictUnifier.getOreDictionaryNames(stack).contains("string")) {
+                if (OreDictUnifier.hasOreDictionary(stack, "string")) {
                     return super.insertItem(slot, stack, simulate);
                 }
                 return stack;

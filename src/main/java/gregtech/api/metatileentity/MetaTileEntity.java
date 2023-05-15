@@ -26,6 +26,7 @@ import gregtech.api.cover.CoverIO;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
@@ -1472,6 +1473,13 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public boolean doTickProfileMessage() {
         return true;
+    }
+
+    @Override
+    public boolean canRenderMachineGrid(@Nonnull ItemStack mainHandStack, @Nonnull ItemStack offHandStack) {
+        final String[] tools = {ToolClasses.WRENCH, ToolClasses.SCREWDRIVER};
+        return ToolHelper.isTool(mainHandStack, tools) ||
+                ToolHelper.isTool(offHandStack, tools);
     }
 
     @Override

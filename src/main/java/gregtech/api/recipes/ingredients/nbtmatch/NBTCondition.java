@@ -2,6 +2,7 @@ package gregtech.api.recipes.ingredients.nbtmatch;
 
 import gregtech.api.util.GTLog;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -18,6 +19,7 @@ public class NBTCondition {
         return new NBTCondition(tagType, nbtKey, value);
     }
 
+    @Nullable
     public final NBTTagType tagType;
     public final String nbtKey;
     public final Object value;
@@ -28,6 +30,7 @@ public class NBTCondition {
         this.value = null;
     }
 
+    @SuppressWarnings("NullableProblems")
     protected NBTCondition(NBTTagType tagType, String nbtKey, Object value) {
         this.tagType = tagType;
         this.nbtKey = nbtKey;

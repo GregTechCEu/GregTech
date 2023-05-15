@@ -14,7 +14,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockSteamCasing;
@@ -31,9 +31,10 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase implements IPrimitivePump {
 
@@ -166,11 +167,11 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
 
     @Override
     public String[] getDescription() {
-        return Stream.of(
-                new String[]{I18n.format("gregtech.multiblock.primitive_water_pump.description")},
-                GTUtility.getForwardNewLineRegex().split(I18n.format("gregtech.multiblock.primitive_water_pump.extra1")),
-                GTUtility.getForwardNewLineRegex().split(I18n.format("gregtech.multiblock.primitive_water_pump.extra2"))
-        ).flatMap(Stream::of).toArray(String[]::new);
+        List<String> list = new ArrayList<>();
+        list.add(I18n.format("gregtech.multiblock.primitive_water_pump.description"));
+        Collections.addAll(list, LocalizationUtils.formatLines("gregtech.multiblock.primitive_water_pump.extra1"));
+        Collections.addAll(list, LocalizationUtils.formatLines("gregtech.multiblock.primitive_water_pump.extra2"));
+        return list.toArray(new String[0]);
     }
 
     private boolean isRainingInBiome() {

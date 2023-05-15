@@ -1,20 +1,19 @@
 package gregtech.common.inventory.itemsource;
 
-import gregtech.api.util.ItemStackKey;
 import gregtech.common.inventory.IItemInfo;
+import it.unimi.dsi.fastutil.objects.Object2IntAVLTreeMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.item.ItemStack;
 
 import java.util.Comparator;
-import java.util.Map;
-import java.util.TreeMap;
-
 public class NetworkItemInfo implements IItemInfo {
 
-    private final ItemStackKey itemStackKey;
+    private final ItemStack itemStack;
     private int totalItemAmount = 0;
-    private final Map<ItemSource, Integer> inventories = new TreeMap<>(Comparator.comparingInt(ItemSource::getPriority));
+    private final Object2IntMap<ItemSource> inventories = new Object2IntAVLTreeMap<>(Comparator.comparingInt(ItemSource::getPriority));
 
-    public NetworkItemInfo(ItemStackKey itemStackKey) {
-        this.itemStackKey = itemStackKey;
+    public NetworkItemInfo(ItemStack itemStack) {
+        this.itemStack = itemStack;
     }
 
     @Override
@@ -23,8 +22,8 @@ public class NetworkItemInfo implements IItemInfo {
     }
 
     @Override
-    public ItemStackKey getItemStackKey() {
-        return itemStackKey;
+    public ItemStack getItemStack() {
+        return itemStack;
     }
 
     void addToSource(ItemSource itemSource, int amount) {

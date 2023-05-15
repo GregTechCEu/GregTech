@@ -59,11 +59,11 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
 
             // make the mold recipe if the two required inputs were found
             if (!moldStack.isEmpty() && moldStack.getTagCompound() != null && !itemStack.isEmpty()) {
-                ItemStack output = GTUtility.copyAmount(1, itemStack);
+                ItemStack output = GTUtility.copy(1, itemStack);
                 output.setStackDisplayName(moldStack.getDisplayName());
                 return this.recipeBuilder()
                         .notConsumable(GTRecipeItemInput.getOrCreate(moldStack)) //recipe is reusable as long as mold stack matches
-                        .inputs(GTUtility.copyAmount(1, itemStack))
+                        .inputs(GTUtility.copy(1, itemStack))
                         .outputs(output)
                         .duration(40).EUt(4)
                         .build().getResult();

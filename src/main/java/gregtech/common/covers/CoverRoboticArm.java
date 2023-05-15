@@ -9,10 +9,10 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -63,13 +63,21 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     protected int doTransferExact(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
-        Map<ItemStackKey, TypeItemInfo> sourceItemAmount = doCountSourceInventoryItemsByType(itemHandler, myItemHandler);
-        Iterator<ItemStackKey> iterator = sourceItemAmount.keySet().iterator();
+        Map<ItemStack, TypeItemInfo> sourceItemAmount = doCountSourceInventoryItemsByType(itemHandler, myItemHandler);
+        Iterator<ItemStack> iterator = sourceItemAmount.keySet().iterator();
         while (iterator.hasNext()) {
-            ItemStackKey key = iterator.next();
-            TypeItemInfo sourceInfo = sourceItemAmount.get(key);
+            TypeItemInfo sourceInfo = sourceItemAmount.get(iterator.next());
             int itemAmount = sourceInfo.totalCount;
             int itemToMoveAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
+
+            if (itemFilterContainer.getTransferStackSize() > 1 && itemToMoveAmount * 2 <= itemAmount) {
+                // get the max we can extract from the item filter variable
+                int maxMultiplier = Math.floorDiv(Math.min(itemAmount, maxTransferAmount), itemToMoveAmount);
+
+                // multiply up to the total count of all the items
+                itemToMoveAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+            }
+
             if (itemAmount >= itemToMoveAmount) {
                 sourceInfo.totalCount = itemToMoveAmount;
             } else {
@@ -107,6 +115,15 @@ public class CoverRoboticArm extends CoverConveyor {
             Object filterSlotIndex = iterator.next();
             GroupItemInfo sourceInfo = sourceItemAmounts.get(filterSlotIndex);
             int itemToKeepAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
+
+            if (itemFilterContainer.getTransferStackSize() > 1 && itemToKeepAmount * 2 <= sourceInfo.totalCount) {
+                // get the max we can keep from the item filter variable
+                int maxMultiplier = Math.floorDiv(sourceInfo.totalCount, itemToKeepAmount);
+
+                // multiply up to the total count of all the items
+                itemToKeepAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+            }
+
             int itemAmount = 0;
             if (currentItemAmount.containsKey(filterSlotIndex)) {
                 GroupItemInfo destItemInfo = currentItemAmount.get(filterSlotIndex);

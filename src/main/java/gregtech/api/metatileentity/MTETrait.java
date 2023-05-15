@@ -15,6 +15,12 @@ public abstract class MTETrait {
     private static final Object2IntFunction<String> traitIds = new Object2IntOpenHashMap<>();
     private static int rollingNetworkId = 0;
 
+    private static final int NO_NETWORK_ID = -1;
+
+    static {
+        traitIds.defaultReturnValue(NO_NETWORK_ID);
+    }
+
     protected final MetaTileEntity metaTileEntity;
     private final int networkId;
 
@@ -25,14 +31,15 @@ public abstract class MTETrait {
      */
     public MTETrait(@Nonnull MetaTileEntity metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
-        metaTileEntity.addMetaTileEntityTrait(this);
 
         final String traitName = getName();
-        if (!traitIds.containsKey(traitName)) {
-           this.networkId = traitIds.put(traitName, rollingNetworkId++);
-        } else {
-            this.networkId = traitIds.getInt(traitName);
+        int networkId = traitIds.getInt(traitName);
+        if (networkId == NO_NETWORK_ID) {
+            networkId = rollingNetworkId++;
+            traitIds.put(traitName, networkId);
         }
+        this.networkId = networkId;
+        metaTileEntity.addMetaTileEntityTrait(this);
     }
 
     @Nonnull
@@ -80,5 +87,14 @@ public abstract class MTETrait {
 
     public final void writeCustomData(int id, @Nonnull Consumer<PacketBuffer> writer) {
         metaTileEntity.writeTraitData(this, id, writer);
+    }
+
+    @Override
+    public String toString() {
+        return "MTETrait{" +
+                "metaTileEntity=" + metaTileEntity +
+                ", networkId=" + networkId +
+                ", name='" + getName() + '\'' +
+                '}';
     }
 }

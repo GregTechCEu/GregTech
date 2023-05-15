@@ -126,7 +126,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
 
     @Override
     protected BlockPattern createStructurePattern() {
-        return boilerType == null ? null : FactoryBlockPattern.start()
+        return FactoryBlockPattern.start()
                 .aisle("XXX", "CCC", "CCC", "CCC")
                 .aisle("XXX", "CPC", "CPC", "CCC")
                 .aisle("XXX", "CSC", "CCC", "CCC")

@@ -131,18 +131,14 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 return classWriter.toByteArray();
             }
             case RenderItemVisitor.TARGET_CLASS_NAME: {
-                // do not conflict with EnderCore's changes, which already do what we need
-                if (!Loader.instance().getIndexedModList().containsKey(GTValues.MODID_ECORE)) {
-                    ClassNode classNode = new ClassNode();
-                    ClassReader classReader = new ClassReader(basicClass);
-                    classReader.accept(classNode, 0);
-                    Iterator<MethodNode> methods = classNode.methods.iterator();
-                    RenderItemVisitor.transform(methods);
-                    ClassWriter classWriter = new ClassWriter(0);
-                    classNode.accept(classWriter);
-                    return classWriter.toByteArray();
-                }
-                break;
+                ClassNode classNode = new ClassNode();
+                ClassReader classReader = new ClassReader(basicClass);
+                classReader.accept(classNode, 0);
+                Iterator<MethodNode> methods = classNode.methods.iterator();
+                RenderItemVisitor.transform(methods);
+                ClassWriter classWriter = new ClassWriter(0);
+                classNode.accept(classWriter);
+                return classWriter.toByteArray();
             }
             case RecipeRepairItemVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
@@ -170,6 +166,12 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(0);
                 classReader.accept(new TargetClassVisitor(classWriter, MinecraftVisitor.PROCESS_KEY_F3, MinecraftVisitor::new), ClassReader.EXPAND_FRAMES);
+                return classWriter.toByteArray();
+            }
+            case ModelLoaderRegistryVisitor.TARGET_CLASS_NAME: {
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(0);
+                classReader.accept(new TargetClassVisitor(classWriter, ModelLoaderRegistryVisitor.TARGET_METHOD, ModelLoaderRegistryVisitor::new), ClassReader.EXPAND_FRAMES);
                 return classWriter.toByteArray();
             }
         }

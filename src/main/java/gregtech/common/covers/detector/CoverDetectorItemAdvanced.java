@@ -5,27 +5,24 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.impl.FilteredItemHandler;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.*;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-
-import java.util.regex.Pattern;
 
 public class CoverDetectorItemAdvanced extends CoverDetectorItem implements CoverWithUI {
 
@@ -82,7 +79,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
 
         this.itemFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
 
-        return ModularUI.builder(GuiTextures.BACKGROUND,  176, 188 + 82)
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 188 + 82)
                 .widget(group)
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 188)
                 .build(this, player);
@@ -97,12 +94,22 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     }
 
     private void setMinValue(String val) {
-        int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MIN);
+        int parsedValue;
+        try {
+            parsedValue = Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            parsedValue = DEFAULT_MIN;
+        }
         this.min = Math.min(max - 1, Math.max(0, parsedValue));
     }
 
     private void setMaxValue(String val) {
-        int parsedValue = GTUtility.tryParseInt(val, DEFAULT_MAX);
+        int parsedValue;
+        try {
+            parsedValue = Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            parsedValue = DEFAULT_MAX;
+        }
         max = Math.max(min + 1, parsedValue);
     }
 
@@ -126,12 +133,13 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         int storedItems = 0;
 
         for (int i = 0; i < itemHandler.getSlots(); i++) {
-            if(itemFilter.testItemStack(itemHandler.getStackInSlot(i)))
+            if (itemFilter.testItemStack(itemHandler.getStackInSlot(i)))
                 storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 
-        setRedstoneSignalOutput(GTUtility.computeRedstoneBetweenValues(storedItems, max, min, this.isInverted()));
+        setRedstoneSignalOutput(RedstoneUtil.computeRedstoneBetweenValues(storedItems, max, min, isInverted()));
     }
+
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);

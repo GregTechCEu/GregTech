@@ -17,10 +17,9 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTHashMaps;
-import gregtech.api.util.InventoryUtils;
-import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -39,7 +38,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable {
 
@@ -71,7 +69,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
             // Only attempt to auto collapse the inventory contents once the bus has been notified
             if (isAutoCollapse()) {
                 IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : this.getImportItems());
-                if  (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) : this.getNotifiedItemInputList().contains(inventory)) {
+                if (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) : this.getNotifiedItemInputList().contains(inventory)) {
                     collapseInventorySlotContents(inventory);
                 }
             }
@@ -203,24 +201,34 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {
 
         // Gather a snapshot of the provided inventory
-        Map<ItemStackKey, Integer> inventoryContents = GTHashMaps.fromItemHandler(inventory);
+        Object2IntMap<ItemStack> inventoryContents = GTHashMaps.fromItemHandler(inventory);
 
         List<ItemStack> inventoryItemContents = new ArrayList<>();
 
         // Populate the list of item stacks in the inventory with apportioned item stacks, for easy replacement
-        for(Map.Entry<ItemStackKey, Integer> slot : inventoryContents.entrySet()) {
-            ItemStack stack = slot.getKey().getItemStack();
-            stack.setCount(slot.getValue());
-            inventoryItemContents.addAll(InventoryUtils.apportionStack(stack, stack.getMaxStackSize()));
+        for (Object2IntMap.Entry<ItemStack> e : inventoryContents.object2IntEntrySet()) {
+            ItemStack stack = e.getKey();
+            int count = e.getIntValue();
+            int maxStackSize = stack.getMaxStackSize();
+            while (count >= maxStackSize) {
+                ItemStack copy = stack.copy();
+                copy.setCount(maxStackSize);
+                inventoryItemContents.add(copy);
+                count -= maxStackSize;
+            }
+            if (count > 0) {
+                ItemStack copy = stack.copy();
+                copy.setCount(count);
+                inventoryItemContents.add(copy);
+            }
         }
 
-        for(int i = 0; i < inventory.getSlots(); i++) {
+        for (int i = 0; i < inventory.getSlots(); i++) {
             ItemStack stackToMove;
             // Ensure that we are not exceeding the List size when attempting to populate items
-            if(i >= inventoryItemContents.size()) {
+            if (i >= inventoryItemContents.size()) {
                 stackToMove = ItemStack.EMPTY;
-            }
-            else {
+            } else {
                 stackToMove = inventoryItemContents.get(i);
             }
 
@@ -234,17 +242,16 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
 
         boolean isAttached = false;
-        if (this.isAttachedToMultiBlock()){
+        if (this.isAttachedToMultiBlock()) {
             setAutoCollapse(!this.autoCollapse);
             isAttached = true;
         }
 
-        if(!getWorld().isRemote) {
+        if (!getWorld().isRemote) {
             if (isAttached) {
-                if(this.autoCollapse) {
+                if (this.autoCollapse) {
                     playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse_true"));
-                }
-                else {
+                } else {
                     playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse_false"));
                 }
             } else {

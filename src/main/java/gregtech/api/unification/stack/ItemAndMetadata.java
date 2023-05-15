@@ -1,7 +1,6 @@
 package gregtech.api.unification.stack;
 
 import gregtech.api.GTValues;
-import gregtech.api.util.GTUtility;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -20,7 +19,7 @@ public final class ItemAndMetadata {
 
     public ItemAndMetadata(@Nonnull ItemStack itemStack) {
         this.item = itemStack.getItem();
-        this.itemDamage = GTUtility.getActualItemDamageFromStack(itemStack);
+        this.itemDamage = itemStack.getItemDamage();
     }
 
     @Nonnull

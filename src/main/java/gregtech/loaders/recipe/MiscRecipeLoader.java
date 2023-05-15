@@ -38,6 +38,14 @@ public class MiscRecipeLoader {
                 "SGS", "PBP", "PWP", 'S', new UnificationEntry(screw, WroughtIron), 'G', OreDictUnifier.get("paneGlass"), 'B', new ItemStack(Items.BOOK),
                                         'P', new UnificationEntry(plate, WroughtIron), 'W', new UnificationEntry(wireGtSingle, RedAlloy));
 
+        // Multiblock Builder
+        ModHandler.addShapedRecipe(true, "multiblock_builder", MULTIBLOCK_BUILDER.getStackForm(),
+                "wCE", "SRC", "RSd",
+                'C', new UnificationEntry(circuit, MarkerMaterials.Tier.HV),
+                'E', new UnificationEntry(gem, EnderEye),
+                'S', new UnificationEntry(screw, StainlessSteel),
+                'R', new UnificationEntry(stick, StainlessSteel));
+
         // Potin Recipe
         ModHandler.addShapelessRecipe("potin_dust", OreDictUnifier.get(dust, Potin, 8),
                 new UnificationEntry(dust, Copper),
