@@ -1,7 +1,5 @@
 package gregtech.common.terminal.app.prospector.widget;
 
-import com.mamiyaotaru.voxelmap.interfaces.AbstractVoxelMap;
-import com.mamiyaotaru.voxelmap.interfaces.IWaypointManager;
 import gregtech.api.GTValues;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -21,8 +19,6 @@ import gregtech.common.terminal.app.prospector.ProspectingTexture;
 import gregtech.common.terminal.app.prospector.ProspectorMode;
 import gregtech.core.network.packets.PacketProspecting;
 import gregtech.integration.xaero.ColorUtility;
-import journeymap.client.model.Waypoint;
-import journeymap.client.waypoint.WaypointStore;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -43,9 +39,6 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import xaero.common.XaeroMinimapSession;
-import xaero.common.minimap.waypoints.WaypointSet;
-import xaero.common.minimap.waypoints.WaypointWorld;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -381,13 +374,13 @@ public class WidgetProspectingMap extends Widget {
 
     @Optional.Method(modid = GTValues.MODID_JOURNEYMAP)
     private boolean addJourneymapWaypoint(BlockPos b) {
-        Waypoint journeyMapWaypoint = new Waypoint(createVeinName(),
+        journeymap.client.model.Waypoint journeyMapWaypoint = new journeymap.client.model.Waypoint(createVeinName(),
                 b,
                 new Color(color),
-                Waypoint.Type.Normal,
+                journeymap.client.model.Waypoint.Type.Normal,
                 Minecraft.getMinecraft().world.provider.getDimension());
-        if (!WaypointStore.INSTANCE.getAll().contains(journeyMapWaypoint)) {
-            WaypointStore.INSTANCE.save(journeyMapWaypoint);
+        if (!journeymap.client.waypoint.WaypointStore.INSTANCE.getAll().contains(journeyMapWaypoint)) {
+            journeymap.client.waypoint.WaypointStore.INSTANCE.save(journeyMapWaypoint);
             return true;
         }
         return false;
@@ -399,15 +392,15 @@ public class WidgetProspectingMap extends Widget {
         TreeSet<Integer> world = new TreeSet<>();
         world.add(Minecraft.getMinecraft().world.provider.getDimension());
 
-        IWaypointManager waypointManager = AbstractVoxelMap.getInstance().getWaypointManager();
+        com.mamiyaotaru.voxelmap.interfaces.IWaypointManager waypointManager = com.mamiyaotaru.voxelmap.interfaces.AbstractVoxelMap.getInstance().getWaypointManager();
         com.mamiyaotaru.voxelmap.util.Waypoint voxelMapWaypoint = new com.mamiyaotaru.voxelmap.util.Waypoint(createVeinName(),
                 b.getX(),
                 b.getZ(),
                 Minecraft.getMinecraft().world.getHeight(b.getX(), b.getZ()),
                 true,
-                c.getRed(),
-                c.getGreen(),
-                c.getBlue(),
+                c.getRed() / 255F,
+                c.getGreen() / 255F,
+                c.getBlue() / 255F,
                 Minecraft.getMinecraft().world.provider.getDimensionType().getSuffix(),
                 Minecraft.getMinecraft().world.provider.getDimensionType().getName(),
                 world);
@@ -433,10 +426,10 @@ public class WidgetProspectingMap extends Widget {
 
         for (int i = 0; i < xaerosColors.length; i++) {
             double[] c = xaerosColors[i];
-            double diffLinner = Math.abs(c[0] - labWPC[0]);
-            double diffAinner = Math.abs(c[1] - labWPC[1]);
-            double diffBinner = Math.abs(c[2] - labWPC[2]);
-            double distance = diffLinner * diffLinner + diffAinner * diffAinner + diffBinner * diffBinner;
+            double diffLInner = Math.abs(c[0] - labWPC[0]);
+            double diffAInner = Math.abs(c[1] - labWPC[1]);
+            double diffBInner = Math.abs(c[2] - labWPC[2]);
+            double distance = diffLInner * diffLInner + diffAInner * diffAInner + diffBInner * diffBInner;
             if (distance < closestDistance) {
                 closestDistance = distance;
                 bestColorIndex = i;
@@ -444,9 +437,9 @@ public class WidgetProspectingMap extends Widget {
 
         }
 
-        XaeroMinimapSession minimapSession = XaeroMinimapSession.getCurrentSession();
-        WaypointSet wps = minimapSession.getWaypointsManager().getWaypoints();
-        WaypointWorld ww = minimapSession.getWaypointsManager().getCurrentWorld();
+        xaero.common.XaeroMinimapSession minimapSession = xaero.common.XaeroMinimapSession.getCurrentSession();
+        xaero.common.minimap.waypoints.WaypointSet wps = minimapSession.getWaypointsManager().getWaypoints();
+        xaero.common.minimap.waypoints.WaypointWorld ww = minimapSession.getWaypointsManager().getCurrentWorld();
         xaero.common.minimap.waypoints.Waypoint xaeroWaypoint = new xaero.common.minimap.waypoints.Waypoint(
                 b.getX(),
                 Minecraft.getMinecraft().world.getHeight(b.getX(), b.getZ()),
