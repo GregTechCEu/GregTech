@@ -33,9 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMufflerHatch>, ITieredMetaTileEntity, IMufflerHatch {
 
@@ -76,17 +74,15 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     }
 
     public void recoverItemsTable(List<ItemStack> recoveryItems) {
-        int numRolls = Math.min(recoveryItems.size(), inventory.getSlots());
-        List<ItemStack> items = new ArrayList<>();
-        IntStream.range(0, numRolls).forEach(slot -> {
-            if (calculateChance())
-                GTUtility.addStackToItemStackList(recoveryItems.get(slot), items);
-        });
-        GTTransferUtils.addItemsToItemHandler(inventory, false, items);
+        for (ItemStack recoveryItem : recoveryItems) {
+            if (calculateChance()) {
+                GTTransferUtils.insertItem(inventory, recoveryItem, false);
+            }
+        }
     }
 
     private boolean calculateChance() {
-        return recoveryChance >= 100 || recoveryChance >= GTValues.RNG.nextInt(100);
+        return recoveryChance >= 100 || recoveryChance > GTValues.RNG.nextInt(100);
     }
 
 

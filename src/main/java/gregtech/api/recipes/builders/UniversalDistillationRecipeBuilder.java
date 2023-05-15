@@ -4,9 +4,10 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+
+import javax.annotation.Nullable;
 
 import static gregtech.api.recipes.logic.OverclockingLogic.STANDARD_OVERCLOCK_DURATION_DIVISOR;
 
@@ -68,7 +69,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
             }
 
             if (!this.outputs.isEmpty()) {
-                boolean itemsDivisible = GTUtility.isItemStackCountDivisible(this.outputs.get(0), ratio) && fluidsDivisible;
+                boolean itemsDivisible = this.outputs.get(0).getCount() % ratio == 0 && fluidsDivisible;
 
                 if (fluidsDivisible && itemsDivisible) {
                     ItemStack stack = this.outputs.get(0).copy();
@@ -83,19 +84,19 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
         super.buildAndRegister();
     }
 
-    private static int getRatioForDistillery(FluidStack fluidInput, FluidStack fluidOutput, ItemStack output) {
+    private static int getRatioForDistillery(FluidStack fluidInput, FluidStack fluidOutput, @Nullable ItemStack output) {
         int[] divisors = new int[]{2, 5, 10, 25, 50};
         int ratio = -1;
 
         for (int divisor : divisors) {
 
-            if (!(isFluidStackDivisibleForDistillery(fluidInput, divisor)))
+            if (!isFluidStackDivisibleForDistillery(fluidInput, divisor))
                 continue;
 
-            if (!(isFluidStackDivisibleForDistillery(fluidOutput, divisor)))
+            if (!isFluidStackDivisibleForDistillery(fluidOutput, divisor))
                 continue;
 
-            if (output != null && !(GTUtility.isItemStackCountDivisible(output, divisor)))
+            if (output != null && output.getCount() % divisor != 0)
                 continue;
 
             ratio = divisor;
@@ -105,7 +106,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
     }
 
     private static boolean isFluidStackDivisibleForDistillery(FluidStack fluidStack, int divisor) {
-        return GTUtility.isFluidStackAmountDivisible(fluidStack, divisor) && fluidStack.amount / divisor >= 25;
+        return fluidStack.amount % divisor == 0 && fluidStack.amount / divisor >= 25;
     }
 
     // todo expose to CT

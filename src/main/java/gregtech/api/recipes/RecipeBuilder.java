@@ -395,7 +395,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R circuitMeta(int circuitNumber) {
-        if (!GTUtility.isBetweenInclusive(IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX, circuitNumber)) {
+        if (IntCircuitIngredient.CIRCUIT_MIN > circuitNumber || circuitNumber > IntCircuitIngredient.CIRCUIT_MAX) {
             GTLog.logger.error("Integrated Circuit Number cannot be less than {} and more than {}",
                     IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX);
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid Integrated Circuit Number"));

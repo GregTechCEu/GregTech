@@ -76,7 +76,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private boolean isInventoryFull = false;
 
     private final int drillingFluidConsumePerTick;
-    private final String romanNumeralString;
 
     private final MultiblockMinerLogic minerLogic;
 
@@ -85,7 +84,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.material = material;
         this.tier = tier;
         this.drillingFluidConsumePerTick = drillingFluidConsumePerTick;
-        this.romanNumeralString = GTUtility.romanNumeralString(fortune);
         this.minerLogic = new MultiblockMinerLogic(this, fortune, speed, maximumChunkDiameter * CHUNK_LENGTH / 2, getBaseTexture(null), RecipeMaps.MACERATOR_RECIPES);
     }
 
@@ -411,10 +409,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     public int getDrillingFluidConsumePerTick() {
         return this.drillingFluidConsumePerTick;
-    }
-
-    public String getRomanNumeralString() {
-        return this.romanNumeralString;
     }
 
     @Override

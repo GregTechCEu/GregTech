@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
@@ -397,7 +398,22 @@ public class Recipe {
                     recipeTier, machineTier);
             if (GTValues.RNG.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
                 ItemStack stackToAdd = chancedOutput.getItemStack();
-                GTUtility.addStackToItemStackList(stackToAdd, resultChanced);
+                for (ItemStack stackInList : resultChanced) {
+                    int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
+                    if (insertable > 0 && ItemHandlerHelper.canItemStacksStack(stackInList, stackToAdd)) {
+                        if (insertable >= stackToAdd.getCount()) {
+                            stackInList.grow(stackToAdd.getCount());
+                            stackToAdd = ItemStack.EMPTY;
+                            break;
+                        } else {
+                            stackInList.grow(insertable);
+                            stackToAdd.shrink(insertable);
+                        }
+                    }
+                }
+                if (!stackToAdd.isEmpty()) {
+                    resultChanced.add(stackToAdd);
+                }
             }
         }
 
