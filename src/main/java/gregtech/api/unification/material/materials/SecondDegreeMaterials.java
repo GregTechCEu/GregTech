@@ -328,12 +328,7 @@ public class SecondDegreeMaterials {
                 .components(Sodium, 2, Sulfur, 1, Water, 10, Oxygen, 4)
                 .build();
 
-        Trona = new Material.Builder(2031, "trona")
-                .dust(1).ore(2)
-                .color(0x87875F).iconSet(METALLIC)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Sodium, 3, Carbon, 2, Hydrogen, 1, Water, 2, Oxygen, 6)
-                .build();
+        // FREE ID 2031
 
         Gypsum = new Material.Builder(2032, "gypsum")
                 .dust(1).ore()

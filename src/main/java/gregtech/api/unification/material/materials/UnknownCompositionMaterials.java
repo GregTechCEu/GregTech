@@ -523,14 +523,14 @@ public class UnknownCompositionMaterials {
                 .color(0x8C8C8C).iconSet(ROUGH)
                 .build();
 
-        LeadConcentrate = new Material.Builder(2045, "lead_concentrate")
+        LeadConcentrate = new Material.Builder(1657, "lead_concentrate")
                 .fluid()
                 .color(0x551E55)
                 .flags(DISABLE_DECOMPOSITION)
                 .build()
                 .setFormula("?(PbSO4)", true);
 
-        ZincConcentrate = new Material.Builder(2045, "zinc_concentrate")
+        ZincConcentrate = new Material.Builder(1658, "zinc_concentrate")
                 .fluid()
                 .color(0xA18DA1)
                 .flags(DISABLE_DECOMPOSITION)

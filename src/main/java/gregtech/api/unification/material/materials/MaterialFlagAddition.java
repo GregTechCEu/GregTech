@@ -418,9 +418,6 @@ public class MaterialFlagAddition {
         oreProp = Powellite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Potassium, Molybdenite);
 
-        oreProp = Trona.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Sodium, SodaAsh, SodaAsh);
-
         oreProp = Mica.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Potassium, Aluminium);
 

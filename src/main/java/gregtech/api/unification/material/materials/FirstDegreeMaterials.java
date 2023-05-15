@@ -861,12 +861,6 @@ public class FirstDegreeMaterials {
                 .components(Arsenic, 4, Sulfur, 4)
                 .build();
 
-        SodiumBicarbonate = new Material.Builder(366, "sodium_bicarbonate")
-                .dust(1)
-                .color(0x565b96).iconSet(ROUGH)
-                .components(Sodium, 1, Hydrogen, 1, Carbon, 1, Oxygen, 3)
-                .build();
-
         PotassiumDichromate = new Material.Builder(367, "potassium_dichromate")
                 .dust(1)
                 .color(0xFF084E)

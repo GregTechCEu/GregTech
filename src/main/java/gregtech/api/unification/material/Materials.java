@@ -368,7 +368,6 @@ public class Materials {
     public static Material CalciumChloride;
     public static Material Bornite;
     public static Material Chalcocite;
-
     public static Material GalliumArsenide;
     public static Material Potash;
     public static Material SodaAsh;
@@ -384,7 +383,6 @@ public class Materials {
     public static Material Magnesia;
     public static Material PlatinumGroupSludge;
     public static Material Realgar;
-    public static Material SodiumBicarbonate;
     public static Material PotassiumDichromate;
     public static Material ChromiumTrioxide;
     public static Material AntimonyTrioxide;
@@ -727,7 +725,6 @@ public class Materials {
     public static Material Pitchblende;
     public static Material Monazite;
     public static Material Mirabilite;
-    public static Material Trona;
     public static Material Gypsum;
     public static Material Zeolite;
     public static Material Concrete;
