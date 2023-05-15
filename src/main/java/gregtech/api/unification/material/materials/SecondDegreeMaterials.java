@@ -39,14 +39,14 @@ public class SecondDegreeMaterials {
         BlueTopaz = new Material.Builder(257, "blue_topaz")
                 .gem(3).ore()
                 .color(0x7B96DC).iconSet(GEM_HORIZONTAL)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING)
                 .components(Alumina, 5, Silicon, 1, Fluorine, 2, Water, 1)
                 .build().setFormula("(Al2O3)(SiO2)F2(H2O)", true);
 
         Emerald = new Material.Builder(278, "emerald")
                 .gem().ore()
                 .color(0x50FF50).iconSet(EMERALD)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_LENS)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_LENS)
                 .components(Alumina, 1, Beryllium, 3, SiliconDioxide, 6, Oxygen, 3)
                 .build();
 
@@ -65,7 +65,7 @@ public class SecondDegreeMaterials {
         Ruby = new Material.Builder(311, "ruby")
                 .gem().ore()
                 .color(0xFF6464).iconSet(RUBY)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, GENERATE_LENS, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Alumina, 5, Chromium, 1)
                 .build().setFormula("(Al2O3)Cr", true);
 
@@ -78,7 +78,7 @@ public class SecondDegreeMaterials {
         Topaz = new Material.Builder(329, "topaz")
                 .gem(3).ore()
                 .color(0xFF8000).iconSet(GEM_HORIZONTAL)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING)
                 .components(Alumina, 5, Fluorine, 1, SiliconDioxide, 1, Water, 1)
                 .build().setFormula("(Al2O3)F(SiO2)(H2O)", true);
 
@@ -145,21 +145,21 @@ public class SecondDegreeMaterials {
         Olivine = new Material.Builder(2004, "olivine")
                 .gem().ore()
                 .color(0x96FF96).iconSet(RUBY)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING)
                 .components(Magnesium, 2, Iron, 1, SiliconDioxide, 2)
                 .build();
 
         Opal = new Material.Builder(2005, "opal")
                 .gem().ore()
                 .color(0x0000FF).iconSet(OPAL)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
                 .build();
 
         Amethyst = new Material.Builder(2006, "amethyst")
                 .gem(3).ore()
                 .color(0xD232D2).iconSet(RUBY)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 4, Iron, 1)
                 .build();
 
@@ -185,7 +185,7 @@ public class SecondDegreeMaterials {
                 .gem(1).ore(2)
                 .color(0xC8C8FF).iconSet(DIAMOND)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_BOLT_SCREW)
-                .components(Calcium, 5, Phosphate, 3, Chlorine, 1)
+                .components(Calcium, 5, Phosphorus, 3, Oxygen, 12, Chlorine, 1)
                 .build();
 
         BlackSteel = new Material.Builder(2011, "black_steel")
@@ -237,15 +237,15 @@ public class SecondDegreeMaterials {
         TricalciumPhosphate = new Material.Builder(2015, "tricalcium_phosphate")
                 .dust().ore(2)
                 .color(0xFFFF00).iconSet(FLINT)
-                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE, DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Calcium, 3, Phosphate, 2)
+                .flags(NO_SMASHING, NO_SMELTING)
+                .components(Calcium, 3, Phosphorus, 2, Oxygen, 8)
                 .build();
 
         // TODO REMOVE
         GarnetRed = new Material.Builder(2016, "garnet_red")
                 .gem().ore()
                 .color(0xC85050).iconSet(RUBY)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Pyrope, 3, Almandine, 5, Spessartine, 8)
                 .build();
 
@@ -253,7 +253,7 @@ public class SecondDegreeMaterials {
         GarnetYellow = new Material.Builder(2017, "garnet_yellow")
                 .gem().ore()
                 .color(0xC8C850).iconSet(RUBY)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Andradite, 5, Grossular, 8, Uvarovite, 3)
                 .build();
 
@@ -319,7 +319,7 @@ public class SecondDegreeMaterials {
                 .gem(1).ore(2, true)
                 .color(0x324632).iconSet(DIAMOND)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
-                .components(RareEarth, 1, Phosphate, 1)
+                .components(RareEarth, 1, Phosphorus, 1, Oxygen, 4)
                 .build();
 
         Mirabilite = new Material.Builder(2030, "mirabilite")

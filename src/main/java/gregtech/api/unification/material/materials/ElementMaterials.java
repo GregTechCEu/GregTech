@@ -167,7 +167,7 @@ public class ElementMaterials {
         Cobalt = new Material.Builder(23, "cobalt")
                 .ingot().fluid().ore() // leave for TiCon ore processing
                 .color(0x5050FA).iconSet(METALLIC)
-                .flags(EXT_METAL, WASHING_PERSULFATE)
+                .flags(EXT_METAL)
                 .element(Elements.Co)
                 .cableProperties(GTValues.V[1], 2, 2)
                 .itemPipeProperties(2560, 2.0f)
@@ -182,8 +182,7 @@ public class ElementMaterials {
         Copper = new Material.Builder(25, "copper")
                 .ingot(1).fluid().ore()
                 .color(0xFF6400).iconSet(SHINY)
-                .flags(EXT_METAL, MORTAR_GRINDABLE, GENERATE_SPRING,
-                        GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE, WASHING_PERSULFATE)
+                .flags(EXT_METAL, MORTAR_GRINDABLE, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE)
                 .element(Elements.Cu)
                 .cableProperties(GTValues.V[2], 1, 2)
                 .fluidPipeProperties(1696, 6, true)
@@ -280,7 +279,7 @@ public class ElementMaterials {
                 .ingot().fluid().ore()
                 .color(0xFFE650).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_RING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_SPRING,
-                        GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE, GENERATE_FOIL, WASHING_MERCURY)
+                        GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE, GENERATE_FOIL)
                 .element(Elements.Au)
                 .cableProperties(GTValues.V[3], 3, 2)
                 .fluidPipeProperties(1671, 25, true, true, false, false)
@@ -384,7 +383,6 @@ public class ElementMaterials {
         Lithium = new Material.Builder(56, "lithium")
                 .dust().fluid().ore()
                 .color(0xBDC7DB)
-                .flags(WASHING_MERCURY)
                 .element(Elements.Li)
                 .fluidTemp(454)
                 .build();
@@ -470,7 +468,7 @@ public class ElementMaterials {
         Nickel = new Material.Builder(69, "nickel")
                 .ingot().fluid().plasma().ore()
                 .color(0xC8C8FA).iconSet(METALLIC)
-                .flags(STD_METAL, MORTAR_GRINDABLE, WASHING_PERSULFATE)
+                .flags(STD_METAL, MORTAR_GRINDABLE)
                 .element(Elements.Ni)
                 .cableProperties(GTValues.V[GTValues.LV], 3, 3)
                 .itemPipeProperties(2048, 1.0f)
@@ -545,7 +543,7 @@ public class ElementMaterials {
         Platinum = new Material.Builder(80, "platinum")
                 .ingot().fluid().ore()
                 .color(0xFFFFC8).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_RING, WASHING_MERCURY)
+                .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_RING)
                 .element(Elements.Pt)
                 .cableProperties(GTValues.V[5], 2, 1)
                 .itemPipeProperties(512, 4.0f)
@@ -671,7 +669,7 @@ public class ElementMaterials {
         Silver = new Material.Builder(100, "silver")
                 .ingot().fluid().ore()
                 .color(0xDCDCFF).iconSet(SHINY)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING, WASHING_MERCURY)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING)
                 .element(Elements.Ag)
                 .cableProperties(GTValues.V[3], 1, 1)
                 .fluidTemp(1235)
@@ -825,8 +823,7 @@ public class ElementMaterials {
         Zinc = new Material.Builder(122, "zinc")
                 .ingot(1).fluid().ore()
                 .color(0xEBEBFA).iconSet(METALLIC)
-                .flags(STD_METAL, MORTAR_GRINDABLE, GENERATE_FOIL, GENERATE_RING,
-                        GENERATE_FINE_WIRE, WASHING_MERCURY, WASHING_PERSULFATE)
+                .flags(STD_METAL, MORTAR_GRINDABLE, GENERATE_FOIL, GENERATE_RING, GENERATE_FINE_WIRE)
                 .element(Elements.Zn)
                 .fluidTemp(693)
                 .build();

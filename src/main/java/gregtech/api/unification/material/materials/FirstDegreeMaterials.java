@@ -168,14 +168,14 @@ public class FirstDegreeMaterials {
         Cobaltite = new Material.Builder(272, "cobaltite")
                 .dust(1).ore()
                 .color(0x5050FA).iconSet(METALLIC)
-                .flags(WASHING_PERSULFATE, DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Cobalt, 1, Arsenic, 1, Sulfur, 1)
                 .build();
 
         Cooperite = new Material.Builder(273, "cooperite")
                 .dust(1).ore()
                 .color(0xFFFFC8).iconSet(METALLIC)
-                .flags(WASHING_MERCURY, DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Platinum, 3, Nickel, 1, Sulfur, 1, Palladium, 1)
                 .build();
 
@@ -200,7 +200,7 @@ public class FirstDegreeMaterials {
                 .gem(3).ore()
                 .color(0xC8FFFF).iconSet(DIAMOND)
                 .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING,
-                        HIGH_SIFTER_OUTPUT, DISABLE_DECOMPOSITION, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
+                        DISABLE_DECOMPOSITION, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Carbon, 1)
                 .toolStats(ToolProperty.Builder.of(6.0F, 7.0F, 768, 3)
                         .attackSpeed(0.1F).enchantability(18).build())
@@ -228,14 +228,13 @@ public class FirstDegreeMaterials {
         Garnierite = new Material.Builder(280, "garnierite")
                 .dust(3).ore()
                 .color(0x32C846).iconSet(METALLIC)
-                .flags(WASHING_PERSULFATE)
                 .components(Nickel, 1, Oxygen, 1)
                 .build();
 
         GreenSapphire = new Material.Builder(281, "green_sapphire")
                 .gem().ore()
                 .color(0x64C882).iconSet(GEM_HORIZONTAL)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING)
                 .components(Aluminium, 2, Oxygen, 3)
                 .build();
 
@@ -367,12 +366,7 @@ public class FirstDegreeMaterials {
                 .components(Magnesium, 1, Iron, 1, Silicon, 2, Oxygen, 4)
                 .build();
 
-        Phosphate = new Material.Builder(298, "phosphate")
-                .dust(1)
-                .color(0xFFFF00)
-                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE)
-                .components(Phosphorus, 1, Oxygen, 4)
-                .build();
+        //FREE ID 298
 
         PlatinumRaw = new Material.Builder(299, "platinum_raw")
                 .dust()
@@ -491,7 +485,7 @@ public class FirstDegreeMaterials {
         Sapphire = new Material.Builder(314, "sapphire")
                 .gem().ore()
                 .color(0x6464C8).iconSet(GEM_VERTICAL)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, GENERATE_LENS)
                 .components(Aluminium, 2, Oxygen, 3)
                 .build();
 
@@ -541,7 +535,7 @@ public class FirstDegreeMaterials {
         Sphalerite = new Material.Builder(322, "sphalerite")
                 .dust(1).ore()
                 .color(0xFFFFFF)
-                .flags(DISABLE_DECOMPOSITION, WASHING_PERSULFATE)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Zinc, 1, Sulfur, 1)
                 .build();
 
@@ -585,7 +579,7 @@ public class FirstDegreeMaterials {
         Tetrahedrite = new Material.Builder(327, "tetrahedrite")
                 .dust().ore()
                 .color(0xC82000)
-                .flags(WASHING_PERSULFATE, DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Copper, 3, Antimony, 1, Iron, 1, Sulfur, 3)
                 .build();
 
@@ -921,7 +915,7 @@ public class FirstDegreeMaterials {
         Pentlandite = new Material.Builder(380, "pentlandite")
                 .dust().ore()
                 .color(0xA59605)
-                .flags(WASHING_PERSULFATE, DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Nickel, 9, Sulfur, 8)
                 .build();
 
@@ -946,7 +940,6 @@ public class FirstDegreeMaterials {
         Malachite = new Material.Builder(385, "malachite")
                 .gem().ore()
                 .color(0x055F05).iconSet(LAPIS)
-                .flags(WASHING_PERSULFATE)
                 .components(Copper, 2, Carbon, 1, Hydrogen, 2, Oxygen, 5)
                 .build();
 

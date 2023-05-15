@@ -394,16 +394,19 @@ public class UnknownCompositionMaterials {
                 .flags(STICKY, FLAMMABLE)
                 .build();
 
-        // FREE ID 1620
-
-        CopperSlag = new Material.Builder(1621, "copper_slag")
+        CopperSlag = new Material.Builder(1620, "copper_slag")
                 .dust()
                 .color(0xA65537).iconSet(ROUGH)
                 .build();
 
-        NickelSlag = new Material.Builder(1622, "nickel_slag")
+        NickelSlag = new Material.Builder(1621, "nickel_slag")
                 .dust()
                 .color(0x7A858E).iconSet(ROUGH)
+                .build();
+
+        LeadZincSlag = new Material.Builder(1622, "lead_zinc_slag")
+                .dust()
+                .color(0x3F2C3F).iconSet(ROUGH)
                 .build();
 
         // These colors are much nicer looking than those in MC's EnumDyeColor

@@ -33,17 +33,17 @@ public class WashedRecipeHandler {
                 .output(dust, material, 2 * property.getOreMultiplier())
                 .duration(10).EUt(16).buildAndRegister();
 
-        // Purified Ore -> Refined Ore
+        // Washed Ore -> Purified Ore
         if (material.hasProperty(PropertyKey.GEM)) {
             // Gems go in the Sifter
             SIFTER_RECIPES.recipeBuilder()
                     .input(washed, material)
                     .output(purified, material)
-                    .chancedOutput(gemChipped, material, property.getOreMultiplier(), 8000, 0)
-                    .chancedOutput(gemFlawed, material, property.getOreMultiplier(), 4000, 0)
-                    .chancedOutput(gem, material, property.getOreMultiplier(), 2000, 0)
-                    .chancedOutput(gemFlawless, material, property.getOreMultiplier(), 1000, 0)
                     .chancedOutput(gemExquisite, material, property.getOreMultiplier(), 500, 0)
+                    .chancedOutput(gemFlawless, material, property.getOreMultiplier(), 1000, 0)
+                    .chancedOutput(gem, material, property.getOreMultiplier(), 2000, 0)
+                    .chancedOutput(gemFlawed, material, property.getOreMultiplier(), 4000, 0)
+                    .chancedOutput(gemChipped, material, property.getOreMultiplier(), 8000, 0)
                     .duration(200).EUt(64).buildAndRegister();
         } else if (material.hasFlag(PURIFY_BY_SIFTING)) {
             // Certain ores flagged to be in Sifter

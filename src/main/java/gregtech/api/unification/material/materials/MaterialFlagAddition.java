@@ -28,8 +28,8 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(Bauxite, Bauxite, Ilmenite, Rutile);
         oreProp.setBathIOStacks(CLAY_VITRIOL);
 
-        oreProp = Beryllium.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Emerald, Emerald, Thorium);
+        //oreProp = Beryllium.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Emerald, Emerald, Thorium);
 
         oreProp = Cobalt.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Cobaltite);
@@ -344,10 +344,10 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(Lazurite, Sodalite, Pyrite);
 
         oreProp = Apatite.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(TricalciumPhosphate, Phosphate, Pyrochlore);
+        oreProp.setOreByProducts(TricalciumPhosphate, Phosphorus, Pyrochlore);
 
         oreProp = TricalciumPhosphate.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Apatite, Phosphate, Pyrochlore);
+        oreProp.setOreByProducts(Apatite, Phosphorus, Pyrochlore);
 
         oreProp = GarnetRed.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Spessartine, Pyrope, Almandine);

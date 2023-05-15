@@ -254,21 +254,9 @@ public class MaterialFlags {
     /////////////////
 
     /**
-     * Add to material if its Crushed Ore should be processed in the Sifter (instead of Thermal Centrifuge or Electromagnetic Separator).
+     * Add to material if its Washed Ore should be processed in the Sifter (instead of Centrifuge or Electromagnetic Separator).
      */
     public static final MaterialFlag PURIFY_BY_SIFTING = new MaterialFlag.Builder("purify_by_sifting")
-            .requireProps(PropertyKey.ORE)
-            .build();
-
-    public static final MaterialFlag HIGH_SIFTER_OUTPUT = new MaterialFlag.Builder("high_sifter_output")
-            .requireProps(PropertyKey.GEM, PropertyKey.ORE)
-            .build();
-
-    public static final MaterialFlag WASHING_MERCURY = new MaterialFlag.Builder("washing_mercury")
-            .requireProps(PropertyKey.ORE)
-            .build();
-
-    public static final MaterialFlag WASHING_PERSULFATE = new MaterialFlag.Builder("washing_persulfate")
             .requireProps(PropertyKey.ORE)
             .build();
 

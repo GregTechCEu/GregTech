@@ -339,6 +339,12 @@ public class ReactorRecipes {
                 .duration(480).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, LeadZincSlag)
+                .fluidInputs(SulfuricAcid.getFluid(1250))
+                .fluidOutputs(IndiumConcentrate.getFluid(250))
+                .duration(50).EUt(30).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Aluminium, 2)
                 .fluidInputs(IndiumConcentrate.getFluid(1000))
                 .output(dustSmall, Indium)

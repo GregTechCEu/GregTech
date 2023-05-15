@@ -316,7 +316,6 @@ public class Materials {
     public static Material NiobiumNitride;
     public static Material NiobiumTitanium;
     public static Material Obsidian;
-    public static Material Phosphate;
     public static Material SterlingSilver;
     public static Material RoseGold;
     public static Material BlackBronze;
@@ -663,6 +662,7 @@ public class Materials {
     public static Material FishOil;
     public static Material CopperSlag;
     public static Material NickelSlag;
+    public static Material LeadZincSlag;
     public static Material DyeBlack;
     public static Material DyeRed;
     public static Material DyeGreen;

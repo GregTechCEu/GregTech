@@ -58,8 +58,6 @@ public class OreByProduct implements IRecipeWrapper {
     private final List<List<FluidStack>> fluidInputs = new ObjectArrayList<>();
     private final List<List<FluidStack>> fluidOutputs = new ObjectArrayList<>();
     private final boolean hasDirectSmelt;
-    private final boolean hasMercuryBath;
-    private final boolean hasPersulfateBath;
     private final boolean hasVitriol;
     private final boolean hasSifter;
     private int currentSlot = 0;
@@ -92,30 +90,6 @@ public class OreByProduct implements IRecipeWrapper {
         addToInputs(MetaTileEntities.CHEMICAL_BATH[GTValues.LV].getStackForm());
         // macerate crushed -> impure dust
         addToInputs(MetaTileEntities.MACERATOR[GTValues.LV].getStackForm());
-
-        // mercury and persulfate washing
-        boolean hasMercury = false;
-        boolean hasPersulfate = false;
-        for (Material byproduct : property.getOreByProducts()) {
-            if (!hasMercury) hasMercury = byproduct.hasFlag(WASHING_MERCURY);
-            if (!hasPersulfate) hasPersulfate = byproduct.hasFlag(WASHING_PERSULFATE);
-        }
-
-        if (hasMercury) {
-            addToInputs(MetaTileEntities.CHEMICAL_BATH[GTValues.LV].getStackForm());
-            this.hasMercuryBath = true;
-        } else {
-            addToInputs(ItemStack.EMPTY);
-            this.hasMercuryBath = false;
-        }
-
-        if (hasPersulfate) {
-            addToInputs(MetaTileEntities.CHEMICAL_BATH[GTValues.LV].getStackForm());
-            this.hasPersulfateBath = true;
-        } else {
-            addToInputs(ItemStack.EMPTY);
-            this.hasPersulfateBath = false;
-        }
 
         // macerate crushed purified -> dust
         addToInputs(MetaTileEntities.MACERATOR[GTValues.LV].getStackForm());
@@ -208,32 +182,6 @@ public class OreByProduct implements IRecipeWrapper {
         addToOutputs(material, OrePrefix.washed, 1);
         addToOutputs(primaryByproduct, OrePrefix.dustTiny, 1);
         fluidInputs.add(Collections.singletonList(Materials.Water.getFluid(1000)));
-
-        Material mercuryByproduct = null;
-        Material persulfateByproduct = null;
-        for (Material byproduct : property.getOreByProducts()) {
-            // find the first byproduct in the list with one of these flags (if any)
-            if (byproduct.hasFlag(WASHING_MERCURY)) mercuryByproduct = byproduct;
-            if (byproduct.hasFlag(WASHING_PERSULFATE)) persulfateByproduct = byproduct;
-        }
-
-        if (mercuryByproduct != null) {
-            fluidInputs.add(Collections.singletonList(Materials.Mercury.getFluid(100)));
-            addToOutputs(material, washed, 1);
-            addToOutputs(mercuryByproduct, washed, 1);
-        } else {
-            fluidInputs.add(Collections.emptyList());
-            addEmptyOutputs(2);
-        }
-
-        if (persulfateByproduct != null) {
-            fluidInputs.add(Lists.newArrayList(SodiumPersulfate.getFluid(100)));
-            addToOutputs(material, washed, 1);
-            addToOutputs(persulfateByproduct, washed, 1);
-        } else {
-            fluidInputs.add(Collections.emptyList());
-            addEmptyOutputs(2);
-        }
     }
 
     private void purifiedRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
@@ -250,35 +198,27 @@ public class OreByProduct implements IRecipeWrapper {
         addToOutputs(material, OrePrefix.purified, 1);
         addToOutputs(byproduct, OrePrefix.dustSmall, 1);
 
-        // sifter purified ore -> gems
+        // sifter washed ore -> gems
         if (material.hasProperty(PropertyKey.GEM)) {
-            boolean highOutput = material.hasFlag(HIGH_SIFTER_OUTPUT);
+            addToOutputs(material, purified, 1);
             addToOutputs(material, gemExquisite, 1);
-            if (highOutput) addChance(500, 150);
-            else addChance(300, 100);
+            addChance(500, 0);
             addToOutputs(material, gemFlawless, 1);
-            if (highOutput) addChance(1500, 200);
-            else addChance(1000, 150);
+            addChance(1000, 0);
             addToOutputs(material, gem, 1);
-            if (highOutput) addChance(5000, 1000);
-            else addChance(3500, 500);
-            addToOutputs(material, dust, 1);
-            if (highOutput) addChance(2500, 500);
-            else addChance(5000, 750);
+            addChance(2000, 0);
 
             ItemStack flawedStack = OreDictUnifier.get(OrePrefix.gemFlawed, material);
             if (!flawedStack.isEmpty()) {
                 addToOutputs(flawedStack);
-                if (highOutput) addChance(2000, 500);
-                else addChance(2500, 300);
+                addChance(4000, 0);
             } else {
                 addEmptyOutputs(1);
             }
             ItemStack chippedStack = OreDictUnifier.get(OrePrefix.gemChipped, material);
             if (!chippedStack.isEmpty()) {
                 addToOutputs(chippedStack);
-                if (highOutput) addChance(3000, 350);
-                else addChance(3500, 400);
+                addChance(8000, 0);
             } else {
                 addEmptyOutputs(1);
             }
@@ -361,14 +301,6 @@ public class OreByProduct implements IRecipeWrapper {
 
     public boolean hasSifter() {
         return hasSifter;
-    }
-
-    public boolean hasMercuryBath() {
-        return hasMercuryBath;
-    }
-
-    public boolean hasPersulfateBath() {
-        return hasPersulfateBath;
     }
 
     public boolean hasVitriol() {

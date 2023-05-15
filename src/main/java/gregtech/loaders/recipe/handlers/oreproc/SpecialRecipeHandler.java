@@ -165,7 +165,7 @@ public class SpecialRecipeHandler {
      * - Output the Sulfur as SO2
      * - Output the other parts as Ingots if possible (Dusts if Ingot is unavailable or requires EBF)
      * - 30 EU/t, 10 seconds
-     * - If material includes copper or nickel, output corresponding slag
+     * - If material includes copper, nickel, lead or zinc, output corresponding slag
      * Designed for ONLY FIRST DEGREE MATERIALS!!
      */
     private static void addRoastingRecipe(Material input) {
@@ -189,6 +189,7 @@ public class SpecialRecipeHandler {
         }
         if (input.getNumComponentsOf(Copper) > 0) builder.output(dust, CopperSlag);
         if (input.getNumComponentsOf(Nickel) > 0) builder.output(dust, NickelSlag);
+        if (input.getNumComponentsOf(Lead) + input.getNumComponentsOf(Zinc) > 0) builder.output(dust, LeadZincSlag);
         builder.buildAndRegister();
     }
 }

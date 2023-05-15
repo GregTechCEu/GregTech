@@ -1908,6 +1908,7 @@ material.paper=Paper
 material.fish_oil=Fish Oil
 material.copper_slag=Copper Slag
 material.nickel_slag=Nickel Slag
+material.lead_zinc_slag=Lead-Zinc Slag
 material.dye_black=Chemical Black Dye
 material.dye_red=Chemical Red Dye
 material.dye_green=Chemical Green Dye
@@ -2159,6 +2160,9 @@ item.copper_slag.dust=Copper Slag
 item.nickel_slag.dustTiny=Tiny Pile of Nickel Slag
 item.nickel_slag.dustSmall=Small Pile of Nickel Slag
 item.nickel_slag.dust=Nickel Slag
+item.lead_zinc_slag.dustTiny=Tiny Pile of Lead-Zinc Slag
+item.lead_zinc_slag.dustSmall=Small Pile of Lead-Zinc Slag
+item.lead_zinc_slag.dust=Lead-Zinc Slag
 
 recipemap.sluice.name=Sluice
 recipemap.thermal_centrifuge.name=Thermal Centrifuge
