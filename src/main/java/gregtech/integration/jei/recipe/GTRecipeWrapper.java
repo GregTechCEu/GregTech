@@ -6,6 +6,7 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
@@ -14,8 +15,8 @@ import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.TooltipHelper;
-import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.integration.RecipeCompatUtil;
+import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JeiButton;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -82,7 +83,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
             // Scanner Output replacing, used for cycling research outputs
             List<ItemStack> scannerPossibilities = new ObjectArrayList<>();
-            if (recipe.getOutputs().size() > 0) {
+            if (!recipe.getOutputs().isEmpty()) {
                 ItemStack dataStick = recipe.getOutputs().get(0);
                 NBTTagCompound researchItemNBT = dataStick.getSubCompound(IResearchRecipeMap.RESEARCH_NBT_TAG);
                 if (researchItemNBT != null) {
