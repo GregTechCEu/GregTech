@@ -339,16 +339,32 @@ public class ReactorRecipes {
                 .duration(480).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, LeadZincSlag)
-                .fluidInputs(SulfuricAcid.getFluid(1250))
-                .fluidOutputs(IndiumConcentrate.getFluid(250))
+                .input(dust, LeadSlag, 2)
+                .fluidInputs(SulfuricAcid.getFluid(2500))
+                .fluidOutputs(LeadConcentrate.getFluid(500))
+                .output(dustSmall, Silver)
+                .duration(50).EUt(30).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, ZincSlag, 2)
+                .fluidInputs(SulfuricAcid.getFluid(2500))
+                .fluidOutputs(ZincConcentrate.getFluid(500))
+                .output(dustSmall, Gallium)
                 .duration(50).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Aluminium, 2)
-                .fluidInputs(IndiumConcentrate.getFluid(1000))
+                .fluidInputs(LeadConcentrate.getFluid(1000))
                 .output(dustSmall, Indium)
-                .fluidOutputs(LeadZincConcentrate.getFluid(1000))
+                .fluidOutputs(PurpleVitriol.getFluid(2000))
+                .fluidOutputs(ClayVitriol.getFluid(1000))
+                .duration(50).EUt(600).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Aluminium, 2)
+                .fluidInputs(ZincConcentrate.getFluid(1000))
+                .output(dustSmall, Indium)
+                .fluidOutputs(WhiteVitriol.getFluid(2000))
                 .fluidOutputs(ClayVitriol.getFluid(1000))
                 .duration(50).EUt(600).buildAndRegister();
 

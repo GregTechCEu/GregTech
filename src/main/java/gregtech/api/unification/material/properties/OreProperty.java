@@ -46,18 +46,6 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
     private Material directSmeltResult;
 
     /**
-     * Material that this Ore should create in a special Washing step.
-     * Should be one of the 9 "Vitriol" Materials, or a new Material that
-     * is considered part of this same category.
-     * <p>
-     * Any Material you pass here should follow the pattern of "?SO4" where
-     * ? is some metal element.
-     * <p>
-     * Default: none
-     */
-    private Material vitriol;
-
-    /**
      * Material that this Ore requires as Fluid in a special Washing step.
      * <p>
      * Default: none
@@ -144,15 +132,6 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
     @Nullable
     public Material getDirectSmeltResult() {
         return this.directSmeltResult;
-    }
-
-    public void setVitriol(Material m) {
-        this.vitriol = m;
-    }
-
-    @Nullable
-    public Material getVitriol() {
-        return vitriol;
     }
 
     public Material getBathInput() {
@@ -331,7 +310,6 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
         properties.ensureSet(PropertyKey.DUST, true);
 
         if (directSmeltResult != null) directSmeltResult.getProperties().ensureSet(PropertyKey.INGOT, true);
-        if (vitriol != null) vitriol.getProperties().ensureSet(PropertyKey.FLUID, true);
     }
 
 }

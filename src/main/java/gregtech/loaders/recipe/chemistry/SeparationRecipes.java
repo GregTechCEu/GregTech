@@ -434,107 +434,106 @@ public class SeparationRecipes {
         // Vitriols
         // Follows the formula:
         // ?SO4 + H2O -> H2SO4 + O + ?
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(BlueVitriol.getFluid(1000))
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Copper)
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .fluidOutputs(Oxygen.getFluid(1000))
-                .buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(GreenVitriol.getFluid(1000))
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Iron)
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .fluidOutputs(Oxygen.getFluid(1000))
-                .buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(RedVitriol.getFluid(1000))
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Cobalt)
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .fluidOutputs(Oxygen.getFluid(1000))
-                .buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(PinkVitriol.getFluid(1000))
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Magnesium)
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .fluidOutputs(Oxygen.getFluid(1000))
-                .buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(CyanVitriol.getFluid(1000))
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Nickel)
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .fluidOutputs(Oxygen.getFluid(1000))
-                .buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(WhiteVitriol.getFluid(1000))
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Zinc)
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .fluidOutputs(Oxygen.getFluid(1000))
-                .buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(GrayVitriol.getFluid(1000))
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Manganese)
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .fluidOutputs(Oxygen.getFluid(1000))
-                .buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(PurpleVitriol.getFluid(1000))
+                .fluidInputs(Water.getFluid(1000))
+                .circuitMeta(2)
+                .output(dust, Lead)
+                .fluidOutputs(SulfuricAcid.getFluid(1000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
         // Al2(SO4)3 + 3H2O -> Al2O3 + 3H2SO4
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(ClayVitriol.getFluid(1000))
                 .fluidInputs(Water.getFluid(3000))
                 .circuitMeta(2)
                 .output(dust, Alumina, 5)
                 .fluidOutputs(SulfuricAcid.getFluid(3000))
-                .buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
-		ELECTROLYZER_RECIPES.recipeBuilder()
-				.fluidInputs(LeadZincConcentrate.getFluid(1000))
-				.fluidInputs(Water.getFluid(2000))
-				.circuitMeta(2)
-				.output(dust, Lead)
-				.output(dust, Zinc)
-				.fluidOutputs(SulfuricAcid.getFluid(2000))
-				.fluidOutputs(Oxygen.getFluid(2000))
-				.buildAndRegister();
-
-        // HAuCl4 + 1.5H2O -> Au + 4HCl + 1.5O
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+		// HAuCl4 + 1.5H2O -> Au + 4HCl + 1.5O
+        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(ChloroauricAcid.getFluid(1000))
                 .fluidInputs(Water.getFluid(1500))
                 .circuitMeta(2)
                 .output(dust, Gold)
                 .fluidOutputs(HydrochloricAcid.getFluid(4000))
                 .fluidOutputs(Oxygen.getFluid(1500))
-                .buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
         // H2PtCl6 + 2H2O -> Pt + 6HCl + 2O
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(ChloroplatinicAcid.getFluid(1000))
                 .fluidInputs(Water.getFluid(2000))
                 .circuitMeta(2)
                 .output(dust, Platinum)
                 .fluidOutputs(HydrochloricAcid.getFluid(6000))
                 .fluidOutputs(Oxygen.getFluid(2000))
-                .buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
         // Extractor
         EXTRACTOR_RECIPES.recipeBuilder()

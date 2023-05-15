@@ -15,11 +15,11 @@ public class MaterialFlagAddition {
     private static final ArrayList<Object> GREEN_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, GreenVitriol, 1000, Hydrogen, 2000));
     private static final ArrayList<Object> PINK_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, PinkVitriol, 1000, Hydrogen, 2000));
     private static final ArrayList<Object> CYAN_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, CyanVitriol, 1000, Hydrogen, 2000));
-    private static final ArrayList<Object> WHITE_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, WhiteVitriol, 1000, Hydrogen, 2000));
     private static final ArrayList<Object> GRAY_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, GrayVitriol, 1000, Hydrogen, 2000));
     private static final ArrayList<Object> CLAY_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1500, ClayVitriol, 500, Hydrogen, 3000));
     private static final ArrayList<Object> SODIUM_GOLD_CYANIDE = new ArrayList<>(Arrays.asList(SodiumCyanide, 2000, SodiumGoldCyanide, 1000));
-    private static final ArrayList<Object> INDIUM_CONCENTRATE = new ArrayList<>(Arrays.asList(SulfuricAcid, 2500, IndiumConcentrate, 500, Hydrogen, 5000));
+    private static final ArrayList<Object> LEAD_CONCENTRATE = new ArrayList<>(Arrays.asList(SulfuricAcid, 2500, LeadConcentrate, 500, Hydrogen, 5000));
+    private static final ArrayList<Object> ZINC_CONCENTRATE = new ArrayList<>(Arrays.asList(SulfuricAcid, 2500, ZincConcentrate, 500, Hydrogen, 5000));
     private static final ArrayList<Object> PGS_CHLOROPLATINIC_ACID = new ArrayList<>(Arrays.asList(AquaRegia, 2000, PlatinumGroupSlurry, 1000, ChloroplatinicAcid, 1000));
 
 
@@ -49,6 +49,7 @@ public class MaterialFlagAddition {
 
         oreProp = Lead.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Silver, Sulfur);
+        oreProp.setBathIOStacks(LEAD_CONCENTRATE);
 
         oreProp = Lithium.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Lithium);
@@ -64,8 +65,8 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(Chromium, Iron);
         oreProp.setBathIOStacks(GRAY_VITRIOL);
 
-        oreProp = Neodymium.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(RareEarth);
+        //oreProp = Neodymium.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(RareEarth);
 
         oreProp = Nickel.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Cobalt, Iron, Platinum);
@@ -109,7 +110,7 @@ public class MaterialFlagAddition {
 
         oreProp = Zinc.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Zinc, Zinc, Gallium);
-        oreProp.setBathIOStacks(WHITE_VITRIOL);
+        oreProp.setBathIOStacks(ZINC_CONCENTRATE);
 
         oreProp = CertusQuartz.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(NetherQuartz, Barite);
@@ -175,7 +176,7 @@ public class MaterialFlagAddition {
         oreProp = Galena.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Sulfur, Silver);
         oreProp.setDirectSmeltResult(Lead);
-        oreProp.setBathIOStacks(INDIUM_CONCENTRATE);
+        oreProp.setBathIOStacks(LEAD_CONCENTRATE);
 
         oreProp = Garnierite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Nickel);
@@ -263,7 +264,7 @@ public class MaterialFlagAddition {
         oreProp = Sphalerite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(GarnetYellow, Gallium, Cadmium, Zinc);
         oreProp.setDirectSmeltResult(Zinc);
-        oreProp.setBathIOStacks(INDIUM_CONCENTRATE);
+        oreProp.setBathIOStacks(ZINC_CONCENTRATE);
 
         oreProp = Stibnite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Antimony);

@@ -58,7 +58,6 @@ public class OreByProduct implements IRecipeWrapper {
     private final List<List<FluidStack>> fluidInputs = new ObjectArrayList<>();
     private final List<List<FluidStack>> fluidOutputs = new ObjectArrayList<>();
     private final boolean hasDirectSmelt;
-    private final boolean hasVitriol;
     private final boolean hasSifter;
     private int currentSlot = 0;
 
@@ -104,16 +103,6 @@ public class OreByProduct implements IRecipeWrapper {
         } else {
             addToInputs(ItemStack.EMPTY);
             this.hasSifter = false;
-        }
-
-        // acid wash crushed purified -> refined + vitriol
-        if (property.getVitriol() != null || material == Cassiterite || material == CassiteriteSand || material == Tin ||
-                material == Copper || material == Gold || material == Cooperite || material == Platinum || material == Palladium) {
-            addToInputs(MetaTileEntities.CHEMICAL_BATH[GTValues.LV].getStackForm());
-            this.hasVitriol = true;
-        } else {
-            addToInputs(ItemStack.EMPTY);
-            this.hasVitriol = false;
         }
 
         // macerate refined -> dust
@@ -225,38 +214,6 @@ public class OreByProduct implements IRecipeWrapper {
         } else {
             addEmptyOutputs(6);
         }
-
-        // vitriol bathing
-        Material vitriol = property.getVitriol();
-        if (vitriol != null) {
-            fluidInputs.add(Collections.singletonList(SulfuricAcid.getFluid(vitriol == ClayVitriol ? 1500 : 500)));
-            addToOutputs(material, purified, 1);
-            addToOutputs(material, purified, 1);
-            addChance(5000, 0);
-            fluidOutputs.add(Collections.singletonList(vitriol.getFluid(500)));
-        } else if (material == Cassiterite || material == CassiteriteSand || material == Tin) {
-            fluidInputs.add(Collections.singletonList(SulfuricAcid.getFluid(500)));
-            addToOutputs(material, purified, 1);
-            addToOutputs(Zinc, purified, 1);
-            addChance(5000, 0);
-            fluidOutputs.add(Collections.singletonList(WhiteVitriol.getFluid(500)));
-        } else if (material == Copper || material == Gold) {
-            fluidInputs.add(Collections.singletonList(AquaRegia.getFluid(6000)));
-            addToOutputs(material, purified, 1);
-            addToOutputs(material == Copper ? Cobalt : Copper, purified, 1);
-            addChance(5000, 0);
-            fluidOutputs.add(Collections.singletonList(ChloroauricAcid.getFluid(500)));
-        } else if (material == Cooperite || material == Platinum || material == Palladium) {
-            fluidInputs.add(Collections.singletonList(AquaRegia.getFluid(9000)));
-            addToOutputs(material, purified, 1);
-            addToOutputs(PlatinumGroupSludge, dust, 2);
-            addChance(5000, 0);
-            fluidOutputs.add(Collections.singletonList(ChloroauricAcid.getFluid(500)));
-        } else {
-            fluidInputs.add(Collections.emptyList());
-            addEmptyOutputs(2);
-            fluidOutputs.add(Collections.emptyList());
-        }
     }
 
     private void refinedRecipes(@Nonnull Material material, @Nonnull OreProperty property) {
@@ -301,10 +258,6 @@ public class OreByProduct implements IRecipeWrapper {
 
     public boolean hasSifter() {
         return hasSifter;
-    }
-
-    public boolean hasVitriol() {
-        return hasVitriol;
     }
 
     public boolean hasDirectSmelt() {

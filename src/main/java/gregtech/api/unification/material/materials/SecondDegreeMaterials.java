@@ -424,12 +424,7 @@ public class SecondDegreeMaterials {
 
         //FREE ID 2044
 
-        LeadZincConcentrate = new Material.Builder(2045, "lead_zinc_concentrate")
-                .fluid()
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Lead, 1, Zinc, 1, Sulfur, 2, Oxygen, 8)
-                .build()
-				.setFormula("(PbSO4)(ZnSO4)", true);
+        //FREE ID 2045
 
         NitrationMixture = new Material.Builder(2046, "nitration_mixture")
                 .fluid(FluidTypes.ACID)

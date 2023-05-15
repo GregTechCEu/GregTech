@@ -43,7 +43,6 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     protected boolean hasDirectSmelt;
     protected boolean hasMercuryBath;
     protected boolean hasPersulfateBath;
-    protected boolean hasVitriol;
     protected boolean hasSifter;
 
     // XY positions of every item and fluid, in three enormous lists
@@ -168,9 +167,6 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         fluidStackGroup.set(ingredients);
 
         hasDirectSmelt = recipeWrapper.hasDirectSmelt();
-        hasMercuryBath = recipeWrapper.hasMercuryBath();
-        hasPersulfateBath = recipeWrapper.hasPersulfateBath();
-        hasVitriol = recipeWrapper.hasVitriol();
         hasSifter = recipeWrapper.hasSifter();
     }
 
@@ -192,7 +188,6 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         if (hasDirectSmelt) arrowsDirectSmelt.draw(minecraft, 21, 10);
         if (hasMercuryBath) arrowsMercuryBath.draw(minecraft, 24, 55);
         if (hasPersulfateBath) arrowsPersulfateBath.draw(minecraft, 24, 76);
-        if (hasVitriol) arrowsVitriol.draw(minecraft, 77, 10);
         if (hasSifter) arrowsSifter.draw(minecraft, 77, 23);
 
         // only draw slot on inputs if it is the ore

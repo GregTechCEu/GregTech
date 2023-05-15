@@ -50,11 +50,9 @@ public class UnknownCompositionMaterials {
         Lubricant = new Material.Builder(1511, "lubricant")
                 .fluid().build();
 
-        McGuffium239 = new Material.Builder(1512, "mc_guffium_239")
-                .fluid().build();
+        // FREE ID 1512
 
-        IndiumConcentrate = new Material.Builder(1513, "indium_concentrate")
-                .fluid(FluidTypes.ACID).color(0x0E2950).build();
+        // FREE ID 1513
 
         SeedOil = new Material.Builder(1514, "seed_oil")
                 .fluid().color(0xFFFFFF)
@@ -394,20 +392,11 @@ public class UnknownCompositionMaterials {
                 .flags(STICKY, FLAMMABLE)
                 .build();
 
-        CopperSlag = new Material.Builder(1620, "copper_slag")
-                .dust()
-                .color(0xA65537).iconSet(ROUGH)
-                .build();
+        //FREE ID 1620
 
-        NickelSlag = new Material.Builder(1621, "nickel_slag")
-                .dust()
-                .color(0x7A858E).iconSet(ROUGH)
-                .build();
+        //FREE ID 1621
 
-        LeadZincSlag = new Material.Builder(1622, "lead_zinc_slag")
-                .dust()
-                .color(0x3F2C3F).iconSet(ROUGH)
-                .build();
+        //FREE ID 1622
 
         // These colors are much nicer looking than those in MC's EnumDyeColor
         DyeBlack = new Material.Builder(1623, "dye_black")
@@ -494,12 +483,58 @@ public class UnknownCompositionMaterials {
                 .flags(GENERATE_PLATE, FLAMMABLE, GENERATE_ROD, GENERATE_FRAME)
                 .build();
 
-        UUMatter = new Material.Builder(1649, "uu_matter").fluid().fluidTemp(300).build();
+        UUMatter = new Material.Builder(1649, "uu_matter")
+                .fluid()
+                .fluidTemp(300)
+                .build();
 
-        SluiceJuice = new Material.Builder(1650, "sluice_juice").fluid().color(0x5C3C24).build();
+        SluiceJuice = new Material.Builder(1650, "sluice_juice")
+                .fluid()
+                .color(0x5C3C24)
+                .build();
 
-        SluiceSand = new Material.Builder(1651, "sluice_sand").dust().color(0xA5A578).iconSet(FINE).build();
+        SluiceSand = new Material.Builder(1651, "sluice_sand")
+                .dust()
+                .color(0xA5A578).iconSet(FINE)
+                .build();
 
-        FlotationWaste = new Material.Builder(1652, "flotation_waste").fluid().color(0x3D1E10).build();
+        FlotationWaste = new Material.Builder(1652, "flotation_waste")
+                .fluid()
+                .color(0x3D1E10)
+                .build();
+
+        CopperSlag = new Material.Builder(1653, "copper_slag")
+                .dust()
+                .color(0xA65537).iconSet(ROUGH)
+                .build();
+
+        NickelSlag = new Material.Builder(1654, "nickel_slag")
+                .dust()
+                .color(0x7A858E).iconSet(ROUGH)
+                .build();
+
+        LeadSlag = new Material.Builder(1655, "lead_slag")
+                .dust()
+                .color(0x4B334B).iconSet(ROUGH)
+                .build();
+
+        ZincSlag = new Material.Builder(1656, "zinc_slag")
+                .dust()
+                .color(0x8C8C8C).iconSet(ROUGH)
+                .build();
+
+        LeadConcentrate = new Material.Builder(2045, "lead_concentrate")
+                .fluid()
+                .color(0x551E55)
+                .flags(DISABLE_DECOMPOSITION)
+                .build()
+                .setFormula("?(PbSO4)", true);
+
+        ZincConcentrate = new Material.Builder(2045, "zinc_concentrate")
+                .fluid()
+                .color(0xA18DA1)
+                .flags(DISABLE_DECOMPOSITION)
+                .build()
+                .setFormula("?(ZnSO4)", true);
     }
 }

@@ -1,18 +1,14 @@
 package gregtech.loaders.recipe.handlers.oreproc;
 
-import gregtech.api.recipes.ModHandler;
-import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processMetalSmelting;
 
 public class CrushedRecipeHandler {
 

@@ -403,6 +403,7 @@ public class Materials {
     public static Material Talc;
     public static Material Soapstone;
     public static Material Kyanite;
+    public static Material Thorianite;
     public static Material IronMagnetic;
     public static Material TungstenCarbide;
     public static Material CarbonDioxide;
@@ -468,6 +469,7 @@ public class Materials {
     public static Material CyanVitriol;
     public static Material WhiteVitriol;
     public static Material GrayVitriol;
+    public static Material PurpleVitriol;
     public static Material ClayVitriol;
     public static Material ChloroauricAcid;
     public static Material ChloroplatinicAcid;
@@ -575,8 +577,6 @@ public class Materials {
     public static Material RocketFuel;
     public static Material Glue;
     public static Material Lubricant;
-    public static Material McGuffium239;
-    public static Material IndiumConcentrate;
     public static Material SeedOil;
     public static Material DrillingFluid;
     public static Material ConstructionFoam;
@@ -660,9 +660,6 @@ public class Materials {
     public static Material TreatedWood;
     public static Material Paper;
     public static Material FishOil;
-    public static Material CopperSlag;
-    public static Material NickelSlag;
-    public static Material LeadZincSlag;
     public static Material DyeBlack;
     public static Material DyeRed;
     public static Material DyeGreen;
@@ -694,6 +691,12 @@ public class Materials {
     public static Material SluiceJuice;
     public static Material SluiceSand;
     public static Material FlotationWaste;
+    public static Material CopperSlag;
+    public static Material NickelSlag;
+    public static Material LeadSlag;
+    public static Material ZincSlag;
+    public static Material LeadConcentrate;
+    public static Material ZincConcentrate;
 
     /**
      * Second Degree Compounds
@@ -733,7 +736,6 @@ public class Materials {
     public static Material Potin;
     public static Material BorosilicateGlass;
     public static Material NaquadahAlloy;
-    public static Material LeadZincConcentrate;
     public static Material NitrationMixture;
     public static Material DilutedSulfuricAcid;
     public static Material DilutedHydrochloricAcid;

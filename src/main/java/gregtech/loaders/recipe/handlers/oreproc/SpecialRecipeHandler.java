@@ -34,22 +34,22 @@ public class SpecialRecipeHandler {
         addRoastingRecipe(Tetrahedrite);
         addRoastingRecipe(Chalcocite);
         addRoastingRecipe(Bornite);
-        addRoastingRecipe(Pentlandite);
+        addRoastingRecipe(Sphalerite);
+
+        // Pentlandite done separately because of its formula
+        ARC_FURNACE_RECIPES.recipeBuilder()
+                .input(dust, Pentlandite, 4)
+                .fluidInputs(Oxygen.getFluid(4000))
+                .output(ingot, Nickel, 2)
+                .output(dust, NickelSlag)
+                .fluidOutputs(SulfurDioxide.getFluid(2000))
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
         // Realgar done separately because of its formula
         ARC_FURNACE_RECIPES.recipeBuilder()
                 .input(dust, Realgar, 2)
                 .fluidInputs(Oxygen.getFluid(2000))
                 .output(dust, Arsenic)
-                .fluidOutputs(SulfurDioxide.getFluid(1000))
-                .duration(200).EUt(VA[LV]).buildAndRegister();
-
-        // Sphalerite done separately because of the Gallium output
-        ARC_FURNACE_RECIPES.recipeBuilder()
-                .input(dust, Sphalerite, 2)
-                .fluidInputs(Oxygen.getFluid(2000))
-                .output(ingot, Zinc)
-                .chancedOutput(chunk, Gallium, 2000, 1000)
                 .fluidOutputs(SulfurDioxide.getFluid(1000))
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
@@ -136,7 +136,7 @@ public class SpecialRecipeHandler {
         // Sluice Juice
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(16)
                 .fluidInputs(SluiceJuice.getFluid(1000))
-                .output(dust, Stone)
+                .output(dust, SiliconDioxide)
                 .chancedOutput(dust, Iron, 400, 0)
                 .chancedOutput(dust, Copper, 200, 0)
                 .chancedOutput(dust, Tin, 200, 0)
@@ -146,9 +146,9 @@ public class SpecialRecipeHandler {
                 .buildAndRegister();
 
         // Sluice Sand
-        ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder().duration(200).EUt(240)
+        ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder().duration(200).EUt(120)
                 .input(dust, SluiceSand)
-                .output(dust, Stone)
+                .output(dust, SiliconDioxide)
                 .chancedOutput(dust, Iron, 400, 0)
                 .chancedOutput(dust, Neodymium, 200, 0)
                 .chancedOutput(dust, Chromium, 200, 0)
@@ -189,7 +189,8 @@ public class SpecialRecipeHandler {
         }
         if (input.getNumComponentsOf(Copper) > 0) builder.output(dust, CopperSlag);
         if (input.getNumComponentsOf(Nickel) > 0) builder.output(dust, NickelSlag);
-        if (input.getNumComponentsOf(Lead) + input.getNumComponentsOf(Zinc) > 0) builder.output(dust, LeadZincSlag);
+        if (input.getNumComponentsOf(Lead) > 0) builder.output(dust, LeadSlag);
+        if (input.getNumComponentsOf(Zinc) > 0) builder.output(dust, ZincSlag);
         builder.buildAndRegister();
     }
 }

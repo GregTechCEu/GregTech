@@ -963,7 +963,15 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("KAl4(SO4)2", true);
 
-        // Free ID 389 - 391
+        // Free ID 389
+
+        // Free ID 390
+
+        Thorianite = new Material.Builder(390, "thorianite")
+                .dust().ore()
+                .color(0x001E00).iconSet(ROUGH)
+                .components(Thorium, 1, Oxygen, 2)
+                .build();
 
         // ID 392 RESERVED
 
@@ -1441,7 +1449,14 @@ public class FirstDegreeMaterials {
                 .components(Manganese, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
-        ClayVitriol = new Material.Builder(458, "clay_vitriol")
+        PurpleVitriol = new Material.Builder(458, "purple_vitriol")
+                .fluid()
+                .color(0x6F426F)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Lead, 1, Sulfur, 1, Oxygen, 4)
+                .build();
+
+        ClayVitriol = new Material.Builder(459, "clay_vitriol")
                 .fluid()
                 .color(0x42DEDE)
                 .flags(DISABLE_DECOMPOSITION)
@@ -1449,39 +1464,39 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("Al2(SO4)3", true);
 
-        ChloroauricAcid = new Material.Builder(459, "chloroauric_acid")
+        ChloroauricAcid = new Material.Builder(460, "chloroauric_acid")
                 .fluid(FluidTypes.ACID)
                 .color(0xFFC846)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 1, Gold, 1, Chlorine, 4)
                 .build();
 
-        ChloroplatinicAcid = new Material.Builder(460, "chloroplatinic_acid")
+        ChloroplatinicAcid = new Material.Builder(461, "chloroplatinic_acid")
                 .fluid(FluidTypes.ACID)
                 .color(0xFF4646)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Platinum, 1, Chlorine, 6)
                 .build();
 
-        CarbonDisulfide = new Material.Builder(461, "carbon_disulfide")
+        CarbonDisulfide = new Material.Builder(462, "carbon_disulfide")
                 .fluid(FluidTypes.GAS)
                 .color(0x302C01)
                 .components(Carbon, 1, Sulfur, 2)
                 .build();
 
-        SodiumEthylXanthate = new Material.Builder(462, "sodium_ethyl_xanthate")
+        SodiumEthylXanthate = new Material.Builder(463, "sodium_ethyl_xanthate")
                 .fluid()
                 .color(0xEAF514)
                 .components(Carbon, 3, Hydrogen, 5, Oxygen, 1, Sulfur, 2, Sodium, 1)
                 .build();
 
-        SodiumCyanide = new Material.Builder(463, "sodium_cyanide")
+        SodiumCyanide = new Material.Builder(464, "sodium_cyanide")
                 .fluid()
                 .color(0x6163D4)
                 .components(Sodium, 1, Carbon, 1, Nitrogen, 1)
                 .build();
 
-        SodiumGoldCyanide = new Material.Builder(464, "sodium_gold_cyanide")
+        SodiumGoldCyanide = new Material.Builder(465, "sodium_gold_cyanide")
                 .fluid()
                 .color(0xD4C361)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
