@@ -554,6 +554,8 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem LOGO;
 
+    public static MetaItem<?>.MetaValueItem MULTIBLOCK_BUILDER;
+
     public static MetaOreDictItem CT_OREDICT_ITEM;
 
     private static final List<OrePrefix> orePrefixes = new ArrayList<>();
