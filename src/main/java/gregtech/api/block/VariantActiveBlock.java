@@ -1,7 +1,6 @@
 package gregtech.api.block;
 
 import gregtech.api.GTValues;
-import gregtech.api.util.GTUtility;
 import gregtech.client.model.ActiveVariantBlockBakedModel;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
@@ -118,7 +117,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
-        Class<T> enumClass = GTUtility.getActualTypeParameter(getClass(), VariantActiveBlock.class, 0);
+        Class<T> enumClass = getActualTypeParameter(getClass(), VariantActiveBlock.class, 0);
         this.VARIANT = PropertyEnum.create("variant", enumClass);
         this.VALUES = enumClass.getEnumConstants();
         return new ExtendedBlockState(this, new IProperty[]{VARIANT, ACTIVE_DEPRECATED}, new IUnlistedProperty[]{ACTIVE});

@@ -36,6 +36,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -207,7 +208,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
          */
         @Override
         public boolean isRecipeMapValid(@Nonnull RecipeMap<?> recipeMap) {
-            if (GTUtility.findMachineInBlacklist(recipeMap.getUnlocalizedName(), ((IMachineHatchMultiblock) metaTileEntity).getBlacklist())) {
+            if (ArrayUtils.contains(((IMachineHatchMultiblock) metaTileEntity).getBlacklist(), recipeMap.getUnlocalizedName())) {
                 return false;
             }
 

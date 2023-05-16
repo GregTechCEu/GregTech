@@ -2,6 +2,7 @@ package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
@@ -10,11 +11,13 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Tuple;
+import net.minecraft.util.WeightedRandom;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import java.util.Collection;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import static gregtech.api.GTValues.*;
@@ -86,8 +89,7 @@ public class SeparationRecipes {
         for (Item item : ForgeRegistries.ITEMS.getValuesCollection()) {
             if (item instanceof ItemFood) {
                 ItemFood itemFood = (ItemFood) item;
-                Collection<ItemStack> subItems = GTUtility.getAllSubItems(new ItemStack(item, 1, GTValues.W));
-                for (ItemStack itemStack : subItems) {
+                for (ItemStack itemStack : GTUtility.getAllSubItems(item)) {
                     int healAmount = itemFood.getHealAmount(itemStack);
                     float saturationModifier = itemFood.getSaturationModifier(itemStack);
                     if (healAmount > 0) {
@@ -535,11 +537,10 @@ public class SeparationRecipes {
                 .fluidOutputs(Helium.getFluid(200))
                 .duration(64).EUt(64).buildAndRegister();
 
-        List<Tuple<ItemStack, Integer>> seedEntries = GTUtility.getGrassSeedEntries();
-        for (Tuple<ItemStack, Integer> seedEntry : seedEntries) {
+        for (ItemStack seed : getGrassSeedItems()) {
             EXTRACTOR_RECIPES.recipeBuilder()
                     .duration(32).EUt(2)
-                    .inputs(seedEntry.getFirst())
+                    .inputs(GTUtility.copy(1, seed))
                     .fluidOutputs(SeedOil.getFluid(10))
                     .buildAndRegister();
         }
@@ -625,5 +626,28 @@ public class SeparationRecipes {
                 .outputs(new ItemStack(Items.BOOK, 3))
                 .duration(300).EUt(2).buildAndRegister();
 
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<ItemStack> getGrassSeedItems() {
+        List<ItemStack> result = new ArrayList<>();
+        try {
+            Field seedListField = ForgeHooks.class.getDeclaredField("seedList");
+            seedListField.setAccessible(true);
+            Class<?> seedEntryClass = Class.forName("net.minecraftforge.common.ForgeHooks$SeedEntry");
+            Field seedField = seedEntryClass.getDeclaredField("seed");
+            seedField.setAccessible(true);
+
+            List<WeightedRandom.Item> seedList = (List<WeightedRandom.Item>) seedListField.get(null);
+            for (WeightedRandom.Item seedEntryObject : seedList) {
+                ItemStack seedStack = (ItemStack) seedField.get(seedEntryObject);
+                if (!seedStack.isEmpty()) {
+                    result.add(seedStack);
+                }
+            }
+        } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException ex) {
+            GTLog.logger.error("Failed to get forge grass seed list", ex);
+        }
+        return result;
     }
 }

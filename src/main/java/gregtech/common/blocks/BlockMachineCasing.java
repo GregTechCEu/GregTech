@@ -17,6 +17,7 @@ import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Locale;
 
 @ParametersAreNonnullByDefault
 public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineCasingType> {
@@ -77,7 +78,7 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
         }
 
         private static String makeName(String voltageName) {
-            return String.join("_", voltageName.toLowerCase().split(" "));
+            return voltageName.toLowerCase(Locale.ROOT).replace(' ', '_');
         }
     }
 }

@@ -3,10 +3,10 @@ package gregtech.api.unification.material.properties;
 import com.google.common.base.Preconditions;
 import gregtech.api.command.ICommandManager;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.function.TriConsumer;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -303,6 +303,7 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
     public void setGenerateBlock(boolean doGenerateBlock) {
         this.doGenerateBlock = doGenerateBlock;
+
     }
 
     @Override

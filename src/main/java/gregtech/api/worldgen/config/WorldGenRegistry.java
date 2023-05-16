@@ -17,6 +17,8 @@ import gregtech.api.worldgen.populator.IVeinPopulator;
 import gregtech.api.worldgen.populator.SurfaceBlockPopulator;
 import gregtech.api.worldgen.populator.SurfaceRockPopulator;
 import gregtech.api.worldgen.shape.*;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
@@ -48,20 +50,19 @@ public class WorldGenRegistry {
     private static final int FLUID_VEIN_VERSION = 2;
     private static final int ORE_VEIN_VERSION = 1;
 
-    private WorldGenRegistry() {
-    }
+    private WorldGenRegistry() {}
 
     private final Map<String, Supplier<ShapeGenerator>> shapeGeneratorRegistry = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private final Map<String, Supplier<BlockFiller>> blockFillerRegistry = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private final Map<String, Supplier<IVeinPopulator>> veinPopulatorRegistry = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    private final Map<Integer, String> namedDimensions = new HashMap<>();
+    private final Int2ObjectMap<String> namedDimensions = new Int2ObjectOpenHashMap<>();
 
     private final List<OreDepositDefinition> registeredVeinDefinitions = new ArrayList<>();
     private final List<BedrockFluidDepositDefinition> registeredBedrockVeinDefinitions = new ArrayList<>();
     private final List<OreDepositDefinition> addonRegisteredDefinitions = new ArrayList<>();
     private final List<BedrockFluidDepositDefinition> addonRegisteredBedrockVeinDefinitions = new ArrayList<>();
-    private List<OreDepositDefinition> removedVeinDefinitions = new ArrayList<>();
-    private List<BedrockFluidDepositDefinition> removedBedrockVeinDefinitions = new ArrayList<>();
+    private final List<OreDepositDefinition> removedVeinDefinitions = new ArrayList<>();
+    private final List<BedrockFluidDepositDefinition> removedBedrockVeinDefinitions = new ArrayList<>();
     private final Map<WorldProvider, WorldOreVeinCache> oreVeinCache = new WeakHashMap<>();
 
     private class WorldOreVeinCache {
@@ -94,6 +95,7 @@ public class WorldGenRegistry {
         return worldOreVeinCache.getBiomeEntry(biome);
     }
 
+    @SuppressWarnings("unchecked")
     public void initializeRegistry() {
         GTLog.logger.info("Initializing ore generation registry...");
         registerShapeGenerator("ellipsoid", EllipsoidGenerator::new);
@@ -131,10 +133,10 @@ public class WorldGenRegistry {
     /**
      * Handles the setup of ore generation files in the config folder.
      * Either creates the default files and reads them, or reads any modified files made by users
-     *
+     * <p>
      * After reading all json worldgen files in the folder, they are initialized, creating vein definitions
      *
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public void reinitializeRegisteredVeins() throws IOException {
         GTLog.logger.info("Reloading ore generation files from config...");
@@ -203,7 +205,7 @@ public class WorldGenRegistry {
         }
 
         //attempt extraction if worldgen root directory is empty
-        boolean shouldExtract = false;
+        boolean shouldExtract;
         try (Stream<Path> stream = Files.list(worldgenRootPath.resolve(veinPath))) {
             shouldExtract = !stream.findFirst().isPresent();
         }
@@ -223,10 +225,10 @@ public class WorldGenRegistry {
 
         // Will always fail when called from initializeRegistry
         // Placed here to delete the file before being gathered and having its definition initialized
-        if(!removedVeinDefinitions.isEmpty()) {
+        if (!removedVeinDefinitions.isEmpty()) {
             removeExistingFiles(veinPath, removedVeinDefinitions);
         }
-        if(!removedBedrockVeinDefinitions.isEmpty()) {
+        if (!removedBedrockVeinDefinitions.isEmpty()) {
             removeExistingFiles(bedrockVeinPath, removedBedrockVeinDefinitions);
         }
 
@@ -307,7 +309,7 @@ public class WorldGenRegistry {
      *
      * @param configPath The path of the config root for the Gregtech mod
      * @param targetPath The path of the target location where the files will be initialized
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     private static void extractJarVeinDefinitions(Path configPath, Path targetPath) throws IOException {
         // The path of the worldgen folder in the config folder
@@ -369,8 +371,7 @@ public class WorldGenRegistry {
                     Files.copy(jarFile, worldgenPath, StandardCopyOption.REPLACE_EXISTING);
                 }
                 GTLog.logger.info("Extracted {} builtin worldgen vein definitions into vein folder", jarFiles.size());
-            } else
-            if (targetPath.compareTo(bedrockFluidVeinRootPath) == 0) {
+            } else if (targetPath.compareTo(bedrockFluidVeinRootPath) == 0) {
                 GTLog.logger.info("Attempting extraction of standard worldgen definitions from {} to {}",
                         bedrockFluidJarRootPath, bedrockFluidVeinRootPath);
                 // Find all the default worldgen files in the assets folder
@@ -420,30 +421,29 @@ public class WorldGenRegistry {
         }
     }
 
-    private static void removeExistingFiles(Path root, @Nonnull List<? extends IWorldgenDefinition> definitions){
-        for(IWorldgenDefinition definition : definitions) {
+    private static void removeExistingFiles(Path root, @Nonnull List<? extends IWorldgenDefinition> definitions) {
+        for (IWorldgenDefinition definition : definitions) {
             Path filePath = root.resolve(Paths.get(definition.getDepositName()));
 
             try {
-                if(Files.exists(filePath)) {
+                if (Files.exists(filePath)) {
                     Files.delete(filePath);
                     GTLog.logger.info("Removed oregen file at {}", definition.getDepositName());
                 }
-            }
-            catch (IOException exception) {
+            } catch (IOException exception) {
                 GTLog.logger.error("Failed to remove oregen file at {}", definition.getDepositName());
             }
         }
     }
 
-    private static <T extends IWorldgenDefinition> void addAddonFiles(Path root, @Nonnull List<T> definitions, @Nonnull List<T> registeredDefinitions){
+    private static <T extends IWorldgenDefinition> void addAddonFiles(Path root, @Nonnull List<T> definitions, @Nonnull List<T> registeredDefinitions) {
         Iterator<T> it = definitions.iterator();
         while (it.hasNext()) {
             T definition = it.next();
 
             JsonObject element = FileUtility.tryExtractFromFile(root.resolve(definition.getDepositName()));
 
-            if(element == null) {
+            if (element == null) {
                 GTLog.logger.error("Addon mod tried to register bad ore definition at {}", definition.getDepositName());
                 it.remove();
                 continue;
@@ -452,8 +452,7 @@ public class WorldGenRegistry {
             try {
                 definition.initializeFromConfig(element);
                 registeredDefinitions.add(definition);
-            }
-            catch (RuntimeException exception) {
+            } catch (RuntimeException exception) {
                 GTLog.logger.error("Failed to parse addon worldgen definition {}", definition.getDepositName(), exception);
             }
         }
@@ -483,7 +482,7 @@ public class WorldGenRegistry {
     /**
      * Called to remove veins from the list of registered vein definitions
      * Can fail if called on default veins when the veins have been modified by modpack makers
-     *
+     * <p>
      * After removing all desired veins, call {@link WorldGenRegistry#reinitializeRegisteredVeins()} to delete the existing files
      *
      * @param definition The {@link OreDepositDefinition} to remove
@@ -512,7 +511,7 @@ public class WorldGenRegistry {
     /**
      * Adds the provided OreDepositionDefinition to the list and Map of registered definitions
      * Will not create an entry if a file already exists for the provided definition
-     *
+     * <p>
      * After adding all veins, call {@link WorldGenRegistry#reinitializeRegisteredVeins()} to initialize the new veins
      * Or, register veins before {@link WorldGenRegistry#initializeRegistry()} is called, and the veins will be loaded with the
      * default veins
@@ -521,10 +520,9 @@ public class WorldGenRegistry {
      */
     @SuppressWarnings("unused")
     public void addVeinDefinitions(OreDepositDefinition definition) {
-        if(!registeredVeinDefinitions.contains(definition)) {
+        if (!registeredVeinDefinitions.contains(definition)) {
             addonRegisteredDefinitions.add(definition);
-        }
-        else {
+        } else {
             GTLog.logger.error("Failed to add ore vein definition at {}. Definition already exists", definition.getDepositName());
         }
     }
@@ -532,7 +530,7 @@ public class WorldGenRegistry {
     /**
      * Adds the provided BedrockFluidDepositDefinition to the list and Map of registered definitions
      * Will not create an entry if a file already exists for the provided definition
-     *
+     * <p>
      * After adding all veins, call {@link WorldGenRegistry#reinitializeRegisteredVeins()} to initialize the new veins
      * Or, register veins before {@link WorldGenRegistry#initializeRegistry()} is called, and the veins will be loaded with the
      * default veins
@@ -541,10 +539,9 @@ public class WorldGenRegistry {
      */
     @SuppressWarnings("unused")
     public void addVeinDefinitions(BedrockFluidDepositDefinition definition) {
-        if(!addonRegisteredBedrockVeinDefinitions.contains(definition)) {
+        if (!addonRegisteredBedrockVeinDefinitions.contains(definition)) {
             addonRegisteredBedrockVeinDefinitions.add(definition);
-        }
-        else {
+        } else {
             GTLog.logger.error("Failed to add bedrock fluid deposit definition at {}. Definition already exists", definition.getDepositName());
         }
     }
@@ -602,7 +599,7 @@ public class WorldGenRegistry {
         return Collections.unmodifiableList(INSTANCE.registeredBedrockVeinDefinitions);
     }
 
-    public static Map<Integer, String> getNamedDimensions() {
+    public static Int2ObjectMap<String> getNamedDimensions() {
         return INSTANCE.namedDimensions;
     }
 }

@@ -1,6 +1,7 @@
 package gregtech.api.recipes.recipeproperties;
 
 import gregtech.api.worldgen.config.WorldGenRegistry;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -29,11 +30,11 @@ public class GasCollectorDimensionProperty extends RecipeProperty<IntList> {
                 getDimensionsForRecipe(castValue(value))), x, y, color);
     }
 
-    private static String getDimensionsForRecipe(List<Integer> value) {
-        Map<Integer, String> dimNames = WorldGenRegistry.getNamedDimensions();
+    private static String getDimensionsForRecipe(IntList value) {
+        Int2ObjectMap<String> dimNames = WorldGenRegistry.getNamedDimensions();
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < value.size(); i++) {
-            builder.append(dimNames.getOrDefault(value.get(i), String.valueOf(value.get(i))));
+            builder.append(dimNames.getOrDefault(value.getInt(i), String.valueOf(value.getInt(i))));
             if (i != value.size() - 1)
                 builder.append(", ");
         }

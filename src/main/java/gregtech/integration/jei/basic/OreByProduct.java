@@ -62,8 +62,10 @@ public class OreByProduct implements IRecipeWrapper {
     private int currentSlot = 0;
 
     public OreByProduct(Material material) {
+
         // add the ores
         List<ItemStack> oreStacks = new ObjectArrayList<>();
+
         for (OrePrefix prefix : ORES) {
             // get all ores with the relevant oredicts instead of just the first unified ore
             oreStacks.addAll(OreDictionary.getOres(prefix.name() + material.toCamelCaseString()));

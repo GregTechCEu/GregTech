@@ -431,10 +431,10 @@ public class RecyclingRecipes {
     private static void splitStacks(List<Tuple<ItemStack, MaterialStack>> list, ItemStack originalStack, UnificationEntry entry) {
         int amount = originalStack.getCount();
         while (amount > 64) {
-            list.add(new Tuple<>(GTUtility.copyAmount(64, originalStack), new MaterialStack(entry.material, entry.orePrefix.getMaterialAmount(entry.material) * 64)));
+            list.add(new Tuple<>(GTUtility.copy(64, originalStack), new MaterialStack(entry.material, entry.orePrefix.getMaterialAmount(entry.material) * 64)));
             amount -= 64;
         }
-        list.add(new Tuple<>(GTUtility.copyAmount(amount, originalStack), new MaterialStack(entry.material, entry.orePrefix.getMaterialAmount(entry.material) * amount)));
+        list.add(new Tuple<>(GTUtility.copy(amount, originalStack), new MaterialStack(entry.material, entry.orePrefix.getMaterialAmount(entry.material) * amount)));
     }
 
     private static final List<OrePrefix> INGOT_ORDER = ImmutableList.of(OrePrefix.block, OrePrefix.ingot, OrePrefix.chunk, OrePrefix.nugget);

@@ -246,22 +246,22 @@ public class WoodRecipeLoader {
                     ModHandler.removeRecipeByName(new ResourceLocation(entry.modid, entry.planksRecipeName));
                 }
                 ModHandler.addShapelessRecipe(hasPlanksRecipe ? entry.planksRecipeName : name + "_planks",
-                        GTUtility.copyAmount(2, entry.planks), entry.log.copy());
+                        GTUtility.copy(2, entry.planks), entry.log.copy());
             } else {
                 if (!hasPlanksRecipe) {
-                    ModHandler.addShapelessRecipe(name + "_planks", GTUtility.copyAmount(4, entry.planks), entry.log.copy());
+                    ModHandler.addShapelessRecipe(name + "_planks", GTUtility.copy(4, entry.planks), entry.log.copy());
                 }
             }
 
             // log -> plank saw crafting
             ModHandler.addShapedRecipe(name + "_planks_saw",
-                    GTUtility.copyAmount(ConfigHolder.recipes.nerfWoodCrafting ? 4 : 6, entry.planks),
+                    GTUtility.copy(ConfigHolder.recipes.nerfWoodCrafting ? 4 : 6, entry.planks),
                     "s", "L", 'L', entry.log.copy());
 
             // log -> plank cutting
             CUTTER_RECIPES.recipeBuilder()
                     .inputs(entry.log.copy())
-                    .outputs(GTUtility.copyAmount(6, entry.planks))
+                    .outputs(GTUtility.copy(6, entry.planks))
                     .output(dust, Wood, 2)
                     .duration(200)
                     .EUt(VA[ULV])
@@ -301,21 +301,21 @@ public class WoodRecipeLoader {
                 // plank -> door assembling
                 ASSEMBLER_RECIPES.recipeBuilder()
                         .inputs(new ItemStack(Blocks.TRAPDOOR))
-                        .inputs(GTUtility.copyAmount(4, entry.planks))
+                        .inputs(GTUtility.copy(4, entry.planks))
                         .fluidInputs(Iron.getFluid(GTValues.L / 9))
                         .outputs(entry.door.copy())
                         .duration(400).EUt(4).buildAndRegister();
             } else {
                 if (!hasDoorRecipe) {
-                    ModHandler.addShapedRecipe(name + "_door", GTUtility.copyAmount(3, entry.door),
+                    ModHandler.addShapedRecipe(name + "_door", GTUtility.copy(3, entry.door),
                             "PP", "PP", "PP",
                             'P', entry.planks.copy()
                     );
                 }
 
                 ASSEMBLER_RECIPES.recipeBuilder()
-                        .inputs(GTUtility.copyAmount(6, entry.planks))
-                        .outputs(GTUtility.copyAmount(3, entry.door))
+                        .inputs(GTUtility.copy(6, entry.planks))
+                        .outputs(GTUtility.copy(3, entry.door))
                         .circuitMeta(6)
                         .duration(600).EUt(4)
                         .buildAndRegister();
@@ -325,15 +325,15 @@ public class WoodRecipeLoader {
         // stairs
         if (!entry.stairs.isEmpty()) {
             if (entry.addStairsCraftingRecipe) {
-                ModHandler.addShapedRecipe(name + "_stairs", GTUtility.copyAmount(4, entry.stairs),
+                ModHandler.addShapedRecipe(name + "_stairs", GTUtility.copy(4, entry.stairs),
                         "P  ", "PP ", "PPP",
                         'P', entry.planks.copy());
             }
 
             // plank -> stairs assembling
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(GTUtility.copyAmount(6, entry.planks))
-                    .outputs(GTUtility.copyAmount(4, entry.stairs))
+                    .inputs(GTUtility.copy(6, entry.planks))
+                    .outputs(GTUtility.copy(4, entry.stairs))
                     .circuitMeta(7)
                     .EUt(1).duration(100).buildAndRegister();
         }
@@ -341,18 +341,18 @@ public class WoodRecipeLoader {
         // slab
         if (!entry.slab.isEmpty()) {
             if (entry.addSlabCraftingRecipe) {
-                ModHandler.addShapedRecipe(name + "_slab", GTUtility.copyAmount(6, entry.slab),
+                ModHandler.addShapedRecipe(name + "_slab", GTUtility.copy(6, entry.slab),
                         "PPP", 'P', entry.planks.copy());
             }
 
             // plank -> slab crafting
-            ModHandler.addShapedRecipe(name + "_slab_saw", GTUtility.copyAmount(2, entry.slab),
+            ModHandler.addShapedRecipe(name + "_slab_saw", GTUtility.copy(2, entry.slab),
                     "sS", 'S', entry.planks.copy());
 
             // plank -> slab cutting
             CUTTER_RECIPES.recipeBuilder()
                     .inputs(entry.planks.copy())
-                    .outputs(GTUtility.copyAmount(2, entry.slab))
+                    .outputs(GTUtility.copy(2, entry.slab))
                     .duration(200).EUt(VA[ULV])
                     .buildAndRegister();
         }
@@ -373,7 +373,7 @@ public class WoodRecipeLoader {
                 );
             } else {
                 if (!hasFenceRecipe) {
-                    ModHandler.addShapedRecipe(name + "_fence", GTUtility.copyAmount(3, entry.fence),
+                    ModHandler.addShapedRecipe(name + "_fence", GTUtility.copy(3, entry.fence),
                             "PSP", "PSP",
                             'P', entry.planks.copy(),
                             'S', entry.getStick()
@@ -406,7 +406,7 @@ public class WoodRecipeLoader {
                         'F', new ItemStack(Items.FLINT)
                 );
 
-                ModHandler.addShapedRecipe(name + "_fence_gate_screws", GTUtility.copyAmount(2, entry.fenceGate),
+                ModHandler.addShapedRecipe(name + "_fence_gate_screws", GTUtility.copy(2, entry.fenceGate),
                         "IdI", "SPS", "SPS",
                         'P', entry.planks,
                         'S', entry.getStick(),
@@ -423,7 +423,7 @@ public class WoodRecipeLoader {
 
             // plank -> fence gate assembling
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(GTUtility.copyAmount(2, entry.planks))
+                    .inputs(GTUtility.copy(2, entry.planks))
                     .input(entry.getStick().toString(), 2)
                     .outputs(entry.fenceGate.copy())
                     .circuitMeta(2)
@@ -456,7 +456,7 @@ public class WoodRecipeLoader {
 
             // plank -> boat assembling
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(GTUtility.copyAmount(5, entry.planks))
+                    .inputs(GTUtility.copy(5, entry.planks))
                     .outputs(entry.boat.copy())
                     .circuitMeta(15)
                     .duration(100).EUt(4).buildAndRegister();
