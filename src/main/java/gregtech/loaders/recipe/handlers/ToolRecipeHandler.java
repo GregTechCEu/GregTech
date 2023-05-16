@@ -359,6 +359,11 @@ public class ToolRecipeHandler {
                 "I", "S",
                 'I', flint,
                 'S', stick);
+
+        addToolRecipe(Materials.Flint, ToolItems.HARD_HAMMER, false,
+                "II ", "IIS", "II ",
+                'I', flint,
+                'S', stick);
     }
 
     private static void registerMortarRecipes() {

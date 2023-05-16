@@ -22,11 +22,18 @@ public class CrushedRecipeHandler {
 
 
         // Forge Hammer recipe
-        // Crushed Ore -> 1.5 Dust
-        FORGE_HAMMER_RECIPES.recipeBuilder()
-                .input(crushed, material)
-                .output(dustSmall, material, 6 * property.getOreMultiplier())
-                .duration(10).EUt(16).buildAndRegister();
+        // 2 Crushed Ore -> 3 Dust
+        if (property.getOreMultiplier() % 2 == 0){
+            FORGE_HAMMER_RECIPES.recipeBuilder()
+                    .input(crushed, material)
+                    .output(dust, material, property.getOreMultiplier() * 3 / 2)
+                    .duration(10).EUt(16).buildAndRegister();
+        } else {
+            FORGE_HAMMER_RECIPES.recipeBuilder()
+                    .input(crushed, material, 2)
+                    .output(dust, material, 3 * property.getOreMultiplier())
+                    .duration(20).EUt(16).buildAndRegister();
+        }
 
         // Sluice recipes
         // Crushed Ore -> Purified Ore + Byproduct Dust (Water)
