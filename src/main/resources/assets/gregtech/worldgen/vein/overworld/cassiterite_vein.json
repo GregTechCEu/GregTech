@@ -21,13 +21,13 @@
         "primary": "ore:cassiterite"
       },
       {
-        "secondary": "ore:cassiterite"
+        "secondary": "ore:bismuthinite"
       },
       {
         "between": "ore:cassiterite"
       },
       {
-        "sporadic": "ore:cassiterite"
+        "sporadic": "ore:bismuthinite"
       }
     ]
   }

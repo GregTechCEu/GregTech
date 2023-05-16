@@ -35,6 +35,7 @@ public class SpecialRecipeHandler {
         addRoastingRecipe(Chalcocite);
         addRoastingRecipe(Bornite);
         addRoastingRecipe(Sphalerite);
+        addRoastingRecipe(Bismuthinite);
 
         // Pentlandite done separately because of its formula
         ARC_FURNACE_RECIPES.recipeBuilder()

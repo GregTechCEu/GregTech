@@ -1719,6 +1719,7 @@ material.pink_vitriol=Pink Vitriol
 material.cyan_vitriol=Cyan Vitriol
 material.white_vitriol=White Vitriol
 material.gray_vitriol=Gray Vitriol
+material.purple_vitriol=Purple Vitriol
 material.clay_vitriol=Clay Vitriol
 material.chloroauric_acid=Chloroauric Acid
 material.chloroplatinic_acid=Chloroplatinic Acid
@@ -1940,6 +1941,8 @@ material.uu_matter=UU-Matter
 material.sluice_juice=Sluice Juice
 material.sluice_sand=Sluice Sand
 material.flotation_waste=Flotation Waste
+material.lead_concentrate=Lead Concentrate
+material.zinc_concentrate=Zinc Concentrate
 
 # Second Degree Materials
 material.glass=Glass

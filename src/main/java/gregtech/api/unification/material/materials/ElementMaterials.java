@@ -318,7 +318,7 @@ public class ElementMaterials {
                 .build();
 
         Indium = new Material.Builder(48, "indium")
-                .ingot().fluid()
+                .dust().fluid()
                 .color(0x400080).iconSet(SHINY)
                 .element(Elements.In)
                 .fluidTemp(430)
@@ -446,7 +446,7 @@ public class ElementMaterials {
                 .build();
 
         Neodymium = new Material.Builder(66, "neodymium")
-                .ingot().fluid().ore()
+                .ingot().fluid()
                 .color(0x646464).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_ROD, GENERATE_BOLT_SCREW, MAGNETIC_ORE)
                 .element(Elements.Nd)
@@ -551,7 +551,7 @@ public class ElementMaterials {
                 .build();
 
         Plutonium239 = new Material.Builder(81, "plutonium")
-                .ingot(3).fluid().ore(true)
+                .ingot(3).fluid()
                 .color(0xF03232).iconSet(METALLIC)
                 .element(Elements.Pu239)
                 .fluidTemp(913)

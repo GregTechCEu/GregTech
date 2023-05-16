@@ -401,6 +401,7 @@ public class Materials {
     public static Material Talc;
     public static Material Soapstone;
     public static Material Kyanite;
+    public static Material Bismuthinite;
     public static Material Thorianite;
     public static Material IronMagnetic;
     public static Material TungstenCarbide;

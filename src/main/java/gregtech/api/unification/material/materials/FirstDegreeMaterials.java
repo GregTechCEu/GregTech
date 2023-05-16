@@ -959,10 +959,15 @@ public class FirstDegreeMaterials {
 
         // Free ID 389
 
-        // Free ID 390
+        Bismuthinite = new Material.Builder(389, "bismuthinite")
+                .dust().ore()
+                .color(0x70AA93).iconSet(SHINY)
+                .components(Bismuth, 2, Sulfur, 3)
+                .flags(DISABLE_DECOMPOSITION)
+                .build();
 
         Thorianite = new Material.Builder(390, "thorianite")
-                .dust().ore()
+                .dust().ore(true)
                 .color(0x001E00).iconSet(ROUGH)
                 .components(Thorium, 1, Oxygen, 2)
                 .build();

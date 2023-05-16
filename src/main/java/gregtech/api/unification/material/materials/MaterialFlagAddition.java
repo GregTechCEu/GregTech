@@ -80,9 +80,6 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(Nickel, Nickel, Cobalt, Platinum);
         oreProp.setBathIOStacks(PGS_CHLOROPLATINIC_ACID);
 
-        oreProp = Plutonium239.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Uraninite, Lead, Uraninite);
-
         //oreProp = Silicon.getProperty(PropertyKey.ORE);
         //oreProp.setOreByProducts(SiliconDioxide);
 
@@ -405,7 +402,7 @@ public class MaterialFlagAddition {
         oreProp.setBathIOStacks(PINK_VITRIOL);
 
         oreProp = Kyanite.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Talc, Aluminium, Silicon);
+        oreProp.setOreByProducts(Talc, Aluminium, SiliconDioxide);
         oreProp.setBathIOStacks(PINK_VITRIOL);
 
         oreProp = Gypsum.getProperty(PropertyKey.ORE);
@@ -430,5 +427,12 @@ public class MaterialFlagAddition {
 
         oreProp = Pyrochlore.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Apatite, Calcium, Niobium);
+
+        oreProp = Bismuthinite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Lead, Tin, Sulfur);
+        oreProp.setDirectSmeltResult(Bismuth);
+
+        oreProp = Thorianite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Uraninite, Pitchblende, Lead);
     }
 }
