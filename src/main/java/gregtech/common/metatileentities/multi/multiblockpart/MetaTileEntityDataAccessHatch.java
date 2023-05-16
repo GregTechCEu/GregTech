@@ -164,10 +164,9 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         }
     }
 
-    @Nonnull
     @Override
-    public Set<Recipe> getAvailableRecipes() {
-        return recipes;
+    public boolean isRecipeAvailable(@Nonnull Recipe recipe) {
+        return recipes.contains(recipe);
     }
 
     @Override

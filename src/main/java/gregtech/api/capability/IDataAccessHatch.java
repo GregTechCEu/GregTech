@@ -3,16 +3,14 @@ package gregtech.api.capability;
 import gregtech.api.recipes.Recipe;
 
 import javax.annotation.Nonnull;
-import java.util.Set;
 
 public interface IDataAccessHatch {
 
     /**
-     *
-     * @return all recipes which are allowed to be run in the main multiblock
+     * @param recipe the recipe to check
+     * @return if the recipe is available for use
      */
-    @Nonnull
-    Set<Recipe> getAvailableRecipes();
+    boolean isRecipeAvailable(@Nonnull Recipe recipe);
 
     /**
      *

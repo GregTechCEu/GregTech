@@ -1,6 +1,7 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import net.minecraftforge.common.config.Config;
 
 @Config(modid = GTValues.MODID)
@@ -118,21 +119,20 @@ public class ConfigHolder {
         public String replaceMinedBlocksWith = "minecraft:cobblestone";
 
         @Config.Comment({"Whether to enable Assembly Line research for recipes.", "Default: true"})
+        @Config.RequiresMcRestart
         public boolean enableResearch = true;
 
-        @Config.Comment({"Whether the Assembly Line should require the item inputs to be in order.",
-                "This does nothing if B:enableResearch is false.",
-                "Default: true"})
+        @Config.Comment({"Whether the Assembly Line should require the item inputs to be in order.", "Default: true"})
         public boolean orderedAssembly = true;
 
         @Config.Comment({"Whether the Assembly Line should require the fluid inputs to be in order.",
-                "This does nothing if B:enableResearch is false or if B:orderedAssembly is false.",
+                "This does nothing if B:orderedAssembly is false.",
                 "Default: false"})
         public boolean orderedFluidAssembly = false;
 
         /**
          * <strong>Addons mods should not reference this config directly.</strong>
-         * Use {@link gregtech.api.GregTechAPI#highTier} instead.
+         * Use {@link GregTechAPI#isHighTier()} instead.
          */
         @Config.Comment({"If High Tier (>UV-tier) GT content should be registered.",
                 "Items and Machines enabled with this config will have missing recipes by default.",

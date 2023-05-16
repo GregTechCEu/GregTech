@@ -45,23 +45,28 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     @Override
     public boolean applyPropertyCT(@Nonnull String key, Object value) {
         if (key.equals(ResearchProperty.KEY)) {
-            this.research(value.toString());
+            if (value instanceof ItemStack) {
+                this.research((ItemStack) value);
+            }  else {
+                this.applyResearchProperty(value.toString());
+            }
             return true;
         }
         return super.applyPropertyCT(key, value);
     }
 
-    /**
-     * Do not use! Look for {@link AssemblyLineRecipeBuilder#research(ItemStack, boolean)}
-     */
-    protected AssemblyLineRecipeBuilder research(@Nonnull String researchId) {
+    private void applyResearchProperty(@Nonnull String researchId) {
         this.applyProperty(ResearchProperty.getInstance(), researchId);
-        return this;
     }
 
-    public AssemblyLineRecipeBuilder research(@Nonnull ItemStack researchItem, boolean generateRecipe) {
-        this.shouldAddResearchRecipe = generateRecipe;
-        return research(researchItem);
+    public AssemblyLineRecipeBuilder researchWithoutRecipe(@Nonnull ItemStack researchItem) {
+        return researchWithoutRecipe(researchItem.toString());
+    }
+
+    public AssemblyLineRecipeBuilder researchWithoutRecipe(@Nonnull String researchId) {
+        this.shouldAddResearchRecipe = false;
+        applyResearchProperty(researchId);
+        return this;
     }
 
     public AssemblyLineRecipeBuilder research(@Nonnull ItemStack researchItem) {
@@ -78,7 +83,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
             recipeStatus = EnumValidationResult.INVALID;
         } else {
             this.researchItem = researchItem;
-            research(researchId);
+            applyResearchProperty(researchId);
         }
         if (scanDuration <=0) {
             GTLog.logger.error("Assemblyline Research Duration must be greater than 0", new IllegalArgumentException());
@@ -93,6 +98,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
             this.scanEUt = scanEUt;
         }
 
+        this.shouldAddResearchRecipe = true;
         return this;
     }
 

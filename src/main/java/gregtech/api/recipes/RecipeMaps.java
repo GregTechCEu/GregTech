@@ -7,6 +7,8 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.machines.*;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.ConfigHolder;
@@ -159,7 +161,7 @@ public class RecipeMaps {
                 if (researchItem.isEmpty()) return;
 
                 RecipeMaps.SCANNER_RECIPES.recipeBuilder()
-                        .input(MetaItems.TOOL_DATA_STICK)
+                        .inputNBT(MetaItems.TOOL_DATA_STICK, NBTMatcher.ANY, NBTCondition.ANY)
                         .inputs(researchItem)
                         .outputs(dataStick)
                         .EUt(builder.getScanEUt())

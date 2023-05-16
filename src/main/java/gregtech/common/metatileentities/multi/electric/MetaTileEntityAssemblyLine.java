@@ -18,7 +18,6 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
-import gregtech.api.util.GTUtility;
 import gregtech.client.particle.GTLaserBeamParticle;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.ICubeRenderer;
@@ -75,7 +74,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .where('S', selfPredicate())
                 .where('F', states(getCasingState())
                         .or(autoAbilities(false, true, false, false, false, false, false))
-                        .or(orderedFluidPredicate()))
+                        .or(fluidInputPredicate()))
                 .where('O', abilities(MultiblockAbility.EXPORT_ITEMS)
                         .addTooltips("gregtech.multiblock.pattern.location_end"))
                 .where('Y', states(getCasingState())
@@ -103,15 +102,12 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Nonnull
-    protected static TraceabilityPredicate orderedFluidPredicate() {
-        // if ordered fluids are enabled, ban multi fluid hatches, otherwise allow all types
-        if (ConfigHolder.machines.enableResearch && ConfigHolder.machines.orderedAssembly && ConfigHolder.machines.orderedFluidAssembly) {
-            return metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.IMPORT_FLUIDS).stream()
-                    .filter(mte -> !(mte instanceof MetaTileEntityMultiFluidHatch))
-                    .toArray(MetaTileEntity[]::new))
-                    .setMaxGlobalLimited(4);
-        }
-        return abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(4);
+    protected static TraceabilityPredicate fluidInputPredicate() {
+        // block multi-fluid hatches
+        return metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.IMPORT_FLUIDS).stream()
+                .filter(mte -> !(mte instanceof MetaTileEntityMultiFluidHatch))
+                .toArray(MetaTileEntity[]::new))
+                .setMaxGlobalLimited(4);
     }
 
     @Nonnull
@@ -283,48 +279,47 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     @Override
     public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+        // check ordered items
+        if (ConfigHolder.machines.orderedAssembly) {
+            List<GTRecipeInput> inputs = recipe.getInputs();
+            List<IItemHandlerModifiable> itemInputInventory = getAbilities(MultiblockAbility.IMPORT_ITEMS);
+
+            // slot count is not enough, so don't try to match it
+            if (itemInputInventory.size() < inputs.size()) return false;
+
+            for (int i = 0; i < inputs.size(); i++) {
+                if (!inputs.get(i).acceptsStack(itemInputInventory.get(i).getStackInSlot(0))) {
+                    return false;
+                }
+            }
+
+            // check ordered fluids
+            if (ConfigHolder.machines.orderedFluidAssembly) {
+                inputs = recipe.getFluidInputs();
+                List<IFluidTank> fluidInputInventory = getAbilities(MultiblockAbility.IMPORT_FLUIDS);
+
+                // slot count is not enough, so don't try to match it
+                if (fluidInputInventory.size() < inputs.size()) return false;
+
+                for (int i = 0; i < inputs.size(); i++) {
+                    if (!inputs.get(i).acceptsFluid(fluidInputInventory.get(i).getFluid())) {
+                        return false;
+                    }
+                }
+            }
+        }
+
         if (!ConfigHolder.machines.enableResearch) {
             return super.checkRecipe(recipe, consumeIfSuccess);
         }
 
+        // check for research
         for (IDataAccessHatch hatch : getAbilities(MultiblockAbility.DATA_ACCESS_HATCH)) {
             // creative hatches do not need to check, they always have the recipe
             if (hatch.isCreative()) return true;
 
-            // hatches need to have the recipe allowed
-            if (hatch.getAvailableRecipes().contains(recipe)) {
-                // check ordered items
-                if (ConfigHolder.machines.orderedAssembly) {
-                    List<GTRecipeInput> inputs = recipe.getInputs();
-                    List<IItemHandlerModifiable> itemInputInventory = getAbilities(MultiblockAbility.IMPORT_ITEMS);
-
-                    // slot count is not enough, so don't try to match it
-                    if (itemInputInventory.size() < inputs.size()) return false;
-
-                    for (int i = 0; i < inputs.size(); i++) {
-                        if (!inputs.get(i).acceptsStack(itemInputInventory.get(i).getStackInSlot(0))) {
-                            return false;
-                        }
-                    }
-
-                    // check ordered fluids
-                    if (ConfigHolder.machines.orderedFluidAssembly) {
-                        inputs = recipe.getFluidInputs();
-                        List<IFluidTank> fluidInputInventory = getAbilities(MultiblockAbility.IMPORT_FLUIDS);
-
-                        // slot count is not enough, so don't try to match it
-                        if (fluidInputInventory.size() < inputs.size()) return false;
-
-                        for (int i = 0; i < inputs.size(); i++) {
-                            if (!inputs.get(i).acceptsFluid(fluidInputInventory.get(i).getFluid())) {
-                                return false;
-                            }
-                        }
-                    }
-                }
-                // all conditions matched for any given config
-                return true;
-            }
+            // hatches need to have the recipe available
+            if (hatch.isRecipeAvailable(recipe)) return true;
         }
         return false;
     }
