@@ -50,7 +50,7 @@ public class FoodUseManager implements IItemBehaviour, IItemUseManager {
 
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, EntityPlayer player) {
-        stack.shrink(1);
+        if (!player.isCreative()) stack.shrink(1);
         player.getFoodStats().addStats(foodStats.getFoodLevel(stack, player), foodStats.getSaturation(stack, player));
         return foodStats.onFoodEaten(stack, player);
     }
