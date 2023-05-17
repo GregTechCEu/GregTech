@@ -175,9 +175,6 @@ public class MaterialRecipeHandler {
                     .buildAndRegister();
         } else {
             blastBuilder.duration(duration);
-            if (material == Materials.Silicon) {
-                blastBuilder.circuitMeta(1);
-            }
             blastBuilder.buildAndRegister();
         }
 
