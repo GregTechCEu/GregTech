@@ -5,8 +5,9 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.sync.GuiSyncHandler;
+import com.cleanroommc.modularui.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import gregtech.api.gui.GTGuis;
 import gregtech.api.gui.GuiTextures;
@@ -31,7 +32,6 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubItemHandler {
 
@@ -76,6 +76,15 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     }
 
     @Override
+    public void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer entityPlayer, ItemStack var3) {
+        for (int i = 0; i <= 32; i++) {
+            int finalI = i;
+            guiSyncHandler.syncValue("config", i, new InteractionSyncHandler()
+                    .setOnMousePressed(b -> IntCircuitIngredient.setCircuitConfiguration(var3, finalI)));
+        }
+    }
+
+    @Override
     public ModularPanel createUIPanel(GuiContext context, EntityPlayer player, ItemStack stack) {
         List<List<IWidget>> options = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
@@ -86,11 +95,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                 options.get(i).add(new ButtonWidget<>()
                         .size(18)
                         .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT, new ItemDrawable(IntCircuitIngredient.getIntegratedCircuit(index)).asIcon().size(16))
-                        .onMousePressed(button -> {
-                            // TODO send click to server so it actually works
-                            IntCircuitIngredient.setCircuitConfiguration(stack, index);
-                            return true;
-                        }));
+                        .setSynced("config", index));
             }
         }
         return ModularPanel.defaultPanel(context, 176, 120)
