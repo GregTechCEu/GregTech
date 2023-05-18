@@ -1,4 +1,4 @@
-package gregtech.api.util;
+package gregtech.common.terminal.app.game.pong;
 
 import org.lwjgl.util.vector.Vector2f;
 
@@ -23,7 +23,6 @@ public class TwoDimensionalRayTracer {
      * @param pos     The original position of the point.
      * @param delta   The proposed new position of the point.
      * @param boxSize The half-width and half-height of the box
-     *
      * @return The resulting intersection between a segment and a box, or else null
      */
     public static TwoDimensionalRayTraceResult intersectBoxSegment(Vector2f pos, Vector2f delta, Vector2f boxCenter, Vector2f boxSize) {

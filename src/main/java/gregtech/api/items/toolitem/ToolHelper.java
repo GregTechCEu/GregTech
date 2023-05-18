@@ -186,7 +186,7 @@ public final class ToolHelper {
         if (toolProperty != null) {
             toolProperty.getEnchantments().forEach((enchantment, level) -> {
                 if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
-                    stack.addEnchantment(enchantment, level);
+                    stack.addEnchantment(enchantment, level.getLevel(toolProperty.getToolHarvestLevel()));
                 }
             });
         }

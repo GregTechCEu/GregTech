@@ -1286,13 +1286,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
     }
 
     /**
-     * Deprecated, use {@link MetaTileEntity#onPlacement()} instead
-     */
-    @Deprecated
-    public void onAttached(Object... data) {
-    }
-
-    /**
      * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy}
      * <p>
      * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},

@@ -7,18 +7,12 @@ import com.google.common.collect.Table;
 import gregtech.api.GTValues;
 import gregtech.api.gui.resources.ResourceHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
-@EventBusSubscriber(modid = GTValues.MODID, value = Side.CLIENT)
 public class MaterialIconType {
 
     public static final Map<String, MaterialIconType> ICON_TYPES = new HashMap<>();
@@ -158,9 +152,7 @@ public class MaterialIconType {
             return cache.get(this, iconSet);
         }
 
-        if (!iconSet.isRootIconset &&
-                FMLCommonHandler.instance().getSidedDelegate() != null && // Test environment check
-                FMLCommonHandler.instance().getSide().isClient()) {
+        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getSide().isClient()) {
             ResourceLocation fullLocation = new ResourceLocation(GTValues.MODID, String.format(fullPath, iconSet.name, this.name));
             if (!ResourceHelper.doResourcepacksHaveResource(fullLocation)) {
                 ResourceLocation iconSetPath = recurseIconsetPath(iconSet.parentIconset, cache, fullPath, path);
@@ -179,10 +171,10 @@ public class MaterialIconType {
         return this.name;
     }
 
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public static void onModelBake(ModelBakeEvent event) {
+    @SuppressWarnings("unused") // Called from ASM-injected code
+    public static void clearCache() {
         ITEM_MODEL_CACHE.clear();
         BLOCK_TEXTURE_CACHE.clear();
+        BLOCK_MODEL_CACHE.clear();
     }
 }

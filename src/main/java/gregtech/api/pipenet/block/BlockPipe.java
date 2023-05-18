@@ -17,11 +17,9 @@ import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFrame;
-import gregtech.common.blocks.FrameItemBlock;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.ctm.IFacadeWrapper;
@@ -295,16 +293,19 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public boolean onPipeActivated(World world, IBlockState state, BlockPos pos, EntityPlayer entityPlayer, EnumHand hand, EnumFacing side, CuboidRayTraceResult hit, IPipeTile<PipeType, NodeDataType> pipeTile) {
         ItemStack itemStack = entityPlayer.getHeldItem(hand);
 
-        if (pipeTile.getFrameMaterial() == null && pipeTile instanceof TileEntityPipeBase && itemStack.getItem() instanceof FrameItemBlock && pipeTile.getPipeType().getThickness() < 1) {
-            BlockFrame frameBlock = (BlockFrame) ((FrameItemBlock) itemStack.getItem()).getBlock();
-            Material material = frameBlock.getGtMaterial(itemStack.getMetadata());
-            ((TileEntityPipeBase<PipeType, NodeDataType>) pipeTile).setFrameMaterial(material);
-            SoundType type = frameBlock.getSoundType(itemStack);
-            world.playSound(entityPlayer, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
-            if (!entityPlayer.capabilities.isCreativeMode) {
-                itemStack.shrink(1);
+        if (pipeTile.getFrameMaterial() == null &&
+                pipeTile instanceof TileEntityPipeBase &&
+                pipeTile.getPipeType().getThickness() < 1) {
+            BlockFrame frameBlock = BlockFrame.getFrameBlockFromItem(itemStack);
+            if (frameBlock != null) {
+                ((TileEntityPipeBase<PipeType, NodeDataType>) pipeTile).setFrameMaterial(frameBlock.getGtMaterial(itemStack));
+                SoundType type = frameBlock.getSoundType(itemStack);
+                world.playSound(entityPlayer, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
+                if (!entityPlayer.capabilities.isCreativeMode) {
+                    itemStack.shrink(1);
+                }
+                return true;
             }
-            return true;
         }
 
         if (itemStack.getItem() instanceof ItemBlockPipe) {

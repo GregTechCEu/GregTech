@@ -914,6 +914,27 @@ item.gt.tool.behavior.plunger=§9Plumber: §fDrains Fluids
 item.gt.tool.behavior.block_rotation=§2Mechanic: §fRotates Blocks
 item.gt.tool.behavior.damage_boost=§4Damage Boost: §fExtra damage against %s
 
+gt.tool.class.sword=Sword
+gt.tool.class.pickaxe=Pickaxe
+gt.tool.class.shovel=Shovel
+gt.tool.class.axe=Axe
+gt.tool.class.hoe=Hoe
+gt.tool.class.saw=Saw
+gt.tool.class.hammer=Hammer
+gt.tool.class.mallet=Mallet
+gt.tool.class.wrench=Wrench
+gt.tool.class.file=File
+gt.tool.class.crowbar=Crowbar
+gt.tool.class.screwdriver=Screwdriver
+gt.tool.class.mortar=Mortar
+gt.tool.class.wirecutter=Wirecutter
+gt.tool.class.scythe=Scythe
+gt.tool.class.shears=Shears
+gt.tool.class.knife=Knife
+gt.tool.class.butchery_knife=Butchery Knife
+gt.tool.class.grafter=Grafter
+gt.tool.class.plunger=Plunger
+
 item.gt.tool.sword.name=%s Sword
 item.gt.tool.pickaxe.name=%s Pickaxe
 item.gt.tool.shovel.name=%s Shovel
@@ -1057,6 +1078,10 @@ metaitem.power_thruster.name=Power Thruster
 metaitem.power_thruster_advanced.name=Advanced Power Thruster
 metaitem.gravitation_engine.name=Gravitation Engine Unit
 
+metaitem.tool.multiblock_builder.name=Multiblock Builder
+metaitem.tool.multiblock_builder.tooltip=For debugging and auto-building your Multiblocks!
+metaitem.tool.multiblock_builder.tooltip2=Sneak and right-click Multiblock controllers to auto-build them
+
 metaarmor.nms.nightvision.enabled=NanoMuscle™ Suite: NightVision Enabled
 metaarmor.nms.nightvision.disabled=NanoMuscle™ Suite: NightVision Disabled
 metaarmor.nms.nightvision.error=NanoMuscle™ Suite: §cNot enough power!
@@ -1192,7 +1217,7 @@ cover.robotic_arm.title=Robotic Arm Settings (%s)
 cover.robotic_arm.transfer_mode.transfer_any=Transfer Any
 cover.robotic_arm.transfer_mode.transfer_exact=Supply Exact
 cover.robotic_arm.transfer_mode.keep_exact=Keep Exact
-cover.robotic_arm.transfer_mode.description=§eTransfer Any§r - in this mode, cover will transfer as many items matching its filter as possible./n§eSupply Exact§r - in this mode, cover will supply items in portions specified in item filter slots (or variable under this button for ore dictionary filter). If amount of items is less than portion size, items won't be moved./n§eKeep Exact§r - in this mode, cover will keep specified amount of items in the destination inventory, supplying additional amount of items if required./n§7Tip: left/right click on filter slots to change item amount,  use shift clicking to change amount faster.
+cover.robotic_arm.transfer_mode.description=§eTransfer Any§r - in this mode, cover will transfer as many items matching its filter as possible./n§eSupply Exact§r - in this mode, cover will supply items in portions specified in item filter slots (or variable under this button for ore dictionary filter). If amount of items is less than portion size, items won't be moved. If there's a smart filter, the variable under this button will act as a multiplier instead./n§eKeep Exact§r - in this mode, cover will keep specified amount of items in the destination inventory, supplying additional amount of items if required./n§7Tip: left/right click on filter slots to change item amount,  use shift clicking to change amount faster.
 
 cover.pump.title=Pump Cover Settings (%s)
 cover.pump.transfer_rate=%s
@@ -4872,6 +4897,7 @@ gregtech.fluid.state_plasma=§aState: Plasma
 gregtech.fluid.type_acid.tooltip=§6Acidic! Handle with care!
 gregtech.gui.fuel_amount=Fuel Amount:
 gregtech.gui.fluid_amount=Fluid Amount:
+gregtech.gui.amount_raw=Amount:
 gregtech.gui.toggle_view.disabled=Toggle View (Fluids)
 gregtech.gui.toggle_view.enabled=Toggle View (Items)
 gregtech.gui.overclock.enabled=Overclocking Enabled./nClick to Disable
@@ -4987,6 +5013,8 @@ gregtech.multiblock.preview.zoom=Use mousewheel or right-click + drag to zoom
 gregtech.multiblock.preview.rotate=Click and drag to rotate
 gregtech.multiblock.preview.select=Right-click to check candidates
 
+gregtech.multiblock.pattern.error_message_header=Potential structure error:
+gregtech.multiblock.pattern.no_errors=No errors in structure found!
 gregtech.multiblock.pattern.error=Expected components (%s) at (%s).
 gregtech.multiblock.pattern.error.limited_exact=§cExactly: %d§r
 gregtech.multiblock.pattern.error.limited_within=§cBetween %d and %d§r

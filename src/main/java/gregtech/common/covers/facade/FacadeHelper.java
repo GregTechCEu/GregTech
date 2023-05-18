@@ -12,32 +12,25 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.NonNullList;
 
-import java.util.List;
-import java.util.stream.StreamSupport;
-
 public class FacadeHelper {
 
     private static ImmutableList<ItemStack> validFacadeItems = null;
 
-    private static ImmutableList<ItemStack> retrieveValidItemsList() {
-        return StreamSupport.stream(Item.REGISTRY.spliterator(), false)
-                .filter(item -> item instanceof ItemBlock)
-                .flatMap(item -> getSubItems(item).stream())
-                .filter(FacadeHelper::isValidFacade)
-                .collect(GTUtility.toImmutableList());
-    }
-
     public static ImmutableList<ItemStack> getValidFacadeItems() {
         if (validFacadeItems == null) {
-            validFacadeItems = retrieveValidItemsList();
+            ImmutableList.Builder<ItemStack> b = ImmutableList.builder();
+            for (Item item : Item.REGISTRY) {
+                if (item instanceof ItemBlock) {
+                    for (ItemStack subItem : GTUtility.getAllSubItems(item)) {
+                        if (isValidFacade(subItem)) {
+                            b.add(subItem);
+                        }
+                    }
+                }
+            }
+            validFacadeItems = b.build();
         }
         return validFacadeItems;
-    }
-
-    private static List<ItemStack> getSubItems(Item item) {
-        NonNullList<ItemStack> list = NonNullList.create();
-        item.getSubItems(CreativeTabs.SEARCH, list);
-        return list;
     }
 
     public static boolean isValidFacade(ItemStack itemStack) {

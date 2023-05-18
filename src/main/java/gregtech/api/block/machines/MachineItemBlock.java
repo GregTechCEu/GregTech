@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
@@ -34,7 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -52,7 +53,6 @@ public class MachineItemBlock extends ItemBlock {
      * @param creativeTab Creative tab to be checked during {@link net.minecraft.item.Item#getSubItems(CreativeTabs, NonNullList)}
      * @throws NullPointerException     If {@code creativeTab == null}
      * @throws IllegalArgumentException If {@code creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES || creativeTab == CreativeTabs.SEARCH}
-     *
      * @see MetaTileEntity#isInCreativeTab(CreativeTabs)
      */
     public static void addCreativeTab(CreativeTabs creativeTab) {
@@ -120,8 +120,9 @@ public class MachineItemBlock extends ItemBlock {
         return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) != null;
     }
 
+    @Nonnull
     @Override
-    public @Nonnull ItemStack getContainerItem(@Nonnull ItemStack itemStack) {
+    public ItemStack getContainerItem(@Nonnull ItemStack itemStack) {
         if (!hasContainerItem(itemStack)) {
             return ItemStack.EMPTY;
         }
@@ -147,8 +148,7 @@ public class MachineItemBlock extends ItemBlock {
         //item specific tooltip like: gregtech.machine.lathe.lv.tooltip
         String tooltipLocale = metaTileEntity.getMetaName() + ".tooltip";
         if (I18n.hasKey(tooltipLocale)) {
-            String[] lines = GTUtility.getForwardNewLineRegex().split(I18n.format(tooltipLocale));
-            tooltip.addAll(Arrays.asList(lines));
+            Collections.addAll(tooltip, LocalizationUtils.formatLines(tooltipLocale));
         }
 
         //tier less tooltip for a electric machine like: gregtech.machine.lathe.tooltip
@@ -157,8 +157,7 @@ public class MachineItemBlock extends ItemBlock {
             //only add tierless tooltip if it's key is not equal to normal tooltip key (i.e if machine name has dot in it's name)
             //case when it's not true would be any machine extending from TieredMetaTileEntity but having only one tier
             if (!tooltipLocale.equals(tierlessTooltipLocale) && I18n.hasKey(tierlessTooltipLocale)) {
-                String[] lines = GTUtility.getForwardNewLineRegex().split(I18n.format(tierlessTooltipLocale));
-                tooltip.addAll(Arrays.asList(lines));
+                Collections.addAll(tooltip, LocalizationUtils.formatLines(tierlessTooltipLocale));
             }
         }
 

@@ -11,7 +11,12 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
+
+import javax.annotation.Nonnull;
 
 public abstract class BlockGregWoodSlab extends BlockSlab {
 
@@ -28,6 +33,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
         this.useNeighborBrightness = true;
     }
 
+    @Nonnull
     @Override
     public IProperty<BlockGregPlanks.BlockType> getVariantProperty() {
         return VARIANT;
@@ -38,18 +44,20 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
         return state.getValue(VARIANT).ordinal();
     }
 
+    @Nonnull
     @Override
     public String getTranslationKey(int meta) {
         return super.getTranslationKey() + "." + blockTypeFromMeta(meta).getName();
     }
 
+    @Nonnull
     @Override
     public BlockGregPlanks.BlockType getTypeForItem(ItemStack stack) {
         return blockTypeFromMeta(stack.getMetadata());
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
+    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
         for (BlockGregPlanks.BlockType type : BlockGregPlanks.BlockType.values()) {
             items.add(new ItemStack(this, 1, type.ordinal()));
         }
@@ -72,6 +80,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             return false;
         }
 
+        @Nonnull
         @SuppressWarnings("deprecation")
         @Override
         public IBlockState getStateFromMeta(int meta) {
@@ -89,9 +98,15 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             return i;
         }
 
+        @Nonnull
         @Override
         protected BlockStateContainer createBlockState() {
             return new BlockStateContainer(this, HALF, VARIANT);
+        }
+
+        @Override
+        public boolean doesSideBlockChestOpening(@Nonnull IBlockState blockState, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+            return false;
         }
     }
 
@@ -107,6 +122,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             return true;
         }
 
+        @Nonnull
         @SuppressWarnings("deprecation")
         @Override
         public IBlockState getStateFromMeta(int meta) {
@@ -118,6 +134,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             return state.getValue(VARIANT).ordinal();
         }
 
+        @Nonnull
         @Override
         protected BlockStateContainer createBlockState() {
             return new BlockStateContainer(this, VARIANT);
