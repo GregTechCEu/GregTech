@@ -8,7 +8,6 @@ import org.jetbrains.gradle.ext.Gradle
 plugins {
     id 'java'
     id 'java-library'
-    id 'maven-publish'
     id 'eclipse'
     id 'org.jetbrains.gradle.plugin.idea-ext' version "$idea_ext_version"
     id 'com.gtnewhorizons.retrofuturagradle' version "$rfg_version"
@@ -20,12 +19,17 @@ version = project.mod_version
 group = project.maven_group
 archivesBaseName = project.archives_base_name
 
+// Declare java compilation and java compatibility versions as groovy variables to prevent configuration errors when
+// extracting values from the gradle.properties file
+def javaVersion = project.java_version
+def javaCompatVersion = project.java_compat_version
+
 // Set the toolchain version to decouple the Java we run Gradle with from the Java used to compile and run the mod
 java {
     toolchain {
-        // Azul covers the most platforms for Java 8 toolchains, crucially including MacOS arm64
+        // Azul covers the most platforms for Java 8+ toolchains, crucially including MacOS arm64
         vendor.set(JvmVendorSpec.AZUL)
-        languageVersion.set(JavaLanguageVersion.of(project.java_version))
+        languageVersion.set(JavaLanguageVersion.of(javaVersion))
     }
 
     // Generate sources when building and publishing
@@ -35,7 +39,28 @@ java {
 }
 
 tasks.withType(JavaCompile).configureEach {
+    // prevent compiling MC with newer java versions
+    if (it.name in ['compileMcLauncherJava', 'compilePatchedMcJava']) {
+        return
+    }
+
     options.encoding 'UTF-8'
+
+    if (it.name == 'compileTestJava') {
+        // ensure tests are compiled with java8 to support forge's use of sun reflection classes
+        // These were removed in later java versions
+        sourceCompatibility = targetCompatibility = java_compat_version
+    } else {
+        // Enable Java17 for all other compilation tasks
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaCompatVersion
+        options.release.set(Integer.parseInt(javaCompatVersion))
+
+        javaCompiler.set(javaToolchains.compilerFor {
+            languageVersion.set(JavaLanguageVersion.of(javaVersion))
+            vendor.set(JvmVendorSpec.AZUL)
+        })
+    }
 }
 
 configurations {
@@ -120,6 +145,10 @@ dependencies {
     testImplementation rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
 
     // Compile-Time Dependencies
+    annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}"
+    compileOnly("com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}") {
+        transitive = false // We only care about the 1 annotation class
+    }
 
     // GroovyScript dependency
     implementation "zone.rong:mixinbooter:${mixinbooter_version}"
@@ -180,6 +209,11 @@ jar {
 }
 
 test {
+    // ensure tests are run with java8 to support forge's use of sun reflection classes
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(java_compat_version)
+    }.get()
+
     testLogging {
         events TestLogEvent.STARTED, TestLogEvent.PASSED, TestLogEvent.FAILED
         exceptionFormat TestExceptionFormat.FULL
