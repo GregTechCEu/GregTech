@@ -6,6 +6,7 @@ import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.sync.GuiSyncHandler;
 import gregtech.api.gui.GTGuis;
+import gregtech.api.gui.GregTechGuiScreen;
 import gregtech.api.gui.ModularUI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -31,7 +32,7 @@ public interface CoverWithUI extends IGuiHolder {
     @Override
     default ModularScreen createClientGui(EntityPlayer entityPlayer) {
         CoverBehavior cover = (CoverBehavior) this;
-        return ModularScreen.simple(cover.getCoverDefinition().getCoverId().getNamespace(), cover.getCoverDefinition().getCoverId().getPath(), context -> createUIPanel(context, entityPlayer));
+        return GregTechGuiScreen.simple(cover.getCoverDefinition().getCoverId(), context -> createUIPanel(context, entityPlayer));
     }
 
     // TODO: make abstract

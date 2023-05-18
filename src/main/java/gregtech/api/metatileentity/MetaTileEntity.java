@@ -30,6 +30,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverIO;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GTGuis;
+import gregtech.api.gui.GregTechGuiScreen;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -429,10 +430,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
 
     @Override
     public ModularScreen createClientGui(EntityPlayer entityPlayer) {
-        return ModularScreen.simple(this.metaTileEntityId.getNamespace(), this.metaTileEntityId.getPath(), context -> {
-            context.useTheme("gregtech");
-            return createUIPanel(context, entityPlayer);
-        });
+        return GregTechGuiScreen.simple(this.metaTileEntityId, context -> createUIPanel(context, entityPlayer));
     }
 
     // TODO: make abstract

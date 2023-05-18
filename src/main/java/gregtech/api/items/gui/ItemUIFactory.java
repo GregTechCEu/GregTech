@@ -5,8 +5,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.sync.GuiSyncHandler;
-import gregtech.api.GTValues;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.gui.GregTechGuiScreen;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
@@ -25,7 +24,7 @@ public interface ItemUIFactory extends IItemComponent, IItemGuiHolder {
     @Override
     default ModularScreen createGuiScreen(EntityPlayer entityPlayer, ItemStack stack) {
         MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
-        return ModularScreen.simple(stack.getItem().getRegistryName().getNamespace(), valueItem.unlocalizedName, context -> createUIPanel(context, entityPlayer, stack));
+        return GregTechGuiScreen.simple(valueItem, context -> createUIPanel(context, entityPlayer, stack));
     }
 
     // TODO: make abstract
