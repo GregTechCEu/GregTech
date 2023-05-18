@@ -429,7 +429,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
 
     @Override
     public ModularScreen createClientGui(EntityPlayer entityPlayer) {
-        return ModularScreen.simple(this.metaTileEntityId.getNamespace(), this.metaTileEntityId.getPath(), context -> createUIPanel(context, entityPlayer));
+        return ModularScreen.simple(this.metaTileEntityId.getNamespace(), this.metaTileEntityId.getPath(), context -> {
+            context.useTheme("gregtech");
+            return createUIPanel(context, entityPlayer);
+        });
     }
 
     // TODO: make abstract

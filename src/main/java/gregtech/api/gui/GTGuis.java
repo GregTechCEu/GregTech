@@ -1,7 +1,10 @@
 package gregtech.api.gui;
 
 import com.cleanroommc.modularui.api.IItemGuiHolder;
+import com.cleanroommc.modularui.api.IThemeApi;
 import com.cleanroommc.modularui.manager.GuiInfo;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.utils.JsonBuilder;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
@@ -9,6 +12,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -104,5 +108,14 @@ public class GTGuis {
             }
         }
         throw new IllegalStateException();
+    }
+
+    public static void initThemes() {
+        JsonBuilder bronzeTheme = new JsonBuilder()
+                .add("color", "0xFA9D23");
+        JsonBuilder gregtechTheme = new JsonBuilder()
+                .add("color", String.valueOf(ConfigHolder.client.defaultUIColor));
+        IThemeApi.get().registerTheme("gregtech:bronze", bronzeTheme);
+        IThemeApi.get().registerTheme("gregtech", gregtechTheme);
     }
 }

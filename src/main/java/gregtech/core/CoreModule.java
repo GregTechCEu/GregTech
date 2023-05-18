@@ -9,6 +9,7 @@ import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.MetaFluids;
+import gregtech.api.gui.GTGuis;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
@@ -97,6 +98,9 @@ public class CoreModule implements IGregTechModule {
 
         GregTechAPI.soundManager = SoundManager.getInstance();
         GTSoundEvents.register();
+
+        /* Start UI init */
+        GTGuis.initThemes();
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();

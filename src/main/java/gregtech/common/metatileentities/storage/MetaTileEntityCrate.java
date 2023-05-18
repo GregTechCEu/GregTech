@@ -19,6 +19,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -141,6 +142,9 @@ public class MetaTileEntityCrate extends MetaTileEntity {
 
     @Override
     protected ModularPanel createUIPanel(GuiContext context, EntityPlayer player) {
+        if (this.material == Materials.Bronze) {
+            context.useTheme("gregtech:bronze");
+        }
         int rows = this.inventorySize / this.rowSize;
         List<List<IWidget>> widgets = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
