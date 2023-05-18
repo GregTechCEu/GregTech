@@ -3,7 +3,7 @@ package gregtech.api.gui;
 import com.cleanroommc.modularui.api.IItemGuiHolder;
 import com.cleanroommc.modularui.api.IThemeApi;
 import com.cleanroommc.modularui.manager.GuiInfo;
-import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.theme.ReloadThemeEvent;
 import com.cleanroommc.modularui.utils.JsonBuilder;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
@@ -17,10 +17,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.EnumMap;
 
 public class GTGuis {
+
+    private static final JsonBuilder gregtechTheme = new JsonBuilder();
+    private static final JsonBuilder bronzeTheme = new JsonBuilder();
 
     private static final EnumMap<EnumFacing, GuiInfo> COVERS = new EnumMap<>(EnumFacing.class);
 
@@ -111,11 +116,14 @@ public class GTGuis {
     }
 
     public static void initThemes() {
-        JsonBuilder bronzeTheme = new JsonBuilder()
-                .add("color", "0xFA9D23");
-        JsonBuilder gregtechTheme = new JsonBuilder()
-                .add("color", String.valueOf(ConfigHolder.client.defaultUIColor));
+        MinecraftForge.EVENT_BUS.register(GTGuis.class);
         IThemeApi.get().registerTheme("gregtech:bronze", bronzeTheme);
         IThemeApi.get().registerTheme("gregtech", gregtechTheme);
+    }
+
+    @SubscribeEvent
+    public static void onReloadThemes(ReloadThemeEvent.Pre event) {
+        bronzeTheme.add("color", 0xFA9D23);
+        gregtechTheme.add("color", ConfigHolder.client.defaultUIColor);
     }
 }
