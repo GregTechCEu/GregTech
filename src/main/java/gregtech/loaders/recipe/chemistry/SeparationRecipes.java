@@ -530,6 +530,16 @@ public class SeparationRecipes {
                 .fluidOutputs(Oxygen.getFluid(2000))
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
+        // H2PdCl6 + 2H2O -> Pd + 6HCl + 2O
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .fluidInputs(ChloropalladicAcid.getFluid(1000))
+                .fluidInputs(Water.getFluid(2000))
+                .circuitMeta(2)
+                .output(dust, Palladium)
+                .fluidOutputs(HydrochloricAcid.getFluid(6000))
+                .fluidOutputs(Oxygen.getFluid(2000))
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
         // Extractor
         EXTRACTOR_RECIPES.recipeBuilder()
                 .input(dust, Monazite)

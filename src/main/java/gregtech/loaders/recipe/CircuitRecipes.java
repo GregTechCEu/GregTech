@@ -343,7 +343,7 @@ public class CircuitRecipes {
 
         // Transistor
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(plate, Silicon)
+                .input(SILICON_WAFER)
                 .input(wireFine, Tin, 6)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .output(TRANSISTOR, 8)

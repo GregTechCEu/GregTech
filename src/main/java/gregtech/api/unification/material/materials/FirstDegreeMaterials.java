@@ -1489,19 +1489,12 @@ public class FirstDegreeMaterials {
                 .components(Carbon, 3, Hydrogen, 5, Oxygen, 1, Sulfur, 2, Sodium, 1)
                 .build();
 
-        SodiumCyanide = new Material.Builder(464, "sodium_cyanide")
-                .fluid()
+        ChloropalladicAcid = new Material.Builder(464, "chloropalladic_acid")
+                .fluid(FluidTypes.ACID)
                 .color(0x6163D4)
-                .components(Sodium, 1, Carbon, 1, Nitrogen, 1)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Hydrogen, 2, Palladium, 1, Chlorine, 6)
                 .build();
-
-        SodiumGoldCyanide = new Material.Builder(465, "sodium_gold_cyanide")
-                .fluid()
-                .color(0xD4C361)
-                .flags(DECOMPOSITION_BY_ELECTROLYZING)
-                .components(Sodium, 1, Gold, 1, Carbon, 2, Nitrogen, 2)
-                .build()
-                .setFormula("NaAu(CN)2", true);
 
         GraniticMineralSand = new Material.Builder(2513, "granitic_mineral_sand")
                 .dust(1).ore()

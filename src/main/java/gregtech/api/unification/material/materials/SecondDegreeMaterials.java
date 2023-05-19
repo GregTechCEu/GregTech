@@ -567,7 +567,7 @@ public class SecondDegreeMaterials {
                 .fluid()
                 .color(0x2F3030)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(PlatinumGroupSludge, 1, Water, 1)
+                .components(PlatinumGroupSludge, 1, Water, 3)
                 .build();
 
         Bentonite = new Material.Builder(2026, "bentonite")

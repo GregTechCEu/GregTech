@@ -87,11 +87,8 @@ public class OreByProduct implements IRecipeWrapper {
 
         // macerate ore -> crushed
         addToInputs(MetaTileEntities.MACERATOR[GTValues.LV].getStackForm());
-        // water wash crushed -> crushed purified
-        addToInputs(MetaTileEntities.CHEMICAL_BATH[GTValues.LV].getStackForm());
-        // macerate crushed -> impure dust
-        addToInputs(MetaTileEntities.MACERATOR[GTValues.LV].getStackForm());
-
+        // water wash crushed -> washed
+        addToInputs(MetaTileEntities.SLUICE[GTValues.LV].getStackForm());
         // macerate crushed purified -> dust
         addToInputs(MetaTileEntities.MACERATOR[GTValues.LV].getStackForm());
 

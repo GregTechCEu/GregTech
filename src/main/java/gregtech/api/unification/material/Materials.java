@@ -474,8 +474,7 @@ public class Materials {
     public static Material ChloroplatinicAcid;
     public static Material CarbonDisulfide;
     public static Material SodiumEthylXanthate;
-    public static Material SodiumCyanide;
-    public static Material SodiumGoldCyanide;
+    public static Material ChloropalladicAcid;
     public static Material Alumina;
     public static Material GraniticMineralSand;
     public static Material BasalticMineralSand;

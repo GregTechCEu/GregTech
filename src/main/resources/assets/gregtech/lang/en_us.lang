@@ -1540,7 +1540,7 @@ material.water=Water
 material.liquid_oxygen=Liquid Oxygen
 material.coal=Coal
 material.cobaltite=Cobaltite
-material.cooperite=Sheldonite
+material.cooperite=Cooperite
 material.cupronickel=Cupronickel
 material.dark_ash=Dark Ashes
 material.diamond=Diamond
@@ -1585,7 +1585,6 @@ material.saltpeter=Saltpeter
 material.sapphire=Sapphire
 material.scheelite=Scheelite
 material.sodalite=Sodalite
-material.aluminium_sulfite=Aluminium Sulfite
 material.tantalite=Tantalite
 material.coke=Coke
 
@@ -1728,12 +1727,10 @@ material.purple_vitriol=Purple Vitriol
 material.clay_vitriol=Clay Vitriol
 material.chloroauric_acid=Chloroauric Acid
 material.chloroplatinic_acid=Chloroplatinic Acid
+material.chloropalladic_acid=Chloropalladic Acid
 material.alumina=Alumina
 material.carbon_disulfide=Carbon Disulfide
 material.sodium_ethyl_xanthate=Sodium Ethyl Xanthate
-material.sodium_cyanide=Sodium Cyanide
-material.sodium_gold_cyanide=Sodium Gold Cyanide
-
 
 # Organic Chemistry Materials
 material.silicone_rubber=Silicone Rubber
@@ -2535,14 +2532,14 @@ tile.transparent_casing.laminated_glass.name=Laminated Glass
 tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
 
 # Creative tabs
-itemGroup.gregtech.main=GregTech
-itemGroup.gregtech.machines=Machines (GT)
-itemGroup.gregtech.cables=Cables (GT)
-itemGroup.gregtech.pipes=Pipes (GT)
-itemGroup.gregtech.tools=Tools (GT)
-itemGroup.gregtech.materials=Materials (GT)
-itemGroup.gregtech.ores=Ores (GT)
-itemGroup.gregtech.decorations=Decorations (GT)
+itemGroup.gregtech.main=GregTech Main
+itemGroup.gregtech.machines=GregTech Machines
+itemGroup.gregtech.cables=GregTech Cables
+itemGroup.gregtech.pipes=GregTech Pipes
+itemGroup.gregtech.tools=GregTech Tools
+itemGroup.gregtech.materials=GregTech Materials
+itemGroup.gregtech.ores=GregTech Ores
+itemGroup.gregtech.decorations=GregTech Decorations
 
 # Drums
 gregtech.machine.drum.wood.name=Wooden Barrel

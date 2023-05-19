@@ -709,15 +709,13 @@ public class MachineRecipeLoader {
         BLAST_RECIPES.recipeBuilder().duration(240).EUt(VA[MV]).blastFurnaceTemp(1200)
                 .input(dust, SiliconDioxide, 3)
                 .input(dust, Carbon, 2)
-                .output(ingot, Silicon)
+                .output(gem, Silicon)
                 .output(dustTiny, Ash)
                 .fluidOutputs(CarbonMonoxide.getFluid(2000))
                 .buildAndRegister();
     }
 
     private static void registerDecompositionRecipes() {
-
-
         EXTRACTOR_RECIPES.recipeBuilder()
                 .inputs(STICKY_RESIN.getStackForm())
                 .output(dust, RawRubber, 3)

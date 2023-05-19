@@ -19,6 +19,7 @@ public class MaterialTree implements IRecipeWrapper {
             OrePrefix.dustTiny,
             OrePrefix.dust,
             OrePrefix.dustSmall,
+            OrePrefix.chunk,
             OrePrefix.cableGtSingle,
             OrePrefix.ingotHot,
             OrePrefix.ingot,
@@ -46,7 +47,7 @@ public class MaterialTree implements IRecipeWrapper {
             // fluid,
             OrePrefix.lens,
             OrePrefix.foil
-            // TODO chunk?
+
     );
 
     private final List<List<ItemStack>> itemInputs = new ArrayList<>();

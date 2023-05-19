@@ -639,7 +639,7 @@ public class RecipeMaps {
             .setSlotOverlay(false, false, true, GuiTextures.DUST_OVERLAY)
             .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, MoveType.VERTICAL)
-            .setSound(SoundEvents.BLOCK_SAND_PLACE);
+            .setSound(GTSoundEvents.CHEMICAL_REACTOR);
 
     /**
      * Example:

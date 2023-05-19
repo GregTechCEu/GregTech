@@ -659,11 +659,10 @@ public class ElementMaterials {
                 .build();
 
         Silicon = new Material.Builder(99, "silicon")
-                .ingot().fluid()
-                .color(0x3C3C50).iconSet(METALLIC)
-                .flags(GENERATE_FOIL)
+                .gem().fluid()
+                .color(0x3C3C50).iconSet(FLINT)
                 .element(Elements.Si)
-                .blastTemp(1687) // no gas tier for silicon
+                .flags(FLAMMABLE, EXPLOSIVE) // disable implosion
                 .build();
 
         Silver = new Material.Builder(100, "silver")
