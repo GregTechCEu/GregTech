@@ -504,11 +504,7 @@ public class FirstDegreeMaterials {
                 .components(Aluminium, 3, Silicon, 3, Sodium, 4, Chlorine, 1)
                 .build();
 
-        AluminiumSulfite = new Material.Builder(317, "aluminium_sulfite")
-                .dust()
-                .color(0xCC4BBB).iconSet(DULL)
-                .components(Aluminium, 2, Sulfur, 3, Oxygen, 9)
-                .build().setFormula("Al2(SO3)3", true);
+        // FREE ID 317
 
         Tantalite = new Material.Builder(318, "tantalite")
                 .dust(3).ore()
