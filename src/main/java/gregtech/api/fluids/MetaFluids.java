@@ -110,7 +110,6 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.Helium, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.Helium, FluidTypes.PLASMA);
         setMaterialFluidTexture(Materials.Helium3, FluidTypes.GAS);
-        setMaterialFluidTexture(Materials.Fluorine, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.TitaniumTetrachloride, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Steam, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.OilHeavy, FluidTypes.LIQUID);
@@ -130,7 +129,6 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.SeverelySteamCrackedLightFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.LightlySteamCrackedHeavyFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.SeverelySteamCrackedHeavyFuel, FluidTypes.LIQUID);
-        setMaterialFluidTexture(Materials.Chlorine, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.CetaneBoostedDiesel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.SodiumPersulfate, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.GlycerylTrinitrate, FluidTypes.LIQUID);

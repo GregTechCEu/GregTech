@@ -82,7 +82,7 @@ public class PlatGroupMetalsRecipes {
                 .input(dust, PalladiumRaw, 5)
                 .fluidInputs(HydrochloricAcid.getFluid(1000))
                 .output(dust, Palladium)
-                .output(dust, AmmoniumChloride, 2)
+                .output(dust, SalAmmoniac, 2)
                 .buildAndRegister();
 
 

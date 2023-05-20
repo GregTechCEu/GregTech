@@ -53,8 +53,8 @@ public class MultiblockMinerLogic extends MinerLogic {
 
     @Override
     protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, @Nonnull IBlockState blockState) {
-        if (!isSilkTouchMode) // 3X the ore compared to the single blocks
-            applyTieredHammerNoRandomDrops(blockState, blockDrops, 3, this.blockDropRecipeMap, this.voltageTier);
+        if (!isSilkTouchMode) // 2X the ore compared to the single blocks
+            applyTieredHammerNoRandomDrops(blockState, blockDrops, 1, this.blockDropRecipeMap, this.voltageTier);
         else
             super.getRegularBlockDrops(blockDrops, world, blockToMine, blockState);
     }

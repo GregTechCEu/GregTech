@@ -150,6 +150,7 @@ public class ElementMaterials {
 
         Chlorine = new Material.Builder(21, "chlorine")
                 .fluid(FluidTypes.GAS)
+                .color(0x97CB52)
                 .element(Elements.Cl)
                 .build();
 
@@ -249,6 +250,7 @@ public class ElementMaterials {
 
         Fluorine = new Material.Builder(36, "fluorine")
                 .fluid(FluidTypes.GAS)
+                .color(0xC9E43D)
                 .element(Elements.F)
                 .build();
 

@@ -553,7 +553,7 @@ public class Materials {
     public static Material PlatinumSludgeResidue;
     public static Material PalladiumRaw;
     public static Material RarestMetalMixture;
-    public static Material AmmoniumChloride;
+    public static Material SalAmmoniac;
     public static Material AcidicOsmiumSolution;
     public static Material Rhodallium;
     public static Material Butyraldehyde;

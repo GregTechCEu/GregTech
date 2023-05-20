@@ -311,9 +311,8 @@ public class SecondDegreeMaterials {
                 .dust(3).ore(true)
                 .color(0xC8D200)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Uraninite, 3, Thorium, 1, Lead, 1)
-                .build()
-                .setFormula("(UO2)3ThPb", true);
+                .components(Uraninite, 3, Thorianite, 1, Lead, 1)
+                .build();
 
         Monazite = new Material.Builder(2029, "monazite")
                 .gem(1).ore(2, true)
@@ -524,9 +523,9 @@ public class SecondDegreeMaterials {
                 .components(Iridium, 1, Osmium, 1, Oxygen, 4, Water, 1)
                 .build();
 
-        AmmoniumChloride = new Material.Builder(2060, "ammonium_chloride")
-                .dust()
-                .color(0x9711A6)
+        SalAmmoniac = new Material.Builder(2060, "sal_ammoniac")
+                .dust().ore(2)
+                .color(0xD7AFDB)
                 .components(Ammonia, 1, HydrochloricAcid, 1)
                 .build()
                 .setFormula("NH4Cl", true);
