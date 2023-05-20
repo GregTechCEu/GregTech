@@ -17,6 +17,7 @@ import org.apache.commons.lang3.Validate;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -604,6 +605,11 @@ public class OrePrefix {
     @ZenMethod
     public void setIgnored(Material material) {
         ignoredMaterials.add(material);
+    }
+
+    @ZenMethod
+    public void removeIgnored(@Nonnull Material material) {
+        ignoredMaterials.remove(material);
     }
 
     public boolean isMarkerPrefix() {
