@@ -10,7 +10,7 @@ on:
       - "gradle**" # covers gradle folder, gradle.properties, gradlew
       - "build.gradle*"
       - "settings.gradle*"
-      - "src/main/resources/META-INF/*_at.cfg" # access transformers
+      - "src/main/resources/*_at.cfg" # access transformers
 
 jobs:
   Update_Cache:
@@ -23,7 +23,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: '17'
 
       - name: Update Cache
