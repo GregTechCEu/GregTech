@@ -46,21 +46,15 @@ tasks.withType(JavaCompile).configureEach {
 
     options.encoding 'UTF-8'
 
-    if (it.name == 'compileTestJava') {
-        // ensure tests are compiled with java8 to support forge's use of sun reflection classes
-        // These were removed in later java versions
-        sourceCompatibility = targetCompatibility = java_compat_version
-    } else {
-        // Enable Java17 for all other compilation tasks
-        sourceCompatibility = javaVersion
-        targetCompatibility = javaCompatVersion
-        options.release.set(Integer.parseInt(javaCompatVersion))
+    // Enable Java17 for all other compilation tasks
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaCompatVersion
+    options.release.set(Integer.parseInt(javaCompatVersion))
 
-        javaCompiler.set(javaToolchains.compilerFor {
-            languageVersion.set(JavaLanguageVersion.of(javaVersion))
-            vendor.set(JvmVendorSpec.AZUL)
-        })
-    }
+    javaCompiler.set(javaToolchains.compilerFor {
+        languageVersion.set(JavaLanguageVersion.of(javaVersion))
+        vendor.set(JvmVendorSpec.AZUL)
+    })
 }
 
 configurations {
@@ -149,6 +143,9 @@ dependencies {
     compileOnly("com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}") {
         transitive = false // We only care about the 1 annotation class
     }
+
+    // Allow jdk.unsupported classes like sun.misc.Unsafe, workaround for JDK-8206937 and fixes Forge crashes in tests.
+    patchedMinecraft "me.eigenraven.java8unsupported:java-8-unsupported-shim:${unsupported_shim_version}"
 
     // GroovyScript dependency
     implementation "zone.rong:mixinbooter:${mixinbooter_version}"
