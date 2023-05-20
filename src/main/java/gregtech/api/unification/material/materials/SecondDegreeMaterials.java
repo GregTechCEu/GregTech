@@ -365,7 +365,7 @@ public class SecondDegreeMaterials {
                 .ingot(3).fluid()
                 .color(0xc0c0c0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR)
-                .components(Vanadium, 1, Chromium, 1, Steel, 7)
+                .components(Steel, 7, Vanadium, 1, Chromium, 1)
                 .toolStats(ToolProperty.Builder.of(3.0F, 3.0F, 1536, 3)
                         .attackSpeed(-0.2F).enchantability(5).build())
                 .rotorStats(7.0f, 3.0f, 1920)
@@ -525,7 +525,7 @@ public class SecondDegreeMaterials {
 
         SalAmmoniac = new Material.Builder(2060, "sal_ammoniac")
                 .dust().ore(2)
-                .color(0xD7AFDB)
+                .color(0xE0C3E3)
                 .components(Ammonia, 1, HydrochloricAcid, 1)
                 .build()
                 .setFormula("NH4Cl", true);

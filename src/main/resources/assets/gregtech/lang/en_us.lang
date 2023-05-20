@@ -2535,14 +2535,14 @@ tile.transparent_casing.laminated_glass.name=Laminated Glass
 tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
 
 # Creative tabs
-itemGroup.gregtech.main=GregTech Main
-itemGroup.gregtech.machines=GregTech Machines
-itemGroup.gregtech.cables=GregTech Cables
-itemGroup.gregtech.pipes=GregTech Pipes
-itemGroup.gregtech.tools=GregTech Tools
-itemGroup.gregtech.materials=GregTech Materials
-itemGroup.gregtech.ores=GregTech Ores
-itemGroup.gregtech.decorations=GregTech Decorations
+itemGroup.gregtech.main=GT Main
+itemGroup.gregtech.machines=GT Machines
+itemGroup.gregtech.cables=GT Cables
+itemGroup.gregtech.pipes=GT Pipes
+itemGroup.gregtech.tools=GT Tools
+itemGroup.gregtech.materials=GT Materials
+itemGroup.gregtech.ores=GT Ores
+itemGroup.gregtech.decorations=GT Decorations
 
 # Drums
 gregtech.machine.drum.wood.name=Wooden Barrel

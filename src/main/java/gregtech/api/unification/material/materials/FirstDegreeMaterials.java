@@ -759,7 +759,7 @@ public class FirstDegreeMaterials {
                 .ingot(1).fluid()
                 .color(0xA0A0A0)
                 .flags(STD_METAL, DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Arsenic, 1, Gallium, 1)
+                .components(Gallium, 1, Arsenic, 1)
                 .blastTemp(1200, GasTier.LOW, VA[MV], 1200)
                 .fluidTemp(1511)
                 .build();
