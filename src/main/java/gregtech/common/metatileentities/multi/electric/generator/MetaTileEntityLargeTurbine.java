@@ -107,11 +107,6 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
             FluidStack fuelStack = ((LargeTurbineWorkableHandler) recipeMapWorkable).getInputFluidStack();
             int fuelAmount = fuelStack == null ? 0 : fuelStack.amount;
 
-            // energy output (recipeMapWorkable.getRecipeEUt())
-            // recipe fluid (recipeMapWorkable.getPreviousRecipe().fluidInputs)
-            // recipe eut (recipeMapWorkable.getPreviousRecipe().EUt)
-            // recipe duration (recipeMapWorkable.getPreviousRecipe().duration)
-            // recipeMapWorkable.getPreviousRecipe().EUt * recipeMapWorkable.getPreviousRecipe().duration / recipeMapWorkable.getPreviousRecipe().fluidInputs.get(0).amount
             ITextComponent fuelName = new TextComponentTranslation(fuelAmount == 0 ? "gregtech.fluid.empty" : fuelStack.getUnlocalizedName());
 
             Recipe recipe = recipeMapWorkable.getPreviousRecipe();
