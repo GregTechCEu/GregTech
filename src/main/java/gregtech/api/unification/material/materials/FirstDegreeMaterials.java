@@ -953,8 +953,6 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("KAl4(SO4)2", true);
 
-        // Free ID 389
-
         Bismuthinite = new Material.Builder(389, "bismuthinite")
                 .dust().ore()
                 .color(0x70AA93).iconSet(SHINY)
@@ -966,6 +964,14 @@ public class FirstDegreeMaterials {
                 .dust().ore(true)
                 .color(0x001E00).iconSet(ROUGH)
                 .components(Thorium, 1, Oxygen, 2)
+                .build();
+
+        LiquidNitrogen = new Material.Builder(391, "liquid_nitrogen")
+                .fluid()
+                .color(0x00BFC1)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Nitrogen, 1)
+                .fluidTemp(77)
                 .build();
 
         // ID 392 RESERVED

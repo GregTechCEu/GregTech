@@ -107,7 +107,6 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.Air, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.Deuterium, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.Tritium, FluidTypes.GAS);
-        setMaterialFluidTexture(Materials.Helium, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.Helium, FluidTypes.PLASMA);
         setMaterialFluidTexture(Materials.Helium3, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.TitaniumTetrachloride, FluidTypes.LIQUID);

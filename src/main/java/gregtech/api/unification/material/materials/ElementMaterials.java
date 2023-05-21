@@ -311,6 +311,7 @@ public class ElementMaterials {
 
         Helium = new Material.Builder(46, "helium")
                 .fluid(FluidTypes.GAS).plasma()
+				.color(0xFCFF90)
                 .element(Elements.He)
                 .build();
 
@@ -327,7 +328,7 @@ public class ElementMaterials {
                 .build();
 
         Iodine = new Material.Builder(49, "iodine")
-                .color(0x2C344F).iconSet(SHINY)
+                .color(0x3B344F).iconSet(SHINY)
                 .element(Elements.I)
                 .build();
 
@@ -533,7 +534,7 @@ public class ElementMaterials {
 
         Phosphorus = new Material.Builder(78, "phosphorus")
                 .dust()
-                .color(0xFFFF00)
+                .color(0xD4D48E)
                 .element(Elements.P)
                 .build();
 
@@ -689,7 +690,7 @@ public class ElementMaterials {
 
         Sulfur = new Material.Builder(103, "sulfur")
                 .dust().ore()
-                .color(0xC8C800)
+                .color(0xFFFF00)
                 .flags(FLAMMABLE)
                 .element(Elements.S)
                 .build();

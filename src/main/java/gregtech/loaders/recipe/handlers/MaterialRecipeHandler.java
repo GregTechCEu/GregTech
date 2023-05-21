@@ -180,13 +180,21 @@ public class MaterialRecipeHandler {
 
         // Add Vacuum Freezer recipe if required.
         if (ingotHot.doGenerateItem(material)) {
-            if (blastTemp < 5000) {
+            if (blastTemp < 3500) {
                 RecipeMaps.VACUUM_RECIPES.recipeBuilder()
                         .input(ingotHot, material)
                         .output(ingot, material)
                         .duration((int) material.getMass() * 3)
                         .buildAndRegister();
-            } else {
+            } else if (blastTemp < 5000) {
+                RecipeMaps.VACUUM_RECIPES.recipeBuilder()
+                        .input(ingotHot, material)
+						.fluidInputs(Materials.LiquidNitrogen.getFluid(1000))
+                        .output(ingot, material)
+						.fluidOutputs(Materials.Nitrogen.getFluid(500))
+                        .duration((int) material.getMass() * 3)
+                        .buildAndRegister();
+			} else {
                 RecipeMaps.VACUUM_RECIPES.recipeBuilder()
                         .input(ingotHot, material)
                         .fluidInputs(Materials.LiquidHelium.getFluid(500))

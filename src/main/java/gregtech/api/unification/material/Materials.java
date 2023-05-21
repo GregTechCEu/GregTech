@@ -336,7 +336,7 @@ public class Materials {
     public static Material Sodalite;
     public static Material Tantalite;
     public static Material Coke;
-
+	public static Material LiquidNitrogen;
 
     public static Material SolderingAlloy;
     public static Material Spessartine;

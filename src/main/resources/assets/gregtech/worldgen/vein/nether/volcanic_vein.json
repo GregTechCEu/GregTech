@@ -11,27 +11,30 @@
     "is_nether"
   ],
   "generator": {
-    "type": "layered",
+    "type": "ellipsoid",
     "radius": [
       17,
       24
     ]
   },
   "filler": {
-    "type" : "weight_random",
-    "values" : [
-      {
-        "weight" : 50,
-        "value" : "ore:sulfur"
-      },
-      {
-        "weight" : 30,
-        "value" : "ore:saltpeter"
-      },
-      {
-        "weight" : 20,
-        "value" : "ore:sal_ammoniac"
-      }
-    ]
+    "type" : "simple",
+	"value" : {
+	  "type" : "weight_random",
+      "values" : [
+        {
+          "weight" : 50,
+          "value" : "ore:sulfur"
+        },
+        {
+          "weight" : 30,
+          "value" : "ore:saltpeter"
+        },
+        {
+          "weight" : 20,
+          "value" : "ore:sal_ammoniac"
+        }
+      ]
+	}
   }
 }

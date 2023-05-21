@@ -5,7 +5,7 @@
   "max_height": 45,
   "vein_populator": {
     "type": "surface_rock",
-    "material": "saltpeter"
+    "material": "pollucite"
   },
   "dimension_filter": [
     "is_nether"
