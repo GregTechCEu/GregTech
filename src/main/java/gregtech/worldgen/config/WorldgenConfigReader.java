@@ -7,14 +7,15 @@ import gregtech.api.GTValues;
 import gregtech.api.util.FileUtility;
 import gregtech.worldgen.WorldgenModule;
 import gregtech.worldgen.terrain.IBlockMapper;
-import gregtech.worldgen.terrain.config.TerrainGenFileProcessor;
+import gregtech.worldgen.terrain.config.TerrainGenDefaults;
+import gregtech.worldgen.terrain.config.internal.TerrainGenFileProcessor;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,11 +25,15 @@ public final class WorldgenConfigReader {
     private static final String WORLDGEN_DIR = "worldgen";
     private static final String TERRAIN_DIR = "terrain";
     private static final String TERRAIN_VERSION_KEY = "terrainVersion";
+    private static final String WORLDGEN_EXTRACTED = "worldgen_extracted.json";
+
+    @Nullable
+    private static Path terrainPath;
 
     private WorldgenConfigReader() {}
 
     @Nullable
-    public static Int2ObjectMap<IBlockMapper> readMappersFromConfig() {
+    public static Int2ObjectMap<IBlockMapper> readTerrainMappersFromConfig() {
         Path configDir = Loader.instance().getConfigDir().toPath();
 
         Path gtConfigPath = getOrCreateGtConfigFolder(configDir);
@@ -37,43 +42,43 @@ public final class WorldgenConfigReader {
         Path worldgenPath = getOrCreateWorldgenFolder(gtConfigPath);
         if (worldgenPath == null) return null;
 
-        handleGenerationLock(gtConfigPath, worldgenPath);
-
-        Path terrainPath = getOrCreateTerrainFolder(worldgenPath);
+        // create the default paths before attempting to write defaults
+        terrainPath = getOrCreateTerrainFolder(worldgenPath);
         if (terrainPath == null) return null;
+
+        handleDefaults(gtConfigPath);
+
         return new TerrainGenFileProcessor(terrainPath).process();
     }
 
     /**
      * @param gtConfigPath the path to the gt config folder
-     * @param worldgenPath the path to the gt worldgen config folder
      */
-    private static void handleGenerationLock(@Nonnull Path gtConfigPath, @Nonnull Path worldgenPath) {
-        Path generationLockPath = gtConfigPath.resolve("worldgen_extracted.json");
+    private static void handleDefaults(@Nonnull Path gtConfigPath) {
+        Path generationLockPath = gtConfigPath.resolve(WORLDGEN_EXTRACTED);
+
+        if (!Files.exists(generationLockPath)) createLockFile(generationLockPath);
 
         if (Files.exists(generationLockPath)) {
             JsonObject generationLock = FileUtility.tryExtractFromFile(generationLockPath);
             if (generationLock != null) {
-                boolean needsUpdate = false;
-                JsonElement terrainVersionElement = generationLock.get(TERRAIN_VERSION_KEY);
-                if (terrainVersionElement == null || terrainVersionElement.getAsInt() != TerrainGenFileProcessor.TERRAIN_GEN_VERSION) {
-                    writeTerrainDefaults(worldgenPath);
-                    needsUpdate = true;
-                }
-                if (needsUpdate) {
+                boolean needsWriting = false;
+
+                if (handleTerrainDefaults(generationLock)) {
                     // bump the version(s) on the lock file if needed
                     generationLock.addProperty(TERRAIN_VERSION_KEY, TerrainGenFileProcessor.TERRAIN_GEN_VERSION);
+                    needsWriting = true;
+                }
 
+                if (needsWriting) {
                     try {
                         writeJsonToFile(generationLockPath, generationLock);
                     } catch (IOException e) {
-                        WorldgenModule.logger.warn("Unable to update Worldgen Lock File at Path: {}", generationLockPath);
+                        WorldgenModule.logger.error("Unable to update Worldgen Lock File at Path: " + generationLockPath, e);
                     }
                 }
-            }
-        } else {
-            createLockFile(generationLockPath);
-        }
+            } // FileUtility#tryExtractFromFile handles logging for the else case already
+        } // #createLockFile handles logging for the else case already
     }
 
     /**
@@ -86,7 +91,7 @@ public final class WorldgenConfigReader {
         try {
             Files.createFile(path);
         } catch (IOException e) {
-            WorldgenModule.logger.warn("Failed to create the Worldgen Lock File at Path: {}", path);
+            WorldgenModule.logger.error("Failed to create the Worldgen Lock File at Path: " + path, e);
             return;
         }
 
@@ -100,8 +105,28 @@ public final class WorldgenConfigReader {
         try {
             writeJsonToFile(path, lockContent);
         } catch (IOException e) {
-            WorldgenModule.logger.warn("Failed to write Worldgen Lock File contents to file at Path: {}", path);
+            WorldgenModule.logger.error("Failed to write Worldgen Lock File contents to file at Path: " + path, e);
         }
+    }
+
+    /**
+     * @param generationLock the generation lock file
+     * @return if a lock file update is needed
+     */
+    private static boolean handleTerrainDefaults(@Nonnull JsonObject generationLock) {
+        if (terrainPath == null) return false;
+        JsonElement terrainVersionElement = generationLock.get(TERRAIN_VERSION_KEY);
+        if (terrainVersionElement == null || terrainVersionElement.getAsInt() != TerrainGenFileProcessor.TERRAIN_GEN_VERSION) {
+            MinecraftForge.TERRAIN_GEN_BUS.post(new WorldgenDefaultsEvent(WorldgenDefaultsEvent.Type.TERRAIN_GEN));
+
+            try {
+                TerrainGenDefaults.write(terrainPath);
+            } catch (IOException e) {
+                WorldgenModule.logger.error("Unable to write default Terrain Generation files at Path: " + terrainPath, e);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -112,15 +137,12 @@ public final class WorldgenConfigReader {
      * @throws IOException if errors happen during file i/o
      */
     private static void writeJsonToFile(@Nonnull Path path, @Nonnull JsonObject json) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile()))) {
-            new GsonBuilder().setPrettyPrinting()
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+            new GsonBuilder()
+                    .setPrettyPrinting()
                     .create()
                     .toJson(json, writer);
         }
-    }
-
-    private static void writeTerrainDefaults(@Nonnull Path terrainPath) {
-        //TODO
     }
 
     /**
@@ -135,7 +157,7 @@ public final class WorldgenConfigReader {
             try {
                 Files.createDirectories(gtConfigPath);
             } catch (IOException e) {
-                WorldgenModule.logger.warn("Unable to create GregTech Config Directory at Path: {}", gtConfigPath);
+                WorldgenModule.logger.error("Unable to create GregTech Config Directory at Path: " + gtConfigPath, e);
                 return null;
             }
         }
@@ -154,7 +176,7 @@ public final class WorldgenConfigReader {
             try {
                 Files.createDirectories(worldgenPath);
             } catch (IOException e) {
-                WorldgenModule.logger.warn("Unable to create Worldgen Directory at Path: {}", worldgenPath);
+                WorldgenModule.logger.error("Unable to create Worldgen Directory at Path: " + worldgenPath, e);
                 return null;
             }
         }
@@ -173,7 +195,7 @@ public final class WorldgenConfigReader {
             try {
                 Files.createDirectories(terrainPath);
             } catch (IOException e) {
-                WorldgenModule.logger.warn("Unable to create GregTech Terrain Directory at Path: {}", terrainPath);
+                WorldgenModule.logger.error("Unable to create GregTech Terrain Directory at Path: " + terrainPath, e);
                 return null;
             }
         }

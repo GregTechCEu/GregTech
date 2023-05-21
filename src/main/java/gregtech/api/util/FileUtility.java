@@ -64,13 +64,66 @@ public class FileUtility {
         try {
             return gson.fromJson(Files.newBufferedReader(filePath), clazz);
         } catch (IOException exception) {
-            GTLog.logger.error("Failed to read file on path {}", filePath, exception);
+            GTLog.logger.error("Failed to read file on path " + filePath, exception);
         } catch (JsonParseException exception) {
             GTLog.logger.error("Failed to extract json from file", exception);
         } catch (Exception exception) {
-            GTLog.logger.error("Failed to extract json from file on path {}", filePath, exception);
+            GTLog.logger.error("Failed to extract json from file on path " + filePath, exception);
         }
         return null;
+    }
+
+    /**
+     * Write an object as json
+     *
+     * @param filePath the path to write the file to
+     * @param instance the instance to write
+     * @param clazz the class of the instance
+     * @param <T> the type of the instance
+     */
+    public static <T> void tryWriteObjectAsJson(@Nonnull Path filePath, T instance, Class<T> clazz) {
+        try {
+            tryWriteObjectAsJsonUnchecked(filePath, instance, clazz);
+        } catch (IOException e) {
+            GTLog.logger.error("Failed to write file to path " + filePath, e);
+        } catch (JsonParseException e) {
+            GTLog.logger.error("Failed to convert object to json", e);
+        } catch (Exception e) {
+            GTLog.logger.error("Failed to write json file to path " + filePath, e);
+        }
+    }
+
+    /**
+     * Write an object as json
+     *
+     * @param filePath the path to write the file to
+     * @param instance the instance to write
+     * @param clazz the class of the instance
+     * @param <T> the type of the instance
+     * @throws IOException if errors happen during file i/o
+     */
+    public static <T> void tryWriteObjectAsJsonUnchecked(@Nonnull Path filePath, T instance, Class<T> clazz) throws IOException {
+        JsonObject toWrite = gson.toJsonTree(instance, clazz).getAsJsonObject();
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
+            new GsonBuilder()
+                    .setPrettyPrinting()
+                    .create()
+                    .toJson(toWrite, writer);
+        }
+    }
+
+    /**
+     * @param filePath the path to write the file to
+     * @param object the json to write
+     * @throws IOException if errors happen during file i/o
+     */
+    public static void tryWriteJsonToFile(@Nonnull Path filePath, JsonObject object) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
+            new GsonBuilder()
+                    .setPrettyPrinting()
+                    .create()
+                    .toJson(object, writer);
+        }
     }
 
     public static JsonElement loadJson(File file) {

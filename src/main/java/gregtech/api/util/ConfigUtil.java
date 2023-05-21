@@ -5,11 +5,14 @@ import net.minecraft.block.state.IBlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class ConfigUtil {
+public final class ConfigUtil {
 
     private static final Pattern COLON_PATTERN = Pattern.compile(":");
+
+    private ConfigUtil() {}
 
     /**
      * Get an IBlockState from a block's name.
@@ -38,5 +41,14 @@ public class ConfigUtil {
         }
 
         return replacementBlock.getDefaultState();
+    }
+
+    @Nonnull
+    public static String getBlockStateName(@Nonnull IBlockState state) {
+        Block block = state.getBlock();
+        int metadata = block.getMetaFromState(state);
+        String name = Objects.requireNonNull(block.getRegistryName()).toString();
+        if (metadata != 0) name += ":" + metadata;
+        return name;
     }
 }

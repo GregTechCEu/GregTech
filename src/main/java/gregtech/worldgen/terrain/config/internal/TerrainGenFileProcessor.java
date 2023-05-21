@@ -1,4 +1,4 @@
-package gregtech.worldgen.terrain.config;
+package gregtech.worldgen.terrain.config.internal;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -7,6 +7,8 @@ import gregtech.api.util.FileUtility;
 import gregtech.worldgen.WorldgenModule;
 import gregtech.worldgen.terrain.BlockMapper;
 import gregtech.worldgen.terrain.IBlockMapper;
+import gregtech.worldgen.terrain.config.JsonBlockMapping;
+import gregtech.worldgen.terrain.config.TerrainGenConstants;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
@@ -32,11 +34,7 @@ public final class TerrainGenFileProcessor {
     public static final int TERRAIN_GEN_VERSION = 1;
 
     // general constants
-    private static final String JSON_EXTENSION = ".json";
     private static final Pattern DOT_PATTERN = Pattern.compile("\\.");
-
-    // replacement_entries.json content constants
-    private static final String REPLACEMENT_ENTRIES = "replacement_entries";
 
     /**
      * The path to the terrain folder
@@ -81,7 +79,7 @@ public final class TerrainGenFileProcessor {
      */
     private void gatherJsonInTerrainFolder() {
         try (Stream<Path> files = Files.walk(Paths.get(terrainFolderPath.toUri()))) {
-            terrainFolderContent = files.filter(file -> file.toString().endsWith(JSON_EXTENSION))
+            terrainFolderContent = files.filter(file -> file.toString().endsWith(TerrainGenConstants.JSON_EXTENSION))
                     .filter(Files::isRegularFile)
                     .collect(Collectors.toList());
         } catch (IOException e) {
@@ -97,7 +95,7 @@ public final class TerrainGenFileProcessor {
         for (Path path : terrainFolderContent) {
             String fileName = path.toFile().getName();
             // parse the entries file if found
-            if (fileName.startsWith(REPLACEMENT_ENTRIES)) {
+            if (fileName.startsWith(TerrainGenConstants.REPLACEMENT_ENTRIES)) {
                 replacementEntriesJson = FileUtility.tryExtractFromFile(path);
                 if (replacementEntriesJson == null) {
                     WorldgenModule.logger.error("Unable to parse Block Mapper entries file at Path {}.", path.toString());
@@ -105,9 +103,9 @@ public final class TerrainGenFileProcessor {
                 continue;
             }
 
-            JsonBlockMapping jsonBlockMapper = FileUtility.tryExtractFromFile(path, JsonBlockMapping.class);
-            if (jsonBlockMapper == null) continue;
-            ParsedBlockMapping parsed = jsonBlockMapper.toParsed(path.toString());
+            JsonBlockMapping jsonBlockMapping = FileUtility.tryExtractFromFile(path, JsonBlockMapping.class);
+            if (jsonBlockMapping == null) continue;
+            ParsedBlockMapping parsed = ParsedBlockMapping.fromJson(jsonBlockMapping, path.toString());
             if (parsed == null) continue;
             fileToParsedMapping.put(DOT_PATTERN.split(fileName)[0], parsed);
         }
@@ -162,8 +160,8 @@ public final class TerrainGenFileProcessor {
 
         // merge mappers mapping the same block together
         map.merge(mapperEntry.target, mapperEntry.replacements, (key, value) -> {
-                    value.addAll(mapperEntry.replacements);
-                    return value;
+            value.addAll(mapperEntry.replacements);
+            return value;
         });
     }
 }

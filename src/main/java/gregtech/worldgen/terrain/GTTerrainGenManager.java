@@ -92,7 +92,7 @@ public final class GTTerrainGenManager {
      * Reload the stone types and dimension from the config
      */
     public static void reloadFromConfig() {
-        stoneTypeMappers = WorldgenConfigReader.readMappersFromConfig();
+        stoneTypeMappers = WorldgenConfigReader.readTerrainMappersFromConfig();
         WorldgenModule.logger.info("Loaded terrain generation entries for {} dimensions.", stoneTypeMappers == null ? 0 : stoneTypeMappers.size());
 
         if (stoneTypeMappers == null) {

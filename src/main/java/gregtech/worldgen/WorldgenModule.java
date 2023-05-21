@@ -4,10 +4,12 @@ import gregtech.api.GTValues;
 import gregtech.api.modules.GregTechModule;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
+import gregtech.worldgen.config.internal.GTWorldgenDefaults;
 import gregtech.worldgen.terrain.GTTerrainGenManager;
 import gregtech.worldgen.terrain.VanillaTerrainHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +31,11 @@ public final class WorldgenModule extends BaseGregTechModule {
     @Override
     public Logger getLogger() {
         return logger;
+    }
+
+    @Override
+    public void preInit(FMLPreInitializationEvent event) {
+        GTWorldgenDefaults.init();
     }
 
     @Override
