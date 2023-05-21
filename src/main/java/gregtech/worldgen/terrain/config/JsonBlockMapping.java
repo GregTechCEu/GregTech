@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
- * Json-equivalent form of a single mapping in a {@link gregtech.worldgen.terrain.BlockMapper}
+ * Json-equivalent form of a single mapping in a {@link gregtech.worldgen.terrain.IBlockMapper}
  */
 public class JsonBlockMapping {
 
@@ -15,7 +15,11 @@ public class JsonBlockMapping {
     public String target;
     public String[] replacements;
 
-    JsonBlockMapping() {}
+    /**
+     * Needed for Gson to parse json into an instance of this class
+     */
+    @SuppressWarnings("unused")
+    private JsonBlockMapping() {}
 
     public JsonBlockMapping(@Nonnull IBlockState target, @Nonnull IBlockState... replacements) {
         this.target = ConfigUtil.getBlockStateName(target);

@@ -1,8 +1,9 @@
-package gregtech.worldgen.terrain;
+package gregtech.worldgen.terrain.internal;
 
 import gregtech.api.util.PerlinNoise;
 import gregtech.worldgen.WorldgenModule;
-import gregtech.worldgen.config.WorldgenConfigReader;
+import gregtech.worldgen.config.internal.WorldgenConfigReader;
+import gregtech.worldgen.terrain.IBlockMapper;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.world.World;

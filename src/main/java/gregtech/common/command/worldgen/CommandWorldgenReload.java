@@ -3,7 +3,7 @@ package gregtech.common.command.worldgen;
 import com.google.common.base.Stopwatch;
 import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.WorldGenRegistry;
-import gregtech.worldgen.terrain.GTTerrainGenManager;
+import gregtech.worldgen.terrain.internal.GTTerrainGenManager;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;

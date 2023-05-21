@@ -1,6 +1,7 @@
-package gregtech.worldgen.terrain;
+package gregtech.worldgen.terrain.internal;
 
 import gregtech.api.util.WorldgenUtil;
+import gregtech.worldgen.terrain.IBlockMapper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -17,7 +18,7 @@ public final class TerrainGenWorker {
 
     private final IBlockMapper mapper;
 
-    public TerrainGenWorker(@Nonnull IBlockMapper mapper) {
+    TerrainGenWorker(@Nonnull IBlockMapper mapper) {
         this.mapper = mapper;
     }
 
@@ -29,7 +30,7 @@ public final class TerrainGenWorker {
      * @param startX the starting x block coordinate of the world
      * @param startZ the starting z block coordinate of the world
      */
-    public void generate(@Nonnull World world, @Nonnull Chunk chunk, int startX, int startZ) {
+    void generate(@Nonnull World world, @Nonnull Chunk chunk, int startX, int startZ) {
         final ExtendedBlockStorage[] storages = chunk.getBlockStorageArray();
         final int maxY = world.getActualHeight();
 

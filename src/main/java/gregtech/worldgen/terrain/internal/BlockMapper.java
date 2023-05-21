@@ -1,5 +1,6 @@
-package gregtech.worldgen.terrain;
+package gregtech.worldgen.terrain.internal;
 
+import gregtech.worldgen.terrain.IBlockMapper;
 import net.minecraft.block.state.IBlockState;
 
 import javax.annotation.Nonnull;

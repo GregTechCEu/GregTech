@@ -1,4 +1,4 @@
-package gregtech.worldgen.terrain;
+package gregtech.worldgen.terrain.internal;
 
 import gregtech.common.ConfigHolder;
 import net.minecraftforge.event.terraingen.OreGenEvent;

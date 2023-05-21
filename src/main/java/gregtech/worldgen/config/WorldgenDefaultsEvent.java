@@ -22,7 +22,7 @@ public final class WorldgenDefaultsEvent extends Event {
         return this.type;
     }
 
-    public static enum Type {
+    public enum Type {
         /** <strong>Currently Unused.</strong> */
         ORE_GEN,
         /** <strong>Currently Unused.</strong> */

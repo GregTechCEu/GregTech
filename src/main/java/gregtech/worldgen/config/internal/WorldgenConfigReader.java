@@ -1,4 +1,4 @@
-package gregtech.worldgen.config;
+package gregtech.worldgen.config.internal;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import gregtech.api.GTValues;
 import gregtech.api.util.FileUtility;
 import gregtech.worldgen.WorldgenModule;
+import gregtech.worldgen.config.WorldgenDefaultsEvent;
 import gregtech.worldgen.terrain.IBlockMapper;
 import gregtech.worldgen.terrain.config.TerrainGenDefaults;
 import gregtech.worldgen.terrain.config.internal.TerrainGenFileProcessor;
