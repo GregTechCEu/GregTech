@@ -21,6 +21,9 @@ public interface IGregTechModule {
         return Collections.emptySet();
     }
 
+    default void construction(FMLConstructionEvent event) {
+    }
+
     default void preInit(FMLPreInitializationEvent event) {
     }
 

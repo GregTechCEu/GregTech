@@ -1,60 +1,16 @@
-package gregtech.api.util;
+package gregtech.integration.crafttweaker;
 
 import crafttweaker.mc1120.data.NBTConverter;
-import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
-import gregtech.common.blocks.BlockCompressed;
-import gregtech.common.blocks.BlockFrame;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemBlock;
+import gregtech.integration.IntegrationModule;
+import gregtech.integration.RecipeCompatUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
-
 public class CTRecipeHelper {
-
-    @Nullable
-    public static String getMetaItemId(ItemStack item) {
-        if (item.getItem() instanceof MetaItem) {
-            MetaItem<?>.MetaValueItem metaValueItem = ((MetaItem<?>) item.getItem()).getItem(item);
-            if (metaValueItem != null) return metaValueItem.unlocalizedName;
-        }
-        if (item.getItem() instanceof ItemBlock) {
-            Block block = ((ItemBlock) item.getItem()).getBlock();
-            if (item.getItem() instanceof MachineItemBlock) {
-                MetaTileEntity mte = GTUtility.getMetaTileEntity(item);
-                if (mte != null) {
-                    return (mte.metaTileEntityId.getNamespace().equals("gregtech") ? mte.metaTileEntityId.getPath() : mte.metaTileEntityId.toString());
-                }
-            }
-            if (block instanceof BlockCompressed) {
-                return "block" + ((BlockCompressed) block).getGtMaterial(item).toCamelCaseString();
-            }
-            if (block instanceof BlockFrame) {
-                return "frame" + ((BlockFrame) block).getGtMaterial(item).toCamelCaseString();
-            }
-            if (block instanceof BlockMaterialPipe) {
-                return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(item).toCamelCaseString();
-            }
-        }
-        return null;
-    }
-
-    public static String getItemIdFor(ItemStack item) {
-        String id = getMetaItemId(item);
-        if (id != null)
-            return id;
-        if (item.getItem().getRegistryName() == null)
-            return "null";
-        return item.getItem().getRegistryName().toString();
-    }
 
     public static String getRecipeRemoveLine(RecipeMap<?> recipeMap, Recipe recipe) {
         StringBuilder builder = new StringBuilder();
@@ -143,7 +99,7 @@ public class CTRecipeHelper {
             builder.append(".outputs(");
             builder.append("[");
             for (ItemStack itemStack : recipe.getOutputs()) {
-                String itemId = getMetaItemId(itemStack);
+                String itemId = RecipeCompatUtil.getMetaItemId(itemStack);
                 if (itemId != null) {
                     builder.append("<metaitem:")
                             .append(itemId)
@@ -196,7 +152,7 @@ public class CTRecipeHelper {
         ItemStack itemStack = null;
         String itemId = null;
         for (ItemStack item : recipeInput.getInputStacks()) {
-            itemId = getMetaItemId(item);
+            itemId = RecipeCompatUtil.getMetaItemId(item);
             if (itemId != null) {
                 builder.append("<metaitem:")
                         .append(itemId)
@@ -210,7 +166,7 @@ public class CTRecipeHelper {
         if (itemStack != null) {
             if (itemId == null) {
                 if (itemStack.getItem().getRegistryName() == null) {
-                    GTLog.logger.info("Could not remove recipe {}, because of unregistered Item", builder);
+                    IntegrationModule.logger.info("Could not remove recipe {}, because of unregistered Item", builder);
                     return null;
                 }
                 builder.append("<")

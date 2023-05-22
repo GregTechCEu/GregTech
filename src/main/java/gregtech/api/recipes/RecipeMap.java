@@ -9,6 +9,7 @@ import crafttweaker.api.minecraft.CraftTweakerMC;
 import gnu.trove.map.TByteObjectMap;
 import gnu.trove.map.hash.TByteObjectHashMap;
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
@@ -18,6 +19,7 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.integration.crafttweaker.CTRecipeHelper;
 import gregtech.integration.crafttweaker.recipe.CTRecipe;
 import gregtech.integration.crafttweaker.recipe.CTRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -27,8 +29,9 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
-import gregtech.integration.groovy.GroovyScriptCompat;
+import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.integration.groovy.VirtualizedRecipeMap;
+import gregtech.modules.GregTechModules;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -185,7 +188,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.recipeBuilderSample = defaultRecipeBuilder;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
 
-        this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
+        this.virtualizedRecipeMap = GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS)
+                ? new VirtualizedRecipeMap(this) : null;
     }
 
 
@@ -304,7 +308,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public boolean removeRecipe(@Nonnull Recipe recipe) {
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         if (recurseIngredientTreeRemove(recipe, items, lookup, 0) != null) {
-            if (GroovyScriptCompat.isCurrentlyRunning()) {
+            if (GroovyScriptModule.isCurrentlyRunning()) {
                 this.virtualizedRecipeMap.addBackup(recipe);
             }
             return true;

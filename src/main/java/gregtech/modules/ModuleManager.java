@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.*;
 
 public class ModuleManager implements IModuleManager {
@@ -75,10 +76,10 @@ public class ModuleManager implements IModuleManager {
         containers.put(container.getID(), container);
     }
 
-    public void setup(FMLPreInitializationEvent event) {
+    public void setup(ASMDataTable asmDataTable, File configDirectory) {
         currentStage = ModuleStage.M_SETUP;
-        //configFolder = new File(event.getModConfigurationDirectory(), GTValues.MODID);
-        Map<String, List<IGregTechModule>> modules = getModules(event.getAsmData());
+        //configFolder = new File(configDirectory, GTValues.MODID);
+        Map<String, List<IGregTechModule>> modules = getModules(asmDataTable);
         configureModules(modules);
 
         for (IGregTechModule module : loadedModules) {
@@ -87,6 +88,16 @@ public class ModuleManager implements IModuleManager {
             for (Class<?> clazz : module.getEventBusSubscribers()) {
                 MinecraftForge.EVENT_BUS.register(clazz);
             }
+        }
+    }
+
+    public void onConstruction(FMLConstructionEvent event) {
+        currentStage = ModuleStage.CONSTRUCTION;
+        for (IGregTechModule module : loadedModules) {
+            currentContainer = containers.get(getContainerID(module));
+            module.getLogger().debug("Construction start");
+            module.construction(event);
+            module.getLogger().debug("Construction complete");
         }
     }
 
