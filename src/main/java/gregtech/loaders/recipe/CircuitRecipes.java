@@ -651,7 +651,7 @@ public class CircuitRecipes {
                 STICKY_RESIN.getStackForm(),
                 STICKY_RESIN.getStackForm());
 
-        ModHandler.addShapedRecipe("basic_circuit_board", BASIC_CIRCUIT_BOARD.getStackForm(),
+        ModHandler.addShapedRecipe("primitive_circuit_board", PRIMITIVE_CIRCUIT_BOARD.getStackForm(),
                 "WWW", "WBW", "WWW",
                 'W', new UnificationEntry(wireGtSingle, Copper),
                 'B', COATED_BOARD.getStackForm());
@@ -661,7 +661,7 @@ public class CircuitRecipes {
                 .input(foil, Copper, 4)
                 .input(plate, Wood)
                 .fluidInputs(Glue.getFluid(100))
-                .output(BASIC_CIRCUIT_BOARD)
+                .output(PRIMITIVE_CIRCUIT_BOARD)
                 .duration(200).EUt(VA[ULV]).buildAndRegister();
 
         // Phenolic Board
@@ -673,7 +673,7 @@ public class CircuitRecipes {
                 .duration(30).EUt(VA[ULV]).buildAndRegister();
 
         // Good Circuit Board
-        ModHandler.addShapedRecipe("good_circuit_board", GOOD_CIRCUIT_BOARD.getStackForm(),
+        ModHandler.addShapedRecipe("basic_circuit_board", BASIC_CIRCUIT_BOARD.getStackForm(),
                 "WWW", "WBW", "WWW",
                 'W', new UnificationEntry(wireGtSingle, Silver),
                 'B', PHENOLIC_BOARD.getStackForm());
@@ -682,14 +682,14 @@ public class CircuitRecipes {
                 .input(foil, Silver, 4)
                 .input(PHENOLIC_BOARD)
                 .fluidInputs(SodiumPersulfate.getFluid(200))
-                .output(GOOD_CIRCUIT_BOARD)
+                .output(BASIC_CIRCUIT_BOARD)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(300)
                 .input(foil, Silver, 4)
                 .input(PHENOLIC_BOARD)
                 .fluidInputs(Iron3Chloride.getFluid(100))
-                .output(GOOD_CIRCUIT_BOARD)
+                .output(BASIC_CIRCUIT_BOARD)
                 .buildAndRegister();
 
         // Plastic Board
@@ -726,14 +726,14 @@ public class CircuitRecipes {
                 .input(PLASTIC_BOARD)
                 .input(foil, Copper, 6)
                 .fluidInputs(SodiumPersulfate.getFluid(500))
-                .output(PLASTIC_CIRCUIT_BOARD)
+                .output(GOOD_CIRCUIT_BOARD)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(600).EUt(VA[LV])
                 .input(PLASTIC_BOARD)
                 .input(foil, Copper, 6)
                 .fluidInputs(Iron3Chloride.getFluid(250))
-                .output(PLASTIC_CIRCUIT_BOARD)
+                .output(GOOD_CIRCUIT_BOARD)
                 .buildAndRegister();
 
         // Epoxy Board
@@ -882,11 +882,11 @@ public class CircuitRecipes {
                 'R', RESISTOR.getStackForm(),
                 'P', new UnificationEntry(plate, Steel),
                 'V', VACUUM_TUBE.getStackForm(),
-                'B', BASIC_CIRCUIT_BOARD.getStackForm(),
+                'B', PRIMITIVE_CIRCUIT_BOARD.getStackForm(),
                 'C', new UnificationEntry(cableGtSingle, RedAlloy));
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(16).duration(200)
-                .input(BASIC_CIRCUIT_BOARD)
+                .input(PRIMITIVE_CIRCUIT_BOARD)
                 .input(component, Component.Resistor, 2)
                 .input(wireGtSingle, RedAlloy, 2)
                 .input(circuit, Tier.ULV, 2)
@@ -899,11 +899,11 @@ public class CircuitRecipes {
                 'W', new UnificationEntry(wireGtSingle, Copper),
                 'P', new UnificationEntry(plate, Steel),
                 'C', ELECTRONIC_CIRCUIT_LV.getStackForm(),
-                'B', GOOD_CIRCUIT_BOARD.getStackForm(),
+                'B', BASIC_CIRCUIT_BOARD.getStackForm(),
                 'D', DIODE.getStackForm());
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).duration(300)
-                .input(GOOD_CIRCUIT_BOARD)
+                .input(BASIC_CIRCUIT_BOARD)
                 .input(circuit, Tier.LV, 2)
                 .input(component, Component.Diode, 2)
                 .input(wireGtSingle, Copper, 2)
@@ -914,7 +914,7 @@ public class CircuitRecipes {
 
         // LV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(16).duration(200)
-                .input(BASIC_CIRCUIT_BOARD)
+                .input(PRIMITIVE_CIRCUIT_BOARD)
                 .input(INTEGRATED_LOGIC_CIRCUIT)
                 .input(component, Component.Resistor, 2)
                 .input(component, Component.Diode, 2)
@@ -925,7 +925,7 @@ public class CircuitRecipes {
 
         // MV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(24).duration(400)
-                .input(GOOD_CIRCUIT_BOARD)
+                .input(BASIC_CIRCUIT_BOARD)
                 .input(INTEGRATED_CIRCUIT_LV, 2)
                 .input(component, Component.Resistor, 2)
                 .input(component, Component.Diode, 2)
@@ -949,7 +949,7 @@ public class CircuitRecipes {
 
         // NAND Chip ULV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[MV]).duration(300)
-                .input(GOOD_CIRCUIT_BOARD)
+                .input(BASIC_CIRCUIT_BOARD)
                 .input(SIMPLE_SYSTEM_ON_CHIP)
                 .input(bolt, RedAlloy, 2)
                 .input(wireFine, Tin, 2)
@@ -957,7 +957,7 @@ public class CircuitRecipes {
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[MV]).duration(300)
-                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(GOOD_CIRCUIT_BOARD)
                 .input(SIMPLE_SYSTEM_ON_CHIP)
                 .input(bolt, RedAlloy, 2)
                 .input(wireFine, Tin, 2)
@@ -966,22 +966,22 @@ public class CircuitRecipes {
 
         // Microprocessor LV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(60).duration(200)
-                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(GOOD_CIRCUIT_BOARD)
                 .input(CENTRAL_PROCESSING_UNIT)
                 .input(component, Component.Resistor, 2)
                 .input(component, Component.Capacitor, 2)
                 .input(component, Component.Transistor, 2)
                 .input(wireFine, Copper, 2)
-                .output(MICROPROCESSOR_LV, 3)
+                .output(MICROCONTROLLER_LV, 3)
                 .buildAndRegister();
 
         // Microprocessor LV SoC
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(600).duration(50)
-                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(GOOD_CIRCUIT_BOARD)
                 .input(SYSTEM_ON_CHIP)
                 .input(wireFine, Copper, 2)
                 .input(bolt, Tin, 2)
-                .output(MICROPROCESSOR_LV, 6)
+                .output(MICROCONTROLLER_LV, 6)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
@@ -989,46 +989,46 @@ public class CircuitRecipes {
 
         // MV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(60).duration(200)
-                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(GOOD_CIRCUIT_BOARD)
                 .input(CENTRAL_PROCESSING_UNIT)
                 .input(component, Component.Resistor, 4)
                 .input(component, Component.Capacitor, 4)
                 .input(component, Component.Transistor, 4)
                 .input(wireFine, RedAlloy, 4)
-                .output(PROCESSOR_MV, 2)
+                .output(MICRO_PROCESSOR_MV, 2)
                 .buildAndRegister();
 
         // MV SoC
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(2400).duration(50)
-                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(GOOD_CIRCUIT_BOARD)
                 .input(SYSTEM_ON_CHIP)
                 .input(wireFine, RedAlloy, 4)
                 .input(bolt, AnnealedCopper, 4)
-                .output(PROCESSOR_MV, 4)
+                .output(MICRO_PROCESSOR_MV, 4)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // HV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[MV]).duration(400)
-                .input(PLASTIC_CIRCUIT_BOARD)
-                .input(PROCESSOR_MV, 2)
+                .input(GOOD_CIRCUIT_BOARD)
+                .input(MICRO_PROCESSOR_MV, 2)
                 .input(component, Component.Inductor, 4)
                 .input(component, Component.Capacitor, 8)
                 .input(RANDOM_ACCESS_MEMORY, 4)
                 .input(wireFine, RedAlloy, 8)
-                .output(PROCESSOR_ASSEMBLY_HV, 2)
+                .output(MICRO_PROCESSOR_ASSEMBLY_HV, 2)
                 .solderMultiplier(2)
                 .buildAndRegister();
 
         // EV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[MV]).duration(400)
-                .input(PLASTIC_CIRCUIT_BOARD)
-                .input(PROCESSOR_ASSEMBLY_HV, 2)
+                .input(GOOD_CIRCUIT_BOARD)
+                .input(MICRO_PROCESSOR_ASSEMBLY_HV, 2)
                 .input(component, Component.Diode, 4)
                 .input(RANDOM_ACCESS_MEMORY, 4)
                 .input(wireFine, Electrum, 16)
                 .input(bolt, BlueAlloy, 16)
-                .output(WORKSTATION_EV)
+                .output(MICRO_COMPUTER_EV)
                 .solderMultiplier(2)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
@@ -1036,24 +1036,24 @@ public class CircuitRecipes {
         // IV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[HV]).duration(800)
                 .input(frameGt, Aluminium, 2)
-                .input(WORKSTATION_EV, 2)
+                .input(MICRO_COMPUTER_EV, 2)
                 .input(component, Component.Inductor, 8)
                 .input(component, Component.Capacitor, 16)
                 .input(RANDOM_ACCESS_MEMORY, 16)
                 .input(wireGtSingle, AnnealedCopper, 16)
-                .output(MAINFRAME_IV)
+                .output(MICRO_MAINFRAME_IV)
                 .solderMultiplier(4)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[HV]).duration(400)
                 .input(frameGt, Aluminium, 2)
-                .input(WORKSTATION_EV, 2)
+                .input(MICRO_COMPUTER_EV, 2)
                 .input(ADVANCED_SMD_INDUCTOR, 2)
                 .input(ADVANCED_SMD_CAPACITOR, 4)
                 .input(RANDOM_ACCESS_MEMORY, 16)
                 .input(wireGtSingle, AnnealedCopper, 16)
-                .output(MAINFRAME_IV)
+                .output(MICRO_MAINFRAME_IV)
                 .solderMultiplier(4)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
@@ -1428,7 +1428,7 @@ public class CircuitRecipes {
 
         // Data Stick
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
-                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(GOOD_CIRCUIT_BOARD)
                 .input(CENTRAL_PROCESSING_UNIT, 2)
                 .input(NAND_MEMORY_CHIP, 32)
                 .input(RANDOM_ACCESS_MEMORY, 4)

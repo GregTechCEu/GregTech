@@ -338,9 +338,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem MULTILAYER_FIBER_BOARD;
     public static MetaItem<?>.MetaValueItem WETWARE_BOARD;
 
+    public static MetaItem<?>.MetaValueItem PRIMITIVE_CIRCUIT_BOARD;
     public static MetaItem<?>.MetaValueItem BASIC_CIRCUIT_BOARD;
     public static MetaItem<?>.MetaValueItem GOOD_CIRCUIT_BOARD;
-    public static MetaItem<?>.MetaValueItem PLASTIC_CIRCUIT_BOARD;
     public static MetaItem<?>.MetaValueItem ADVANCED_CIRCUIT_BOARD;
     public static MetaItem<?>.MetaValueItem EXTREME_CIRCUIT_BOARD;
     public static MetaItem<?>.MetaValueItem ELITE_CIRCUIT_BOARD;
@@ -375,13 +375,13 @@ public final class MetaItems {
 
     // ULV/LV easier circuits
     public static MetaItem<?>.MetaValueItem NAND_CHIP_ULV;
-    public static MetaItem<?>.MetaValueItem MICROPROCESSOR_LV;
+    public static MetaItem<?>.MetaValueItem MICROCONTROLLER_LV;
 
-    // T3: Processor
-    public static MetaItem<?>.MetaValueItem PROCESSOR_MV;
-    public static MetaItem<?>.MetaValueItem PROCESSOR_ASSEMBLY_HV;
-    public static MetaItem<?>.MetaValueItem WORKSTATION_EV;
-    public static MetaItem<?>.MetaValueItem MAINFRAME_IV;
+    // T3: Micro
+    public static MetaItem<?>.MetaValueItem MICRO_PROCESSOR_MV;
+    public static MetaItem<?>.MetaValueItem MICRO_PROCESSOR_ASSEMBLY_HV;
+    public static MetaItem<?>.MetaValueItem MICRO_COMPUTER_EV;
+    public static MetaItem<?>.MetaValueItem MICRO_MAINFRAME_IV;
 
     // T4: Nano
     public static MetaItem<?>.MetaValueItem NANO_PROCESSOR_HV;

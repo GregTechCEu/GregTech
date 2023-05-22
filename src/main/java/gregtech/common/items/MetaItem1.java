@@ -617,9 +617,9 @@ public class MetaItem1 extends StandardMetaItem {
         WETWARE_BOARD = addItem(387, "board.wetware");
 
         // Finished Circuit Boards: ID 401-420
-        BASIC_CIRCUIT_BOARD = addItem(401, "circuit_board.basic");
-        GOOD_CIRCUIT_BOARD = addItem(402, "circuit_board.good");
-        PLASTIC_CIRCUIT_BOARD = addItem(403, "circuit_board.plastic");
+        PRIMITIVE_CIRCUIT_BOARD = addItem(401, "circuit_board.primitive");
+        BASIC_CIRCUIT_BOARD = addItem(402, "circuit_board.basic");
+        GOOD_CIRCUIT_BOARD = addItem(403, "circuit_board.good");
         ADVANCED_CIRCUIT_BOARD = addItem(404, "circuit_board.advanced");
         EXTREME_CIRCUIT_BOARD = addItem(405, "circuit_board.extreme");
         ELITE_CIRCUIT_BOARD = addItem(406, "circuit_board.elite");
@@ -783,13 +783,13 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Misc Unlocks
         NAND_CHIP_ULV = addItem(626, "circuit.nand_chip").setUnificationData(OrePrefix.circuit, Tier.ULV);
-        MICROPROCESSOR_LV = addItem(627, "circuit.microprocessor").setUnificationData(OrePrefix.circuit, Tier.LV);
+        MICROCONTROLLER_LV = addItem(627, "circuit.microcontroller").setUnificationData(OrePrefix.circuit, Tier.LV);
 
         // T3: Processor
-        PROCESSOR_MV = addItem(628, "circuit.processor").setUnificationData(OrePrefix.circuit, Tier.MV);
-        PROCESSOR_ASSEMBLY_HV = addItem(629, "circuit.assembly").setUnificationData(OrePrefix.circuit, Tier.HV);
-        WORKSTATION_EV = addItem(630, "circuit.workstation").setUnificationData(OrePrefix.circuit, Tier.EV);
-        MAINFRAME_IV = addItem(631, "circuit.mainframe").setUnificationData(OrePrefix.circuit, Tier.IV);
+        MICRO_PROCESSOR_MV = addItem(628, "circuit.micro_processor").setUnificationData(OrePrefix.circuit, Tier.MV);
+        MICRO_PROCESSOR_ASSEMBLY_HV = addItem(629, "circuit.micro_assembly").setUnificationData(OrePrefix.circuit, Tier.HV);
+        MICRO_COMPUTER_EV = addItem(630, "circuit.micro_computer").setUnificationData(OrePrefix.circuit, Tier.EV);
+        MICRO_MAINFRAME_IV = addItem(631, "circuit.micro_mainframe").setUnificationData(OrePrefix.circuit, Tier.IV);
 
         // T4: Nano
         NANO_PROCESSOR_HV = addItem(632, "circuit.nano_processor").setUnificationData(OrePrefix.circuit, Tier.HV);
