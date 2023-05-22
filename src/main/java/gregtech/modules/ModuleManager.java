@@ -239,19 +239,6 @@ public class ModuleManager implements IModuleManager {
                     toLoad.remove(new ResourceLocation(moduleID));
                     logger.info("Module {} is missing at least one of module dependencies: {}, skipping loading...", moduleID, dependencies);
                 }
-
-                // Check mod dependencies
-                Set<String> modDependencies = module.getModDependencyIDs();
-                for (String modid : modDependencies) {
-                    if (!Loader.isModLoaded(modid)) {
-                        iterator.remove();
-                        changed = true;
-                        GregTechModule annotation = module.getClass().getAnnotation(GregTechModule.class);
-                        String moduleID = annotation.moduleID();
-                        toLoad.remove(new ResourceLocation(moduleID));
-                        logger.info("Module {} is missing at least one of mod dependencies: {}, skipping loading...", moduleID, modDependencies);
-                    }
-                }
             }
         } while (changed);
 
@@ -308,11 +295,17 @@ public class ModuleManager implements IModuleManager {
         Set<ASMDataTable.ASMData> dataSet = table.getAll(GregTechModule.class.getCanonicalName());
         List<IGregTechModule> instances = new ArrayList<>();
         for (ASMDataTable.ASMData data : dataSet) {
-            try {
-                Class<?> clazz = Class.forName(data.getClassName());
-                instances.add((IGregTechModule) clazz.newInstance());
-            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-                logger.error("Could not initialize module " + data.getAnnotationInfo().get("moduleID"), e);
+            String moduleID = (String) data.getAnnotationInfo().get("moduleID");
+            String[] modDependencies = (String[]) data.getAnnotationInfo().get("modDependencies");
+            if (modDependencies.length == 0 || Arrays.stream(modDependencies).allMatch(Loader::isModLoaded)) {
+                try {
+                    Class<?> clazz = Class.forName(data.getClassName());
+                    instances.add((IGregTechModule) clazz.newInstance());
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+                    logger.error("Could not initialize module " + moduleID, e);
+                }
+            } else {
+                logger.info("Module {} is missing at least one of mod dependencies: {}, skipping loading...", moduleID, modDependencies);
             }
         }
         return instances;

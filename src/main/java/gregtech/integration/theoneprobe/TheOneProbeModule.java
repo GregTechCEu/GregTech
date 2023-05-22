@@ -9,23 +9,14 @@ import mcjty.theoneprobe.TheOneProbe;
 import mcjty.theoneprobe.api.ITheOneProbe;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.Set;
-
 @GregTechModule(
         moduleID = GregTechModules.MODULE_TOP,
         containerID = GTValues.MODID,
+        modDependencies = GTValues.MODID_TOP,
         name = "GregTech TheOneProbe Integration",
         descriptionKey = "gregtech.modules.top_integration.description"
 )
 public class TheOneProbeModule extends IntegrationSubmodule {
-
-    @Nonnull
-    @Override
-    public Set<String> getModDependencyIDs() {
-        return Collections.singleton(GTValues.MODID_TOP);
-    }
 
     @Override
     public void init(FMLInitializationEvent event) {

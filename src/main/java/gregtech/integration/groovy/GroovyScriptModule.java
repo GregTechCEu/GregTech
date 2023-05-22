@@ -38,10 +38,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import static gregtech.api.GregTechAPI.MATERIAL_REGISTRY;
@@ -49,6 +47,7 @@ import static gregtech.api.GregTechAPI.MATERIAL_REGISTRY;
 @GregTechModule(
         moduleID = GregTechModules.MODULE_GRS,
         containerID = GTValues.MODID,
+        modDependencies = GTValues.MODID_GROOVYSCRIPT,
         name = "GregTech GroovyScript Integration",
         descriptionKey = "gregtech.modules.grs_integration.description"
 )
@@ -56,12 +55,6 @@ public class GroovyScriptModule extends IntegrationSubmodule {
 
     private static ModSupport.Container<Container> modSupportContainer;
     private static final Map<String, ItemStack> metaItems = new Object2ObjectOpenHashMap<>();
-
-    @Nonnull
-    @Override
-    public Set<String> getModDependencyIDs() {
-        return Collections.singleton(GTValues.MODID_GROOVYSCRIPT);
-    }
 
     @Nonnull
     @Override

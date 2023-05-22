@@ -17,7 +17,6 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -56,9 +55,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -67,6 +64,7 @@ import java.util.stream.Stream;
 @GregTechModule(
         moduleID = GregTechModules.MODULE_JEI,
         containerID = GTValues.MODID,
+        modDependencies = GTValues.MODID_JEI,
         name = "GregTech JEI Integration",
         descriptionKey = "gregtech.modules.jei_integration.description"
 )
@@ -75,12 +73,6 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
     public static IIngredientRegistry ingredientRegistry;
     public static IJeiRuntime jeiRuntime;
     public static IGuiHelper guiHelper;
-
-    @Nonnull
-    @Override
-    public Set<String> getModDependencyIDs() {
-        return Collections.singleton(GTValues.MODID_JEI);
-    }
 
     @Override
     public void loadComplete(FMLLoadCompleteEvent event) {

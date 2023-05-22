@@ -27,10 +27,6 @@ public abstract class IntegrationSubmodule extends BaseGregTechModule {
 
     @Nonnull
     @Override
-    public abstract Set<String> getModDependencyIDs();
-
-    @Nonnull
-    @Override
     public Set<ResourceLocation> getDependencyUids() {
         return DEPENDENCY_UID;
     }

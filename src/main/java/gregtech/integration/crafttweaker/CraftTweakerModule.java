@@ -20,23 +20,17 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @GregTechModule(
         moduleID = GregTechModules.MODULE_CT,
         containerID = GTValues.MODID,
+        modDependencies = GTValues.MODID_CT,
         name = "GregTech CraftTweaker Integration",
         descriptionKey = "gregtech.modules.ct_integration.description"
 )
 public class CraftTweakerModule extends IntegrationSubmodule {
 
     public static MetaOreDictItem CT_OREDICT_ITEM;
-
-    @Nonnull
-    @Override
-    public Set<String> getModDependencyIDs() {
-        return Collections.singleton(GTValues.MODID_CT);
-    }
 
     @Nonnull
     @Override
