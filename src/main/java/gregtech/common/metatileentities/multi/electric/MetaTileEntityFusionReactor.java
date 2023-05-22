@@ -323,7 +323,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         @Override
         public void updateWorkable() {
             super.updateWorkable();
-            if (!isActive && heat > 0) {
+            if (!(isActive || isWorkingEnabled()) && heat > 0) {
                 heat = heat <= 10000 ? 0 : (heat - 10000);
             }
         }
