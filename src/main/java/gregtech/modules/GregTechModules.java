@@ -11,6 +11,8 @@ public class GregTechModules implements IModuleContainer {
     // Integration modules
     public static final String MODULE_JEI = "jei_integration";
     public static final String MODULE_TOP = "top_integration";
+    public static final String MODULE_CT  = "ct_integration";
+    public static final String MODULE_GRS = "grs_integration";
 
     @Override
     public String getID() {

@@ -1,4 +1,4 @@
-package gregtech.api.recipes.crafttweaker;
+package gregtech.integration.crafttweaker.recipe;
 
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;

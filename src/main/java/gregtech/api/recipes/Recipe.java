@@ -9,7 +9,7 @@ import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
-import gregtech.integration.groovy.GroovyScriptCompat;
+import gregtech.integration.groovy.GroovyScriptModule;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -106,7 +106,7 @@ public class Recipe {
         this.hidden = hidden;
         this.isCTRecipe = isCTRecipe;
         this.hashCode = makeHashCode();
-        this.groovyRecipe = GroovyScriptCompat.isCurrentlyRunning();
+        this.groovyRecipe = GroovyScriptModule.isCurrentlyRunning();
     }
 
     public Recipe copy() {

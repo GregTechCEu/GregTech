@@ -1,4 +1,4 @@
-package gregtech.api.recipes.crafttweaker;
+package gregtech.integration.crafttweaker.recipe;
 
 import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -8,6 +8,7 @@ import static gregtech.integration.jei.multiblock.MultiblockInfoCategory.REGISTE
 
 @ZenClass("mods.gregtech.general.utils")
 @ZenRegister
+@SuppressWarnings("unused")
 public class CTUtilities {
 
     // TODO YEET

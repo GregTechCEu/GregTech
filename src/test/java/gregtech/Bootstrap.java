@@ -7,6 +7,7 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.MetaItems;
+import gregtech.modules.ModuleManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.Locale;
 import net.minecraft.network.INetHandler;
@@ -57,6 +58,7 @@ public final class Bootstrap {
         ModMetadata meta = new ModMetadata();
         meta.modId = GTValues.MODID;
         Loader.instance().setupTestHarness(new DummyModContainer(meta));
+        GregTechAPI.moduleManager = ModuleManager.getInstance();
 
         GregTechAPI.MATERIAL_REGISTRY.unfreeze();
         Materials.register();

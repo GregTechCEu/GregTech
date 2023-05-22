@@ -1,4 +1,4 @@
-package gregtech.api.unification.crafttweaker;
+package gregtech.integration.crafttweaker.material;
 
 import com.google.common.collect.ImmutableList;
 import crafttweaker.CraftTweakerAPI;

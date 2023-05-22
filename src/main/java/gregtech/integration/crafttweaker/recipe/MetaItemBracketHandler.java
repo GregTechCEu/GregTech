@@ -1,4 +1,4 @@
-package gregtech.api.recipes.crafttweaker;
+package gregtech.integration.crafttweaker.recipe;
 
 import com.cleanroommc.groovyscript.api.GroovyLog;
 import crafttweaker.CraftTweakerAPI;
@@ -16,7 +16,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
-import gregtech.integration.groovy.GroovyScriptCompat;
+import gregtech.integration.groovy.GroovyScriptModule;
 import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
@@ -86,12 +86,14 @@ public class MetaItemBracketHandler implements IBracketHandler {
         if ((item = MetaTileEntityBracketHandler.getMetaTileEntityItem(name)) != null) {
             return item.copy();
         }
-        if (GroovyScriptCompat.isCurrentlyRunning()) {
+        if (GroovyScriptModule.isCurrentlyRunning()) {
             GroovyLog.get().error("Could not resolve metaitem('{}')", name);
         }
         return ItemStack.EMPTY;
     }
 
+    // referenced via this class's constructor
+    @SuppressWarnings("unused")
     public static IItemStack getCtMetaItem(String name) {
         ItemStack itemStack = getMetaItem(name);
         if (itemStack.isEmpty()) {

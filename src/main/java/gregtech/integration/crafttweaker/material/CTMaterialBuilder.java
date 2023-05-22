@@ -1,4 +1,4 @@
-package gregtech.api.unification.crafttweaker;
+package gregtech.integration.crafttweaker.material;
 
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.enchantments.IEnchantment;
@@ -18,8 +18,8 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenConstructor;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateComponentList;
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidTypeNoPlasma;
+import static gregtech.integration.crafttweaker.material.CTMaterialHelpers.validateComponentList;
+import static gregtech.integration.crafttweaker.material.CTMaterialHelpers.validateFluidTypeNoPlasma;
 
 @ZenClass("mods.gregtech.material.MaterialBuilder")
 @ZenRegister

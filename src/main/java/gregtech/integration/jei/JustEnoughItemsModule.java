@@ -9,6 +9,7 @@ import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
+import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
@@ -16,7 +17,6 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -24,6 +24,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.jei.basic.*;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
 import gregtech.integration.jei.recipe.*;
@@ -31,6 +32,7 @@ import gregtech.integration.jei.utils.MachineSubtypeHandler;
 import gregtech.integration.jei.utils.MetaItemSubtypeHandler;
 import gregtech.integration.jei.utils.ModularUIGuiHandler;
 import gregtech.integration.jei.utils.MultiblockInfoRecipeFocusShower;
+import gregtech.modules.GregTechModules;
 import mezz.jei.Internal;
 import mezz.jei.api.*;
 import mezz.jei.api.ingredients.IIngredientRegistry;
@@ -47,6 +49,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
@@ -57,15 +61,29 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @JEIPlugin
-public class GTJeiPlugin implements IModPlugin {
+@GregTechModule(
+        moduleID = GregTechModules.MODULE_JEI,
+        containerID = GTValues.MODID,
+        modDependencies = GTValues.MODID_JEI,
+        name = "GregTech JEI Integration",
+        descriptionKey = "gregtech.modules.jei_integration.description"
+)
+public class JustEnoughItemsModule extends IntegrationSubmodule implements IModPlugin {
 
     public static IIngredientRegistry ingredientRegistry;
     public static IJeiRuntime jeiRuntime;
     public static IGuiHelper guiHelper;
 
     @Override
+    public void loadComplete(FMLLoadCompleteEvent event) {
+        if (event.getSide() == Side.CLIENT) {
+            setupInputHandler();
+        }
+    }
+
+    @Override
     public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
-        GTJeiPlugin.jeiRuntime = jeiRuntime;
+        JustEnoughItemsModule.jeiRuntime = jeiRuntime;
     }
 
     @Override
@@ -239,7 +257,7 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addIngredientInfo(new ItemStack(MetaBlocks.BRITTLE_CHARCOAL), VanillaTypes.ITEM, I18n.format("tile.brittle_charcoal.tooltip.1", I18n.format("tile.brittle_charcoal.tooltip.2")));
     }
 
-    public static void setupInputHandler() {
+    private void setupInputHandler() {
         try {
             Field inputHandlerField = Internal.class.getDeclaredField("inputHandler");
             inputHandlerField.setAccessible(true);
@@ -249,11 +267,11 @@ public class GTJeiPlugin implements IModPlugin {
             showsRecipeFocuses.add(new MultiblockInfoRecipeFocusShower());
 
         } catch (Exception e) {
-            GTLog.logger.error("Could not reflect JEI Internal inputHandler", e);
+            getLogger().error("Could not reflect JEI Internal inputHandler", e);
         }
     }
 
-    private static void registerRecipeMapCatalyst(IModRegistry registry, RecipeMap<?> recipeMap, MetaTileEntity metaTileEntity) {
+    private void registerRecipeMapCatalyst(IModRegistry registry, RecipeMap<?> recipeMap, MetaTileEntity metaTileEntity) {
         registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
         if (recipeMap instanceof RecipeMapFurnace) {
             registry.addRecipeCatalyst(metaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
