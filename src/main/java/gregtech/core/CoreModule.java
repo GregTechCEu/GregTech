@@ -47,7 +47,6 @@ import gregtech.core.network.internal.NetworkHandler;
 import gregtech.core.network.packets.*;
 import gregtech.core.sound.GTSoundEvents;
 import gregtech.core.sound.internal.SoundManager;
-import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;
 import net.minecraft.block.state.IBlockState;
@@ -198,11 +197,6 @@ public class CoreModule implements IGregTechModule {
                 logger.fatal("Report to GTCEu GitHub to get more help and fix the problem");
                 logger.fatal("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
-        }
-
-        if (Loader.isModLoaded(GTValues.MODID_TOP)) {
-            logger.info("TheOneProbe found. Enabling integration...");
-            TheOneProbeCompatibility.registerCompatibility();
         }
 
         WorldGenRegistry.INSTANCE.initializeRegistry();
