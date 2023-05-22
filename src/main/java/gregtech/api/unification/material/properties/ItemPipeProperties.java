@@ -2,7 +2,7 @@ package gregtech.api.unification.material.properties;
 
 import java.util.Objects;
 
-public class ItemPipeProperties implements IMaterialProperty<ItemPipeProperties> {
+public class ItemPipeProperties implements IMaterialProperty {
 
     /**
      * Items will try to take the path with the lowest priority
@@ -62,7 +62,9 @@ public class ItemPipeProperties implements IMaterialProperty<ItemPipeProperties>
 
     @Override
     public void verifyProperty(MaterialProperties properties) {
-        properties.ensureSet(PropertyKey.INGOT, true);
+        if (!properties.hasProperty(PropertyKey.WOOD)) {
+            properties.ensureSet(PropertyKey.INGOT, true);
+        }
 
         if (properties.hasProperty(PropertyKey.FLUID_PIPE)) {
             throw new IllegalStateException(

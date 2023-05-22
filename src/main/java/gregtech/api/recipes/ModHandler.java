@@ -142,7 +142,7 @@ public final class ModHandler {
      * @return if the material is a wood
      */
     public static boolean isMaterialWood(@Nullable Material material) {
-        return material == Materials.Wood || material == Materials.TreatedWood;
+        return material != null && material.hasProperty(PropertyKey.WOOD);
     }
 
     // Furnace Smelting
