@@ -35,10 +35,10 @@ public class CTRecipeHelper {
                 }
             }
             if (block instanceof BlockCompressed) {
-                return "block" + ((BlockCompressed) block).getGtMaterial(item.getMetadata()).toCamelCaseString();
+                return "block" + ((BlockCompressed) block).getGtMaterial(item).toCamelCaseString();
             }
             if (block instanceof BlockFrame) {
-                return "frame" + ((BlockFrame) block).getGtMaterial(item.getMetadata()).toCamelCaseString();
+                return "frame" + ((BlockFrame) block).getGtMaterial(item).toCamelCaseString();
             }
             if (block instanceof BlockMaterialPipe) {
                 return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(item).toCamelCaseString();

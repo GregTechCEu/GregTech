@@ -154,10 +154,10 @@ public class CommonProxy {
         for (BlockLamp block : LAMPS.values()) registry.register(block);
         for (BlockLamp block : BORDERLESS_LAMPS.values()) registry.register(block);
 
-        COMPRESSED.values().stream().distinct().forEach(registry::register);
-        FRAMES.values().stream().distinct().forEach(registry::register);
-        SURFACE_ROCK.values().stream().distinct().forEach(registry::register);
-        ORES.forEach(registry::register);
+        for (BlockCompressed block : COMPRESSED_BLOCKS) registry.register(block);
+        for (BlockFrame block : FRAME_BLOCKS) registry.register(block);
+        for (BlockSurfaceRock block : SURFACE_ROCK_BLOCKS) registry.register(block);
+        for (BlockOre block : ORES) registry.register(block);
     }
 
     private static void createOreBlock(Material material) {
@@ -254,17 +254,15 @@ public class CommonProxy {
         registry.register(createItemBlock(RUBBER_LEAVES, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_SAPLING, ItemBlock::new));
 
-        COMPRESSED.values()
-                .stream().distinct()
-                .map(block -> createItemBlock(block, CompressedItemBlock::new))
-                .forEach(registry::register);
-        FRAMES.values()
-                .stream().distinct()
-                .map(block -> createItemBlock(block, FrameItemBlock::new))
-                .forEach(registry::register);
-        ORES.stream()
-                .map(block -> createItemBlock(block, OreItemBlock::new))
-                .forEach(registry::register);
+        for (BlockCompressed block : COMPRESSED_BLOCKS) {
+            registry.register(createItemBlock(block, b -> new MaterialItemBlock(b, OrePrefix.block)));
+        }
+        for (BlockFrame block : FRAME_BLOCKS) {
+            registry.register(createItemBlock(block, b -> new MaterialItemBlock(b, OrePrefix.frameGt)));
+        }
+        for (BlockOre block : ORES) {
+            registry.register(createItemBlock(block, OreItemBlock::new));
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -339,13 +337,11 @@ public class CommonProxy {
             event.setBurnTime(100);
         } else if (block == WOOD_SLAB) {
             event.setBurnTime(150);
-        } else if (stack.getItem() instanceof CompressedItemBlock) {
+        } else if (block instanceof BlockCompressed) {
             //handle material blocks burn value
-            CompressedItemBlock itemBlock = (CompressedItemBlock) stack.getItem();
-            Material material = itemBlock.getBlockState(stack).getValue(itemBlock.compressedBlock.variantProperty);
+            Material material = ((BlockCompressed) block).getGtMaterial(stack);
             DustProperty property = material.getProperty(PropertyKey.DUST);
-            if (property != null &&
-                    property.getBurnTime() > 0) {
+            if (property != null && property.getBurnTime() > 0) {
                 //compute burn value for block prefix, taking amount of material in block into account
                 double materialUnitsInBlock = OrePrefix.block.getMaterialAmount(material) / (GTValues.M * 1.0);
                 event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));

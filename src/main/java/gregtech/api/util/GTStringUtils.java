@@ -50,9 +50,9 @@ public final class GTStringUtils {
             Block block = Block.getBlockFromItem(stack.getItem());
             String id = null;
             if (block instanceof BlockCompressed) {
-                id = "block" + ((BlockCompressed) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+                id = "block" + ((BlockCompressed) block).getGtMaterial(stack).toCamelCaseString();
             } else if (block instanceof BlockFrame) {
-                id = "frame" + ((BlockFrame) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+                id = "frame" + ((BlockFrame) block).getGtMaterial(stack).toCamelCaseString();
             } else if (block instanceof BlockMaterialPipe) {
                 id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
             }
@@ -87,7 +87,7 @@ public final class GTStringUtils {
      *
      * @param stringToDraw The String to draw
      * @param fontRenderer An instance of the MC FontRenderer
-     * @param maxLength The maximum width of the String
+     * @param maxLength    The maximum width of the String
      */
     public static void drawCenteredStringWithCutoff(String stringToDraw, FontRenderer fontRenderer, int maxLength) {
 

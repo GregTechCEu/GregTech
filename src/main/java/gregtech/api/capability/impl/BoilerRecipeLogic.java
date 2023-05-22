@@ -6,20 +6,20 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -137,9 +137,10 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
                 amount -= excessWater / STEAM_PER_WATER;
                 excessWater %= STEAM_PER_WATER;
 
-                FluidStack drainedWater = GTUtility.getBoilerFluidFromContainer(getInputTank(), (int) amount, true);
+                FluidStack drainedWater = getBoilerFluidFromContainer(getInputTank(), (int) amount);
                 if (amount != 0 && (drainedWater == null || drainedWater.amount < amount)) {
-                    getMetaTileEntity().explodeMultiblock((currentHeat/getMaximumHeat()) * 8);
+                    //noinspection IntegerDivisionInFloatingPointContext
+                    getMetaTileEntity().explodeMultiblock((currentHeat / getMaximumHeat()) * 8);
                 } else {
                     setLastTickSteam(generatedSteam);
                     getOutputTank().fill(ModHandler.getSteam(generatedSteam), true);
@@ -299,5 +300,31 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     protected long getMaxVoltage() {
         GTLog.logger.error("Large Boiler called getMaxVoltage(), this should not be possible!");
         return 0;
+    }
+
+    /**
+     * @param fluidHandler the handler to drain from
+     * @param amount       the amount to drain
+     * @return a valid boiler fluid from a container
+     */
+    @Nullable
+    private static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, int amount) {
+        if (amount == 0) return null;
+        FluidStack drainedWater = fluidHandler.drain(Materials.Water.getFluid(amount), true);
+        if (drainedWater == null || drainedWater.amount == 0) {
+            drainedWater = fluidHandler.drain(Materials.DistilledWater.getFluid(amount), true);
+        }
+        if (drainedWater == null || drainedWater.amount == 0) {
+            for (String fluidName : ConfigHolder.machines.boilerFluids) {
+                Fluid fluid = FluidRegistry.getFluid(fluidName);
+                if (fluid != null) {
+                    drainedWater = fluidHandler.drain(new FluidStack(fluid, amount), true);
+                    if (drainedWater != null && drainedWater.amount > 0) {
+                        break;
+                    }
+                }
+            }
+        }
+        return drainedWater;
     }
 }

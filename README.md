@@ -1,8 +1,15 @@
-# GregTech CE: Unofficial
-
-[![Curseforge](http://cf.way2muchnoise.eu/full_557242_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/gregtech-ce-unofficial)  [![Curseforge](http://cf.way2muchnoise.eu/versions/For%20MC_557242_all.svg)](https://www.curseforge.com/minecraft/mc-mods/gregtech-ce-unofficial) <a title="Join us on Discord!" href="https://discord.gg/bWSWuYvURP"><img src="https://img.shields.io/discord/701354865217110096?label=GTCEu%20Discord&amp;logo=Discord&amp;style=?flat" alt="Discord"/></a>
-
-This is a fork of GregTech Community Edition for MC 1.12.2 maintained by the Gregtech CEu development team.
+<p align="center"><img src="https://user-images.githubusercontent.com/37029404/233205606-a7bb352a-eb0c-4484-9fc8-820255b996a4.png" alt="Logo"></p>
+<h1 align="center">GregTech CE: Unofficial</h1>
+<p align="center"><i>A fork of GregTech Community Edition by the Gregtech CEu development team</i></p>
+<h1 align="center">
+    <a href="https://www.curseforge.com/minecraft/mc-mods/gregtech-ce-unofficial"><img src="https://img.shields.io/badge/Available%20for-MC%201.12.2%20-informational?style=for-the-badge" alt="Supported Versions"></a>
+    <a href="https://github.com/GregTechCEu/GregTech/blob/master/LICENSE"><img src="https://img.shields.io/github/license/GregTechCEu/GregTech?style=for-the-badge" alt="License"></a>
+    <a href="https://discord.gg/bWSWuYvURP"><img src="https://img.shields.io/discord/701354865217110096?color=5464ec&label=Discord&style=for-the-badge" alt="Discord"></a>
+    <br>
+    <a href="https://www.curseforge.com/minecraft/mc-mods/gregtech-ce-unofficial"><img src="https://cf.way2muchnoise.eu/557242.svg?badge_style=for_the_badge" alt="CurseForge"></a>
+    <a href="https://modrinth.com/mod/gregtech-ce-unofficial"><img src="https://img.shields.io/modrinth/dt/gregtech-ce-unofficial?logo=modrinth&label=&suffix=%20&style=for-the-badge&color=2d2d2d&labelColor=5ca424&logoColor=1c1c1c" alt="Modrinth"></a>
+    <a href="https://github.com/GregTechCEu/GregTech/releases"><img src="https://img.shields.io/github/downloads/GregTechCEu/GregTech/total?sort=semver&logo=github&label=&style=for-the-badge&color=2d2d2d&labelColor=545454&logoColor=FFFFFF" alt="GitHub"></a>
+</h1>
 
 ## Welcome to GregTech CE: Unofficial
 ### What is this?

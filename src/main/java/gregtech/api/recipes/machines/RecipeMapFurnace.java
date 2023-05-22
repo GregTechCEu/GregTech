@@ -29,7 +29,7 @@ public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
 
             if (!output.isEmpty()) {
                 return this.recipeBuilder()
-                        .inputs(GTUtility.copyAmount(1, input))
+                        .inputs(GTUtility.copy(1, input))
                         .outputs(output)
                         .duration(128).EUt(4)
                         .build().getResult();

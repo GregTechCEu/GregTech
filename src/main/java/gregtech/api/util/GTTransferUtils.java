@@ -179,8 +179,7 @@ public class GTTransferUtils {
             ItemStack slotStack = handler.getStackInSlot(i);
             if (slotStack.isEmpty()) {
                 emptySlots.add(i);
-            }
-            if (ItemHandlerHelper.canItemStacksStack(stack, slotStack)) {
+            } else if (ItemHandlerHelper.canItemStacksStack(stack, slotStack)) {
                 stack = handler.insertItem(i, stack, simulate);
                 if (stack.isEmpty()) {
                     return ItemStack.EMPTY;
@@ -215,12 +214,6 @@ public class GTTransferUtils {
             }
         }
         return stack;
-    }
-
-    public static boolean areStackable(FluidStack stack, FluidStack stack2) {
-        return stack != null && stack.amount > 0 &&
-                stack2 != null && stack2.amount > 0 &&
-                stack.isFluidEqual(stack2);
     }
 
     // TODO try to remove this one day

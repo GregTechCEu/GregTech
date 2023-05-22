@@ -3,11 +3,11 @@ package gregtech.api.gui.widgets;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.util.MCGuiUtil;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiPageButtonList;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.network.PacketBuffer;
@@ -45,7 +45,7 @@ public class TextFieldWidget extends Widget {
             this.textField.setCanLoseFocus(true);
             this.textField.setEnableBackgroundDrawing(enableBackground);
             this.textField.setMaxStringLength(this.maxStringLength);
-            this.textField.setGuiResponder(MCGuiUtil.createTextFieldResponder(this::onTextChanged));
+            this.textField.setGuiResponder(new Responder());
         }
         this.textSupplier = textSupplier;
         this.textResponder = textResponder;
@@ -64,7 +64,7 @@ public class TextFieldWidget extends Widget {
             this.textField.setEnableBackgroundDrawing(enableBackground);
             this.textField.setMaxStringLength(maxStringLength);
             this.maxStringLength = maxStringLength;
-            this.textField.setGuiResponder(MCGuiUtil.createTextFieldResponder(this::onTextChanged));
+            this.textField.setGuiResponder(new Responder());
         }
         this.textSupplier = textSupplier;
         this.textResponder = textResponder;
@@ -79,7 +79,7 @@ public class TextFieldWidget extends Widget {
             this.textField.setCanLoseFocus(true);
             this.textField.setEnableBackgroundDrawing(false);
             this.textField.setMaxStringLength(maxStringLength);
-            this.textField.setGuiResponder(MCGuiUtil.createTextFieldResponder(this::onTextChanged));
+            this.textField.setGuiResponder(new Responder());
         }
         this.background = background;
         this.textSupplier = textSupplier;
@@ -236,5 +236,19 @@ public class TextFieldWidget extends Widget {
             this.textField.setValidator(validator::test);
         }
         return this;
+    }
+
+    private class Responder implements GuiPageButtonList.GuiResponder {
+
+        @Override
+        public void setEntryValue(int id, boolean value) {}
+
+        @Override
+        public void setEntryValue(int id, float value) {}
+
+        @Override
+        public void setEntryValue(int id, String value) {
+            onTextChanged(value);
+        }
     }
 }

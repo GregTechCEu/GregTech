@@ -4,13 +4,13 @@ import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ScrollableListWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.inventory.IItemInfo;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.IItemList.InsertMode;
 import gregtech.common.inventory.SimpleItemInfo;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
@@ -19,6 +19,14 @@ import java.io.IOException;
 import java.util.*;
 
 public class ItemListGridWidget extends ScrollableListWidget {
+
+    private static final Comparator<IItemInfo> COMPARATOR = Comparator.comparing(
+            IItemInfo::getItemStack,
+            Comparator.<ItemStack>comparingInt(it -> Item.REGISTRY.getIDForObject(it.getItem()))
+                    .thenComparing(ItemStack::getItemDamage)
+                    .thenComparing(ItemStack::hasTagCompound)
+                    .thenComparing(it -> -Objects.hashCode(it.getTagCompound()))
+                    .thenComparing(it -> -it.getCount()));
 
     @Nullable
     private final IItemList itemList;
@@ -29,7 +37,6 @@ public class ItemListGridWidget extends ScrollableListWidget {
     private final List<SimpleItemInfo> itemsChanged = new ArrayList<>();
     private final List<ItemStack> itemsRemoved = new ArrayList<>();
 
-    private final Comparator<IItemInfo> comparator = Comparator.comparing(IItemInfo::getItemStack, GTUtility.createItemStackComparator());
     private final List<SimpleItemInfo> displayItemList = new ArrayList<>();
 
     public ItemListGridWidget(int x, int y, int slotsX, int slotsY, @Nullable IItemList itemList) {
@@ -209,7 +216,7 @@ public class ItemListGridWidget extends ScrollableListWidget {
                     }
                     itemInfo.setTotalItemAmount(newTotalAmount);
                 }
-                this.displayItemList.sort(comparator);
+                this.displayItemList.sort(COMPARATOR);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }

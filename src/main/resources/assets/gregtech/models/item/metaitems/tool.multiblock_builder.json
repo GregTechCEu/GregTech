@@ -1,0 +1,20 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "gregtech:items/metaitems/tool.multiblock_builder"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "gregtech:auto_mode": 0.0
+      },
+      "model": "gregtech:item/metaitems/tool.multiblock_builder.default"
+    },
+    {
+      "predicate": {
+        "gregtech:auto_mode": 1.0
+      },
+      "model": "gregtech:item/metaitems/tool.multiblock_builder.auto"
+    }
+  ]
+}

@@ -913,5 +913,7 @@ public class MetaItem1 extends StandardMetaItem {
 
         LOGO = addItem(1003, "logo").setInvisible();
         LOGO.getMetaItem().addPropertyOverride(new ResourceLocation("xmas"), (s, w, e) -> GTValues.XMAS.get() ? 1 : 0);
+
+        MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior()).setMaxStackSize(1);
     }
 }
