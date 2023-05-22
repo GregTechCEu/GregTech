@@ -10,6 +10,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.*;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.covers.filter.SmartItemFilter;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -70,12 +71,15 @@ public class CoverRoboticArm extends CoverConveyor {
             int itemAmount = sourceInfo.totalCount;
             int itemToMoveAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
 
-            if (itemFilterContainer.getTransferStackSize() > 1 && itemToMoveAmount * 2 <= itemAmount) {
-                // get the max we can extract from the item filter variable
-                int maxMultiplier = Math.floorDiv(Math.min(itemAmount, maxTransferAmount), itemToMoveAmount);
+            // if smart item filter
+            if (itemFilterContainer.getFilterWrapper().getItemFilter() instanceof SmartItemFilter) {
+                if (itemFilterContainer.getTransferStackSize() > 1 && itemToMoveAmount * 2 <= itemAmount) {
+                    // get the max we can extract from the item filter variable
+                    int maxMultiplier = Math.floorDiv(Math.min(itemAmount, maxTransferAmount), itemToMoveAmount);
 
-                // multiply up to the total count of all the items
-                itemToMoveAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+                    // multiply up to the total count of all the items
+                    itemToMoveAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+                }
             }
 
             if (itemAmount >= itemToMoveAmount) {
@@ -116,12 +120,15 @@ public class CoverRoboticArm extends CoverConveyor {
             GroupItemInfo sourceInfo = sourceItemAmounts.get(filterSlotIndex);
             int itemToKeepAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
 
-            if (itemFilterContainer.getTransferStackSize() > 1 && itemToKeepAmount * 2 <= sourceInfo.totalCount) {
-                // get the max we can keep from the item filter variable
-                int maxMultiplier = Math.floorDiv(sourceInfo.totalCount, itemToKeepAmount);
+            // only run multiplier for smart item
+            if (itemFilterContainer.getFilterWrapper().getItemFilter() instanceof SmartItemFilter) {
+                if (itemFilterContainer.getTransferStackSize() > 1 && itemToKeepAmount * 2 <= sourceInfo.totalCount) {
+                    // get the max we can keep from the item filter variable
+                    int maxMultiplier = Math.floorDiv(sourceInfo.totalCount, itemToKeepAmount);
 
-                // multiply up to the total count of all the items
-                itemToKeepAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+                    // multiply up to the total count of all the items
+                    itemToKeepAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+                }
             }
 
             int itemAmount = 0;
