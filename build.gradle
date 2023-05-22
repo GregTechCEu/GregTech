@@ -69,12 +69,7 @@ repositories {
         url 'https://maven.cleanroommc.com'
     }
     maven {
-        // JEI
-        name 'Progwml6 Maven'
-        url 'https://dvs1.progwml6.com/files/maven/'
-    }
-    maven {
-        // CraftTweaker and JEI Backup
+        // CraftTweaker and JEI
         name 'BlameJared Maven'
         url 'https://maven.blamejared.com'
     }
