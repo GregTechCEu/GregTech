@@ -10,7 +10,7 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.integration.jei.GTJeiPlugin;
+import gregtech.integration.jei.JustEnoughItemsModule;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
 import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
 import mezz.jei.api.IGuiHelper;
@@ -83,7 +83,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
             return icon;
         } else if (iconIngredient != null) {
             // cache the icon drawable for less gc pressure
-            return icon = GTJeiPlugin.guiHelper.createDrawableIngredient(iconIngredient);
+            return icon = JustEnoughItemsModule.guiHelper.createDrawableIngredient(iconIngredient);
         }
         // JEI will automatically populate the icon as the first registered catalyst if null
         return null;

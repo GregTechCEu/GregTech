@@ -30,7 +30,6 @@ import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
 import gregtech.integration.groovy.GroovyScriptCompat;
-import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
@@ -54,7 +53,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -374,9 +372,6 @@ public class CommonProxy {
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
-        if (Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
-            GTJeiPlugin.setupInputHandler();
-        }
         GTRecipeInput.INSTANCES = new ObjectOpenHashSet<>();
     }
 
