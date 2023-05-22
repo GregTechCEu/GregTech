@@ -257,7 +257,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         registry.addIngredientInfo(new ItemStack(MetaBlocks.BRITTLE_CHARCOAL), VanillaTypes.ITEM, I18n.format("tile.brittle_charcoal.tooltip.1", I18n.format("tile.brittle_charcoal.tooltip.2")));
     }
 
-    public void setupInputHandler() {
+    private void setupInputHandler() {
         try {
             Field inputHandlerField = Internal.class.getDeclaredField("inputHandler");
             inputHandlerField.setAccessible(true);

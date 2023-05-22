@@ -1,5 +1,6 @@
 package gregtech.integration;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
@@ -56,7 +57,7 @@ public final class RecipeCompatUtil {
             if (item.getItem() instanceof MachineItemBlock) {
                 MetaTileEntity mte = GTUtility.getMetaTileEntity(item);
                 if (mte != null) {
-                    return (mte.metaTileEntityId.getNamespace().equals("gregtech") ? mte.metaTileEntityId.getPath() : mte.metaTileEntityId.toString());
+                    return (mte.metaTileEntityId.getNamespace().equals(GTValues.MODID) ? mte.metaTileEntityId.getPath() : mte.metaTileEntityId.toString());
                 }
             }
             if (block instanceof BlockCompressed) {
