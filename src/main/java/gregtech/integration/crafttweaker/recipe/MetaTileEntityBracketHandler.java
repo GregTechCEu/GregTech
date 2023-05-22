@@ -1,4 +1,4 @@
-package gregtech.api.recipes.crafttweaker;
+package gregtech.integration.crafttweaker.recipe;
 
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.BracketHandler;

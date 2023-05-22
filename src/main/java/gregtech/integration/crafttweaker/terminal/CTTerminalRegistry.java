@@ -1,9 +1,9 @@
-package gregtech.api.terminal;
-
+package gregtech.integration.crafttweaker.terminal;
 
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.util.GTLog;
 import gregtech.common.terminal.hardware.BatteryHardware;
@@ -19,11 +19,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
 @ZenClass("mods.gregtech.TerminalRegistry")
 @ZenRegister
 @SuppressWarnings("unused")
 public class CTTerminalRegistry {
+
     private static List<CTAppRegistryBuilder> ctAppRegistryBuilders = new LinkedList<>();
 
     @ZenMethod

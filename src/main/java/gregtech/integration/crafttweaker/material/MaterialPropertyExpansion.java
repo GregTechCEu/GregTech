@@ -1,4 +1,4 @@
-package gregtech.api.unification.crafttweaker;
+package gregtech.integration.crafttweaker.material;
 
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.fluids.fluidType.FluidType;
@@ -9,8 +9,8 @@ import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenExpansion;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.checkFrozen;
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidTypeNoPlasma;
+import static gregtech.integration.crafttweaker.material.CTMaterialHelpers.checkFrozen;
+import static gregtech.integration.crafttweaker.material.CTMaterialHelpers.validateFluidTypeNoPlasma;
 
 @ZenExpansion("mods.gregtech.material.Material")
 @ZenRegister

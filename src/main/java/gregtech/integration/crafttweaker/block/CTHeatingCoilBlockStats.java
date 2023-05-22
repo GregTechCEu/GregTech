@@ -1,9 +1,10 @@
-package gregtech.api.block;
+package gregtech.integration.crafttweaker.block;
 
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.block.IBlockState;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GregTechAPI;
+import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.unification.material.Material;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;

@@ -1,4 +1,4 @@
-package gregtech.api.recipes.crafttweaker;
+package gregtech.integration.crafttweaker.recipe;
 
 import com.cleanroommc.groovyscript.api.GroovyLog;
 import crafttweaker.CraftTweakerAPI;

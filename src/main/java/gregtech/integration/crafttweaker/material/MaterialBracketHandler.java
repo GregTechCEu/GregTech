@@ -1,10 +1,11 @@
-package gregtech.api.recipes.crafttweaker;
+package gregtech.integration.crafttweaker.material;
 
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.BracketHandler;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.zenscript.IBracketHandler;
-import gregtech.api.recipes.RecipeMap;
+import gregtech.api.GregTechAPI;
+import gregtech.api.unification.material.Material;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
 import stanhebben.zenscript.expression.ExpressionString;
@@ -16,24 +17,27 @@ import java.util.List;
 
 @BracketHandler
 @ZenRegister
-public class RecipeMapBracketHandler implements IBracketHandler {
-
-    // TODO YEET
+@SuppressWarnings("unused")
+public class MaterialBracketHandler implements IBracketHandler {
 
     private final IJavaMethod method;
 
-    public RecipeMapBracketHandler() {
-        this.method = CraftTweakerAPI.getJavaMethod(RecipeMapBracketHandler.class, "getRecipeMap", String.class);
+    public MaterialBracketHandler() {
+        this.method = CraftTweakerAPI.getJavaMethod(MaterialBracketHandler.class, "getMaterial", String.class);
     }
 
-    public static RecipeMap<?> getRecipeMap(String name) {
-        return RecipeMap.getByName(name);
+    public static Material getMaterial(String name) {
+        Material material = name == null ? null : GregTechAPI.MaterialRegistry.get(name);
+        if (material == null) {
+            CraftTweakerAPI.logError("Could not find material with name " + name);
+        }
+        return material;
     }
 
     @Override
     public IZenSymbol resolve(IEnvironmentGlobal environment, List<Token> tokens) {
         if ((tokens.size() < 3)) return null;
-        if (!tokens.get(0).getValue().equalsIgnoreCase("recipemap")) return null;
+        if (!tokens.get(0).getValue().equalsIgnoreCase("material")) return null;
         if (!tokens.get(1).getValue().equals(":")) return null;
         StringBuilder nameBuilder = new StringBuilder();
         for (int i = 2; i < tokens.size(); i++) {
@@ -42,4 +46,5 @@ public class RecipeMapBracketHandler implements IBracketHandler {
         return position -> new ExpressionCallStatic(position, environment, method,
                 new ExpressionString(position, nameBuilder.toString()));
     }
+
 }

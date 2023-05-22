@@ -1,4 +1,4 @@
-package gregtech.api.unification.crafttweaker;
+package gregtech.integration.crafttweaker.material;
 
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
@@ -16,8 +16,8 @@ import stanhebben.zenscript.annotations.ZenExpansion;
 import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.checkFrozen;
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.logError;
+import static gregtech.integration.crafttweaker.material.CTMaterialHelpers.checkFrozen;
+import static gregtech.integration.crafttweaker.material.CTMaterialHelpers.logError;
 
 @ZenExpansion("mods.gregtech.material.Material")
 @ZenRegister

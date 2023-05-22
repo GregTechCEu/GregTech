@@ -7,7 +7,6 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
@@ -48,7 +47,6 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -311,9 +309,6 @@ public class CommonProxy {
         OrePrefix.runMaterialHandlers();
         GTRecipeManager.loadLatest();
 
-        if (Loader.isModLoaded(GTValues.MODID_CT)) {
-            MetaItemBracketHandler.rebuildComponentRegistry();
-        }
         if (GroovyScriptCompat.isLoaded()) {
             GroovyScriptCompat.loadMetaItemBracketHandler();
         }

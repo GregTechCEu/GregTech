@@ -1,6 +1,5 @@
 package gregtech.core;
 
-import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.GregTechAPIInternal;
@@ -121,12 +120,6 @@ public class CoreModule implements IGregTechModule {
         logger.info("Registering addon Materials");
         MinecraftForge.EVENT_BUS.post(new GregTechAPI.MaterialEvent());
 
-        // Then, run CraftTweaker Material registration scripts
-        if (Loader.isModLoaded(GTValues.MODID_CT)) {
-            logger.info("Running early CraftTweaker initialization scripts...");
-            runEarlyCraftTweakerScripts();
-        }
-
         // Fire Post-Material event, intended for when Materials need to be iterated over in-full before freezing
         // Block entirely new Materials from being added in the Post event
         MATERIAL_REGISTRY.closeRegistry();
@@ -212,11 +205,6 @@ public class CoreModule implements IGregTechModule {
         /* End Cover Definition Registration */
 
         DungeonLootLoader.init();
-    }
-
-    @Optional.Method(modid = GTValues.MODID_CT)
-    private static void runEarlyCraftTweakerScripts() {
-        CraftTweakerAPI.tweaker.loadScript(false, "gregtech");
     }
 
     @Override

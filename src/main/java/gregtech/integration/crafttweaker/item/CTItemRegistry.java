@@ -1,4 +1,4 @@
-package gregtech.api.items.crafttweaker;
+package gregtech.integration.crafttweaker.item;
 
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.material.info.MaterialIconSet;
@@ -7,7 +7,7 @@ import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import static gregtech.common.items.MetaItems.CT_OREDICT_ITEM;
+import static gregtech.integration.crafttweaker.CraftTweakerModule.CT_OREDICT_ITEM;
 
 @ZenClass("mods.gregtech.item.ItemRegistry")
 @ZenRegister
