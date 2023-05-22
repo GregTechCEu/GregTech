@@ -735,27 +735,28 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         ));
 
         // repair info
-        if (TooltipHelper.isShiftDown()) {
-            Material material = getToolMaterial(stack);
+        if (!tagCompound.getBoolean(UNBREAKABLE_KEY)) {
+            if (TooltipHelper.isShiftDown()) {
+                Material material = getToolMaterial(stack);
 
-            Collection<String> repairItems = new ArrayList<>();
-            if (ModHandler.isMaterialWood(material)) {
-                repairItems.add(OrePrefix.plank.getLocalNameForItem(material));
-            } else {
-                if (material.hasProperty(PropertyKey.INGOT)) {
-                    repairItems.add(OrePrefix.ingot.getLocalNameForItem(material));
-                } else if (material.hasProperty(PropertyKey.GEM)) {
-                    repairItems.add(OrePrefix.gem.getLocalNameForItem(material));
+                Collection<String> repairItems = new ArrayList<>();
+                if (ModHandler.isMaterialWood(material)) {
+                    repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                } else {
+                    if (material.hasProperty(PropertyKey.INGOT)) {
+                        repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                    } else if (material.hasProperty(PropertyKey.GEM)) {
+                        repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                    }
+                    repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
                 }
-                repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", String.join(", ", repairItems)));
+            } else {
+                tooltip.add(I18n.format("item.gt.tool.tooltip.repair_info"));
             }
-            tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", String.join(", ", repairItems)));
-
-            if (this.isElectric()) {
-                tooltip.add(I18n.format("item.gt.tool.replace_tool_head"));
-            }
-        } else {
-            tooltip.add(I18n.format("item.gt.tool.tooltip.repair_info"));
+        }
+        if (this.isElectric()) {
+            tooltip.add(I18n.format("item.gt.tool.replace_tool_head"));
         }
     }
 
