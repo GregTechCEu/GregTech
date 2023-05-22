@@ -127,7 +127,8 @@ public class GTValues {
             MODID_JEI = "jei",
             MODID_GROOVYSCRIPT = "groovyscript",
             MODID_NC = "nuclearcraft",
-            MODID_IE = "immersiveengineering";
+            MODID_IE = "immersiveengineering",
+            MODID_OC = "opencomputers";
 
     private static Boolean isClient;
 
