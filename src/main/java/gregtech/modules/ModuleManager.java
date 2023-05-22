@@ -291,13 +291,14 @@ public class ModuleManager implements IModuleManager {
         return modules;
     }
 
+    @SuppressWarnings("unchecked")
     private List<IGregTechModule> getInstances(ASMDataTable table) {
         Set<ASMDataTable.ASMData> dataSet = table.getAll(GregTechModule.class.getCanonicalName());
         List<IGregTechModule> instances = new ArrayList<>();
         for (ASMDataTable.ASMData data : dataSet) {
             String moduleID = (String) data.getAnnotationInfo().get("moduleID");
-            String[] modDependencies = (String[]) data.getAnnotationInfo().get("modDependencies");
-            if (modDependencies.length == 0 || Arrays.stream(modDependencies).allMatch(Loader::isModLoaded)) {
+            List<String> modDependencies = (ArrayList<String>) data.getAnnotationInfo().get("modDependencies");
+            if (modDependencies == null || modDependencies.stream().allMatch(Loader::isModLoaded)) {
                 try {
                     Class<?> clazz = Class.forName(data.getClassName());
                     instances.add((IGregTechModule) clazz.newInstance());
