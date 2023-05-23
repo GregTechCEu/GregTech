@@ -13,6 +13,7 @@ import gregtech.api.worldgen.populator.VeinChunkPopulator;
 import gregtech.api.worldgen.shape.IBlockGeneratorAccess;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.longs.*;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -200,7 +201,7 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
     }
 
     public void triggerVeinsGeneration() {
-        this.veinGeneratedMap = new HashMap<>();
+        this.veinGeneratedMap = new Object2ObjectOpenHashMap<>();
         if (!cachedDepositMap.isEmpty()) {
             int currentCycle = 0;
             int maxCycles = ConfigHolder.worldgen.minVeinsInSection + (ConfigHolder.worldgen.additionalVeinsInSection == 0 ? 0 : gridRandom.nextInt(ConfigHolder.worldgen.additionalVeinsInSection + 1));
@@ -303,8 +304,8 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
 
     public static class ChunkDataEntry {
 
-        private final Map<OreDepositDefinition, MutablePair<LongList, Integer>> oreBlocks = new HashMap<>();
-        private final Map<OreDepositDefinition, LongSet> generatedBlocksSet = new HashMap<>();
+        private final Map<OreDepositDefinition, MutablePair<LongList, Integer>> oreBlocks = new Object2ObjectOpenHashMap<>();
+        private final Map<OreDepositDefinition, LongSet> generatedBlocksSet = new Object2ObjectOpenHashMap<>();
         private final List<OreDepositDefinition> generatedOres = new ArrayList<>();
         private final int chunkX;
         private final int chunkZ;
@@ -342,7 +343,9 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
                 int lowestY = entry.getValue().getRight();
                 LongSet generatedBlocks = new LongOpenHashSet();
                 boolean generatedOreVein = false;
-                for (long blockIndex : blockIndexList) {
+                LongIterator iterator = blockIndexList.iterator();
+                while (iterator.hasNext()) {
+                    long blockIndex = iterator.nextLong();
                     int xyzValue = (int) (blockIndex >> 32);
                     int blockX = (byte) xyzValue;
                     int blockZ = (byte) (xyzValue >> 8);

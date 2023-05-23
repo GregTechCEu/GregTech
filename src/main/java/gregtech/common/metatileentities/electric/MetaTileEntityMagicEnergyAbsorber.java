@@ -13,6 +13,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntIterator;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.block.BlockDragonEgg;
 import net.minecraft.block.state.IBlockState;
@@ -94,10 +95,12 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
         if (getOffsetTimer() % 200 == 0 || isFirstTick()) {
             updateConnectedCrystals();
         }
+
         int totalEnergyGeneration = 0;
-        for (int connectedCrystalId : connectedCrystalsIds) {
+        IntIterator itr = connectedCrystalsIds.iterator();
+        while (itr.hasNext()) {
             //since we don't check quite often, check twice before outputting energy
-            if (getWorld().getEntityByID(connectedCrystalId) instanceof EntityEnderCrystal) {
+            if (getWorld().getEntityByID(itr.nextInt()) instanceof EntityEnderCrystal) {
                 totalEnergyGeneration += hasDragonEggAmplifier ? 128 : 32;
             }
         }
@@ -189,8 +192,9 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
     }
 
     private void resetConnectedEnderCrystals() {
-        for (int connectedEnderCrystal : connectedCrystalsIds) {
-            EntityEnderCrystal entityEnderCrystal = (EntityEnderCrystal) getWorld().getEntityByID(connectedEnderCrystal);
+        IntIterator itr = connectedCrystalsIds.iterator();
+        while (itr.hasNext()) {
+            EntityEnderCrystal entityEnderCrystal = (EntityEnderCrystal) getWorld().getEntityByID(itr.nextInt());
             if (entityEnderCrystal != null && getPos().equals(entityEnderCrystal.getBeamTarget())) {
                 //on removal, reset ender crystal beam location so somebody can use it
                 entityEnderCrystal.setBeamTarget(null);
