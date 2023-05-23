@@ -132,6 +132,8 @@ dependencies {
 
     // Compile-Time Dependencies
     annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}"
+    // workaround for https://github.com/bsideup/jabel/issues/174
+    annotationProcessor "net.java.dev.jna:jna-platform:${jna_version}"
     compileOnly("com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}") {
         transitive = false // We only care about the 1 annotation class
     }
