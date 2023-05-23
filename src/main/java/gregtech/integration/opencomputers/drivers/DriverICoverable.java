@@ -54,21 +54,20 @@ public class DriverICoverable extends DriverSidedTileEntity {
             int index = InputValidator.getInteger(args, 0, 0, 5);
             EnumFacing side = EnumFacing.VALUES[index];
             CoverBehavior coverBehavior = tileEntity.getCoverAtSide(side);
-            if (coverBehavior instanceof CoverRoboticArm)
-                return new Object[]{new ValueCoverRoboticArm((CoverRoboticArm) coverBehavior, side)};
-            if (coverBehavior instanceof CoverConveyor)
-                return new Object[]{new ValueCoverConveyor((CoverConveyor) coverBehavior, side)};
-            if (coverBehavior instanceof CoverFluidRegulator)
-                return new Object[]{new ValueCoverFluidRegulator((CoverFluidRegulator) coverBehavior, side)};
-            if (coverBehavior instanceof CoverPump)
-                return new Object[]{new ValueCoverPump((CoverPump) coverBehavior, side)};
-            if (coverBehavior instanceof CoverFluidFilter)
-                return new Object[]{new ValueCoverFluidFilter((CoverFluidFilter) coverBehavior, side)};
-            if (coverBehavior instanceof CoverItemFilter)
-                return new Object[]{new ValueCoverItemFilter((CoverItemFilter) coverBehavior, side)};
-            if (coverBehavior instanceof CoverEnderFluidLink) {
-                return new Object[]{new ValueCoverEnderFluidLink((CoverEnderFluidLink) coverBehavior, side)};
-            }
+            if (coverBehavior instanceof CoverRoboticArm robotArm)
+                return new Object[]{new ValueCoverRoboticArm(robotArm, side)};
+            if (coverBehavior instanceof CoverConveyor conveyor)
+                return new Object[]{new ValueCoverConveyor(conveyor, side)};
+            if (coverBehavior instanceof CoverFluidRegulator regulator)
+                return new Object[]{new ValueCoverFluidRegulator(regulator, side)};
+            if (coverBehavior instanceof CoverPump pump)
+                return new Object[]{new ValueCoverPump(pump, side)};
+            if (coverBehavior instanceof CoverFluidFilter filter)
+                return new Object[]{new ValueCoverFluidFilter(filter, side)};
+            if (coverBehavior instanceof CoverItemFilter filter)
+                return new Object[]{new ValueCoverItemFilter(filter, side)};
+            if (coverBehavior instanceof CoverEnderFluidLink efl)
+                return new Object[]{new ValueCoverEnderFluidLink(efl, side)};
             if (coverBehavior != null)
                 return new Object[]{new ValueCoverBehavior(coverBehavior, side)};
             return new Object[]{null};
