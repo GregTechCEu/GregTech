@@ -447,11 +447,10 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             allNodesList.appendTag(nodeTag);
         }
 
-        for (NodeDataType nodeData : alreadyWritten.keySet()) {
-            int wirePropertiesIndex = alreadyWritten.get(nodeData);
+        for (Object2IntMap.Entry<NodeDataType> entry : alreadyWritten.object2IntEntrySet()) {
             NBTTagCompound propertiesTag = new NBTTagCompound();
-            propertiesTag.setInteger("index", wirePropertiesIndex);
-            writeNodeData(nodeData, propertiesTag);
+            propertiesTag.setInteger("index", entry.getIntValue());
+            writeNodeData(entry.getKey(), propertiesTag);
             wirePropertiesList.appendTag(propertiesTag);
         }
 
