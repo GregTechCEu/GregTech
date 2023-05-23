@@ -343,9 +343,10 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
                 int lowestY = entry.getValue().getRight();
                 LongSet generatedBlocks = new LongOpenHashSet();
                 boolean generatedOreVein = false;
-                LongIterator iterator = blockIndexList.iterator();
-                while (iterator.hasNext()) {
-                    long blockIndex = iterator.nextLong();
+                // enhanced for loops cause boxing and unboxing with FastUtil collections
+                //noinspection ForLoopReplaceableByForEach
+                for (int i = 0; i < blockIndexList.size(); i++) {
+                    long blockIndex = blockIndexList.get(i);
                     int xyzValue = (int) (blockIndex >> 32);
                     int blockX = (byte) xyzValue;
                     int blockZ = (byte) (xyzValue >> 8);

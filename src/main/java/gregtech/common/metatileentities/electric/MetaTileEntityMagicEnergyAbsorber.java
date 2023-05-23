@@ -13,7 +13,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntIterator;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.block.BlockDragonEgg;
 import net.minecraft.block.state.IBlockState;
@@ -97,10 +96,11 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
         }
 
         int totalEnergyGeneration = 0;
-        IntIterator itr = connectedCrystalsIds.iterator();
-        while (itr.hasNext()) {
+        // enhanced for loops cause boxing and unboxing with FastUtil collections
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0; i < connectedCrystalsIds.size(); i++) {
             //since we don't check quite often, check twice before outputting energy
-            if (getWorld().getEntityByID(itr.nextInt()) instanceof EntityEnderCrystal) {
+            if (getWorld().getEntityByID(connectedCrystalsIds.get(i)) instanceof EntityEnderCrystal) {
                 totalEnergyGeneration += hasDragonEggAmplifier ? 128 : 32;
             }
         }
@@ -192,9 +192,10 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
     }
 
     private void resetConnectedEnderCrystals() {
-        IntIterator itr = connectedCrystalsIds.iterator();
-        while (itr.hasNext()) {
-            EntityEnderCrystal entityEnderCrystal = (EntityEnderCrystal) getWorld().getEntityByID(itr.nextInt());
+        // enhanced for loops cause boxing and unboxing with FastUtil collections
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0; i < connectedCrystalsIds.size(); i++) {
+            EntityEnderCrystal entityEnderCrystal = (EntityEnderCrystal) getWorld().getEntityByID(connectedCrystalsIds.get(i));
             if (entityEnderCrystal != null && getPos().equals(entityEnderCrystal.getBeamTarget())) {
                 //on removal, reset ender crystal beam location so somebody can use it
                 entityEnderCrystal.setBeamTarget(null);
