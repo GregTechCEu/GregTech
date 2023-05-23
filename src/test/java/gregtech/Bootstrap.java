@@ -3,7 +3,6 @@ package gregtech;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.MetaFluids;
-import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.MetaItems;
@@ -65,7 +64,6 @@ public final class Bootstrap {
         OrePrefix.runMaterialHandlers();
         MetaFluids.init();
         MetaItems.init();
-        ModHandler.init();
         bootstrapped = true;
     }
 

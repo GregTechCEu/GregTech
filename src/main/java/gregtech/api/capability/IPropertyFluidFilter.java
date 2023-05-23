@@ -6,30 +6,31 @@ import gregtech.api.fluids.fluidType.FluidTypes;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 /**
- * Interface for FluidHandlerItemStacks which handle GT's unique fluid mechanics
+ * Fluid filter based on fluid properties; i.e. temperature, fluid state, and various material flags such as acid
+ * and plasma.
  *
  * @see FluidType
  * @see FluidTypes
  * @see MaterialFluid
- * @deprecated use {@link IPropertyFluidFilter}
  */
-@Deprecated
-public interface IThermalFluidHandlerItemStack {
+public interface IPropertyFluidFilter extends IFilter<FluidStack> {
 
     /**
-     * @param stack the {@link FluidStack} to check
-     * @return whether the FluidStack can be used to fill this fluid container
+     * Minimum temperature of the fluid in kelvin before it starts being considered 'cryogenic'; if a fluid has lower
+     * temperature than this, it's considered cryogenic.
      */
-    default boolean canFillFluidType(@Nullable FluidStack stack) {
-        if (stack == null || stack.getFluid() == null) return false;
+    int CRYOGENIC_TEMPERATURE_THRESHOLD = 120;
 
+    @Override
+    @SuppressWarnings("RedundantIfStatement")
+    default boolean test(@Nonnull FluidStack stack) {
         Fluid fluid = stack.getFluid();
-        if (fluid.getTemperature() > getMaxFluidTemperature()) return false;
-        // fluids less than 120K are cryogenic
-        if (fluid.getTemperature() < 120 && !isCryoProof()) return false;
+        int temperature = fluid.getTemperature();
+        if (temperature > getMaxFluidTemperature()) return false;
+        if (temperature < CRYOGENIC_TEMPERATURE_THRESHOLD && !isCryoProof()) return false;
         if (fluid.isGaseous() && !isGasProof()) return false;
 
         if (fluid instanceof MaterialFluid) {
@@ -40,34 +41,39 @@ public interface IThermalFluidHandlerItemStack {
         return true;
     }
 
+    @Override
+    default int getPriority() {
+        return IFilter.blacklistLikePriority();
+    }
+
     /**
      * This is always checked, regardless of the contained fluid being a {@link MaterialFluid} or not
      *
-     * @return the maximum allowed temperature for a fluid to be stored in this container
+     * @return the maximum allowed temperature for a fluid
      */
     int getMaxFluidTemperature();
 
     /**
      * This is always checked, regardless of the contained fluid being a {@link MaterialFluid} or not
      *
-     * @return true if this fluid container allows gases, otherwise false
+     * @return whether this filter allows gases
      */
     boolean isGasProof();
 
     /**
-     * @return true if this fluid container allows acids, otherwise false
+     * @return whether this filter allows acids
      * @see FluidTypes
      */
     boolean isAcidProof();
 
     /**
-     * @return true if this fluid container allows cryogenics, otherwise false
+     * @return whether this filter allows cryogenic fluids
      * @see FluidTypes
      */
     boolean isCryoProof();
 
     /**
-     * @return true if this fluid container allows plasmas, otherwise false
+     * @return whether this filter allows plasmas
      * @see FluidTypes
      */
     boolean isPlasmaProof();

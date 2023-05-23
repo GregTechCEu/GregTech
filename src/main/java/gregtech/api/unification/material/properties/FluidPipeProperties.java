@@ -1,8 +1,10 @@
 package gregtech.api.unification.material.properties;
 
+import gregtech.api.capability.IPropertyFluidFilter;
+
 import java.util.Objects;
 
-public class FluidPipeProperties implements IMaterialProperty<FluidPipeProperties> {
+public class FluidPipeProperties implements IMaterialProperty<FluidPipeProperties>, IPropertyFluidFilter {
 
     private int throughput;
     private final int tanks;
@@ -60,6 +62,7 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
         this.throughput = throughput;
     }
 
+    @Override
     public int getMaxFluidTemperature() {
         return maxFluidTemperature;
     }
@@ -68,6 +71,7 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
         this.maxFluidTemperature = maxFluidTemperature;
     }
 
+    @Override
     public boolean isGasProof() {
         return gasProof;
     }
@@ -76,6 +80,7 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
         this.gasProof = gasProof;
     }
 
+    @Override
     public boolean isAcidProof() {
         return acidProof;
     }
@@ -84,6 +89,7 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
         this.acidProof = acidProof;
     }
 
+    @Override
     public boolean isCryoProof() {
         return cryoProof;
     }
@@ -92,6 +98,7 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
         this.cryoProof = cryoProof;
     }
 
+    @Override
     public boolean isPlasmaProof() {
         return plasmaProof;
     }
@@ -103,27 +110,31 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FluidPipeProperties)) return false;
-        FluidPipeProperties that = (FluidPipeProperties) o;
-        return maxFluidTemperature == that.maxFluidTemperature &&
-            throughput == that.throughput && gasProof == that.gasProof && tanks == that.tanks;
+        if (!(o instanceof FluidPipeProperties that)) return false;
+        return getThroughput() == that.getThroughput() &&
+                getTanks() == that.getTanks() &&
+                getMaxFluidTemperature() == that.getMaxFluidTemperature() &&
+                isGasProof() == that.isGasProof() &&
+                isAcidProof() == that.isAcidProof() &&
+                isCryoProof() == that.isCryoProof() &&
+                isPlasmaProof() == that.isPlasmaProof();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(maxFluidTemperature, throughput, gasProof, tanks);
+        return Objects.hash(getThroughput(), getTanks(), getMaxFluidTemperature(), isGasProof(), isAcidProof(), isCryoProof(), isPlasmaProof());
     }
 
     @Override
     public String toString() {
         return "FluidPipeProperties{" +
-                "maxFluidTemperature=" + maxFluidTemperature +
-                ", throughput=" + throughput +
+                "throughput=" + throughput +
+                ", tanks=" + tanks +
+                ", maxFluidTemperature=" + maxFluidTemperature +
                 ", gasProof=" + gasProof +
                 ", acidProof=" + acidProof +
                 ", cryoProof=" + cryoProof +
                 ", plasmaProof=" + plasmaProof +
-                ", tanks=" + tanks +
                 '}';
     }
 }

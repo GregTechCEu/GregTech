@@ -12,6 +12,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,6 +23,19 @@ import java.util.List;
  * @see gregtech.api.capability.impl.FluidTankList FluidTankList
  */
 public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleTankHandler.MultiFluidTankEntry> {
+
+    /**
+     * Comparator for entries that can be used in insertion logic
+     */
+    Comparator<MultiFluidTankEntry> ENTRY_COMPARATOR = (o1, o2) -> {
+        // #1: non-empty tank first
+        boolean empty1 = o1.getFluidAmount() <= 0;
+        boolean empty2 = o2.getFluidAmount() <= 0;
+        if (empty1 != empty2) return empty1 ? 1 : -1;
+
+        // #2: filter priority
+        return IFilter.FILTER_COMPARATOR.compare(o1.getFilter(), o2.getFilter());
+    };
 
     /**
      * @return unmodifiable view of {@code MultiFluidTankEntry}s. Note that it's still possible to access
@@ -71,7 +85,7 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
      * Entry of multi fluid tanks. Retains reference to original {@link IMultipleTankHandler} for accessing
      * information such as {@link IMultipleTankHandler#allowSameFluidFill()}.
      */
-    final class MultiFluidTankEntry implements IFluidTank {
+    final class MultiFluidTankEntry implements IFluidTank, IFiltered {
 
         private final IMultipleTankHandler tank;
         private final IFluidTank delegate;
@@ -95,32 +109,37 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
             return tank.allowSameFluidFill();
         }
 
+        @Nullable
+        @Override
+        public IFilter<FluidStack> getFilter() {
+            return this.delegate instanceof IFiltered filtered ? filtered.getFilter() : null;
+        }
+
         @Nonnull
         public IFluidTankProperties[] getTankProperties() {
-            return delegate instanceof IFluidHandler ?
-                    ((IFluidHandler) delegate).getTankProperties() :
+            return delegate instanceof IFluidHandler fluidHandler ?
+                    fluidHandler.getTankProperties() :
                     new IFluidTankProperties[]{new FallbackTankProperty()};
         }
 
-        @SuppressWarnings("unchecked")
         public NBTTagCompound trySerialize() {
-            if (delegate instanceof FluidTank) {
-                return ((FluidTank) delegate).writeToNBT(new NBTTagCompound());
-            } else if (delegate instanceof INBTSerializable) {
+            if (delegate instanceof FluidTank fluidTank) {
+                return fluidTank.writeToNBT(new NBTTagCompound());
+            } else if (delegate instanceof INBTSerializable serializable) {
                 try {
-                    return ((INBTSerializable<NBTTagCompound>) delegate).serializeNBT();
+                    return (NBTTagCompound) serializable.serializeNBT();
                 } catch (ClassCastException ignored) {}
             }
             return new NBTTagCompound();
         }
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings({"unchecked"})
         public void tryDeserialize(NBTTagCompound tag) {
-            if (delegate instanceof FluidTank) {
-                ((FluidTank) delegate).readFromNBT(tag);
-            } else if (delegate instanceof INBTSerializable) {
+            if (delegate instanceof FluidTank fluidTank) {
+                fluidTank.readFromNBT(tag);
+            } else if (delegate instanceof INBTSerializable serializable) {
                 try {
-                    ((INBTSerializable) delegate).deserializeNBT(tag);
+                    serializable.deserializeNBT(tag);
                 } catch (ClassCastException ignored) {}
             }
         }
@@ -198,7 +217,8 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
 
             @Override
             public boolean canFillFluidType(FluidStack fluidStack) {
-                return true;
+                IFilter<FluidStack> filter = getFilter();
+                return filter == null || filter.test(fluidStack);
             }
 
             @Override

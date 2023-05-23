@@ -1,12 +1,14 @@
 package gregtech.api.util;
 
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.IMultipleTankHandler.MultiFluidTankEntry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,7 +20,9 @@ public class OverlayedFluidHandler {
 
     public OverlayedFluidHandler(@Nonnull IMultipleTankHandler tank) {
         this.overlayedTanks = new ArrayList<>();
-        for (IMultipleTankHandler.MultiFluidTankEntry fluidTank : tank.getFluidTanks()) {
+        MultiFluidTankEntry[] entries = tank.getFluidTanks().toArray(new MultiFluidTankEntry[0]);
+        Arrays.sort(entries, IMultipleTankHandler.ENTRY_COMPARATOR);
+        for (MultiFluidTankEntry fluidTank : entries) {
             for (IFluidTankProperties property : fluidTank.getTankProperties()) {
                 this.overlayedTanks.add(new OverlayedTank(property, fluidTank.allowSameFluidFill()));
             }

@@ -45,7 +45,7 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
     }
 
     private MultiFluidTankEntry wrapIntoEntry(IFluidTank tank) {
-        return tank instanceof MultiFluidTankEntry ? (MultiFluidTankEntry) tank : new MultiFluidTankEntry(this, tank);
+        return tank instanceof MultiFluidTankEntry entry ? entry : new MultiFluidTankEntry(this, tank);
     }
 
     @Nonnull
@@ -93,8 +93,11 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
         // flag value indicating whether the fluid was stored in 'distinct' slot at least once
         boolean distinctSlotVisited = false;
 
+        MultiFluidTankEntry[] fluidTanks = this.fluidTanks.clone();
+        Arrays.sort(fluidTanks, IMultipleTankHandler.ENTRY_COMPARATOR);
+
         // search for tanks with same fluid type first
-        for (MultiFluidTankEntry tank : this.fluidTanks) {
+        for (MultiFluidTankEntry tank : fluidTanks) {
             // if the fluid to insert matches the tank, insert the fluid
             if (resource.isFluidEqual(tank.getFluid())) {
                 int inserted = tank.fill(resource, doFill);
@@ -117,7 +120,7 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
             }
         }
         // if we still have fluid to insert, loop through empty tanks until we find one that can accept the fluid
-        for (MultiFluidTankEntry tank : this.fluidTanks) {
+        for (MultiFluidTankEntry tank : fluidTanks) {
             // if the tank uses distinct fluid fill (allowSameFluidFill disabled) and another distinct tank had
             // received the fluid, skip this tank
             boolean usesDistinctFluidFill = tank.allowSameFluidFill();

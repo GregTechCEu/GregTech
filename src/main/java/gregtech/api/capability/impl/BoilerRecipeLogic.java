@@ -3,7 +3,6 @@ package gregtech.api.capability.impl;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
@@ -13,6 +12,7 @@ import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -72,7 +72,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
 
         for (IFluidTank fluidTank : importFluids.getFluidTanks()) {
             FluidStack fuelStack = fluidTank.drain(Integer.MAX_VALUE, false);
-            if (fuelStack == null || ModHandler.isWater(fuelStack)) continue;
+            if (fuelStack == null || CommonFluidFilters.BOILER_FLUID.test(fuelStack)) continue;
 
             Recipe dieselRecipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(
                     GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack));
@@ -101,7 +101,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             IItemHandlerModifiable importItems = boiler.getImportItems();
             for (int i = 0; i < importItems.getSlots(); i++) {
                 ItemStack stack = importItems.getStackInSlot(i);
-                int fuelBurnTime = (int) Math.ceil(ModHandler.getFuelValue(stack));
+                int fuelBurnTime = (int) Math.ceil(TileEntityFurnace.getItemBurnTime(stack));
                 if (fuelBurnTime / 80 > 0) { // try to ensure this fuel can burn for at least 1 tick
                     if (FluidUtil.getFluidHandler(stack) != null) continue;
                     this.excessFuel += fuelBurnTime % 80;
@@ -143,7 +143,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
                     getMetaTileEntity().explodeMultiblock((currentHeat / getMaximumHeat()) * 8);
                 } else {
                     setLastTickSteam(generatedSteam);
-                    getOutputTank().fill(ModHandler.getSteam(generatedSteam), true);
+                    getOutputTank().fill(Materials.Steam.getFluid(generatedSteam), true);
                 }
             }
             if (currentHeat < getMaximumHeat()) {
