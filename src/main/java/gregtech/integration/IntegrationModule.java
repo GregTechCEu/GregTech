@@ -35,6 +35,7 @@ public class IntegrationModule extends BaseGregTechModule {
     public Logger getLogger() {
         return logger;
     }
+
     @Nonnull
     @Override
     public List<Class<?>> getEventBusSubscribers() {

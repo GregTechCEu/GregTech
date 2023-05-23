@@ -9,11 +9,9 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
-import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.client.utils.TooltipHelper;
-import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.integration.RecipeCompatUtil;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JeiButton;
@@ -24,7 +22,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -142,17 +139,14 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     @Override
     public void initExtras() {
         // do not add the X button if no tweaker mod is present
-        if (!Loader.isModLoaded(GTValues.MODID_CT) && !GroovyScriptCompat.isLoaded()) return;
+        if (!RecipeCompatUtil.isTweakerLoaded()) return;
 
         BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative();
-        final String mod = GroovyScriptCompat.isLoaded() ? "GroovyScript" : "CraftTweaker";
         buttons.add(new JeiButton(166, 2, 10, 10)
                 .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
-                .setTooltipBuilder(lines -> lines.add("Copies a " + mod + " script, to remove this recipe, to the clipboard"))
+                .setTooltipBuilder(lines -> lines.add("Copies a " + RecipeCompatUtil.getTweakerName() + " script, to remove this recipe, to the clipboard"))
                 .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
-                    String recipeLine = GroovyScriptCompat.isLoaded() ?
-                            GroovyScriptCompat.getRecipeRemoveLine(recipeMap, recipe) :
-                            CTRecipeHelper.getRecipeRemoveLine(recipeMap, recipe);
+                    String recipeLine = RecipeCompatUtil.getRecipeRemoveLine(recipeMap, recipe);
                     String output = RecipeCompatUtil.getFirstOutputString(recipe);
                     if (!output.isEmpty()) {
                         output = "// " + output + "\n";

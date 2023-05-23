@@ -67,4 +67,6 @@ Certificate of Not Being a Noob Anymore is from **[Crops++](https://www.cursefor
 
 NanoMuscle and QuarkTech Suite Armors are from **[Nukepowered Utils](https://www.curseforge.com/minecraft/mc-mods/nukepowered-utils)**.
 
+OpenComputers compatibility has some code from **[GTCE2OC](https://www.curseforge.com/minecraft/mc-mods/gtce2oc)**.
+
 See something we forgot to credit? Reach out to us on Discord, or open an issue and ask for appropriate credit, we will happily mark it here
