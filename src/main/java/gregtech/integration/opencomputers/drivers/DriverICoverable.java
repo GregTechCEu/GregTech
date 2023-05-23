@@ -58,6 +58,8 @@ public class DriverICoverable extends DriverSidedTileEntity {
                 return new Object[]{new ValueCoverRoboticArm((CoverRoboticArm) coverBehavior, side)};
             if (coverBehavior instanceof CoverConveyor)
                 return new Object[]{new ValueCoverConveyor((CoverConveyor) coverBehavior, side)};
+            if (coverBehavior instanceof CoverFluidRegulator)
+                return new Object[]{new ValueCoverFluidRegulator((CoverFluidRegulator) coverBehavior, side)};
             if (coverBehavior instanceof CoverPump)
                 return new Object[]{new ValueCoverPump((CoverPump) coverBehavior, side)};
             if (coverBehavior instanceof CoverFluidFilter)

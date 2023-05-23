@@ -11,8 +11,12 @@ import net.minecraft.util.EnumFacing;
 
 public class ValueCoverPump extends ValueCoverBehavior {
 
+    protected ValueCoverPump(CoverPump coverBehavior, EnumFacing side, String name) {
+        super(coverBehavior, side, name);
+    }
+
     public ValueCoverPump(CoverPump coverBehavior, EnumFacing side) {
-        super(coverBehavior, side, "gt_coverPump");
+        this(coverBehavior, side, "gt_coverPump");
     }
 
     @Override

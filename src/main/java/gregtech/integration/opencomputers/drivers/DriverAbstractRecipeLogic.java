@@ -6,6 +6,7 @@ import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
@@ -19,7 +20,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +61,7 @@ public class DriverAbstractRecipeLogic extends DriverSidedTileEntity {
         public Object[] getCurrentRecipe(final Context context, final Arguments args) {
             Recipe previousRecipe = tileEntity.getPreviousRecipe();
             if (previousRecipe != null && tileEntity.isActive()) {
-                HashMap<String, Object> recipe = new HashMap<>();
+                Map<String, Object> recipe = new Object2ObjectOpenHashMap<>();
                 recipe.put("duration", previousRecipe.getDuration());
                 recipe.put("EUt", previousRecipe.getEUt());
 
@@ -69,7 +69,7 @@ public class DriverAbstractRecipeLogic extends DriverSidedTileEntity {
                 List<GTRecipeInput> inputs = previousRecipe.getInputs();
                 inputs.forEach(iR -> {
                     for (ItemStack itemStack : iR.getInputStacks()) {
-                        Map<String, Object> input = new HashMap<>();
+                        Map<String, Object> input = new Object2ObjectOpenHashMap<>();
                         input.put("count", iR.getAmount());
                         input.put("name", itemStack.getDisplayName());
                         itemInput.add(input);
@@ -82,7 +82,7 @@ public class DriverAbstractRecipeLogic extends DriverSidedTileEntity {
                 List<Map<String, Object>> fluidInput = new ArrayList<>();
                 List<GTRecipeInput> fluidInputs = previousRecipe.getFluidInputs();
                 fluidInputs.forEach(iR -> {
-                    Map<String, Object> input = new HashMap<>();
+                    Map<String, Object> input = new Object2ObjectOpenHashMap<>();
                     input.put("amount", iR.getAmount());
                     input.put("name", iR.getInputFluidStack().getFluid().getName());
                     fluidInput.add(input);
@@ -94,7 +94,7 @@ public class DriverAbstractRecipeLogic extends DriverSidedTileEntity {
                 List<Map<String, Object>> itemOutput = new ArrayList<>();
                 List<ItemStack> outputs = previousRecipe.getOutputs();
                 outputs.forEach(iR -> {
-                    Map<String, Object> output = new HashMap<>();
+                    Map<String, Object> output = new Object2ObjectOpenHashMap<>();
                     output.put("count", iR.getCount());
                     output.put("name", iR.getDisplayName());
                     itemOutput.add(output);
@@ -106,7 +106,7 @@ public class DriverAbstractRecipeLogic extends DriverSidedTileEntity {
                 List<Map<String, Object>> chancedItemOutput = new ArrayList<>();
                 List<Recipe.ChanceEntry> chancedOutputs = previousRecipe.getChancedOutputs();
                 chancedOutputs.forEach(iR -> {
-                    Map<String, Object> output = new HashMap<>();
+                    Map<String, Object> output = new Object2ObjectOpenHashMap<>();
                     output.put("chance", iR.getChance());
                     output.put("boostPerTier", iR.getBoostPerTier());
                     output.put("count", iR.getItemStack().getCount());
@@ -120,7 +120,7 @@ public class DriverAbstractRecipeLogic extends DriverSidedTileEntity {
                 List<Map<String, Object>> fluidOutput = new ArrayList<>();
                 List<FluidStack> fluidOutputs = previousRecipe.getFluidOutputs();
                 fluidOutputs.forEach(iR -> {
-                    Map<String, Object> output = new HashMap<>();
+                    Map<String, Object> output = new Object2ObjectOpenHashMap<>();
                     output.put("amount", iR.amount);
                     output.put("name", iR.getFluid().getName());
                     fluidOutput.add(output);

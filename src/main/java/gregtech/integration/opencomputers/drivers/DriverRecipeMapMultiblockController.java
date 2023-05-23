@@ -5,6 +5,7 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
@@ -20,7 +21,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -104,7 +104,7 @@ public class DriverRecipeMapMultiblockController extends DriverSidedTileEntity {
             for (int slot = 0; slot < handler.getSlots(); slot++) {
                 ItemStack itemStack = handler.getStackInSlot(slot);
                 if (itemStack.isEmpty()) continue;
-                Map<String, Object> map = new HashMap<>();
+                Map<String, Object> map = new Object2ObjectOpenHashMap<>();
                 map.put("count", itemStack.getCount());
                 map.put("name", itemStack.getDisplayName());
                 result.add(map);
@@ -126,7 +126,7 @@ public class DriverRecipeMapMultiblockController extends DriverSidedTileEntity {
         private Object[] getTank(IMultipleTankHandler handler) {
             List<Map<String, Object>> result = new ArrayList<>();
             handler.getFluidTanks().forEach(tank -> {
-                Map<String, Object> map = new HashMap<>();
+                Map<String, Object> map = new Object2ObjectOpenHashMap<>();
                 FluidStack fluid = tank.getFluid();
                 if (fluid == null) {
                     map.put("amount", 0);

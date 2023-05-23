@@ -11,6 +11,7 @@ import gregtech.modules.GregTechModules;
 import li.cil.oc.api.Driver;
 import li.cil.oc.api.driver.DriverBlock;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @GregTechModule(
         moduleID = GregTechModules.MODULE_OC,
@@ -24,10 +25,13 @@ public class OpenComputersModule extends IntegrationSubmodule {
     private static final String MODID_GTCE2OC = "gtce2oc";
 
     @Override
-    public void init(FMLInitializationEvent event) {
+    public void preInit(FMLPreInitializationEvent event) {
         IntegrationUtil.throwIncompatibilityIfLoaded(MODID_GTCE2OC,
                 "All functionality from this mod has been implemented in GregTech CE Unofficial.");
+    }
 
+    @Override
+    public void init(FMLInitializationEvent event) {
         getLogger().info("Registering OpenComputers Drivers...");
         registerDriver(new DriverEnergyContainer());
         registerDriver(new DriverWorkable());
