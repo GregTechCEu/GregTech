@@ -1,5 +1,6 @@
 package gregtech.api.capability.impl;
 
+import com.google.common.collect.Iterables;
 import gregtech.api.capability.IFilter;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -19,6 +20,11 @@ public final class MultiFluidFilter implements IFilter<FluidStack> {
     public MultiFluidFilter(boolean blacklist, @Nonnull FluidStack... fluids) {
         this.blacklist = blacklist;
         this.fluids = fluids;
+    }
+
+    public MultiFluidFilter(boolean blacklist, Iterable<FluidStack> fluids) {
+        this.blacklist = blacklist;
+        this.fluids = Iterables.toArray(fluids, FluidStack.class);
     }
 
     @Nonnull
