@@ -1,18 +1,25 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IFilter;
-import gregtech.api.capability.IFiltered;
+import gregtech.api.capability.IFilteredFluidContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class GTFluidHandlerItemStack extends FluidHandlerItemStack implements IFiltered {
+public class GTFluidHandlerItemStack extends FluidHandlerItemStack implements IFilteredFluidContainer {
 
     @Nullable
     private IFilter<FluidStack> filter;
+
+    private boolean canFill = true;
+    private boolean canDrain = true;
+
+    @Nullable
+    private IFluidTankProperties[] properties;
 
     /**
      * @param container The container itemStack, data is stored on it directly as NBT.
@@ -32,6 +39,32 @@ public class GTFluidHandlerItemStack extends FluidHandlerItemStack implements IF
     public GTFluidHandlerItemStack setFilter(@Nullable IFilter<FluidStack> filter) {
         this.filter = filter;
         return this;
+    }
+
+    public boolean canFill() {
+        return canFill;
+    }
+
+    public GTFluidHandlerItemStack setCanFill(boolean canFill) {
+        this.canFill = canFill;
+        return this;
+    }
+
+    public boolean canDrain() {
+        return canDrain;
+    }
+
+    public GTFluidHandlerItemStack setCanDrain(boolean canDrain) {
+        this.canDrain = canDrain;
+        return this;
+    }
+
+    @Override
+    public IFluidTankProperties[] getTankProperties() {
+        if (properties == null) {
+            return properties = new IFluidTankProperties[]{new TankProperties()};
+        }
+        return properties;
     }
 
     @Override
@@ -56,6 +89,45 @@ public class GTFluidHandlerItemStack extends FluidHandlerItemStack implements IF
 
     @Override
     public boolean canFillFluidType(FluidStack fluid) {
-        return this.filter == null || this.filter.test(fluid);
+        return canFill() && (this.filter == null || this.filter.test(fluid));
+    }
+
+    @Override
+    public boolean canDrainFluidType(FluidStack fluid) {
+        return canDrain();
+    }
+
+    private final class TankProperties implements IFluidTankProperties {
+
+        @Nullable
+        @Override
+        public FluidStack getContents() {
+            return GTFluidHandlerItemStack.this.getFluid();
+        }
+
+        @Override
+        public int getCapacity() {
+            return GTFluidHandlerItemStack.this.capacity;
+        }
+
+        @Override
+        public boolean canFill() {
+            return GTFluidHandlerItemStack.this.canFill();
+        }
+
+        @Override
+        public boolean canDrain() {
+            return GTFluidHandlerItemStack.this.canDrain();
+        }
+
+        @Override
+        public boolean canFillFluidType(FluidStack fluidStack) {
+            return GTFluidHandlerItemStack.this.canFillFluidType(fluidStack);
+        }
+
+        @Override
+        public boolean canDrainFluidType(FluidStack fluidStack) {
+            return GTFluidHandlerItemStack.this.canDrainFluidType(fluidStack);
+        }
     }
 }

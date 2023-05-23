@@ -1,18 +1,26 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IFilter;
-import gregtech.api.capability.IFiltered;
+import gregtech.api.capability.IFilteredFluidContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStackSimple;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple implements IFiltered {
+public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple implements IFilteredFluidContainer {
 
     @Nullable
     private IFilter<FluidStack> filter;
+
+    private boolean canFill = true;
+    private boolean canDrain = true;
+
+    @Nullable
+    private IFluidTankProperties[] properties;
 
     /**
      * @param container The container itemStack, data is stored on it directly as NBT.
@@ -32,6 +40,32 @@ public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple i
     public GTSimpleFluidHandlerItemStack setFilter(@Nullable IFilter<FluidStack> filter) {
         this.filter = filter;
         return this;
+    }
+
+    public boolean canFill() {
+        return canFill;
+    }
+
+    public GTSimpleFluidHandlerItemStack setCanFill(boolean canFill) {
+        this.canFill = canFill;
+        return this;
+    }
+
+    public boolean canDrain() {
+        return canDrain;
+    }
+
+    public GTSimpleFluidHandlerItemStack setCanDrain(boolean canDrain) {
+        this.canDrain = canDrain;
+        return this;
+    }
+
+    @Override
+    public IFluidTankProperties[] getTankProperties() {
+        if (properties == null) {
+            return properties = new IFluidTankProperties[]{new GTSimpleFluidHandlerItemStack.TankProperties()};
+        }
+        return properties;
     }
 
     @Override
@@ -56,6 +90,45 @@ public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple i
 
     @Override
     public boolean canFillFluidType(FluidStack fluid) {
-        return this.filter == null || this.filter.test(fluid);
+        return canFill() && (this.filter == null || this.filter.test(fluid));
+    }
+
+    @Override
+    public boolean canDrainFluidType(FluidStack fluid) {
+        return canDrain();
+    }
+
+    private final class TankProperties implements IFluidTankProperties {
+
+        @Nullable
+        @Override
+        public FluidStack getContents() {
+            return GTSimpleFluidHandlerItemStack.this.getFluid();
+        }
+
+        @Override
+        public int getCapacity() {
+            return GTSimpleFluidHandlerItemStack.this.capacity;
+        }
+
+        @Override
+        public boolean canFill() {
+            return GTSimpleFluidHandlerItemStack.this.canFill();
+        }
+
+        @Override
+        public boolean canDrain() {
+            return GTSimpleFluidHandlerItemStack.this.canDrain();
+        }
+
+        @Override
+        public boolean canFillFluidType(FluidStack fluidStack) {
+            return GTSimpleFluidHandlerItemStack.this.canFillFluidType(fluidStack);
+        }
+
+        @Override
+        public boolean canDrainFluidType(FluidStack fluidStack) {
+            return GTSimpleFluidHandlerItemStack.this.canDrainFluidType(fluidStack);
+        }
     }
 }

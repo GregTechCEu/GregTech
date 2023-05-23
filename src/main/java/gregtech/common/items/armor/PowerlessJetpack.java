@@ -1,5 +1,7 @@
 package gregtech.common.items.armor;
 
+import gregtech.api.capability.IFilter;
+import gregtech.api.capability.impl.GTFluidHandlerItemStack;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
 import gregtech.api.items.armor.ArmorUtils;
@@ -26,10 +28,8 @@ import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -192,7 +192,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
                 return;
             } else if (fluidStack != null) {
                 Recipe recipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.find(Collections.emptyList(), Collections.singletonList(fluidStack), (Objects::nonNull));
-                if (recipe != null)  {
+                if (recipe != null) {
                     previousRecipe = recipe;
                     currentRecipe = previousRecipe;
                     return;
@@ -237,6 +237,18 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
 
     public class Behaviour implements IItemDurabilityManager, IItemCapabilityProvider, IItemBehaviour, ISubItemHandler {
 
+        private static final IFilter<FluidStack> JETPACK_FUEL_FILTER = new IFilter<>() {
+            @Override
+            public boolean test(@Nonnull FluidStack fluidStack) {
+                return RecipeMaps.COMBUSTION_GENERATOR_FUELS.find(Collections.emptyList(), Collections.singletonList(fluidStack), (Objects::nonNull)) != null;
+            }
+
+            @Override
+            public int getPriority() {
+                return IFilter.whitelistLikePriority();
+            }
+        };
+
         public final int maxCapacity;
         private final Pair<Color, Color> durabilityBarColors;
 
@@ -262,17 +274,9 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
 
         @Override
         public ICapabilityProvider createProvider(ItemStack itemStack) {
-            return new FluidHandlerItemStack(itemStack, maxCapacity) {
-                @Override
-                public boolean canFillFluidType(FluidStack fluidStack) {
-                    return RecipeMaps.COMBUSTION_GENERATOR_FUELS.find(Collections.emptyList(), Collections.singletonList(fluidStack), (Objects::nonNull)) != null;
-                }
-
-                @Override
-                public IFluidTankProperties[] getTankProperties() {
-                    return new FluidTankProperties[]{new FluidTankProperties(getFluid(), capacity, true, false)};
-                }
-            };
+            return new GTFluidHandlerItemStack(itemStack, maxCapacity)
+                    .setFilter(JETPACK_FUEL_FILTER)
+                    .setCanDrain(false);
         }
 
         @Override

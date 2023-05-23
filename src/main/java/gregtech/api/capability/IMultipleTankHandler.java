@@ -34,7 +34,11 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
         if (empty1 != empty2) return empty1 ? 1 : -1;
 
         // #2: filter priority
-        return IFilter.FILTER_COMPARATOR.compare(o1.getFilter(), o2.getFilter());
+        IFilter<FluidStack> filter1 = o1.getFilter();
+        IFilter<FluidStack> filter2 = o2.getFilter();
+        if (filter1 == null) return filter2 == null ? 0 : 1;
+        if (filter2 == null) return -1;
+        return IFilter.FILTER_COMPARATOR.compare(filter1, filter2);
     };
 
     /**
@@ -85,7 +89,7 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
      * Entry of multi fluid tanks. Retains reference to original {@link IMultipleTankHandler} for accessing
      * information such as {@link IMultipleTankHandler#allowSameFluidFill()}.
      */
-    final class MultiFluidTankEntry implements IFluidTank, IFiltered {
+    final class MultiFluidTankEntry implements IFluidTank, IFilteredFluidContainer {
 
         private final IMultipleTankHandler tank;
         private final IFluidTank delegate;
@@ -112,7 +116,7 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
         @Nullable
         @Override
         public IFilter<FluidStack> getFilter() {
-            return this.delegate instanceof IFiltered filtered ? filtered.getFilter() : null;
+            return this.delegate instanceof IFilteredFluidContainer filtered ? filtered.getFilter() : null;
         }
 
         @Nonnull

@@ -2,6 +2,7 @@ package gregtech.api.capability.impl;
 
 import gregtech.Bootstrap;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.OverlayedFluidHandler;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -233,6 +234,79 @@ public class FluidTankListTest {
                         null,
                         null,
                         null);
+    }
+
+    @Test
+    public void testFilterOrdering() {
+        SingleFluidFilter waterFilter = new SingleFluidFilter(new FluidStack(WATER, 1), false);
+        SingleFluidFilter lavaFilter = new SingleFluidFilter(new FluidStack(LAVA, 1), false);
+        SingleFluidFilter creosoteFilter = new SingleFluidFilter(new FluidStack(Materials.Creosote.getFluid(), 1), false);
+
+        new FluidHandlerTester(false,
+                new FilteredFluidHandler(1000).setFilter(waterFilter),
+                new FilteredFluidHandler(1000).setFilter(lavaFilter),
+                new FilteredFluidHandler(1000).setFilter(creosoteFilter))
+                .beginSimulation()
+                .fill(WATER, 800)
+                .fill(LAVA, 800)
+                .fill(WATER, 800)
+                .expectContents(
+                        new FluidStack(WATER, 1000),
+                        new FluidStack(LAVA, 800),
+                        null);
+
+        new FluidHandlerTester(true,
+                new FilteredFluidHandler(1000).setFilter(waterFilter),
+                new FilteredFluidHandler(1000).setFilter(lavaFilter),
+                new FilteredFluidHandler(1000).setFilter(creosoteFilter))
+                .beginSimulation()
+                .fill(WATER, 800)
+                .fill(LAVA, 800)
+                .fill(WATER, 800)
+                .expectContents(
+                        new FluidStack(WATER, 1000),
+                        new FluidStack(LAVA, 800),
+                        null);
+
+        new FluidHandlerTester(true,
+                new FilteredFluidHandler(1000).setFilter(waterFilter),
+                new FluidTank(1000))
+                .beginSimulation()
+                .fill(WATER, 800)
+                .fill(LAVA, 800)
+                .expectContents(
+                        new FluidStack(WATER, 800),
+                        new FluidStack(LAVA, 800));
+
+        new FluidHandlerTester(true,
+                new FilteredFluidHandler(1000).setFilter(waterFilter),
+                new FluidTank(1000))
+                .beginSimulation()
+                .fill(LAVA, 800)
+                .fill(WATER, 800)
+                .expectContents(
+                        new FluidStack(WATER, 800),
+                        new FluidStack(LAVA, 800));
+
+        new FluidHandlerTester(true,
+                new FluidTank(1000),
+                new FilteredFluidHandler(1000).setFilter(waterFilter))
+                .beginSimulation()
+                .fill(WATER, 800)
+                .fill(LAVA, 800)
+                .expectContents(
+                        new FluidStack(LAVA, 800),
+                        new FluidStack(WATER, 800));
+
+        new FluidHandlerTester(true,
+                new FluidTank(1000),
+                new FilteredFluidHandler(1000).setFilter(waterFilter))
+                .beginSimulation()
+                .fill(LAVA, 800)
+                .fill(WATER, 800)
+                .expectContents(
+                        new FluidStack(LAVA, 800),
+                        new FluidStack(WATER, 800));
     }
 
     private static final class FluidHandlerTester {

@@ -8,7 +8,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.capability.IFiltered;
+import gregtech.api.capability.IFilteredFluidContainer;
 import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.capability.impl.CombinedCapabilityProvider;
 import gregtech.api.capability.impl.ElectricItem;
@@ -569,8 +569,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     fluidTankProperties.getCapacity(),
                     fluid == null ? "" : fluid.getLocalizedName()));
 
-            if (fluidHandler instanceof IFiltered ffh &&
-                    ffh.getFilter() instanceof IPropertyFluidFilter propertyFilter) {
+            if (fluidHandler instanceof IFilteredFluidContainer filtered &&
+                    filtered.getFilter() instanceof IPropertyFluidFilter propertyFilter) {
                 if (TooltipHelper.isShiftDown()) {
                     lines.add(I18n.format("gregtech.fluid_pipe.max_temperature", propertyFilter.getMaxFluidTemperature()));
                     if (propertyFilter.isGasProof()) lines.add(I18n.format("gregtech.fluid_pipe.gas_proof"));

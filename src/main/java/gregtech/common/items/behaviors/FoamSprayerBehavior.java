@@ -1,14 +1,17 @@
 package gregtech.common.items.behaviors;
 
+import gregtech.api.capability.impl.GTFluidHandlerItemStack;
+import gregtech.api.capability.impl.SingleFluidFilter;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
+import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GradientUtil;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
-import net.minecraft.block.material.Material;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,13 +25,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabilityManager, IItemBehaviour, ISubItemHandler {
 
@@ -44,6 +48,10 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
     public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack itemStack = player.getHeldItem(hand);
         IFluidHandlerItem fluidHandlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        if (fluidHandlerItem == null) {
+            return ActionResult.newResult(EnumActionResult.FAIL, itemStack);
+        }
+
         FluidStack fluidStack = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
         if (fluidStack != null && fluidStack.amount >= FLUID_PER_BLOCK) {
             BlockPos offsetPos = pos.offset(facing);
@@ -87,12 +95,8 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
 
     @Override
     public ICapabilityProvider createProvider(ItemStack itemStack) {
-        return new FluidHandlerItemStack(itemStack, 10000) {
-            @Override
-            public boolean canFillFluidType(FluidStack fluid) {
-                return fluid != null && fluid.isFluidEqual(Materials.ConstructionFoam.getFluid(1));
-            }
-        };
+        return new GTFluidHandlerItemStack(itemStack, 10000)
+                .setFilter(new SingleFluidFilter(Materials.ConstructionFoam.getFluid(1), false));
     }
 
     private static int foamAllFrameBlocks(World world, BlockPos pos, int maxBlocksToFoam, boolean isSneaking) {
@@ -102,7 +106,8 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         //replace blocks without updating physics
         for (BlockPos framePos : frameBlocks) {
             IBlockState blockState = world.getBlockState(framePos);
-            boolean isNormalFrame = blockState.getBlock().getMaterial(blockState) == Material.WOOD || isSneaking;
+            boolean isNormalFrame = isSneaking ||
+                    ModHandler.isMaterialWood(((BlockFrame) blockState.getBlock()).getGtMaterial(blockState));
             if (isNormalFrame) {
                 blockState.getBlock().dropBlockAsItem(world, framePos, blockState, 0);
             }
@@ -135,49 +140,49 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         return replacableBlocks.size();
     }
 
-    private static List<BlockPos> gatherReplacableBlocks(World worldIn, BlockPos centerPos, int maxRadiusSq) {
-        HashSet<BlockPos> observedSet = new HashSet<>();
+    private static List<BlockPos> gatherReplacableBlocks(World world, BlockPos centerPos, int maxRadiusSq) {
+        Set<BlockPos> observedSet = new ObjectOpenHashSet<>();
         ArrayList<BlockPos> resultAirBlocks = new ArrayList<>();
         observedSet.add(centerPos);
         resultAirBlocks.add(centerPos);
-        Deque<EnumFacing> moveStack = new ArrayDeque<>();
+        List<EnumFacing> moveStack = new ArrayList<>();
         MutableBlockPos currentPos = new MutableBlockPos(centerPos);
         main:
         while (true) {
             for (EnumFacing facing : EnumFacing.VALUES) {
                 currentPos.move(facing);
-                IBlockState blockStateHere = worldIn.getBlockState(currentPos);
+                IBlockState blockStateHere = world.getBlockState(currentPos);
                 //if there is node, and it can connect with previous node, add it to list, and set previous node as current
-                if (blockStateHere.getBlock().isReplaceable(worldIn, currentPos) &&
+                if (blockStateHere.getBlock().isReplaceable(world, currentPos) &&
                         currentPos.distanceSq(centerPos) <= maxRadiusSq && !observedSet.contains(currentPos)) {
                     BlockPos immutablePos = currentPos.toImmutable();
                     observedSet.add(immutablePos);
                     resultAirBlocks.add(immutablePos);
-                    moveStack.push(facing.getOpposite());
+                    moveStack.add(facing.getOpposite());
                     continue main;
                 } else currentPos.move(facing.getOpposite());
             }
             if (!moveStack.isEmpty()) {
-                currentPos.move(moveStack.pop());
+                currentPos.move(moveStack.remove(moveStack.size() - 1));
             } else break;
         }
         resultAirBlocks.sort(Comparator.comparing(it -> it.distanceSq(centerPos)));
         return resultAirBlocks;
     }
 
-    private static List<BlockPos> gatherFrameBlocks(World worldIn, BlockPos centerPos, int maxRadiusSq) {
-        HashSet<BlockPos> observedSet = new HashSet<>();
+    private static List<BlockPos> gatherFrameBlocks(World world, BlockPos centerPos, int maxRadiusSq) {
+        Set<BlockPos> observedSet = new ObjectOpenHashSet<>();
         ArrayList<BlockPos> resultFrameBlocks = new ArrayList<>();
         observedSet.add(centerPos);
         resultFrameBlocks.add(centerPos);
         IBlockState frameState = null;
-        Deque<EnumFacing> moveStack = new ArrayDeque<>();
+        List<EnumFacing> moveStack = new ArrayList<>();
         MutableBlockPos currentPos = new MutableBlockPos(centerPos);
         main:
         while (true) {
             for (EnumFacing facing : EnumFacing.VALUES) {
                 currentPos.move(facing);
-                IBlockState blockStateHere = worldIn.getBlockState(currentPos);
+                IBlockState blockStateHere = world.getBlockState(currentPos);
                 //if there is node, and it can connect with previous node, add it to list, and set previous node as current
                 if (blockStateHere.getBlock() instanceof BlockFrame &&
                         currentPos.distanceSq(centerPos) <= maxRadiusSq &&
@@ -185,13 +190,13 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
                     BlockPos immutablePos = currentPos.toImmutable();
                     observedSet.add(immutablePos);
                     resultFrameBlocks.add(immutablePos);
-                    moveStack.push(facing.getOpposite());
+                    moveStack.add(facing.getOpposite());
                     frameState = blockStateHere;
                     continue main;
                 } else currentPos.move(facing.getOpposite());
             }
             if (!moveStack.isEmpty()) {
-                currentPos.move(moveStack.pop());
+                currentPos.move(moveStack.remove(moveStack.size() - 1));
             } else break;
         }
         resultFrameBlocks.sort(Comparator.comparing(it -> it.distanceSq(centerPos)));
