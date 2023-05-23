@@ -38,22 +38,23 @@ public interface IFilter<T> extends Predicate<T> {
      * certain filters from others. The priority system uses <i>reverse ordering</i>; higher priority values have
      * precedence over lower ones.
      * <ul>
-     *     <li>Whitelist filters have {@code Integer.MAX_VALUE - whitelistSize} as their default priority. The lowest
+     *     <li>Whitelist filters have {@code Integer.MAX_VALUE - whitelistSize} as their default priority. The highest
      *     possible number for whitelist priority is {@code Integer.MAX_VALUE - 1}, where only one entry is
-     *     whitelisted.</li>
+     *     whitelisted. The priority can be computed using {@link #whitelistPriority(int)}.</li>
      *     <li>Blacklist filters have {@code Integer.MIN_VALUE + 1 + blacklistSize} as their default priority. The
-     *     highest possible number for blacklist priority is {@code Integer.MIN_VALUE + 2}, where only one entry is
-     *     blacklisted.</li>
+     *     lowest possible number for blacklist priority is {@code Integer.MIN_VALUE + 2}, where only one entry is
+     *     blacklisted. The priority can be computed using {@link #blacklistPriority(int)}.</li>
      *     <li>Filters with unspecified priority have {@code 0} as their priority.</li>
-     *     <li>Two values, {@code Integer.MIN_VALUE + 1}, and {@code Integer.MAX_VALUE}, can be used to create filter
-     *     with lowest/highest possible priority respectively.</li>
-     *     <li>For custom filter implementations, it is expected to have at least negative priority for whitelist-like
-     *     filters, and positive priority for blacklist-like filters. Methods {@link #whitelistLikePriority()} and
-     *     {@link #blacklistLikePriority()}</li>
-     *     <li>{@code Integer.MIN_VALUE} is reserved for 'no-priority' filters; it's applicable to no-op filters and
+     *     <li>Two values, {@link #firstPriority()}, and {@link #lastPriority()}, can be used to create filter
+     *     with highest/lowest possible priority respectively.</li>
+     *     <li>For custom filter implementations, it is expected to have at least positive priority for whitelist-like
+     *     filters, and negative priority for blacklist-like filters. Methods {@link #whitelistLikePriority()} and
+     *     {@link #blacklistLikePriority()} are available as standard priority.</li>
+     *     <li>{@link #noPriority()} is reserved for 'no-priority' filters; it's applicable to no-op filters and
      *     its reverse (everything filter).</li>
      * </ul>
-     * Although not required, it is strongly encouraged to specify priority according to these criteria.
+     * Although the priority is not a strict requirement, it is strongly encouraged to specify priority according to
+     * these criteria.
      *
      * @return insertion priority
      */
@@ -92,7 +93,7 @@ public interface IFilter<T> extends Predicate<T> {
     /**
      * Default priority logic for all whitelist filters.
      * <p>
-     * Whitelist filters have {@code Integer.MAX_VALUE - whitelistSize} as their default priority. The lowest possible
+     * Whitelist filters have {@code Integer.MAX_VALUE - whitelistSize} as their default priority. The highest possible
      * number for whitelist priority is {@code Integer.MAX_VALUE - 1}, where only one entry is whitelisted.
      *
      * @param whitelistSize the size of whitelist entries
@@ -105,8 +106,8 @@ public interface IFilter<T> extends Predicate<T> {
     /**
      * Default priority logic for all blacklist filters.
      * <p>
-     * Blacklist filters have {@code Integer.MIN_VALUE + 1 + blacklistSize} as their default priority. The highest possible
-     * number for blacklist priority is {@code Integer.MIN_VALUE + 2}, where only one entry is blacklisted.
+     * Blacklist filters have {@code Integer.MIN_VALUE + 1 + blacklistSize} as their default priority. The lowest
+     * possible number for blacklist priority is {@code Integer.MIN_VALUE + 2}, where only one entry is blacklisted.
      *
      * @param blacklistSize the size of whitelist entries
      * @return default priority logic for all blacklist filters
@@ -130,7 +131,25 @@ public interface IFilter<T> extends Predicate<T> {
      * @return recommended priority for 'blacklist-like' filters
      */
     static int blacklistLikePriority() {
-        return 1000;
+        return -1000;
+    }
+
+    /**
+     * Highest possible priority for filters.
+     *
+     * @return highest possible priority
+     */
+    static int firstPriority() {
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Lowest possible priority for filters.
+     *
+     * @return lowest possible priority
+     */
+    static int lastPriority() {
+        return Integer.MIN_VALUE + 1;
     }
 
     /**
