@@ -3,7 +3,6 @@ package gregtech.common;
 import gregtech.api.GTValues;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.toolitem.ToolClasses;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
@@ -78,36 +77,19 @@ public class EventHandlers {
 
     @SubscribeEvent
     public static void onPlayerInteractionRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        EntityPlayer player = event.getEntityPlayer();
         if (event.getWorld().getTileEntity(event.getPos()) instanceof IGregTechTileEntity) {
             event.setUseBlock(Event.Result.ALLOW);
         }
         ItemStack stack = event.getItemStack();
-        if (!stack.isEmpty()) {
-            if (stack.getItem() == Items.FLINT_AND_STEEL) {
-                if (!event.getWorld().isRemote
-                        && !event.getEntityPlayer().capabilities.isCreativeMode
-                        && GTValues.RNG.nextInt(100) >= ConfigHolder.misc.flintChanceToCreateFire) {
-                    stack.damageItem(1, event.getEntityPlayer());
-                    if (stack.getItemDamage() >= stack.getMaxDamage()) {
-                        stack.shrink(1);
-                    }
-                    event.setCanceled(true);
+        if (!stack.isEmpty() && stack.getItem() == Items.FLINT_AND_STEEL) {
+            if (!event.getWorld().isRemote
+                    && !event.getEntityPlayer().capabilities.isCreativeMode
+                    && GTValues.RNG.nextInt(100) >= ConfigHolder.misc.flintChanceToCreateFire) {
+                stack.damageItem(1, event.getEntityPlayer());
+                if (stack.getItemDamage() >= stack.getMaxDamage()) {
+                    stack.shrink(1);
                 }
-            }
-            else if (stack.getItem() == Items.NAME_TAG) {
-                TileEntity te = event.getWorld().getTileEntity(event.getPos());
-                if (te instanceof MetaTileEntityHolder) {
-                    if (player.isSneaking() && stack.getTagCompound() != null && stack.getTagCompound().hasKey("display")){
-                        MetaTileEntityHolder mte = (MetaTileEntityHolder) te;
-
-                        mte.setCustomName(stack.getTagCompound().getCompoundTag("display").getString("Name"));
-                        if (!player.isCreative()) {
-                            stack.shrink(1);
-                        }
-                        event.setCanceled(true);
-                    }
-                }
+                event.setCanceled(true);
             }
         }
     }

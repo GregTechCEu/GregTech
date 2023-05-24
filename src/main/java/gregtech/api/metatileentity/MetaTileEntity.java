@@ -48,6 +48,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -425,12 +426,25 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return true if something happened, so animation will be played
      */
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        ItemStack heldStack = playerIn.getHeldItem(hand);
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
             return true;
         } else {
+            // Attempt to rename the MTE first
+            if (heldStack.getItem() == Items.NAME_TAG) {
+                if (playerIn.isSneaking() && heldStack.getTagCompound() != null && heldStack.getTagCompound().hasKey("display")) {
+                    MetaTileEntityHolder mteHolder = (MetaTileEntityHolder) getHolder();
+
+                    mteHolder.setCustomName(heldStack.getTagCompound().getCompoundTag("display").getString("Name"));
+                    if (!playerIn.isCreative()) {
+                        heldStack.shrink(1);
+                    }
+                    return true;
+                }
+            }
             EnumFacing hitFacing = hitResult.sideHit;
             CoverBehavior coverBehavior = hitFacing == null ? null : getCoverAtSide(hitFacing);
             if (coverBehavior == null) {
