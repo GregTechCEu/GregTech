@@ -708,5 +708,12 @@ public class ReactorRecipes {
                 .fluidInputs(PolyvinylAcetate.getFluid(144))
                 .fluidOutputs(PolyvinylButyral.getFluid(144))
                 .duration(400).EUt(VA[HV]).buildAndRegister();
+
+		CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(160)
+                .fluidInputs(NitrationMixture.getFluid(1000))
+                .fluidInputs(Benzene.getFluid(1000))
+                .fluidOutputs(Nitrobenzene.getFluid(1000))
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
+                .buildAndRegister();
     }
 }

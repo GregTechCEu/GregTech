@@ -525,7 +525,7 @@ public class SecondDegreeMaterials {
 
         SalAmmoniac = new Material.Builder(2060, "sal_ammoniac")
                 .dust().ore()
-                .color(0xE0C3E3).iconSet(FINE)
+                .color(0xF0C8C8).iconSet(FINE)
                 .components(Ammonia, 1, HydrochloricAcid, 1)
                 .build()
                 .setFormula("NH4Cl", true);

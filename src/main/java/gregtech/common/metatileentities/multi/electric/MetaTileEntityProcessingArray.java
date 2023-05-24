@@ -89,7 +89,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     public IBlockState getCasingState() {
         return tier == 0
                 ? MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST)
-                : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSE_STURDY);
+                : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSE_RIGID);
     }
 
     @Override

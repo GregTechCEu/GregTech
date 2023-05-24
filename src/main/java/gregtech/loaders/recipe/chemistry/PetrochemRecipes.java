@@ -93,24 +93,24 @@ public class PetrochemRecipes {
                 .fluidOutputs(HydrogenSulfide.getFluid(1000))
                 .fluidOutputs(RefineryGas.getFluid(16000))
                 .duration(160).EUt(VA[LV]).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .fluidInputs(NaturalGas.getFluid(16000))
-                .fluidInputs(Hydrogen.getFluid(2000))
-                .fluidOutputs(HydrogenSulfide.getFluid(1000))
-                .fluidOutputs(RefineryGas.getFluid(16000))
-                .duration(160).EUt(VA[LV]).buildAndRegister();
     }
 
     private static void distillationRecipes() {
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(RefineryGas.getFluid(1000))
+                .fluidInputs(NaturalGas.getFluid(1000))
                 .fluidOutputs(Butane.getFluid(60))
                 .fluidOutputs(Propane.getFluid(70))
                 .fluidOutputs(Ethane.getFluid(100))
                 .fluidOutputs(Methane.getFluid(750))
                 .fluidOutputs(Helium.getFluid(20))
+                .duration(240).EUt(VA[MV]).buildAndRegister();
+
+        DISTILLATION_RECIPES.recipeBuilder()
+                .fluidInputs(RefineryGas.getFluid(1000))
+                .fluidOutputs(Butane.getFluid(450))
+                .fluidOutputs(Propane.getFluid(400))
+                .fluidOutputs(Ethane.getFluid(150))
                 .duration(240).EUt(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()

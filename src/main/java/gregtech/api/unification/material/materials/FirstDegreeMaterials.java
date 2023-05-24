@@ -494,7 +494,7 @@ public class FirstDegreeMaterials {
                 .color(0xC88C14)
                 .flags(DISABLE_DECOMPOSITION, MAGNETIC_ORE)
                 .components(Calcium, 1, Tungsten, 1, Oxygen, 4)
-                .build()
+                .build();
 
         Sodalite = new Material.Builder(316, "sodalite")
                 .gem(1).ore(5)
@@ -594,7 +594,7 @@ public class FirstDegreeMaterials {
                 .color(0x373223)
                 .flags(DISABLE_DECOMPOSITION, MAGNETIC_ORE)
                 .components(Lithium, 2, Tungsten, 1, Oxygen, 4)
-                .build()
+                .build();
 
         Ultimet = new Material.Builder(331, "ultimet")
                 .ingot(4).fluid()

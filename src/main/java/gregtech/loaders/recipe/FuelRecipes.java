@@ -34,12 +34,6 @@ public class FuelRecipes {
                 .buildAndRegister();
 
         RecipeMaps.COMBUSTION_GENERATOR_FUELS.recipeBuilder()
-                .fluidInputs(Octane.getFluid(2))
-                .duration(5)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.COMBUSTION_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(BioDiesel.getFluid(1))
                 .duration(8)
                 .EUt((int) V[LV])
@@ -78,12 +72,6 @@ public class FuelRecipes {
         RecipeMaps.COMBUSTION_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(HighOctaneGasoline.getFluid(1))
                 .duration(100)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.COMBUSTION_GENERATOR_FUELS.recipeBuilder()
-                .fluidInputs(Toluene.getFluid(1))
-                .duration(10)
                 .EUt((int) V[LV])
                 .buildAndRegister();
 
@@ -145,74 +133,14 @@ public class FuelRecipes {
                 .buildAndRegister();
 
         RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
-                .fluidInputs(Ethylene.getFluid(1))
-                .duration(4)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
                 .fluidInputs(RefineryGas.getFluid(1))
                 .duration(5)
                 .EUt((int) V[LV])
                 .buildAndRegister();
 
         RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
-                .fluidInputs(Ethane.getFluid(4))
-                .duration(21)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
-                .fluidInputs(Propene.getFluid(1))
-                .duration(6)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
-                .fluidInputs(Butadiene.getFluid(16))
-                .duration(102)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
-                .fluidInputs(Propane.getFluid(4))
-                .duration(29)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
-                .fluidInputs(Butene.getFluid(1))
-                .duration(8)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
-                .fluidInputs(Phenol.getFluid(1))
-                .duration(9)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
-                .fluidInputs(Benzene.getFluid(1))
-                .duration(11)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
-                .fluidInputs(Butane.getFluid(4))
-                .duration(37)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
                 .fluidInputs(LPG.getFluid(1))
                 .duration(10)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder() // TODO Too OP pls nerf
-                .fluidInputs(Nitrobenzene.getFluid(1))
-                .duration(40)
                 .EUt((int) V[LV])
                 .buildAndRegister();
 
@@ -250,12 +178,6 @@ public class FuelRecipes {
         RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(HeavyFuel.getFluid(8))
                 .duration(15)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.recipeBuilder()
-                .fluidInputs(FishOil.getFluid(16))
-                .duration(1)
                 .EUt((int) V[LV])
                 .buildAndRegister();
 

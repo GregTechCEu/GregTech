@@ -2469,7 +2469,7 @@ tile.metal_casing.stainless_clean.name=Clean Stainless Steel Casing
 tile.metal_casing.titanium_stable.name=Stable Titanium Machine Casing
 tile.metal_casing.tungstensteel_robust.name=Robust Tungstensteel Machine Casing
 tile.metal_casing.ptfe_inert.name=Chemically Inert PTFE Machine Casing
-tile.metal_casing.hsse_sturdy.name=Sturdy HSS-E Machine Casing
+tile.metal_casing.hsse_rigid.name=Rigid HSS-E Machine Casing
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULV Machine Casing
@@ -2507,8 +2507,8 @@ tile.turbine_casing.tungstensteel_gearbox.name=Tungstensteel Gearbox Casing
 
 # Turbine casing blocks
 tile.turbine_casing.steel_turbine_casing.name=Steel Turbine Casing
-tile.turbine_casing.titanium_turbine_casing.name=Titanium Turbine Casing
 tile.turbine_casing.stainless_turbine_casing.name=Stainless Turbine Casing
+tile.turbine_casing.titanium_turbine_casing.name=Titanium Turbine Casing
 tile.turbine_casing.tungstensteel_turbine_casing.name=Tungstensteel Turbine Casing
 
 # Multiblock casing blocks
@@ -2521,9 +2521,9 @@ tile.multiblock_casing.assembly_line.name=Assembly Line Casing
 # Fusion casing blocks
 tile.fusion_casing.superconductor_coil.name=Superconducting Coil Block
 tile.fusion_casing.fusion_coil.name=Fusion Coil Block
-tile.fusion_casing.fusion_casing.name=Fusion Machine Casing
-tile.fusion_casing.fusion_casing_mk2.name=Fusion Machine Casing MK II
-tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
+tile.fusion_casing.fusion_casing.name=Fusion Reactor Casing
+tile.fusion_casing.fusion_casing_mk2.name=Fusion Reactor Casing MK II
+tile.fusion_casing.fusion_casing_mk3.name=Fusion Reactor Casing MK III
 
 # Transparent casing blocks
 tile.transparent_casing.tempered_glass.name=Tempered Glass

@@ -33,22 +33,6 @@ public class SeparationRecipes {
 
         // Centrifuge
         CENTRIFUGE_RECIPES.recipeBuilder()
-                .fluidInputs(RefineryGas.getFluid(8000))
-                .fluidOutputs(Methane.getFluid(4000))
-                .fluidOutputs(LPG.getFluid(4000))
-                .duration(200).EUt(5).buildAndRegister();
-
-        CENTRIFUGE_RECIPES.recipeBuilder()
-                .fluidInputs(Butane.getFluid(320))
-                .fluidOutputs(LPG.getFluid(370))
-                .duration(20).EUt(5).buildAndRegister();
-
-        CENTRIFUGE_RECIPES.recipeBuilder()
-                .fluidInputs(Propane.getFluid(320))
-                .fluidOutputs(LPG.getFluid(290))
-                .duration(20).EUt(5).buildAndRegister();
-
-        CENTRIFUGE_RECIPES.recipeBuilder()
                 .fluidInputs(NitrationMixture.getFluid(2000))
                 .fluidOutputs(NitricAcid.getFluid(1000))
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
