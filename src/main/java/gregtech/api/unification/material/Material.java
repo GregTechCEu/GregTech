@@ -59,7 +59,7 @@ public class Material implements Comparable<Material> {
      */
     private String chemicalFormula;
 
-    // TODO Fix isotope tooltips being set toSmallDownNumbers
+    @Nonnull
     private String calculateChemicalFormula() {
         if (chemicalFormula != null) return this.chemicalFormula;
         if (materialInfo.element != null) {
@@ -68,7 +68,7 @@ public class Material implements Comparable<Material> {
         if (!materialInfo.componentList.isEmpty()) {
             StringBuilder components = new StringBuilder();
             for (MaterialStack component : materialInfo.componentList)
-                components.append(component.toString());
+                components.append(component.toFormatted());
             return components.toString();
         }
         return "";

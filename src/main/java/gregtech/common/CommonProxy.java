@@ -7,7 +7,6 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
@@ -29,8 +28,6 @@ import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
-import gregtech.integration.groovy.GroovyScriptCompat;
-import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
@@ -49,12 +46,10 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -311,13 +306,6 @@ public class CommonProxy {
         GTLog.logger.info("Running late material handlers...");
         OrePrefix.runMaterialHandlers();
         GTRecipeManager.loadLatest();
-
-        if (Loader.isModLoaded(GTValues.MODID_CT)) {
-            MetaItemBracketHandler.rebuildComponentRegistry();
-        }
-        if (GroovyScriptCompat.isLoaded()) {
-            GroovyScriptCompat.loadMetaItemBracketHandler();
-        }
     }
 
     @SubscribeEvent
@@ -378,9 +366,6 @@ public class CommonProxy {
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
-        if (Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
-            GTJeiPlugin.setupInputHandler();
-        }
         GTRecipeInput.INSTANCES = new ObjectOpenHashSet<>();
     }
 

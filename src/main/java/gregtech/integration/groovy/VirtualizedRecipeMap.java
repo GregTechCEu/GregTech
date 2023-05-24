@@ -21,7 +21,7 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
     public VirtualizedRecipeMap(RecipeMap<?> recipeMap) {
         super(false, generateAliases(recipeMap.unlocalizedName));
         this.recipeMap = recipeMap;
-        GroovyScriptCompat.getInstance().addRegistry(this);
+        GroovyScriptModule.getInstance().addRegistry(this);
     }
 
     public static String[] generateAliases(String name) {
@@ -67,7 +67,7 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
     public boolean removeByInput(long voltage, List<ItemStack> items, List<FluidStack> fluids) {
         Recipe recipe = find(voltage, items, fluids);
         if (recipe == null) {
-            if (GroovyScriptCompat.isCurrentlyRunning()) {
+            if (GroovyScriptModule.isCurrentlyRunning()) {
                 GroovyLog.msg("Error removing GregTech " + getName() + " recipe")
                         .add("could not find recipe for: voltage {}, items {}, fluids {}", voltage, items, fluids)
                         .error()
