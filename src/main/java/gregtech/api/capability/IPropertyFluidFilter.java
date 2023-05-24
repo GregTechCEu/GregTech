@@ -25,20 +25,20 @@ public interface IPropertyFluidFilter extends IFilter<FluidStack> {
     int CRYOGENIC_TEMPERATURE_THRESHOLD = 120;
 
     @Override
-    @SuppressWarnings("RedundantIfStatement")
     default boolean test(@Nonnull FluidStack stack) {
         Fluid fluid = stack.getFluid();
-        int temperature = fluid.getTemperature();
-        if (temperature > getMaxFluidTemperature()) return false;
-        if (temperature < CRYOGENIC_TEMPERATURE_THRESHOLD && !isCryoProof()) return false;
+        if (fluid.getTemperature() < CRYOGENIC_TEMPERATURE_THRESHOLD && !isCryoProof()) return false;
         if (fluid.isGaseous() && !isGasProof()) return false;
 
-        if (fluid instanceof MaterialFluid) {
-            FluidType fluidType = ((MaterialFluid) fluid).getFluidType();
-            if (fluidType == FluidTypes.ACID && !isAcidProof()) return false;
-            if (fluidType == FluidTypes.PLASMA && !isPlasmaProof()) return false;
+        if (fluid instanceof MaterialFluid materialFluid) {
+            FluidType fluidType = materialFluid.getFluidType();
+            if (fluidType == FluidTypes.ACID) {
+                if (!isAcidProof()) return false;
+            } else if (fluidType == FluidTypes.PLASMA) {
+                return isPlasmaProof(); // bypass max temperature check below
+            }
         }
-        return true;
+        return fluid.getTemperature() <= getMaxFluidTemperature();
     }
 
     @Override
