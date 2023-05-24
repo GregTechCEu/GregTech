@@ -89,7 +89,7 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
      * Entry of multi fluid tanks. Retains reference to original {@link IMultipleTankHandler} for accessing
      * information such as {@link IMultipleTankHandler#allowSameFluidFill()}.
      */
-    final class MultiFluidTankEntry implements IFluidTank, IFilteredFluidContainer {
+    final class MultiFluidTankEntry implements IFluidTank, IFluidHandler, IFilteredFluidContainer {
 
         private final IMultipleTankHandler tank;
         private final IFluidTank delegate;
@@ -172,6 +172,20 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
         @Override
         public int fill(FluidStack resource, boolean doFill) {
             return delegate.fill(resource, doFill);
+        }
+
+        @Nullable
+        @Override
+        public FluidStack drain(FluidStack resource, boolean doDrain) {
+            if (resource == null || resource.amount <= 0) {
+                return null;
+            }
+            if (delegate instanceof IFluidHandler fluidHandler) {
+                return fluidHandler.drain(resource, doDrain);
+            }
+            // just imitate the logic
+            FluidStack fluid = delegate.getFluid();
+            return fluid != null && fluid.isFluidEqual(resource) ? drain(resource.amount, doDrain) : null;
         }
 
         @Nullable
