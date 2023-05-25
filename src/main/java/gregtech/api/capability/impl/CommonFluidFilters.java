@@ -98,7 +98,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
      * @return whether the fluid in fluid stack and fluid associated with the material are equal
      */
     public static boolean matchesFluid(@Nonnull FluidStack fluidStack, @Nonnull Material fluidMaterial) {
-        return fluidStack.tag == null || fluidStack.getFluid() == fluidMaterial.getFluid();
+        return fluidStack.tag == null && fluidStack.getFluid() == fluidMaterial.getFluid();
     }
 
     /**
@@ -109,6 +109,6 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
      * @return whether the fluid in fluid stack and fluid parameter are equal
      */
     public static boolean matchesFluid(@Nonnull FluidStack fluidStack, @Nonnull Fluid fluid) {
-        return fluidStack.tag == null || fluidStack.getFluid() == fluid;
+        return fluidStack.tag == null && fluidStack.getFluid() == fluid;
     }
 }
