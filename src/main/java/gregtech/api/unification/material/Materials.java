@@ -2,6 +2,7 @@ package gregtech.api.unification.material;
 
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.materials.*;
+import gregtech.api.unification.ore.OrePrefix;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,6 +109,8 @@ public class Materials {
                 Materials.DyeBrown, Materials.DyeGreen,
                 Materials.DyeRed, Materials.DyeBlack
         };
+
+        OrePrefix.init();
     }
 
     public static final List<MaterialFlag> STD_METAL = new ArrayList<>();

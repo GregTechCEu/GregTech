@@ -64,7 +64,7 @@ public class PipeRecipeHandler {
                 'P', new UnificationEntry(unrestrictive, material), 'R', OreDictUnifier.get(OrePrefix.ring, Materials.Iron));
     }
 
-    private static void processPipeTiny(OrePrefix pipePrefix, Material material, IMaterialProperty<?> property) {
+    private static void processPipeTiny(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 1)
@@ -89,7 +89,7 @@ public class PipeRecipeHandler {
         }
     }
 
-    private static void processPipeSmall(OrePrefix pipePrefix, Material material, IMaterialProperty<?> property) {
+    private static void processPipeSmall(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 1)
@@ -114,7 +114,7 @@ public class PipeRecipeHandler {
         }
     }
 
-    private static void processPipeNormal(OrePrefix pipePrefix, Material material, IMaterialProperty<?> property) {
+    private static void processPipeNormal(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 3)
@@ -139,7 +139,7 @@ public class PipeRecipeHandler {
         }
     }
 
-    private static void processPipeLarge(OrePrefix pipePrefix, Material material, IMaterialProperty<?> property) {
+    private static void processPipeLarge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 6)
@@ -164,7 +164,7 @@ public class PipeRecipeHandler {
         }
     }
 
-    private static void processPipeHuge(OrePrefix pipePrefix, Material material, IMaterialProperty<?> property) {
+    private static void processPipeHuge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 12)
