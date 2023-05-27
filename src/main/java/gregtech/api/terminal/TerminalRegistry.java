@@ -46,11 +46,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class TerminalRegistry {
-    protected static final Map<String, AbstractApplication> APP_REGISTER = new LinkedHashMap<>();
-    protected static final Map<String, Hardware> HW_REGISTER = new LinkedHashMap<>();
-    protected static final Map<String, List<Hardware>[]> APP_HW_DEMAND = new HashMap<>();
-    protected static final Map<String, List<ItemStack>[]> APP_UPGRADE_CONDITIONS = new HashMap<>();
-    protected static final List<String> DEFAULT_APPS = new ArrayList<>();
+    public static final Map<String, AbstractApplication> APP_REGISTER = new LinkedHashMap<>();
+    public static final Map<String, Hardware> HW_REGISTER = new LinkedHashMap<>();
+    public static final Map<String, List<Hardware>[]> APP_HW_DEMAND = new HashMap<>();
+    public static final Map<String, List<ItemStack>[]> APP_UPGRADE_CONDITIONS = new HashMap<>();
+    public static final List<String> DEFAULT_APPS = new ArrayList<>();
     @SideOnly(Side.CLIENT)
     public static File TERMINAL_PATH;
 
@@ -159,9 +159,6 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new CapeSelectorApp())
                 .battery(GTValues.ULV, 8)
                 .build();
-        if (Loader.isModLoaded(GTValues.MODID_CT)) { // handle CT register
-            CTTerminalRegistry.register();
-        }
     }
 
     @SideOnly(Side.CLIENT)

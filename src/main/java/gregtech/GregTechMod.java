@@ -6,12 +6,12 @@ import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
-import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.*;
@@ -47,14 +47,12 @@ public class GregTechMod {
         OreGlob.setCompiler(input -> new OreGlobParser(input).compile());
         moduleManager.registerContainer(new GregTechModules());
         MinecraftForge.EVENT_BUS.post(new ModuleContainerRegistryEvent());
-
-        /* GroovyScript must be initialized during construction since the first load stage is right after construction */
-        GroovyScriptCompat.init();
+        moduleManager.setup(event.getASMHarvestedData(), Loader.instance().getConfigDir());
+        moduleManager.onConstruction(event);
     }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        moduleManager.setup(event);
         moduleManager.onPreInit(event);
     }
 

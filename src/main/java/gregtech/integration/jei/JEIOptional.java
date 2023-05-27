@@ -15,7 +15,7 @@ import java.util.List;
 public class JEIOptional {
     @Optional.Method(modid = "jei")
     public static WorldSceneRenderer getWorldSceneRenderer(MultiblockControllerBase controllerBase){
-        IRecipeRegistry rr = GTJeiPlugin.jeiRuntime.getRecipeRegistry();
+        IRecipeRegistry rr = JustEnoughItemsModule.jeiRuntime.getRecipeRegistry();
         IFocus<ItemStack> focus = rr.createFocus(IFocus.Mode.INPUT, controllerBase.getStackForm());
         return rr.getRecipeCategories(focus)
                 .stream()

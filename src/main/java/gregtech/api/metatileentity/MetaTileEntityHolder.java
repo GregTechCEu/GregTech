@@ -80,8 +80,6 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity) {
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
         setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
-        // TODO remove this method call after v2.5.0. This is a deprecated method is set for removal.
-        this.metaTileEntity.onAttached();
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
             writeCustomData(INITIALIZE_MTE, buffer -> {
@@ -128,8 +126,6 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                 /* Note: NBTs need to be read before onAttached is run, since NBTs may contain important information
                  * about the composition of the BlockPattern that onAttached may generate. */
                 this.metaTileEntity.readFromNBT(metaTileEntityData);
-                // TODO remove this method call after v2.5.0. This is a deprecated method is set for removal.
-                this.metaTileEntity.onAttached();
             } else {
                 GTLog.logger.error("Failed to load MetaTileEntity with invalid ID " + metaTileEntityIdRaw);
             }

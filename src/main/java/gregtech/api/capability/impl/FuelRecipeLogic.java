@@ -16,11 +16,12 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
         super(tileEntity, recipeMap, energyContainer);
     }
 
+    @Nonnull
     @Override
     protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
         // no overclocking happens other than parallelization,
         // so return the recipe's values, with EUt made positive for it to be made negative later
-        return new int[]{recipeEUt * -1, recipeDuration};
+        return new int[]{-recipeEUt, recipeDuration};
     }
 
     @Nonnull

@@ -127,6 +127,8 @@ public class GTValues {
             MODID_JEI = "jei",
             MODID_GROOVYSCRIPT = "groovyscript",
             MODID_NC = "nuclearcraft",
+            MODID_IE = "immersiveengineering",
+            MODID_OC = "opencomputers",
             MODID_JOURNEYMAP = "journeymap",
             MODID_VOXELMAP = "voxelmap",
             MODID_XAERO_MINIMAP = "xaerominimap";

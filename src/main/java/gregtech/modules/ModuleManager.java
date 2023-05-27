@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.*;
 
 public class ModuleManager implements IModuleManager {
@@ -75,10 +76,10 @@ public class ModuleManager implements IModuleManager {
         containers.put(container.getID(), container);
     }
 
-    public void setup(FMLPreInitializationEvent event) {
+    public void setup(ASMDataTable asmDataTable, File configDirectory) {
         currentStage = ModuleStage.M_SETUP;
-        //configFolder = new File(event.getModConfigurationDirectory(), GTValues.MODID);
-        Map<String, List<IGregTechModule>> modules = getModules(event.getAsmData());
+        //configFolder = new File(configDirectory, GTValues.MODID);
+        Map<String, List<IGregTechModule>> modules = getModules(asmDataTable);
         configureModules(modules);
 
         for (IGregTechModule module : loadedModules) {
@@ -87,6 +88,16 @@ public class ModuleManager implements IModuleManager {
             for (Class<?> clazz : module.getEventBusSubscribers()) {
                 MinecraftForge.EVENT_BUS.register(clazz);
             }
+        }
+    }
+
+    public void onConstruction(FMLConstructionEvent event) {
+        currentStage = ModuleStage.CONSTRUCTION;
+        for (IGregTechModule module : loadedModules) {
+            currentContainer = containers.get(getContainerID(module));
+            module.getLogger().debug("Construction start");
+            module.construction(event);
+            module.getLogger().debug("Construction complete");
         }
     }
 
@@ -228,19 +239,6 @@ public class ModuleManager implements IModuleManager {
                     toLoad.remove(new ResourceLocation(moduleID));
                     logger.info("Module {} is missing at least one of module dependencies: {}, skipping loading...", moduleID, dependencies);
                 }
-
-                // Check mod dependencies
-                Set<String> modDependencies = module.getModDependencyIDs();
-                for (String modid : modDependencies) {
-                    if (!Loader.isModLoaded(modid)) {
-                        iterator.remove();
-                        changed = true;
-                        GregTechModule annotation = module.getClass().getAnnotation(GregTechModule.class);
-                        String moduleID = annotation.moduleID();
-                        toLoad.remove(new ResourceLocation(moduleID));
-                        logger.info("Module {} is missing at least one of mod dependencies: {}, skipping loading...", moduleID, modDependencies);
-                    }
-                }
             }
         } while (changed);
 
@@ -293,15 +291,22 @@ public class ModuleManager implements IModuleManager {
         return modules;
     }
 
+    @SuppressWarnings("unchecked")
     private List<IGregTechModule> getInstances(ASMDataTable table) {
         Set<ASMDataTable.ASMData> dataSet = table.getAll(GregTechModule.class.getCanonicalName());
         List<IGregTechModule> instances = new ArrayList<>();
         for (ASMDataTable.ASMData data : dataSet) {
-            try {
-                Class<?> clazz = Class.forName(data.getClassName());
-                instances.add((IGregTechModule) clazz.newInstance());
-            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-                logger.error("Could not initialize module " + data.getAnnotationInfo().get("moduleID"), e);
+            String moduleID = (String) data.getAnnotationInfo().get("moduleID");
+            List<String> modDependencies = (ArrayList<String>) data.getAnnotationInfo().get("modDependencies");
+            if (modDependencies == null || modDependencies.stream().allMatch(Loader::isModLoaded)) {
+                try {
+                    Class<?> clazz = Class.forName(data.getClassName());
+                    instances.add((IGregTechModule) clazz.newInstance());
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+                    logger.error("Could not initialize module " + moduleID, e);
+                }
+            } else {
+                logger.info("Module {} is missing at least one of mod dependencies: {}, skipping loading...", moduleID, modDependencies);
             }
         }
         return instances;

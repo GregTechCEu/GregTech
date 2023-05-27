@@ -17,6 +17,7 @@ import org.apache.commons.lang3.Validate;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -239,7 +240,7 @@ public class OrePrefix {
         public static final Predicate<Material> hasRotorProperty = mat -> mat.hasProperty(PropertyKey.ROTOR);
     }
 
-    static {
+    public static void init() {
         ingotHot.heatDamageFunction = (temp) -> ((temp - 1750) / 1000.0F) + 2;
         gemFlawless.maxStackSize = 32;
         gemExquisite.maxStackSize = 16;
@@ -291,15 +292,12 @@ public class OrePrefix {
 
         ingot.setIgnored(Materials.Iron);
         ingot.setIgnored(Materials.Gold);
-        ingot.setIgnored(Materials.Wood);
-        ingot.setIgnored(Materials.TreatedWood);
         ingot.setIgnored(Materials.Paper);
 
-        nugget.setIgnored(Materials.Wood);
-        nugget.setIgnored(Materials.TreatedWood);
         nugget.setIgnored(Materials.Gold);
         nugget.setIgnored(Materials.Paper);
         nugget.setIgnored(Materials.Iron);
+
         plate.setIgnored(Materials.Paper);
 
         block.setIgnored(Materials.Iron);
@@ -352,14 +350,6 @@ public class OrePrefix {
         toolHeadChainsaw.addSecondaryMaterial(new MaterialStack(Materials.Steel, plate.materialAmount * 4 + ring.materialAmount * 2));
         toolHeadWrench.addSecondaryMaterial(new MaterialStack(Materials.Steel, ring.materialAmount + screw.materialAmount * 2));
 
-        pipeTinyFluid.setIgnored(Materials.Wood);
-        pipeHugeFluid.setIgnored(Materials.Wood);
-        pipeQuadrupleFluid.setIgnored(Materials.Wood);
-        pipeNonupleFluid.setIgnored(Materials.Wood);
-        pipeTinyFluid.setIgnored(Materials.TreatedWood);
-        pipeHugeFluid.setIgnored(Materials.TreatedWood);
-        pipeQuadrupleFluid.setIgnored(Materials.TreatedWood);
-        pipeNonupleFluid.setIgnored(Materials.TreatedWood);
         pipeSmallRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeNormalRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeLargeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
@@ -510,7 +500,7 @@ public class OrePrefix {
         return oreProcessingHandlers.addAll(Arrays.asList(processingHandler));
     }
 
-    public <T extends IMaterialProperty<T>> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {
+    public <T extends IMaterialProperty> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
             if (material.hasProperty(propertyKey) && !material.hasFlag(NO_UNIFICATION)) {
                 handler.accept(orePrefix, material, material.getProperty(propertyKey));
@@ -593,6 +583,11 @@ public class OrePrefix {
     @ZenMethod
     public void setIgnored(Material material) {
         ignoredMaterials.add(material);
+    }
+
+    @ZenMethod
+    public void removeIgnored(@Nonnull Material material) {
+        ignoredMaterials.remove(material);
     }
 
     public boolean isMarkerPrefix() {
