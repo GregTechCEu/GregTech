@@ -129,6 +129,9 @@ dependencies {
     // Left as compileOnlyApi by default for a slimmer default instance.
     compileOnlyApi rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
     compileOnlyApi rfg.deobf("curse.maven:opencomputers-${oc_pid}:${oc_fid}")
+    compileOnlyApi "curse.maven:journeymap-${jm_pid}:${jm_fid}"
+    compileOnlyApi "curse.maven:voxelmap-${voxel_pid}:${voxel_fid}"
+    compileOnlyApi "curse.maven:xaeros-${xaeros_pid}:${xaeros_fid}"
 
     // Compile-Time Dependencies
     annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}"
@@ -139,10 +142,6 @@ dependencies {
     }
     // Allow jdk.unsupported classes like sun.misc.Unsafe, workaround for JDK-8206937 and fixes Forge crashes in tests.
     patchedMinecraft "me.eigenraven.java8unsupported:java-8-unsupported-shim:${unsupported_shim_version}"
-
-    compileOnlyApi "curse.maven:journeymap-${jm_pid}:${jm_fid}"
-    compileOnlyApi "curse.maven:voxelmap-${voxel_pid}:${voxel_fid}"
-    compileOnlyApi "curse.maven:xaeros-${xaeros_pid}:${xaeros_fid}"
 
     // Tests
     testImplementation "org.junit.jupiter:junit-jupiter:${junit_version}"
