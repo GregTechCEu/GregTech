@@ -252,7 +252,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     protected void modifyOverclockPre(@Nonnull int[] values, @Nonnull IRecipePropertyStorage storage) {
         super.modifyOverclockPre(values, storage);
 
-        // apply maintenance penalties
+        // apply maintenance bonuses
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
         // duration bonus
