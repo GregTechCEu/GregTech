@@ -23,7 +23,18 @@ public class RecipeMapCrackerUnit<R extends RecipeBuilder<R>> extends RecipeMap<
     @Override
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
-        addSlot(builder, 52, 24 + yOffset, 0, importItems, importFluids, false, false);
+        if (getMaxInputs() == 1) {
+            addSlot(builder, 52, 24 + yOffset, 0, importItems, importFluids, false, false);
+        } else {
+            int[] grid = determineSlotsGrid(getMaxInputs());
+            for (int y = 0; y < grid[1]; y++) {
+                for (int x = 0; x < grid[0]; x++) {
+                    addSlot(builder, 34 + (x * 18) - (Math.max(0, grid[0] - 2) * 18), 24 + (y * 18) - (Math.max(0, grid[1] - 1) * 18) + yOffset,
+                            y * grid[0] + x, importItems, importFluids, false, false);
+                }
+            }
+        }
+
         addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
         addSlot(builder, 52, 24 + yOffset + 19 + 18, 0, importItems, importFluids, true, false);
         addSlot(builder, 34, 24 + yOffset + 19 + 18, 1, importItems, importFluids, true, false);
