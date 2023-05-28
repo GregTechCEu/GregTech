@@ -352,20 +352,20 @@ public class ReactorRecipes {
                 .output(dustSmall, Gallium)
                 .duration(50).EUt(30).buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder()
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Aluminium, 2)
                 .fluidInputs(LeadConcentrate.getFluid(1000))
                 .output(dustSmall, Indium)
-                .fluidOutputs(PurpleVitriol.getFluid(2000))
-                .fluidOutputs(ClayVitriol.getFluid(1000))
+                .output(dust, PurpleVitriol, 2)
+                .output(dust, ClayVitriol, 2)
                 .duration(50).EUt(600).buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder()
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Aluminium, 2)
                 .fluidInputs(ZincConcentrate.getFluid(1000))
                 .output(dustSmall, Indium)
-                .fluidOutputs(WhiteVitriol.getFluid(2000))
-                .fluidOutputs(ClayVitriol.getFluid(1000))
+                .output(dust, WhiteVitriol, 2)
+                .output(dust, ClayVitriol, 2)
                 .duration(50).EUt(600).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()

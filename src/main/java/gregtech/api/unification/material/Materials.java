@@ -746,7 +746,6 @@ public class Materials {
     public static Material SaltWater;
     public static Material Clay;
     public static Material Redstone;
-    public static Material PlatinumGroupSlurry;
 
     /**
      * Third Degree Materials

@@ -1,18 +1,18 @@
 package gregtech.api.unification.material.properties;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.command.ICommandManager;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.function.TriConsumer;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static gregtech.api.unification.material.Materials.*;
+import static gregtech.api.unification.ore.OrePrefix.dust;
 
 public class OreProperty implements IMaterialProperty<OreProperty> {
 
@@ -61,13 +61,29 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
     private int bathInputAmount = 500;
 
     /**
+     * Material this Ore will output as Items in a special Washing step.
+     *
+     * Default: none
+     */
+
+    private Material bathItemOutput;
+
+    /**
+     * Amount of Item this Ore will output in a special Washing step
+     *
+     * Default: none
+     */
+
+    private int bathItemOutputAmount;
+
+    /**
      * List of Materials this Ore will output as Fluids in a special Washing step.
      * Cannot have more than 3 Fluids (max allowed outputs in Chemical Bath).
      *
      * Default: none
      */
 
-    private List<Material> bathOutputs;
+    private List<Material> bathFluidOutputs;
 
     /**
      * List of amount of Fluids this Ore will output in a special Washing step.
@@ -77,7 +93,7 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      * Default: none
      */
 
-    private List<Integer> bathOutputAmounts;
+    private List<Integer> bathFluidOutputAmounts;
 
     private TriConsumer<Material, OreProperty, Material> bathRecipe;
 
@@ -162,42 +178,57 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
         this.bathInputAmount = n;
     }
 
-    public List<Material> getBathOutputs() {
-        return bathOutputs;
+    public Material getBathItemOutput() { return bathItemOutput; }
+
+    public void setBathItemOutput(Material material) { this.bathItemOutput = material; }
+
+    public int getBathItemOutputAmount() { return bathItemOutputAmount; }
+
+    public void setBathItemOutputAmount(int bathItemOutputAmount) { this.bathItemOutputAmount = bathItemOutputAmount; }
+
+    public ItemStack getBathItemOutputStack() { return OreDictUnifier.get(dust, bathItemOutput, bathItemOutputAmount);}
+
+    public void setBathItemOutputStack(Material m, int n) {
+        this.bathItemOutput = m;
+        this.bathItemOutputAmount = n;
     }
 
-    public void setBathOutputs(List<Material> bathOutputs) {
-        this.bathOutputs = bathOutputs;
+    public List<Material> getBathFluidOutputs() {
+        return bathFluidOutputs;
     }
 
-    public void setBathOutputs(Material... materials) {
-        this.bathOutputs = Arrays.asList(materials);
+    public void setBathFluidOutputs(List<Material> bathFluidOutputs) {
+        this.bathFluidOutputs = bathFluidOutputs;
     }
 
-    public List<Integer> getBathOutputAmounts() {
-        return bathOutputAmounts;
+    public void setBathFluidOutputs(Material... materials) {
+        this.bathFluidOutputs = Arrays.asList(materials);
     }
 
-    public void setBathOutputAmounts(List<Integer> bathOutputAmounts) {
-        this.bathOutputAmounts = bathOutputAmounts;
+    public List<Integer> getBathFluidOutputAmounts() {
+        return bathFluidOutputAmounts;
     }
 
-    public void setBathOutputAmounts(Integer... bathOutputAmounts) {
-        this.bathOutputAmounts = Arrays.asList(bathOutputAmounts);
+    public void setBathFluidOutputAmounts(List<Integer> bathFluidOutputAmounts) {
+        this.bathFluidOutputAmounts = bathFluidOutputAmounts;
     }
 
-    public List<FluidStack> getBathOutputStacks() {
-        ArrayList<FluidStack> bathOutputStacks = new ArrayList<>();
-        for (int i = 0; i < getBathOutputs().size(); i++) {
-            bathOutputStacks.add(getBathOutputs().get(i).getFluid(getBathOutputAmounts().get(i)));
+    public void setBathFluidOutputAmounts(Integer... bathOutputAmounts) {
+        this.bathFluidOutputAmounts = Arrays.asList(bathOutputAmounts);
+    }
+
+    public List<FluidStack> getBathFluidOutputStacks() {
+        ArrayList<FluidStack> bathFluidOutputStacks = new ArrayList<>();
+        for (int i = 0; i < getBathFluidOutputs().size(); i++) {
+            bathFluidOutputStacks.add(getBathFluidOutputs().get(i).getFluid(getBathFluidOutputAmounts().get(i)));
         }
-        return bathOutputStacks;
+        return bathFluidOutputStacks;
     }
 
-    public void setBathOutputStacks(Object... components) {
+    public void setBathFluidOutputStacks(Object... components) {
         Preconditions.checkArgument(
                 components.length % 2 == 0,
-                "Bath Output Stacks list malformed! Tried to build: " + Arrays.toString(components)
+                "Bath Fluid Output Stacks list malformed! Tried to build: " + Arrays.toString(components)
         );
 
         ArrayList<Material> materials = new ArrayList<>();
@@ -205,15 +236,15 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
         for (int i = 0; i < components.length; i += 2) {
             if (components[i] == null) {
-                throw new IllegalArgumentException("Material in Bath Output Stacks List is null. Tried: " + Arrays.toString(components));
+                throw new IllegalArgumentException("Material in Bath Fluid Output Stacks List is null. Tried: " + Arrays.toString(components));
             }
 
             materials.add((Material) components[i]);
             amounts.add((int) components[i+1]);
         }
 
-        this.bathOutputs = materials;
-        this.bathOutputAmounts = amounts;
+        this.bathFluidOutputs = materials;
+        this.bathFluidOutputAmounts = amounts;
     }
 
     /**
@@ -234,8 +265,15 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
         ArrayList<Material> materials = new ArrayList<>();
         ArrayList<Integer> amounts = new ArrayList<>();
+        int fluidStart = 2;
 
-        for (int i = 2; i < components.length; i += 2) {
+        if (!((Material) components[2]).hasFluid()) {
+            this.bathItemOutput = (Material) components[2];
+            this.bathItemOutputAmount = (int) components[3];
+            fluidStart = 4;
+        }
+
+        for (int i = fluidStart; i < components.length; i += 2) {
             if (components[i] == null) {
                 throw new IllegalArgumentException("Material in Bath I/O Stacks List is null. Tried: " + Arrays.toString(components));
             }
@@ -244,15 +282,15 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
             amounts.add((int) components[i+1]);
         }
 
-        this.bathOutputs = materials;
-        this.bathOutputAmounts = amounts;
+        this.bathFluidOutputs = materials;
+        this.bathFluidOutputAmounts = amounts;
     }
 
     /**
      * Method for setting both Input and Output of Bath step.
      * Format: InputMaterial, InputAmount, OutputMaterial, OutputAmount, OutputMaterial, OutputAmount...
      *
-     * Example: SulfuricAcid, 500, BlueVitriol, 500, Hydrogen, 1000
+     * Example: SulfuricAcid, 1000, BlueVitriol, 1, Hydrogen, 2000
      * @param components
      */
     public void setBathIOStacks(ArrayList<Object> components) {
@@ -266,8 +304,15 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
         ArrayList<Material> materials = new ArrayList<>();
         ArrayList<Integer> amounts = new ArrayList<>();
+        int fluidStart = 2;
 
-        for (int i = 2; i < components.size(); i += 2) {
+        if (!((Material) components.get(2)).hasFluid()) {
+            this.bathItemOutput = (Material) components.get(2);
+            this.bathItemOutputAmount = (int) components.get(3);
+            fluidStart = 4;
+        }
+
+        for (int i = fluidStart; i < components.size(); i += 2) {
             if (components.get(i) == null) {
                 throw new IllegalArgumentException("Material in Bath I/O Stacks List is null. Tried: " + components.toString());
             }
@@ -276,8 +321,8 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
             amounts.add((int) components.get(i + 1));
         }
 
-        this.bathOutputs = materials;
-        this.bathOutputAmounts = amounts;
+        this.bathFluidOutputs = materials;
+        this.bathFluidOutputAmounts = amounts;
     }
 
     public void setBathHandler(TriConsumer<Material, OreProperty, Material> c) {

@@ -1999,8 +1999,6 @@ material.aqua_regia=Aqua Regia
 material.salt_water=Salt Water
 material.clay=Clay
 material.redstone=Redstone
-material.platinum_group_slurry=Platinum Group Slurry
-
 
 # Third Degree Materials
 material.electrotine=Electrotine

@@ -562,13 +562,6 @@ public class SecondDegreeMaterials {
                 .fluidTemp(500)
                 .build();
 
-        PlatinumGroupSlurry = new Material.Builder(2065, "platinum_group_slurry")
-                .fluid()
-                .color(0x2F3030)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(PlatinumGroupSludge, 1, Water, 3)
-                .build();
-
         Bentonite = new Material.Builder(2026, "bentonite")
                 .dust().ore()
                 .color(0xF5D7D2).iconSet(ROUGH)

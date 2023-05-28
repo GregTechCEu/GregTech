@@ -10,18 +10,18 @@ import static gregtech.api.unification.material.Materials.*;
 
 public class MaterialFlagAddition {
     // Bath Stacks
-    private static final ArrayList<Object> RED_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, RedVitriol, 1000, Hydrogen, 2000));
-    private static final ArrayList<Object> BLUE_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, BlueVitriol, 1000, Hydrogen, 2000));
-    private static final ArrayList<Object> GREEN_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, GreenVitriol, 1000, Hydrogen, 2000));
-    private static final ArrayList<Object> PINK_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, PinkVitriol, 1000, Hydrogen, 2000));
-    private static final ArrayList<Object> CYAN_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, CyanVitriol, 1000, Hydrogen, 2000));
-    private static final ArrayList<Object> GRAY_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, GrayVitriol, 1000, Hydrogen, 2000));
-    private static final ArrayList<Object> CLAY_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1500, ClayVitriol, 500, Hydrogen, 3000));
+    private static final ArrayList<Object> RED_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, RedVitriol, 1, Hydrogen, 2000));
+    private static final ArrayList<Object> BLUE_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, BlueVitriol, 1, Hydrogen, 2000));
+    private static final ArrayList<Object> GREEN_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, GreenVitriol, 1, Hydrogen, 2000));
+    private static final ArrayList<Object> PINK_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, PinkVitriol, 1, Hydrogen, 2000));
+    private static final ArrayList<Object> CYAN_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, CyanVitriol, 1, Hydrogen, 2000));
+    private static final ArrayList<Object> GRAY_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1000, GrayVitriol, 1, Hydrogen, 2000));
+    private static final ArrayList<Object> CLAY_VITRIOL = new ArrayList<>(Arrays.asList(SulfuricAcid, 1500, ClayVitriol, 1, Hydrogen, 3000));
     private static final ArrayList<Object> LEAD_CONCENTRATE = new ArrayList<>(Arrays.asList(SulfuricAcid, 2500, LeadConcentrate, 500, Hydrogen, 5000));
     private static final ArrayList<Object> ZINC_CONCENTRATE = new ArrayList<>(Arrays.asList(SulfuricAcid, 2500, ZincConcentrate, 500, Hydrogen, 5000));
     private static final ArrayList<Object> CHLOROAURIC_ACID = new ArrayList<>(Arrays.asList(AquaRegia, 6000, ChloroauricAcid, 1000, Water, 2000, NitrogenDioxide, 2000));
-	private static final ArrayList<Object> CHLOROPLATINIC_ACID = new ArrayList<>(Arrays.asList(AquaRegia, 9000, ChloroplatinicAcid, 1000, PlatinumGroupSlurry, 1000, NitrogenDioxide, 3000));
-    private static final ArrayList<Object> CHLOROPALLADIC_ACID = new ArrayList<>(Arrays.asList(AquaRegia, 9000, ChloropalladicAcid, 1000, PlatinumGroupSlurry, 1000, NitrogenDioxide, 3000));
+	private static final ArrayList<Object> CHLOROPLATINIC_ACID = new ArrayList<>(Arrays.asList(AquaRegia, 9000, PlatinumGroupSludge, 1, ChloroplatinicAcid, 1000, Water, 3000, NitrogenDioxide, 3000));
+    private static final ArrayList<Object> CHLOROPALLADIC_ACID = new ArrayList<>(Arrays.asList(AquaRegia, 9000, PlatinumGroupSludge, 1, ChloropalladicAcid, 1000, Water, 3000, NitrogenDioxide, 3000));
 
     public static void register() {
         OreProperty oreProp = Aluminium.getProperty(PropertyKey.ORE);

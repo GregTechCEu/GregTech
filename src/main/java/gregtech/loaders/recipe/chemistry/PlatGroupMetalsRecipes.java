@@ -4,6 +4,7 @@ import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.api.unification.ore.OrePrefix.dustSmall;
 
 public class PlatGroupMetalsRecipes {
 
@@ -12,20 +13,20 @@ public class PlatGroupMetalsRecipes {
         // Primary Chain
 
         // Platinum Group Sludge Production
-        CHEMICAL_RECIPES.recipeBuilder()
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, CopperSlag)
                 .fluidInputs(SulfuricAcid.getFluid(1500))
                 .output(dust, PlatinumGroupSludge)
-                .fluidOutputs(BlueVitriol.getFluid(1000))
-                .fluidOutputs(GreenVitriol.getFluid(500))
+                .output(dust, BlueVitriol)
+                .output(dustSmall, GreenVitriol, 2)
                 .duration(50).EUt(30).buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder()
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, NickelSlag)
                 .fluidInputs(SulfuricAcid.getFluid(1500))
                 .output(dust, PlatinumGroupSludge)
-                .fluidOutputs(CyanVitriol.getFluid(1000))
-                .fluidOutputs(RedVitriol.getFluid(500))
+                .output(dust, CyanVitriol)
+                .output(dustSmall, RedVitriol, 2)
                 .duration(50).EUt(30).buildAndRegister();
 
         // Aqua Regia

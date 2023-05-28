@@ -9,7 +9,6 @@ import gregtech.api.util.GTUtility;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processMetalSmelting;
 
 public class PurifiedRecipeHandler {
 
@@ -42,14 +41,25 @@ public class PurifiedRecipeHandler {
                 .duration(200).EUt(256).buildAndRegister();
 
         // Chemical Bath recipes
-        if (property.getBathOutputs() != null) {
-            CHEMICAL_BATH_RECIPES.recipeBuilder()
-                    .input(purified, material)
-                    .fluidInputs(property.getBathInputStack())
-                    .output(refined, material)
-                    .output(dust, primaryByproduct, primaryByproductMultiplier)
-                    .fluidOutputs(property.getBathOutputStacks())
-                    .duration(200).EUt(256).buildAndRegister();
+        if (property.getBathFluidOutputs() != null) {
+            if (property.getBathItemOutput() != null) {
+                CHEMICAL_BATH_RECIPES.recipeBuilder()
+                        .input(purified, material)
+                        .fluidInputs(property.getBathInputStack())
+                        .output(refined, material)
+                        .output(dust, primaryByproduct, primaryByproductMultiplier)
+                        .outputs(property.getBathItemOutputStack())
+                        .fluidOutputs(property.getBathFluidOutputStacks())
+                        .duration(200).EUt(256).buildAndRegister();
+            } else {
+                CHEMICAL_BATH_RECIPES.recipeBuilder()
+                        .input(purified, material)
+                        .fluidInputs(property.getBathInputStack())
+                        .output(refined, material)
+                        .output(dust, primaryByproduct, primaryByproductMultiplier)
+                        .fluidOutputs(property.getBathFluidOutputStacks())
+                        .duration(200).EUt(256).buildAndRegister();
+            }
         }
     }
 }

@@ -412,9 +412,9 @@ public class SeparationRecipes {
 
         // Vitriols
         // Follows the formula:
-        // ?SO4 + H2O -> H2SO4 + O + ?
+        // MSO4 + H2O -> H2SO4 + O + M
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(BlueVitriol.getFluid(1000))
+                .input(dust, BlueVitriol)
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Copper)
@@ -423,7 +423,7 @@ public class SeparationRecipes {
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(GreenVitriol.getFluid(1000))
+                .input(dust, GreenVitriol)
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Iron)
@@ -432,7 +432,7 @@ public class SeparationRecipes {
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(RedVitriol.getFluid(1000))
+                .input(dust, RedVitriol)
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Cobalt)
@@ -441,7 +441,7 @@ public class SeparationRecipes {
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(PinkVitriol.getFluid(1000))
+                .input(dust, PinkVitriol)
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Magnesium)
@@ -450,7 +450,7 @@ public class SeparationRecipes {
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(CyanVitriol.getFluid(1000))
+                .input(dust, CyanVitriol)
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Nickel)
@@ -459,7 +459,7 @@ public class SeparationRecipes {
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(WhiteVitriol.getFluid(1000))
+                .input(dust, WhiteVitriol)
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Zinc)
@@ -468,7 +468,7 @@ public class SeparationRecipes {
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(GrayVitriol.getFluid(1000))
+                .input(dust, GrayVitriol)
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Manganese)
@@ -477,7 +477,7 @@ public class SeparationRecipes {
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(PurpleVitriol.getFluid(1000))
+                .input(dust, PurpleVitriol)
                 .fluidInputs(Water.getFluid(1000))
                 .circuitMeta(2)
                 .output(dust, Lead)
@@ -485,13 +485,14 @@ public class SeparationRecipes {
                 .fluidOutputs(Oxygen.getFluid(1000))
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
-        // Al2(SO4)3 + 3H2O -> Al2O3 + 3H2SO4
+        // Al2(SO4)3 + 3H2O -> 2Al + 3H2SO4 + 3O
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(ClayVitriol.getFluid(1000))
-                .fluidInputs(Water.getFluid(3000))
+                .input(dust, ClayVitriol)
+                .fluidInputs(Water.getFluid(1500))
                 .circuitMeta(2)
-                .output(dust, Alumina, 5)
-                .fluidOutputs(SulfuricAcid.getFluid(3000))
+                .output(dust, Aluminium)
+                .fluidOutputs(SulfuricAcid.getFluid(1500))
+                .fluidOutputs(Oxygen.getFluid(1500))
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
 		// HAuCl4 + 1.5H2O -> Au + 4HCl + 1.5O

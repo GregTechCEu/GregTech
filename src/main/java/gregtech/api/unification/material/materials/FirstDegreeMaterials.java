@@ -1400,64 +1400,64 @@ public class FirstDegreeMaterials {
                 .build();
 
         BlueVitriol = new Material.Builder(451, "blue_vitriol")
-                .fluid()
-                .color(0x4242DE)
+                .dust()
+                .color(0x4242DE).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Copper, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
         GreenVitriol = new Material.Builder(452, "green_vitriol")
-                .fluid()
-                .color(0x42DE42)
+                .dust()
+                .color(0x42DE42).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Iron, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
         RedVitriol = new Material.Builder(453, "red_vitriol")
-                .fluid()
-                .color(0xDE4242)
+                .dust()
+                .color(0xDE4242).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Cobalt, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
         PinkVitriol = new Material.Builder(454, "pink_vitriol")
-                .fluid()
-                .color(0xDE6F6F)
+                .dust()
+                .color(0xDE6F6F).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Magnesium, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
         CyanVitriol = new Material.Builder(455, "cyan_vitriol")
-                .fluid()
-                .color(0x6FDEDE)
+                .dust()
+                .color(0x6FDEDE).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Nickel, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
         WhiteVitriol = new Material.Builder(456, "white_vitriol")
-                .fluid()
-                .color(0xDEDEDE)
+                .dust()
+                .color(0xDEDEDE).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zinc, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
         GrayVitriol = new Material.Builder(457, "gray_vitriol")
-                .fluid()
-                .color(0x6F6F6F)
+                .dust()
+                .color(0x6F6F6F).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Manganese, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
         PurpleVitriol = new Material.Builder(458, "purple_vitriol")
-                .fluid()
-                .color(0x6F426F)
+                .dust()
+                .color(0x6F426F).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Lead, 1, Sulfur, 1, Oxygen, 4)
                 .build();
 
         ClayVitriol = new Material.Builder(459, "clay_vitriol")
-                .fluid()
-                .color(0x42DEDE)
+                .dust()
+                .color(0x42DEDE).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Aluminium, 2, Sulfur, 3, Oxygen, 12)
                 .build()
