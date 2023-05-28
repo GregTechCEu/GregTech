@@ -13,8 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static gregtech.api.unification.ore.OrePrefix.dust;
-
-public class OreProperty implements IMaterialProperty<OreProperty> {
+public class OreProperty implements IMaterialProperty {
 
     /**
      * List of Ore byproducts.

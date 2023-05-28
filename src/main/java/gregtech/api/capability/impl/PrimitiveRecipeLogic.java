@@ -43,6 +43,7 @@ public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
         return GTValues.LV;
     }
 
+    @Nonnull
     @Override
     protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
         return standardOverclockingLogic(

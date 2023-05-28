@@ -374,9 +374,10 @@ public class UnknownCompositionMaterials {
                 .build();
 
         Wood = new Material.Builder(1617, "wood")
-                .dust(0, 300)
+                .wood()
                 .color(0x896727).iconSet(WOOD)
                 .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, FLAMMABLE, GENERATE_GEAR, GENERATE_FRAME)
+                .fluidPipeProperties(340, 5, false)
                 .build();
 
         Paper = new Material.Builder(1618, "paper")
@@ -478,9 +479,10 @@ public class UnknownCompositionMaterials {
                 .build();
 
         TreatedWood = new Material.Builder(1648, "treated_wood")
-                .dust(0, 300)
+                .wood()
                 .color(0x674A28).iconSet(WOOD)
                 .flags(GENERATE_PLATE, FLAMMABLE, GENERATE_ROD, GENERATE_FRAME)
+                .fluidPipeProperties(340, 10, false)
                 .build();
 
         UUMatter = new Material.Builder(1649, "uu_matter")

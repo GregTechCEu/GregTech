@@ -185,6 +185,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
         tryDoVenting();
     }
 
+    @Nonnull
     @Override
     protected int[] calculateOverclock(@Nonnull Recipe recipe) {
 
