@@ -18,4 +18,3 @@ spotless.eclipseformat.xml @GregTechCEu/gregtech-build-team
 spotless.importorder @GregTechCEu/gregtech-build-team
 .gitignore @GregTechCEu/gregtech-build-team
 /libs/** @GregTechCEu/gregtech-build-team
-/scripts/** @GregTechCEu/gregtech-build-team
