@@ -15,6 +15,7 @@ import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.CableRenderer;
+import gregtech.client.renderer.pipe.PipeRenderer;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
@@ -76,6 +77,12 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     @Override
     protected WireProperties createProperties(Insulation insulation, Material material) {
         return insulation.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
+    }
+
+    @Nonnull
+    @Override
+    public PipeRenderer getPipeRenderer() {
+        return CableRenderer.INSTANCE;
     }
 
     @Override

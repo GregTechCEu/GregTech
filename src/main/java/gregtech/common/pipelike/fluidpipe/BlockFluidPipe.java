@@ -11,6 +11,7 @@ import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
+import gregtech.client.renderer.pipe.PipeRenderer;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
@@ -73,6 +74,12 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     protected FluidPipeProperties createProperties(FluidPipeType fluidPipeType, Material material) {
         return fluidPipeType.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
+    }
+
+    @Nonnull
+    @Override
+    public PipeRenderer getPipeRenderer() {
+        return FluidPipeRenderer.INSTANCE;
     }
 
     @Override

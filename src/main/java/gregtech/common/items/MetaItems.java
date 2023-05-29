@@ -610,7 +610,7 @@ public final class MetaItems {
             for (MaterialRegistry registry : MaterialRegistrationManager.getRegistries()) {
                 String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, prefix.name());
                 MetaPrefixItem metaOrePrefix = new MetaPrefixItem(registry, prefix);
-                metaOrePrefix.setRegistryName(String.format("meta_%s", regName));
+                metaOrePrefix.setRegistryName(registry.getModid(), String.format("meta_%s", regName));
             }
         }
     }

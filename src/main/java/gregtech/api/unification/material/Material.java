@@ -21,7 +21,6 @@ import gregtech.api.util.SmallDigits;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
 import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nonnull;
@@ -31,6 +30,12 @@ import java.util.*;
 @ZenClass("mods.gregtech.material.Material")
 @ZenRegister
 public class Material implements Comparable<Material> {
+
+    /**
+     * Internal usage <strong>only</strong>.
+     */
+    @Nullable
+    public static MaterialRegistry activeRegistry = null;
 
     /**
      * Basic Info of this Material.
@@ -64,7 +69,7 @@ public class Material implements Comparable<Material> {
     /**
      * The modid of the material
      */
-    private String modid;
+    private final String modid;
 
     @Nonnull
     private String calculateChemicalFormula() {
@@ -113,24 +118,22 @@ public class Material implements Comparable<Material> {
         return getMaterialComponents().toArray(new MaterialStack[0]);
     }
 
-    private Material(@Nonnull MaterialInfo materialInfo, @Nonnull MaterialProperties properties, @Nonnull MaterialFlags flags) {
+    private Material(@Nonnull MaterialInfo materialInfo, @Nonnull MaterialProperties properties, @Nonnull MaterialFlags flags, @Nonnull String modid) {
         this.materialInfo = materialInfo;
         this.properties = properties;
         this.flags = flags;
         this.properties.setMaterial(this);
-        //TODO Fix this always being GT
-        this.modid = Objects.requireNonNull(Loader.instance().activeModContainer()).getModId();
+        this.modid = modid;
         registerMaterial();
     }
 
     // thou shall not call
-    protected Material(String name) {
+    protected Material(String name, String modid) {
         materialInfo = new MaterialInfo(0, name);
         materialInfo.iconSet = MaterialIconSet.DULL;
         properties = new MaterialProperties();
         flags = new MaterialFlags();
-        //TODO Fix this always being GT
-        this.modid = Objects.requireNonNull(Loader.instance().activeModContainer()).getModId();
+        this.modid = modid;
     }
 
     protected void registerMaterial() {
@@ -403,6 +406,7 @@ public class Material implements Comparable<Material> {
         private final MaterialInfo materialInfo;
         private final MaterialProperties properties;
         private final MaterialFlags flags;
+        private final String modid;
 
         /*
          * The temporary list of components for this Material.
@@ -429,6 +433,7 @@ public class Material implements Comparable<Material> {
             materialInfo = new MaterialInfo(id, name);
             properties = new MaterialProperties();
             flags = new MaterialFlags();
+            modid = Objects.requireNonNull(activeRegistry).getModid();
         }
 
         /*
@@ -956,7 +961,7 @@ public class Material implements Comparable<Material> {
         public Material build() {
             materialInfo.componentList = ImmutableList.copyOf(composition);
             materialInfo.verifyInfo(properties, averageRGB);
-            return new Material(materialInfo, properties, flags);
+            return new Material(materialInfo, properties, flags, modid);
         }
     }
 

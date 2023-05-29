@@ -10,6 +10,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import gregtech.client.renderer.pipe.PipeRenderer;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
@@ -80,6 +81,12 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     @Override
     protected ItemPipeProperties createProperties(ItemPipeType itemPipeType, Material material) {
         return itemPipeType.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
+    }
+
+    @Nonnull
+    @Override
+    public PipeRenderer getPipeRenderer() {
+        return ItemPipeRenderer.INSTANCE;
     }
 
     public Collection<Material> getEnabledMaterials() {

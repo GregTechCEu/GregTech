@@ -123,12 +123,14 @@ public class CoreModule implements IGregTechModule {
 
         // First, register CEu Materials
         MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.OPEN);
+        MaterialEvent materialEvent = new MaterialEvent();
         logger.info("Registering GTCEu Materials");
+        materialEvent.startRegistration(GTValues.MODID);
         Materials.register();
 
         // Then, register addon Materials
         logger.info("Registering addon Materials");
-        MinecraftForge.EVENT_BUS.post(new MaterialEvent());
+        MinecraftForge.EVENT_BUS.post(materialEvent);
 
         // Fire Post-Material event, intended for when Materials need to be iterated over in-full before freezing
         // Block entirely new Materials from being added in the Post event

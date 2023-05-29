@@ -3,6 +3,7 @@ package gregtech;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.MetaFluids;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.registry.MaterialRegistrationManager;
 import gregtech.api.unification.ore.OrePrefix;
@@ -61,6 +62,7 @@ public final class Bootstrap {
         GregTechAPI.moduleManager = ModuleManager.getInstance();
 
         MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.OPEN);
+        Material.activeRegistry = MaterialRegistrationManager.getRegistry(GTValues.MODID);
         Materials.register();
         MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.CLOSED);
         MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.FROZEN);

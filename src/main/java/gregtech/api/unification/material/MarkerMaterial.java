@@ -1,6 +1,9 @@
 package gregtech.api.unification.material;
 
 import gregtech.api.unification.OreDictUnifier;
+import net.minecraftforge.fml.common.Loader;
+
+import java.util.Objects;
 
 /**
  * MarkerMaterial is type of material used for generic things like material re-registration and use in recipes
@@ -13,7 +16,7 @@ public final class MarkerMaterial extends Material {
     private final String name;
 
     public MarkerMaterial(String name) {
-        super(name);
+        super(name, Objects.requireNonNull(Loader.instance().activeModContainer()).getModId());
         this.name = name;
         OreDictUnifier.registerMarkerMaterial(this);
     }
