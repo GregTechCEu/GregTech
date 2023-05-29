@@ -17,8 +17,8 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialHelpers;
-import gregtech.api.unification.material.registry.MaterialRegistrationManager;
 import gregtech.api.unification.material.registry.MaterialRegistry;
+import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
@@ -143,7 +143,7 @@ public class GroovyScriptModule extends IntegrationSubmodule {
             map.put(modid + ':' + name, stack);
         }
 
-        for (MaterialRegistry registry : MaterialRegistrationManager.getRegistries()) {
+        for (MaterialRegistry registry : MaterialRegistryManager.getRegistries()) {
             String modid = registry.getModid();
             Map<String, ItemStack> map = new Object2ObjectOpenHashMap<>();
 

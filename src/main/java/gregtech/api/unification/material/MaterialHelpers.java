@@ -1,7 +1,7 @@
 package gregtech.api.unification.material;
 
 import gregtech.api.GTValues;
-import gregtech.api.unification.material.registry.MaterialRegistrationManager;
+import gregtech.api.unification.material.registry.MaterialRegistryManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,7 +33,7 @@ public final class MaterialHelpers {
                 modid = GTValues.MODID;
                 materialName = name;
             }
-            return MaterialRegistrationManager.getRegistry(modid).getObject(materialName);
+            return MaterialRegistryManager.getRegistry(modid).getObject(materialName);
         }
         return null;
     }

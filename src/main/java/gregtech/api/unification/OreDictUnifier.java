@@ -6,8 +6,8 @@ import gregtech.api.GTValues;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.registry.MaterialRegistrationManager;
 import gregtech.api.unification.material.registry.MaterialRegistry;
+import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.*;
 import gregtech.api.util.CustomModPriorityComparator;
@@ -138,7 +138,7 @@ public class OreDictUnifier {
             if (builder.length() > 0) {
                 splits.add(builder.toString());
             }
-            for (MaterialRegistry registry : MaterialRegistrationManager.getRegistries()) {
+            for (MaterialRegistry registry : MaterialRegistryManager.getRegistries()) {
                 //try to combine in different manners
                 //oreBasaltic MineralSand , ore BasalticMineralSand
                 StringBuilder buffer = new StringBuilder();

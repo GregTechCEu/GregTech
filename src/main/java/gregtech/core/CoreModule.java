@@ -21,7 +21,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.event.MaterialRegistryEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
-import gregtech.api.unification.material.registry.MaterialRegistrationManager;
+import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
@@ -122,7 +122,7 @@ public class CoreModule implements IGregTechModule {
         MinecraftForge.EVENT_BUS.post(new MaterialRegistryEvent());
 
         // First, register CEu Materials
-        MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.OPEN);
+        MaterialRegistryManager.transitionPhase(MaterialRegistryManager.Phase.OPEN);
         MaterialEvent materialEvent = new MaterialEvent();
         logger.info("Registering GTCEu Materials");
         materialEvent.startRegistration(GTValues.MODID);
@@ -135,11 +135,11 @@ public class CoreModule implements IGregTechModule {
 
         // Fire Post-Material event, intended for when Materials need to be iterated over in-full before freezing
         // Block entirely new Materials from being added in the Post event
-        MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.CLOSED);
+        MaterialRegistryManager.transitionPhase(MaterialRegistryManager.Phase.CLOSED);
         MinecraftForge.EVENT_BUS.post(new PostMaterialEvent());
 
         // Freeze Material Registry before processing Items, Blocks, and Fluids
-        MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.FROZEN);
+        MaterialRegistryManager.transitionPhase(MaterialRegistryManager.Phase.FROZEN);
         /* End Material Registration */
 
         OreDictUnifier.init();

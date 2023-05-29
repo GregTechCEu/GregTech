@@ -9,6 +9,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
+import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.GTUtility;
@@ -368,12 +369,9 @@ public class MetaBlocks {
     public static void registerItemModels() {
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE), stack -> MetaTileEntityRenderer.MODEL_LOCATION);
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
-            for (BlockCable cable : CABLES.get(registry.getModid()))
-                ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(cable), stack -> CableRenderer.INSTANCE.getModelLocation());
-            for (BlockFluidPipe pipe : FLUID_PIPES.get(registry.getModid()))
-                ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> FluidPipeRenderer.INSTANCE.getModelLocation());
-            for (BlockItemPipe pipe : ITEM_PIPES.get(registry.getModid()))
-                ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> ItemPipeRenderer.INSTANCE.getModelLocation());
+            for (BlockCable cable : CABLES.get(registry.getModid())) cable.onModelRegister();
+            for (BlockFluidPipe pipe : FLUID_PIPES.get(registry.getModid())) pipe.onModelRegister();
+            for (BlockItemPipe pipe : ITEM_PIPES.get(registry.getModid())) pipe.onModelRegister();
         }
         for (BlockOpticalPipe pipe : OPTICAL_PIPES)
             ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> OpticalPipeRenderer.INSTANCE.getModelLocation());
@@ -589,9 +587,24 @@ public class MetaBlocks {
             }
         }
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
-            for (BlockCable cable : CABLES.get(registry.getModid())) cable.onModelRegister();
-            for (BlockFluidPipe pipe : FLUID_PIPES.get(registry.getModid())) pipe.onModelRegister();
-            for (BlockItemPipe pipe : ITEM_PIPES.get(registry.getModid())) pipe.onModelRegister();
+            for (BlockCable cable : CABLES.get(registry.getModid())) {
+                for (Material pipeMaterial : cable.getEnabledMaterials()) {
+                    ItemStack itemStack = cable.getItem(pipeMaterial);
+                    OreDictUnifier.registerOre(itemStack, cable.getPrefix(), pipeMaterial);
+                }
+            }
+            for (BlockFluidPipe pipe : FLUID_PIPES.get(registry.getModid())) {
+                for (Material pipeMaterial : pipe.getEnabledMaterials()) {
+                    ItemStack itemStack = pipe.getItem(pipeMaterial);
+                    OreDictUnifier.registerOre(itemStack, pipe.getPrefix(), pipeMaterial);
+                }
+            }
+            for (BlockItemPipe pipe : ITEM_PIPES.get(registry.getModid())) {
+                for (Material pipeMaterial : pipe.getEnabledMaterials()) {
+                    ItemStack itemStack = pipe.getItem(pipeMaterial);
+                    OreDictUnifier.registerOre(itemStack, pipe.getPrefix(), pipeMaterial);
+                }
+            }
         }
     }
 

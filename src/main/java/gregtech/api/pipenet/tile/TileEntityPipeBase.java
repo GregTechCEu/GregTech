@@ -9,7 +9,7 @@ import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialHelpers;
-import gregtech.api.unification.material.registry.MaterialRegistrationManager;
+import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -404,7 +404,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         int registryId = buf.readVarInt();
         int frameMaterialId = buf.readVarInt();
         if (registryId >= 0 && frameMaterialId >= 0) {
-            this.frameMaterial = MaterialRegistrationManager.getRegistry(registryId).getObjectById(frameMaterialId);
+            this.frameMaterial = MaterialRegistryManager.getRegistry(registryId).getObjectById(frameMaterialId);
         } else {
             this.frameMaterial = null;
         }
@@ -431,7 +431,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             int registryId = buf.readVarInt();
             int frameMaterialId = buf.readVarInt();
             if (registryId >= 0 && frameMaterialId >= 0) {
-                this.frameMaterial = MaterialRegistrationManager.getRegistry(registryId).getObjectById(frameMaterialId);
+                this.frameMaterial = MaterialRegistryManager.getRegistry(registryId).getObjectById(frameMaterialId);
             } else {
                 this.frameMaterial = null;
             }

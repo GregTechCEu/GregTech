@@ -13,8 +13,8 @@ import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.registry.MaterialRegistrationManager;
 import gregtech.api.unification.material.registry.MaterialRegistry;
+import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.ItemMaterialInfo;
@@ -73,7 +73,7 @@ public class CommonProxy {
 
         StoneType.init();
 
-        for (MaterialRegistry materialRegistry : MaterialRegistrationManager.getRegistries()) {
+        for (MaterialRegistry materialRegistry : MaterialRegistryManager.getRegistries()) {
             for (Material material : materialRegistry) {
                 if (material.hasProperty(PropertyKey.ORE)) {
                     createOreBlock(material);
@@ -206,7 +206,7 @@ public class CommonProxy {
 
         registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
 
-        for (MaterialRegistry materialRegistry : MaterialRegistrationManager.getRegistries()) {
+        for (MaterialRegistry materialRegistry : MaterialRegistryManager.getRegistries()) {
             for (BlockCable cable : CABLES.get(materialRegistry.getModid())) registry.register(createItemBlock(cable, ItemBlockCable::new));
             for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid())) registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
             for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid())) registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));

@@ -67,7 +67,7 @@ public class MaterialRegistry extends GTControlledRegistry<String, Material> {
     @Nonnull
     public Material getFallbackMaterial() {
         if (this.fallbackMaterial == null) {
-            this.fallbackMaterial = MaterialRegistrationManager.GREGTECH_REGISTRY.getFallbackMaterial();
+            this.fallbackMaterial = MaterialRegistryManager.GREGTECH_REGISTRY.getFallbackMaterial();
         }
         return this.fallbackMaterial;
     }
@@ -87,7 +87,7 @@ public class MaterialRegistry extends GTControlledRegistry<String, Material> {
     @ZenMethod
     @Nullable
     public static Material get(@Nonnull String modid, @Nonnull String name) {
-        return MaterialRegistrationManager.getRegistry(modid).getObject(name);
+        return MaterialRegistryManager.getRegistry(modid).getObject(name);
     }
 
     @ZenMethod

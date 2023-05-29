@@ -11,8 +11,8 @@ import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
-import gregtech.api.unification.material.registry.MaterialRegistrationManager;
 import gregtech.api.unification.material.registry.MaterialRegistry;
+import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -132,11 +132,11 @@ public class Material implements Comparable<Material> {
 
     protected void registerMaterial() {
         verifyMaterial();
-        MaterialRegistrationManager.getRegistry(modid).register(this);
+        MaterialRegistryManager.getRegistry(modid).register(this);
     }
 
     public void addFlags(MaterialFlag... flags) {
-        if (MaterialRegistrationManager.canModifyMaterials()) {
+        if (MaterialRegistryManager.canModifyMaterials()) {
             this.flags.addFlags(flags).verify(this);
         } else throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
     }
@@ -360,7 +360,7 @@ public class Material implements Comparable<Material> {
     }
 
     public <T extends IMaterialProperty> void setProperty(PropertyKey<T> key, IMaterialProperty property) {
-        if (!MaterialRegistrationManager.canModifyMaterials()) {
+        if (!MaterialRegistryManager.canModifyMaterials()) {
             throw new IllegalStateException("Cannot add properties to a Material when registry is frozen!");
         }
         properties.setProperty(key, property);
@@ -389,7 +389,7 @@ public class Material implements Comparable<Material> {
 
     @Nonnull
     public MaterialRegistry getRegistry() {
-        return MaterialRegistrationManager.getRegistry(this.modid);
+        return MaterialRegistryManager.getRegistry(this.modid);
     }
 
     /**
@@ -401,7 +401,7 @@ public class Material implements Comparable<Material> {
          * Internal usage <strong>only</strong>.
          */
         @Nullable
-        public static MaterialRegistry activeRegistry = null;
+        private static MaterialRegistry activeRegistry = null;
 
         private final MaterialInfo materialInfo;
         private final MaterialProperties properties;

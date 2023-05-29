@@ -6,7 +6,7 @@ import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialHelpers;
-import gregtech.api.unification.material.registry.MaterialRegistrationManager;
+import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.unification.stack.MaterialStack;
 
 import java.util.Arrays;
@@ -65,7 +65,7 @@ public class CTMaterialHelpers {
     }
 
     protected static boolean checkFrozen(String description) {
-        if (MaterialRegistrationManager.canModifyMaterials()) {
+        if (MaterialRegistryManager.canModifyMaterials()) {
             CraftTweakerAPI.logError("Cannot " + description + " now, must be done in a file labeled with \"#loader gregtech\"");
             return true;
         } return false;

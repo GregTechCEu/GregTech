@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public final class MaterialRegistrationManager {
+public final class MaterialRegistryManager {
 
     private static final Object2ObjectMap<String, MaterialRegistry> REGISTRIES = new Object2ObjectOpenHashMap<>();
     private static final Int2ObjectMap<MaterialRegistry> NETWORK_IDS = new Int2ObjectArrayMap<>();
@@ -27,7 +27,7 @@ public final class MaterialRegistrationManager {
     @Nonnull
     private static Phase registrationPhase = Phase.PRE;
 
-    private MaterialRegistrationManager() {}
+    private MaterialRegistryManager() {}
 
     /**
      * Create a registry for a modid. Accessible when in phase {@link Phase#PRE}.
@@ -147,7 +147,7 @@ public final class MaterialRegistrationManager {
         } else if (value > 1) {
             throw new IllegalArgumentException("Cannot skip phases");
         } else if (value == 0) {
-            throw new IllegalArgumentException("MaterialRegistrationManager is already in phase " + phase);
+            throw new IllegalArgumentException("MaterialRegistryManager is already in phase " + phase);
         } else {
             throw new IllegalArgumentException("Cannot transition to already completed phase " + phase);
         }
