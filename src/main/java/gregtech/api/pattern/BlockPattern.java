@@ -174,7 +174,6 @@ public class BlockPattern {
                             } else {
                                 z++;//continue searching for the first aisle
                             }
-//                            validRepetitions = 0;
                             continue loop;
                         }
                     }
