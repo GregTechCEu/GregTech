@@ -21,6 +21,9 @@ dependencies {
     // Left as compileOnlyApi by default for a slimmer default instance.
     compileOnlyApi rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
     compileOnlyApi rfg.deobf("curse.maven:opencomputers-${oc_pid}:${oc_fid}")
+    compileOnlyApi "curse.maven:journeymap-${jm_pid}:${jm_fid}"
+    compileOnlyApi "curse.maven:voxelmap-${voxel_pid}:${voxel_fid}"
+    compileOnlyApi "curse.maven:xaeros-${xaeros_pid}:${xaeros_fid}"
 
     // Compile-Time Dependencies
     annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}"
