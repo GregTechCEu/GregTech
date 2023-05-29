@@ -1,8 +1,11 @@
+//version: 1685391779
 //file:noinspection DependencyNotationArgument
 // TODO remove when fixed in RFG ^
 
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.gradle.internal.logging.text.StyledTextOutput.Style
+import org.gradle.internal.logging.text.StyledTextOutputFactory
 import org.jetbrains.gradle.ext.Gradle
 
 plugins {
@@ -14,6 +17,12 @@ plugins {
     id 'net.darkhax.curseforgegradle' version "$curseforge_gradle_version" apply false
     id 'com.modrinth.minotaur' version "$minotaur_version" apply false
 }
+
+if (verifySettingsGradle()) {
+    throw new GradleException("Settings has been updated, please re-run task.")
+}
+
+def out = services.get(StyledTextOutputFactory).create('an-output')
 
 version = project.mod_version
 group = project.maven_group
@@ -108,70 +117,7 @@ repositories {
     mavenLocal() // Must be last for caching to work
 }
 
-dependencies {
-    // Hard Dependencies
-    // the CCL deobf jar uses very old MCP mappings, making it error at runtime in runClient/runServer
-    // therefore we manually deobf the regular jar
-    implementation rfg.deobf("curse.maven:codechicken-lib-1-8-${ccl_pid}:${ccl_fid}")
-
-    // Soft Dependencies
-    implementation "mezz.jei:jei_1.12.2:${project.jei_version}"
-    implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-${project.crt_version}"
-    implementation rfg.deobf("curse.maven:top-${top_pid}:${top_fid}")
-    implementation rfg.deobf("curse.maven:ctm-${ctm_pid}:${ctm_fid}")
-
-    // use a local jar for GroovyScript to avoid a bug from Mixin and ForgeGradle,
-    // causing crashes at run-time when deobfuscated
-    implementation files("libs/groovyscript-0.4.0.jar")
-    //implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
-
-    // Can change any of the below from compileOnlyApi -> implementation to test them in-game.
-    // Left as compileOnlyApi by default for a slimmer default instance.
-    compileOnlyApi rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
-    compileOnlyApi rfg.deobf("curse.maven:opencomputers-${oc_pid}:${oc_fid}")
-    compileOnlyApi "curse.maven:journeymap-${jm_pid}:${jm_fid}"
-    compileOnlyApi "curse.maven:voxelmap-${voxel_pid}:${voxel_fid}"
-    compileOnlyApi "curse.maven:xaeros-${xaeros_pid}:${xaeros_fid}"
-
-    // Compile-Time Dependencies
-    annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}"
-    // workaround for https://github.com/bsideup/jabel/issues/174
-    annotationProcessor "net.java.dev.jna:jna-platform:${jna_version}"
-    compileOnly("com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}") {
-        transitive = false // We only care about the 1 annotation class
-    }
-    // Allow jdk.unsupported classes like sun.misc.Unsafe, workaround for JDK-8206937 and fixes Forge crashes in tests.
-    patchedMinecraft "me.eigenraven.java8unsupported:java-8-unsupported-shim:${unsupported_shim_version}"
-
-    // Tests
-    testImplementation "org.junit.jupiter:junit-jupiter:${junit_version}"
-    testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
-
-    // ae2 is a transitive dependency for MTE, so it's also needed at test-time
-    testImplementation rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
-
-    // allow Jabel to work in tests
-    testAnnotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}"
-    testCompileOnly("com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}") {
-        transitive = false // We only care about the 1 annotation class
-    }
-    testCompileOnly "me.eigenraven.java8unsupported:java-8-unsupported-shim:${unsupported_shim_version}"
-
-    // GroovyScript dependency
-    implementation "zone.rong:mixinbooter:${mixinbooter_version}"
-
-    // Mixin dependencies
-    api("org.spongepowered:mixin:${mixin_version}") {
-        transitive = false
-    }
-    annotationProcessor("org.spongepowered:mixin:${mixin_version}") {
-        transitive = false
-    }
-
-    annotationProcessor "org.ow2.asm:asm-debug-all:${asm_debug_version}"
-    annotationProcessor "com.google.guava:guava:${guava_version}-jre"
-    annotationProcessor "com.google.code.gson:gson:${gson_version}"
-}
+apply from: 'dependencies.gradle'
 
 //noinspection ConfigurationAvoidance
 for (File at : sourceSets.getByName('main').resources.files) {
@@ -362,4 +308,94 @@ if (modrinth_api_key.isPresent() || deployment_debug) {
         debugMode = deployment_debug
     }
     tasks.modrinth.dependsOn(build)
+}
+
+// Buildscript updating
+
+def buildscriptGradleVersion = '8.1.1'
+
+tasks.named('wrapper', Wrapper).configure {
+    gradleVersion = buildscriptGradleVersion
+}
+
+tasks.register('updateBuildScript') {
+    group = 'Buildscript updates'
+    description = 'Updates the build script to the latest version'
+
+    if (gradle.gradleVersion != buildscriptGradleVersion && !Boolean.getBoolean('DISABLE_BUILDSCRIPT_GRADLE_UPDATE')) {
+        dependsOn('wrapper')
+    }
+
+    doLast {
+        if (performBuildScriptUpdate()) return
+        print('Build script already up to date!')
+    }
+}
+
+if (!project.getGradle().startParameter.isOffline() && !Boolean.getBoolean('DISABLE_BUILDSCRIPT_UPDATE_CHECK') && isNewBuildScriptVersionAvailable()) {
+    //if (autoUpdateBuildScript.toBoolean()) {
+    //    performBuildScriptUpdate()
+    //} else {
+        out.style(Style.SuccessHeader).println("Build script update available! Run 'gradle updateBuildScript'")
+        if (gradle.gradleVersion != buildscriptGradleVersion) {
+            out.style(Style.SuccessHeader).println("updateBuildScript can update gradle from ${gradle.gradleVersion} to ${buildscriptGradleVersion}\n")
+        }
+    //}
+}
+
+static URL availableBuildScriptUrl() {
+    new URL("https://raw.githubusercontent.com/GregTechCEu/Buildscripts/master/build.gradle")
+}
+
+static URL exampleSettingsGradleUrl() {
+    new URL("https://raw.githubusercontent.com/GregTechCEu/Buildscripts/master/settings.gradle.example")
+}
+
+boolean verifySettingsGradle() {
+    def settingsFile = getFile("settings.gradle")
+    if (!settingsFile.exists()) {
+        println("Downloading default settings.gradle")
+        exampleSettingsGradleUrl().withInputStream { i -> settingsFile.withOutputStream { it << i } }
+        return true
+    }
+    return false
+}
+
+boolean performBuildScriptUpdate() {
+    if (isNewBuildScriptVersionAvailable()) {
+        def buildscriptFile = getFile("build.gradle")
+        availableBuildScriptUrl().withInputStream { i -> buildscriptFile.withOutputStream { it << i } }
+        def out = services.get(StyledTextOutputFactory).create('buildscript-update-output')
+        out.style(Style.Success).print("Build script updated. Please REIMPORT the project or RESTART your IDE!")
+        boolean settingsupdated = verifySettingsGradle()
+        settingsupdated = verifyGitAttributes() || settingsupdated
+        if (settingsupdated)
+            throw new GradleException("Settings has been updated, please re-run task.")
+        return true
+    }
+    return false
+}
+
+boolean isNewBuildScriptVersionAvailable() {
+    Map parameters = ["connectTimeout": 2000, "readTimeout": 2000]
+
+    String currentBuildScript = getFile("build.gradle").getText()
+    String currentBuildScriptHash = getVersionHash(currentBuildScript)
+    String availableBuildScript = availableBuildScriptUrl().newInputStream(parameters).getText()
+    String availableBuildScriptHash = getVersionHash(availableBuildScript)
+
+    boolean isUpToDate = currentBuildScriptHash.empty || availableBuildScriptHash.empty || currentBuildScriptHash == availableBuildScriptHash
+    return !isUpToDate
+}
+
+static String getVersionHash(String buildScriptContent) {
+    String versionLine = buildScriptContent.find("^//version: [a-z0-9]*")
+    if (versionLine != null) {
+        return versionLine.split(": ").last()
+    }
+    return ""
+}
+
+def getFile(String relativePath) {
+    return new File(projectDir, relativePath)
 }
