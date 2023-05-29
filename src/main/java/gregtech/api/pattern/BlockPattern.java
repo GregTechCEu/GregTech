@@ -22,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.ArrayUtils;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,13 +48,20 @@ public class BlockPattern {
     // x, y, z, minZ, maxZ
     private int[] centerOffset = null;
 
-    public BlockPattern(TraceabilityPredicate[][][] predicatesIn, RelativeDirection[] structureDir, int[][] aisleRepetitions) {
+    /**
+     * The repetitions per aisle along the axis of repetition
+     */
+    public int[] formedRepetitionCount;
+
+    public BlockPattern(@Nonnull TraceabilityPredicate[][][] predicatesIn, @Nonnull RelativeDirection[] structureDir,
+                        @Nonnull int[][] aisleRepetitions) {
         this.blockMatches = predicatesIn;
         this.globalCount = new HashMap<>();
         this.layerCount = new HashMap<>();
         this.fingerLength = predicatesIn.length;
         this.structureDir = structureDir;
         this.aisleRepetitions = aisleRepetitions;
+        this.formedRepetitionCount = new int[aisleRepetitions.length];
 
         if (this.fingerLength > 0) {
             this.thumbLength = predicatesIn[0].length;
@@ -132,6 +140,7 @@ public class BlockPattern {
         //Checking aisles
         for (int c = 0, z = minZ++, r; c < this.fingerLength; c++) {
             //Checking repeatable slices
+            int validRepetitions = 0;
             loop:
             for (r = 0; (findFirstAisle ? r < aisleRepetitions[c][1] : z <= -centerOffset[3]); r++) {
                 //Checking single slice
@@ -165,6 +174,7 @@ public class BlockPattern {
                             } else {
                                 z++;//continue searching for the first aisle
                             }
+//                            validRepetitions = 0;
                             continue loop;
                         }
                     }
@@ -179,6 +189,7 @@ public class BlockPattern {
                         return null;
                     }
                 }
+                validRepetitions++;
             }
             //Repetitions out of range
             if (r < aisleRepetitions[c][0]) {
@@ -187,6 +198,9 @@ public class BlockPattern {
                 }
                 return null;
             }
+
+            // finished checking the aisle, so store the repetitions
+            formedRepetitionCount[c] = validRepetitions;
         }
 
         //Check count matches amount
