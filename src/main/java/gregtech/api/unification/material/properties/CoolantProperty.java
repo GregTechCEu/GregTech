@@ -1,6 +1,6 @@
 package gregtech.api.unification.material.properties;
 
-public class CoolantProperty implements IMaterialProperty<CoolantProperty>{
+public class CoolantProperty implements IMaterialProperty{
 
     private double moderatorFactor = 0.D;
     private double coolingFactor = 0.D;

@@ -1,6 +1,6 @@
 package gregtech.api.unification.material.properties;
 
-public class ModeratorProperty implements IMaterialProperty<ModeratorProperty>{
+public class ModeratorProperty implements IMaterialProperty{
 
     private double moderatorFactor = 0.D;
     private double absorption = 0.D;
