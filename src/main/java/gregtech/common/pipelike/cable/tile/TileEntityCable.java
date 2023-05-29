@@ -161,7 +161,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         int temp = temperature;
         setTemperature(getDefaultTemp());
         int index = getPipeType().insulationLevel;
-        BlockCable newBlock = MetaBlocks.CABLES[index];
+        BlockCable newBlock = MetaBlocks.CABLES.get(getPipeBlock().getMaterialRegistry().getModid())[index];
         world.setBlockState(pos, newBlock.getDefaultState());
         TileEntityCable newCable = (TileEntityCable) world.getTileEntity(pos);
         if (newCable != null) { // should never be null

@@ -1,6 +1,5 @@
 package gregtech.api.pipenet.tile;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
@@ -9,6 +8,8 @@ import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MaterialHelpers;
+import gregtech.api.unification.material.registry.MaterialRegistrationManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -76,7 +77,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void setFrameMaterial(@Nullable Material frameMaterial) {
         this.frameMaterial = frameMaterial;
         if (world != null && world.isRemote) {
-            writeCustomData(UPDATE_FRAME_MATERIAL, buf -> buf.writeVarInt(frameMaterial == null ? -1 : GregTechAPI.MATERIAL_REGISTRY.getIDForObject(frameMaterial)));
+            writeCustomData(UPDATE_FRAME_MATERIAL, buf -> {
+                buf.writeVarInt(frameMaterial == null ? -1 : frameMaterial.getRegistry().getNetworkId());
+                buf.writeVarInt(frameMaterial == null ? -1 : frameMaterial.getId());
+            });
         }
     }
 
@@ -331,7 +335,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (isPainted()) {
             compound.setInteger("InsulationColor", paintingColor);
         }
-        compound.setString("FrameMaterial", frameMaterial == null ? "" : frameMaterial.toString());
+        compound.setString("FrameMaterial", frameMaterial == null ? "" : frameMaterial.getRegistryName());
         this.coverableImplementation.writeToNBT(compound);
         return compound;
     }
@@ -361,10 +365,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (compound.hasKey("InsulationColor")) {
             this.paintingColor = compound.getInteger("InsulationColor");
         }
-        String frameMaterialName = compound.getString("FrameMaterial");
-        if (!frameMaterialName.isEmpty()) {
-            this.frameMaterial = GregTechAPI.MATERIAL_REGISTRY.getObject(frameMaterialName);
-        }
+        this.frameMaterial = MaterialHelpers.getMaterial(compound.getString("FrameMaterial"));
+
         this.coverableImplementation.readFromNBT(compound);
     }
 
@@ -388,7 +390,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         buf.writeVarInt(connections);
         buf.writeVarInt(blockedConnections);
         buf.writeInt(paintingColor);
-        buf.writeVarInt(frameMaterial == null ? -1 : GregTechAPI.MATERIAL_REGISTRY.getIDForObject(frameMaterial));
+        buf.writeVarInt(frameMaterial == null ? -1 : frameMaterial.getRegistry().getNetworkId());
+        buf.writeVarInt(frameMaterial == null ? -1 : frameMaterial.getId());
         this.coverableImplementation.writeInitialSyncData(buf);
     }
 
@@ -398,8 +401,13 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.connections = buf.readVarInt();
         this.blockedConnections = buf.readVarInt();
         this.paintingColor = buf.readInt();
+        int registryId = buf.readVarInt();
         int frameMaterialId = buf.readVarInt();
-        this.frameMaterial = frameMaterialId < 0 ? null : GregTechAPI.MATERIAL_REGISTRY.getObjectById(frameMaterialId);
+        if (registryId >= 0 && frameMaterialId >= 0) {
+            this.frameMaterial = MaterialRegistrationManager.getRegistry(registryId).getObjectById(frameMaterialId);
+        } else {
+            this.frameMaterial = null;
+        }
         this.coverableImplementation.readInitialSyncData(buf);
     }
 
@@ -420,8 +428,13 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             this.blockedConnections = buf.readVarInt();
             scheduleChunkForRenderUpdate();
         } else if (discriminator == UPDATE_FRAME_MATERIAL) {
+            int registryId = buf.readVarInt();
             int frameMaterialId = buf.readVarInt();
-            this.frameMaterial = frameMaterialId < 0 ? null : GregTechAPI.MATERIAL_REGISTRY.getObjectById(frameMaterialId);
+            if (registryId >= 0 && frameMaterialId >= 0) {
+                this.frameMaterial = MaterialRegistrationManager.getRegistry(registryId).getObjectById(frameMaterialId);
+            } else {
+                this.frameMaterial = null;
+            }
             scheduleChunkForRenderUpdate();
         }
     }

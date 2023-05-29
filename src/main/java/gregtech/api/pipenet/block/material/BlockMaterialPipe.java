@@ -1,6 +1,5 @@
 package gregtech.api.pipenet.block.material;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -8,15 +7,20 @@ import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType> & IMaterialPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
 
     protected final PipeType pipeType;
+    private final MaterialRegistry registry;
 
-    public BlockMaterialPipe(PipeType pipeType) {
+    public BlockMaterialPipe(@Nonnull PipeType pipeType, @Nonnull MaterialRegistry registry) {
         this.pipeType = pipeType;
+        this.registry = registry;
     }
 
     @Override
@@ -40,12 +44,12 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
 
     public ItemStack getItem(Material material) {
         if (material == null) return ItemStack.EMPTY;
-        int materialId = GregTechAPI.MATERIAL_REGISTRY.getIDForObject(material);
+        int materialId = registry.getIDForObject(material);
         return new ItemStack(this, 1, materialId);
     }
 
-    public static Material getItemMaterial(ItemStack itemStack) {
-        return GregTechAPI.MATERIAL_REGISTRY.getObjectById(itemStack.getMetadata());
+    public Material getItemMaterial(ItemStack itemStack) {
+        return registry.getObjectById(itemStack.getMetadata());
     }
 
     @Override
@@ -67,5 +71,10 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
 
     public PipeType getItemPipeType(ItemStack is) {
         return pipeType;
+    }
+
+    @Nonnull
+    public MaterialRegistry getMaterialRegistry() {
+        return registry;
     }
 }

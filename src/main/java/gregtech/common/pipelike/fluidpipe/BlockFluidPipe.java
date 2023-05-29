@@ -8,6 +8,7 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
@@ -42,8 +43,8 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
 
     private final SortedMap<Material, FluidPipeProperties> enabledMaterials = new TreeMap<>();
 
-    public BlockFluidPipe(FluidPipeType pipeType) {
-        super(pipeType);
+    public BlockFluidPipe(FluidPipeType pipeType, MaterialRegistry registry) {
+        super(pipeType, registry);
         setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WRENCH, 1);
     }
@@ -51,7 +52,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     public void addPipeMaterial(Material material, FluidPipeProperties fluidPipeProperties) {
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(fluidPipeProperties, "material %s fluidPipeProperties was null", material);
-        Preconditions.checkArgument(GregTechAPI.MATERIAL_REGISTRY.getNameForObject(material) != null, "material %s is not registered", material);
+        Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null, "material %s is not registered", material);
         this.enabledMaterials.put(material, fluidPipeProperties);
     }
 

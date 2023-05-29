@@ -1,11 +1,11 @@
 package gregtech.common.items.behaviors;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemColorProvider;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.metaitem.stats.IItemNameProvider;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MaterialHelpers;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.LocalizationUtils;
@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants.NBT;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, IItemDurabilityManager, IItemColorProvider, IItemNameProvider {
@@ -33,18 +34,18 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
             return defaultMaterial;
         }
         String materialName = compound.getString("Material");
-        Material material = GregTechAPI.MATERIAL_REGISTRY.getObject(materialName);
+        Material material = MaterialHelpers.getMaterial(materialName);
         if (material == null || !material.hasProperty(PropertyKey.INGOT)) {
             return defaultMaterial;
         }
         return material;
     }
 
-    public static void setPartMaterial(ItemStack itemStack, Material material) {
+    public static void setPartMaterial(ItemStack itemStack, @Nonnull Material material) {
         if (!material.hasProperty(PropertyKey.INGOT))
             throw new IllegalArgumentException("Part material must have an Ingot!");
         NBTTagCompound compound = getOrCreatePartStatsTag(itemStack);
-        compound.setString("Material", material.toString());
+        compound.setString("Material", material.getUnlocalizedName());
     }
 
     public abstract int getPartMaxDurability(ItemStack itemStack);

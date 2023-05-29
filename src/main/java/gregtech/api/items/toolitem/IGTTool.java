@@ -9,7 +9,6 @@ import com.google.common.collect.Multimap;
 import crazypants.enderio.api.tool.ITool;
 import forestry.api.arboriculture.IToolGrafter;
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.impl.CombinedCapabilityProvider;
 import gregtech.api.capability.impl.ElectricItem;
@@ -25,6 +24,7 @@ import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MaterialHelpers;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -222,7 +222,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default Material getToolMaterial(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
         String string = toolTag.getString(MATERIAL_KEY);
-        Material material = GregTechAPI.MaterialRegistry.get(string);
+        Material material = MaterialHelpers.getMaterial(string);
         if (material == null) {
             toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).toString());
         }

@@ -1,12 +1,11 @@
 package gregtech.api.pipenet.block.material;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.registry.MaterialRegistry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
@@ -14,7 +13,7 @@ import javax.annotation.Nonnull;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_PIPE_MATERIAL;
 
-public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> extends TileEntityPipeBase<PipeType, NodeDataType> implements IMaterialPipeTile<PipeType, NodeDataType> {
+public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType> & IMaterialPipeType<NodeDataType>, NodeDataType> extends TileEntityPipeBase<PipeType, NodeDataType> implements IMaterialPipeTile<PipeType, NodeDataType> {
 
     private Material pipeMaterial = Materials.Aluminium;
 
@@ -42,6 +41,11 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
     }
 
     @Override
+    public BlockMaterialPipe<PipeType, NodeDataType, ?> getPipeBlock() {
+        return (BlockMaterialPipe<PipeType, NodeDataType, ?>) super.getPipeBlock();
+    }
+
+    @Override
     public void transferDataFrom(IPipeTile<PipeType, NodeDataType> tileEntity) {
         super.transferDataFrom(tileEntity);
         this.pipeMaterial = ((IMaterialPipeTile<PipeType, NodeDataType>) tileEntity).getPipeMaterial();
@@ -58,30 +62,31 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
     @Override
     public void readFromNBT(@Nonnull NBTTagCompound compound) {
         super.readFromNBT(compound);
-        this.pipeMaterial = GregTechAPI.MATERIAL_REGISTRY.getObject(compound.getString("PipeMaterial"));
+        MaterialRegistry registry = getPipeBlock().getMaterialRegistry();
+        this.pipeMaterial = registry.getObject(compound.getString("PipeMaterial"));
         if (this.pipeMaterial == null) {
-            this.pipeMaterial = Materials.Aluminium; // fallback
+            this.pipeMaterial = registry.getFallbackMaterial();
         }
     }
 
-    private void writePipeMaterial(PacketBuffer buf) {
-        buf.writeVarInt(GregTechAPI.MATERIAL_REGISTRY.getIDForObject(pipeMaterial));
+    private void writePipeMaterial(@Nonnull PacketBuffer buf) {
+        buf.writeVarInt(getPipeBlock().getMaterialRegistry().getIDForObject(pipeMaterial));
     }
 
-    private void readPipeMaterial(PacketBuffer buf) {
-        this.pipeMaterial = GregTechAPI.MATERIAL_REGISTRY.getObjectById(buf.readVarInt());
+    private void readPipeMaterial(@Nonnull PacketBuffer buf) {
+        this.pipeMaterial = getPipeBlock().getMaterialRegistry().getObjectById(buf.readVarInt());
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeVarInt(GregTechAPI.MATERIAL_REGISTRY.getIDForObject(pipeMaterial));
+        buf.writeVarInt(getPipeBlock().getMaterialRegistry().getIDForObject(pipeMaterial));
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.pipeMaterial = GregTechAPI.MATERIAL_REGISTRY.getObjectById(buf.readVarInt());
+        this.pipeMaterial = getPipeBlock().getMaterialRegistry().getObjectById(buf.readVarInt());
     }
 
     @Override

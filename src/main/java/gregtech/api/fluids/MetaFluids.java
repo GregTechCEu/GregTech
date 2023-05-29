@@ -3,7 +3,6 @@ package gregtech.api.fluids;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
@@ -14,6 +13,7 @@ import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.PlasmaProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.registry.MaterialRegistrationManager;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
@@ -61,7 +61,7 @@ public class MetaFluids {
         // set custom textures for fluids
         setCustomTextures();
 
-        for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
+        for (Material material : MaterialRegistrationManager.getRegisteredMaterials()) {
             FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
 
             if (fluidProperty != null && fluidProperty.getFluid() == null) {

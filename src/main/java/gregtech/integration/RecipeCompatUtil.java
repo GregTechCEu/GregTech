@@ -8,10 +8,10 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.integration.crafttweaker.CTRecipeHelper;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
+import gregtech.integration.crafttweaker.CTRecipeHelper;
 import gregtech.integration.groovy.GrSRecipeHelper;
 import gregtech.modules.GregTechModules;
 import net.minecraft.block.Block;
@@ -66,8 +66,8 @@ public final class RecipeCompatUtil {
             if (block instanceof BlockFrame) {
                 return "frame" + ((BlockFrame) block).getGtMaterial(item).toCamelCaseString();
             }
-            if (block instanceof BlockMaterialPipe) {
-                return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(item).toCamelCaseString();
+            if (block instanceof BlockMaterialPipe blockMaterialPipe) {
+                return blockMaterialPipe.getPrefix().name + blockMaterialPipe.getItemMaterial(item).toCamelCaseString();
             }
         }
         return null;

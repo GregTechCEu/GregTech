@@ -3,7 +3,6 @@ package gregtech.api.unification.material;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
-import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.Element;
@@ -12,6 +11,8 @@ import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
+import gregtech.api.unification.material.registry.MaterialRegistrationManager;
+import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -20,6 +21,7 @@ import gregtech.api.util.SmallDigits;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
 import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nonnull;
@@ -58,6 +60,11 @@ public class Material implements Comparable<Material> {
      * Chemical formula of this material
      */
     private String chemicalFormula;
+
+    /**
+     * The modid of the material
+     */
+    private String modid;
 
     @Nonnull
     private String calculateChemicalFormula() {
@@ -111,6 +118,8 @@ public class Material implements Comparable<Material> {
         this.properties = properties;
         this.flags = flags;
         this.properties.setMaterial(this);
+        //TODO Fix this always being GT
+        this.modid = Objects.requireNonNull(Loader.instance().activeModContainer()).getModId();
         registerMaterial();
     }
 
@@ -120,17 +129,19 @@ public class Material implements Comparable<Material> {
         materialInfo.iconSet = MaterialIconSet.DULL;
         properties = new MaterialProperties();
         flags = new MaterialFlags();
+        //TODO Fix this always being GT
+        this.modid = Objects.requireNonNull(Loader.instance().activeModContainer()).getModId();
     }
 
     protected void registerMaterial() {
         verifyMaterial();
-        GregTechAPI.MATERIAL_REGISTRY.register(this);
+        MaterialRegistrationManager.getRegistry(modid).register(this);
     }
 
     public void addFlags(MaterialFlag... flags) {
-        if (GregTechAPI.MATERIAL_REGISTRY.isFrozen())
-            throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
-        this.flags.addFlags(flags).verify(this);
+        if (MaterialRegistrationManager.canModifyMaterials()) {
+            this.flags.addFlags(flags).verify(this);
+        } else throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
     }
 
     @ZenMethod
@@ -303,7 +314,12 @@ public class Material implements Comparable<Material> {
 
     @ZenGetter("unlocalizedName")
     public String getUnlocalizedName() {
-        return "material." + materialInfo.name;
+        return modid + ".material." + materialInfo.name;
+    }
+
+    @Nonnull
+    public String getRegistryName() {
+        return modid + ':' + materialInfo.name;
     }
 
     @ZenGetter("localizedName")
@@ -347,7 +363,7 @@ public class Material implements Comparable<Material> {
     }
 
     public <T extends IMaterialProperty> void setProperty(PropertyKey<T> key, IMaterialProperty property) {
-        if (GregTechAPI.MATERIAL_REGISTRY.isFrozen()) {
+        if (!MaterialRegistrationManager.canModifyMaterials()) {
             throw new IllegalStateException("Cannot add properties to a Material when registry is frozen!");
         }
         properties.setProperty(key, property);
@@ -367,6 +383,16 @@ public class Material implements Comparable<Material> {
         flags.verify(this);
         this.chemicalFormula = calculateChemicalFormula();
         calculateDecompositionType();
+    }
+
+    @Nonnull
+    public String getModid() {
+        return this.modid;
+    }
+
+    @Nonnull
+    public MaterialRegistry getRegistry() {
+        return MaterialRegistrationManager.getRegistry(this.modid);
     }
 
     /**

@@ -3,9 +3,9 @@ package gregtech.api.worldgen.config;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import gregtech.api.GregTechAPI;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MaterialHelpers;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.BlockOre;
@@ -74,7 +74,7 @@ public class OreConfigUtils {
     }
 
     public static Material getMaterialByName(String name) {
-        Material material = GregTechAPI.MATERIAL_REGISTRY.getObject(name);
+        Material material = MaterialHelpers.getMaterial(name);
         if (material == null || !material.hasProperty(PropertyKey.ORE))
             throw new IllegalArgumentException("Material with name " + name + " not found!");
         return material;

@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.MetaFluids;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.registry.MaterialRegistrationManager;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.MetaItems;
 import gregtech.modules.ModuleManager;
@@ -59,9 +60,10 @@ public final class Bootstrap {
         Loader.instance().setupTestHarness(new DummyModContainer(meta));
         GregTechAPI.moduleManager = ModuleManager.getInstance();
 
-        GregTechAPI.MATERIAL_REGISTRY.unfreeze();
+        MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.OPEN);
         Materials.register();
-        GregTechAPI.MATERIAL_REGISTRY.freeze();
+        MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.CLOSED);
+        MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.FROZEN);
 
         OrePrefix.runMaterialHandlers();
         MetaFluids.init();

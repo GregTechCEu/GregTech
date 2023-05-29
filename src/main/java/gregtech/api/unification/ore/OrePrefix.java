@@ -565,14 +565,14 @@ public class OrePrefix {
 
     private String findUnlocalizedName(Material material) {
         if (material.hasProperty(PropertyKey.POLYMER)) {
-            String localizationKey = String.format("item.material.oreprefix.polymer.%s", this.name);
+            String localizationKey = String.format("%s.item.material.oreprefix.polymer.%s", material.getModid(), this.name);
             // Not every polymer ore prefix gets a special name
             if (LocalizationUtils.hasKey(localizationKey)) {
                 return localizationKey;
             }
         }
 
-        return String.format("item.material.oreprefix.%s", this.name);
+        return String.format("%s.item.material.oreprefix.%s", material.getModid(), this.name);
     }
 
     public boolean isIgnored(Material material) {
