@@ -1,6 +1,6 @@
 package gregtech.api.unification.material.properties;
 
-public class FissionFuelProperty implements IMaterialProperty<FissionFuelProperty>{
+public class FissionFuelProperty implements IMaterialProperty{
 
     private double[] crossSections = new double[]{0.D, 0.D};
     private double durability = 0.D;
