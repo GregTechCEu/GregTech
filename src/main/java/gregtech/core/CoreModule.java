@@ -127,6 +127,7 @@ public class CoreModule implements IGregTechModule {
         logger.info("Registering GTCEu Materials");
         materialEvent.startRegistration(GTValues.MODID);
         Materials.register();
+        materialEvent.completeRegistration();
 
         // Then, register addon Materials
         logger.info("Registering addon Materials");

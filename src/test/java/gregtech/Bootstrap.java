@@ -62,7 +62,7 @@ public final class Bootstrap {
         GregTechAPI.moduleManager = ModuleManager.getInstance();
 
         MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.OPEN);
-        Material.activeRegistry = MaterialRegistrationManager.getRegistry(GTValues.MODID);
+        Material.Builder.setConstructionRegistry(MaterialRegistrationManager.getRegistry(GTValues.MODID));
         Materials.register();
         MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.CLOSED);
         MaterialRegistrationManager.transitionPhase(MaterialRegistrationManager.Phase.FROZEN);

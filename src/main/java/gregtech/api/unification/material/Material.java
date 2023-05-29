@@ -32,12 +32,6 @@ import java.util.*;
 public class Material implements Comparable<Material> {
 
     /**
-     * Internal usage <strong>only</strong>.
-     */
-    @Nullable
-    public static MaterialRegistry activeRegistry = null;
-
-    /**
      * Basic Info of this Material.
      *
      * @see MaterialInfo
@@ -402,6 +396,12 @@ public class Material implements Comparable<Material> {
      * @since GTCEu 2.0.0
      */
     public static class Builder {
+
+        /**
+         * Internal usage <strong>only</strong>.
+         */
+        @Nullable
+        public static MaterialRegistry activeRegistry = null;
 
         private final MaterialInfo materialInfo;
         private final MaterialProperties properties;
@@ -962,6 +962,16 @@ public class Material implements Comparable<Material> {
             materialInfo.componentList = ImmutableList.copyOf(composition);
             materialInfo.verifyInfo(properties, averageRGB);
             return new Material(materialInfo, properties, flags, modid);
+        }
+
+        /**
+         * Internal use <strong>only</strong>.
+         *
+         * @param registry the new active registry used during material construction.
+         */
+        public static void setConstructionRegistry(@Nullable MaterialRegistry registry) {
+            // needed to allow material modids to be correct when in different registries.
+            activeRegistry = registry;
         }
     }
 

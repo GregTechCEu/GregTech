@@ -1,5 +1,6 @@
 package gregtech.api.unification.material.event;
 
+import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.registry.MaterialRegistrationManager;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
@@ -16,12 +17,24 @@ public class MaterialEvent extends GenericEvent<Material> {
     }
 
     /**
-     * Every mod should call this before registering materials
+     * Begins material registration for the current mod.
+     * <p>
+     * <strong>Every mod should call this before registering materials.</strong>
      *
      * @param modid the modid performing material registration
      */
     @SuppressWarnings("MethodMayBeStatic")
     public void startRegistration(@Nonnull String modid) {
-        Material.activeRegistry = MaterialRegistrationManager.getRegistry(modid);
+        Material.Builder.setConstructionRegistry(MaterialRegistrationManager.getRegistry(modid));
+    }
+
+    /**
+     * Completes material registration for the current mod.
+     * <p>
+     * <strong>Every mod should call this after registering materials.</strong>
+     */
+    @SuppressWarnings("methodMayBeStatic")
+    public void completeRegistration() {
+        Material.Builder.setConstructionRegistry(MaterialRegistrationManager.getRegistry(GTValues.MODID));
     }
 }

@@ -164,7 +164,7 @@ public final class MaterialRegistrationManager {
             collection.addAll(registry.getAllMaterials());
         }
         registeredMaterials = Collections.unmodifiableCollection(collection);
-        Material.activeRegistry = null;
+        Material.Builder.setConstructionRegistry(null);
     }
 
     public static boolean canModifyMaterials() {
