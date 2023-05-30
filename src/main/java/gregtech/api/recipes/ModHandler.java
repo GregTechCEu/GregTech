@@ -78,7 +78,7 @@ public final class ModHandler {
      */
     @Deprecated
     public static boolean isWater(@Nullable FluidStack stack) {
-        return stack == null || CommonFluidFilters.BOILER_FLUID.test(stack);
+        return stack != null && CommonFluidFilters.BOILER_FLUID.test(stack);
     }
 
     /**
