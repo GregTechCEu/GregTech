@@ -40,6 +40,7 @@ public final class OreGlobCompileResult {
     }
 
     public static final class Report implements Comparable<Report> {
+
         private final String message;
         private final boolean error;
         private final int start;

@@ -1163,6 +1163,48 @@ cover.ore_dictionary_filter.status.warn=§7%s warning(s)
 cover.ore_dictionary_filter.status.no_issues=§aNo issues
 cover.ore_dictionary_filter.status.explain=Ore filter explanation:
 
+cover.ore_dictionary_filter.preview.next=<text>... followed by </text>
+cover.ore_dictionary_filter.preview.match=<node>'<value>%s</value>'</node>
+cover.ore_dictionary_filter.preview.match.not=<node><not>not</not> '<value>%s</value>'</node>
+cover.ore_dictionary_filter.preview.char=<node><value>1</value> character</node>
+cover.ore_dictionary_filter.preview.char.not=<node><logic>either</logic> more than <value>1</value> character <logic>or</logic> nothing</node>
+cover.ore_dictionary_filter.preview.chars=<node><value>%s</value> characters</node>
+cover.ore_dictionary_filter.preview.chars.not=<node><logic>either</logic> more <logic>or</logic> less than <value>%s</value> characters</node>
+cover.ore_dictionary_filter.preview.chars_or_more=<node><value>%s</value> or more characters</node>
+cover.ore_dictionary_filter.preview.chars_or_more.not=<node>less than <value>%s</value> characters</node>
+cover.ore_dictionary_filter.preview.group=<node><not>not</not>:</node>
+cover.ore_dictionary_filter.preview.or=<node><logic>one of</logic>...</node>
+cover.ore_dictionary_filter.preview.nor=<node><logic>anything that <not>isn't</not> one of</logic>...</node>
+cover.ore_dictionary_filter.preview.or.entry=<label>&gt; <logic>or</logic> </label>
+cover.ore_dictionary_filter.preview.or.entry.start=<label>&gt; </label>
+cover.ore_dictionary_filter.preview.and=<node><logic>anything that is</logic>...</node>
+cover.ore_dictionary_filter.preview.nand=<node><logic>anything that <not>isn't</not></logic>...</node>
+cover.ore_dictionary_filter.preview.and.entry=<label>&gt; <logic>and</logic> </label>
+cover.ore_dictionary_filter.preview.and.entry.start=<label>&gt; </label>
+cover.ore_dictionary_filter.preview.xor=<node><logic>only one of</logic>...</node>
+cover.ore_dictionary_filter.preview.xnor=<node><logic>either both or none of</logic>...</node>
+cover.ore_dictionary_filter.preview.xor.entry=<label>&gt; </label>
+cover.ore_dictionary_filter.preview.everything=<node>anything</node>
+cover.ore_dictionary_filter.preview.impossible=<node>(impossible to match)</node>
+cover.ore_dictionary_filter.preview.nonempty=<node>something</node>
+cover.ore_dictionary_filter.preview.empty=<node>nothing</node>
+cover.ore_dictionary_filter.preview.error=<error>ERROR!</error>
+
+cover.ore_dictionary_filter.compile.eof=** End of line **
+
+cover.ore_dictionary_filter.compile.error.unexpected_eof=Unexpected end of expression
+cover.ore_dictionary_filter.compile.error.unexpected_token=Unexpected token '%s'
+cover.ore_dictionary_filter.compile.error.unexpected_token_after_eof=Unexpected token '%s' after end of expression
+cover.ore_dictionary_filter.compile.error.unexpected_compilation_flag=Compilation flags in the middle of expression
+cover.ore_dictionary_filter.compile.error.empty_compilation_flag=No compilation flags given
+cover.ore_dictionary_filter.compile.error.unknown_compilation_flag=Unknown compilation flag '%s'
+cover.ore_dictionary_filter.compile.error.redundant_compilation_flag=Compilation flag '%s' written twice
+cover.ore_dictionary_filter.compile.error.eof_after_escape=End of file after escape character ('\')
+cover.ore_dictionary_filter.compile.error.invalid_char=Invalid character U+%s('%s')
+
+cover.ore_dictionary_filter.compile.warn.nested_negation=Nested negations can be unintuitive. Consider using groups ( () ) to eliminate ambiguity.
+cover.ore_dictionary_filter.compile.warn.consecutive_negation=Consecutive negations can be unintuitive. Please check if the evaluation result is desirable.
+
 cover.fluid_filter.title=Fluid Filter
 cover.fluid_filter.config_amount=Scroll wheel up increases amount, down decreases./nShift[§6x10§r],Ctrl[§ex100§r],Shift+Ctrl[§ax1000§r]/nRight click increases amount, left click decreases./nHold shift to double/halve./nMiddle click to clear
 cover.fluid_filter.mode.filter_fill=Filter Fill

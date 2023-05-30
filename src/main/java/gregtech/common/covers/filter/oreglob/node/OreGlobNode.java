@@ -14,12 +14,9 @@ public abstract class OreGlobNode {
 
     @Nullable
     private MatchDescription descriptionCache;
-    @Nullable
-    private MatchDescription selfDescriptionCache;
 
     // package-private constructor to prevent inheritance from outside
-    OreGlobNode() {
-    }
+    OreGlobNode() {}
 
     @Nullable
     public final OreGlobNode getNext() {
@@ -52,30 +49,8 @@ public abstract class OreGlobNode {
      * Visit this node.
      *
      * @param visitor Visitor for this node
-     * @return Next node, if exists
      */
-    @Nullable
-    public OreGlobNode visit(NodeVisitor visitor) {
-        switch (this.getMatchDescription()) {
-            case EVERYTHING:
-                visitor.everything();
-                break;
-            case NOTHING:
-                visitor.nothing();
-                break;
-            case NONEMPTY:
-                visitor.nonempty();
-                break;
-            case EMPTY:
-                visitor.empty();
-                break;
-            default:
-                visitInternal(visitor);
-        }
-        return this.getNext();
-    }
-
-    protected abstract void visitInternal(NodeVisitor visitor);
+    public abstract void visit(NodeVisitor visitor);
 
     /**
      * Whether this node shares same structure and content with given node.
@@ -95,7 +70,7 @@ public abstract class OreGlobNode {
 
     public final MatchDescription getMatchDescription() {
         if (this.descriptionCache == null) {
-            MatchDescription t = getSelfMatchDescription();
+            MatchDescription t = getIndividualNodeMatchDescription();
             if (t != MatchDescription.NOTHING && this.getNext() != null)
                 t = t.append(this.getNext().getMatchDescription());
             return this.descriptionCache = t;
@@ -103,29 +78,8 @@ public abstract class OreGlobNode {
         return this.descriptionCache;
     }
 
-    public final MatchDescription getSelfMatchDescription() {
-        if (this.selfDescriptionCache == null) {
-            MatchDescription t = getIndividualNodeMatchDescription();
-            if (this.isNegated() && !(this instanceof ErrorNode)) t = t.complement();
-            return this.selfDescriptionCache = t;
-        }
-        return this.selfDescriptionCache;
-    }
-
-    public final boolean isEverything() {
-        return getMatchDescription() == MatchDescription.EVERYTHING;
-    }
-
-    public final boolean isImpossibleToMatch() {
-        return getMatchDescription() == MatchDescription.NOTHING;
-    }
-
-    public final boolean isSomething() {
-        return getMatchDescription() == MatchDescription.NONEMPTY;
-    }
-
-    public final boolean isNothing() {
-        return getMatchDescription() == MatchDescription.EMPTY;
+    public final boolean is(MatchDescription description) {
+        return getMatchDescription() == description;
     }
 
     /**
@@ -138,19 +92,18 @@ public abstract class OreGlobNode {
     public abstract boolean isPropertyEqualTo(@Nonnull OreGlobNode node);
 
     /**
-     * @return Match type of this specific node, without considering negation flag.
+     * @return Match type of this specific node
      */
     protected abstract MatchDescription getIndividualNodeMatchDescription();
 
     final void clearMatchDescriptionCache() {
         this.descriptionCache = null;
-        this.selfDescriptionCache = null;
     }
 
     public static boolean isStructurallyEqualTo(@Nullable OreGlobNode node1, @Nullable OreGlobNode node2) {
         if (node1 == node2) return true;
-        if (node1 == null) return node2.isNothing();
-        if (node2 == null) return node1.isNothing();
+        if (node1 == null) return node2.is(MatchDescription.EMPTY);
+        if (node2 == null) return node1.is(MatchDescription.EMPTY);
         return node1.isStructurallyEqualTo(node2);
     }
 }

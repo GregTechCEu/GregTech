@@ -6,6 +6,7 @@ import gregtech.api.fluids.MetaFluids;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTLog;
 import gregtech.common.items.MetaItems;
 import gregtech.modules.ModuleManager;
 import net.minecraft.client.resources.I18n;
@@ -14,6 +15,7 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
@@ -21,6 +23,8 @@ import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -60,6 +64,8 @@ public final class Bootstrap {
         Loader.instance().setupTestHarness(new DummyModContainer(meta));
         GregTechAPI.moduleManager = ModuleManager.getInstance();
 
+        // loadGregtechLangFile();
+
         GregTechAPI.MATERIAL_REGISTRY.unfreeze();
         Materials.register();
         GregTechAPI.MATERIAL_REGISTRY.freeze();
@@ -69,6 +75,18 @@ public final class Bootstrap {
         MetaItems.init();
         ModHandler.init();
         bootstrapped = true;
+    }
+
+    private static void loadGregtechLangFile() {
+        try (InputStream is = LanguageMap.class.getResourceAsStream("/assets/gregtech/lang/en_us.lang")) {
+            if (is != null) {
+                LanguageMap.inject(is);
+            } else {
+                GTLog.logger.error("Couldn't find en_us.lang file");
+            }
+        } catch (IOException ex) {
+            GTLog.logger.error("Unable to read en_us.lang file", ex);
+        }
     }
 
     private static final class TestSidedHandler implements IFMLSidedHandler {

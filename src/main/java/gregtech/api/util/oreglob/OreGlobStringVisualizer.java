@@ -1,49 +1,24 @@
 package gregtech.api.util.oreglob;
 
-import gregtech.api.util.oreglob.OreGlob.VisualizationHint;
-import gregtech.api.util.oreglob.OreGlob.Visualizer;
+import net.minecraft.util.text.TextFormatting;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Implementation of oreGlob visualizer that outputs String as result.
  */
-public class OreGlobStringVisualizer implements Visualizer {
+public class OreGlobStringVisualizer extends OreGlobVisualizer {
 
-    private final StringBuilder stb = new StringBuilder();
-    private final String indent;
+    public OreGlobStringVisualizer() {}
 
-    public OreGlobStringVisualizer() {
-        this("  ");
+    public OreGlobStringVisualizer(@Nonnull String indent) {
+        super(indent);
     }
 
-    public OreGlobStringVisualizer(String indent) {
-        this.indent = indent;
-    }
-
+    @Nullable
     @Override
-    public void newLine(int indents) {
-        this.stb.append('\n');
-        for (int i = 0; i < indents; i++) {
-            this.stb.append(this.indent);
-        }
-    }
-
-    @Override
-    public void text(String text, VisualizationHint hint) {
-        this.stb.append(text);
-    }
-
-    @Override
-    public void number(int number, VisualizationHint hint) {
-        this.stb.append(number);
-    }
-
-    @Override
-    public void text(int codePoint, VisualizationHint hint) {
-        this.stb.appendCodePoint(codePoint);
-    }
-
-    @Override
-    public String toString() {
-        return this.stb.toString();
+    public TextFormatting getColor(@Nonnull VisualizationHint hint) {
+        return null;
     }
 }

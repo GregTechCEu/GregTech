@@ -2,6 +2,7 @@ package gregtech.common.covers.filter.oreglob.impl;
 
 import com.google.common.annotations.VisibleForTesting;
 import gregtech.api.util.oreglob.OreGlob;
+import gregtech.api.util.oreglob.OreGlobVisualizer;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 
 /**
@@ -21,7 +22,7 @@ public final class NodeOreGlob extends OreGlob {
     }
 
     @Override
-    public <V extends Visualizer> V visualize(V visualizer) {
+    public <V extends OreGlobVisualizer> V visualize(V visualizer) {
         new NodeVisualizer(visualizer).visit(this.root);
         return visualizer;
     }

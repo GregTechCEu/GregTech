@@ -1,6 +1,7 @@
 package gregtech.common.covers.filter.oreglob.impl;
 
 import gregtech.api.util.oreglob.OreGlob;
+import gregtech.api.util.oreglob.OreGlobVisualizer;
 
 /**
  * Simple implementation of oreglob that doesn't match anything.
@@ -14,7 +15,7 @@ public final class ImpossibleOreGlob extends OreGlob {
     }
 
     @Override
-    public <V extends Visualizer> V visualize(V visualizer) {
+    public <V extends OreGlobVisualizer> V visualize(V visualizer) {
         NodeVisualizer.impossible(visualizer);
         return visualizer;
     }
