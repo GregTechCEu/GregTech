@@ -733,11 +733,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public R setDefaultCategory(@Nonnull GTRecipeCategory category) {
-        this.category = category;
-        return (R) this;
-    }
-
     public R copy() {
         return (R) new RecipeBuilder<>(this);
     }
@@ -775,6 +770,12 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             GTLog.logger.error("Recipes must have a category", new IllegalArgumentException());
             if (isCTRecipe) {
                 CraftTweakerAPI.logError("Recipes must have a category", new IllegalArgumentException());
+            }
+            recipeStatus = EnumValidationResult.INVALID;
+        } else if (category.getRecipeMap() != this.recipeMap) {
+            GTLog.logger.error("Cannot apply Category with incompatible RecipeMap", new IllegalArgumentException());
+            if (isCTRecipe) {
+                CraftTweakerAPI.logError("Cannot apply Category with incompatible RecipeMap", new IllegalArgumentException());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }

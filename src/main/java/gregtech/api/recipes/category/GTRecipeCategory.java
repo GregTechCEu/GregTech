@@ -1,5 +1,6 @@
 package gregtech.api.recipes.category;
 
+import gregtech.api.recipes.RecipeMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import javax.annotation.Nonnull;
@@ -14,18 +15,29 @@ public final class GTRecipeCategory {
     private final String name;
     private final String uniqueID;
     private final String unlocalizedName;
+    private final RecipeMap<?> recipeMap;
     private Object icon;
 
+    /**
+     * Create a GTRecipeCategory
+     *
+     * @param modid the mod id of the category
+     * @param name the name of the category, used in translation. Uses the recipeMap's translation key if null.
+     * @param recipeMap the recipemap that accepts this category
+     * @return the new category
+     */
     @Nonnull
-    public static GTRecipeCategory create(@Nonnull String modid, @Nonnull String name) {
-        return categories.computeIfAbsent(name, (k) -> new GTRecipeCategory(modid, name));
+    public static GTRecipeCategory create(@Nonnull String modid, @Nullable String name, @Nonnull RecipeMap<?> recipeMap) {
+        String key = name == null ? recipeMap.getUnlocalizedName() : name;
+        return categories.computeIfAbsent(key, (k) -> new GTRecipeCategory(modid, name, recipeMap));
     }
 
-    private GTRecipeCategory(@Nonnull String modid, @Nonnull String name) {
+    private GTRecipeCategory(@Nonnull String modid, @Nullable String name, @Nonnull RecipeMap<?> recipeMap) {
         this.modid = modid;
-        this.name = name;
-        this.uniqueID = modid + ':' + name;
-        this.unlocalizedName = modid + ".recipe.category." + name;
+        this.name = name == null ? recipeMap.getUnlocalizedName() : name;
+        this.uniqueID = modid + ':' + this.name;
+        this.unlocalizedName = name == null ? recipeMap.getTranslationKey() : modid + ".recipe.category." + name;
+        this.recipeMap = recipeMap;
     }
 
     @Nonnull
@@ -45,7 +57,12 @@ public final class GTRecipeCategory {
 
     @Nonnull
     public String getUnlocalizedName() {
-        return unlocalizedName;
+        return this.unlocalizedName;
+    }
+
+    @Nonnull
+    public RecipeMap<?> getRecipeMap() {
+        return this.recipeMap;
     }
 
     /**
@@ -78,5 +95,10 @@ public final class GTRecipeCategory {
     @Override
     public int hashCode() {
         return getUniqueID().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "GTRecipeCategory{" + uniqueID + '}';
     }
 }

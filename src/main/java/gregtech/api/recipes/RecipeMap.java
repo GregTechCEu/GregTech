@@ -190,7 +190,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         this.isHidden = isHidden;
         defaultRecipeBuilder.setRecipeMap(this);
-        defaultRecipeBuilder.setDefaultCategory(GTRecipeCategory.create(GTValues.MODID, unlocalizedName));
+        defaultRecipeBuilder.category(GTRecipeCategory.create(GTValues.MODID, null, this));
         this.recipeBuilderSample = defaultRecipeBuilder;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
 
@@ -1205,7 +1205,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenGetter("localizedName")
     public String getLocalizedName() {
-        return LocalizationUtils.format("recipemap." + unlocalizedName + ".name");
+        return LocalizationUtils.format(getTranslationKey());
+    }
+
+    @ZenGetter("translationKey")
+    public String getTranslationKey() {
+        return "recipemap." + unlocalizedName + ".name";
     }
 
     @ZenGetter("unlocalizedName")
