@@ -10,9 +10,12 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.category.GTRecipeCategory;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.integration.jei.JustEnoughItemsModule;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
 import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
@@ -29,12 +32,15 @@ import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
 
     private final RecipeMap<?> recipeMap;
+    private final GTRecipeCategory category;
     private final ModularUI modularUI;
     private final ItemStackHandler importItems, exportItems;
     private final FluidTankList importFluids, exportFluids;
@@ -42,11 +48,12 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     private Object iconIngredient;
     private IDrawable icon;
 
-    private static final int FONT_HEIGHT = 9;
-    private static final HashMap<RecipeMap<?>, RecipeMapCategory> categoryMap = new HashMap<>();
+    private static final Map<GTRecipeCategory, RecipeMapCategory> gtCategories = new Object2ObjectOpenHashMap<>();
+    private static final Map<RecipeMap<?>, List<RecipeMapCategory>> recipeMapCategories = new Object2ObjectOpenHashMap<>();
 
-    public RecipeMapCategory(RecipeMap<?> recipeMap, IGuiHelper guiHelper) {
+    public RecipeMapCategory(@Nonnull RecipeMap<?> recipeMap, @Nonnull GTRecipeCategory category, IGuiHelper guiHelper) {
         this.recipeMap = recipeMap;
+        this.category = category;
         FluidTank[] importFluidTanks = new FluidTank[recipeMap.getMaxFluidInputs()];
         for (int i = 0; i < importFluidTanks.length; i++)
             importFluidTanks[i] = new FluidTank(16000);
@@ -61,19 +68,24 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
         ).build(new BlankUIHolder(), Minecraft.getMinecraft().player);
         this.modularUI.initWidgets();
         this.backgroundDrawable = guiHelper.createBlankDrawable(modularUI.getWidth(), modularUI.getHeight() * 2 / 3 + recipeMap.getPropertyHeightShift());
-        categoryMap.put(recipeMap, this);
+        gtCategories.put(category, this);
+        recipeMapCategories.compute(recipeMap, (k, v) -> {
+            if (v == null) v = new ArrayList<>();
+            v.add(this);
+            return v;
+        });
     }
 
     @Override
     @Nonnull
     public String getUid() {
-        return GTValues.MODID + ":" + recipeMap.unlocalizedName;
+        return category.getUniqueID();
     }
 
     @Override
     @Nonnull
     public String getTitle() {
-        return recipeMap.getLocalizedName();
+        return LocalizationUtils.format(category.getUnlocalizedName());
     }
 
     @Nullable
@@ -81,6 +93,8 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     public IDrawable getIcon() {
         if (icon != null) {
             return icon;
+        } else if (iconIngredient instanceof IDrawable drawable) {
+            return icon = drawable;
         } else if (iconIngredient != null) {
             // cache the icon drawable for less gc pressure
             return icon = JustEnoughItemsModule.guiHelper.createDrawableIngredient(iconIngredient);
@@ -190,7 +204,13 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
         }
     }
 
-    public static HashMap<RecipeMap<?>, RecipeMapCategory> getCategoryMap() {
-        return categoryMap;
+    @Nullable
+    public static RecipeMapCategory getCategoryFor(@Nonnull GTRecipeCategory category) {
+        return gtCategories.get(category);
+    }
+
+    @Nullable
+    public static Collection<RecipeMapCategory> getCategoriesFor(@Nonnull RecipeMap<?> recipeMap) {
+        return recipeMapCategories.get(recipeMap);
     }
 }

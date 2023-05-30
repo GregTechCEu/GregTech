@@ -9,6 +9,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.Recipe.ChanceEntry;
+import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.ingredients.*;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
@@ -58,6 +59,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected int duration, EUt;
     protected boolean hidden = false;
+    protected GTRecipeCategory category;
     protected boolean isCTRecipe = false;
     protected int parallel = 0;
     protected Consumer<RecipeBuilder<?>> onBuildAction = null;
@@ -104,6 +106,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.duration = recipeBuilder.duration;
         this.EUt = recipeBuilder.EUt;
         this.hidden = recipeBuilder.hidden;
+        this.category = recipeBuilder.category;
         this.onBuildAction = recipeBuilder.onBuildAction;
         this.recipePropertyStorage = recipeBuilder.recipePropertyStorage;
         if (this.recipePropertyStorage != null) {
@@ -715,6 +718,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R category(@Nonnull GTRecipeCategory category) {
+        this.category = category;
+        return (R) this;
+    }
+
     public R isCTRecipe() {
         this.isCTRecipe = true;
         return (R) this;
@@ -722,6 +730,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R setRecipeMap(RecipeMap<R> recipeMap) {
         this.recipeMap = recipeMap;
+        return (R) this;
+    }
+
+    public R setDefaultCategory(@Nonnull GTRecipeCategory category) {
+        this.category = category;
         return (R) this;
     }
 
@@ -735,7 +748,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public ValidationResult<Recipe> build() {
         return ValidationResult.newResult(finalizeAndValidate(), new Recipe(inputs, outputs, chancedOutputs,
-                fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe, recipePropertyStorage));
+                fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe, recipePropertyStorage, category));
     }
 
     protected EnumValidationResult validate() {
@@ -755,6 +768,13 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             GTLog.logger.error("Duration cannot be less or equal to 0", new IllegalArgumentException());
             if (isCTRecipe) {
                 CraftTweakerAPI.logError("Duration cannot be less or equal to 0", new IllegalArgumentException());
+            }
+            recipeStatus = EnumValidationResult.INVALID;
+        }
+        if (category == null) {
+            GTLog.logger.error("Recipes must have a category", new IllegalArgumentException());
+            if (isCTRecipe) {
+                CraftTweakerAPI.logError("Recipes must have a category", new IllegalArgumentException());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }

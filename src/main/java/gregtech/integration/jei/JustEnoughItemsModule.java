@@ -6,6 +6,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
@@ -13,6 +14,7 @@ import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
@@ -56,6 +58,7 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -96,13 +99,15 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
     }
 
     @Override
-    public void registerCategories(IRecipeCategoryRegistration registry) {
+    public void registerCategories(@Nonnull IRecipeCategoryRegistration registry) {
         guiHelper = registry.getJeiHelpers().getGuiHelper();
         registry.addRecipeCategories(new IntCircuitCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MultiblockInfoCategory(registry.getJeiHelpers()));
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
             if (!recipeMap.isHidden) {
-                registry.addRecipeCategories(new RecipeMapCategory(recipeMap, registry.getJeiHelpers().getGuiHelper()));
+                for (GTRecipeCategory category : recipeMap.getRecipesByCategory().keySet()) {
+                    registry.addRecipeCategories(new RecipeMapCategory(recipeMap, category, registry.getJeiHelpers().getGuiHelper()));
+                }
             }
         }
         registry.addRecipeCategories(new OreByProductCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -135,18 +140,20 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
             if (!recipeMap.isHidden) {
-                Stream<Recipe> recipeStream = recipeMap.getRecipeList().stream()
-                        .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
+                for (Map.Entry<GTRecipeCategory, List<Recipe>> entry : recipeMap.getRecipesByCategory().entrySet()) {
+                    Stream<Recipe> recipeStream = entry.getValue().stream()
+                            .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
 
-                if (recipeMap.getSmallRecipeMap() != null) {
-                    Collection<Recipe> smallRecipes = recipeMap.getSmallRecipeMap().getRecipeList();
-                    recipeStream = recipeStream.filter(recipe -> !smallRecipes.contains(recipe));
+                    if (recipeMap.getSmallRecipeMap() != null) {
+                        Collection<Recipe> smallRecipes = recipeMap.getSmallRecipeMap().getRecipeList();
+                        recipeStream = recipeStream.filter(recipe -> !smallRecipes.contains(recipe));
+                    }
+
+                    registry.addRecipes(recipeStream.map(r -> new GTRecipeWrapper(recipeMap, r))
+                                    .collect(Collectors.toList()),
+                            entry.getKey().getUniqueID()
+                    );
                 }
-
-                registry.addRecipes(
-                        recipeStream.map(r -> new GTRecipeWrapper(recipeMap, r)).collect(Collectors.toList()),
-                        GTValues.MODID + ":" + recipeMap.unlocalizedName
-                );
             }
         }
 
@@ -272,7 +279,13 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
     }
 
     private void registerRecipeMapCatalyst(IModRegistry registry, RecipeMap<?> recipeMap, MetaTileEntity metaTileEntity) {
-        registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
+        for (GTRecipeCategory category : recipeMap.getRecipesByCategory().keySet()) {
+            RecipeMapCategory jeiCategory = RecipeMapCategory.getCategoryFor(category);
+            if (jeiCategory != null) {
+                registry.addRecipeCatalyst(metaTileEntity.getStackForm(), jeiCategory.getUid());
+            }
+        }
+
         if (recipeMap instanceof RecipeMapFurnace) {
             registry.addRecipeCatalyst(metaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
             return;
@@ -281,10 +294,21 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.getSmallRecipeMap().unlocalizedName);
             return;
         }
-        RecipeMapCategory category = RecipeMapCategory.getCategoryMap().get(recipeMap);
-        // don't allow a Steam Machine to be a JEI tab icon
-        if (category != null && !(metaTileEntity instanceof SteamMetaTileEntity)) {
-            category.setIcon(metaTileEntity.getStackForm());
+
+        for (GTRecipeCategory category : recipeMap.getRecipesByCategory().keySet()) {
+            RecipeMapCategory jeiCategory = RecipeMapCategory.getCategoryFor(category);
+            // don't allow a Steam Machine to be a JEI tab icon
+            if (jeiCategory != null && !(metaTileEntity instanceof SteamMetaTileEntity)) {
+                Object icon = category.getJEIIcon();
+                if (icon instanceof TextureArea textureArea) {
+                    icon = guiHelper.drawableBuilder(textureArea.imageLocation, 0, 0, 18, 18)
+                            .setTextureSize(18, 18)
+                            .build();
+                } else if (icon == null) {
+                    icon = metaTileEntity.getStackForm();
+                }
+                jeiCategory.setIcon(icon);
+            }
         }
     }
 }
