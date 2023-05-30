@@ -1,4 +1,4 @@
-//version: 1685409316
+//version: 1685410523
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -56,7 +56,6 @@ propertyDefaultIfUnset("generateGradleTokenClass", "")
 propertyDefaultIfUnset("gradleTokenModId", "")
 propertyDefaultIfUnset("gradleTokenModName", "")
 propertyDefaultIfUnset("gradleTokenVersion", "")
-
 propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
@@ -64,6 +63,7 @@ propertyDefaultIfUnset("modrinthProjectId", "")
 propertyDefaultIfUnset("modrinthRelations", "")
 propertyDefaultIfUnset("curseForgeProjectId", "")
 propertyDefaultIfUnset("curseForgeRelations", "")
+propertyDefaultIfUnset("releaseType", "release")
 propertyDefaultIfUnset("enableModernJavaSyntax", false)
 propertyDefaultIfUnset("enableSpotless", false)
 propertyDefaultIfUnset("enableJUnit", false)
@@ -287,7 +287,7 @@ configurations {
 
 dependencies {
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
-        implementation 'zone.rong:mixinbooter:8.0'
+        implementation 'zone.rong:mixinbooter:7.0'
         api('org.spongepowered:mixin:0.8.3') {
             transitive = false
         }
@@ -533,7 +533,7 @@ if (cfApiKey.isPresent() || deploymentDebug.asBoolean()) {
         def mainFile = upload(curseForgeProjectId, reobfJar)
         def changelogRaw = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
 
-        mainFile.releaseType = providers.environmentVariable('RELEASE_TYPE').get() // todo
+        mainFile.releaseType = getReleaseType()
         mainFile.changelog = changelogRaw
         mainFile.changelogType = 'markdown'
         mainFile.addModLoader 'Forge'
@@ -588,7 +588,7 @@ if (modrinthApiKey.isPresent() || deploymentDebug.asBoolean()) {
         token = modrinthApiKey.get()
         projectId = modrinthProjectId
         changelog = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
-        versionType = providers.environmentVariable("RELEASE_TYPE").get() // todo
+        versionType = getReleaseType()
         versionNumber = modVersion
         gameVersions = [minecraftVersion]
         loaders = ["forge"]
@@ -738,4 +738,12 @@ def getSecondaryArtifacts() {
     if (!noPublishedSources) secondaryArtifacts += [sourcesJar]
     if (apiPackage) secondaryArtifacts += [apiJar]
     return secondaryArtifacts
+}
+
+def getReleaseType() {
+    String type = releaseType
+    if (!(type in ['release', 'beta', 'alpha'])) {
+        throw new Exception("Release type invalid! Found \"" + type + "\", allowed: \"release\", \"beta\", \"alpha\"")
+    }
+    return type
 }
