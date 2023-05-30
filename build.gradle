@@ -1,4 +1,4 @@
-//version: 1685410523
+//version: 1685414244
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -244,6 +244,30 @@ if (getFile('repositories.gradle').exists()) {
 
 repositories {
     if (includeWellKnownRepositories.toBoolean()) {
+        exclusiveContent {
+            forRepository {
+                //noinspection ForeignDelegate
+                maven {
+                    name = 'Curse Maven'
+                    url = 'https://www.cursemaven.com'
+                }
+            }
+            filter {
+                includeGroup 'curse.maven'
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                //noinspection ForeignDelegate
+                maven {
+                    name = 'Modrinth'
+                    url = 'https://api.modrinth.com/maven'
+                }
+            }
+            filter {
+                includeGroup 'maven.modrinth'
+            }
+        }
         maven {
             name 'Cleanroom Maven'
             url 'https://maven.cleanroommc.com'
@@ -251,13 +275,6 @@ repositories {
         maven {
             name 'BlameJared Maven'
             url 'https://maven.blamejared.com'
-        }
-        maven {
-            name 'Curse Maven'
-            url 'https://www.cursemaven.com'
-            content {
-                includeGroup 'curse.maven'
-            }
         }
     }
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
