@@ -215,6 +215,9 @@ public class GuiTextures {
     //JEI
     public static final TextureArea INFO_ICON = TextureArea.fullImage("textures/gui/widget/information.png");
     public static final TextureArea MULTIBLOCK_CATEGORY = TextureArea.fullImage("textures/gui/icon/coke_oven.png");
+    public static final TextureArea ARC_FURNACE_RECYLCING_CATEGORY = TextureArea.fullImage("textures/gui/icon/arc_furnace_recycling.png");
+    public static final TextureArea MACERATOR_RECYLCING_CATEGORY = TextureArea.fullImage("textures/gui/icon/macerator_recycling.png");
+    public static final TextureArea EXTRACTOR_RECYLCING_CATEGORY = TextureArea.fullImage("textures/gui/icon/extractor_recycling.png");
 
     // Covers
     public static final TextureArea COVER_MACHINE_CONTROLLER = TextureArea.fullImage("textures/items/metaitems/cover.controller.png");
