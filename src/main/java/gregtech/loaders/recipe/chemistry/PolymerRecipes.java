@@ -23,7 +23,7 @@ public class PolymerRecipes {
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .fluidInputs(Ethanol.getFluid(1000))
                 .fluidOutputs(Ethylene.getFluid(1000))
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(2000))
                 .duration(1200).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
@@ -301,7 +301,7 @@ public class PolymerRecipes {
                 .fluidInputs(Acetone.getFluid(1000))
                 .fluidInputs(Phenol.getFluid(2000))
                 .fluidOutputs(BisphenolA.getFluid(1000))
-                .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
+                .fluidOutputs(DilutedHydrochloricAcid.getFluid(2000))
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
@@ -321,7 +321,7 @@ public class PolymerRecipes {
                 .input(dust, SodiumHydroxide, 3)
                 .fluidOutputs(Epoxy.getFluid(1000))
                 .fluidOutputs(SaltWater.getFluid(1000))
-                .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
+                .fluidOutputs(DilutedHydrochloricAcid.getFluid(2000))
                 .duration(480).EUt(VA[LV]).buildAndRegister();
     }
 
@@ -366,7 +366,7 @@ public class PolymerRecipes {
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[IV]).duration(100)
                 .fluidInputs(Diaminobenzidine.getFluid(1000))
                 .fluidInputs(DiphenylIsophtalate.getFluid(1000))
-                .fluidOutputs(Phenol.getFluid(1000))
+                .fluidOutputs(Phenol.getFluid(2000))
                 .fluidOutputs(Polybenzimidazole.getFluid(1008))
                 .buildAndRegister();
 
@@ -397,7 +397,7 @@ public class PolymerRecipes {
                 .fluidInputs(NitrationMixture.getFluid(2000))
                 .fluidInputs(Chlorobenzene.getFluid(1000))
                 .fluidOutputs(Nitrochlorobenzene.getFluid(1000))
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(2000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(240)
@@ -414,7 +414,7 @@ public class PolymerRecipes {
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .fluidInputs(PhthalicAcid.getFluid(1000))
                 .fluidOutputs(DiphenylIsophtalate.getFluid(1000))
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(2000))
                 .buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(100)
@@ -492,10 +492,9 @@ public class PolymerRecipes {
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(200)
+                .notConsumable(SulfuricAcid.getFluid(1000))
                 .input(dust, CyclohexanoneOxime, 19)
-                .fluidInputs(SulfuricAcid.getFluid(1000))
                 .output(dust, Caprolactam, 19)
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
                 .buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder().EUt(VA[MV]).duration(150).blastFurnaceTemp(533)

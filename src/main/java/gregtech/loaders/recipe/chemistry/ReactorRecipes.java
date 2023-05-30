@@ -96,7 +96,7 @@ public class ReactorRecipes {
                 .fluidInputs(Dimethyldichlorosilane.getFluid(1000))
                 .fluidInputs(Water.getFluid(1000))
                 .output(dust, Polydimethylsiloxane, 3)
-                .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
+                .fluidOutputs(HydrochloricAcid.getFluid(2000))
                 .duration(240).EUt(96).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
@@ -104,7 +104,8 @@ public class ReactorRecipes {
                 .fluidInputs(HydrochloricAcid.getFluid(2000))
                 .fluidInputs(Methanol.getFluid(2000))
                 .output(dust, Polydimethylsiloxane, 3)
-                .fluidOutputs(DilutedHydrochloricAcid.getFluid(2000))
+                .fluidOutputs(HydrochloricAcid.getFluid(1000))
+                .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
                 .duration(480).EUt(96).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
@@ -114,8 +115,7 @@ public class ReactorRecipes {
                 .fluidInputs(Chlorine.getFluid(4000))
                 .fluidInputs(Methane.getFluid(2000))
                 .output(dust, Polydimethylsiloxane, 3)
-                .fluidOutputs(HydrochloricAcid.getFluid(2000))
-                .fluidOutputs(DilutedHydrochloricAcid.getFluid(2000))
+                .fluidOutputs(HydrochloricAcid.getFluid(4000))
                 .duration(480).EUt(96).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
@@ -159,17 +159,17 @@ public class ReactorRecipes {
                 .duration(120).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .fluidInputs(NitrationMixture.getFluid(3000))
                 .fluidInputs(Glycerol.getFluid(1000))
+                .fluidInputs(NitricAcid.getFluid(3000))
                 .fluidOutputs(GlycerylTrinitrate.getFluid(1000))
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(3000))
+                .fluidOutputs(Water.getFluid(3000))
                 .duration(180).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .fluidInputs(AceticAcid.getFluid(1000))
                 .fluidOutputs(Ethenone.getFluid(1000))
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(2000))
                 .duration(160).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
@@ -289,7 +289,7 @@ public class ReactorRecipes {
                 .fluidOutputs(Dimethylhydrazine.getFluid(1000))
                 .fluidOutputs(DilutedHydrochloricAcid.getFluid(2000))
                 .duration(1040).EUt(VA[HV]).buildAndRegister();
-
+ 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Hydrogen.getFluid(1000))
                 .fluidInputs(Fluorine.getFluid(1000))
@@ -619,6 +619,13 @@ public class ReactorRecipes {
                 .duration(120).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Chlorobenzene.getFluid(1000))
+                .fluidInputs(Water.getFluid(1000))
+                .fluidOutputs(Phenol.getFluid(1000))
+                .fluidOutputs(HydrochloricAcid.getFluid(1000))
+                .duration(120).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(MethylAcetate.getFluid(1000))
                 .fluidInputs(Water.getFluid(1000))
                 .notConsumable(OreDictUnifier.get(dust, SodiumHydroxide))
@@ -713,7 +720,7 @@ public class ReactorRecipes {
                 .fluidInputs(NitrationMixture.getFluid(1000))
                 .fluidInputs(Benzene.getFluid(1000))
                 .fluidOutputs(Nitrobenzene.getFluid(1000))
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(2000))
                 .buildAndRegister();
     }
 }

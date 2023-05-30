@@ -82,7 +82,7 @@ public class GrowthMediumRecipes {
                 .inputs(new ItemStack(Items.DYE, 1, 15))
                 .fluidInputs(SulfuricAcid.getFluid(500))
                 .output(dust, Collagen)
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(500))
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
@@ -91,7 +91,7 @@ public class GrowthMediumRecipes {
                 .inputs(new ItemStack(Items.BONE))
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .output(dust, Collagen, 2)
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(2000))
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 

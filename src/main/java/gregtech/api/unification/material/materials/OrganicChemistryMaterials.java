@@ -502,8 +502,7 @@ public class OrganicChemistryMaterials {
                 .flags(DISABLE_DECOMPOSITION, FLAMMABLE)
                 .color(0xEBEBF0).iconSet(ROUGH)
                 .components(Carbon, 6, Hydrogen, 11, Nitrogen, 1, Oxygen, 1)
-                .build()
-                .setFormula("C6H11NO", true);
+                .build();
 
         Caprolactam = new Material.Builder(1072, "caprolactam")
                 .dust()

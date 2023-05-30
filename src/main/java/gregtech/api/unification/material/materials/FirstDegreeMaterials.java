@@ -454,7 +454,7 @@ public class FirstDegreeMaterials {
         // ID 308 RESERVED: Pyrope
 
         Sylvite = new Material.Builder(309, "sylvite")
-                .gem(1).ore()
+                .dust(1).ore()
                 .color(0xC1A894).iconSet(FINE)
                 .flags(NO_SMASHING)
                 .components(Potassium, 1, Chlorine, 1)
@@ -1501,6 +1501,22 @@ public class FirstDegreeMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Palladium, 1, Chlorine, 6)
                 .build();
+
+		Apatite = new Material.Builder(2010, "apatite")
+                .gem(1).ore(2)
+                .color(0xC8C8FF).iconSet(DIAMOND)
+                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_BOLT_SCREW)
+                .components(Calcium, 5, Phosphorus, 3, Oxygen, 12, Chlorine, 1)
+                .build()
+				.setFormula("Ca5(PO4)3Cl", true);
+
+        TricalciumPhosphate = new Material.Builder(2015, "tricalcium_phosphate")
+                .dust().ore(2)
+                .color(0xFFFF00).iconSet(FLINT)
+                .flags(NO_SMASHING, NO_SMELTING)
+                .components(Calcium, 3, Phosphorus, 2, Oxygen, 8)
+                .build()
+				.setFormula("Ca3(PO4)2", true);
 
         GraniticMineralSand = new Material.Builder(2513, "granitic_mineral_sand")
                 .dust(1).ore()

@@ -22,8 +22,8 @@ public class DistillationRecipes {
                 .duration(600).EUt(64).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(DilutedSulfuricAcid.getFluid(3000))
-                .fluidOutputs(SulfuricAcid.getFluid(2000))
+                .fluidInputs(DilutedSulfuricAcid.getFluid(2000))
+                .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(600).EUt(VA[MV]).buildAndRegister();
 

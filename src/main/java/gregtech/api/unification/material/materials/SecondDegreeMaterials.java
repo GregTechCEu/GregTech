@@ -180,13 +180,8 @@ public class SecondDegreeMaterials {
                 .build();
 
         // Free ID 2009
-
-        Apatite = new Material.Builder(2010, "apatite")
-                .gem(1).ore(2)
-                .color(0xC8C8FF).iconSet(DIAMOND)
-                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_BOLT_SCREW)
-                .components(Calcium, 5, Phosphorus, 3, Oxygen, 12, Chlorine, 1)
-                .build();
+		
+		// ID 2010 RESERVED: Apatite
 
         BlackSteel = new Material.Builder(2011, "black_steel")
                 .ingot().fluid()
@@ -235,14 +230,9 @@ public class SecondDegreeMaterials {
                 .fluidTemp(1202)
                 .build();
 
-        TricalciumPhosphate = new Material.Builder(2015, "tricalcium_phosphate")
-                .dust().ore(2)
-                .color(0xFFFF00).iconSet(FLINT)
-                .flags(NO_SMASHING, NO_SMELTING)
-                .components(Calcium, 3, Phosphorus, 2, Oxygen, 8)
-                .build();
+        //ID 2015 RESERVED: Tricalcium Phosphate
 
-        // TODO REMOVE
+		// TODO REMOVE
         GarnetRed = new Material.Builder(2016, "garnet_red")
                 .gem().ore()
                 .color(0xC85050).iconSet(RUBY)
@@ -433,7 +423,7 @@ public class SecondDegreeMaterials {
                 .fluid(FluidTypes.ACID)
                 .color(0xC07820)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(SulfuricAcid, 2, Water, 1)
+                .components(SulfuricAcid, 1, Water, 1)
                 .build();
 
         DilutedHydrochloricAcid = new Material.Builder(2048, "diluted_hydrochloric_acid")
@@ -525,9 +515,9 @@ public class SecondDegreeMaterials {
                 .components(Iridium, 1, Osmium, 1, Oxygen, 4, Water, 1)
                 .build();
 
-        SalAmmoniac = new Material.Builder(2060, "sal_ammoniac")
-                .dust().ore()
-                .color(0xF0C8C8).iconSet(FINE)
+        AmmoniumChloride = new Material.Builder(2060, "ammonium_chloride")
+                .dust()
+                .color(0x9711A6)
                 .components(Ammonia, 1, HydrochloricAcid, 1)
                 .build()
                 .setFormula("NH4Cl", true);
