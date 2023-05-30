@@ -11,6 +11,7 @@ import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.Position;
+import gregtech.common.terminal.app.prospector.ProspectorMode;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -49,12 +50,12 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
         }
     }
 
-    public void addOres(Set<String> ores, int mode) {
+    public void addOres(Set<String> ores, ProspectorMode mode) {
         switch (mode) {
-            case 0:
+            case ORE:
                 ores.stream().sorted().forEach(this::addOre);
                 break;
-            case 1:
+            case FLUID:
                 ores.stream().sorted().forEach(this::addOil);
                 break;
             default:

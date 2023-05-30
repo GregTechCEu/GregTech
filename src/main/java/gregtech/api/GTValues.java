@@ -128,7 +128,10 @@ public class GTValues {
             MODID_GROOVYSCRIPT = "groovyscript",
             MODID_NC = "nuclearcraft",
             MODID_IE = "immersiveengineering",
-            MODID_OC = "opencomputers";
+            MODID_OC = "opencomputers",
+            MODID_JOURNEYMAP = "journeymap",
+            MODID_VOXELMAP = "voxelmap",
+            MODID_XAERO_MINIMAP = "xaerominimap";
 
     private static Boolean isClient;
 
