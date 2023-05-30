@@ -1,66 +1,54 @@
-// file:noinspection DependencyNotationArgument
+//file:noinspection DependencyNotationArgument
 // TODO remove when fixed in RFG ^
+/*
+ * Add your dependencies here. Common configurations:
+ *  - implementation("group:name:version:classifier"): if you need this for internal implementation details of the mod.
+ *       Available at compiletime and runtime for your environment.
+ *
+ *  - compileOnlyApi("g:n:v:c"): if you need this for internal implementation details of the mod.
+ *       Available at compiletime but not runtime for your environment.
+ *
+ *  - annotationProcessor("g:n:v:c"): mostly for java compiler plugins, if you know you need this, use it, otherwise don't worry
+ *
+ *  - testCONFIG("g:n:v:c"): replace CONFIG by one of the above, same as above but for the test sources instead of main
+ *
+ * You can exclude transitive dependencies (dependencies of the chosen dependency) by appending { transitive = false } if needed.
+ *
+ * To add a mod with CurseMaven, replace '("g:n:v:c")' in the above with 'rfg.deobf("curse.maven:project_slug-project_id:file_id")'
+ * Example: implementation rfg.deobf("curse.maven:gregtech-ce-unofficial-557242:4527757")
+ *
+ * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
+ */
 dependencies {
     // Hard Dependencies
+
     // the CCL deobf jar uses very old MCP mappings, making it error at runtime in runClient/runServer
     // therefore we manually deobf the regular jar
-    implementation rfg.deobf("curse.maven:codechicken-lib-1-8-${ccl_pid}:${ccl_fid}")
+    implementation rfg.deobf("curse.maven:codechicken-lib-1-8-242818:2779848") // CCL 3.2.3.358
 
     // Soft Dependencies
-    implementation "mezz.jei:jei_1.12.2:${project.jei_version}"
-    implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-${project.crt_version}"
-    implementation rfg.deobf("curse.maven:top-${top_pid}:${top_fid}")
-    implementation rfg.deobf("curse.maven:ctm-${ctm_pid}:${ctm_fid}")
+    // Can change any of these from compileOnlyApi -> implementation to test them in-game.
+
+    implementation "mezz.jei:jei_1.12.2:4.16.1.302"
+    implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.684"
+    implementation rfg.deobf("curse.maven:top-245211:2667280") // TOP 1.4.28
+    implementation rfg.deobf("curse.maven:ctm-267602:2915363") // CTM 1.0.2.31
 
     // use a local jar for GroovyScript to avoid a bug from Mixin and ForgeGradle,
     // causing crashes at run-time when deobfuscated
     implementation files("libs/groovyscript-0.4.0.jar")
-    //implementation fg.deobf("curse.maven:groovyscript-${grs_pid}:${grs_fid}")
+    //implementation rfg.deobf("curse.maven:groovyscript-687577:4487379") // GRS 0.4.6
 
-    // Can change any of the below from compileOnlyApi -> implementation to test them in-game.
-    // Left as compileOnlyApi by default for a slimmer default instance.
-    compileOnlyApi rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
-    compileOnlyApi rfg.deobf("curse.maven:opencomputers-${oc_pid}:${oc_fid}")
-    compileOnlyApi "curse.maven:journeymap-${jm_pid}:${jm_fid}"
-    compileOnlyApi "curse.maven:voxelmap-${voxel_pid}:${voxel_fid}"
-    compileOnlyApi "curse.maven:xaeros-${xaeros_pid}:${xaeros_fid}"
-
-    // Compile-Time Dependencies
-    annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}"
-    // workaround for https://github.com/bsideup/jabel/issues/174
-    annotationProcessor "net.java.dev.jna:jna-platform:${jna_version}"
-    compileOnly("com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}") {
-        transitive = false // We only care about the 1 annotation class
-    }
-    // Allow jdk.unsupported classes like sun.misc.Unsafe, workaround for JDK-8206937 and fixes Forge crashes in tests.
-    patchedMinecraft "me.eigenraven.java8unsupported:java-8-unsupported-shim:${unsupported_shim_version}"
-
-    // Tests
-    testImplementation "org.junit.jupiter:junit-jupiter:${junit_version}"
-    testImplementation "org.hamcrest:hamcrest:${hamcrest_version}"
-
+    compileOnlyApi rfg.deobf("curse.maven:ae2-extended-life-570458:4402048") // AE2UEL 0.55.6
     // ae2 is a transitive dependency for MTE, so it's also needed at test-time
-    testImplementation rfg.deobf("curse.maven:ae2-extended-life-${ae2_pid}:${ae2_fid}")
+    testImplementation rfg.deobf("curse.maven:ae2-extended-life-570458:4402048")
 
-    // allow Jabel to work in tests
-    testAnnotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}"
-    testCompileOnly("com.github.bsideup.jabel:jabel-javac-plugin:${jabel_version}") {
-        transitive = false // We only care about the 1 annotation class
-    }
-    testCompileOnly "me.eigenraven.java8unsupported:java-8-unsupported-shim:${unsupported_shim_version}"
+    compileOnlyApi rfg.deobf("curse.maven:opencomputers-223008:4526246") // OpenComputers 1.8.0+9833087
+    compileOnlyApi "curse.maven:journeymap-32274:2916002" // Journeymap 5.7.1
+    compileOnlyApi "curse.maven:voxelmap-225179:3029445" // VoxelMap 1.9.28
+    compileOnlyApi "curse.maven:xaeros-263420:4516832" // Xaero's Minimap 23.4.1
+}
 
-    // GroovyScript dependency
-    implementation "zone.rong:mixinbooter:${mixinbooter_version}"
-
-    // Mixin dependencies
-    api("org.spongepowered:mixin:${mixin_version}") {
-        transitive = false
-    }
-    annotationProcessor("org.spongepowered:mixin:${mixin_version}") {
-        transitive = false
-    }
-
-    annotationProcessor "org.ow2.asm:asm-debug-all:${asm_debug_version}"
-    annotationProcessor "com.google.guava:guava:${guava_version}-jre"
-    annotationProcessor "com.google.code.gson:gson:${gson_version}"
+minecraft {
+    injectedTags.put('DEP_VERSION_STRING', "required-after:gregtech@[${modVersion},);")
 }
