@@ -1,6 +1,9 @@
-//version: 1685406033
-//file:noinspection DependencyNotationArgument
-// TODO remove when fixed in RFG ^
+//version: 1685409316
+/*
+ * DO NOT CHANGE THIS FILE!
+ * Also, you may replace this file at any time if there is an update available.
+ * Please check https://github.com/GregTechCEu/Buildscripts/blob/master/build.gradle for updates.
+ */
 
 import com.diffplug.blowdryer.Blowdryer
 import com.modrinth.minotaur.dependencies.ModDependency
@@ -147,7 +150,7 @@ java {
         // Azul covers the most platforms for Java 8+ toolchains, crucially including MacOS arm64
         vendor.set(JvmVendorSpec.AZUL)
     }
-    if (!noPublishedSources) {
+    if (!noPublishedSources.toBoolean()) {
         withSourcesJar()
     }
 }
@@ -203,7 +206,7 @@ minecraft {
         ])
     }
     if (coreModClass) {
-        extraRunJvmArguments.add("-Dfml.coreMods.load=${coreModClass}")
+        extraRunJvmArguments.add("-Dfml.coreMods.load=${modGroup}.${coreModClass}")
     }
 }
 
@@ -284,7 +287,7 @@ configurations {
 
 dependencies {
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
-        implementation 'zone.rong:mixinbooter:7.0'
+        implementation 'zone.rong:mixinbooter:8.0'
         api('org.spongepowered:mixin:0.8.3') {
             transitive = false
         }
@@ -571,6 +574,7 @@ if (cfApiKey.isPresent() || deploymentDebug.asBoolean()) {
             additionalFile.changelog = changelogRaw
         }
         disableVersionDetection()
+        debugMode = deploymentDebug.asBoolean()
     }
     tasks.curseforge.dependsOn(build)
 }
