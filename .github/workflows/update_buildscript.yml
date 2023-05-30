@@ -22,14 +22,14 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/GregTechCEu/Buildscripts/master/build.gradle --output build.gradle
           new_version=$(head -1 build.gradle | sed -r 's|//version: (.*)|\1|g')
-          echo "::set-output name=new_version::$new_version"
+          echo "NEW_VERSION=$new_version" >> "$GITHUB_OUTPUT"
 
       - name: Create Pull Request
         id: create-pull-request
         uses: peter-evans/create-pull-request@v4
         with:
           add-paths: build.gradle
-          commit-message: 'update build script version to ${{ steps.update-buildscript.outputs.new_version }}'
+          commit-message: 'update build script version to ${{ steps.update-buildscript.outputs.NEW_VERSION }}'
           branch: gha-update-buildscript
-          title: Update build script version to ${{ steps.update-buildscript.outputs.new_version }}
+          title: Update build script version to ${{ steps.update-buildscript.outputs.NEW_VERSION }}
           body: This pull request is created by the buildscript-update workflow
