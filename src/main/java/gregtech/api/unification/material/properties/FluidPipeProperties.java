@@ -4,7 +4,7 @@ import gregtech.api.capability.IPropertyFluidFilter;
 
 import java.util.Objects;
 
-public class FluidPipeProperties implements IMaterialProperty<FluidPipeProperties>, IPropertyFluidFilter {
+public class FluidPipeProperties implements IMaterialProperty, IPropertyFluidFilter {
 
     private int throughput;
     private final int tanks;
@@ -41,7 +41,9 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
 
     @Override
     public void verifyProperty(MaterialProperties properties) {
-        properties.ensureSet(PropertyKey.INGOT, true);
+        if (!properties.hasProperty(PropertyKey.WOOD)) {
+            properties.ensureSet(PropertyKey.INGOT, true);
+        }
 
         if (properties.hasProperty(PropertyKey.ITEM_PIPE)) {
             throw new IllegalStateException(

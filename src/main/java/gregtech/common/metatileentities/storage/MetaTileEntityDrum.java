@@ -9,13 +9,13 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.GTFluidHandlerItemStack;
-import gregtech.api.capability.impl.PropertyFluidFilter;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -102,14 +102,9 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     protected void initializeInventory() {
         if (this.material == null) return; // call before field initialization, should be called later with fields set
         super.initializeInventory();
-        IPropertyFluidFilter filter;
-        if (ModHandler.isMaterialWood(this.material)) { // TODO fix this after wood pipe property thing gets fixed.
-            filter = new PropertyFluidFilter(340, false, false, false, false);
-        } else {
-            filter = this.material.getProperty(PropertyKey.FLUID_PIPE);
-            if (filter == null) {
-                throw new IllegalArgumentException(String.format("Material %s requires FluidPipePropety for Drums", material));
-            }
+        IPropertyFluidFilter filter = this.material.getProperty(PropertyKey.FLUID_PIPE);
+        if (filter == null) {
+            throw new IllegalArgumentException(String.format("Material %s requires FluidPipePropety for Drums", material));
         }
         this.fluidInventory = this.fluidTank = new FilteredFluidHandler(tankSize).setFilter(filter);
     }
@@ -257,17 +252,16 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", tankSize));
         if (TooltipHelper.isShiftDown()) {
-            if (this.fluidTank.getFilter() instanceof IPropertyFluidFilter propertyFluidFilter) {
-                tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", propertyFluidFilter.getMaxFluidTemperature()));
-                if (propertyFluidFilter.isGasProof()) {
-                    tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
-                } else if (ModHandler.isMaterialWood(material)) {
-                    tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
-                }
-                if (propertyFluidFilter.isAcidProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
-                if (propertyFluidFilter.isCryoProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
-                if (propertyFluidFilter.isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
+            FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
+            tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", pipeProperties.getMaxFluidTemperature()));
+            if (pipeProperties.isGasProof()) {
+                tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
+            } else {
+                tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
             }
+            if (pipeProperties.isAcidProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
+            if (pipeProperties.isCryoProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
+            if (pipeProperties.isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_down"));
             tooltip.add(I18n.format("gregtech.tool_action.crowbar"));

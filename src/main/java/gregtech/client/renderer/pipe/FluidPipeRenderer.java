@@ -5,6 +5,7 @@ import gregtech.api.GTValues;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.client.renderer.texture.Textures;
@@ -46,7 +47,7 @@ public class FluidPipeRenderer extends PipeRenderer {
         if (material == null || !(pipeType instanceof FluidPipeType)) {
             return;
         }
-        if(material == Materials.Wood || material == Materials.TreatedWood) {
+        if (ModHandler.isMaterialWood(material)) {
             TextureAtlasSprite sprite = pipeTexturesWood.get(pipeType);
             if(sprite != null) {
                 renderContext.addOpenFaceRender(new IconTransformation(sprite));

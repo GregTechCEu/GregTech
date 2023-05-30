@@ -27,9 +27,9 @@ public final class GTStringUtils {
             MetaItem<?> metaItem = (MetaItem<?>) stack.getItem();
             MetaItem<?>.MetaValueItem metaValueItem = metaItem.getItem(stack);
             if (metaValueItem == null) {
-                if (metaItem instanceof MetaPrefixItem) {
-                    Material material = MetaPrefixItem.getMaterial(stack);
-                    OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
+                if (metaItem instanceof MetaPrefixItem metaPrefixItem) {
+                    Material material = metaPrefixItem.getMaterial(stack);
+                    OrePrefix orePrefix = metaPrefixItem.getOrePrefix();
                     return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material + " * " + stack.getCount();
                 }
             } else {
