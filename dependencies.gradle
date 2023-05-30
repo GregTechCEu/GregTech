@@ -29,3 +29,7 @@ dependencies {
     compileOnlyApi "curse.maven:voxelmap-225179:3029445" // VoxelMap 1.9.28
     compileOnlyApi "curse.maven:xaeros-263420:4516832" // Xaero's Minimap 23.4.1
 }
+
+minecraft {
+    injectedTags.put('DEP_VERSION_STRING', "required-after:gregtech@[${modVersion},);")
+}
