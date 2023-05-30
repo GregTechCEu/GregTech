@@ -1,11 +1,10 @@
-//version: 1685418840
+//version: 1685479964
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
  * Please check https://github.com/GregTechCEu/Buildscripts/blob/master/build.gradle for updates.
  */
 
-import com.diffplug.blowdryer.Blowdryer
 import com.modrinth.minotaur.dependencies.ModDependency
 import com.modrinth.minotaur.dependencies.VersionDependency
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -126,10 +125,42 @@ if (coreModClass) {
 // Plugin application
 
 // Spotless
-project.extensions.add(Blowdryer, 'Blowdryer', Blowdryer) // make Blowdryer available in plugin application
+project.extensions.add(com.diffplug.blowdryer.Blowdryer, 'Blowdryer', com.diffplug.blowdryer.Blowdryer) // make Blowdryer available in plugin application
 if (enableSpotless.toBoolean()) {
     apply plugin: 'com.diffplug.spotless'
-    apply from: Blowdryer.file('spotless.gradle')
+
+    // Spotless auto-formatter
+    // See https://github.com/diffplug/spotless/tree/main/plugin-gradle
+    // Can be locally toggled via spotless:off/spotless:on comments
+    spotless {
+        encoding 'UTF-8'
+
+        format 'misc', {
+            target '.gitignore'
+
+            trimTrailingWhitespace()
+            indentWithSpaces(4)
+            endWithNewline()
+        }
+        java {
+            target 'src/main/java/**/*.java', 'src/test/java/**/*.java' // exclude api as they are not our files
+
+            def orderFile = project.file('spotless.importorder')
+            if (!orderFile.exists()) {
+                orderFile = Blowdryer.file('spotless.importorder')
+            }
+            def formatFile = project.file('spotless.eclipseformat.xml')
+            if (!formatFile.exists()) {
+                formatFile = Blowdryer.file('spotless.eclipseformat.xml')
+            }
+
+            toggleOffOn()
+            importOrderFile(orderFile)
+            removeUnusedImports()
+            endWithNewline()
+            eclipse('4.19.0').configFile(formatFile)
+        }
+    }
 }
 
 // Git submodules
@@ -387,7 +418,10 @@ processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property 'version', modVersion
     inputs.property 'mcversion', minecraftVersion
-    exclude('spotless.gradle')
+    // Blowdryer puts these files into the resource directory, so
+    // exclude them from builds (doesn't hurt to exclude even if not present)
+    exclude('spotless.importorder')
+    exclude('spotless.eclipseformat.xml')
 
     // replace stuff in mcmod.info, nothing else
     filesMatching(['mcmod.info', 'pack.mcmeta']) { fcd ->
@@ -507,6 +541,12 @@ idea {
                         taskNames = ["spotlessApply"]
                     }
                 }
+                'Update Buildscript'(Gradle) {
+                    taskNames = ['updateBuildScript']
+                }
+                'FAQ'(Gradle) {
+                    taskNames = ['faq']
+                }
             }
             compiler.javac {
                 afterEvaluate {
@@ -527,7 +567,7 @@ idea {
 
 final boolean isCIEnv = providers.environmentVariable('CI').getOrElse('false').toBoolean()
 def final changelogEnv = providers.environmentVariable('CHANGELOG_LOCATION')
-File changelogFile = new File(changelogEnv.isPresent() ? changelogEnv.get() : 'CHANGELOG.md')
+File changelogFile = new File(changelogEnv.getOrElse('CHANGELOG.md'))
 
 if (isCIEnv || deploymentDebug.toBoolean()) {
     artifacts {
@@ -549,7 +589,7 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
         apiToken = cfApiKey.get()
         def projectIdVar = providers.environmentVariable('CURSEFORGE_PROJECT_ID')
 
-        def mainFile = upload(projectIdVar.isPresent() ? projectIdVar.get() : curseForgeProjectId, reobfJar)
+        def mainFile = upload(projectIdVar.getOrElse(curseForgeProjectId), reobfJar)
         def changelogRaw = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
 
         mainFile.releaseType = getReleaseType()
@@ -606,7 +646,7 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
 
     modrinth {
         token = modrinthApiKey.get()
-        projectId = projectIdVar.isPresent() ? projectIdVar.get() : modrinthProjectId
+        projectId = projectIdVar.getOrElse(modrinthProjectId)
         changelog = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
         versionType = getReleaseType()
         versionNumber = modVersion
@@ -732,6 +772,22 @@ static String getVersionHash(String buildScriptContent) {
         return versionLine.split(": ").last()
     }
     return ""
+}
+
+
+// Faq
+
+tasks.register('faq') {
+    group = 'GT Buildscript'
+    description = 'Prints frequently asked questions about building a project'
+    doLast {
+        print("To update this buildscript to the latest version, run 'gradlew updateBuildScript' or run the generated run configuration if you are using IDEA.\n" +
+            "To add new dependencies to your project, place them in 'dependencies.gradle', NOT in 'build.gradle' as they would be replaced when the script updates.\n" +
+            "To add new repositories to your project, place them in 'repositories.gradle'.\n" +
+            "If you need additional gradle code to run, you can place it in a file named 'addon.gradle' (or either of the above, up to you for organization).\n" +
+            "If your build fails to recognize the syntax of newer Java versions, enable Jabel in your 'gradle.properties' under the option name 'enableModernJavaSyntax'.\n" +
+            "Report any issues or feature requests you have for this build script to https://github.com/GregTechCEu/Buildscripts")
+    }
 }
 
 
