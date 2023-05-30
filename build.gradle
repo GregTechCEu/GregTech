@@ -1,4 +1,4 @@
-//version: 1685414244
+//version: 1685418840
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -51,7 +51,7 @@ checkPropertyExists("containsMixinsAndOrCoreModOnly")
 // Optional properties: we can assume some default behavior if these are missing
 propertyDefaultIfUnset("autoUpdateBuildScript", false)
 propertyDefaultIfUnset("modArchivesBaseName", project.modId)
-propertyDefaultIfUnset("developmentEnvironmentUserName", "Developer")
+propertyDefaultIfUnsetWithEnvVar("developmentEnvironmentUserName", "Developer", "DEV_USERNAME")
 propertyDefaultIfUnset("generateGradleTokenClass", "")
 propertyDefaultIfUnset("gradleTokenModId", "")
 propertyDefaultIfUnset("gradleTokenModName", "")
@@ -67,7 +67,7 @@ propertyDefaultIfUnset("releaseType", "release")
 propertyDefaultIfUnset("enableModernJavaSyntax", false)
 propertyDefaultIfUnset("enableSpotless", false)
 propertyDefaultIfUnset("enableJUnit", false)
-propertyDefaultIfUnset("deploymentDebug", providers.environmentVariable('DEPLOYMENT_DEBUG').getOrElse("false").toBoolean())
+propertyDefaultIfUnsetWithEnvVar("deploymentDebug", false, "DEPLOYMENT_DEBUG")
 
 
 // Project property assertions
@@ -94,7 +94,7 @@ if (apiPackage) {
 
 if (accessTransformersFile) {
     for (atFile in accessTransformersFile.split(",")) {
-        String targetFile = 'src/main/resources/META-INF/' + atFile.trim()
+        String targetFile = 'src/main/resources/' + atFile.trim()
         if (!getFile(targetFile).exists()) {
             throw new GradleException("Could not resolve \"accessTransformersFile\"! Could not find " + targetFile)
         }
@@ -529,7 +529,7 @@ final boolean isCIEnv = providers.environmentVariable('CI').getOrElse('false').t
 def final changelogEnv = providers.environmentVariable('CHANGELOG_LOCATION')
 File changelogFile = new File(changelogEnv.isPresent() ? changelogEnv.get() : 'CHANGELOG.md')
 
-if (isCIEnv || deploymentDebug.asBoolean()) {
+if (isCIEnv || deploymentDebug.toBoolean()) {
     artifacts {
         if (!noPublishedSources.toBoolean()) {
             archives sourcesJar
@@ -542,12 +542,14 @@ if (isCIEnv || deploymentDebug.asBoolean()) {
 
 // Curseforge
 def final cfApiKey = providers.environmentVariable('CURSEFORGE_API_KEY')
-if (cfApiKey.isPresent() || deploymentDebug.asBoolean()) {
+if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
     apply plugin: 'net.darkhax.curseforgegradle'
     //noinspection UnnecessaryQualifiedReference
     tasks.register('curseforge', net.darkhax.curseforgegradle.TaskPublishCurseForge) {
         apiToken = cfApiKey.get()
-        def mainFile = upload(curseForgeProjectId, reobfJar)
+        def projectIdVar = providers.environmentVariable('CURSEFORGE_PROJECT_ID')
+
+        def mainFile = upload(projectIdVar.isPresent() ? projectIdVar.get() : curseForgeProjectId, reobfJar)
         def changelogRaw = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
 
         mainFile.releaseType = getReleaseType()
@@ -581,7 +583,7 @@ if (cfApiKey.isPresent() || deploymentDebug.asBoolean()) {
                         mainFile.addIncompatibility parts[1]
                         break
                     default:
-                        throw new Exception('Invalid CurseForge relation type: ' + type)
+                        throw new Exception('Invalid CurseForge relation type: ' + parts[0])
                 }
             }
         }
@@ -591,25 +593,26 @@ if (cfApiKey.isPresent() || deploymentDebug.asBoolean()) {
             additionalFile.changelog = changelogRaw
         }
         disableVersionDetection()
-        debugMode = deploymentDebug.asBoolean()
+        debugMode = deploymentDebug.toBoolean()
     }
     tasks.curseforge.dependsOn(build)
 }
 
 // Modrinth
 def final modrinthApiKey = providers.environmentVariable('MODRINTH_API_KEY')
-if (modrinthApiKey.isPresent() || deploymentDebug.asBoolean()) {
+if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
     apply plugin: 'com.modrinth.minotaur'
+    def final projectIdVar = providers.environmentVariable('MODRINTH_PROJECT_ID')
 
     modrinth {
         token = modrinthApiKey.get()
-        projectId = modrinthProjectId
+        projectId = projectIdVar.isPresent() ? projectIdVar.get() : modrinthProjectId
         changelog = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
         versionType = getReleaseType()
         versionNumber = modVersion
         gameVersions = [minecraftVersion]
         loaders = ["forge"]
-        debugMode = deploymentDebug.asBoolean()
+        debugMode = deploymentDebug.toBoolean()
         uploadFile = file("build/libs/${archivesBaseName}-${version}.jar")
         additionalFiles = getSecondaryArtifacts()
     }
@@ -712,7 +715,7 @@ boolean performBuildScriptUpdate() {
 }
 
 boolean isNewBuildScriptVersionAvailable() {
-    Map parameters = ["connectTimeout": 2000, "readTimeout": 2000]
+    Map parameters = ["connectTimeout": 10000, "readTimeout": 10000]
 
     String currentBuildScript = getFile("build.gradle").getText()
     String currentBuildScriptHash = getVersionHash(currentBuildScript)
@@ -750,9 +753,18 @@ def propertyDefaultIfUnset(String propertyName, defaultValue) {
     }
 }
 
+def propertyDefaultIfUnsetWithEnvVar(String propertyName, defaultValue, String envVarName) {
+    def envVar = providers.environmentVariable(envVarName)
+    if (envVar.isPresent()) {
+        project.ext.setProperty(propertyName, envVar.get())
+    } else {
+        propertyDefaultIfUnset(propertyName, defaultValue)
+    }
+}
+
 def getSecondaryArtifacts() {
     def secondaryArtifacts = [publishableDevJar]
-    if (!noPublishedSources) secondaryArtifacts += [sourcesJar]
+    if (!noPublishedSources.toBoolean()) secondaryArtifacts += [sourcesJar]
     if (apiPackage) secondaryArtifacts += [apiJar]
     return secondaryArtifacts
 }
