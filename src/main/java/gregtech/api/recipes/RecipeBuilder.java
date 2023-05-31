@@ -766,18 +766,20 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
-        if (category == null) {
-            GTLog.logger.error("Recipes must have a category", new IllegalArgumentException());
-            if (isCTRecipe) {
-                CraftTweakerAPI.logError("Recipes must have a category", new IllegalArgumentException());
+        if (recipeMap != null) { // recipeMap can be null in tests
+            if (category == null) {
+                GTLog.logger.error("Recipes must have a category", new IllegalArgumentException());
+                if (isCTRecipe) {
+                    CraftTweakerAPI.logError("Recipes must have a category", new IllegalArgumentException());
+                }
+                recipeStatus = EnumValidationResult.INVALID;
+            } else if (category.getRecipeMap() != this.recipeMap) {
+                GTLog.logger.error("Cannot apply Category with incompatible RecipeMap", new IllegalArgumentException());
+                if (isCTRecipe) {
+                    CraftTweakerAPI.logError("Cannot apply Category with incompatible RecipeMap", new IllegalArgumentException());
+                }
+                recipeStatus = EnumValidationResult.INVALID;
             }
-            recipeStatus = EnumValidationResult.INVALID;
-        } else if (category.getRecipeMap() != this.recipeMap) {
-            GTLog.logger.error("Cannot apply Category with incompatible RecipeMap", new IllegalArgumentException());
-            if (isCTRecipe) {
-                CraftTweakerAPI.logError("Cannot apply Category with incompatible RecipeMap", new IllegalArgumentException());
-            }
-            recipeStatus = EnumValidationResult.INVALID;
         }
         if (recipeStatus == EnumValidationResult.INVALID) {
             GTLog.logger.error("Invalid recipe, read the errors above: {}", this);
