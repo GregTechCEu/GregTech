@@ -29,9 +29,7 @@ dependencies {
     // Soft Dependencies
     // Can change any of these from compileOnlyApi -> implementation to test them in-game.
 
-    implementation "mezz.jei:jei_1.12.2:4.16.1.302"
     implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.684"
-    implementation rfg.deobf("curse.maven:top-245211:2667280") // TOP 1.4.28
     implementation rfg.deobf("curse.maven:ctm-267602:2915363") // CTM 1.0.2.31
 
     // use a local jar for GroovyScript to avoid a bug from Mixin and ForgeGradle,
