@@ -199,6 +199,7 @@ public class MetaTileEntities {
     public static MetaTileEntityCleanroom CLEANROOM;
     public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
     public static MetaTileEntityFissionReactor FISSION_REACTOR;
+    public static MetaTileEntityFuelRodHatch FUEL_ROD_INPUT;
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -746,6 +747,8 @@ public class MetaTileEntities {
                 ENERGY_CONVERTER[j][i] = registerMetaTileEntity(1670 + j + i * 4, converter);
             }
         }
+
+        FUEL_ROD_INPUT = registerMetaTileEntity(1730, new MetaTileEntityFuelRodHatch(gregtechId("fuel_rod_input"), false));
 
         /*
          * FOR ADDON DEVELOPERS:
