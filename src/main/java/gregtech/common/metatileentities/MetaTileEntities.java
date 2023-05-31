@@ -378,6 +378,7 @@ public class MetaTileEntities {
     public static MetaTileEntityPowerSubstation POWER_SUBSTATION;
     public static MetaTileEntityActiveTransformer ACTIVE_TRANSFORMER;
     public static MetaTileEntityFissionReactor FISSION_REACTOR;
+    public static MetaTileEntityFuelRodHatch FUEL_ROD_INPUT;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -1213,6 +1214,8 @@ public class MetaTileEntities {
             NONUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(1795 + index,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x." + tierName), i, 9, true));
         }
+
+        FUEL_ROD_INPUT = registerMetaTileEntity(1730, new MetaTileEntityFuelRodHatch(gregtechId("fuel_rod_input"), false));
 
         /*
          * FOR ADDON DEVELOPERS:
