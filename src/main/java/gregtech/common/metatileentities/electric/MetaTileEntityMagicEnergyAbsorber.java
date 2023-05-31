@@ -4,8 +4,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 import gregtech.api.GTValues;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -14,6 +12,8 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.block.BlockDragonEgg;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -49,7 +49,7 @@ import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 
 public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
 
-    private final TIntList connectedCrystalsIds = new TIntArrayList();
+    private final IntList connectedCrystalsIds = new IntArrayList();
     private boolean hasDragonEggAmplifier = false;
     private boolean isActive = false;
 
@@ -94,10 +94,13 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
         if (getOffsetTimer() % 200 == 0 || isFirstTick()) {
             updateConnectedCrystals();
         }
+
         int totalEnergyGeneration = 0;
-        for (int connectedCrystalId : connectedCrystalsIds.toArray()) {
+        // enhanced for loops cause boxing and unboxing with FastUtil collections
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0; i < connectedCrystalsIds.size(); i++) {
             //since we don't check quite often, check twice before outputting energy
-            if (getWorld().getEntityByID(connectedCrystalId) instanceof EntityEnderCrystal) {
+            if (getWorld().getEntityByID(connectedCrystalsIds.get(i)) instanceof EntityEnderCrystal) {
                 totalEnergyGeneration += hasDragonEggAmplifier ? 128 : 32;
             }
         }
@@ -189,8 +192,10 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
     }
 
     private void resetConnectedEnderCrystals() {
-        for (int connectedEnderCrystal : connectedCrystalsIds.toArray()) {
-            EntityEnderCrystal entityEnderCrystal = (EntityEnderCrystal) getWorld().getEntityByID(connectedEnderCrystal);
+        // enhanced for loops cause boxing and unboxing with FastUtil collections
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0; i < connectedCrystalsIds.size(); i++) {
+            EntityEnderCrystal entityEnderCrystal = (EntityEnderCrystal) getWorld().getEntityByID(connectedCrystalsIds.get(i));
             if (entityEnderCrystal != null && getPos().equals(entityEnderCrystal.getBeamTarget())) {
                 //on removal, reset ender crystal beam location so somebody can use it
                 entityEnderCrystal.setBeamTarget(null);
