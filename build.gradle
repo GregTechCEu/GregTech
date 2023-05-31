@@ -1,4 +1,4 @@
-//version: 1685479964
+//version: 1685501596
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -9,9 +9,10 @@ import com.modrinth.minotaur.dependencies.ModDependency
 import com.modrinth.minotaur.dependencies.VersionDependency
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.gradle.internal.logging.text.StyledTextOutput.Style
 import org.gradle.internal.logging.text.StyledTextOutputFactory
 import org.jetbrains.gradle.ext.Gradle
+
+import static org.gradle.internal.logging.text.StyledTextOutput.Style
 
 plugins {
     id 'java'
@@ -39,7 +40,7 @@ checkPropertyExists("modName")
 checkPropertyExists("modId")
 checkPropertyExists("modGroup")
 checkPropertyExists("modVersion")
-checkPropertyExists("minecraftVersion") // hardcoding this makes it harder to immediately tell what version a mod is in (even though this only really supports 1.12.2)
+checkPropertyExists("minecraftVersion") // hard-coding this makes it harder to immediately tell what version a mod is in (even though this only really supports 1.12.2)
 checkPropertyExists("apiPackage")
 checkPropertyExists("accessTransformersFile")
 checkPropertyExists("usesMixins")
@@ -56,6 +57,7 @@ propertyDefaultIfUnset("gradleTokenModId", "")
 propertyDefaultIfUnset("gradleTokenModName", "")
 propertyDefaultIfUnset("gradleTokenVersion", "")
 propertyDefaultIfUnset("includeWellKnownRepositories", true)
+propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
 propertyDefaultIfUnset("modrinthProjectId", "")
@@ -125,6 +127,7 @@ if (coreModClass) {
 // Plugin application
 
 // Spotless
+//noinspection GroovyAssignabilityCheck
 project.extensions.add(com.diffplug.blowdryer.Blowdryer, 'Blowdryer', com.diffplug.blowdryer.Blowdryer) // make Blowdryer available in plugin application
 if (enableSpotless.toBoolean()) {
     apply plugin: 'com.diffplug.spotless'
@@ -158,6 +161,7 @@ if (enableSpotless.toBoolean()) {
             importOrderFile(orderFile)
             removeUnusedImports()
             endWithNewline()
+            //noinspection GroovyAssignabilityCheck
             eclipse('4.19.0').configFile(formatFile)
         }
     }
@@ -274,7 +278,7 @@ if (getFile('repositories.gradle').exists()) {
 }
 
 repositories {
-    if (includeWellKnownRepositories.toBoolean()) {
+    if (includeWellKnownRepositories.toBoolean() || includeCommonDevEnvMods.toBoolean()) {
         exclusiveContent {
             forRepository {
                 //noinspection ForeignDelegate
@@ -371,6 +375,15 @@ dependencies {
             transitive = false // We only care about the 1 annotation class
         }
         testCompileOnly "me.eigenraven.java8unsupported:java-8-unsupported-shim:1.0.0"
+    }
+
+    compileOnlyApi 'org.jetbrains:annotations:23.0.0'
+    annotationProcessor 'org.jetbrains:annotations:23.0.0'
+
+    if (includeCommonDevEnvMods.toBoolean()) {
+        implementation 'mezz.jei:jei_1.12.2:4.16.1.302'
+        //noinspection DependencyNotationArgument
+        implementation rfg.deobf('curse.maven:top-245211:2667280') // TOP 1.4.28
     }
 }
 
@@ -606,25 +619,11 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
                     return
                 }
                 String parts = dep.split(':')
-                switch (parts[0]) {
-                    case 'requiredDependency':
-                        mainFile.addRequirement parts[1]
-                        break
-                    case 'embeddedLibrary':
-                        mainFile.addEmbedded parts[1]
-                        break
-                    case 'optionalDependency':
-                        mainFile.addOptional parts[1]
-                        break
-                    case 'tool':
-                        mainFile.addTool parts[1]
-                        break
-                    case 'incompatible':
-                        mainFile.addIncompatibility parts[1]
-                        break
-                    default:
-                        throw new Exception('Invalid CurseForge relation type: ' + parts[0])
+                String type = parts[0], slug = parts[1]
+                if(!(type in ['requiredDependency', 'embeddedLibrary', 'optionalDependency', 'tool', 'incompatible'])) {
+                    throw new Exception('Invalid Curseforge dependency type: ' + type)
                 }
+                mainFile.addRelation(slug, type)
             }
         }
 
@@ -671,7 +670,7 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
 }
 
 def addModrinthDep(String scope, String type, String name) {
-    com.modrinth.minotaur.dependencies.Dependency dep;
+    com.modrinth.minotaur.dependencies.Dependency dep
     if (!(scope in ['required', 'optional', 'incompatible', 'embedded'])) {
         throw new Exception('Invalid modrinth dependency scope: ' + scope)
     }
@@ -781,12 +780,14 @@ tasks.register('faq') {
     group = 'GT Buildscript'
     description = 'Prints frequently asked questions about building a project'
     doLast {
-        print("To update this buildscript to the latest version, run 'gradlew updateBuildScript' or run the generated run configuration if you are using IDEA.\n" +
-            "To add new dependencies to your project, place them in 'dependencies.gradle', NOT in 'build.gradle' as they would be replaced when the script updates.\n" +
-            "To add new repositories to your project, place them in 'repositories.gradle'.\n" +
-            "If you need additional gradle code to run, you can place it in a file named 'addon.gradle' (or either of the above, up to you for organization).\n" +
-            "If your build fails to recognize the syntax of newer Java versions, enable Jabel in your 'gradle.properties' under the option name 'enableModernJavaSyntax'.\n" +
-            "Report any issues or feature requests you have for this build script to https://github.com/GregTechCEu/Buildscripts")
+        print("\nTo update this buildscript to the latest version, run 'gradlew updateBuildScript' or run the generated run configuration if you are using IDEA.\n" +
+                "To set up the project, run the 'setupDecompWorkspace' task, which you can run as './gradlew setupDecompWorkspace' in a terminal, or find in the 'modded minecraft' gradle category.\n\n" +
+                "To add new dependencies to your project, place them in 'dependencies.gradle', NOT in 'build.gradle' as they would be replaced when the script updates.\n" +
+                "To add new repositories to your project, place them in 'repositories.gradle'.\n" +
+                "If you need additional gradle code to run, you can place it in a file named 'addon.gradle' (or either of the above, up to you for organization).\n\n" +
+                "If your build fails to recognize the syntax of newer Java versions, enable Jabel in your 'gradle.properties' under the option name 'enableModernJavaSyntax'.\n" +
+                "To see information on how to configure your IDE properly for Java 17, see https://github.com/GregTechCEu/Buildscripts/blob/master/jabel.md\n\n" +
+                "Report any issues or feature requests you have for this build script to https://github.com/GregTechCEu/Buildscripts/issues\n")
     }
 }
 
@@ -819,7 +820,7 @@ def propertyDefaultIfUnsetWithEnvVar(String propertyName, defaultValue, String e
 }
 
 def getSecondaryArtifacts() {
-    def secondaryArtifacts = [publishableDevJar]
+    def secondaryArtifacts = [jar]
     if (!noPublishedSources.toBoolean()) secondaryArtifacts += [sourcesJar]
     if (apiPackage) secondaryArtifacts += [apiJar]
     return secondaryArtifacts
