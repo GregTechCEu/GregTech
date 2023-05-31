@@ -1,4 +1,4 @@
-//version: 1685479964
+//version: 1685492349
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -9,9 +9,10 @@ import com.modrinth.minotaur.dependencies.ModDependency
 import com.modrinth.minotaur.dependencies.VersionDependency
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.gradle.internal.logging.text.StyledTextOutput.Style
 import org.gradle.internal.logging.text.StyledTextOutputFactory
 import org.jetbrains.gradle.ext.Gradle
+
+import static org.gradle.internal.logging.text.StyledTextOutput.Style
 
 plugins {
     id 'java'
@@ -39,7 +40,7 @@ checkPropertyExists("modName")
 checkPropertyExists("modId")
 checkPropertyExists("modGroup")
 checkPropertyExists("modVersion")
-checkPropertyExists("minecraftVersion") // hardcoding this makes it harder to immediately tell what version a mod is in (even though this only really supports 1.12.2)
+checkPropertyExists("minecraftVersion") // hard-coding this makes it harder to immediately tell what version a mod is in (even though this only really supports 1.12.2)
 checkPropertyExists("apiPackage")
 checkPropertyExists("accessTransformersFile")
 checkPropertyExists("usesMixins")
@@ -125,6 +126,7 @@ if (coreModClass) {
 // Plugin application
 
 // Spotless
+//noinspection GroovyAssignabilityCheck
 project.extensions.add(com.diffplug.blowdryer.Blowdryer, 'Blowdryer', com.diffplug.blowdryer.Blowdryer) // make Blowdryer available in plugin application
 if (enableSpotless.toBoolean()) {
     apply plugin: 'com.diffplug.spotless'
@@ -158,6 +160,7 @@ if (enableSpotless.toBoolean()) {
             importOrderFile(orderFile)
             removeUnusedImports()
             endWithNewline()
+            //noinspection GroovyAssignabilityCheck
             eclipse('4.19.0').configFile(formatFile)
         }
     }
@@ -372,6 +375,9 @@ dependencies {
         }
         testCompileOnly "me.eigenraven.java8unsupported:java-8-unsupported-shim:1.0.0"
     }
+
+    compileOnlyApi 'org.jetbrains:annotations:23.0.0'
+    annotationProcessor 'org.jetbrains:annotations:23.0.0'
 }
 
 if (getFile('dependencies.gradle').exists()) {
@@ -606,25 +612,11 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
                     return
                 }
                 String parts = dep.split(':')
-                switch (parts[0]) {
-                    case 'requiredDependency':
-                        mainFile.addRequirement parts[1]
-                        break
-                    case 'embeddedLibrary':
-                        mainFile.addEmbedded parts[1]
-                        break
-                    case 'optionalDependency':
-                        mainFile.addOptional parts[1]
-                        break
-                    case 'tool':
-                        mainFile.addTool parts[1]
-                        break
-                    case 'incompatible':
-                        mainFile.addIncompatibility parts[1]
-                        break
-                    default:
-                        throw new Exception('Invalid CurseForge relation type: ' + parts[0])
+                String type = parts[0], slug = parts[1]
+                if(!(type in ['requiredDependency', 'embeddedLibrary', 'optionalDependency', 'tool', 'incompatible'])) {
+                    throw new Exception('Invalid Curseforge dependency type: ' + type)
                 }
+                mainFile.addRelation(slug, type)
             }
         }
 
@@ -671,7 +663,7 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
 }
 
 def addModrinthDep(String scope, String type, String name) {
-    com.modrinth.minotaur.dependencies.Dependency dep;
+    com.modrinth.minotaur.dependencies.Dependency dep
     if (!(scope in ['required', 'optional', 'incompatible', 'embedded'])) {
         throw new Exception('Invalid modrinth dependency scope: ' + scope)
     }
@@ -819,7 +811,7 @@ def propertyDefaultIfUnsetWithEnvVar(String propertyName, defaultValue, String e
 }
 
 def getSecondaryArtifacts() {
-    def secondaryArtifacts = [publishableDevJar]
+    def secondaryArtifacts = [jar]
     if (!noPublishedSources.toBoolean()) secondaryArtifacts += [sourcesJar]
     if (apiPackage) secondaryArtifacts += [apiJar]
     return secondaryArtifacts
