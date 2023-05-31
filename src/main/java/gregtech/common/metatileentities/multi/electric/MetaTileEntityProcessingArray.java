@@ -70,6 +70,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         return tier == 0 ? 16 : 64;
     }
 
+    @Nonnull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -78,7 +79,10 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 .aisle("XXX", "XSX", "XXX")
                 .where('L', states(getCasingState()))
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(tier == 0 ? 11 : 4).or(autoAbilities())
+                .where('X', states(getCasingState())
+                        .setMinGlobalLimited(tier == 0 ? 11 : 4)
+                        .or(autoAbilities(false, true, true, true, true, true, true))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)) // no energy hatch maximum
                         .or(abilities(MultiblockAbility.MACHINE_HATCH).setExactLimit(1)))
                 .where('#', air())
                 .build();
