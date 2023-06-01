@@ -6,9 +6,9 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
-import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.IMultipleTankHandler.MultiFluidTankEntry;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.NotifiableFluidTankFromList;
+import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.TankWidget;
@@ -34,18 +34,23 @@ import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank>, IControllable {
 
     private static final int TANK_SIZE = 16000;
 
-    protected FluidTankList fluidTanks;
+    // only holding this for convenience
+    private final FluidTankList fluidTankList;
     private boolean workingEnabled;
 
     public MetaTileEntityMultiFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
         this.workingEnabled = true;
+        FluidTank[] fluidsHandlers = new FluidTank[getTier() * getTier()];
+        for (int i = 0; i < fluidsHandlers.length; i++) {
+            fluidsHandlers[i] = new NotifiableFluidTank(TANK_SIZE, this, isExportHatch);
+        }
+        this.fluidTankList = new FluidTankList(false, fluidsHandlers);
         initializeInventory();
     }
 
@@ -56,17 +61,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     protected void initializeInventory() {
-        FluidTank[] fluidsHandlers = new FluidTank[(int) Math.pow(this.getTier(), 2)];
-        for (int i = 0; i < fluidsHandlers.length; i++) {
-            fluidsHandlers[i] = new NotifiableFluidTankFromList(TANK_SIZE, this, isExportHatch, i) {
-                @Override
-                public Supplier<IMultipleTankHandler> getFluidTankList() {
-                    return () -> MetaTileEntityMultiFluidHatch.this.fluidTanks;
-                }
-            };
-        }
-        this.fluidTanks = new FluidTankList(false, fluidsHandlers);
-        this.fluidInventory = fluidTanks;
+        if (this.fluidTankList == null) return;
         super.initializeInventory();
     }
 
@@ -173,12 +168,12 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     protected FluidTankList createImportFluidHandler() {
-        return isExportHatch ? new FluidTankList(false) : new FluidTankList(false, fluidTanks);
+        return isExportHatch ? new FluidTankList(false) : fluidTankList;
     }
 
     @Override
     protected FluidTankList createExportFluidHandler() {
-        return isExportHatch ? new FluidTankList(false, fluidTanks) : new FluidTankList(false);
+        return isExportHatch ? fluidTankList : new FluidTankList(false);
     }
 
     @Override
@@ -188,7 +183,9 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.addAll(fluidTanks.getFluidTanks());
+        for (IFluidTank fluidTank : fluidTankList.getFluidTanks()) {
+            abilityList.add(new MultiFluidTankEntry(this.fluidTankList, fluidTank));
+        }
     }
 
     @Override
@@ -201,7 +198,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
-                builder.widget(new TankWidget(fluidTanks.getTankAt(index), 89 - rowSize * 9 + x * 18, 18 + y * 18, 18, 18)
+                builder.widget(new TankWidget(fluidTankList.getTankAt(index), 89 - rowSize * 9 + x * 18, 18 + y * 18, 18, 18)
                         .setBackgroundTexture(GuiTextures.FLUID_SLOT)
                         .setContainerClicking(true, !isExportHatch)
                         .setAlwaysShowFull(true));

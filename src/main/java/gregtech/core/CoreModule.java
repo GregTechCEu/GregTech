@@ -135,7 +135,6 @@ public class CoreModule implements IGregTechModule {
         MetaItems.init();
         ToolItems.init();
         MetaFluids.init();
-        ModHandler.init();
 
         /* Start MetaTileEntity Registration */
         MTE_REGISTRY.unfreeze();

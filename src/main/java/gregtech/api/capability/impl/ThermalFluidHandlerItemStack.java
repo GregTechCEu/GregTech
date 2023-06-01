@@ -6,6 +6,10 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 
+/**
+ * @deprecated use {@link gregtech.api.capability.IFilter} API
+ */
+@Deprecated
 public class ThermalFluidHandlerItemStack extends GTFluidHandlerItemStack implements IThermalFluidHandlerItemStack {
 
     private final int maxFluidTemperature;

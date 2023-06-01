@@ -356,15 +356,15 @@ public class GTUtility {
      * modifications in list will reflect on fluid handler and wise-versa
      */
     public static List<FluidStack> fluidHandlerToList(IMultipleTankHandler fluidInputs) {
-        List<IFluidTank> backedList = fluidInputs.getFluidTanks();
+        List<IMultipleTankHandler.MultiFluidTankEntry> backedList = fluidInputs.getFluidTanks();
         return new AbstractList<FluidStack>() {
             @Override
             public FluidStack set(int index, FluidStack element) {
-                IFluidTank fluidTank = backedList.get(index);
+                IFluidTank fluidTank = backedList.get(index).getDelegate();
                 FluidStack oldStack = fluidTank.getFluid();
-                if (!(fluidTank instanceof FluidTank))
-                    return oldStack;
-                ((FluidTank) backedList.get(index)).setFluid(element);
+                if (fluidTank instanceof FluidTank) {
+                    ((FluidTank) fluidTank).setFluid(element);
+                }
                 return oldStack;
             }
 
