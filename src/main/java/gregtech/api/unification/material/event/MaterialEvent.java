@@ -33,7 +33,7 @@ public class MaterialEvent extends GenericEvent<Material> {
      * <p>
      * <strong>Every mod should call this after registering materials.</strong>
      */
-    @SuppressWarnings("methodMayBeStatic")
+    @SuppressWarnings("MethodMayBeStatic")
     public void completeRegistration() {
         Material.Builder.setConstructionRegistry(GregTechAPI.materialManager.getRegistry(GTValues.MODID));
     }

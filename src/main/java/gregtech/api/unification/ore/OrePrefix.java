@@ -554,8 +554,8 @@ public class OrePrefix {
     }
 
     // todo clean this up
-    public String getLocalNameForItem(Material material) {
-        String specifiedUnlocalized = "item." + material.toString() + "." + this.name;
+    public String getLocalNameForItem(@Nonnull Material material) {
+        String specifiedUnlocalized = "item." + material.getUnlocalizedName() + "." + this.name;
         if (LocalizationUtils.hasKey(specifiedUnlocalized)) return LocalizationUtils.format(specifiedUnlocalized);
         String unlocalized = findUnlocalizedName(material);
         String matLocalized = material.getLocalizedName();
@@ -563,16 +563,16 @@ public class OrePrefix {
         return formatted.equals(unlocalized) ? matLocalized : formatted;
     }
 
-    private String findUnlocalizedName(Material material) {
+    private String findUnlocalizedName(@Nonnull Material material) {
         if (material.hasProperty(PropertyKey.POLYMER)) {
-            String localizationKey = String.format("%s.item.material.oreprefix.polymer.%s", material.getModid(), this.name);
+            String localizationKey = String.format("item.material.oreprefix.polymer.%s", this.name);
             // Not every polymer ore prefix gets a special name
             if (LocalizationUtils.hasKey(localizationKey)) {
                 return localizationKey;
             }
         }
 
-        return String.format("%s.item.material.oreprefix.%s", material.getModid(), this.name);
+        return String.format("item.material.oreprefix.%s", this.name);
     }
 
     public boolean isIgnored(Material material) {
