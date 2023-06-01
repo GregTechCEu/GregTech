@@ -31,6 +31,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
         with:
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           add-paths: build.gradle
           commit-message: 'update build script version to ${{ steps.update-buildscript.outputs.NEW_VERSION }}'
           branch: gha-update-buildscript
