@@ -11,10 +11,13 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.List;
 
 public class MetaTileEntityFuelRodHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable {
+
+    private boolean workingEnabled;
 
     public MetaTileEntityFuelRodHatch(ResourceLocation metaTileEntityId, boolean isExportHatch) {
         super(metaTileEntityId, 0, isExportHatch);
@@ -22,12 +25,12 @@ public class MetaTileEntityFuelRodHatch extends MetaTileEntityMultiblockNotifiab
 
     @Override
     public boolean isWorkingEnabled() {
-        return false;
+        return workingEnabled;
     }
 
     @Override
     public void setWorkingEnabled(boolean isWorkingAllowed) {
-
+        this.workingEnabled = isWorkingAllowed;
     }
 
     @Override
@@ -35,26 +38,29 @@ public class MetaTileEntityFuelRodHatch extends MetaTileEntityMultiblockNotifiab
         return new MetaTileEntityFuelRodHatch(metaTileEntityId, isExportHatch);
     }
 
-    private ModularUI.Builder createUITemplate(EntityPlayer player, int rowSize) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 * 2,
-                18 + 18 * rowSize + 94)
+    @Override
+    protected IItemHandlerModifiable createExportItemHandler() {
+        return new ItemStackHandler(1);
+    }
+
+    @Override
+    protected IItemHandlerModifiable createImportItemHandler() {
+        return new ItemStackHandler(1);
+    }
+
+    private ModularUI.Builder createUITemplate(EntityPlayer player) {
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,143)
                 .label(10, 5, getMetaFullName());
 
-        for (int y = 0; y < rowSize; y++) {
-            for (int x = 0; x < rowSize; x++) {
-                int index = y * rowSize + x;
-                builder.widget(new SlotWidget(isExportHatch ? exportItems : importItems, index,
-                        (88 - rowSize * 9 + x * 18), 18 + y * 18, true, !isExportHatch)
-                        .setBackgroundTexture(GuiTextures.SLOT));
-            }
-        }
-        return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);
+        builder.widget(new SlotWidget(isExportHatch ? exportItems : importItems, 0, 79, 18, true, !isExportHatch)
+                .setBackgroundTexture(GuiTextures.SLOT));
+
+        return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 60);
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        int rowSize = (int) Math.sqrt(1);
-        return createUITemplate(entityPlayer, rowSize).build(getHolder(), entityPlayer);
+        return createUITemplate(entityPlayer).build(getHolder(), entityPlayer);
     }
 
     @Override
