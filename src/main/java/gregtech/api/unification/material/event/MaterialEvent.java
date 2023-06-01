@@ -1,8 +1,8 @@
 package gregtech.api.unification.material.event;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 
 import javax.annotation.Nonnull;
@@ -25,7 +25,7 @@ public class MaterialEvent extends GenericEvent<Material> {
      */
     @SuppressWarnings("MethodMayBeStatic")
     public void startRegistration(@Nonnull String modid) {
-        Material.Builder.setConstructionRegistry(MaterialRegistryManager.getRegistry(modid));
+        Material.Builder.setConstructionRegistry(GregTechAPI.materialManager.getRegistry(modid));
     }
 
     /**
@@ -35,6 +35,6 @@ public class MaterialEvent extends GenericEvent<Material> {
      */
     @SuppressWarnings("methodMayBeStatic")
     public void completeRegistration() {
-        Material.Builder.setConstructionRegistry(MaterialRegistryManager.getRegistry(GTValues.MODID));
+        Material.Builder.setConstructionRegistry(GregTechAPI.materialManager.getRegistry(GTValues.MODID));
     }
 }

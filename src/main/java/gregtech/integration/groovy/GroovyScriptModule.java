@@ -16,9 +16,7 @@ import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialHelpers;
 import gregtech.api.unification.material.registry.MaterialRegistry;
-import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
@@ -143,7 +141,7 @@ public class GroovyScriptModule extends IntegrationSubmodule {
             map.put(modid + ':' + name, stack);
         }
 
-        for (MaterialRegistry registry : MaterialRegistryManager.getRegistries()) {
+        for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             String modid = registry.getModid();
             Map<String, ItemStack> map = new Object2ObjectOpenHashMap<>();
 
@@ -198,7 +196,7 @@ public class GroovyScriptModule extends IntegrationSubmodule {
         @Override
         public void initialize() {
             BracketHandlerManager.registerBracketHandler(GTValues.MODID, "recipemap", RecipeMap::getByName);
-            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "material", MaterialHelpers::getMaterial);
+            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "material", GregTechAPI.materialManager::getMaterial);
             BracketHandlerManager.registerBracketHandler(GTValues.MODID, "oreprefix", OrePrefix::getPrefix);
             BracketHandlerManager.registerBracketHandler(GTValues.MODID, "metaitem", GroovyScriptModule::getMetaItem, ItemStack.EMPTY);
 

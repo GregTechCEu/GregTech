@@ -9,7 +9,6 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
-import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.GTUtility;
@@ -304,7 +303,8 @@ public class MetaBlocks {
      * @param blockGenerator    a function which accepts a Materials set to pack into a MetaBlock, and the ordinal this
      *                          MetaBlock should have within its category.
      */
-    protected static void createGeneratedBlock(Predicate<Material> materialPredicate, TriConsumer<String, Material[], Integer> blockGenerator) {
+    protected static void createGeneratedBlock(Predicate<Material> materialPredicate,
+                                               TriConsumer<String, Material[], Integer> blockGenerator) {
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             Int2ObjectMap<Material[]> blocksToGenerate = new Int2ObjectAVLTreeMap<>();
             for (Material material : registry) {

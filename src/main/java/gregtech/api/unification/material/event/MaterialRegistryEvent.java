@@ -1,13 +1,13 @@
 package gregtech.api.unification.material.event;
 
 import gregtech.api.unification.material.registry.MaterialRegistry;
-import gregtech.api.unification.material.registry.MaterialRegistryManager;
+import gregtech.api.unification.material.registry.IMaterialRegistryManager;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 
 /**
  * Event to add a material registry in.
  *
- * @see MaterialRegistryManager#createRegistry(String)
+ * @see IMaterialRegistryManager#createRegistry(String)
  */
 public class MaterialRegistryEvent extends GenericEvent<MaterialRegistry> {
 

@@ -2,11 +2,10 @@ package gregtech.integration.crafttweaker.material;
 
 import com.google.common.collect.ImmutableList;
 import crafttweaker.CraftTweakerAPI;
+import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialHelpers;
-import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.unification.stack.MaterialStack;
 
 import java.util.Arrays;
@@ -50,7 +49,7 @@ public class CTMaterialHelpers {
     }
 
     protected static Material[] validateMaterialNames(String methodName, String... names) {
-        Material[] materials = Arrays.stream(names).map(MaterialHelpers::getMaterial).toArray(Material[]::new);
+        Material[] materials = Arrays.stream(names).map(GregTechAPI.materialManager::getMaterial).toArray(Material[]::new);
         if (Arrays.stream(materials).anyMatch(Objects::isNull)) {
             logNullMaterial(methodName);
             return null;
@@ -59,13 +58,13 @@ public class CTMaterialHelpers {
     }
 
     protected static Material validateMaterialName(String name) {
-        Material m = MaterialHelpers.getMaterial(name);
+        Material m = GregTechAPI.materialManager.getMaterial(name);
         if (m == null) logBadMaterialName(name);
         return m;
     }
 
     protected static boolean checkFrozen(String description) {
-        if (MaterialRegistryManager.canModifyMaterials()) {
+        if (GregTechAPI.materialManager.canModifyMaterials()) {
             CraftTweakerAPI.logError("Cannot " + description + " now, must be done in a file labeled with \"#loader gregtech\"");
             return true;
         } return false;

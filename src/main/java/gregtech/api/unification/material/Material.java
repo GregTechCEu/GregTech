@@ -3,6 +3,7 @@ package gregtech.api.unification.material;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
+import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.Element;
@@ -12,7 +13,6 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.material.registry.MaterialRegistry;
-import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -132,11 +132,11 @@ public class Material implements Comparable<Material> {
 
     protected void registerMaterial() {
         verifyMaterial();
-        MaterialRegistryManager.getRegistry(modid).register(this);
+        GregTechAPI.materialManager.getRegistry(modid).register(this);
     }
 
     public void addFlags(MaterialFlag... flags) {
-        if (MaterialRegistryManager.canModifyMaterials()) {
+        if (GregTechAPI.materialManager.canModifyMaterials()) {
             this.flags.addFlags(flags).verify(this);
         } else throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
     }
@@ -360,7 +360,7 @@ public class Material implements Comparable<Material> {
     }
 
     public <T extends IMaterialProperty> void setProperty(PropertyKey<T> key, IMaterialProperty property) {
-        if (!MaterialRegistryManager.canModifyMaterials()) {
+        if (!GregTechAPI.materialManager.canModifyMaterials()) {
             throw new IllegalStateException("Cannot add properties to a Material when registry is frozen!");
         }
         properties.setProperty(key, property);
@@ -389,7 +389,7 @@ public class Material implements Comparable<Material> {
 
     @Nonnull
     public MaterialRegistry getRegistry() {
-        return MaterialRegistryManager.getRegistry(this.modid);
+        return GregTechAPI.materialManager.getRegistry(this.modid);
     }
 
     /**

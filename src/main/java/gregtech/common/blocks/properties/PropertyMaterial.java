@@ -2,8 +2,8 @@ package gregtech.common.blocks.properties;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialHelpers;
 import gregtech.api.unification.material.Materials;
 import net.minecraft.block.properties.PropertyHelper;
 
@@ -37,7 +37,7 @@ public class PropertyMaterial extends PropertyHelper<Material> {
     @Nonnull
     @Override
     public Optional<Material> parseValue(@Nonnull String value) {
-        Material material = MaterialHelpers.getMaterial(value);
+        Material material = GregTechAPI.materialManager.getMaterial(value);
         if (material != null && this.allowedValues.contains(material)) {
             return Optional.of(material);
         }

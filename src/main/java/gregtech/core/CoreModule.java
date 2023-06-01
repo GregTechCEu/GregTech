@@ -21,7 +21,6 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.event.MaterialRegistryEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
-import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
@@ -50,6 +49,7 @@ import gregtech.core.network.internal.NetworkHandler;
 import gregtech.core.network.packets.*;
 import gregtech.core.sound.GTSoundEvents;
 import gregtech.core.sound.internal.SoundManager;
+import gregtech.core.unification.material.internal.MaterialRegistryManager;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;
 import net.minecraft.block.state.IBlockState;
@@ -85,6 +85,9 @@ public class CoreModule implements IGregTechModule {
 
     public CoreModule() {
         GregTechAPI.networkHandler = NetworkHandler.getInstance();
+        // must be set here because of GroovyScript compat
+        // trying to read this before the pre-init stage
+        GregTechAPI.materialManager = MaterialRegistryManager.getInstance();
     }
 
     @Nonnull
@@ -118,11 +121,13 @@ public class CoreModule implements IGregTechModule {
         /* Start Material Registration */
 
         // First, register other mods' Registries
+        MaterialRegistryManager managerInternal = (MaterialRegistryManager) GregTechAPI.materialManager;
+
         logger.info("Registering material registries");
         MinecraftForge.EVENT_BUS.post(new MaterialRegistryEvent());
 
         // First, register CEu Materials
-        MaterialRegistryManager.transitionPhase(MaterialRegistryManager.Phase.OPEN);
+        managerInternal.unfreezeRegistries();
         MaterialEvent materialEvent = new MaterialEvent();
         logger.info("Registering GTCEu Materials");
         materialEvent.startRegistration(GTValues.MODID);
@@ -135,11 +140,11 @@ public class CoreModule implements IGregTechModule {
 
         // Fire Post-Material event, intended for when Materials need to be iterated over in-full before freezing
         // Block entirely new Materials from being added in the Post event
-        MaterialRegistryManager.transitionPhase(MaterialRegistryManager.Phase.CLOSED);
+        managerInternal.closeRegistries();
         MinecraftForge.EVENT_BUS.post(new PostMaterialEvent());
 
         // Freeze Material Registry before processing Items, Blocks, and Fluids
-        MaterialRegistryManager.transitionPhase(MaterialRegistryManager.Phase.FROZEN);
+        managerInternal.freezeRegistries();
         /* End Material Registration */
 
         OreDictUnifier.init();

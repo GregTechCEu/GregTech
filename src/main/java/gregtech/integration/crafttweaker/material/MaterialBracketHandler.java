@@ -4,8 +4,8 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.BracketHandler;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.zenscript.IBracketHandler;
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialHelpers;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
 import stanhebben.zenscript.expression.ExpressionString;
@@ -27,7 +27,7 @@ public class MaterialBracketHandler implements IBracketHandler {
     }
 
     public static Material getMaterial(String name) {
-        Material material = name == null ? null : MaterialHelpers.getMaterial(name);
+        Material material = name == null ? null : GregTechAPI.materialManager.getMaterial(name);
         if (material == null) {
             CraftTweakerAPI.logError("Could not find material with name " + name);
         }

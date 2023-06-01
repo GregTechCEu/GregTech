@@ -7,11 +7,11 @@ import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.zenscript.IBracketHandler;
+import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.registry.MaterialRegistry;
-import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
@@ -71,7 +71,7 @@ public class MetaItemBracketHandler implements IBracketHandler {
             map.put(modid + ':' + name, stack);
         }
 
-        for (MaterialRegistry registry : MaterialRegistryManager.getRegistries()) {
+        for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             String modid = registry.getModid();
             Map<String, ItemStack> map = new Object2ObjectOpenHashMap<>();
             for (BlockCable cable : MetaBlocks.CABLES.get(modid)) {

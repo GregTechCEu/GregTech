@@ -1,5 +1,6 @@
 package gregtech.api.pipenet.tile;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
@@ -8,8 +9,6 @@ import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialHelpers;
-import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -365,7 +364,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (compound.hasKey("InsulationColor")) {
             this.paintingColor = compound.getInteger("InsulationColor");
         }
-        this.frameMaterial = MaterialHelpers.getMaterial(compound.getString("FrameMaterial"));
+        this.frameMaterial = GregTechAPI.materialManager.getMaterial(compound.getString("FrameMaterial"));
 
         this.coverableImplementation.readFromNBT(compound);
     }
@@ -404,7 +403,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         int registryId = buf.readVarInt();
         int frameMaterialId = buf.readVarInt();
         if (registryId >= 0 && frameMaterialId >= 0) {
-            this.frameMaterial = MaterialRegistryManager.getRegistry(registryId).getObjectById(frameMaterialId);
+            this.frameMaterial = GregTechAPI.materialManager.getRegistry(registryId).getObjectById(frameMaterialId);
         } else {
             this.frameMaterial = null;
         }
@@ -431,7 +430,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             int registryId = buf.readVarInt();
             int frameMaterialId = buf.readVarInt();
             if (registryId >= 0 && frameMaterialId >= 0) {
-                this.frameMaterial = MaterialRegistryManager.getRegistry(registryId).getObjectById(frameMaterialId);
+                this.frameMaterial = GregTechAPI.materialManager.getRegistry(registryId).getObjectById(frameMaterialId);
             } else {
                 this.frameMaterial = null;
             }

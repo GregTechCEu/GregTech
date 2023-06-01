@@ -1,6 +1,7 @@
 package gregtech.common.items;
 
 import com.google.common.base.CaseFormat;
+import gregtech.api.GregTechAPI;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
@@ -8,7 +9,6 @@ import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.registry.MaterialRegistry;
-import gregtech.api.unification.material.registry.MaterialRegistryManager;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.handler.FacadeRenderer;
@@ -607,7 +607,7 @@ public final class MetaItems {
         MetaArmor armor = new MetaArmor();
         armor.setRegistryName("gt_armor");
         for (OrePrefix prefix : orePrefixes) {
-            for (MaterialRegistry registry : MaterialRegistryManager.getRegistries()) {
+            for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
                 String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, prefix.name());
                 MetaPrefixItem metaOrePrefix = new MetaPrefixItem(registry, prefix);
                 metaOrePrefix.setRegistryName(registry.getModid(), String.format("meta_%s", regName));
