@@ -405,6 +405,8 @@ public class GTUtility {
 
     /**
      * @deprecated Ambiguous naming; use either {@link #copy(ItemStack)} or {@link #copyFirst(ItemStack...)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @Nonnull
@@ -483,6 +485,8 @@ public class GTUtility {
 
     /**
      * @deprecated Use {@link #copy(int, ItemStack)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @Nonnull
@@ -745,6 +749,8 @@ public class GTUtility {
      * @param stack the stack to retrieve from
      * @return all the sub-items of an ItemStack
      * @deprecated Use {@link #getAllSubItems(Item)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Nonnull
     @Deprecated

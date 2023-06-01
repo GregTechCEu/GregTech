@@ -772,14 +772,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return this;
         }
 
-        /**
-         * @deprecated Use {@link MetaValueItem#setInvisibleIf(boolean)} instead
-         */
-        @Deprecated
-        public MetaValueItem setInvisible(boolean isVisible) {
-            return setInvisibleIf(!isVisible);
-        }
-
         public MetaValueItem setInvisibleIf(boolean hide) {
             if (hide) this.creativeTabsOverride = new CreativeTabs[0];
             return this;

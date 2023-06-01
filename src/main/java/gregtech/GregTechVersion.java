@@ -4,6 +4,8 @@ import java.util.regex.Pattern;
 
 /**
  * @deprecated Use {@link GTInternalTags} instead. Any needed information can be added there
+ *
+ * </p> This class was deprecated in 2.6 and will be removed in 2.8
  */
 @SuppressWarnings("unused")
 @Deprecated
