@@ -146,7 +146,8 @@ public class GTValues {
             MODID_ET = "extratrees",
             MODID_GENETICS = "genetics",
             MODID_BOP = "biomesoplenty",
-            MODID_TCON = "tconstruct";
+            MODID_TCON = "tconstruct",
+            MODID_EN = "exnihilocreatio";
 
     private static Boolean isClient;
 
