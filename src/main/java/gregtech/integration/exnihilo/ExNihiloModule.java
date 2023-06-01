@@ -11,6 +11,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.exnihilo.items.ExNihiloPebble;
@@ -27,7 +28,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.List;
+
+import static gregtech.api.unification.ore.OrePrefix.Conditions.hasOreProperty;
+import static gregtech.api.unification.ore.OrePrefix.Flags.ENABLE_UNIFICATION;
 import static gregtech.common.metatileentities.MetaTileEntities.getHighTier;
 import static gregtech.common.metatileentities.MetaTileEntities.getMidTier;
 
@@ -71,6 +80,12 @@ public class ExNihiloModule extends IntegrationSubmodule {
     public static MaterialIconType oreNetherChunkIcon;
     public static MaterialIconType oreSandyChunkIcon;
 
+    @Nonnull
+    @Override
+    public List<Class<?>> getEventBusSubscribers() {
+        return Collections.singletonList(ExNihiloModule.class);
+    }
+
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         getLogger().info("Registering Ex Nihilo Compat Items, Blocks, and Machines");
@@ -85,14 +100,14 @@ public class ExNihiloModule extends IntegrationSubmodule {
         MeshRecipes.init();
     }
 
-    @Override
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         getLogger().info("Registering Ex Nihilo Compat Recipes");
         ExNihiloRecipes.registerHandlers();
         ExNihiloRecipes.registerGTRecipes();
     }
 
-    @Override
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void registerMaterials(GregTechAPI.MaterialEvent event) {
         oreChunkIcon = new MaterialIconType("oreChunk");
         oreEnderChunkIcon = new MaterialIconType("oreEnderChunk");
