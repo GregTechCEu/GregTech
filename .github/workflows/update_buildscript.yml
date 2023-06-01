@@ -2,6 +2,7 @@
 name: Buildscript Updating
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "0 0 * * *" # "min hr day month year", so run once per day
 
