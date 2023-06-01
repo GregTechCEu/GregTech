@@ -27,9 +27,12 @@ jobs:
       - name: Create Pull Request
         id: create-pull-request
         uses: peter-evans/create-pull-request@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
         with:
           add-paths: build.gradle
           commit-message: 'update build script version to ${{ steps.update-buildscript.outputs.NEW_VERSION }}'
           branch: gha-update-buildscript
           title: Update build script version to ${{ steps.update-buildscript.outputs.NEW_VERSION }}
           body: This pull request is created by the buildscript-update workflow
+          labels: ignore changelog
