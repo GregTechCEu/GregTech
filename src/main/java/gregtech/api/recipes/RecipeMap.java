@@ -17,9 +17,6 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
-import gregtech.integration.crafttweaker.CTRecipeHelper;
-import gregtech.integration.crafttweaker.recipe.CTRecipe;
-import gregtech.integration.crafttweaker.recipe.CTRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.map.*;
@@ -27,6 +24,9 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
+import gregtech.integration.crafttweaker.CTRecipeHelper;
+import gregtech.integration.crafttweaker.recipe.CTRecipe;
+import gregtech.integration.crafttweaker.recipe.CTRecipeBuilder;
 import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.integration.groovy.VirtualizedRecipeMap;
 import gregtech.modules.GregTechModules;
@@ -112,6 +112,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * Create and register new instance of RecipeMap with specified properties.
      *
      * @deprecated Use {@link RecipeMap#RecipeMap(String, int, int, int, int, R, boolean)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @SuppressWarnings("unused")
     @Deprecated
@@ -1274,6 +1276,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * @deprecated this value is no longer implemented
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @ZenGetter("minInputs")
@@ -1297,6 +1301,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * @deprecated this value is no longer used
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @ZenGetter("minOutputs")
@@ -1320,6 +1326,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * @deprecated this value is no longer used
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @ZenGetter("minFluidInputs")
@@ -1343,6 +1351,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * @deprecated this value is no longer used
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @ZenGetter("minFluidOutputs")

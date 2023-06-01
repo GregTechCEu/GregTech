@@ -130,6 +130,8 @@ public class CoverBehaviors {
 
     /**
      * @deprecated See {@link CoverBehaviors#registerBehavior(ResourceLocation, MetaItem.MetaValueItem, BiFunction)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     public static void registerBehavior(int coverNetworkId, @Nonnull ResourceLocation coverId, @Nonnull MetaValueItem placerItem,
@@ -151,6 +153,8 @@ public class CoverBehaviors {
 
     /**
      * @deprecated See {@link CoverBehaviors#registerCover(ResourceLocation, MetaItem.MetaValueItem, BiFunction)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Nonnull
     @Deprecated
