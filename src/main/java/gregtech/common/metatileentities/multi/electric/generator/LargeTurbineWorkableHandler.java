@@ -89,9 +89,13 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
             parallel = MathHelper.ceil((turbineMaxVoltage - excessVoltage) /
                             (Math.abs(recipe.getEUt()) * holderEfficiency));
 
+            // move fuel calculation here, or set a variable
+
+
+
             // Null check fluid here, since it can return null on first join into world or first form
             FluidStack inputFluid = getInputFluidStack();
-            if(inputFluid == null || getInputFluidStack().amount < recipeFluidStack.amount * parallel) {
+            if (inputFluid == null || getInputFluidStack().amount < recipeFluidStack.amount * parallel) {
                 return false;
             }
 
