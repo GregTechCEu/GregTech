@@ -624,7 +624,7 @@ public class CraftingComponent {
                 {5, new UnificationEntry(OrePrefix.wireGtDouble, Materials.TungstenSteel)},
                 {6, new UnificationEntry(OrePrefix.wireGtDouble, Materials.HSSG)},
                 {7, new UnificationEntry(OrePrefix.wireGtDouble, Materials.Naquadah)},
-                {8, new UnificationEntry(OrePrefix.wireGtDouble, Materials.NaquadahAlloy)},
+                {8, new UnificationEntry(OrePrefix.wireGtDouble, Materials.Trinium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -638,7 +638,7 @@ public class CraftingComponent {
                 {5, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.TungstenSteel)},
                 {6, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.HSSG)},
                 {7, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Naquadah)},
-                {8, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.NaquadahAlloy)},
+                {8, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Trinium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

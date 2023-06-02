@@ -14,19 +14,19 @@ public class PlatGroupMetalsRecipes {
 
         // Platinum Group Sludge Production
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, CopperSlag)
-                .fluidInputs(SulfuricAcid.getFluid(1500))
-                .output(dust, PlatinumGroupSludge)
-                .output(dust, BlueVitriol)
-                .output(dustSmall, GreenVitriol, 2)
+                .input(dust, CopperSlag, 2)
+                .fluidInputs(SulfuricAcid.getFluid(3000))
+                .output(dust, PlatinumGroupSludge, 2)
+                .output(dust, BlueVitriol, 2)
+                .output(dust, GreenVitriol,)
                 .duration(50).EUt(30).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, NickelSlag)
-                .fluidInputs(SulfuricAcid.getFluid(1500))
-                .output(dust, PlatinumGroupSludge)
-                .output(dust, CyanVitriol)
-                .output(dustSmall, RedVitriol, 2)
+                .input(dust, NickelSlag, 2)
+                .fluidInputs(SulfuricAcid.getFluid(3000))
+                .output(dust, PlatinumGroupSludge, 2)
+                .output(dust, CyanVitriol, 2)
+                .output(dust, RedVitriol,)
                 .duration(50).EUt(30).buildAndRegister();
 
         // Aqua Regia
