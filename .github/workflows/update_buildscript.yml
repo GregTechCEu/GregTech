@@ -2,6 +2,7 @@
 name: Buildscript Updating
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "0 0 * * *" # "min hr day month year", so run once per day
 
@@ -27,9 +28,15 @@ jobs:
       - name: Create Pull Request
         id: create-pull-request
         uses: peter-evans/create-pull-request@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
         with:
+          token: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           add-paths: build.gradle
           commit-message: 'update build script version to ${{ steps.update-buildscript.outputs.NEW_VERSION }}'
           branch: gha-update-buildscript
           title: Update build script version to ${{ steps.update-buildscript.outputs.NEW_VERSION }}
           body: This pull request is created by the buildscript-update workflow
+          labels: ignore changelog
