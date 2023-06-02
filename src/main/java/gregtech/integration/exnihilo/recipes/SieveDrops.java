@@ -1,5 +1,5 @@
 /*
-    Copyright 2019, TheLimePixel, dan
+    Copyright 2019, TheLimePixel, dan, Irgendwer01
     GregBlock Utilities
 
     This program is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ import exnihilocreatio.util.ItemInfo;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.integration.exnihilo.ExNihiloConfig;
 import gregtech.integration.exnihilo.ExNihiloModule;
 import net.minecraft.init.Items;
@@ -78,6 +79,7 @@ public class SieveDrops implements ISieveDefaultRegistryProvider {
         registry.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 2), 0.1f, BlockSieve.MeshType.STRING.getID());
         registry.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 3), 0.5f, BlockSieve.MeshType.STRING.getID());
         registry.register("dirt", new ItemInfo(ExNihiloModule.GTPebbles, 3), 0.1f, BlockSieve.MeshType.STRING.getID());
+        registry.register("dirt", new ItemInfo(MetaBlocks.RUBBER_SAPLING.getBlockState().getBlock()), 0.1f, BlockSieve.MeshType.STRING.getID());
 
         for (Map.Entry<SieveDropType, List<SieveDrop>> drops : SIEVE_DROPS_MAP.entrySet()) {
             OrePrefix prefix = drops.getKey().getPrefix();
