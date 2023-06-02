@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
@@ -89,10 +90,6 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
             parallel = MathHelper.ceil((turbineMaxVoltage - excessVoltage) /
                             (Math.abs(recipe.getEUt()) * holderEfficiency));
 
-            // move fuel calculation here, or set a variable
-
-
-
             // Null check fluid here, since it can return null on first join into world or first form
             FluidStack inputFluid = getInputFluidStack();
             if (inputFluid == null || getInputFluidStack().amount < recipeFluidStack.amount * parallel) {
@@ -115,6 +112,21 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
             return true;
         }
         return false;
+    }
+
+    @Nullable
+    protected FluidStack getRecipeFluidInputAmount() {
+        IRotorHolder rotorHolder = ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder();
+        if (rotorHolder == null || !rotorHolder.hasRotor())
+            return null;
+
+        if (previousRecipe != null) {
+            FluidStack requiredFluidInput = previousRecipe.getFluidInputs().get(0).getInputFluidStack().copy();
+            int fuelEnergyValue = requiredFluidInput.amount / -(previousRecipe.getEUt());
+            requiredFluidInput.amount = (int) (fuelEnergyValue * getMaxVoltage() / (rotorHolder.getTotalEfficiency() / 100f));
+            return requiredFluidInput;
+        }
+        return null;
     }
 
     @Override
