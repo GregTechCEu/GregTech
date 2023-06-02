@@ -104,20 +104,14 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     protected void addDisplayText(List<ITextComponent> textList) {
         if (isStructureFormed()) {
             IRotorHolder rotorHolder = getRotorHolder();
-            FluidStack fuelStack = ((LargeTurbineWorkableHandler) recipeMapWorkable).getInputFluidStack();
-            int fuelAmount = fuelStack == null ? 0 : fuelStack.amount;
+            FluidStack requiredFuelStack = ((LargeTurbineWorkableHandler) recipeMapWorkable).getRecipeFluidInputAmount();
 
-            ITextComponent fuelName = new TextComponentTranslation(fuelAmount == 0 ? "gregtech.fluid.empty" : fuelStack.getUnlocalizedName());
-
-            Recipe recipe = recipeMapWorkable.getPreviousRecipe();
-            if (recipe != null) {
-                FluidStack recipeFuel = recipe.getFluidInputs().get(0).getInputFluidStack();
-                int fuelEnergyValue = recipeFuel.amount / -(recipe.getEUt());
-                int requiredFluidAmount = (int) Math.floor(fuelEnergyValue * (((LargeTurbineWorkableHandler) recipeMapWorkable).getMaxVoltage() / (rotorHolder.getTotalEfficiency() / 100f)));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed", requiredFluidAmount, fuelName, recipe.getDuration()));
+            if (requiredFuelStack != null) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed", requiredFuelStack.amount, requiredFuelStack.getLocalizedName(), recipeMapWorkable.getPreviousRecipeDuration()));
             }
 
-            textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", fuelAmount, fuelName));
+            FluidStack fuelStack = ((LargeTurbineWorkableHandler) recipeMapWorkable).getInputFluidStack();
+            textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", fuelStack.amount, fuelStack.getLocalizedName()));
 
             if (rotorHolder.getRotorEfficiency() > 0) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_speed", rotorHolder.getRotorSpeed(), rotorHolder.getMaxRotorHolderSpeed()));
@@ -150,8 +144,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 176 + 90, 216);
         builder.image(7, 4, 162 + 90, 121 + 6, GuiTextures.DISPLAY);
-        builder.label(11, 9, getMetaFullName(), 0xFFFFFF);
-        builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
+        builder.label(13, 9, getMetaFullName(), 0xFFFFFF);
+        builder.widget(new AdvancedTextWidget(13, 19, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(156 + 90)
                 .setClickHandler(this::handleDisplayClick));
         if (shouldShowVoidingModeButton()) {
