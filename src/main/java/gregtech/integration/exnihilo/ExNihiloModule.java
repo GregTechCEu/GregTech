@@ -13,6 +13,7 @@ import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.integration.IntegrationModule;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.exnihilo.items.ExNihiloPebble;
 import gregtech.integration.exnihilo.metatileentities.MetaTileEntitySieve;
@@ -55,7 +56,7 @@ public class ExNihiloModule extends IntegrationSubmodule {
     public static ExNihiloPebble GTPebbles;
 
     // Recipe maps
-    public static final RecipeMap<SimpleRecipeBuilder> SIEVE_RECIPES = new SieveRecipeMap("electric_sieve", 2, 2, 1, 30, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(100).EUt(4), false)
+    public static final RecipeMap<SimpleRecipeBuilder> SIEVE_RECIPES = new SieveRecipeMap("electric_sieve", 2, false, 36, true, 0, false, 0, false, new SimpleRecipeBuilder().duration(100).EUt(4), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, ProgressWidget.MoveType.VERTICAL_INVERTED)
             .setSound(SoundEvents.BLOCK_SAND_PLACE);
 
@@ -101,14 +102,14 @@ public class ExNihiloModule extends IntegrationSubmodule {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        getLogger().info("Registering Ex Nihilo Compat Recipes");
+    public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
+        IntegrationModule.logger.info("Registering Ex Nihilo Compat Recipes");
         ExNihiloRecipes.registerHandlers();
         ExNihiloRecipes.registerGTRecipes();
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void registerMaterials(GregTechAPI.MaterialEvent event) {
+    public static void registerMaterials(GregTechAPI.MaterialEvent event) {
         oreChunkIcon = new MaterialIconType("oreChunk");
         oreEnderChunkIcon = new MaterialIconType("oreEnderChunk");
         oreNetherChunkIcon = new MaterialIconType("oreNetherChunk");

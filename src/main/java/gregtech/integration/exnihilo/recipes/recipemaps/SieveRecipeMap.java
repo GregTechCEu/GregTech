@@ -28,13 +28,17 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 
+
 public class SieveRecipeMap extends RecipeMap<SimpleRecipeBuilder> {
 
-    public SieveRecipeMap(String unlocalizedName,
-                          int minInputs, int maxInputs, int minOutputs, int maxOutputs,
-                          int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
-                          SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, minInputs, maxInputs, minOutputs, maxOutputs, minFluidInputs, maxFluidInputs, minFluidOutputs, maxFluidOutputs, defaultRecipe, isHidden);
+    public SieveRecipeMap( String unlocalizedName,
+                           int maxInputs, boolean modifyItemInputs,
+                           int maxOutputs, boolean modifyItemOutputs,
+                           int maxFluidInputs, boolean modifyFluidInputs,
+                           int maxFluidOutputs, boolean modifyFluidOutputs,
+                           SimpleRecipeBuilder defaultRecipeBuilder,
+                          boolean isHidden) {
+        super(unlocalizedName, maxInputs, modifyItemInputs, maxOutputs, modifyItemOutputs, maxFluidInputs, modifyFluidInputs, maxFluidOutputs, modifyFluidOutputs, defaultRecipeBuilder, isHidden   );
     }
 
     @Override

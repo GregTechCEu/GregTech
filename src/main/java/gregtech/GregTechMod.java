@@ -32,7 +32,8 @@ import net.minecraftforge.fml.common.event.*;
                 + "after:crafttweaker@[4.1.20,);"
                 + "after:groovyscript@[0.6.0,);"
                 + "after:theoneprobe;"
-                + "after:hwyla;")
+                + "after:hwyla;"
+                + "after:exnihilocreatio;")
 public class GregTechMod {
 
     // Hold this so that we can reference non-interface methods without
