@@ -800,6 +800,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
+     * @return the previous recipe's duration
+     */
+    public int getPreviousRecipeDuration() {
+        return getPreviousRecipe() == null ? 0 : getPreviousRecipe().getDuration();
+    }
+
+    /**
      * sets the amount of ticks of running time to finish the recipe
      *
      * @param maxProgress the amount of ticks to set
