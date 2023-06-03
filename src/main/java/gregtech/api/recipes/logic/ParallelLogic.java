@@ -240,21 +240,20 @@ public abstract class ParallelLogic {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
 
-        Map<FluidKey, Integer> recipeFluidOutputs = GTHashMaps.fromFluidCollection(recipe.getFluidOutputs());
-
         while (minMultiplier != maxMultiplier) {
             overlayedFluidHandler.reset();
 
             int amountLeft = 0;
 
-            for (Map.Entry<FluidKey, Integer> entry : recipeFluidOutputs.entrySet()) {
+            for (FluidStack fluidStack : recipe.getFluidOutputs()) {
+                if (fluidStack.amount <= 0) continue;
                 // Since multiplier starts at Int.MAX, check here for integer overflow
-                if (entry.getValue() != 0 && multiplier > Integer.MAX_VALUE / entry.getValue()) {
+                if (multiplier > Integer.MAX_VALUE / fluidStack.amount) {
                     amountLeft = Integer.MAX_VALUE;
                 } else {
-                    amountLeft = entry.getValue() * multiplier;
+                    amountLeft = fluidStack.amount * multiplier;
                 }
-                int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountLeft);
+                int inserted = overlayedFluidHandler.insertFluid(fluidStack, amountLeft);
                 if (inserted > 0) {
                     amountLeft -= inserted;
                 }

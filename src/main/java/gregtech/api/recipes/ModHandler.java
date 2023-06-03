@@ -3,6 +3,7 @@ package gregtech.api.recipes;
 import crafttweaker.mc1120.actions.ActionAddFurnaceRecipe;
 import crafttweaker.mc1120.furnace.MCFurnaceManager;
 import gregtech.api.GTValues;
+import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -37,11 +38,8 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -62,19 +60,8 @@ public final class ModHandler {
 
     public static final boolean ERROR_ON_INVALID_RECIPE = GTValues.isDeobfEnvironment() || !ConfigHolder.misc.ignoreErrorOrInvalidRecipes;
     public static boolean hasInvalidRecipe = false;
-    private static FluidStack WATER;
-    private static FluidStack DISTILLED_WATER;
-    private static FluidStack LAVA;
-    private static FluidStack STEAM;
 
-    private ModHandler() {/**/}
-
-    public static void init() {
-        WATER = new FluidStack(FluidRegistry.WATER, 1);
-        DISTILLED_WATER = Materials.DistilledWater.getFluid(1);
-        LAVA = new FluidStack(FluidRegistry.LAVA, 0);
-        STEAM = Materials.Steam.getFluid(1);
-    }
+    private ModHandler() {}
 
     public static void postInit() {
         if (ERROR_ON_INVALID_RECIPE && hasInvalidRecipe) {
@@ -87,52 +74,29 @@ public final class ModHandler {
     /**
      * @param stack the fluid to check
      * @return if the fluid is a valid water fluid
+     * @deprecated use {@link CommonFluidFilters#BOILER_FLUID}
      */
+    @Deprecated
     public static boolean isWater(@Nullable FluidStack stack) {
-        if (stack == null) return false;
-        if (WATER.isFluidEqual(stack)) return true;
-        if (DISTILLED_WATER.isFluidEqual(stack)) return true;
-
-        for (String fluidName : ConfigHolder.machines.boilerFluids) {
-            Fluid fluid = FluidRegistry.getFluid(fluidName);
-            if (fluid == null) continue;
-            if (stack.isFluidEqual(new FluidStack(fluid, 1))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param stack the fluid to check
-     * @return if the fluid is a valid lava fluid
-     */
-    @SuppressWarnings("unused")
-    public static boolean isLava(FluidStack stack) {
-        return LAVA.isFluidEqual(stack);
-    }
-
-    /**
-     * @param amount the amount of fluid
-     * @return a FluidStack of lava
-     */
-    @SuppressWarnings("unused")
-    @Nonnull
-    public static FluidStack getLava(int amount) {
-        return new FluidStack(FluidRegistry.LAVA, amount);
+        return stack != null && CommonFluidFilters.BOILER_FLUID.test(stack);
     }
 
     /**
      * @param stack the fluid to check
      * @return if the fluid is a valid steam fluid
+     * @deprecated use {@link CommonFluidFilters#STEAM}
      */
+    @Deprecated
     public static boolean isSteam(FluidStack stack) {
-        return STEAM.isFluidEqual(stack);
+        return CommonFluidFilters.STEAM.test(stack);
     }
 
     /**
-     * Returns a Liquid Stack with given amount of Steam.
+     * @param amount amount of steam in mb
+     * @return a Liquid Stack with given amount of Steam.
+     * @deprecated make it yourself
      */
+    @Deprecated
     public static FluidStack getSteam(int amount) {
         return Materials.Steam.getFluid(amount);
     }
@@ -146,14 +110,6 @@ public final class ModHandler {
     }
 
     // Furnace Smelting
-
-    /**
-     * @param stack the stack to check
-     * @return the furnace fuel value for the stack
-     */
-    public static int getFuelValue(@Nonnull ItemStack stack) {
-        return TileEntityFurnace.getItemBurnTime(stack);
-    }
 
     /**
      * @param fuelStack the stack to check
@@ -453,14 +409,13 @@ public final class ModHandler {
      */
     @Nonnull
     public static Object finalizeIngredient(@Nonnull Object ingredient) {
-        if (ingredient instanceof MetaItem.MetaValueItem) {
-            ingredient = ((MetaItem<?>.MetaValueItem) ingredient).getStackForm();
-        } else if (ingredient instanceof Enum) {
-            ingredient = ((Enum<?>) ingredient).name();
-        } else if (ingredient instanceof OrePrefix) {
-            ingredient = ((OrePrefix) ingredient).name();
-        } else if (ingredient instanceof UnificationEntry) {
-            UnificationEntry entry = (UnificationEntry) ingredient;
+        if (ingredient instanceof MetaItem.MetaValueItem metaValueItem) {
+            ingredient = metaValueItem.getStackForm();
+        } else if (ingredient instanceof Enum anEnum) {
+            ingredient = anEnum.name();
+        } else if (ingredient instanceof OrePrefix orePrefix) {
+            ingredient = orePrefix.name();
+        } else if (ingredient instanceof UnificationEntry entry) {
             if (ConfigHolder.misc.debug && entry.material != null && !entry.orePrefix.isIgnored(entry.material) &&
                     !entry.orePrefix.doGenerateItem(entry.material)) {
                 logInvalidRecipe("Attempted to create recipe for invalid/missing Unification Entry " + ingredient);
@@ -489,8 +444,7 @@ public final class ModHandler {
         Object2LongMap<Material> materialStacksExploded = new Object2LongOpenHashMap<>();
 
         int itr = 0;
-        while (recipe[itr] instanceof String) {
-            String s = (String) recipe[itr];
+        while (recipe[itr] instanceof String s) {
             for (char c : s.toCharArray()) {
                 if (ToolHelper.getToolFromSymbol(c) != null) continue; // skip tools
                 int count = inputCountMap.getOrDefault(c, 0);

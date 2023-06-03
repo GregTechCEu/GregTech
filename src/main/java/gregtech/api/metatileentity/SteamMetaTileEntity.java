@@ -6,13 +6,13 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.RecipeLogicSteam;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
@@ -23,8 +23,8 @@ import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -36,6 +36,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class SteamMetaTileEntity extends MetaTileEntity {
 
@@ -113,8 +114,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
 
     @Override
     public FluidTankList createImportFluidHandler() {
-        this.steamFluidTank = new FilteredFluidHandler(STEAM_CAPACITY)
-                .setFillPredicate(ModHandler::isSteam);
+        this.steamFluidTank = new FilteredFluidHandler(STEAM_CAPACITY).setFilter(CommonFluidFilters.STEAM);
         return new FluidTankList(false, steamFluidTank);
     }
 
@@ -128,7 +128,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
 
     @Override
     public SoundEvent getSound() {
-        return workableHandler.getRecipeMap().getSound();
+        return Objects.requireNonNull(workableHandler.getRecipeMap()).getSound();
     }
 
     @SideOnly(Side.CLIENT)
