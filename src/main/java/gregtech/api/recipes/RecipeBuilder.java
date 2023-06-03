@@ -60,7 +60,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected boolean hidden = false;
     protected boolean isCTRecipe = false;
     protected int parallel = 0;
-    protected Consumer<RecipeBuilder<?>> onBuildAction = null;
+    protected Consumer<R> onBuildAction = null;
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
     protected IRecipePropertyStorage recipePropertyStorage = null;
     protected boolean recipePropertyStorageErrored = false;
@@ -794,7 +794,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return out;
     }
 
-    protected R onBuild(Consumer<RecipeBuilder<?>> consumer) {
+    protected R onBuild(Consumer<R> consumer) {
         this.onBuildAction = consumer;
         return (R) this;
     }
@@ -806,7 +806,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public void buildAndRegister() {
         if (onBuildAction != null) {
-            onBuildAction.accept(this);
+            onBuildAction.accept((R) this);
         }
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);
