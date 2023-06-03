@@ -1,10 +1,12 @@
-//version: 1685501596
+//version: 1685514775
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
  * Please check https://github.com/GregTechCEu/Buildscripts/blob/master/build.gradle for updates.
  */
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.gtnewhorizons.retrofuturagradle.mcp.ReobfuscatedJar
 import com.modrinth.minotaur.dependencies.ModDependency
 import com.modrinth.minotaur.dependencies.VersionDependency
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
@@ -18,12 +20,14 @@ plugins {
     id 'java'
     id 'java-library'
     id 'eclipse'
+    id 'maven-publish'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.7'
     id 'com.gtnewhorizons.retrofuturagradle' version '1.3.+'
     id 'net.darkhax.curseforgegradle' version '1.0.+' apply false
     id 'com.modrinth.minotaur' version '2.7.+' apply false
     id 'com.diffplug.spotless' version '6.13.0' apply false
     id 'com.palantir.git-version' version '3.0.0' apply false
+    id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
 }
 
 if (verifySettingsGradle()) {
@@ -60,11 +64,15 @@ propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
+propertyDefaultIfUnset("usesShadowedDependencies", false)
+propertyDefaultIfUnset("minimizeShadowedDependencies", true)
+propertyDefaultIfUnset("relocateShadowedDependencies", true)
 propertyDefaultIfUnset("modrinthProjectId", "")
 propertyDefaultIfUnset("modrinthRelations", "")
 propertyDefaultIfUnset("curseForgeProjectId", "")
 propertyDefaultIfUnset("curseForgeRelations", "")
 propertyDefaultIfUnset("releaseType", "release")
+propertyDefaultIfUnset("customMavenPublishUrl", "")
 propertyDefaultIfUnset("enableModernJavaSyntax", false)
 propertyDefaultIfUnset("enableSpotless", false)
 propertyDefaultIfUnset("enableJUnit", false)
@@ -74,22 +82,25 @@ propertyDefaultIfUnsetWithEnvVar("deploymentDebug", false, "DEPLOYMENT_DEBUG")
 // Project property assertions
 
 final String javaSourceDir = 'src/main/java/'
-// If Scala or Kotlin are supported, add those paths here
+final String scalaSourceDir = 'src/main/scala/'
+// If Kotlin is supported, add the path here
 
 final String modGroupPath = modGroup.toString().replace('.' as char, '/' as char)
 final String apiPackagePath = apiPackage.toString().replace('.' as char, '/' as char)
 
 String targetPackageJava = javaSourceDir + modGroupPath
-// If Scala or Kotlin are supported, add those paths here
+String targetPackageScala = scalaSourceDir + modGroupPath
+// If Kotlin is supported, add the path here
 
-if (!getFile(targetPackageJava).exists()) {
-    throw new GradleException("Could not resolve \"modGroup\"! Could not find " + targetPackageJava)
+if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists()) {
+    throw new GradleException("Could not resolve \"modGroup\"! Could not find ${targetPackageJava} or ${targetPackageScala}")
 }
 
 if (apiPackage) {
     targetPackageJava = javaSourceDir + modGroupPath + '/' + apiPackagePath
-    if (!getFile(targetPackageJava).exists()) {
-        throw new GradleException("Could not resolve \"apiPackage\"! Could not find " + targetPackageJava)
+    targetPackageScala = scalaSourceDir + modGroupPath + '/' + apiPackagePath
+    if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists()) {
+        throw new GradleException("Could not resolve \"apiPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala}")
     }
 }
 
@@ -110,21 +121,29 @@ if (usesMixins.toBoolean()) {
     }
     final String mixinPackagePath = mixinsPackage.toString().replaceAll('\\.', '/')
     targetPackageJava = javaSourceDir + modGroupPath + '/' + mixinPackagePath
+    targetPackageScala = scalaSourceDir + modGroupPath + '/' + mixinPackagePath
     if (!getFile(targetPackageJava).exists()) {
-        throw new GradleException("Could not resolve \"mixinsPackage\"! Could not find " + targetPackageJava)
+        throw new GradleException("Could not resolve \"mixinsPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala}")
     }
 }
 
 if (coreModClass) {
     final String coreModPath = coreModClass.toString().replaceAll('\\.', '/')
     String targetFileJava = javaSourceDir + modGroupPath + '/' + coreModPath + '.java'
-    if (!getFile(targetFileJava).exists()) {
+    String targetFileScala = scalaSourceDir + modGroupPath + '/' + coreModPath + '.scala'
+    String targetFileScalaJava = scalaSourceDir + modGroupPath + '/' + coreModPath + '.java'
+    if (!getFile(targetFileJava).exists() && !getFile(targetFileScala).exists() && !getFile(targetFileScalaJava).exists()) {
         throw new GradleException("Could not resolve \"coreModClass\"! Could not find " + targetFileJava)
     }
 }
 
 
 // Plugin application
+
+// Scala
+if (getFile('src/main/scala').exists()) {
+    apply plugin: 'scala'
+}
 
 // Spotless
 //noinspection GroovyAssignabilityCheck
@@ -164,12 +183,21 @@ if (enableSpotless.toBoolean()) {
             //noinspection GroovyAssignabilityCheck
             eclipse('4.19.0').configFile(formatFile)
         }
+        scala {
+            target 'src/*/scala/**/*.scala'
+            scalafmt('3.7.1')
+        }
     }
 }
 
 // Git submodules
 if (project.file('.git/HEAD').isFile() || project.file('.git').isFile()) {
     apply plugin: 'com.palantir.git-version'
+}
+
+// Shadowing
+if (usesShadowedDependencies.toBoolean()) {
+    apply plugin: 'com.github.johnrengelman.shadow'
 }
 
 
@@ -206,6 +234,10 @@ tasks.withType(JavaCompile).configureEach {
             vendor.set(JvmVendorSpec.AZUL)
         })
     }
+}
+
+tasks.withType(ScalaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
 
 
@@ -335,6 +367,13 @@ repositories {
 configurations {
     embed
     implementation.extendsFrom(embed)
+
+    if (usesShadowedDependencies.toBoolean()) {
+        for (config in [compileClasspath, runtimeClasspath, testCompileClasspath, testRuntimeClasspath]) {
+            config.extendsFrom(shadowImplementation)
+            config.extendsFrom(shadowCompile)
+        }
+    }
 }
 
 dependencies {
@@ -437,11 +476,12 @@ processResources {
     exclude('spotless.eclipseformat.xml')
 
     // replace stuff in mcmod.info, nothing else
-    filesMatching(['mcmod.info', 'pack.mcmeta']) { fcd ->
-        // replace version and mcversion
+    filesMatching('mcmod.info') { fcd ->
         fcd.expand(
                 'version': modVersion,
-                'mcversion': minecraftVersion
+                'mcversion': minecraftVersion,
+                'modid': modId,
+                'modname': modName
         )
     }
 }
@@ -449,16 +489,46 @@ processResources {
 // Automatically generate a mixin json file if it does not already exist
 tasks.register('generateAssets') {
     group = 'GT Buildscript'
-    description = 'Generates a mixin config file at /src/main/resources/mixins.modid.json if needed'
-    onlyIf {
-        usesMixins.toBoolean()
-    }
+    description = 'Generates a pack.mcmeta, mcmod.info, or mixins.{modid}.json if needed'
     doLast {
-        def mixinConfigFile = getFile("src/main/resources/mixins.${modId}.json")
-        if (!mixinConfigFile.exists()) {
-            def mixinConfigRefmap = "mixins.${modId}.refmap.json"
+        // pack.mcmeta
+        def packMcmetaFile = getFile('src/main/resources/pack.mcmeta')
+        if (!packMcmetaFile.exists()) {
+            packMcmetaFile.text = """{
+  "pack": {
+    "pack_format": 3,
+    "description": "${modName} Resource Pack"
+  }
+}
+"""
+        }
 
-            mixinConfigFile.text = """{
+        // mcmod.info
+        def mcmodInfoFile = getFile('src/main/resources/mcmod.info')
+        if (!mcmodInfoFile.exists()) {
+            mcmodInfoFile.text = """[{
+    "modid": "\${modid}",
+    "name": "\${modname}",
+    "description": "An example mod for Minecraft 1.12.2 with Forge",
+    "version": "\${version}",
+    "mcversion": "\${mcversion}",
+    "logoFile": "",
+    "url": "",
+    "authorList": [],
+    "credits": "",
+    "dependencies": []
+}]
+"""
+            mcmodInfoFile
+        }
+
+        // mixins.{modid}.json
+        if (usesMixins.toBoolean()) {
+            def mixinConfigFile = getFile("src/main/resources/mixins.${modId}.json")
+            if (!mixinConfigFile.exists()) {
+                def mixinConfigRefmap = "mixins.${modId}.refmap.json"
+
+                mixinConfigFile.text = """{
   "package": "${modGroup}.${mixinsPackage}",
   "refmap": "${mixinConfigRefmap}",
   "target": "@env(DEFAULT)",
@@ -469,6 +539,7 @@ tasks.register('generateAssets') {
   "server": []
 }
 """
+            }
         }
     }
 }
@@ -481,21 +552,7 @@ if (usesMixins.toBoolean()) {
 
 jar {
     manifest {
-        def attribute_map = [:]
-        if (coreModClass) {
-            attribute_map['FMLCorePlugin'] = "${modGroup}.${coreModClass}"
-        }
-        if (!containsMixinsAndOrCoreModOnly.toBoolean() && (usesMixins.toBoolean() || coreModClass)) {
-            attribute_map['FMLCorePluginContainsFMLMod'] = true
-        }
-        if (accessTransformersFile) {
-            attribute_map['FMLAT'] = accessTransformersFile.toString()
-        }
-
-        if (usesMixins.toBoolean()) {
-            attribute_map['ForceLoadAsMod'] = !containsMixinsAndOrCoreModOnly.toBoolean()
-        }
-        attributes(attribute_map)
+        attributes(getManifestAttributes())
     }
 
     // Add all embedded dependencies into the jar
@@ -516,6 +573,66 @@ tasks.register('apiJar', Jar) {
     from(sourceSets.main.output) {
         include "${modGroupPath}/${apiPackagePath}/**"
     }
+}
+
+// Configure shadow jar task
+if (usesShadowedDependencies.toBoolean()) {
+    tasks.named('shadowJar', ShadowJar).configure {
+        manifest {
+            attributes(getManifestAttributes())
+        }
+        // Only shadow classes that are actually used, if enabled
+        if (minimizeShadowedDependencies.toBoolean()) {
+            minimize()
+        }
+        configurations = [
+                project.configurations.shadowImplementation,
+                project.configurations.shadowCompile
+        ]
+        archiveClassifier.set('dev')
+        if (relocateShadowedDependencies.toBoolean()) {
+            relocationPrefix = modGroup + '.shadow'
+            enableRelocation = true
+        }
+    }
+    configurations.runtimeElements.outgoing.artifacts.clear()
+    configurations.apiElements.outgoing.artifacts.clear()
+    configurations.runtimeElements.outgoing.artifact(tasks.named('shadowJar', ShadowJar))
+    configurations.apiElements.outgoing.artifact(tasks.named('shadowJar', ShadowJar))
+    tasks.named('jar', Jar) {
+        enabled = false
+        finalizedBy(tasks.shadowJar)
+    }
+    tasks.named('reobfJar', ReobfuscatedJar) {
+        inputJar.set(tasks.named('shadowJar', ShadowJar).flatMap({it.archiveFile}))
+    }
+    AdhocComponentWithVariants javaComponent = (AdhocComponentWithVariants) project.components.findByName('java')
+    javaComponent.withVariantsFromConfiguration(configurations.shadowRuntimeElements) {
+        skip()
+    }
+    for (runTask in ['runClient', 'runServer']) {
+        tasks.named(runTask).configure {
+            dependsOn('shadowJar')
+        }
+    }
+}
+
+def getManifestAttributes() {
+    def attributes = [:]
+    if (coreModClass) {
+        attributes['FMLCorePlugin'] = "${modGroup}.${coreModClass}"
+    }
+    if (!containsMixinsAndOrCoreModOnly.toBoolean() && (usesMixins.toBoolean() || coreModClass)) {
+        attributes['FMLCorePluginContainsFMLMod'] = true
+    }
+    if (accessTransformersFile) {
+        attributes['FMLAT'] = accessTransformersFile.toString()
+    }
+
+    if (usesMixins.toBoolean()) {
+        attributes['ForceLoadAsMod'] = !containsMixinsAndOrCoreModOnly.toBoolean()
+    }
+    return attributes
 }
 
 
@@ -652,7 +769,7 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
         gameVersions = [minecraftVersion]
         loaders = ["forge"]
         debugMode = deploymentDebug.toBoolean()
-        uploadFile = file("build/libs/${archivesBaseName}-${version}.jar")
+        uploadFile = reobfJar
         additionalFiles = getSecondaryArtifacts()
     }
     if (modrinthRelations.size() != 0) {
@@ -685,6 +802,39 @@ def addModrinthDep(String scope, String type, String name) {
             throw new Exception('Invalid modrinth dependency type: ' + type)
     }
     project.modrinth.dependencies.add(dep)
+}
+
+if (customMavenPublishUrl) {
+    String publishedVersion = modVersion
+
+    publishing {
+        publications {
+            create('maven', MavenPublication) {
+                //noinspection GroovyAssignabilityCheck
+                from components.java
+
+                if (apiPackage) {
+                    artifact apiJar
+                }
+
+                // providers is not available here, use System for getting env vars
+                groupId = System.getenv('ARTIFACT_GROUP_ID') ?: project.group
+                artifactId = System.getenv('ARTIFACT_ID') ?: project.name
+                version = System.getenv('RELEASE_VERSION') ?: publishedVersion
+            }
+        }
+
+        repositories {
+            maven {
+                url = customMavenPublishUrl
+                allowInsecureProtocol = !customMavenPublishUrl.startsWith('https')
+                credentials {
+                    username = providers.environmentVariable('MAVEN_USER').getOrElse('NONE')
+                    password = providers.environmentVariable('MAVEN_PASSWORD').getOrElse('NONE')
+                }
+            }
+        }
+    }
 }
 
 
@@ -820,7 +970,7 @@ def propertyDefaultIfUnsetWithEnvVar(String propertyName, defaultValue, String e
 }
 
 def getSecondaryArtifacts() {
-    def secondaryArtifacts = [jar]
+    def secondaryArtifacts = [usesShadowedDependencies.toBoolean() ? tasks.shadowJar : tasks.jar]
     if (!noPublishedSources.toBoolean()) secondaryArtifacts += [sourcesJar]
     if (apiPackage) secondaryArtifacts += [apiJar]
     return secondaryArtifacts

@@ -356,15 +356,15 @@ public class GTUtility {
      * modifications in list will reflect on fluid handler and wise-versa
      */
     public static List<FluidStack> fluidHandlerToList(IMultipleTankHandler fluidInputs) {
-        List<IFluidTank> backedList = fluidInputs.getFluidTanks();
+        List<IMultipleTankHandler.MultiFluidTankEntry> backedList = fluidInputs.getFluidTanks();
         return new AbstractList<FluidStack>() {
             @Override
             public FluidStack set(int index, FluidStack element) {
-                IFluidTank fluidTank = backedList.get(index);
+                IFluidTank fluidTank = backedList.get(index).getDelegate();
                 FluidStack oldStack = fluidTank.getFluid();
-                if (!(fluidTank instanceof FluidTank))
-                    return oldStack;
-                ((FluidTank) backedList.get(index)).setFluid(element);
+                if (fluidTank instanceof FluidTank) {
+                    ((FluidTank) fluidTank).setFluid(element);
+                }
                 return oldStack;
             }
 
@@ -405,6 +405,8 @@ public class GTUtility {
 
     /**
      * @deprecated Ambiguous naming; use either {@link #copy(ItemStack)} or {@link #copyFirst(ItemStack...)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @Nonnull
@@ -481,10 +483,15 @@ public class GTUtility {
         return ItemStack.EMPTY;
     }
 
-    public static <M> M getOrDefault(List<? extends M> list, int index, M replacement) {
-        if (index >= 0 && index < list.size())
-            return list.get(index);
-        return replacement;
+    /**
+     * @deprecated Use {@link #copy(int, ItemStack)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
+     */
+    @Deprecated
+    @Nonnull
+    public static ItemStack copyAmount(int amount, @Nonnull ItemStack stack) {
+        return copy(amount, stack);
     }
 
     public static int getExplosionPower(long voltage) {
@@ -742,6 +749,8 @@ public class GTUtility {
      * @param stack the stack to retrieve from
      * @return all the sub-items of an ItemStack
      * @deprecated Use {@link #getAllSubItems(Item)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Nonnull
     @Deprecated

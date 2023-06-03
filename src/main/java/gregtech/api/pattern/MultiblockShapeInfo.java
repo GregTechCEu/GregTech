@@ -8,7 +8,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import java.lang.reflect.Array;
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,12 +17,16 @@ import java.util.function.Supplier;
 
 public class MultiblockShapeInfo {
 
-    private final BlockInfo[][][] blocks; //[z][y][x]
+    /** {@code [x][y][z]} */
+    private final BlockInfo[][][] blocks;
 
     public MultiblockShapeInfo(BlockInfo[][][] blocks) {
         this.blocks = blocks;
     }
 
+    /**
+     * @return the blocks in an array of format: {@code [x][y][z]}
+     */
     public BlockInfo[][][] getBlocks() {
         return blocks;
     }
@@ -50,6 +54,10 @@ public class MultiblockShapeInfo {
             return where(symbol, new BlockInfo(blockState));
         }
 
+        public Builder where(char symbol, IBlockState blockState, TileEntity tileEntity) {
+            return where(symbol, new BlockInfo(blockState, tileEntity));
+        }
+
         public Builder where(char symbol, MetaTileEntity tileEntity, EnumFacing frontSide) {
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tileEntity);
@@ -70,23 +78,28 @@ public class MultiblockShapeInfo {
             } else throw new IllegalArgumentException("Supplier must supply either a MetaTileEntity or an IBlockState! Actual: " + part.getClass());
         }
 
+        @Nonnull
         private BlockInfo[][][] bakeArray() {
-            BlockInfo[][][] blockInfos = (BlockInfo[][][]) Array.newInstance(BlockInfo.class, shape.get(0)[0].length(), shape.get(0).length, shape.size());
-            for (int z = 0; z < blockInfos.length; z++) { //z
+            final int maxZ = shape.size();
+            final int maxY = shape.get(0).length;
+            final int maxX = shape.get(0)[0].length();
+            BlockInfo[][][] blockInfos = new BlockInfo[maxX][maxY][maxZ];
+            for (int z = 0; z < maxZ; z++) {
                 String[] aisleEntry = shape.get(z);
-                for (int y = 0; y < shape.get(0).length; y++) {
+                for (int y = 0; y < maxY; y++) {
                     String columnEntry = aisleEntry[y];
-                    for (int x = 0; x < columnEntry.length(); x++) {
+                    for (int x = 0; x < maxX; x++) {
                         BlockInfo info = symbolMap.getOrDefault(columnEntry.charAt(x), BlockInfo.EMPTY);
                         TileEntity tileEntity = info.getTileEntity();
-                        if (tileEntity != null) {
-                            MetaTileEntityHolder holder = (MetaTileEntityHolder) tileEntity;
+                        if (tileEntity instanceof MetaTileEntityHolder holder) {
                             final MetaTileEntity mte = holder.getMetaTileEntity();
                             holder = new MetaTileEntityHolder();
                             holder.setMetaTileEntity(mte);
                             holder.getMetaTileEntity().onPlacement();
                             holder.getMetaTileEntity().setFrontFacing(mte.getFrontFacing());
                             info = new BlockInfo(info.getBlockState(), holder);
+                        } else if (tileEntity != null) {
+                            info = new BlockInfo(info.getBlockState(), tileEntity);
                         }
                         blockInfos[x][y][z] = info;
                     }
