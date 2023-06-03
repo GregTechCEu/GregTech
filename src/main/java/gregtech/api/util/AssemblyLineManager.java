@@ -5,6 +5,7 @@ import gregtech.api.items.metaitem.stats.IDataStick;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.IResearchRecipeBuilder;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -78,7 +79,9 @@ public final class AssemblyLineManager {
      * @param builder the builder to retrieve recipe info from
      */
     public static void createDefaultResearchRecipe(@Nonnull IResearchRecipeBuilder builder) {
+        if (!ConfigHolder.machines.enableResearch) return;
         if (!builder.shouldAddResearchRecipe()) return;
+
         String researchId = builder.getResearchId();
         if (researchId == null) {
             GTLog.logger.warn("Attempted to add default research recipe with null Research Id", new IllegalStateException());

@@ -6,6 +6,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.ResearchProperty;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
+import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -52,8 +53,10 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     private boolean applyResearchProperty(@Nonnull String researchId) {
+        if (!ConfigHolder.machines.enableResearch) return false;
         if (researchId.isEmpty()) {
             GTLog.logger.error("Assembly Line Research Id cannot be empty.", new IllegalArgumentException());
+            recipeStatus = EnumValidationResult.INVALID;
             return false;
         }
         if (applyProperty(ResearchProperty.getInstance(), researchId)) {
