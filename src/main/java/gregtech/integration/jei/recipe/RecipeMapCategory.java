@@ -10,8 +10,14 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.recipeproperties.ResearchProperty;
+import gregtech.api.util.AssemblyLineManager;
+import gregtech.api.util.GTUtility;
 import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.common.ConfigHolder;
+import gregtech.common.items.MetaItems;
 import gregtech.integration.jei.JustEnoughItemsModule;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
 import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
@@ -25,6 +31,7 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.ItemStackHandler;
@@ -61,7 +68,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
         for (int i = 0; i < exportFluidTanks.length; i++)
             exportFluidTanks[i] = new FluidTank(16000);
         this.modularUI = recipeMap.createJeiUITemplate(
-                (importItems = new ItemStackHandler(recipeMap.getMaxInputs())),
+                (importItems = new ItemStackHandler(recipeMap.getMaxInputs() + (recipeMap == RecipeMaps.ASSEMBLY_LINE_RECIPES ? 1 : 0))),
                 (exportItems = new ItemStackHandler(recipeMap.getMaxOutputs())),
                 (importFluids = new FluidTankList(false, importFluidTanks)),
                 (exportFluids = new FluidTankList(false, exportFluidTanks)), 0
@@ -188,6 +195,16 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 }
             }
         }
+
+        if (ConfigHolder.machines.enableResearch && this.recipeMap == RecipeMaps.ASSEMBLY_LINE_RECIPES) {
+            ItemStack dataStick = MetaItems.TOOL_DATA_STICK.getStackForm();
+            if (recipeWrapper.getRecipe().hasProperty(ResearchProperty.getInstance())) {
+                String researchId = recipeWrapper.getRecipe().getProperty(ResearchProperty.getInstance(), "");
+                AssemblyLineManager.writeResearchToNBT(GTUtility.getOrCreateNbtCompound(dataStick), researchId);
+            }
+            itemStackGroup.set(16, dataStick);
+        }
+
         itemStackGroup.addTooltipCallback(recipeWrapper::addItemTooltip);
         fluidStackGroup.addTooltipCallback(recipeWrapper::addFluidTooltip);
         itemStackGroup.set(ingredients);

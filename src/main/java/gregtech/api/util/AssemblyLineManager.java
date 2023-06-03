@@ -37,10 +37,7 @@ public final class AssemblyLineManager {
 
         NBTTagCompound researchCompound = compound.getCompoundTag(RESEARCH_NBT_TAG);
         String researchId = researchCompound.getString(RESEARCH_ID_NBT_TAG);
-        if (researchId.isEmpty()) {
-            throw new IllegalArgumentException("NBTTagCompound did not contain research data");
-        }
-        return researchId;
+        return researchId.isEmpty() ? null : researchId;
     }
 
     /**
