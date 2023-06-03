@@ -65,10 +65,6 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                 textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
                 int currentProgress = (int) (recipeMapWorkable.getProgressPercent() * 100);
                 textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
-            } else if (recipeMapWorkable.getPreviousRecipe() != null) {
-                Recipe recipe = recipeMapWorkable.getPreviousRecipe();
-                // add check for not enough fluid or item inputs
-
             } else {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
             }
