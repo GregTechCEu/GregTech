@@ -6,6 +6,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IDataAccessHatch;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
@@ -39,7 +40,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
@@ -66,9 +66,10 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         if (isCreative) return super.createImportItemHandler();
-        return new ItemStackHandler(getInventorySize()) {
+        return new NotifiableItemStackHandler(getInventorySize(), getController(), false) {
             @Override
-            protected void onContentsChanged(int slot) {
+            public void onContentsChanged(int slot) {
+                super.onContentsChanged(slot);
                 rebuildData();
             }
 
