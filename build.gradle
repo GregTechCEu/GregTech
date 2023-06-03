@@ -1,4 +1,4 @@
-//version: 1685514775
+//version: 1685741895
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -484,6 +484,8 @@ processResources {
                 'modname': modName
         )
     }
+
+    rename '(.+_at.cfg)', 'META-INF/$1'
 }
 
 // Automatically generate a mixin json file if it does not already exist
@@ -936,7 +938,7 @@ tasks.register('faq') {
                 "To add new repositories to your project, place them in 'repositories.gradle'.\n" +
                 "If you need additional gradle code to run, you can place it in a file named 'addon.gradle' (or either of the above, up to you for organization).\n\n" +
                 "If your build fails to recognize the syntax of newer Java versions, enable Jabel in your 'gradle.properties' under the option name 'enableModernJavaSyntax'.\n" +
-                "To see information on how to configure your IDE properly for Java 17, see https://github.com/GregTechCEu/Buildscripts/blob/master/jabel.md\n\n" +
+                "To see information on how to configure your IDE properly for Java 17, see https://github.com/GregTechCEu/Buildscripts/blob/master/docs/jabel.md\n\n" +
                 "Report any issues or feature requests you have for this build script to https://github.com/GregTechCEu/Buildscripts/issues\n")
     }
 }
