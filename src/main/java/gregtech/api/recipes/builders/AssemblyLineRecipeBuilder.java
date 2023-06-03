@@ -40,6 +40,17 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         return new AssemblyLineRecipeBuilder(this);
     }
 
+    @Override
+    public boolean applyProperty(@Nonnull String key, @Nullable Object value) {
+        if (key.equals(ResearchProperty.KEY)) {
+            if (value instanceof ItemStack itemStack) {
+                research(itemStack);
+                return true;
+            }
+        }
+        return super.applyProperty(key, value);
+    }
+
     private boolean applyResearchProperty(@Nonnull String researchId) {
         if (researchId.isEmpty()) {
             GTLog.logger.error("Assembly Line Research Id cannot be empty.", new IllegalArgumentException());
