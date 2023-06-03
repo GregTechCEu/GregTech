@@ -1,17 +1,14 @@
 package gregtech.api.recipes.machines;
 
-import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.stats.IDataStick;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.util.AssemblyLineManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -33,9 +30,9 @@ public class RecipeMapScanner extends RecipeMap<SimpleRecipeBuilder> implements 
             NBTTagCompound compound = second.getTagCompound();
             if (compound == null) return null;
 
-            boolean isFirstDataItem = isStackDataItem(first);
+            boolean isFirstDataItem = AssemblyLineManager.isStackDataItem(first);
             if (!isFirstDataItem) return null;
-            boolean isSecondDataItem = isStackDataItem(second);
+            boolean isSecondDataItem = AssemblyLineManager.isStackDataItem(second);
             if (isSecondDataItem) {
                 ItemStack output = first.copy();
                 output.setTagCompound(compound.copy());
@@ -48,18 +45,5 @@ public class RecipeMapScanner extends RecipeMap<SimpleRecipeBuilder> implements 
 
         }
         return recipe;
-    }
-
-    private static boolean isStackDataItem(@Nonnull ItemStack stack) {
-        if (stack.getItem() instanceof MetaItem<?> metaItem) {
-            MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(stack);
-            if (valueItem == null) return false;
-            for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
-                if (behaviour instanceof IDataStick) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

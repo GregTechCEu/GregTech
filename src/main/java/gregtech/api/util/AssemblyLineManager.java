@@ -1,10 +1,14 @@
 package gregtech.api.util;
 
+import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.metaitem.stats.IDataStick;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.IResearchRecipeBuilder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,7 +22,7 @@ public final class AssemblyLineManager {
 
     /**
      * @param stackCompound the compound contained on the ItemStack to write to
-     * @param researchId the research id
+     * @param researchId    the research id
      */
     public static void writeResearchToNBT(@Nonnull NBTTagCompound stackCompound, @Nonnull String researchId) {
         NBTTagCompound compound = new NBTTagCompound();
@@ -41,6 +45,34 @@ public final class AssemblyLineManager {
     }
 
     /**
+     * @param stack the stack to check
+     * @return if the stack is a data item
+     */
+    public static boolean isStackDataItem(@Nonnull ItemStack stack) {
+        if (stack.getItem() instanceof MetaItem<?> metaItem) {
+            MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(stack);
+            if (valueItem == null) return false;
+            for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
+                if (behaviour instanceof IDataStick) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param stack the stack to check
+     * @return if the stack has the research NBTTagCompound
+     */
+    public static boolean hasResearchTag(@Nonnull ItemStack stack) {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null) return false;
+
+        return compound.hasKey(RESEARCH_NBT_TAG, Constants.NBT.TAG_COMPOUND);
+    }
+
+    /**
      * Create the default research recipe
      *
      * @param builder the builder to retrieve recipe info from
@@ -58,8 +90,8 @@ public final class AssemblyLineManager {
         writeResearchToNBT(compound, researchId);
 
         RecipeMaps.SCANNER_RECIPES.recipeBuilder()
-                .inputs(builder.getResearchStack().copy())
                 .input(MetaItems.TOOL_DATA_STICK)
+                .inputs(builder.getResearchStack().copy())
                 .outputs(output)
                 .duration(builder.getResearchDuration())
                 .EUt(builder.getResearchEUt())

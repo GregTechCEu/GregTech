@@ -27,6 +27,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     public AssemblyLineRecipeBuilder(@Nonnull AssemblyLineRecipeBuilder builder) {
+        super(builder);
         this.shouldAddResearchRecipe = builder.shouldAddResearchRecipe;
         this.researchId = builder.researchId;
         this.researchStack = builder.researchStack;

@@ -4815,6 +4815,11 @@ gregtech.machine.passthrough_hatch_item.tooltip=Sends Items from one Side to the
 gregtech.machine.passthrough_hatch_fluid.name=Fluid Passthrough Hatch
 gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to the other
 
+gregtech.machine.data_access_hatch.name=Data Access Hatch
+gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
+gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Sticks
+gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
+gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
