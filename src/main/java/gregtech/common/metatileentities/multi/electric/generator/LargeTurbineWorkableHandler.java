@@ -8,7 +8,9 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.util.TextFormattingUtil;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
@@ -115,7 +117,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
     }
 
     @Nullable
-    protected FluidStack getRecipeFluidInputAmount() {
+    protected String getRecipeFluidInputAmount() {
         IRotorHolder rotorHolder = ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder();
         if (rotorHolder == null || !rotorHolder.hasRotor())
             return null;
@@ -124,7 +126,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
             FluidStack requiredFluidInput = previousRecipe.getFluidInputs().get(0).getInputFluidStack().copy();
             int fuelEnergyValue = requiredFluidInput.amount / -(previousRecipe.getEUt());
             requiredFluidInput.amount = (int) (fuelEnergyValue * getMaxVoltage() / (rotorHolder.getTotalEfficiency() / 100f));
-            return requiredFluidInput;
+            return TextFormattingUtil.format("%,dL ", requiredFluidInput.amount, TextFormatting.RED) + TextFormattingUtil.format("%s", requiredFluidInput.getLocalizedName());
         }
         return null;
     }

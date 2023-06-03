@@ -1,5 +1,9 @@
 package gregtech.api.util;
 
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+
 public class TextFormattingUtil {
 
     private static final long[] metricSuffixValues = {
@@ -42,5 +46,37 @@ public class TextFormattingUtil {
 
     public static String formatLongToCompactString(long value) {
         return formatLongToCompactString(value, 3);
+    }
+
+    public static String format(String format, Object toFormat, TextFormatting color) {
+        return new TextComponentString(String.format(format, toFormat)).setStyle(new Style().setColor(color)).getFormattedText();
+    }
+
+    public static String format(String format, Object toFormat) {
+        return new TextComponentString(String.format(format, toFormat)).getFormattedText();
+    }
+
+    public static String formatIntPretty(int number) {
+        return formatLongPretty(number);
+    }
+
+    public static String formatIntPretty(int number, TextFormatting color) {
+        return formatLongPretty(number, color);
+    }
+
+    public static String colorInt(int number, TextFormatting color) {
+        return formatLongPretty(number, color);
+    }
+
+    public static String formatLongPretty(long number) {
+        return new TextComponentString(String.format("%,d", number)).getFormattedText();
+    }
+
+    public static String formatLongPretty(long number, TextFormatting color) {
+        return new TextComponentString(String.format("%,d", number)).setStyle(new Style().setColor(color)).getFormattedText();
+    }
+
+    public static String colorLong(long number, TextFormatting color) {
+        return new TextComponentString(String.format("%d", number)).setStyle(new Style().setColor(color)).getFormattedText();
     }
 }
