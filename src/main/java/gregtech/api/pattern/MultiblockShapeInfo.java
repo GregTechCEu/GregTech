@@ -54,6 +54,10 @@ public class MultiblockShapeInfo {
             return where(symbol, new BlockInfo(blockState));
         }
 
+        public Builder where(char symbol, IBlockState blockState, TileEntity tileEntity) {
+            return where(symbol, new BlockInfo(blockState, tileEntity));
+        }
+
         public Builder where(char symbol, MetaTileEntity tileEntity, EnumFacing frontSide) {
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tileEntity);
@@ -87,14 +91,15 @@ public class MultiblockShapeInfo {
                     for (int x = 0; x < maxX; x++) {
                         BlockInfo info = symbolMap.getOrDefault(columnEntry.charAt(x), BlockInfo.EMPTY);
                         TileEntity tileEntity = info.getTileEntity();
-                        if (tileEntity != null) {
-                            MetaTileEntityHolder holder = (MetaTileEntityHolder) tileEntity;
+                        if (tileEntity instanceof MetaTileEntityHolder holder) {
                             final MetaTileEntity mte = holder.getMetaTileEntity();
                             holder = new MetaTileEntityHolder();
                             holder.setMetaTileEntity(mte);
                             holder.getMetaTileEntity().onPlacement();
                             holder.getMetaTileEntity().setFrontFacing(mte.getFrontFacing());
                             info = new BlockInfo(info.getBlockState(), holder);
+                        } else if (tileEntity != null) {
+                            info = new BlockInfo(info.getBlockState(), tileEntity);
                         }
                         blockInfos[x][y][z] = info;
                     }

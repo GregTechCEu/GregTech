@@ -471,9 +471,10 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             TileEntity tileEntity = blockInfo.getTileEntity();
             if (tileEntity != null) {
                 this.isTile = true;
-                MetaTileEntity mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
-                if (mte instanceof MultiblockControllerBase)
-                    this.isController = true;
+                if (tileEntity instanceof IGregTechTileEntity iGregTechTileEntity) {
+                    MetaTileEntity mte = iGregTechTileEntity.getMetaTileEntity();
+                    this.isController = mte instanceof MultiblockControllerBase;
+                }
             }
         }
 
