@@ -9,6 +9,7 @@ import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.*;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.AssemblyLineManager;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.init.SoundEvents;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -131,9 +132,10 @@ public class RecipeMaps {
      * The Assembly Line Recipe Builder has no special properties/build actions yet, but will in the future
      */
     @ZenProperty
-    public static final RecipeMapAssemblyLine<SimpleRecipeBuilder> ASSEMBLY_LINE_RECIPES = (RecipeMapAssemblyLine<SimpleRecipeBuilder>) new RecipeMapAssemblyLine<>("assembly_line", 16, false, 1, false,  4, false,  0, false, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<AssemblyLineRecipeBuilder> ASSEMBLY_LINE_RECIPES = new RecipeMapAssemblyLine<>("assembly_line", 16, false, 1, false, 4, false, 1, false, new AssemblyLineRecipeBuilder(), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
-            .setSound(GTSoundEvents.ASSEMBLER);
+            .setSound(GTSoundEvents.ASSEMBLER)
+            .onRecipeBuild(AssemblyLineManager::createDefaultResearchRecipe);
 
     /**
      * Example:
@@ -1038,7 +1040,6 @@ public class RecipeMaps {
      * Currently unused
      */
     @ZenProperty
-    @SuppressWarnings("unused")
     public static final RecipeMap<SimpleRecipeBuilder> SCANNER_RECIPES = new RecipeMap<>("scanner", 2, 1, 1, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.DATA_ORB_OVERLAY)
             .setSlotOverlay(false, false, true, GuiTextures.SCANNER_OVERLAY)
