@@ -21,22 +21,22 @@ public final class GTRecipeCategory {
     /**
      * Create a GTRecipeCategory
      *
-     * @param modid the mod id of the category
-     * @param name the name of the category, used in translation. Uses the recipeMap's translation key if null.
-     * @param recipeMap the recipemap that accepts this category
+     * @param modid           the mod id of the category
+     * @param name            the name of the category
+     * @param unlocalizedName the unlocalized name of the category, used for translation.
+     * @param recipeMap       the recipemap that accepts this category
      * @return the new category
      */
     @Nonnull
-    public static GTRecipeCategory create(@Nonnull String modid, @Nullable String name, @Nonnull RecipeMap<?> recipeMap) {
-        String key = name == null ? recipeMap.getUnlocalizedName() : name;
-        return categories.computeIfAbsent(key, (k) -> new GTRecipeCategory(modid, name, recipeMap));
+    public static GTRecipeCategory create(@Nonnull String modid, @Nonnull String name, @Nonnull String unlocalizedName, @Nonnull RecipeMap<?> recipeMap) {
+        return categories.computeIfAbsent(name, (k) -> new GTRecipeCategory(modid, name, unlocalizedName, recipeMap));
     }
 
-    private GTRecipeCategory(@Nonnull String modid, @Nullable String name, @Nonnull RecipeMap<?> recipeMap) {
+    private GTRecipeCategory(@Nonnull String modid, @Nonnull String name, @Nonnull String unlocalizedName, @Nonnull RecipeMap<?> recipeMap) {
         this.modid = modid;
-        this.name = name == null ? recipeMap.getUnlocalizedName() : name;
+        this.name = name;
         this.uniqueID = modid + ':' + this.name;
-        this.unlocalizedName = name == null ? recipeMap.getTranslationKey() : modid + ".recipe.category." + name;
+        this.unlocalizedName = unlocalizedName;
         this.recipeMap = recipeMap;
     }
 
