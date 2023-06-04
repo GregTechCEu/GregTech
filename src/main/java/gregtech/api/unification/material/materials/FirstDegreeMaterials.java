@@ -903,7 +903,7 @@ public class FirstDegreeMaterials {
                 .dust().ore()
                 .color(0xC86E2D).iconSet(FINE)
                 .flags(MAGNETIC_ORE)
-                .components(Cerium, 1, Carbon, 1, Fluorine, 1, Oxygen, 3)
+                .components(Cerium, 1, Fluorine, 1, Carbon, 1, Oxygen, 3)
                 .build();
 
         Pentlandite = new Material.Builder(380, "pentlandite")

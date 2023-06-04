@@ -483,6 +483,12 @@ public class GTUtility {
         return ItemStack.EMPTY;
     }
 
+    public static <M> M getOrDefault(List<? extends M> list, int index, M replacement) {
+        if (index >= 0 && index < list.size())
+            return list.get(index);
+        return replacement;
+    }
+
     /**
      * @deprecated Use {@link #copy(int, ItemStack)}
      *

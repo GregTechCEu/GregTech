@@ -18,7 +18,7 @@ public class PlatGroupMetalsRecipes {
                 .fluidInputs(SulfuricAcid.getFluid(3000))
                 .output(dust, PlatinumGroupSludge, 2)
                 .output(dust, BlueVitriol, 2)
-                .output(dust, GreenVitriol,)
+                .output(dust, GreenVitriol)
                 .duration(50).EUt(30).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
@@ -26,7 +26,7 @@ public class PlatGroupMetalsRecipes {
                 .fluidInputs(SulfuricAcid.getFluid(3000))
                 .output(dust, PlatinumGroupSludge, 2)
                 .output(dust, CyanVitriol, 2)
-                .output(dust, RedVitriol,)
+                .output(dust, RedVitriol)
                 .duration(50).EUt(30).buildAndRegister();
 
         // Aqua Regia
