@@ -104,7 +104,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> fluidIngredientRoot = new WeakHashMap<>();
 
 
-    private Consumer<RecipeBuilder<?>> onRecipeBuildAction;
+    private Consumer<R> onRecipeBuildAction;
     protected SoundEvent sound;
     private RecipeMap<?> smallRecipeMap;
 
@@ -249,7 +249,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    public RecipeMap<R> onRecipeBuild(Consumer<RecipeBuilder<?>> consumer) {
+    public RecipeMap<R> onRecipeBuild(Consumer<R> consumer) {
         onRecipeBuildAction = consumer;
         return this;
     }
