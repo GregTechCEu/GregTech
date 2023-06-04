@@ -6,8 +6,8 @@ import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
+import gregtech.integration.RecipeCompatUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.*;
@@ -21,7 +21,7 @@ public class GroovyHandCommand {
     public static void onHandCommand(GsHandEvent event) {
         ItemStack stackInHand = event.stack;
 
-        String id = CTRecipeHelper.getMetaItemId(stackInHand);
+        String id = RecipeCompatUtil.getMetaItemId(stackInHand);
         if (id != null) {
             String copyText = "metaitem('" + id + "')";
             ClipboardUtil.copyToClipboard((EntityPlayerMP) event.player, copyText);

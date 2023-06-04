@@ -134,7 +134,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                     if (!inputStack.isEmpty() && (itemStack.isEmpty() || areItemStackIdentical(itemStack, inputStack))) {
                         int amountOfItemsToInsert = (int) Math.min(inputStack.getCount(), maxStoredItems - itemsStoredInside);
                         if (this.itemsStoredInside == 0L || itemStack.isEmpty()) {
-                            this.itemStack = GTUtility.copyAmount(1, inputStack);
+                            this.itemStack = GTUtility.copy(1, inputStack);
                         }
                         inputStack.shrink(amountOfItemsToInsert);
                         importItems.setStackInSlot(0, inputStack);
@@ -150,7 +150,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 if (outputStack.isEmpty() || (areItemStackIdentical(itemStack, outputStack) && outputStack.getCount() < maxStackSize)) {
                     int amountOfItemsToRemove = (int) Math.min(maxStackSize - outputStack.getCount(), itemsStoredInside);
                     if (outputStack.isEmpty()) {
-                        outputStack = GTUtility.copyAmount(amountOfItemsToRemove, itemStack);
+                        outputStack = GTUtility.copy(amountOfItemsToRemove, itemStack);
                     } else outputStack.grow(amountOfItemsToRemove);
                     exportItems.setStackInSlot(0, outputStack);
                     this.itemsStoredInside -= amountOfItemsToRemove;

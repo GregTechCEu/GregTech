@@ -1,10 +1,12 @@
 package gregtech.api.capability.impl;
 
+import com.google.common.collect.ImmutableList;
 import gregtech.Bootstrap;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
@@ -16,6 +18,7 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMaintenanceHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -545,5 +548,212 @@ public class MultiblockRecipeLogicTest {
         mbl.completeRecipe();
         MatcherAssert.assertThat(AbstractRecipeLogic.areItemStacksEqual(mbl.getOutputInventory().getStackInSlot(0),
                 new ItemStack(Blocks.STONE, 1)), is(true));
+    }
+
+    @Test
+    public void testMaintenancePenalties() {
+        TestableMaintenanceHatch maintenanceHatch = new TestableMaintenanceHatch(gregtechId("maintenance.hatch"), false);
+
+        RecipeMapMultiblockController mbt = MetaTileEntities.registerMetaTileEntity(508,
+                new MetaTileEntityElectricBlastFurnace(
+                        // super function calls the world, which equal null in test
+                        new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
+                    @Override
+                    public boolean canBeDistinct() {
+                        return false;
+                    }
+
+                    @Override
+                    public void reinitializeStructurePattern() {
+
+                    }
+
+                    // function checks for the temperature of the recipe against the coils
+                    @Override
+                    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+                        return true;
+                    }
+
+                    // testing maintenance problems
+                    @Override
+                    public boolean hasMaintenanceMechanics() {
+                        return true;
+                    }
+
+                    // ignore muffler outputs
+                    @Override
+                    public boolean hasMufflerMechanics() {
+                        return false;
+                    }
+
+                    @Override
+                    public <T> List<T> getAbilities(MultiblockAbility<T> ability) {
+                        if (ability == MultiblockAbility.MAINTENANCE_HATCH) {
+                            //noinspection unchecked
+                            return (List<T>) ImmutableList.of(maintenanceHatch);
+                        }
+                        return super.getAbilities(ability);
+                    }
+                });
+
+        //isValid() check in the dirtying logic requires both a metatileentity and a holder
+        try {
+            Field field = MetaTileEntity.class.getDeclaredField("holder");
+            field.setAccessible(true);
+            field.set(mbt, new MetaTileEntityHolder());
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Field field = MetaTileEntityHolder.class.getDeclaredField("metaTileEntity");
+            field.setAccessible(true);
+            field.set(mbt.getHolder(), mbt);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        ((MetaTileEntityHolder) mbt.getHolder()).setWorld(DummyWorld.INSTANCE);
+
+        maintenanceHatch.myController = mbt;
+
+        //Controller and isAttachedToMultiBlock need the world so we fake it here.
+        MetaTileEntityItemBus importItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false) {
+            @Override
+            public boolean isAttachedToMultiBlock() {
+                return true;
+            }
+
+            @Override
+            public MultiblockControllerBase getController() {
+                return mbt;
+            }
+        };
+        MetaTileEntityItemBus exportItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, true) {
+            @Override
+            public boolean isAttachedToMultiBlock() {
+                return true;
+            }
+
+            @Override
+            public MultiblockControllerBase getController() {
+                return mbt;
+            }
+        };
+
+        //Controller is a private field but we need that information
+        try {
+            Field field = MetaTileEntityMultiblockPart.class.getDeclaredField("controllerTile");
+            field.setAccessible(true);
+            field.set(importItemBus, mbt);
+            field.set(exportItemBus, mbt);
+            field.set(maintenanceHatch, mbt);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        MultiblockRecipeLogic mbl = new MultiblockRecipeLogic(mbt) {
+
+            @Override
+            protected long getEnergyStored() {
+                return Long.MAX_VALUE;
+            }
+
+            @Override
+            protected long getEnergyCapacity() {
+                return Long.MAX_VALUE;
+            }
+
+            @Override
+            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+                return true;
+            }
+
+            @Override
+            public long getMaxVoltage() {
+                return 32;
+            }
+
+            // since the hatches were not really added to a valid multiblock structure,
+            // refer to their inventories directly
+            @Override
+            protected IItemHandlerModifiable getInputInventory() {
+                return importItemBus.getImportItems();
+            }
+
+            @Override
+            protected IItemHandlerModifiable getOutputInventory() {
+                return exportItemBus.getExportItems();
+            }
+
+            @Override
+            protected IMultipleTankHandler getInputTank() {
+                return new FluidTankList(false);
+            }
+
+            @Override
+            protected IMultipleTankHandler getOutputTank() {
+                return new FluidTankList(false);
+            }
+
+            @Override
+            protected List<IItemHandlerModifiable> getInputBuses() {
+                List<IItemHandlerModifiable> a = new ArrayList<>();
+                a.add(importItemBus.getImportItems());
+                return a;
+            }
+        };
+
+        RecipeMaps.BLAST_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.CRAFTING_TABLE))
+                .outputs(new ItemStack(Blocks.STONE))
+                .EUt(10).duration(10)
+                .blastFurnaceTemp(1)
+                .buildAndRegister();
+
+        // start off as fixed
+        for (int i = 0; i < 6; i++) {
+            mbt.setMaintenanceFixed(i);
+        }
+
+        // cause one problem
+        mbt.causeMaintenanceProblems();
+
+        MatcherAssert.assertThat(mbt.getNumMaintenanceProblems(), is(1));
+
+        IItemHandlerModifiable firstBus = mbl.getInputBuses().get(0);
+        firstBus.insertItem(0, new ItemStack(Blocks.CRAFTING_TABLE, 1), false);
+        mbl.trySearchNewRecipe();
+
+        // 1 problem is 10% slower. 10 * 1.1 = 11
+        MatcherAssert.assertThat(mbl.maxProgressTime, is(11));
+
+        mbl.completeRecipe();
+
+        // fix old problems
+        for (int i = 0; i < 6; i++) {
+            mbt.setMaintenanceFixed(i);
+        }
+
+        firstBus.insertItem(0, new ItemStack(Blocks.CRAFTING_TABLE, 1), false);
+        mbl.trySearchNewRecipe();
+
+        // 0 problems should have the regular duration of 10
+        MatcherAssert.assertThat(mbl.maxProgressTime, is(10));
+    }
+
+    // needed to prevent cyclic references in anonymous class creation
+    private static class TestableMaintenanceHatch extends MetaTileEntityMaintenanceHatch {
+
+        public RecipeMapMultiblockController myController;
+
+        public TestableMaintenanceHatch(ResourceLocation metaTileEntityId, boolean isConfigurable) {
+            super(metaTileEntityId, isConfigurable);
+        }
+
+        @Override
+        public MultiblockControllerBase getController() {
+            return myController;
+        }
     }
 }

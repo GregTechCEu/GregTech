@@ -15,6 +15,8 @@ public @interface GregTechModule {
 
     String name();
 
+    String[] modDependencies() default {};
+
     boolean coreModule() default false;
 
     String author() default "";

@@ -76,7 +76,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
             stack.setCount(maxAmount);
             int addAmount = super.insertItem(slot, stack, simulate).getCount();
             int totalAmount = remainder + addAmount;
-            return totalAmount == 0 ? ItemStack.EMPTY : GTUtility.copyAmount(totalAmount, stack);
+            return totalAmount == 0 ? ItemStack.EMPTY : GTUtility.copy(totalAmount, stack);
         }
 
         @Override

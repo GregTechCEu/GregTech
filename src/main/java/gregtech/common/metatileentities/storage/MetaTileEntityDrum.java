@@ -6,11 +6,9 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.capability.impl.FilteredFluidHandler;
-import gregtech.api.capability.impl.ThermalFluidHandlerItemStack;
-import gregtech.api.fluids.MaterialFluid;
-import gregtech.api.fluids.fluidType.FluidType;
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.capability.impl.GTFluidHandlerItemStack;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -36,7 +34,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
@@ -52,8 +49,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT;
-import static gregtech.api.recipes.ModHandler.isMaterialWood;
-import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
 
 public class MetaTileEntityDrum extends MetaTileEntity {
 
@@ -66,9 +61,6 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         super(metaTileEntityId);
         this.tankSize = tankSize;
         this.material = material;
-        if (!isMaterialWood(material) && !this.material.hasProperty(PropertyKey.FLUID_PIPE)) {
-            throw new IllegalArgumentException(String.format("Material %s requires FluidPipePropety for Drums", material));
-        }
         initializeInventory();
     }
 
@@ -98,7 +90,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public String getHarvestTool() {
-        return isMaterialWood(material) ? ToolClasses.AXE : ToolClasses.WRENCH;
+        return ModHandler.isMaterialWood(material) ? ToolClasses.AXE : ToolClasses.WRENCH;
     }
 
     @Override
@@ -108,35 +100,13 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     protected void initializeInventory() {
+        if (this.material == null) return; // call before field initialization, should be called later with fields set
         super.initializeInventory();
-        this.fluidTank = new FilteredFluidHandler(tankSize)
-                .setFillPredicate(stack -> {
-                    if (stack == null || stack.getFluid() == null) return false;
-
-                    Fluid fluid = stack.getFluid();
-                    if (isMaterialWood(material)) {
-                        boolean meetsGTRequirements = true;
-                        if (fluid instanceof MaterialFluid) {
-                            FluidType fluidType = ((MaterialFluid) fluid).getFluidType();
-                            meetsGTRequirements = fluidType != FluidTypes.ACID && fluidType != FluidTypes.PLASMA;
-                        }
-                        return fluid.getTemperature() <= 340 && !fluid.isGaseous() && meetsGTRequirements;
-                    }
-
-                    FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
-                    if (fluid.getTemperature() > pipeProperties.getMaxFluidTemperature()) return false;
-                    // fluids less than 120K are cryogenic
-                    if (fluid.getTemperature() < 120 && !pipeProperties.isCryoProof()) return false;
-                    if (fluid.isGaseous() && !pipeProperties.isGasProof()) return false;
-
-                    if (fluid instanceof MaterialFluid) {
-                        FluidType fluidType = ((MaterialFluid) fluid).getFluidType();
-                        if (fluidType == FluidTypes.ACID && !pipeProperties.isAcidProof()) return false;
-                        if (fluidType == FluidTypes.PLASMA && !pipeProperties.isPlasmaProof()) return false;
-                    }
-                    return true;
-                });
-        this.fluidInventory = fluidTank;
+        IPropertyFluidFilter filter = this.material.getProperty(PropertyKey.FLUID_PIPE);
+        if (filter == null) {
+            throw new IllegalArgumentException(String.format("Material %s requires FluidPipePropety for Drums", material));
+        }
+        this.fluidInventory = this.fluidTank = new FilteredFluidHandler(tankSize).setFilter(filter);
     }
 
     @Override
@@ -161,17 +131,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public ICapabilityProvider initItemStackCapabilities(ItemStack itemStack) {
-        if (isMaterialWood(material) || material.hasFlag(FLAMMABLE)) {
-            return new ThermalFluidHandlerItemStack(itemStack, tankSize, 340, false, false, false, false);
-        }
-
-        FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
-        return new ThermalFluidHandlerItemStack(itemStack, tankSize,
-                pipeProperties.getMaxFluidTemperature(),
-                pipeProperties.isGasProof(),
-                pipeProperties.isAcidProof(),
-                pipeProperties.isCryoProof(),
-                pipeProperties.isPlasmaProof());
+        return new GTFluidHandlerItemStack(itemStack, tankSize).setFilter(this.fluidTank.getFilter());
     }
 
     @Override
@@ -255,7 +215,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        if(isMaterialWood(material)) {
+        if (ModHandler.isMaterialWood(material)) {
             return Pair.of(Textures.WOODEN_DRUM.getParticleTexture(), getPaintingColorForRendering());
         } else {
             int color = ColourRGBA.multiply(
@@ -268,7 +228,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if(isMaterialWood(material)) {
+        if (ModHandler.isMaterialWood(material)) {
             ColourMultiplier multiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             Textures.WOODEN_DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier), getFrontFacing());
         } else {
@@ -292,17 +252,16 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", tankSize));
         if (TooltipHelper.isShiftDown()) {
-            if (ModHandler.isMaterialWood(material)) {
-                tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", 340));
-                tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
+            FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
+            tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", pipeProperties.getMaxFluidTemperature()));
+            if (pipeProperties.isGasProof()) {
+                tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
             } else {
-                FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
-                tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", pipeProperties.getMaxFluidTemperature()));
-                if (pipeProperties.isGasProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
-                if (pipeProperties.isAcidProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
-                if (pipeProperties.isCryoProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
-                if (pipeProperties.isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
+                tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
             }
+            if (pipeProperties.isAcidProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
+            if (pipeProperties.isCryoProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
+            if (pipeProperties.isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_down"));
             tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
@@ -348,5 +307,4 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     protected boolean shouldSerializeInventories() {
         return false;
     }
-
 }

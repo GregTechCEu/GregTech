@@ -7,14 +7,11 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.DustProperty;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
@@ -29,8 +26,6 @@ import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
-import gregtech.integration.groovy.GroovyScriptCompat;
-import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
@@ -49,12 +44,10 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -103,13 +96,6 @@ public class CommonProxy {
                 }
             }
         }
-        for (BlockFluidPipe pipe : FLUID_PIPES) {
-            if (!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
-                    !pipe.getItemPipeType(pipe.getItem(Materials.TreatedWood)).getOrePrefix().isIgnored(Materials.TreatedWood)) {
-                pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(340, 5, false, false, false, false));
-                pipe.addPipeMaterial(Materials.TreatedWood, new FluidPipeProperties(340, 10, false, false, false, false));
-            }
-        }
 
         for (BlockCable cable : CABLES) registry.register(cable);
         for (BlockFluidPipe pipe : FLUID_PIPES) registry.register(pipe);
@@ -154,10 +140,10 @@ public class CommonProxy {
         for (BlockLamp block : LAMPS.values()) registry.register(block);
         for (BlockLamp block : BORDERLESS_LAMPS.values()) registry.register(block);
 
-        COMPRESSED.values().stream().distinct().forEach(registry::register);
-        FRAMES.values().stream().distinct().forEach(registry::register);
-        SURFACE_ROCK.values().stream().distinct().forEach(registry::register);
-        ORES.forEach(registry::register);
+        for (BlockCompressed block : COMPRESSED_BLOCKS) registry.register(block);
+        for (BlockFrame block : FRAME_BLOCKS) registry.register(block);
+        for (BlockSurfaceRock block : SURFACE_ROCK_BLOCKS) registry.register(block);
+        for (BlockOre block : ORES) registry.register(block);
     }
 
     private static void createOreBlock(Material material) {
@@ -254,17 +240,15 @@ public class CommonProxy {
         registry.register(createItemBlock(RUBBER_LEAVES, ItemBlock::new));
         registry.register(createItemBlock(RUBBER_SAPLING, ItemBlock::new));
 
-        COMPRESSED.values()
-                .stream().distinct()
-                .map(block -> createItemBlock(block, CompressedItemBlock::new))
-                .forEach(registry::register);
-        FRAMES.values()
-                .stream().distinct()
-                .map(block -> createItemBlock(block, FrameItemBlock::new))
-                .forEach(registry::register);
-        ORES.stream()
-                .map(block -> createItemBlock(block, OreItemBlock::new))
-                .forEach(registry::register);
+        for (BlockCompressed block : COMPRESSED_BLOCKS) {
+            registry.register(createItemBlock(block, b -> new MaterialItemBlock(b, OrePrefix.block)));
+        }
+        for (BlockFrame block : FRAME_BLOCKS) {
+            registry.register(createItemBlock(block, b -> new MaterialItemBlock(b, OrePrefix.frameGt)));
+        }
+        for (BlockOre block : ORES) {
+            registry.register(createItemBlock(block, OreItemBlock::new));
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -314,13 +298,6 @@ public class CommonProxy {
         GTLog.logger.info("Running late material handlers...");
         OrePrefix.runMaterialHandlers();
         GTRecipeManager.loadLatest();
-
-        if (Loader.isModLoaded(GTValues.MODID_CT)) {
-            MetaItemBracketHandler.rebuildComponentRegistry();
-        }
-        if (GroovyScriptCompat.isLoaded()) {
-            GroovyScriptCompat.loadMetaItemBracketHandler();
-        }
     }
 
     @SubscribeEvent
@@ -339,13 +316,11 @@ public class CommonProxy {
             event.setBurnTime(100);
         } else if (block == WOOD_SLAB) {
             event.setBurnTime(150);
-        } else if (stack.getItem() instanceof CompressedItemBlock) {
+        } else if (block instanceof BlockCompressed) {
             //handle material blocks burn value
-            CompressedItemBlock itemBlock = (CompressedItemBlock) stack.getItem();
-            Material material = itemBlock.getBlockState(stack).getValue(itemBlock.compressedBlock.variantProperty);
+            Material material = ((BlockCompressed) block).getGtMaterial(stack);
             DustProperty property = material.getProperty(PropertyKey.DUST);
-            if (property != null &&
-                    property.getBurnTime() > 0) {
+            if (property != null && property.getBurnTime() > 0) {
                 //compute burn value for block prefix, taking amount of material in block into account
                 double materialUnitsInBlock = OrePrefix.block.getMaterialAmount(material) / (GTValues.M * 1.0);
                 event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));
@@ -378,9 +353,6 @@ public class CommonProxy {
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
-        if (Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
-            GTJeiPlugin.setupInputHandler();
-        }
         GTRecipeInput.INSTANCES = new ObjectOpenHashSet<>();
     }
 

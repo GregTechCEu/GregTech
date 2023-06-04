@@ -64,12 +64,12 @@ public class PipeRecipeHandler {
                 'P', new UnificationEntry(unrestrictive, material), 'R', OreDictUnifier.get(OrePrefix.ring, Materials.Iron));
     }
 
-    private static void processPipeTiny(OrePrefix pipePrefix, Material material, IMaterialProperty<?> property) {
+    private static void processPipeTiny(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 1)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
-                .outputs(GTUtility.copyAmount(2, pipeStack))
+                .outputs(GTUtility.copy(2, pipeStack))
                 .duration((int) (material.getMass()))
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
@@ -78,18 +78,18 @@ public class PipeRecipeHandler {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(OrePrefix.dust, material, 1)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
-                    .outputs(GTUtility.copyAmount(2, pipeStack))
+                    .outputs(GTUtility.copy(2, pipeStack))
                     .duration((int) (material.getMass()))
                     .EUt(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
             ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material),
-                    GTUtility.copyAmount(2, pipeStack), " s ", "hXw",
+                    GTUtility.copy(2, pipeStack), " s ", "hXw",
                     'X', new UnificationEntry(OrePrefix.plate, material));
         }
     }
 
-    private static void processPipeSmall(OrePrefix pipePrefix, Material material, IMaterialProperty<?> property) {
+    private static void processPipeSmall(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 1)
@@ -114,7 +114,7 @@ public class PipeRecipeHandler {
         }
     }
 
-    private static void processPipeNormal(OrePrefix pipePrefix, Material material, IMaterialProperty<?> property) {
+    private static void processPipeNormal(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 3)
@@ -139,7 +139,7 @@ public class PipeRecipeHandler {
         }
     }
 
-    private static void processPipeLarge(OrePrefix pipePrefix, Material material, IMaterialProperty<?> property) {
+    private static void processPipeLarge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 6)
@@ -164,7 +164,7 @@ public class PipeRecipeHandler {
         }
     }
 
-    private static void processPipeHuge(OrePrefix pipePrefix, Material material, IMaterialProperty<?> property) {
+    private static void processPipeHuge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 12)
@@ -197,7 +197,7 @@ public class PipeRecipeHandler {
                 'X', smallPipe);
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder()
-                .inputs(GTUtility.copyAmount(4, smallPipe))
+                .inputs(GTUtility.copy(4, smallPipe))
                 .circuitMeta(4)
                 .outputs(quadPipe)
                 .duration(30)
@@ -213,7 +213,7 @@ public class PipeRecipeHandler {
                 'X', smallPipe);
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder()
-                .inputs(GTUtility.copyAmount(9, smallPipe))
+                .inputs(GTUtility.copy(9, smallPipe))
                 .circuitMeta(9)
                 .outputs(nonuplePipe)
                 .duration(40)

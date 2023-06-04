@@ -5,7 +5,6 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
-import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.ore.OrePrefix;
@@ -554,7 +553,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem LOGO;
 
-    public static MetaOreDictItem CT_OREDICT_ITEM;
+    public static MetaItem<?>.MetaValueItem MULTIBLOCK_BUILDER;
 
     private static final List<OrePrefix> orePrefixes = new ArrayList<>();
 
@@ -603,8 +602,6 @@ public final class MetaItems {
     public static void init() {
         MetaItem1 first = new MetaItem1();
         first.setRegistryName("meta_item_1");
-        CT_OREDICT_ITEM = new MetaOreDictItem((short) 0);
-        CT_OREDICT_ITEM.setRegistryName("meta_oredict_item_ct");
         MetaArmor armor = new MetaArmor();
         armor.setRegistryName("gt_armor");
         for (OrePrefix prefix : orePrefixes) {

@@ -1,6 +1,5 @@
 package gregtech.core;
 
-import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.GregTechAPIInternal;
@@ -20,7 +19,6 @@ import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
-import gregtech.api.util.NBTUtil;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -48,7 +46,6 @@ import gregtech.core.network.internal.NetworkHandler;
 import gregtech.core.network.packets.*;
 import gregtech.core.sound.GTSoundEvents;
 import gregtech.core.sound.internal.SoundManager;
-import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;
 import net.minecraft.block.state.IBlockState;
@@ -123,12 +120,6 @@ public class CoreModule implements IGregTechModule {
         logger.info("Registering addon Materials");
         MinecraftForge.EVENT_BUS.post(new GregTechAPI.MaterialEvent());
 
-        // Then, run CraftTweaker Material registration scripts
-        if (Loader.isModLoaded(GTValues.MODID_CT)) {
-            logger.info("Running early CraftTweaker initialization scripts...");
-            runEarlyCraftTweakerScripts();
-        }
-
         // Fire Post-Material event, intended for when Materials need to be iterated over in-full before freezing
         // Block entirely new Materials from being added in the Post event
         MATERIAL_REGISTRY.closeRegistry();
@@ -139,13 +130,11 @@ public class CoreModule implements IGregTechModule {
         /* End Material Registration */
 
         OreDictUnifier.init();
-        NBTUtil.registerSerializers();
 
         MetaBlocks.init();
         MetaItems.init();
         ToolItems.init();
         MetaFluids.init();
-        ModHandler.init();
 
         /* Start MetaTileEntity Registration */
         MTE_REGISTRY.unfreeze();
@@ -202,11 +191,6 @@ public class CoreModule implements IGregTechModule {
             }
         }
 
-        if (Loader.isModLoaded(GTValues.MODID_TOP)) {
-            logger.info("TheOneProbe found. Enabling integration...");
-            TheOneProbeCompatibility.registerCompatibility();
-        }
-
         WorldGenRegistry.INSTANCE.initializeRegistry();
 
         LootTableHelper.initialize();
@@ -220,11 +204,6 @@ public class CoreModule implements IGregTechModule {
         /* End Cover Definition Registration */
 
         DungeonLootLoader.init();
-    }
-
-    @Optional.Method(modid = GTValues.MODID_CT)
-    private static void runEarlyCraftTweakerScripts() {
-        CraftTweakerAPI.tweaker.loadScript(false, "gregtech");
     }
 
     @Override

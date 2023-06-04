@@ -1,12 +1,14 @@
 package gregtech.api.gui.widgets;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.util.GTLog;
-import gregtech.integration.jei.GTJeiPlugin;
+import gregtech.integration.IntegrationModule;
+import gregtech.integration.jei.JustEnoughItemsModule;
 import gregtech.integration.jei.recipe.RecipeMapCategory;
+import gregtech.modules.GregTechModules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiUtils;
@@ -39,8 +41,9 @@ public class RecipeProgressWidget extends ProgressWidget {
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        if (!Loader.isModLoaded(GTValues.MODID_JEI))
+        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI)) {
             return false;
+        }
         if (isMouseOverElement(mouseX, mouseY) && RecipeMapCategory.getCategoryMap().containsKey(recipeMap)) {
             // Since categories were even registered at all, we know JEI is active.
             List<String> categoryID = new ArrayList<>();
@@ -50,11 +53,12 @@ public class RecipeProgressWidget extends ProgressWidget {
             else {
                 categoryID.add(RecipeMapCategory.getCategoryMap().get(recipeMap).getUid());
             }
-            if (GTJeiPlugin.jeiRuntime == null) {
-                GTLog.logger.error("GTCEu JEI integration has crashed, this is not a good thing");
+
+            if (JustEnoughItemsModule.jeiRuntime == null) {
+                IntegrationModule.logger.error("GTCEu JEI integration has crashed, this is not a good thing");
                 return false;
             }
-            GTJeiPlugin.jeiRuntime.getRecipesGui().showCategories(categoryID);
+            JustEnoughItemsModule.jeiRuntime.getRecipesGui().showCategories(categoryID);
             return true;
         }
         return false;

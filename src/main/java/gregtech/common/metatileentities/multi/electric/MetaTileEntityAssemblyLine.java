@@ -11,7 +11,6 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.util.GTUtility;
 import gregtech.client.particle.GTLaserBeamParticle;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.ICubeRenderer;
@@ -34,8 +33,8 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
-    private static final ResourceLocation LASER_LOCATION = new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser.png");
-    private static final ResourceLocation LASER_HEAD_LOCATION = new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser_start.png");
+    private static final ResourceLocation LASER_LOCATION = new ResourceLocation(GTValues.MODID, "textures/fx/laser/laser.png");
+    private static final ResourceLocation LASER_HEAD_LOCATION = new ResourceLocation(GTValues.MODID, "textures/fx/laser/laser_start.png");
 
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
@@ -83,7 +82,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     @Override
     public void update() {
         super.update();
-        if(ConfigHolder.client.shader.assemblyLineParticles) {
+        if (ConfigHolder.client.shader.assemblyLineParticles) {
             if (getRecipeMapWorkable().isWorking()) {
                 int maxBeams = getAbilities(MultiblockAbility.IMPORT_ITEMS).size() + 1;
                 int maxProgress = getRecipeMapWorkable().getMaxProgress();
@@ -98,8 +97,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                     beamCount = currentBeamCount;
                     writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
                 }
-            }
-            else if (beamCount != 0) {
+            } else if (beamCount != 0) {
                 beamCount = 0;
                 writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
             }
@@ -182,7 +180,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     private GTLaserBeamParticle createALParticles(World world, Vector3 startPos, Vector3 endPos) {
-        GTLaserBeamParticle particle =  new GTLaserBeamParticle(world, startPos, endPos)
+        GTLaserBeamParticle particle = new GTLaserBeamParticle(world, startPos, endPos)
                 .setBody(LASER_LOCATION)
                 .setBeamHeight(0.125f)
                 // Try commenting or adjusting on the next four lines to see what happens
@@ -192,7 +190,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .setEmit(0.2f);
 
         particle.setOnUpdate(p -> {
-            if (!isValid() || !GTUtility.isPosChunkLoaded(getWorld(), getPos()) || getWorld().getTileEntity(getPos()) != this.getHolder()) {
+            if (!isValid() || !getWorld().isBlockLoaded(getPos(), false) || getWorld().getTileEntity(getPos()) != this.getHolder()) {
                 p.setExpired();
             }
         });

@@ -231,9 +231,9 @@ public class CommandRecipeCheck extends CommandBase {
             MetaItem<?> metaItem = (MetaItem<?>) stack.getItem();
             MetaValueItem metaValueItem = metaItem.getItem(stack);
             if (metaValueItem == null) {
-                if (metaItem instanceof MetaPrefixItem) {
-                    Material material = MetaPrefixItem.getMaterial(stack);
-                    OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
+                if (metaItem instanceof MetaPrefixItem metaPrefixItem) {
+                    Material material = metaPrefixItem.getMaterial(stack);
+                    OrePrefix orePrefix = metaPrefixItem.getOrePrefix();
                     return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material + " * " + stack.getCount();
                 }
             } else {
@@ -254,9 +254,9 @@ public class CommandRecipeCheck extends CommandBase {
             Block block = Block.getBlockFromItem(stack.getItem());
             String id = null;
             if (block instanceof BlockCompressed) {
-                id = "block" + ((BlockCompressed) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+                id = "block" + ((BlockCompressed) block).getGtMaterial(stack).toCamelCaseString();
             } else if (block instanceof BlockFrame) {
-                id = "frame" + ((BlockFrame) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+                id = "frame" + ((BlockFrame) block).getGtMaterial(stack).toCamelCaseString();
             } else if (block instanceof BlockMaterialPipe) {
                 id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
             }

@@ -1,13 +1,10 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.capability.IMaintenanceHatch;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
-import gregtech.common.ConfigHolder;
+import net.minecraft.util.Tuple;
 
 import javax.annotation.Nonnull;
 
@@ -19,29 +16,34 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         super(tileEntity);
     }
 
+    @Nonnull
     @Override
     protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
-        // apply maintenance penalties
-        MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
-        int numMaintenanceProblems = displayBase == null ? 0 : displayBase.getNumMaintenanceProblems();
-
-        int[] overclock = null;
-        if (displayBase != null && ConfigHolder.machines.enableMaintenance && displayBase.hasMaintenanceMechanics()) {
-            IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-            double durationMultiplier = hatch.getDurationMultiplier();
-            if (durationMultiplier != 1.0) {
-                overclock = new int[]{recipeEUt * -1, (int) Math.round(recipeDuration / durationMultiplier)};
-            }
-        }
-        if (overclock == null) {
-            overclock = new int[]{recipeEUt * -1, recipeDuration};
-        }
-
-        overclock[1] = (int) (overclock[1] * (1 - 0.1 * numMaintenanceProblems));
-
         // no overclocking happens other than parallelization,
         // so return the recipe's values, with EUt made positive for it to be made negative later
-        return overclock;
+        return new int[]{-recipeEUt, recipeDuration};
+    }
+
+    @Override
+    protected void modifyOverclockPre(@Nonnull int[] values, @Nonnull IRecipePropertyStorage storage) {
+        // apply maintenance bonuses
+        Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
+
+        // duration bonus
+        if (maintenanceValues.getSecond() != 1.0) {
+            values[1] = (int) Math.round(values[1] / maintenanceValues.getSecond());
+        }
+    }
+
+    @Override
+    protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {
+        // apply maintenance penalties
+        Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
+
+        // duration penalty
+        if (maintenanceValues.getFirst() > 0) {
+            overclockResults[1] = (int) (overclockResults[1] * (1 - 0.1 * maintenanceValues.getFirst()));
+        }
     }
 
     @Nonnull

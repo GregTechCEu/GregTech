@@ -89,6 +89,11 @@ public class MaterialFlags {
             .requireProps(PropertyKey.DUST)
             .build();
 
+    public static final MaterialFlag GENERATE_DOUBLE_PLATE = new MaterialFlag.Builder("generate_double_plate")
+            .requireFlags(GENERATE_PLATE)
+            .requireProps(PropertyKey.INGOT)
+            .build();
+
     public static final MaterialFlag GENERATE_ROD = new MaterialFlag.Builder("generate_rod")
             .requireProps(PropertyKey.DUST)
             .build();
