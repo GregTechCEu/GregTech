@@ -35,7 +35,8 @@ public class MaterialIconSet {
     public static final MaterialIconSet WOOD = new MaterialIconSet("wood", FINE);
     public static final MaterialIconSet ROUGH = new MaterialIconSet("rough", FINE);
     public static final MaterialIconSet FLINT = new MaterialIconSet("flint", ROUGH);
-    public static final MaterialIconSet LIGNITE = new MaterialIconSet("lignite", ROUGH);
+    public static final MaterialIconSet COAL = new MaterialIconSet("coal", ROUGH);
+    public static final MaterialIconSet LIGNITE = new MaterialIconSet("lignite", COAL);
     public static final MaterialIconSet QUARTZ = new MaterialIconSet("quartz", ROUGH);
     public static final MaterialIconSet CERTUS = new MaterialIconSet("certus", QUARTZ);
     public static final MaterialIconSet LAPIS = new MaterialIconSet("lapis", QUARTZ);

@@ -161,7 +161,7 @@ public class FirstDegreeMaterials {
 
         Coal = new Material.Builder(271, "coal")
                 .gem(0, 1600).ore(2) //default coal burn time in vanilla
-                .color(0x464646).iconSet(LIGNITE)
+                .color(0x464646).iconSet(COAL)
                 .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
                 .build();
@@ -259,7 +259,7 @@ public class FirstDegreeMaterials {
         Rutile = new Material.Builder(285, "rutile")
                 .gem()
                 .color(0xD40D5C).iconSet(GEM_HORIZONTAL)
-                .flags(DISABLE_DECOMPOSITION, MAGNETIC_ORE)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Titanium, 1, Oxygen, 2)
                 .build();
 
@@ -494,7 +494,7 @@ public class FirstDegreeMaterials {
         Scheelite = new Material.Builder(315, "scheelite")
                 .dust(3).ore()
                 .color(0xC88C14)
-                .flags(DISABLE_DECOMPOSITION, MAGNETIC_ORE)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Calcium, 1, Tungsten, 1, Oxygen, 4)
                 .build();
 
@@ -596,7 +596,7 @@ public class FirstDegreeMaterials {
         Tungstate = new Material.Builder(330, "tungstate")
                 .dust(3).ore()
                 .color(0x373223)
-                .flags(DISABLE_DECOMPOSITION, MAGNETIC_ORE)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Lithium, 2, Tungsten, 1, Oxygen, 4)
                 .build();
 

@@ -14,7 +14,7 @@ public class PlatGroupMetalsRecipes {
 
         // Platinum Group Sludge Production
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, CopperSlag, 2)
+                .input(dust, CopperSlag, 4)
                 .fluidInputs(SulfuricAcid.getFluid(3000))
                 .output(dust, PlatinumGroupSludge, 2)
                 .output(dust, BlueVitriol, 2)
@@ -22,7 +22,7 @@ public class PlatGroupMetalsRecipes {
                 .duration(50).EUt(30).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, NickelSlag, 2)
+                .input(dust, NickelSlag, 4)
                 .fluidInputs(SulfuricAcid.getFluid(3000))
                 .output(dust, PlatinumGroupSludge, 2)
                 .output(dust, CyanVitriol, 2)
