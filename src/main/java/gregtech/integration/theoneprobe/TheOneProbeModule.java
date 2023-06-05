@@ -38,5 +38,6 @@ public class TheOneProbeModule extends IntegrationSubmodule {
         oneProbe.registerProvider(new CoverProvider());
         oneProbe.registerProvider(new BlockOreProvider());
         oneProbe.registerProvider(new LampInfoProvider());
+        oneProbe.registerProvider(new LDPipeProvider());
     }
 }

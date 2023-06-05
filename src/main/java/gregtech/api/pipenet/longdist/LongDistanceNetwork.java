@@ -179,6 +179,7 @@ public class LongDistanceNetwork {
         }
     }
 
+    @Nullable
     public ILDEndpoint getOtherEndpoint(ILDEndpoint endpoint) {
         if (!isValid() || (!endpoint.isInput() && !endpoint.isOutput())) return null;
 
