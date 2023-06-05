@@ -281,9 +281,9 @@ minecraft {
     extraRunJvmArguments.add("-ea:${modGroup}")
     if (usesMixins.toBoolean()) {
         extraRunJvmArguments.addAll([
-            '-Dmixin.hotSwap=true',
-            '-Dmixin.checks.interfaces=true',
-            '-Dmixin.debug.export=true'
+                '-Dmixin.hotSwap=true',
+                '-Dmixin.checks.interfaces=true',
+                '-Dmixin.debug.export=true'
         ])
     }
     if (coreModClass) {
@@ -499,7 +499,12 @@ processResources {
         )
     }
 
-    rename '(.+_at.cfg)', 'META-INF/$1'
+    if (accessTransformersFile) {
+        String[] ats = accessTransformersFile.split(',')
+        ats.each { at ->
+            rename "(${at})", 'META-INF/$1'
+        }
+    }
 }
 
 // Automatically generate a mixin json file if it does not already exist
@@ -535,7 +540,6 @@ tasks.register('generateAssets') {
     "dependencies": []
 }]
 """
-            mcmodInfoFile
         }
 
         // mixins.{modid}.json
@@ -560,10 +564,8 @@ tasks.register('generateAssets') {
     }
 }
 
-if (usesMixins.toBoolean()) {
-    tasks.named('processResources').configure {
-        dependsOn('generateAssets')
-    }
+tasks.named('processResources').configure {
+    dependsOn('generateAssets')
 }
 
 jar {
