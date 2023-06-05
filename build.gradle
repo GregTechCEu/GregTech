@@ -1,4 +1,4 @@
-//version: 1685741895
+//version: 1685860463
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -43,7 +43,6 @@ def out = services.get(StyledTextOutputFactory).create('an-output')
 checkPropertyExists("modName")
 checkPropertyExists("modId")
 checkPropertyExists("modGroup")
-checkPropertyExists("modVersion")
 checkPropertyExists("minecraftVersion") // hard-coding this makes it harder to immediately tell what version a mod is in (even though this only really supports 1.12.2)
 checkPropertyExists("apiPackage")
 checkPropertyExists("accessTransformersFile")
@@ -53,6 +52,7 @@ checkPropertyExists("coreModClass")
 checkPropertyExists("containsMixinsAndOrCoreModOnly")
 
 // Optional properties: we can assume some default behavior if these are missing
+propertyDefaultIfUnset("modVersion", "")
 propertyDefaultIfUnset("autoUpdateBuildScript", false)
 propertyDefaultIfUnset("modArchivesBaseName", project.modId)
 propertyDefaultIfUnsetWithEnvVar("developmentEnvironmentUserName", "Developer", "DEV_USERNAME")
@@ -67,11 +67,12 @@ propertyDefaultIfUnset("forceEnableMixins", false)
 propertyDefaultIfUnset("usesShadowedDependencies", false)
 propertyDefaultIfUnset("minimizeShadowedDependencies", true)
 propertyDefaultIfUnset("relocateShadowedDependencies", true)
-propertyDefaultIfUnset("modrinthProjectId", "")
+propertyDefaultIfUnsetWithEnvVar("modrinthProjectId", "", "MODRINTH_PROJECT_ID")
 propertyDefaultIfUnset("modrinthRelations", "")
-propertyDefaultIfUnset("curseForgeProjectId", "")
+propertyDefaultIfUnsetWithEnvVar("curseForgeProjectId", "", "CURSEFORGE_PROJECT_ID")
 propertyDefaultIfUnset("curseForgeRelations", "")
 propertyDefaultIfUnset("releaseType", "release")
+propertyDefaultIfUnset("generateDefaultChangelog", false)
 propertyDefaultIfUnset("customMavenPublishUrl", "")
 propertyDefaultIfUnset("enableModernJavaSyntax", false)
 propertyDefaultIfUnset("enableSpotless", false)
@@ -190,7 +191,7 @@ if (enableSpotless.toBoolean()) {
     }
 }
 
-// Git submodules
+// Git version checking, also checking for if this is a submodule
 if (project.file('.git/HEAD').isFile() || project.file('.git').isFile()) {
     apply plugin: 'com.palantir.git-version'
 }
@@ -242,6 +243,19 @@ tasks.withType(ScalaCompile).configureEach {
 
 
 // Configure Minecraft
+
+// Try to gather mod version from git tags if version is not manually specified
+if (!modVersion) {
+    try {
+        modVersion = gitVersion()
+    } catch (Exception ignored) {
+        out.style(Style.Failure).text(
+                "Mod version could not be determined! Property 'modVersion' is not set, and either git is not installed or no git tags exist.\n" +
+                        "Either specify a mod version in 'gradle.properties', or create at least one tag in git for this project."
+        )
+        modVersion = 'NO-GIT-TAG-SET'
+    }
+}
 
 version = modVersion
 group = modGroup
@@ -698,8 +712,6 @@ idea {
 // Deployment
 
 final boolean isCIEnv = providers.environmentVariable('CI').getOrElse('false').toBoolean()
-def final changelogEnv = providers.environmentVariable('CHANGELOG_LOCATION')
-File changelogFile = new File(changelogEnv.getOrElse('CHANGELOG.md'))
 
 if (isCIEnv || deploymentDebug.toBoolean()) {
     artifacts {
@@ -712,18 +724,46 @@ if (isCIEnv || deploymentDebug.toBoolean()) {
     }
 }
 
+// Changelog generation
+tasks.register('generateChangelog') {
+    group = 'GT Buildscript'
+    description = 'Generate a default changelog of all commits since the last tagged git commit'
+    onlyIf {
+        generateDefaultChangelog.toBoolean()
+    }
+    doLast {
+        def lastTag = getLastTag()
+
+        def changelog = runShell(([
+                "git",
+                "log",
+                "--date=format:%d %b %Y",
+                "--pretty=%s - **%an** (%ad)",
+                "${lastTag}..HEAD"
+        ] + (sourceSets.main.java.srcDirs + sourceSets.main.resources.srcDirs)
+                .collect { ['--', it] }).flatten())
+
+        if (changelog) {
+            changelog = "Changes since ${lastTag}:\n${{("\n" + changelog).replaceAll("\n", "\n* ")}}"
+        }
+        def f = getFile('build/changelog.md')
+        f.write(changelog ?: 'There have been no changes.', 'UTF-8')
+    }
+}
+
 // Curseforge
 def final cfApiKey = providers.environmentVariable('CURSEFORGE_API_KEY')
 if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
     apply plugin: 'net.darkhax.curseforgegradle'
     //noinspection UnnecessaryQualifiedReference
     tasks.register('curseforge', net.darkhax.curseforgegradle.TaskPublishCurseForge) {
-        apiToken = cfApiKey.get()
-        def projectIdVar = providers.environmentVariable('CURSEFORGE_PROJECT_ID')
+        apiToken = cfApiKey.getOrElse('debug_token')
 
-        def mainFile = upload(projectIdVar.getOrElse(curseForgeProjectId), reobfJar)
+        def mainFile = upload(curseForgeProjectId, reobfJar)
+        def changelogFile = getChangelog()
         def changelogRaw = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
 
+        mainFile.displayName = "${modName}: ${modVersion}"
         mainFile.releaseType = getReleaseType()
         mainFile.changelog = changelogRaw
         mainFile.changelogType = 'markdown'
@@ -737,7 +777,7 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
                 if (dep.size() == 0) {
                     return
                 }
-                String parts = dep.split(':')
+                String[] parts = dep.split(':')
                 String type = parts[0], slug = parts[1]
                 if(!(type in ['requiredDependency', 'embeddedLibrary', 'optionalDependency', 'tool', 'incompatible'])) {
                     throw new Exception('Invalid Curseforge dependency type: ' + type)
@@ -754,17 +794,18 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
         debugMode = deploymentDebug.toBoolean()
     }
     tasks.curseforge.dependsOn(build)
+    tasks.curseforge.dependsOn('generateChangelog')
 }
 
 // Modrinth
 def final modrinthApiKey = providers.environmentVariable('MODRINTH_API_KEY')
 if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
     apply plugin: 'com.modrinth.minotaur'
-    def final projectIdVar = providers.environmentVariable('MODRINTH_PROJECT_ID')
+    def final changelogFile = getChangelog()
 
     modrinth {
-        token = modrinthApiKey.get()
-        projectId = projectIdVar.getOrElse(modrinthProjectId)
+        token = modrinthApiKey.getOrElse('debug_token')
+        projectId = modrinthProjectId
         changelog = changelogFile.exists() ? changelogFile.getText('UTF-8') : ""
         versionType = getReleaseType()
         versionNumber = modVersion
@@ -781,11 +822,12 @@ if (modrinthApiKey.isPresent() || deploymentDebug.toBoolean()) {
                 return
             }
             String[] parts = dep.split(':')
-            String qual = parts[0].split('-')
+            String[] qual = parts[0].split('-')
             addModrinthDep(qual[0], qual[1], parts[1])
         }
     }
     tasks.modrinth.dependsOn(build)
+    tasks.modrinth.dependsOn('generateChangelog')
 }
 
 def addModrinthDep(String scope, String type, String name) {
@@ -837,6 +879,37 @@ if (customMavenPublishUrl) {
             }
         }
     }
+}
+
+def getSecondaryArtifacts() {
+    def secondaryArtifacts = [usesShadowedDependencies.toBoolean() ? tasks.shadowJar : tasks.jar]
+    if (!noPublishedSources.toBoolean()) secondaryArtifacts += [sourcesJar]
+    if (apiPackage) secondaryArtifacts += [apiJar]
+    return secondaryArtifacts
+}
+
+def getReleaseType() {
+    String type = project.releaseType
+    if (!(type in ['release', 'beta', 'alpha'])) {
+        throw new Exception("Release type invalid! Found \"" + type + "\", allowed: \"release\", \"beta\", \"alpha\"")
+    }
+    return type
+}
+
+/*
+ * If CHANGELOG_LOCATION env var is set, that takes highest precedence.
+ * Next, if 'generateDefaultChangelog' option is enabled, use that.
+ * Otherwise, try to use a CHANGELOG.md file at root directory.
+ */
+def getChangelog() {
+    def final changelogEnv = providers.environmentVariable('CHANGELOG_LOCATION')
+    if (changelogEnv.isPresent()) {
+        return new File(changelogEnv.get())
+    }
+    if (generateDefaultChangelog.toBoolean()) {
+        return getFile('build/changelog.md')
+    }
+    return getFile('CHANGELOG.md')
 }
 
 
@@ -971,17 +1044,22 @@ def propertyDefaultIfUnsetWithEnvVar(String propertyName, defaultValue, String e
     }
 }
 
-def getSecondaryArtifacts() {
-    def secondaryArtifacts = [usesShadowedDependencies.toBoolean() ? tasks.shadowJar : tasks.jar]
-    if (!noPublishedSources.toBoolean()) secondaryArtifacts += [sourcesJar]
-    if (apiPackage) secondaryArtifacts += [apiJar]
-    return secondaryArtifacts
+static runShell(command) {
+    def process = command.execute()
+    def outputStream = new StringBuffer()
+    def errorStream = new StringBuffer()
+    process.waitForProcessOutput(outputStream, errorStream)
+
+    errorStream.toString().with {
+        if (it) {
+            throw new GradleException("Error executing ${command}:\n> ${it}")
+        }
+    }
+    return outputStream.toString().trim()
 }
 
-def getReleaseType() {
-    String type = releaseType
-    if (!(type in ['release', 'beta', 'alpha'])) {
-        throw new Exception("Release type invalid! Found \"" + type + "\", allowed: \"release\", \"beta\", \"alpha\"")
-    }
-    return type
+def getLastTag() {
+    def githubTag = providers.environmentVariable('GITHUB_TAG')
+    return runShell('git describe --abbrev=0 --tags ' +
+            (githubTag.isPresent() ? runShell('git rev-list --tags --skip=1 --max-count=1') : ''))
 }
