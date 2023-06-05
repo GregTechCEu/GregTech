@@ -20,6 +20,7 @@ import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,6 +43,7 @@ public class LongDistanceNetwork {
         this.world = world;
     }
 
+    @Nullable
     public static LongDistanceNetwork get(World world, BlockPos pos) {
         return WorldData.get(world).getNetwork(pos);
     }
@@ -184,11 +186,11 @@ public class LongDistanceNetwork {
             ILDEndpoint in = this.endpoints.get(this.activeInputIndex);
             ILDEndpoint out = this.endpoints.get(this.activeOutputIndex);
             if (in == endpoint) {
-                if (!endpoint.isInput()) throw new IllegalStateException();
+                if (!endpoint.isInput()) throw new IllegalStateException("Other endpoint from input was itself");
                 return out;
             }
             if (out == endpoint) {
-                if (!endpoint.isOutput()) throw new IllegalStateException();
+                if (!endpoint.isOutput()) throw new IllegalStateException("Other endpoint from output was itself");
                 return in;
             }
             return null;

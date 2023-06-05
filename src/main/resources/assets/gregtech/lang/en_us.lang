@@ -4229,8 +4229,10 @@ gregtech.machine.parallel_limit=Can run up to §b%d§r§7 Recipes at once.
 
 gregtech.machine.ld_item_endpoint.name=Long Distance Item Pipeline Endpoint
 gregtech.machine.ld_fluid_endpoint.name=Long Distance Fluid Pipeline Endpoint
-gregtech.machine.endpoint.tooltip.min_length=Minimum Distance: §b%d§r blocks
-gregtech.machine.endpoint.tooltip.straight=Pipeline must be straight
+gregtech.machine.endpoint.tooltip.min_length=§bMinimum Endpoint Distance: §f%d Blocks
+gregtech.machine.endpoint.tooltip.1=Connect with §fLong Distance Pipe§7 blocks to create a pipeline.
+gregtech.machine.endpoint.tooltip.2=Pipelines must have exactly §f1 Input§7 and §f1 Output§7 endpoint.
+gregtech.machine.endpoint.tooltip.3=Only pipeline endpoints need to be §fchunk-loaded§7.
 
 # Advancements
 gregtech.advancement.root_steam.name=Steam Age
@@ -4858,6 +4860,8 @@ gregtech.universal.tooltip.base_production_fluid=§eBase Production: §f%,d L/t
 gregtech.universal.tooltip.produces_fluid=§eProduces: §f%,d L/t
 gregtech.universal.tooltip.terrain_resist=This Machine will not explode when exposed to the Elements
 gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
+
+gregtech.block.tooltip.no_mob_spawning=§bMobs cannot spawn on this block
 
 gregtech.recipe.total=Total: %,d EU
 gregtech.recipe.eu=Usage: %,d EU/t (%s§r)

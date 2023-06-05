@@ -1,19 +1,24 @@
 package gregtech.api.pipenet.longdist;
 
 import gregtech.api.GregTechAPI;
-import gregtech.common.metatileentities.storage.MetaTileEntityLongDistanceEndpoint;
+import gregtech.api.items.toolitem.ToolClasses;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +31,7 @@ public class BlockLongDistancePipe extends Block {
         this.pipeType = pipeType;
         setTranslationKey("long_distance_" + pipeType.getName() + "_pipeline");
         setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setHarvestLevel(ToolClasses.WRENCH, 1);
     }
 
     @Override
@@ -69,7 +75,9 @@ public class BlockLongDistancePipe extends Block {
         super.breakBlock(worldIn, pos, state);
         if (worldIn.isRemote) return;
         LongDistanceNetwork network = LongDistanceNetwork.get(worldIn, pos);
-        network.onRemovePipe(pos);
+        if (network != null) {
+            network.onRemovePipe(pos);
+        }
     }
 
     @Override
@@ -77,5 +85,16 @@ public class BlockLongDistancePipe extends Block {
         if (itemIn == GregTechAPI.TAB_GREGTECH) {
             items.add(new ItemStack(this));
         }
+    }
+
+    @Override
+    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityLiving.SpawnPlacementType type) {
+        return false;
+    }
+
+    @Override
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
+        tooltip.add(I18n.format("gregtech.block.tooltip.no_mob_spawning"));
     }
 }

@@ -5,6 +5,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.longdist.ILDEndpoint;
 import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.pipenet.longdist.LongDistancePipeType;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,7 +35,11 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     public void updateNetwork() {
         LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
         if (network != null) {
-            if (network.getTotalSize() == 1) {
+            int endpointAmount = network.getEndpointAmount();
+            if (endpointAmount == 2) return;
+
+            if (endpointAmount == 1) {
+                network.onPlaceEndpoint(this);
                 return;
             }
             network.onRemoveEndpoint(this);
@@ -62,13 +67,19 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     }
 
     @Override
+    public boolean isValidFrontFacing(EnumFacing facing) {
+        return !this.hasFrontFacing() || getFrontFacing() != facing;
+    }
+
+    @Override
     public void onRemoval() {
         if (link != null) {
             link.invalidateLink();
             invalidateLink();
         }
         setType(Type.NONE);
-        LongDistanceNetwork.get(getWorld(), getPos()).onRemoveEndpoint(this);
+        LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
+        if (network != null) network.onPlaceEndpoint(this);
     }
 
     @Override
@@ -109,13 +120,6 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             setType(Type.INPUT);
         }
         return networks;
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        if (pipeType.getMinLength() > 0) {
-            tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.min_length", pipeType.getMinLength()));
-        }
     }
 
     @Override
@@ -165,6 +169,36 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     @Override
     public LongDistancePipeType getPipeType() {
         return pipeType;
+    }
+
+    @Override
+    public boolean getIsWeatherOrTerrainResistant() {
+        return true;
+    }
+
+    @Override
+    protected boolean openGUIOnRightClick() {
+        return false;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.1"));
+        tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.2"));
+        tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.3"));
+        if (pipeType.getMinLength() > 0) {
+            tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.min_length", pipeType.getMinLength()));
+        }
+        if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant()) {
+            tooltip.add("gregtech.universal.tooltip.terrain_resist");
+        }
+    }
+
+    @Override
+    public void addToolUsages(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        super.addToolUsages(stack, world, tooltip, advanced);
     }
 
     @Nonnull
