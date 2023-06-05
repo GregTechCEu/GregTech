@@ -85,7 +85,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     @Override
     @Nonnull
     public String getTitle() {
-        return LocalizationUtils.format(category.getUnlocalizedName());
+        return LocalizationUtils.format(category.getTranslationKey());
     }
 
     @Nullable

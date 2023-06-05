@@ -14,29 +14,38 @@ public final class GTRecipeCategory {
     private final String modid;
     private final String name;
     private final String uniqueID;
-    private final String unlocalizedName;
+    private final String translationKey;
     private final RecipeMap<?> recipeMap;
     private Object icon;
 
     /**
      * Create a GTRecipeCategory
      *
-     * @param modid           the mod id of the category
-     * @param name            the name of the category
-     * @param unlocalizedName the unlocalized name of the category, used for translation.
-     * @param recipeMap       the recipemap that accepts this category
+     * @param modid          the mod id of the category
+     * @param categoryName   the name of the category
+     * @param translationKey the translation key of the category.
+     * @param recipeMap      the recipemap that accepts this category
      * @return the new category
      */
     @Nonnull
-    public static GTRecipeCategory create(@Nonnull String modid, @Nonnull String name, @Nonnull String unlocalizedName, @Nonnull RecipeMap<?> recipeMap) {
-        return categories.computeIfAbsent(name, (k) -> new GTRecipeCategory(modid, name, unlocalizedName, recipeMap));
+    public static GTRecipeCategory create(@Nonnull String modid, @Nonnull String categoryName, @Nonnull String translationKey, @Nonnull RecipeMap<?> recipeMap) {
+        return categories.computeIfAbsent(categoryName, (k) -> new GTRecipeCategory(modid, categoryName, translationKey, recipeMap));
     }
 
-    private GTRecipeCategory(@Nonnull String modid, @Nonnull String name, @Nonnull String unlocalizedName, @Nonnull RecipeMap<?> recipeMap) {
+    /**
+     * @param categoryName the name of the category
+     * @return the category associated with the name
+     */
+    @Nullable
+    public static GTRecipeCategory getByName(@Nonnull String categoryName) {
+        return categories.get(categoryName);
+    }
+
+    private GTRecipeCategory(@Nonnull String modid, @Nonnull String name, @Nonnull String translationKey, @Nonnull RecipeMap<?> recipeMap) {
         this.modid = modid;
         this.name = name;
         this.uniqueID = modid + ':' + this.name;
-        this.unlocalizedName = unlocalizedName;
+        this.translationKey = translationKey;
         this.recipeMap = recipeMap;
     }
 
@@ -56,8 +65,8 @@ public final class GTRecipeCategory {
     }
 
     @Nonnull
-    public String getUnlocalizedName() {
-        return this.unlocalizedName;
+    public String getTranslationKey() {
+        return this.translationKey;
     }
 
     @Nonnull
@@ -97,6 +106,7 @@ public final class GTRecipeCategory {
         return getUniqueID().hashCode();
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "GTRecipeCategory{" + uniqueID + '}';
