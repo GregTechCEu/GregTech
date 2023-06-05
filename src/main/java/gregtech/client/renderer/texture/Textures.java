@@ -160,8 +160,7 @@ public class Textures {
     public static final OrientedOverlayRenderer STEAM_TURBINE_OVERLAY = new OrientedOverlayRenderer("generators/steam_turbine");
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator");
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_TE_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator_te");
-    public static final OrientedOverlayRenderer LD_ITEM_PIPE = new OrientedOverlayRenderer("pipe/ld_item_pipe");
-    public static final OrientedOverlayRenderer LD_FLUID_PIPE = new OrientedOverlayRenderer("pipe/ld_fluid_pipe");
+
 
     // Simple Overlay Renderers
     public static final SimpleOverlayRenderer SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_screen");
@@ -205,6 +204,9 @@ public class Textures {
     public static final ICubeRenderer TITANIUM_FIREBOX_ACTIVE = new FireboxActiveRenderer("casings/firebox/overlay/titanium/active");
     public static final ICubeRenderer TUNGSTENSTEEL_FIREBOX = new SidedCubeRenderer("casings/firebox/overlay/tungstensteel");
     public static final ICubeRenderer TUNGSTENSTEEL_FIREBOX_ACTIVE = new FireboxActiveRenderer("casings/firebox/overlay/tungstensteel/active");
+
+    public static final SidedCubeRenderer LD_ITEM_PIPE = new SidedCubeRenderer("pipe/ld_item_pipe");
+    public static final SidedCubeRenderer LD_FLUID_PIPE = new SidedCubeRenderer("pipe/ld_fluid_pipe");
 
     public static final SimpleOverlayRenderer ROTOR_HOLDER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_rotor_holder");
     public static final SimpleOverlayRenderer ADV_PUMP_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_adv_pump");
