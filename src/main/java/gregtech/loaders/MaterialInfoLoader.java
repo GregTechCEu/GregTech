@@ -18,6 +18,9 @@ import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.GTValues.W;
+import static gregtech.api.unification.material.Materials.*;
+import static gregtech.common.metatileentities.MetaTileEntities.LONG_DIST_FLUID_ENDPOINT;
+import static gregtech.common.metatileentities.MetaTileEntities.LONG_DIST_ITEM_ENDPOINT;
 
 public class MaterialInfoLoader {
 
@@ -175,6 +178,22 @@ public class MaterialInfoLoader {
         ));
 
         OreDictUnifier.registerOre(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.PRIMITIVE_BRICKS), new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M * 4)));
+
+        OreDictUnifier.registerOre(LONG_DIST_ITEM_ENDPOINT.getStackForm(),
+                new ItemMaterialInfo(new MaterialStack(Tin, M * 6), // large pipe
+                        new MaterialStack(Steel, M * 8))); // 4 plates + 1 gear
+
+        OreDictUnifier.registerOre(LONG_DIST_FLUID_ENDPOINT.getStackForm(),
+                new ItemMaterialInfo(new MaterialStack(Bronze, M * 6), // large pipe
+                        new MaterialStack(Steel, M * 8))); // 4 plates + 1 gear
+
+        OreDictUnifier.registerOre(new ItemStack(MetaBlocks.LD_ITEM_PIPE),
+                new ItemMaterialInfo(new MaterialStack(Tin, M * 6 * 2 / 64), // 2 large pipe / 64
+                        new MaterialStack(Steel, M * 8 / 64))); // 8 steel plate / 64
+
+        OreDictUnifier.registerOre(new ItemStack(MetaBlocks.LD_FLUID_PIPE),
+                new ItemMaterialInfo(new MaterialStack(Bronze, M * 6 * 2 / 64), // 2 large pipe / 64
+                        new MaterialStack(Steel, M * 8 / 64))); // 8 steel plate / 64
 
         if (ConfigHolder.recipes.hardIronRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.IRON_DOOR, 1), new ItemMaterialInfo(
