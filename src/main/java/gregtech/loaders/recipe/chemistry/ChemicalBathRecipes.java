@@ -93,12 +93,12 @@ public class ChemicalBathRecipes {
                 .input(ingotHot, Silicon)
                 .fluidInputs(Water.getFluid(100))
                 .output(ingot, Silicon)
-                .duration(400).EUt(VA[MV]).buildAndRegister();
+                .duration(200).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(ingotHot, Silicon)
                 .fluidInputs(DistilledWater.getFluid(100))
                 .output(ingot, Silicon)
-                .duration(250).EUt(VA[MV]).buildAndRegister();
+                .duration(125).EUt(VA[MV]).buildAndRegister();
     }
 }

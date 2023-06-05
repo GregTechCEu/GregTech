@@ -768,7 +768,7 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder().duration(240).EUt(VA[MV]).blastFurnaceTemp(2273)
-                .input(dust, SiliconDioxide)
+                .input(dust, SiliconDioxide, 3)
                 .input(dust, Carbon, 2)
                 .output(ingotHot, Silicon)
                 .output(dustTiny, Ash)
