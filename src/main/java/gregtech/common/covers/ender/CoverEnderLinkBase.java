@@ -73,7 +73,7 @@ public abstract class CoverEnderLinkBase<T> extends CoverBehavior implements Cov
         return this.isPrivate() ? this.playerUUID : null;
     }
 
-    protected void updateColor(String str) {
+    public void updateColor(String str) {
         if (str.length() == 8) {
             isColorTemp = false;
             // stupid java not having actual unsigned ints

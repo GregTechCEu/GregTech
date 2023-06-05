@@ -5,6 +5,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.covers.*;
+import gregtech.common.covers.ender.*;
 import gregtech.integration.opencomputers.InputValidator;
 import gregtech.integration.opencomputers.values.*;
 import li.cil.oc.api.machine.Arguments;
