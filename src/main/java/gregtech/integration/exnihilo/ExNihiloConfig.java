@@ -24,13 +24,4 @@ public class ExNihiloConfig {
     })
     @RequiresMcRestart
     public static boolean harderMeshes = true;
-
-    @Comment({
-            "Enable High-Tier Sieves (UHV-UXV)",
-            "Requires Gregicality to be installed.",
-            "Default: true"
-    })
-    @RequiresMcRestart
-    public static boolean highTierSieve = true;
-
 }

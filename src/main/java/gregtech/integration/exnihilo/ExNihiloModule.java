@@ -38,8 +38,7 @@ import java.util.List;
 
 import static gregtech.api.unification.ore.OrePrefix.Conditions.hasOreProperty;
 import static gregtech.api.unification.ore.OrePrefix.Flags.ENABLE_UNIFICATION;
-import static gregtech.common.metatileentities.MetaTileEntities.getHighTier;
-import static gregtech.common.metatileentities.MetaTileEntities.getMidTier;
+import static gregtech.common.metatileentities.MetaTileEntities.*;
 
 
 @GregTechModule(
@@ -101,14 +100,14 @@ public class ExNihiloModule extends IntegrationSubmodule {
         MeshRecipes.init();
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent()
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         IntegrationModule.logger.info("Registering Ex Nihilo Compat Recipes");
         ExNihiloRecipes.registerHandlers();
         ExNihiloRecipes.registerGTRecipes();
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void registerMaterials(GregTechAPI.MaterialEvent event) {
         oreChunkIcon = new MaterialIconType("oreChunk");
         oreEnderChunkIcon = new MaterialIconType("oreEnderChunk");
@@ -142,8 +141,7 @@ public class ExNihiloModule extends IntegrationSubmodule {
             SIEVES[6] = MetaTileEntities.registerMetaTileEntity(4008, new MetaTileEntitySieve(new ResourceLocation(GTValues.MODID, "sieve.zpm"), 7));
             SIEVES[7] = MetaTileEntities.registerMetaTileEntity(4009, new MetaTileEntitySieve(new ResourceLocation(GTValues.MODID, "sieve.uv"), 8));
         }
-        // TODO this config should ideally use the HIGH_TIER map instead of direct checking it, if the cfg is kept
-        if (getHighTier("sieve") && ExNihiloConfig.highTierSieve) {
+        if (getHighTier("sieve")) {
             SIEVES[8] = MetaTileEntities.registerMetaTileEntity(4010, new MetaTileEntitySieve(new ResourceLocation(GTValues.MODID, "sieve.uhv"), 9));
             SIEVES[9] = MetaTileEntities.registerMetaTileEntity(4011, new MetaTileEntitySieve(new ResourceLocation(GTValues.MODID, "sieve.uev"), 10));
             SIEVES[10] = MetaTileEntities.registerMetaTileEntity(4012, new MetaTileEntitySieve(new ResourceLocation(GTValues.MODID, "sieve.uiv"), 11));
@@ -151,5 +149,4 @@ public class ExNihiloModule extends IntegrationSubmodule {
             SIEVES[12] = MetaTileEntities.registerMetaTileEntity(4014, new MetaTileEntitySieve(new ResourceLocation(GTValues.MODID, "sieve.opv"), 13));
         }
     }
-
 }

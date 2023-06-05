@@ -40,10 +40,10 @@ public class MeshRecipes {
             );
         }
 
-        ModHandler.addMirroredShapedRecipe("basalt", OreDictUnifier.get(stone, Basalt, 1), "PP", "PP", 'P', new ItemStack(ExNihiloModule.GTPebbles, 1, 0));
-        ModHandler.addMirroredShapedRecipe("black_granite", OreDictUnifier.get(stone, GraniteBlack, 1), "PP", "PP", 'P', new ItemStack(ExNihiloModule.GTPebbles, 1, 1));
-        ModHandler.addMirroredShapedRecipe("marble", OreDictUnifier.get(stone, Marble, 1), "PP", "PP", 'P', new ItemStack(ExNihiloModule.GTPebbles, 1, 2));
-        ModHandler.addMirroredShapedRecipe("red_granite", OreDictUnifier.get(stone, GraniteRed, 1), "PP", "PP", 'P', new ItemStack(ExNihiloModule.GTPebbles, 1, 3));
+        ModHandler.addShapedRecipe("basalt", OreDictUnifier.get(stone, Basalt, 1), "PP", "PP", 'P', new ItemStack(ExNihiloModule.GTPebbles, 1, 0));
+        ModHandler.addShapedRecipe("black_granite", OreDictUnifier.get(stone, GraniteBlack, 1), "PP", "PP", 'P', new ItemStack(ExNihiloModule.GTPebbles, 1, 1));
+        ModHandler.addShapedRecipe("marble", OreDictUnifier.get(stone, Marble, 1), "PP", "PP", 'P', new ItemStack(ExNihiloModule.GTPebbles, 1, 2));
+        ModHandler.addShapedRecipe("red_granite", OreDictUnifier.get(stone, GraniteRed, 1), "PP", "PP", 'P', new ItemStack(ExNihiloModule.GTPebbles, 1, 3));
 
         FORGE_HAMMER_RECIPES.recipeBuilder()
                 .duration(10).EUt(16)
