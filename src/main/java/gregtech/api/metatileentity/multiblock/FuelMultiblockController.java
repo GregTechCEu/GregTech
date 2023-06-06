@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
@@ -43,6 +42,10 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                     .setStyle(new Style().setColor(TextFormatting.RED)
                             .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
         } else {
+            if (recipeMapWorkable.getPreviousRecipe() != null) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed", recipeMapWorkable.getRecipeFluidInputAmount(), TextFormattingUtil.colorInt(recipeMapWorkable.getPreviousRecipeDuration(), TextFormatting.AQUA)));
+            }
+
             if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics())
                 addMaintenanceText(textList);
 
