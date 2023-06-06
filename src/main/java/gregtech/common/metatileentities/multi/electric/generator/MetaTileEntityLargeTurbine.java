@@ -102,13 +102,11 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
         if (isStructureFormed()) {
             IRotorHolder rotorHolder = getRotorHolder();
 
-            if (recipeMapWorkable.getPreviousRecipe() != null) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed", ((LargeTurbineWorkableHandler) recipeMapWorkable).getRecipeFluidInputAmount(), TextFormattingUtil.colorInt(recipeMapWorkable.getPreviousRecipeDuration(), TextFormatting.AQUA)));
-            }
-
             FluidStack fuelStack = ((LargeTurbineWorkableHandler) recipeMapWorkable).getInputFluidStack();
-            textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", TextFormattingUtil.formatIntPretty(fuelStack.amount), fuelStack.getLocalizedName()));
-
+            if (fuelStack != null && fuelStack.amount > 0) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", TextFormattingUtil.formatIntPretty(fuelStack.amount), fuelStack.getLocalizedName()));
+            }
+            super.addDisplayText(textList);
             if (rotorHolder.getRotorEfficiency() > 0) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_speed", TextFormattingUtil.formatIntPretty(rotorHolder.getRotorSpeed()), TextFormattingUtil.formatIntPretty(rotorHolder.getMaxRotorHolderSpeed())));
                 textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.efficiency", rotorHolder.getTotalEfficiency()));
@@ -133,7 +131,6 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
                         .setStyle(new Style().setColor(TextFormatting.RED)));
             }
         }
-        super.addDisplayText(textList);
     }
 
     @Override
