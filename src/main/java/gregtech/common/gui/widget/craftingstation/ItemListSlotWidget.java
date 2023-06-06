@@ -44,7 +44,9 @@ public class ItemListSlotWidget extends Widget {
         int stackX = position.x + 1;
         int stackY = position.y + 1;
         if (itemInfo != null) {
-            ItemStack itemStack = itemInfo.getItemStack();
+            ItemStack itemStack = itemInfo.getItemStack().copy();
+            // Set the count to 1 to prevent stack size from being drawn in drawItemStack
+            itemStack.setCount(1);
             String itemAmountStr = formatItemAmount(itemInfo.getTotalItemAmount());
             drawItemStack(itemStack, stackX, stackY, null);
             drawStringFixedCorner(itemAmountStr, stackX + 17, stackY + 17, 16777215, true, 0.5f);
