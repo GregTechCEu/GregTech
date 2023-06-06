@@ -116,21 +116,6 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         return false;
     }
 
-    @Nullable
-    protected String getRecipeFluidInputAmount() {
-        IRotorHolder rotorHolder = ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder();
-        if (rotorHolder == null || !rotorHolder.hasRotor())
-            return null;
-
-        if (previousRecipe != null) {
-            FluidStack requiredFluidInput = previousRecipe.getFluidInputs().get(0).getInputFluidStack().copy();
-            int fuelEnergyValue = requiredFluidInput.amount / -(previousRecipe.getEUt());
-            requiredFluidInput.amount = (int) (fuelEnergyValue * getMaxVoltage() / (rotorHolder.getTotalEfficiency() / 100f));
-            return TextFormattingUtil.format("%,dL ", requiredFluidInput.amount, TextFormatting.RED) + TextFormattingUtil.format("%s", requiredFluidInput.getLocalizedName());
-        }
-        return null;
-    }
-
     @Override
     public void invalidate() {
         excessVoltage = 0;
