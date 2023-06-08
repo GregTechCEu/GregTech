@@ -1037,7 +1037,16 @@ public class RecipeMaps {
             .setSound(GTSoundEvents.FIRE);
 
     /**
-     * Currently unused
+     * Example:
+     * <pre>
+     * RecipeMaps.SCANNER_RECIPES.recipeBuilder()
+     *              .inputNBT(MetaItems.TOOL_DATA_STICK, NBTMatcher.ANY, NBTCondition.ANY)
+     *              .input(MetaItems.ELECTRIC_MOTOR_IV)
+     *              .output(MetaItems.TOOL_DATA_STICK)
+     *              .duration(100)
+     *              .EUt(2)
+     *              .buildAndRegister();
+     * </pre>
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> SCANNER_RECIPES = new RecipeMapScanner("scanner", 2, 1, 1, 0, new SimpleRecipeBuilder(), false)

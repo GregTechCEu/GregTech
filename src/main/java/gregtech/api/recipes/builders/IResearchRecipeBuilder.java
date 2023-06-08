@@ -29,6 +29,12 @@ public interface IResearchRecipeBuilder {
     ItemStack getResearchStack();
 
     /**
+     * @return the ItemStack used to hold the research data. Can be {@link ItemStack#EMPTY}
+     */
+    @Nonnull
+    ItemStack getDataItem();
+
+    /**
      * @return the duration of the research recipe to generate.
      */
     int getResearchDuration();

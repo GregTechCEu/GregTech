@@ -5,14 +5,14 @@ import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
 
-public class ResearchProperty extends RecipeProperty<String> {
+public final class ResearchProperty extends RecipeProperty<ResearchPropertyData> {
 
     public static final String KEY = "research";
 
     private static ResearchProperty INSTANCE;
 
     private ResearchProperty() {
-        super(KEY, String.class);
+        super(KEY, ResearchPropertyData.class);
     }
 
     @Nonnull

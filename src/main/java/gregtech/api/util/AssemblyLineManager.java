@@ -5,6 +5,8 @@ import gregtech.api.items.metaitem.stats.IDataStick;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.IResearchRecipeBuilder;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
@@ -18,6 +20,11 @@ public final class AssemblyLineManager {
 
     public static final String RESEARCH_NBT_TAG = "assemblylineResearch";
     public static final String RESEARCH_ID_NBT_TAG = "researchId";
+
+    @Nonnull
+    public static ItemStack getDefaultDataItem() {
+        return MetaItems.TOOL_DATA_STICK.getStackForm();
+    }
 
     private AssemblyLineManager() {}
 
@@ -38,7 +45,7 @@ public final class AssemblyLineManager {
     @Nullable
     public static String readResearchId(@Nonnull ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
-        if (compound == null) return null;
+        if (!hasResearchTag(compound)) return null;
 
         NBTTagCompound researchCompound = compound.getCompoundTag(RESEARCH_NBT_TAG);
         String researchId = researchCompound.getString(RESEARCH_ID_NBT_TAG);
@@ -67,9 +74,15 @@ public final class AssemblyLineManager {
      * @return if the stack has the research NBTTagCompound
      */
     public static boolean hasResearchTag(@Nonnull ItemStack stack) {
-        NBTTagCompound compound = stack.getTagCompound();
-        if (compound == null) return false;
+        return hasResearchTag(stack.getTagCompound());
+    }
 
+    /**
+     * @param compound the compound to check
+     * @return if the tag has  the research NBTTagCompound
+     */
+    private static boolean hasResearchTag(@Nullable NBTTagCompound compound) {
+        if (compound == null || compound.isEmpty()) return false;
         return compound.hasKey(RESEARCH_NBT_TAG, Constants.NBT.TAG_COMPOUND);
     }
 
@@ -88,14 +101,14 @@ public final class AssemblyLineManager {
             return;
         }
 
-        ItemStack output = MetaItems.TOOL_DATA_STICK.getStackForm();
-        NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(output);
+        ItemStack dataItem = builder.getDataItem();
+        NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(dataItem);
         writeResearchToNBT(compound, researchId);
 
         RecipeMaps.SCANNER_RECIPES.recipeBuilder()
-                .input(MetaItems.TOOL_DATA_STICK)
+                .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
                 .inputs(builder.getResearchStack().copy())
-                .outputs(output)
+                .outputs(dataItem)
                 .duration(builder.getResearchDuration())
                 .EUt(builder.getResearchEUt())
                 .buildAndRegister();

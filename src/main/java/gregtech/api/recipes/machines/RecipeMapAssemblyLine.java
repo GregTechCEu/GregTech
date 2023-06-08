@@ -9,6 +9,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.ResearchProperty;
+import gregtech.api.recipes.recipeproperties.ResearchPropertyData;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -73,10 +74,12 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     public boolean compileRecipe(Recipe recipe) {
         if (!super.compileRecipe(recipe)) return false;
         if (recipe.hasProperty(ResearchProperty.getInstance())) {
-            String researchId = recipe.getProperty(ResearchProperty.getInstance(), null);
-            if (researchId != null) {
-                addDataStickEntry(researchId, recipe);
+            ResearchPropertyData data = recipe.getProperty(ResearchProperty.getInstance(), null);
+            if (data != null) {
+                addDataStickEntry(data.getResearchId(), recipe);
+                return true;
             }
+            return false;
         }
         return true;
     }
@@ -85,10 +88,11 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     public boolean removeRecipe(@Nonnull Recipe recipe) {
         if (!super.removeRecipe(recipe)) return false;
         if (recipe.hasProperty(ResearchProperty.getInstance())) {
-            String researchId = recipe.getProperty(ResearchProperty.getInstance(), null);
-            if (researchId != null) {
-                return removeDataStickEntry(researchId, recipe);
+            ResearchPropertyData data = recipe.getProperty(ResearchProperty.getInstance(), null);
+            if (data != null) {
+                return removeDataStickEntry(data.getResearchId(), recipe);
             }
+            return false;
         }
         return true;
     }

@@ -12,12 +12,12 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.ResearchProperty;
+import gregtech.api.recipes.recipeproperties.ResearchPropertyData;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTUtility;
 import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.common.ConfigHolder;
-import gregtech.common.items.MetaItems;
 import gregtech.integration.jei.JustEnoughItemsModule;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
 import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
@@ -197,12 +197,14 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
         }
 
         if (ConfigHolder.machines.enableResearch && this.recipeMap == RecipeMaps.ASSEMBLY_LINE_RECIPES) {
-            ItemStack dataStick = MetaItems.TOOL_DATA_STICK.getStackForm();
             if (recipeWrapper.getRecipe().hasProperty(ResearchProperty.getInstance())) {
-                String researchId = recipeWrapper.getRecipe().getProperty(ResearchProperty.getInstance(), "");
-                AssemblyLineManager.writeResearchToNBT(GTUtility.getOrCreateNbtCompound(dataStick), researchId);
+                ResearchPropertyData data = recipeWrapper.getRecipe().getProperty(ResearchProperty.getInstance(), null);
+                if (data != null) {
+                    ItemStack dataStick = data.getDataItem();
+                    AssemblyLineManager.writeResearchToNBT(GTUtility.getOrCreateNbtCompound(dataStick), data.getResearchId());
+                    itemStackGroup.set(16, dataStick);
+                }
             }
-            itemStackGroup.set(16, dataStick);
         }
 
         itemStackGroup.addTooltipCallback(recipeWrapper::addItemTooltip);
