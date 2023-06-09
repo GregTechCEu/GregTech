@@ -539,16 +539,16 @@ metaitem.glass_lens.black.name=Glass Lens (Black)
 #CIRCUITS LOCALIZATION
 metaitem.boule.silicon.name=Monocrystalline Silicon Boule
 metaitem.boule.silicon.tooltip=Raw Circuit
-metaitem.boule.glowstone.name=Glowstone-doped Monocrystalline Silicon Boule
-metaitem.boule.glowstone.tooltip=Raw Circuit
+metaitem.boule.phosphorus.name=Phosphorus-doped Monocrystalline Silicon Boule
+metaitem.boule.phosphorus.tooltip=Raw Circuit
 metaitem.boule.naquadah.name=Naquadah-doped Monocrystalline Silicon Boule
 metaitem.boule.naquadah.tooltip=Raw Circuit
 metaitem.boule.neutronium.name=Neutronium-doped Monocrystalline Silicon Boule
 metaitem.boule.neutronium.tooltip=Raw Circuit
 metaitem.wafer.silicon.name=Silicon Wafer
 metaitem.wafer.silicon.tooltip=Raw Circuit
-metaitem.wafer.glowstone.name=Glowstone-doped Wafer
-metaitem.wafer.glowstone.tooltip=Raw Circuit
+metaitem.wafer.phosphorus.name=Phosphorus-doped Wafer
+metaitem.wafer.phosphorus.tooltip=Raw Circuit
 metaitem.wafer.naquadah.name=Naquadah-doped Wafer
 metaitem.wafer.naquadah.tooltip=Raw Circuit
 metaitem.wafer.neutronium.name=Neutronium-doped Wafer
@@ -2263,6 +2263,10 @@ recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 recipemap.flotation_cell.name=Froth Flotation
 
+gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
+gregtech.recipe.category.macerator_recycling=Macerator Recycling
+gregtech.recipe.category.extractor_recycling=Extractor Recycling
+
 behaviour.hoe=Can till dirt
 behaviour.soft_hammer=Activates and Deactivates Machines
 behaviour.soft_hammer.enabled=Working Enabled
@@ -2572,6 +2576,7 @@ gregtech.machine.drum.aluminium.name=Aluminium Drum
 gregtech.machine.drum.stainless_steel.name=Stainless Steel Drum
 gregtech.machine.drum.titanium.name=Titanium Drum
 gregtech.machine.drum.tungstensteel.name=Tungstensteel Drum
+gregtech.machine.drum.gold.name=Gold Drum
 
 gregtech.machine.drum.enable_output=Will drain Fluid to downward adjacent Tanks
 gregtech.machine.drum.disable_output=Will not drain Fluid

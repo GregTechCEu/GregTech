@@ -1,7 +1,11 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.GTValues;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.stack.UnificationEntry;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
@@ -15,6 +19,30 @@ import static gregtech.common.metatileentities.MetaTileEntities.*;
 public class MetaTileEntityMachineRecipeLoader {
 
     public static void init() {
+
+        // Fluid Hatches
+        registerHatchBusRecipe(ULV, FLUID_IMPORT_HATCH[ULV], FLUID_EXPORT_HATCH[ULV], new ItemStack(Blocks.GLASS));
+        registerHatchBusRecipe(LV, FLUID_IMPORT_HATCH[LV], FLUID_EXPORT_HATCH[LV], new ItemStack(Blocks.GLASS));
+        registerHatchBusRecipe(MV, FLUID_IMPORT_HATCH[MV], FLUID_EXPORT_HATCH[MV], BRONZE_DRUM.getStackForm());
+        registerHatchBusRecipe(HV, FLUID_IMPORT_HATCH[HV], FLUID_EXPORT_HATCH[HV], STEEL_DRUM.getStackForm());
+        registerHatchBusRecipe(EV, FLUID_IMPORT_HATCH[EV], FLUID_EXPORT_HATCH[EV], ALUMINIUM_DRUM.getStackForm());
+        registerHatchBusRecipe(IV, FLUID_IMPORT_HATCH[IV], FLUID_EXPORT_HATCH[IV], STAINLESS_STEEL_DRUM.getStackForm());
+        registerHatchBusRecipe(LuV, FLUID_IMPORT_HATCH[LuV], FLUID_EXPORT_HATCH[LuV], TITANIUM_DRUM.getStackForm());
+        registerHatchBusRecipe(ZPM, FLUID_IMPORT_HATCH[ZPM], FLUID_EXPORT_HATCH[ZPM], TUNGSTENSTEEL_DRUM.getStackForm());
+        registerHatchBusRecipe(UV, FLUID_IMPORT_HATCH[UV], FLUID_EXPORT_HATCH[UV], QUANTUM_TANK[0].getStackForm());
+        registerHatchBusRecipe(UHV, FLUID_IMPORT_HATCH[UHV], FLUID_EXPORT_HATCH[UHV], QUANTUM_TANK[1].getStackForm());
+
+        // Item Buses
+        registerHatchBusRecipe(ULV, ITEM_IMPORT_BUS[ULV], ITEM_EXPORT_BUS[ULV], new ItemStack(Blocks.CHEST));
+        registerHatchBusRecipe(LV, ITEM_IMPORT_BUS[LV], ITEM_EXPORT_BUS[LV], new ItemStack(Blocks.CHEST));
+        registerHatchBusRecipe(MV, ITEM_IMPORT_BUS[MV], ITEM_EXPORT_BUS[MV], BRONZE_CRATE.getStackForm());
+        registerHatchBusRecipe(HV, ITEM_IMPORT_BUS[HV], ITEM_EXPORT_BUS[HV], STEEL_CRATE.getStackForm());
+        registerHatchBusRecipe(EV, ITEM_IMPORT_BUS[EV], ITEM_EXPORT_BUS[EV], ALUMINIUM_CRATE.getStackForm());
+        registerHatchBusRecipe(IV, ITEM_IMPORT_BUS[IV], ITEM_EXPORT_BUS[IV], STAINLESS_STEEL_CRATE.getStackForm());
+        registerHatchBusRecipe(LuV, ITEM_IMPORT_BUS[LuV], ITEM_EXPORT_BUS[LuV], TITANIUM_CRATE.getStackForm());
+        registerHatchBusRecipe(ZPM, ITEM_IMPORT_BUS[ZPM], ITEM_EXPORT_BUS[ZPM], TUNGSTENSTEEL_CRATE.getStackForm());
+        registerHatchBusRecipe(UV, ITEM_IMPORT_BUS[UV], ITEM_EXPORT_BUS[UV], QUANTUM_CHEST[0].getStackForm());
+        registerHatchBusRecipe(UHV, ITEM_IMPORT_BUS[UHV], ITEM_EXPORT_BUS[UHV], QUANTUM_CHEST[1].getStackForm());
 
         // Energy Output Hatches
 
@@ -552,7 +580,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[LV])
-                .circuitMeta(1)
+                .circuitMeta(8)
                 .output(MAINTENANCE_HATCH)
                 .duration(100).EUt(VA[LV]).buildAndRegister();
 
@@ -628,5 +656,107 @@ public class MetaTileEntityMachineRecipeLoader {
                 .circuitMeta(2)
                 .output(ADVANCED_FLUID_DRILLING_RIG)
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
+    }
+
+    private static void registerHatchBusRecipe(int tier, MetaTileEntity inputBus, MetaTileEntity outputBus, ItemStack extra) {
+        // Glue recipe for ULV and LV
+        // 250L for ULV, 500L for LV
+        if (tier <= GTValues.LV) {
+            int fluidAmount = tier == GTValues.ULV ? 250 : 500;
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(HULL[tier])
+                    .inputs(extra)
+                    .fluidInputs(Glue.getFluid(fluidAmount))
+                    .circuitMeta(1)
+                    .output(inputBus)
+                    .duration(300).EUt(VA[tier]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(HULL[tier])
+                    .inputs(extra)
+                    .fluidInputs(Glue.getFluid(fluidAmount))
+                    .circuitMeta(2)
+                    .output(outputBus)
+                    .duration(300).EUt(VA[tier]).buildAndRegister();
+        }
+
+        // Polyethylene recipe for HV and below
+        // 72L for ULV, 144L for LV, 288L for MV, 432L for HV
+        if (tier <= GTValues.HV) {
+            int peAmount = getFluidAmount(tier + 4);
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(HULL[tier])
+                    .inputs(extra)
+                    .fluidInputs(Polyethylene.getFluid(peAmount))
+                    .circuitMeta(1)
+                    .output(inputBus)
+                    .duration(300).EUt(VA[tier]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(HULL[tier])
+                    .inputs(extra)
+                    .fluidInputs(Polyethylene.getFluid(peAmount))
+                    .circuitMeta(2)
+                    .output(outputBus)
+                    .duration(300).EUt(VA[tier]).buildAndRegister();
+        }
+
+        // Polytetrafluoroethylene recipe for LuV and below
+        // 36L for ULV, 72L for LV, 144L for MV, 288L for HV, 432L for EV, 576L for IV, 720L for LuV
+        if (tier <= GTValues.LuV) {
+            int ptfeAmount = getFluidAmount(tier + 3);
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(HULL[tier])
+                    .inputs(extra)
+                    .fluidInputs(Polytetrafluoroethylene.getFluid(ptfeAmount))
+                    .circuitMeta(1)
+                    .output(inputBus)
+                    .duration(300).EUt(VA[tier]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(HULL[tier])
+                    .inputs(extra)
+                    .fluidInputs(Polytetrafluoroethylene.getFluid(ptfeAmount))
+                    .circuitMeta(2)
+                    .output(outputBus)
+                    .duration(300).EUt(VA[tier]).buildAndRegister();
+        }
+
+        // PBI recipe for all
+        // 4L for ULV, 9L for LV, 18L for MV, 36L for HV, 72L for EV, 144L for IV,
+        // 288L for LuV, 432L for ZPM, 576L for UV, 720L for UHV
+        // Use a Math.min() call on tier so that UHV hatches are still UV voltage
+        int pbiAmount = getFluidAmount(tier);
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[tier])
+                .inputs(extra)
+                .fluidInputs(Polybenzimidazole.getFluid(pbiAmount))
+                .circuitMeta(1)
+                .output(inputBus)
+                .duration(300).EUt(VA[Math.min(GTValues.UV, tier)]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[tier])
+                .inputs(extra)
+                .fluidInputs(Polybenzimidazole.getFluid(pbiAmount))
+                .circuitMeta(2)
+                .output(outputBus)
+                .duration(300).EUt(VA[Math.min(GTValues.UV, tier)]).buildAndRegister();
+    }
+
+    private static int getFluidAmount(int offsetTier) {
+        switch (offsetTier) {
+            case 0: return 4;
+            case 1: return 9;
+            case 2: return 18;
+            case 3: return 36;
+            case 4: return 72;
+            case 5: return 144;
+            case 6: return 288;
+            case 7: return 432;
+            case 8: return 576;
+            case 9:
+            default: return 720;
+        }
     }
 }

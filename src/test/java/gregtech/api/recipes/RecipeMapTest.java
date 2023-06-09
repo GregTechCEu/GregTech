@@ -34,21 +34,18 @@ public class RecipeMapTest {
     }
 
     RecipeMap<SimpleRecipeBuilder> map;
+    private static int mapId = 0;
 
     @BeforeEach
     public void setupRecipes() {
-        map = new RecipeMap<>("chemical_reactor",
-                0,
+        map = new RecipeMap<>("test_reactor_" + mapId++,
                 2,
-                0,
                 2,
-                0,
                 3,
-                0,
                 2,
                 new SimpleRecipeBuilder().EUt(30),
-
                 false);
+
         map.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))

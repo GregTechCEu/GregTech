@@ -66,6 +66,13 @@ public class Material implements Comparable<Material> {
             return materialInfo.element.getSymbol();
         }
         if (!materialInfo.componentList.isEmpty()) {
+            // prevent parenthesis around single component materials
+            if (materialInfo.componentList.size() == 1) {
+                MaterialStack stack = materialInfo.componentList.get(0);
+                if (stack.amount == 1) {
+                    return stack.material.getChemicalFormula();
+                }
+            }
             StringBuilder components = new StringBuilder();
             for (MaterialStack component : materialInfo.componentList)
                 components.append(component.toFormatted());

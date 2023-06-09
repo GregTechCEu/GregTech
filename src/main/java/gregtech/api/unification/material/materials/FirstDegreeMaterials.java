@@ -289,7 +289,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_SPRING)
                 .components(Iron, 1, Aluminium, 1, Chromium, 1)
                 .cableProperties(GTValues.V[3], 4, 3)
-                .blastTemp(1800, GasTier.LOW, VA[MV], 1000)
+                .blastTemp(1800, GasTier.LOW, VA[HV], 900)
                 .fluidTemp(1708)
                 .build();
 

@@ -53,9 +53,9 @@ public class PetrochemRecipes {
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(RawOil.getFluid(100))
-                .fluidOutputs(SulfuricHeavyFuel.getFluid(15))
+                .fluidOutputs(SulfuricHeavyFuel.getFluid(10))
                 .fluidOutputs(SulfuricLightFuel.getFluid(50))
-                .fluidOutputs(SulfuricNaphtha.getFluid(20))
+                .fluidOutputs(SulfuricNaphtha.getFluid(150))
                 .fluidOutputs(SulfuricGas.getFluid(60))
                 .duration(20).EUt(96).buildAndRegister();
 

@@ -649,6 +649,9 @@ public class MachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Steel, 2).input(plate, Steel, 4).outputs(STEEL_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Aluminium, 2).input(plate, Aluminium, 4).outputs(ALUMINIUM_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, StainlessSteel, 2).input(plate, StainlessSteel, 4).outputs(STAINLESS_STEEL_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Titanium, 2).input(plate, Titanium, 4).outputs(TITANIUM_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, TungstenSteel, 2).input(plate, TungstenSteel, 4).outputs(TUNGSTENSTEEL_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Gold, 2).input(plate, Gold, 4).outputs(GOLD_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, Polyethylene, 4).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(288)).output(DUCT_TAPE).duration(100).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, SiliconeRubber, 2).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(288)).output(DUCT_TAPE, 2).duration(100).buildAndRegister();
@@ -687,70 +690,74 @@ public class MachineRecipeLoader {
     }
 
     private static void registerBlastFurnaceRecipes() {
-        BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, Ruby).output(nugget, Aluminium, 3).output(dustTiny, DarkAsh).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, Ruby).output(nugget, Aluminium, 3).output(dustTiny, DarkAsh).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, GreenSapphire).output(nugget, Aluminium, 3).output(dustTiny, DarkAsh).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, GreenSapphire).output(nugget, Aluminium, 3).output(dustTiny, DarkAsh).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, Sapphire).output(nugget, Aluminium, 3).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, Sapphire).output(nugget, Aluminium, 3).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(800).EUt(VA[HV]).input(dust, Magnesium, 2).fluidInputs(TitaniumTetrachloride.getFluid(1000)).outputs(OreDictUnifier.get(OrePrefix.ingotHot, Materials.Titanium), OreDictUnifier.get(OrePrefix.dust, Materials.MagnesiumChloride, 6)).blastFurnaceTemp(Materials.Titanium.getBlastTemperature() + 200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(500).EUt(VA[MV]).input(ingot, Iron).fluidInputs(Oxygen.getFluid(200)).output(ingot, Steel).output(dustTiny, Ash).blastFurnaceTemp(1000).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(300).EUt(VA[MV]).input(ingot, WroughtIron).fluidInputs(Oxygen.getFluid(200)).output(ingot, Steel).output(dustTiny, Ash).blastFurnaceTemp(1000).buildAndRegister();
-
-        //Tempered Glass
         BLAST_RECIPES.recipeBuilder()
-                .input(block, Glass)
-                .fluidInputs(Oxygen.getFluid(100))
-                .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
-                        BlockGlassCasing.CasingType.TEMPERED_GLASS))
-                .blastFurnaceTemp(1000)
-                .duration(200).EUt(VA[MV]).buildAndRegister();
+				.input(dust, Magnesium, 2)
+				.fluidInputs(TitaniumTetrachloride.getFluid(1000))
+				.output(ingotHot, Titanium)
+				.output(dust, MagnesiumChloride, 6)
+				.blastFurnaceTemp(Materials.Titanium.getBlastTemperature() + 200)
+				.duration(800).EUt(VA[HV]).buildAndRegister();
 
-        BLAST_RECIPES.recipeBuilder().duration(240).EUt(VA[MV]).blastFurnaceTemp(1200)
+        BLAST_RECIPES.recipeBuilder()
+				.input(ingot, Iron)
+				.fluidInputs(Oxygen.getFluid(200))
+				.output(ingot, Steel)
+				.output(dustTiny, Ash)
+				.blastFurnaceTemp(1000)
+				.duration(500).EUt(VA[MV]).buildAndRegister();
+
+        BLAST_RECIPES.recipeBuilder()
+				.input(ingot, WroughtIron)
+				.fluidInputs(Oxygen.getFluid(200))
+				.output(ingot, Steel)
+				.output(dustTiny, Ash)
+				.blastFurnaceTemp(1000)
+				.duration(300).EUt(VA[MV]).buildAndRegister();
+
+        BLAST_RECIPES.recipeBuilder()
                 .input(dust, SiliconDioxide, 3)
                 .input(dust, Carbon, 2)
                 .output(gem, Silicon)
-                .output(dustTiny, Ash)
-                .fluidOutputs(CarbonMonoxide.getFluid(2000))
-                .buildAndRegister();
+				.fluidOutputs(CarbonMonoxide.getFluid(2000))
+                .blastFurnaceTemp(1200)
+				.duration(240).EUt(VA[MV]).buildAndRegister();
     }
 
     private static void registerDecompositionRecipes() {
         EXTRACTOR_RECIPES.recipeBuilder()
                 .inputs(STICKY_RESIN.getStackForm())
                 .output(dust, RawRubber, 3)
-                .duration(150).EUt(2)
-                .buildAndRegister();
+                .duration(150).EUt(2).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().duration(300).EUt(2)
+        EXTRACTOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(MetaBlocks.RUBBER_LEAVES, 16))
                 .output(dust, RawRubber)
-                .buildAndRegister();
+                .duration(300).EUt(2).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().duration(300).EUt(2)
+        EXTRACTOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(MetaBlocks.RUBBER_LOG))
                 .output(dust, RawRubber)
-                .buildAndRegister();
+                .duration(300).EUt(2).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().duration(300).EUt(2)
+        EXTRACTOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(MetaBlocks.RUBBER_SAPLING))
                 .output(dust, RawRubber)
-                .buildAndRegister();
+                .duration(300).EUt(2).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().duration(150).EUt(2)
+        EXTRACTOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.SLIME_BALL))
                 .output(dust, RawRubber, 2)
-                .buildAndRegister();
+                .duration(150).EUt(2).buildAndRegister();
 
-        COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2).input("treeSapling", 8).output(PLANT_BALL).buildAndRegister();
-        COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2).inputs(new ItemStack(Items.WHEAT, 8)).output(PLANT_BALL).buildAndRegister();
-        COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2).inputs(new ItemStack(Items.POTATO, 8)).output(PLANT_BALL).buildAndRegister();
-        COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2).inputs(new ItemStack(Items.CARROT, 8)).output(PLANT_BALL).buildAndRegister();
-        COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2).inputs(new ItemStack(Blocks.CACTUS, 8)).output(PLANT_BALL).buildAndRegister();
-        COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2).inputs(new ItemStack(Items.REEDS, 8)).output(PLANT_BALL).buildAndRegister();
-        COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2).inputs(new ItemStack(Blocks.BROWN_MUSHROOM, 8)).output(PLANT_BALL).buildAndRegister();
-        COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2).inputs(new ItemStack(Blocks.RED_MUSHROOM, 8)).output(PLANT_BALL).buildAndRegister();
-        COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2).inputs(new ItemStack(Items.BEETROOT, 8)).output(PLANT_BALL).buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder().input("treeSapling", 8).output(PLANT_BALL).duration(300).EUt(2).buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Items.WHEAT, 8)).output(PLANT_BALL).duration(300).EUt(2).buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Items.POTATO, 8)).output(PLANT_BALL).duration(300).EUt(2).buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Items.CARROT, 8)).output(PLANT_BALL).duration(300).EUt(2).buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.CACTUS, 8)).output(PLANT_BALL).duration(300).EUt(2).buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Items.REEDS, 8)).output(PLANT_BALL).duration(300).EUt(2).buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.BROWN_MUSHROOM, 8)).output(PLANT_BALL).duration(300).EUt(2).buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.RED_MUSHROOM, 8)).output(PLANT_BALL).duration(300).EUt(2).buildAndRegister();
+        COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Items.BEETROOT, 8)).output(PLANT_BALL).duration(300).EUt(2).buildAndRegister();
 
     }
 
@@ -946,6 +953,9 @@ public class MachineRecipeLoader {
         ModHandler.addShapelessNBTClearingRecipe("drum_nbt_steel", MetaTileEntities.STEEL_DRUM.getStackForm(), MetaTileEntities.STEEL_DRUM.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("drum_nbt_aluminium", MetaTileEntities.ALUMINIUM_DRUM.getStackForm(), MetaTileEntities.ALUMINIUM_DRUM.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("drum_nbt_stainless_steel", MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm(), MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("drum_nbt_titanium", MetaTileEntities.TITANIUM_DRUM.getStackForm(), MetaTileEntities.TITANIUM_DRUM.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("drum_nbt_tungstensteel", MetaTileEntities.TUNGSTENSTEEL_DRUM.getStackForm(), MetaTileEntities.TUNGSTENSTEEL_DRUM.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("drum_nbt_gold", MetaTileEntities.GOLD_DRUM.getStackForm(), MetaTileEntities.GOLD_DRUM.getStackForm());
 
         // Cells
         ModHandler.addShapedNBTClearingRecipe("cell_nbt_regular", MetaItems.FLUID_CELL.getStackForm(), " C", "  ", 'C', MetaItems.FLUID_CELL.getStackForm());
