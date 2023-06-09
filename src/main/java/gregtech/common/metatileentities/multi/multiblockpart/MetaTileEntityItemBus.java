@@ -16,7 +16,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.GTHashMaps;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -68,16 +67,10 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                 }
             }
             // Only attempt to auto collapse the inventory contents once the bus has been notified
-            if (isAutoCollapse() && this.isAttachedToMultiBlock()) {
-                MultiblockControllerBase controller = getController();
-                if (controller != null) {
-                    List<IItemHandlerModifiable> notified = isExportHatch ? controller.getNotifiedItemOutputList() : controller.getNotifiedItemInputList();
-                    IItemHandlerModifiable inventory = isExportHatch ? getExportItems() : getImportItems();
-                    if (notified.contains(inventory)) {
-                        collapseInventorySlotContents(inventory);
-                        // collapsing re-notifies, so prevent attempts to collapse again
-                        notified.remove(inventory);
-                    }
+            if (isAutoCollapse()) {
+                IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : this.getImportItems());
+                if (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) : this.getNotifiedItemInputList().contains(inventory)) {
+                    collapseInventorySlotContents(inventory);
                 }
             }
         }
