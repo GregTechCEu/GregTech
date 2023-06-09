@@ -33,14 +33,10 @@ public class AbstractRecipeLogicTest {
         World world = DummyWorld.INSTANCE;
 
         // Create an empty recipe map to work with
-        RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("chemical_reactor",
-                0,
+        RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("test_reactor",
                 2,
-                0,
                 2,
-                0,
                 3,
-                0,
                 2,
                 new SimpleRecipeBuilder().EUt(30),
                 false);

@@ -2226,6 +2226,10 @@ recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 
+gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
+gregtech.recipe.category.macerator_recycling=Macerator Recycling
+gregtech.recipe.category.extractor_recycling=Extractor Recycling
+
 behaviour.hoe=Can till dirt
 behaviour.soft_hammer=Activates and Deactivates Machines
 behaviour.soft_hammer.enabled=Working Enabled
