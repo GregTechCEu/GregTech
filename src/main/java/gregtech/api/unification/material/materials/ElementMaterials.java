@@ -324,7 +324,7 @@ public class ElementMaterials {
                 .build();
 
         Indium = new Material.Builder(48, "indium")
-                .dust().fluid()
+                .ingot().fluid()
                 .color(0x400080).iconSet(SHINY)
                 .element(Elements.In)
                 .fluidTemp(430)

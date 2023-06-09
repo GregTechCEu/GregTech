@@ -567,20 +567,20 @@ metaitem.board.fiber_reinforced.tooltip=An Extreme Board
 metaitem.board.multilayer.fiber_reinforced.name=Multi-layer Fiber-Reinforced Circuit Board
 metaitem.board.multilayer.fiber_reinforced.tooltip=An Elite Board
 metaitem.board.wetware.name=Wetware Lifesupport Circuit Board
-metaitem.board.wetware.tooltip=The Board that keeps life
+metaitem.board.wetware.tooltip=A Master Board
 
 metaitem.circuit_board.primitive.name=Primitive Circuit Board
-metaitem.circuit_board.primitive.tooltip=A Primitive Circuit Board
+metaitem.circuit_board.primitive.tooltip=A Coated Board
 metaitem.circuit_board.basic.name=Basic Circuit Board
-metaitem.circuit_board.basic.tooltip=A Basic Circuit Board
+metaitem.circuit_board.basic.tooltip=A Phenolic Board
 metaitem.circuit_board.good.name=Good Circuit Board
-metaitem.circuit_board.good.tooltip=A Good Circuit Board
+metaitem.circuit_board.good.tooltip=A Plastic Board
 metaitem.circuit_board.advanced.name=Advanced Circuit Board
-metaitem.circuit_board.advanced.tooltip=An Advanced Circuit Board
+metaitem.circuit_board.advanced.tooltip=An Epoxy Board
 metaitem.circuit_board.extreme.name=Extreme Circuit Board
-metaitem.circuit_board.extreme.tooltip=A More Advanced Circuit Board
+metaitem.circuit_board.extreme.tooltip=A Fiber-Reinforced Board
 metaitem.circuit_board.elite.name=Elite Circuit Board
-metaitem.circuit_board.elite.tooltip=An Elite Circuit Board
+metaitem.circuit_board.elite.tooltip=A Multilayer Board
 metaitem.circuit_board.wetware.name=Master Circuit Board
 metaitem.circuit_board.wetware.tooltip=The Board that keeps life
 
