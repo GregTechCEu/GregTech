@@ -210,6 +210,9 @@ public class MetaTileEntities {
     public static MetaTileEntityDrum ALUMINIUM_DRUM;
     public static MetaTileEntityDrum STEEL_DRUM;
     public static MetaTileEntityDrum STAINLESS_STEEL_DRUM;
+    public static MetaTileEntityDrum TITANIUM_DRUM;
+    public static MetaTileEntityDrum TUNGSTENSTEEL_DRUM;
+    public static MetaTileEntityDrum GOLD_DRUM;
     public static MetaTileEntityCrate WOODEN_CRATE;
     public static MetaTileEntityCrate BRONZE_CRATE;
     public static MetaTileEntityCrate ALUMINIUM_CRATE;
@@ -684,6 +687,9 @@ public class MetaTileEntities {
         STEEL_DRUM = registerMetaTileEntity(1612, new MetaTileEntityDrum(gregtechId("drum.steel"), Materials.Steel, 64000));
         ALUMINIUM_DRUM = registerMetaTileEntity(1613, new MetaTileEntityDrum(gregtechId("drum.aluminium"), Materials.Aluminium, 128000));
         STAINLESS_STEEL_DRUM = registerMetaTileEntity(1614, new MetaTileEntityDrum(gregtechId("drum.stainless_steel"), Materials.StainlessSteel, 256000));
+        TITANIUM_DRUM = registerMetaTileEntity(1615, new MetaTileEntityDrum(gregtechId("drum.titanium"), Materials.Titanium, 512000));
+        TUNGSTENSTEEL_DRUM = registerMetaTileEntity(1616, new MetaTileEntityDrum(gregtechId("drum.tungstensteel"), Materials.TungstenSteel, 1024000));
+        GOLD_DRUM = registerMetaTileEntity(1617, new MetaTileEntityDrum(gregtechId("drum.gold"), Materials.Gold, 32000));
 
         // Crates, IDs 1625-1639
         WOODEN_CRATE = registerMetaTileEntity(1625, new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27));
