@@ -134,23 +134,6 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     }
 
     @Override
-    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 176 + 90, 216);
-        builder.image(7, 4, 162 + 90, 121 + 6, GuiTextures.DISPLAY);
-        builder.label(13, 9, getMetaFullName(), 0xFFFFFF);
-        builder.widget(new AdvancedTextWidget(13, 19, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(156 + 90)
-                .setClickHandler(this::handleDisplayClick));
-        if (shouldShowVoidingModeButton()) {
-            builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
-                    4, this::getVoidingMode, this::setVoidingMode)
-                    .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
-        }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7 + 45, 134);
-        return builder;
-    }
-
-    @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.tooltip.base_production_eut", GTValues.V[tier] * 2));
