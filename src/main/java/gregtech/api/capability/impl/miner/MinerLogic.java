@@ -457,6 +457,15 @@ public class MinerLogic {
     }
 
     /**
+     * Resets the pipe length to zero
+     */
+    private void resetPipeLength() {
+        this.pipeLength = 0;
+        this.metaTileEntity.writeCustomData(GregtechDataCodes.PUMP_HEAD_LEVEL, b -> b.writeInt(pipeLength));
+        this.metaTileEntity.markDirty();
+    }
+
+    /**
      * renders the pipe beneath the miner
      */
     public void renderPipe(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
