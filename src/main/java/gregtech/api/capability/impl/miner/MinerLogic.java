@@ -688,6 +688,10 @@ public class MinerLogic {
             this.isWorkingEnabled = isWorkingEnabled;
             metaTileEntity.markDirty();
             if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
+                if (!isWorkingEnabled && checkCanMine()) {
+                    resetArea();
+                    resetPipeLength();
+                }
                 this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(isWorkingEnabled));
             }
         }
