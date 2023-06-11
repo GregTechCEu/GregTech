@@ -16,15 +16,14 @@ import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeBuilder> implements IResearchRecipeBuilder {
 
-    private boolean shouldAddResearchRecipe = false;
-    private String researchId;
-    private ItemStack researchStack = ItemStack.EMPTY;
-    private ItemStack dataStack = ItemStack.EMPTY;
-    private int researchDuration;
-    private int researchEUt;
+    private final Collection<ResearchRecipeEntry> recipeEntries = new ArrayList<>();
+
+    private boolean generatingRecipes = true;
 
     public AssemblyLineRecipeBuilder() {}
 
@@ -35,12 +34,8 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
 
     public AssemblyLineRecipeBuilder(@Nonnull AssemblyLineRecipeBuilder builder) {
         super(builder);
-        this.shouldAddResearchRecipe = builder.shouldAddResearchRecipe;
-        this.researchId = builder.researchId;
-        this.researchStack = builder.researchStack;
-        this.dataStack = builder.dataStack;
-        this.researchDuration = builder.researchDuration;
-        this.researchEUt = builder.researchEUt;
+        this.recipeEntries.addAll(builder.getRecipeEntries());
+        this.generatingRecipes = builder.generatingRecipes;
     }
 
     @Override
@@ -59,29 +54,34 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         return super.applyProperty(key, value);
     }
 
-    private boolean applyResearchProperty(@Nonnull String researchId) {
+    private boolean applyResearchProperty(ResearchPropertyData.ResearchEntry researchEntry) {
         if (!ConfigHolder.machines.enableResearch) return false;
-        if (researchId.isEmpty()) {
-            GTLog.logger.error("Assembly Line Research Id cannot be empty.", new IllegalArgumentException());
+        if (researchEntry == null) {
+            GTLog.logger.error("Assembly Line Research Entry cannot be empty.", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
             return false;
         }
-        if (dataStack.isEmpty()) dataStack = AssemblyLineManager.getDefaultDataItem();
-        if (applyProperty(ResearchProperty.getInstance(), new ResearchPropertyData(researchId, dataStack))) {
-            this.researchId = researchId;
+
+        if (!generatingRecipes) {
+            GTLog.logger.error("Cannot generate recipes when using researchWithoutRecipe()", new IllegalArgumentException());
+            recipeStatus = EnumValidationResult.INVALID;
+            return false;
+        }
+
+        if (recipePropertyStorage != null && recipePropertyStorage.hasRecipeProperty(ResearchProperty.getInstance())) {
+            ResearchPropertyData property = recipePropertyStorage.getRecipePropertyValue(ResearchProperty.getInstance(), null);
+            if (property == null) throw new IllegalStateException("Property storage has a null property");
+            property.add(researchEntry);
             return true;
         }
-        return false;
-    }
 
-    /**
-     * Does not generate a research recipe.
-     *
-     * @param researchStack the stack to use for the researchId
-     * @return this
-     */
-    public AssemblyLineRecipeBuilder researchWithoutRecipe(@Nonnull ItemStack researchStack) {
-        return researchWithoutRecipe(researchStack.toString());
+        ResearchPropertyData property = new ResearchPropertyData();
+        if (applyProperty(ResearchProperty.getInstance(), property)) {
+            property.add(researchEntry);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -91,7 +91,19 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * @return this
      */
     public AssemblyLineRecipeBuilder researchWithoutRecipe(@Nonnull String researchId) {
-        applyResearchProperty(researchId);
+        return researchWithoutRecipe(researchId, AssemblyLineManager.getDefaultDataItem());
+    }
+
+    /**
+     * Does not generate a research recipe.
+     *
+     * @param researchId the researchId for the recipe
+     * @param dataStack     the stack to hold the data. Must have the {@link gregtech.api.items.metaitem.stats.IDataStick} behavior.
+     * @return this
+     */
+    public AssemblyLineRecipeBuilder researchWithoutRecipe(@Nonnull String researchId, @Nonnull ItemStack dataStack) {
+        applyResearchProperty(new ResearchPropertyData.ResearchEntry(researchId, dataStack));
+        this.generatingRecipes = false;
         return this;
     }
 
@@ -191,8 +203,6 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
             GTLog.logger.error("Research ItemStack must not be empty", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
             return this;
-        } else {
-            this.researchStack = researchStack;
         }
 
         if (!dataStack.isEmpty()) {
@@ -201,8 +211,8 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
                 for (IItemBehaviour behaviour : metaItem.getBehaviours(dataStack)) {
                     if (behaviour instanceof IDataStick) {
                         foundBehavior = true;
-                        this.dataStack = dataStack.copy();
-                        this.dataStack.setCount(1);
+                        dataStack = dataStack.copy();
+                        dataStack.setCount(1);
                         break;
                     }
                 }
@@ -212,60 +222,32 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
                 recipeStatus = EnumValidationResult.INVALID;
                 return this;
             }
+        } else {
+            dataStack = AssemblyLineManager.getDefaultDataItem();
         }
 
-        if (duration > 0) {
-            this.researchDuration = duration;
-        } else {
+        if (duration <= 0) {
             GTLog.logger.error("Research recipe Duration must be > 0", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
             return this;
         }
 
-        if (EUt > 0) {
-            this.researchEUt = EUt;
-        } else {
+        if (EUt <= 0) {
             GTLog.logger.error("Research recipe EUt must be > 0", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
             return this;
         }
 
-        if (applyResearchProperty(researchId)) {
-            this.shouldAddResearchRecipe = true;
+        if (applyResearchProperty(new ResearchPropertyData.ResearchEntry(researchId, dataStack))) {
+            this.recipeEntries.add(new ResearchRecipeEntry(researchId, researchStack, dataStack, duration, EUt));
         }
+
         return this;
     }
 
-    @Override
-    public boolean shouldAddResearchRecipe() {
-        return this.shouldAddResearchRecipe;
-    }
-
-    @Override
-    @Nullable
-    public String getResearchId() {
-        return this.researchId;
-    }
-
-    @Override
-    @Nonnull
-    public ItemStack getResearchStack() {
-        return this.researchStack;
-    }
-
     @Nonnull
     @Override
-    public ItemStack getDataItem() {
-        return this.dataStack;
-    }
-
-    @Override
-    public int getResearchDuration() {
-        return this.researchDuration;
-    }
-
-    @Override
-    public int getResearchEUt() {
-        return this.researchEUt;
+    public Collection<ResearchRecipeEntry> getRecipeEntries() {
+        return this.recipeEntries;
     }
 }

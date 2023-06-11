@@ -197,13 +197,15 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
         }
 
         if (ConfigHolder.machines.enableResearch && this.recipeMap == RecipeMaps.ASSEMBLY_LINE_RECIPES) {
-            if (recipeWrapper.getRecipe().hasProperty(ResearchProperty.getInstance())) {
-                ResearchPropertyData data = recipeWrapper.getRecipe().getProperty(ResearchProperty.getInstance(), null);
-                if (data != null) {
-                    ItemStack dataStick = data.getDataItem();
-                    AssemblyLineManager.writeResearchToNBT(GTUtility.getOrCreateNbtCompound(dataStick), data.getResearchId());
-                    itemStackGroup.set(16, dataStick);
+            ResearchPropertyData data = recipeWrapper.getRecipe().getProperty(ResearchProperty.getInstance(), null);
+            if (data != null) {
+                List<ItemStack> dataItems = new ArrayList<>();
+                for (ResearchPropertyData.ResearchEntry entry : data) {
+                    ItemStack dataStick = entry.getDataItem().copy();
+                    AssemblyLineManager.writeResearchToNBT(GTUtility.getOrCreateNbtCompound(dataStick), entry.getResearchId());
+                    dataItems.add(dataStick);
                 }
+                itemStackGroup.set(16, dataItems);
             }
         }
 

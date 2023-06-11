@@ -93,24 +93,24 @@ public final class AssemblyLineManager {
      */
     public static void createDefaultResearchRecipe(@Nonnull IResearchRecipeBuilder builder) {
         if (!ConfigHolder.machines.enableResearch) return;
-        if (!builder.shouldAddResearchRecipe()) return;
 
-        String researchId = builder.getResearchId();
-        if (researchId == null) {
-            GTLog.logger.warn("Attempted to add default research recipe with null Research Id", new IllegalStateException());
-            return;
+        for (IResearchRecipeBuilder.ResearchRecipeEntry entry : builder.getRecipeEntries()) {
+            createDefaultResearchRecipe(entry.getResearchId(), entry.getResearchStack(), entry.getDataStack(), entry.getDuration(), entry.getEUt());
         }
+    }
 
-        ItemStack dataItem = builder.getDataItem();
+    public static void createDefaultResearchRecipe(@Nonnull String researchId, @Nonnull ItemStack researchItem, @Nonnull ItemStack dataItem, int duration, int EUt) {
+        if (!ConfigHolder.machines.enableResearch) return;
+
         NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(dataItem);
         writeResearchToNBT(compound, researchId);
 
         RecipeMaps.SCANNER_RECIPES.recipeBuilder()
                 .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
-                .inputs(builder.getResearchStack().copy())
+                .inputs(researchItem)
                 .outputs(dataItem)
-                .duration(builder.getResearchDuration())
-                .EUt(builder.getResearchEUt())
+                .duration(duration)
+                .EUt(EUt)
                 .buildAndRegister();
     }
 }
