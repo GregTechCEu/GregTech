@@ -61,7 +61,6 @@ import java.util.function.Predicate;
 import static gregtech.api.GTValues.V;
 
 public class GTUtility {
-
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
     public static <T> String[] mapToString(T[] array, Function<T, String> mapper) {
@@ -659,10 +658,12 @@ public class GTUtility {
         return result.toString();
     }
 
+    @Deprecated
     public static String formatNumbers(long number) {
         return NUMBER_FORMAT.format(number);
     }
 
+    @Deprecated
     public static String formatNumbers(double number) {
         return NUMBER_FORMAT.format(number);
     }
