@@ -391,17 +391,4 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 return ((IMultipleRecipeMaps) metaTileEntity).getCurrentRecipeMap();
         return super.getRecipeMap();
     }
-
-    public String getRecipeFluidInputAmount() {
-        IRotorHolder rotorHolder = metaTileEntity instanceof MetaTileEntityLargeTurbine ? ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder() : null;
-
-        FluidStack requiredFluidInput = previousRecipe.getFluidInputs().get(0).getInputFluidStack().copy();
-        int ocAmount = (int) (getMaxVoltage() / -previousRecipe.getEUt());
-        requiredFluidInput.amount *= ocAmount;
-        if (rotorHolder != null && rotorHolder.hasRotor()) {
-            requiredFluidInput.amount /= (rotorHolder.getTotalEfficiency() / 100f);
-        }
-        return TextFormattingUtil.format("%,dL ", requiredFluidInput.amount, TextFormatting.RED) + TextFormattingUtil.format("%s", requiredFluidInput.getLocalizedName());
-
-    }
 }

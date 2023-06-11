@@ -1,10 +1,15 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.capability.IRotorHolder;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.util.TextFormattingUtil;
+import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 
@@ -98,5 +103,18 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     public void invalidate() {
         super.invalidate();
         totalContinuousRunningTime = 0;
+    }
+
+    public String getRecipeFluidInputAmount() {
+        IRotorHolder rotorHolder = metaTileEntity instanceof MetaTileEntityLargeTurbine ? ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder() : null;
+
+        FluidStack requiredFluidInput = previousRecipe.getFluidInputs().get(0).getInputFluidStack().copy();
+        int ocAmount = (int) (getMaxVoltage() / -previousRecipe.getEUt());
+        requiredFluidInput.amount *= ocAmount;
+        if (rotorHolder != null && rotorHolder.hasRotor()) {
+            requiredFluidInput.amount /= (rotorHolder.getTotalEfficiency() / 100f);
+        }
+        return TextFormattingUtil.format("%,dL ", requiredFluidInput.amount, TextFormatting.RED) + TextFormattingUtil.format("%s", requiredFluidInput.getLocalizedName());
+
     }
 }
