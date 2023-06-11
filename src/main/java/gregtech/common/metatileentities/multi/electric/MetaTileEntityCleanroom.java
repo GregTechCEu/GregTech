@@ -5,7 +5,6 @@ import appeng.core.features.AEFeature;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.google.common.collect.Sets;
 import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.CleanroomLogic;
@@ -497,8 +496,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     @Override
-    public Set<CleanroomType> getTypes() {
-        return Sets.newHashSet(this.cleanroomType);
+    public boolean checkCleanroomType(@Nonnull CleanroomType type) {
+        return type == this.cleanroomType;
     }
 
     @Override
