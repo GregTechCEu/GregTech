@@ -105,7 +105,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         totalContinuousRunningTime = 0;
     }
 
-    public String getRecipeFluidInputAmount() {
+    public String[] getRecipeFluidInputAmount() {
         IRotorHolder rotorHolder = metaTileEntity instanceof MetaTileEntityLargeTurbine ? ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder() : null;
 
         FluidStack requiredFluidInput = previousRecipe.getFluidInputs().get(0).getInputFluidStack().copy();
@@ -114,7 +114,9 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         if (rotorHolder != null && rotorHolder.hasRotor()) {
             requiredFluidInput.amount /= (rotorHolder.getTotalEfficiency() / 100f);
         }
-        return TextFormattingUtil.format("%,dL ", requiredFluidInput.amount, TextFormatting.RED) + TextFormattingUtil.format("%s", requiredFluidInput.getLocalizedName());
-
+        return new String[] {
+                "§c" + GTUtility.formatNumbers(requiredFluidInput.amount) + "L",
+                requiredFluidInput.getLocalizedName()
+        };
     }
 }

@@ -48,7 +48,9 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                             .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
         } else {
             if (recipeMapWorkable.getPreviousRecipe() != null) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed", ((MultiblockFuelRecipeLogic) recipeMapWorkable).getRecipeFluidInputAmount(), TextFormattingUtil.colorInt(recipeMapWorkable.getPreviousRecipeDuration(), TextFormatting.AQUA)));
+                String[] recipeInput = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getRecipeFluidInputAmount();
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed",
+                        recipeInput[0], recipeInput[1], "§b" + GTUtility.formatNumbers(recipeMapWorkable.getPreviousRecipeDuration())));
             }
 
             if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics())
@@ -64,7 +66,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
                 String voltageName = GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
-                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatLongPretty(maxVoltage), voltageName));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", GTUtility.formatNumbers(maxVoltage), voltageName));
             }
 
             if (!recipeMapWorkable.isWorkingEnabled()) {
