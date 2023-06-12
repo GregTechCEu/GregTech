@@ -2,7 +2,7 @@ package gregtech.api.recipes.builders;
 
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.stats.IDataStick;
+import gregtech.api.items.metaitem.stats.IDataItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
@@ -102,7 +102,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * Does not generate a research recipe.
      *
      * @param researchId the researchId for the recipe
-     * @param dataStack     the stack to hold the data. Must have the {@link gregtech.api.items.metaitem.stats.IDataStick} behavior.
+     * @param dataStack     the stack to hold the data. Must have the {@link IDataItem} behavior.
      * @return this
      */
     public AssemblyLineRecipeBuilder researchWithoutRecipe(@Nonnull String researchId, @Nonnull ItemStack dataStack) {
@@ -125,7 +125,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * Generates a research recipe.
      *
      * @param researchStack the stack to use for research
-     * @param dataStack     the stack to hold the data. Must have the {@link gregtech.api.items.metaitem.stats.IDataStick} behavior.
+     * @param dataStack     the stack to hold the data. Must have the {@link IDataItem} behavior.
      * @return this
      */
     public AssemblyLineRecipeBuilder research(@Nonnull ItemStack researchStack, @Nonnull ItemStack dataStack) {
@@ -147,7 +147,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * Generates a research recipe.
      *
      * @param researchStack the stack to use for research
-     * @param dataStack     the stack to hold the data. Must have the {@link gregtech.api.items.metaitem.stats.IDataStick} behavior.
+     * @param dataStack     the stack to hold the data. Must have the {@link IDataItem} behavior.
      * @param researchId    the research id for the recipe
      * @return this
      */
@@ -171,7 +171,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * Generates a research recipe.
      *
      * @param researchStack the stack to use for research
-     * @param dataStack     the stack to hold the data. Must have the {@link gregtech.api.items.metaitem.stats.IDataStick} behavior.
+     * @param dataStack     the stack to hold the data. Must have the {@link IDataItem} behavior.
      * @param duration      the duration of the research recipe
      * @param EUt           the EUt of the research recipe
      * @return this
@@ -196,7 +196,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * Generates a research recipe.
      *
      * @param researchStack the stack to use for research
-     * @param dataStack     the stack to hold the data. Must have the {@link gregtech.api.items.metaitem.stats.IDataStick} behavior.
+     * @param dataStack     the stack to hold the data. Must have the {@link IDataItem} behavior.
      * @param researchId    the research id for the recipe
      * @param duration      the duration of the research recipe
      * @param EUt           the EUt of the research recipe
@@ -213,7 +213,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
             boolean foundBehavior = false;
             if (dataStack.getItem() instanceof MetaItem<?> metaItem) {
                 for (IItemBehaviour behaviour : metaItem.getBehaviours(dataStack)) {
-                    if (behaviour instanceof IDataStick) {
+                    if (behaviour instanceof IDataItem) {
                         foundBehavior = true;
                         dataStack = dataStack.copy();
                         dataStack.setCount(1);
@@ -222,7 +222,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
                 }
             }
             if (!foundBehavior) {
-                GTLog.logger.error("Data ItemStack must have the IDataStick behavior", new IllegalArgumentException());
+                GTLog.logger.error("Data ItemStack must have the IDataItem behavior", new IllegalArgumentException());
                 recipeStatus = EnumValidationResult.INVALID;
                 return this;
             }

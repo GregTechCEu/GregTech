@@ -1,6 +1,6 @@
 package gregtech.common.items.behaviors;
 
-import gregtech.api.items.metaitem.stats.IDataStick;
+import gregtech.api.items.metaitem.stats.IDataItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 
-public class DataItemBehavior implements IItemBehaviour, IDataStick {
+public class DataItemBehavior implements IItemBehaviour, IDataItem {
 
     @Override
     public void addInformation(@Nonnull ItemStack itemStack, List<String> lines) {

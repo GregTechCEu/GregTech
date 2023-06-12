@@ -1,7 +1,7 @@
 package gregtech.api.util;
 
 import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.stats.IDataStick;
+import gregtech.api.items.metaitem.stats.IDataItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
@@ -61,7 +61,7 @@ public final class AssemblyLineManager {
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(stack);
             if (valueItem == null) return false;
             for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
-                if (behaviour instanceof IDataStick) {
+                if (behaviour instanceof IDataItem) {
                     return true;
                 }
             }

@@ -1,4 +1,5 @@
 package gregtech.api.items.metaitem.stats;
 
-public interface IDataStick {
+public interface IDataItem {
+
 }
