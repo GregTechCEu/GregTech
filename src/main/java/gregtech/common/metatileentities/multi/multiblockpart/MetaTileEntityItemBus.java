@@ -199,9 +199,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {
-
         // Gather a snapshot of the provided inventory
-        Object2IntMap<ItemStack> inventoryContents = GTHashMaps.fromItemHandler(inventory);
+        Object2IntMap<ItemStack> inventoryContents = GTHashMaps.fromItemHandler(inventory, true);
 
         List<ItemStack> inventoryItemContents = new ArrayList<>();
 
@@ -235,7 +234,6 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
             // Populate the slots
             inventory.setStackInSlot(i, stackToMove);
         }
-
     }
 
     @Override
