@@ -37,7 +37,9 @@ public class PropertyMaterial extends PropertyHelper<Material> {
     @Nonnull
     @Override
     public Optional<Material> parseValue(@Nonnull String value) {
-        Material material = GregTechAPI.materialManager.getMaterial(value);
+        int index = value.indexOf(':');
+        String materialName = index < 0 ? value : value.substring(0, index) + '_' + value.substring(index + 1);
+        Material material = GregTechAPI.materialManager.getMaterial(materialName);
         if (material != null && this.allowedValues.contains(material)) {
             return Optional.of(material);
         }
@@ -46,8 +48,8 @@ public class PropertyMaterial extends PropertyHelper<Material> {
 
     @Nonnull
     @Override
-    public String getName(Material material) {
-        return material.getModid() + '_' + material.toString();
+    public String getName(@Nonnull Material material) {
+        return material.getModid() + '_' + material.getName();
     }
 
     @Override

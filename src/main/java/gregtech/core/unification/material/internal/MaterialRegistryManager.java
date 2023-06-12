@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class MaterialRegistryManager implements IMaterialRegistryManager {
+public final class MaterialRegistryManager implements IMaterialRegistryManager {
 
     private static MaterialRegistryManager INSTANCE;
 
@@ -30,7 +30,7 @@ public class MaterialRegistryManager implements IMaterialRegistryManager {
 
     private Phase registrationPhase = Phase.PRE;
 
-    private MaterialRegistryManager() {/**/}
+    private MaterialRegistryManager() {}
 
     public static MaterialRegistryManager getInstance() {
         if (INSTANCE == null) {
@@ -87,8 +87,9 @@ public class MaterialRegistryManager implements IMaterialRegistryManager {
         return registeredMaterials;
     }
 
+    @Nullable
     @Override
-    public Material getMaterial(String name) {
+    public Material getMaterial(@Nonnull String name) {
         if (!name.isEmpty()) {
             String modid;
             String materialName;
@@ -132,13 +133,15 @@ public class MaterialRegistryManager implements IMaterialRegistryManager {
         registrationPhase = Phase.FROZEN;
     }
 
+    @Nonnull
     private MaterialRegistryImpl createInternalRegistry() {
         MaterialRegistryImpl registry = new MaterialRegistryImpl(GTValues.MODID);
         this.registries.put(GTValues.MODID, registry);
         return registry;
     }
 
-    protected Material getDefaultFallback() {
+    @Nonnull
+    public Material getDefaultFallback() {
         return gregtechRegistry.getFallbackMaterial();
     }
 }

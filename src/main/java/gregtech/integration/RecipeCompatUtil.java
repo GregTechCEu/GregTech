@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
@@ -93,6 +94,24 @@ public final class RecipeCompatUtil {
             return TweakerType.CRAFTTWEAKER;
         }
         return TweakerType.NONE;
+    }
+
+    @Nullable
+    public static Material getMaterial(@Nonnull String name) {
+        if (!name.isEmpty()) {
+            String modid;
+            String materialName;
+            int index = name.indexOf(':');
+            if (index >= 0) {
+                modid = name.substring(0, index);
+                materialName = name.substring(index + 1);
+            } else {
+                modid = GTValues.MODID;
+                materialName = name;
+            }
+            return GregTechAPI.materialManager.getRegistry(modid).getObject(materialName);
+        }
+        return null;
     }
 
     public static boolean isTweakerLoaded() {

@@ -67,6 +67,8 @@ public interface IMaterialRegistryManager {
      * <li>{@code "registry_name"} - where modid is inferred to be {@link GTValues#MODID}</li>
      * </ul>
      *
+     * Intended for use in reading/writing materials from/to NBT tags.
+     *
      * @param name the name of the material in the above format
      * @return the material associated with the name
      */

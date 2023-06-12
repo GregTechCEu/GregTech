@@ -45,7 +45,7 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
         if (!material.hasProperty(PropertyKey.INGOT))
             throw new IllegalArgumentException("Part material must have an Ingot!");
         NBTTagCompound compound = getOrCreatePartStatsTag(itemStack);
-        compound.setString("Material", material.getUnlocalizedName());
+        compound.setString("Material", material.getRegistryName());
     }
 
     public abstract int getPartMaxDurability(ItemStack itemStack);

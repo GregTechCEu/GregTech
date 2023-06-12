@@ -364,7 +364,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (compound.hasKey("InsulationColor")) {
             this.paintingColor = compound.getInteger("InsulationColor");
         }
-        this.frameMaterial = GregTechAPI.materialManager.getMaterial(compound.getString("FrameMaterial"));
+        String frameMaterialName = compound.getString("FrameMaterial");
+        if (!frameMaterialName.isEmpty()) {
+            this.frameMaterial = GregTechAPI.materialManager.getMaterial(frameMaterialName);
+        }
 
         this.coverableImplementation.readFromNBT(compound);
     }

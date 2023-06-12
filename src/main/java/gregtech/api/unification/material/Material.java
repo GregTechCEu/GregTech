@@ -304,6 +304,17 @@ public class Material implements Comparable<Material> {
         return prop == null ? null : prop.getPlasma(amount);
     }
 
+    @ZenGetter("name")
+    @Nonnull
+    public String getName() {
+        return this.materialInfo.name;
+    }
+
+    @Nonnull
+    public String getModid() {
+        return this.modid;
+    }
+
     @ZenGetter("camelCaseName")
     public String toCamelCaseString() {
         return GTUtility.lowerUnderscoreToUpperCamel(toString());
@@ -327,11 +338,10 @@ public class Material implements Comparable<Material> {
     @Override
     @ZenMethod
     public int compareTo(Material material) {
-        return toString().compareTo(material.toString());
+        return getName().compareTo(material.getName());
     }
 
     @Override
-    @ZenGetter("name")
     public String toString() {
         return materialInfo.name;
     }
@@ -380,11 +390,6 @@ public class Material implements Comparable<Material> {
         flags.verify(this);
         this.chemicalFormula = calculateChemicalFormula();
         calculateDecompositionType();
-    }
-
-    @Nonnull
-    public String getModid() {
-        return this.modid;
     }
 
     @Nonnull

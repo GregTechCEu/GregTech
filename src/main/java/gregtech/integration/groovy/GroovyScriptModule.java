@@ -25,6 +25,7 @@ import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.integration.IntegrationSubmodule;
+import gregtech.integration.RecipeCompatUtil;
 import gregtech.integration.crafttweaker.material.MaterialExpansion;
 import gregtech.integration.crafttweaker.material.MaterialPropertyExpansion;
 import gregtech.modules.GregTechModules;
@@ -196,7 +197,7 @@ public class GroovyScriptModule extends IntegrationSubmodule {
         @Override
         public void initialize() {
             BracketHandlerManager.registerBracketHandler(GTValues.MODID, "recipemap", RecipeMap::getByName);
-            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "material", GregTechAPI.materialManager::getMaterial);
+            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "material", RecipeCompatUtil::getMaterial);
             BracketHandlerManager.registerBracketHandler(GTValues.MODID, "oreprefix", OrePrefix::getPrefix);
             BracketHandlerManager.registerBracketHandler(GTValues.MODID, "metaitem", GroovyScriptModule::getMetaItem, ItemStack.EMPTY);
 

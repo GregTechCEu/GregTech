@@ -133,6 +133,9 @@ public class CoreModule implements IGregTechModule {
         materialEvent.startRegistration(GTValues.MODID);
         Materials.register();
         materialEvent.completeRegistration();
+        MaterialRegistryManager.getInstance()
+                .getRegistry(GTValues.MODID)
+                .setFallbackMaterial(Materials.Aluminium);
 
         // Then, register addon Materials
         logger.info("Registering addon Materials");
