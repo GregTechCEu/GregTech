@@ -4,7 +4,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IDataStick;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.builders.IResearchRecipeBuilder;
+import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.common.ConfigHolder;
@@ -91,10 +91,10 @@ public final class AssemblyLineManager {
      *
      * @param builder the builder to retrieve recipe info from
      */
-    public static void createDefaultResearchRecipe(@Nonnull IResearchRecipeBuilder builder) {
+    public static void createDefaultResearchRecipe(@Nonnull AssemblyLineRecipeBuilder builder) {
         if (!ConfigHolder.machines.enableResearch) return;
 
-        for (IResearchRecipeBuilder.ResearchRecipeEntry entry : builder.getRecipeEntries()) {
+        for (AssemblyLineRecipeBuilder.ResearchRecipeEntry entry : builder.getRecipeEntries()) {
             createDefaultResearchRecipe(entry.getResearchId(), entry.getResearchStack(), entry.getDataStack(), entry.getDuration(), entry.getEUt());
         }
     }
