@@ -3,7 +3,8 @@ package gregtech.common.metatileentities.multi.electric;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IBatteryBlockPart;
+import gregtech.api.metatileentity.multiblock.IBatteryDataProvider;
+import gregtech.api.metatileentity.multiblock.IBatteryDataProvider.IBatteryData;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
@@ -12,7 +13,9 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockGlassCasing;
+import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -61,7 +64,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
         this.inputHatches = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
         this.outputHatches = new EnergyContainerList(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
 
-        List<IBatteryBlockPart> parts = new ArrayList<>();
+        List<IBatteryData> parts = new ArrayList<>();
         for (Map.Entry<String, Object> battery : context.entrySet()) {
             if (battery.getKey().startsWith(PMC_BATTERY_HEADER)) {
                 BatteryMatchWrapper wrapper = (BatteryMatchWrapper) battery.getValue();
@@ -96,21 +99,22 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start(RIGHT, FRONT, UP)
-                .aisle("XXXXX", "XXXXX", "XXSXX", "XXXXX", "XXXXX")
-                .aisle("XXXXX", "XXXXX", "XXXXX", "XXXXX", "XXXXX")
+                .aisle("XXSXX", "XXXXX", "XXXXX", "XXXXX", "XXXXX")
+                .aisle("XXXXX", "XCCCX", "XCCCX", "XCCCX", "XXXXX")
                 .aisle("GGGGG", "GBBBG", "GBBBG", "GBBBG", "GGGGG").setRepeatable(1, MAX_BATTERY_LAYERS)
                 .aisle("GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG")
                 .where('S', selfPredicate())
+                .where('C', states(getCasingState()))
                 .where('X' ,states(getCasingState()).setMinGlobalLimited(MIN_CASINGS)
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1))
-                        .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setMinGlobalLimited(1)))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY).setMinGlobalLimited(1)))
                 .where('G', states(getGlassState()))
                 .where('B', batteryPredicate())
                 .build();
     }
 
     protected IBlockState getCasingState() {
-        return null; // todo
+        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PALLADIUM_SUBSTATION);
     }
 
     protected IBlockState getGlassState() {
@@ -120,21 +124,32 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
     protected TraceabilityPredicate batteryPredicate() {
         return new TraceabilityPredicate(state -> {
             Block block = state.getBlockState().getBlock();
-            if (!(block instanceof IBatteryBlockPart)) {
+            if (!(block instanceof IBatteryDataProvider)) {
                 return false;
             }
-            IBatteryBlockPart battery = (IBatteryBlockPart) block;
-            String key = String.format("%s%s", PMC_BATTERY_HEADER, battery.getName());
-            BatteryMatchWrapper wrapper = state.getMatchContext().get(key);
-            if (wrapper == null) wrapper = new BatteryMatchWrapper(battery);
-            state.getMatchContext().set(key, wrapper.increment());
+            IBatteryData battery = ((IBatteryDataProvider) block).getData(state.getBlockState());
+
+            // Allow unfilled batteries in the structure, but do not add them to match context.
+            // This lets you use empty batteries as "filler slots" for convenience if desired.
+            if (battery.getTier() != -1 && battery.getCapacity() > 0) {
+                String key = String.format("%s%s", PMC_BATTERY_HEADER, battery.getName());
+                BatteryMatchWrapper wrapper = state.getMatchContext().get(key);
+                if (wrapper == null) wrapper = new BatteryMatchWrapper(battery);
+                state.getMatchContext().set(key, wrapper.increment());
+            }
             return true;
         });
     }
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        return null; // todo
+        return Textures.PALLADIUM_SUBSTATION_CASING;
+    }
+
+    @Nonnull
+    @Override
+    protected ICubeRenderer getFrontOverlay() {
+        return super.getFrontOverlay();
     }
 
     @Override
@@ -177,7 +192,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
         private final BigInteger capacity;
         private int index;
 
-        public PowerStationEnergyBank(List<IBatteryBlockPart> batteries) {
+        public PowerStationEnergyBank(List<IBatteryData> batteries) {
             storage = new long[batteries.size()];
             maximums = new long[batteries.size()];
             for (int i = 0; i < batteries.size(); i++) {
@@ -218,7 +233,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
          * Will use existing stored power and try to map it onto new batteries.
          * If there was more power before the rebuild operation, it will be lost.
          */
-        public PowerStationEnergyBank rebuild(@Nonnull List<IBatteryBlockPart> batteries) {
+        public PowerStationEnergyBank rebuild(@Nonnull List<IBatteryData> batteries) {
             if (batteries.size() == 0) {
                 throw new IllegalArgumentException("Cannot rebuild Power Substation power bank with no batteries!");
             }
@@ -318,10 +333,10 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
 
     private static class BatteryMatchWrapper {
 
-        private final IBatteryBlockPart partType;
+        private final IBatteryData partType;
         private int amount;
 
-        public BatteryMatchWrapper(IBatteryBlockPart partType) {
+        public BatteryMatchWrapper(IBatteryData partType) {
             this.partType = partType;
         }
 

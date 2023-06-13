@@ -98,7 +98,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return tier == 0
                 ? Textures.ROBUST_TUNGSTENSTEEL_CASING
-                : Textures.ROBUST_HSSE_CASING;
+                : Textures.STURDY_HSSE_CASING;
     }
 
     @Override

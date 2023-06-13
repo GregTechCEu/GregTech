@@ -1,0 +1,59 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecraft:cube_bottom_top"
+  },
+  "variants": {
+    "variant": {
+      "empty": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/battery/empty/top",
+          "top": "gregtech:blocks/casings/battery/empty/top",
+          "side": "gregtech:blocks/casings/battery/empty/side"
+        }
+      },
+      "lapotronic_ev": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/battery/lapotronic_ev/top",
+          "top": "gregtech:blocks/casings/battery/lapotronic_ev/top",
+          "side": "gregtech:blocks/casings/battery/lapotronic_ev/side"
+        }
+      },
+      "lapotronic_iv": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/battery/lapotronic_iv/top",
+          "top": "gregtech:blocks/casings/battery/lapotronic_iv/top",
+          "side": "gregtech:blocks/casings/battery/lapotronic_iv/side"
+        }
+      },
+      "lapotronic_luv": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/battery/lapotronic_luv/top",
+          "top": "gregtech:blocks/casings/battery/lapotronic_luv/top",
+          "side": "gregtech:blocks/casings/battery/lapotronic_luv/side"
+        }
+      },
+      "lapotronic_zpm": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/battery/lapotronic_zpm/top",
+          "top": "gregtech:blocks/casings/battery/lapotronic_zpm/top",
+          "side": "gregtech:blocks/casings/battery/lapotronic_zpm/side"
+        }
+      },
+      "lapotronic_uv": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/battery/lapotronic_uv/top",
+          "top": "gregtech:blocks/casings/battery/lapotronic_uv/top",
+          "side": "gregtech:blocks/casings/battery/lapotronic_uv/side"
+        }
+      },
+      "ultimate_uhv": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/battery/ultimate_uhv/top",
+          "top": "gregtech:blocks/casings/battery/ultimate_uhv/top",
+          "side": "gregtech:blocks/casings/battery/ultimate_uhv/side"
+        }
+      }
+    }
+  }
+}

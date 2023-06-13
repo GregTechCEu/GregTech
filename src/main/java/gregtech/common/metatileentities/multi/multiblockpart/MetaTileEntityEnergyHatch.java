@@ -29,9 +29,9 @@ import java.util.List;
 
 public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IEnergyContainer> {
 
-    private final boolean isExportHatch;
-    private final int amperage;
-    private final IEnergyContainer energyContainer;
+    protected final boolean isExportHatch;
+    protected final int amperage;
+    protected final IEnergyContainer energyContainer;
 
     public MetaTileEntityEnergyHatch(ResourceLocation metaTileEntityId, int tier, int amperage, boolean isExportHatch) {
         super(metaTileEntityId, tier);
@@ -71,16 +71,20 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
                 return Textures.ENERGY_OUT_MULTI;
             } else if (amperage <= 4) {
                 return Textures.ENERGY_OUT_HI;
-            } else {
+            } else if (amperage <= 16) {
                 return Textures.ENERGY_OUT_ULTRA;
+            } else {
+                return Textures.ENERGY_OUT_MAX;
             }
         } else {
             if (amperage <= 2) {
                 return Textures.ENERGY_IN_MULTI;
             } else if (amperage <= 4) {
                 return Textures.ENERGY_IN_HI;
-            } else {
+            } else if (amperage <= 16) {
                 return Textures.ENERGY_IN_ULTRA;
+            } else {
+                return Textures.ENERGY_IN_MAX;
             }
         }
     }

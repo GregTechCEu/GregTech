@@ -1,7 +1,7 @@
 package gregtech.common.metatileentities.multiblock;
 
 import gregtech.Bootstrap;
-import gregtech.api.metatileentity.multiblock.IBatteryBlockPart;
+import gregtech.api.metatileentity.multiblock.IBatteryDataProvider.IBatteryData;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation.PowerStationEnergyBank;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
@@ -260,7 +260,7 @@ public class PowerSubstationTest {
     }
 
     private static PowerStationEnergyBank createStorage(long... storageValues) {
-        List<IBatteryBlockPart> batteries = new ArrayList<>();
+        List<IBatteryData> batteries = new ArrayList<>();
         for (long value : storageValues) {
             batteries.add(new TestBattery(value));
         }
@@ -268,14 +268,14 @@ public class PowerSubstationTest {
     }
 
     private static PowerStationEnergyBank rebuildStorage(PowerStationEnergyBank storage, long... storageValues) {
-        List<IBatteryBlockPart> batteries = new ArrayList<>();
+        List<IBatteryData> batteries = new ArrayList<>();
         for (long value : storageValues) {
             batteries.add(new TestBattery(value));
         }
         return storage.rebuild(batteries);
     }
 
-    private static class TestBattery implements IBatteryBlockPart {
+    private static class TestBattery implements IBatteryData {
 
         private final long capacity;
 

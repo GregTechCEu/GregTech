@@ -115,7 +115,7 @@ public class MetaTileEntityAdjustableTransformer extends MetaTileEntityTransform
         switch (this.ampIndex) {
             case 1:
                 otherFaceTexture = isInverted() ? Textures.ENERGY_IN_MULTI : Textures.ENERGY_OUT_MULTI;
-                frontFaceTexture = isInverted() ? Textures.ENERGY_IN_HI : Textures.ENERGY_IN_HI;
+                frontFaceTexture = isInverted() ? Textures.ENERGY_OUT_HI : Textures.ENERGY_IN_HI;
                 break;
             case 2:
                 otherFaceTexture = isInverted() ? Textures.ENERGY_IN_HI : Textures.ENERGY_OUT_HI;
@@ -123,7 +123,7 @@ public class MetaTileEntityAdjustableTransformer extends MetaTileEntityTransform
                 break;
             case 3:
                 otherFaceTexture = isInverted() ? Textures.ENERGY_IN_ULTRA : Textures.ENERGY_OUT_ULTRA;
-                frontFaceTexture = isInverted() ? Textures.ENERGY_OUT_ULTRA : Textures.ENERGY_IN_ULTRA;
+                frontFaceTexture = isInverted() ? Textures.ENERGY_OUT_MAX : Textures.ENERGY_IN_MAX;
                 break;
             default:
                 otherFaceTexture = isInverted() ? Textures.ENERGY_IN : Textures.ENERGY_OUT;
