@@ -256,6 +256,9 @@ public class MetaTileEntities {
     public static MetaTileEntityFissionReactor FISSION_REACTOR;
     public static MetaTileEntityFuelRodHatch FUEL_ROD_INPUT;
     public static MetaTileEntityFuelRodHatch FUEL_ROD_OUTPUT;
+    public static MetaTileEntityCoolantHatch COOLANT_INPUT;
+    public static MetaTileEntityCoolantHatch COOLANT_OUTPUT;
+    public static MetaTileEntityControlRodPort CONTROL_ROD;
 
     // STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
@@ -1110,6 +1113,9 @@ public class MetaTileEntities {
 
         FUEL_ROD_INPUT = registerMetaTileEntity(1730, new MetaTileEntityFuelRodHatch(gregtechId("fuel_rod_input"), false));
         FUEL_ROD_OUTPUT = registerMetaTileEntity(1731, new MetaTileEntityFuelRodHatch(gregtechId("fuel_rod_output"), true));
+        COOLANT_INPUT = registerMetaTileEntity(1733, new MetaTileEntityCoolantHatch(gregtechId("coolant_input"), false));
+        COOLANT_OUTPUT = registerMetaTileEntity(1734, new MetaTileEntityCoolantHatch(gregtechId("coolant_output"), true));
+        CONTROL_ROD = registerMetaTileEntity(1735, new MetaTileEntityControlRodPort(gregtechId("control_rod"), false));
 
         /*
          * FOR ADDON DEVELOPERS:
