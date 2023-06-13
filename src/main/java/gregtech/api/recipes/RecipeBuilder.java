@@ -9,6 +9,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.Recipe.ChanceEntry;
+import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.ingredients.*;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
@@ -24,7 +25,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
-import gregtech.integration.groovy.GroovyScriptCompat;
+import gregtech.integration.groovy.GroovyScriptModule;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -58,9 +59,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected int duration, EUt;
     protected boolean hidden = false;
+    protected GTRecipeCategory category;
     protected boolean isCTRecipe = false;
     protected int parallel = 0;
-    protected Consumer<RecipeBuilder<?>> onBuildAction = null;
+    protected Consumer<R> onBuildAction = null;
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
     protected IRecipePropertyStorage recipePropertyStorage = null;
     protected boolean recipePropertyStorageErrored = false;
@@ -104,6 +106,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.duration = recipeBuilder.duration;
         this.EUt = recipeBuilder.EUt;
         this.hidden = recipeBuilder.hidden;
+        this.category = recipeBuilder.category;
         this.onBuildAction = recipeBuilder.onBuildAction;
         this.recipePropertyStorage = recipeBuilder.recipePropertyStorage;
         if (this.recipePropertyStorage != null) {
@@ -395,7 +398,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R circuitMeta(int circuitNumber) {
-        if (!GTUtility.isBetweenInclusive(IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX, circuitNumber)) {
+        if (IntCircuitIngredient.CIRCUIT_MIN > circuitNumber || circuitNumber > IntCircuitIngredient.CIRCUIT_MAX) {
             GTLog.logger.error("Integrated Circuit Number cannot be less than {} and more than {}",
                     IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX);
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid Integrated Circuit Number"));
@@ -715,6 +718,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R category(@Nonnull GTRecipeCategory category) {
+        this.category = category;
+        return (R) this;
+    }
+
     public R isCTRecipe() {
         this.isCTRecipe = true;
         return (R) this;
@@ -735,11 +743,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public ValidationResult<Recipe> build() {
         return ValidationResult.newResult(finalizeAndValidate(), new Recipe(inputs, outputs, chancedOutputs,
-                fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe, recipePropertyStorage));
+                fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe, recipePropertyStorage, category));
     }
 
     protected EnumValidationResult validate() {
-        if (GroovyScriptCompat.isCurrentlyRunning()) {
+        if (GroovyScriptModule.isCurrentlyRunning()) {
             GroovyLog.Msg msg = GroovyLog.msg("Error adding GregTech " + recipeMap.unlocalizedName + " recipe").error();
             validateGroovy(msg);
             return msg.postIfNotEmpty() ? EnumValidationResult.SKIP : EnumValidationResult.VALID;
@@ -757,6 +765,21 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 CraftTweakerAPI.logError("Duration cannot be less or equal to 0", new IllegalArgumentException());
             }
             recipeStatus = EnumValidationResult.INVALID;
+        }
+        if (recipeMap != null) { // recipeMap can be null in tests
+            if (category == null) {
+                GTLog.logger.error("Recipes must have a category", new IllegalArgumentException());
+                if (isCTRecipe) {
+                    CraftTweakerAPI.logError("Recipes must have a category", new IllegalArgumentException());
+                }
+                recipeStatus = EnumValidationResult.INVALID;
+            } else if (category.getRecipeMap() != this.recipeMap) {
+                GTLog.logger.error("Cannot apply Category with incompatible RecipeMap", new IllegalArgumentException());
+                if (isCTRecipe) {
+                    CraftTweakerAPI.logError("Cannot apply Category with incompatible RecipeMap", new IllegalArgumentException());
+                }
+                recipeStatus = EnumValidationResult.INVALID;
+            }
         }
         if (recipeStatus == EnumValidationResult.INVALID) {
             GTLog.logger.error("Invalid recipe, read the errors above: {}", this);
@@ -794,7 +817,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return out;
     }
 
-    protected R onBuild(Consumer<RecipeBuilder<?>> consumer) {
+    protected R onBuild(Consumer<R> consumer) {
         this.onBuildAction = consumer;
         return (R) this;
     }
@@ -806,7 +829,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public void buildAndRegister() {
         if (onBuildAction != null) {
-            onBuildAction.accept(this);
+            onBuildAction.accept((R) this);
         }
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);

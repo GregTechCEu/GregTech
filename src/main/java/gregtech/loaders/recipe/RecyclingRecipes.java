@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.category.RecipeCategories;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTTagType;
@@ -116,7 +117,8 @@ public class RecyclingRecipes {
                 .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(outputs))
-                .EUt(2 * multiplier);
+                .EUt(2 * multiplier)
+                .category(RecipeCategories.MACERATOR_RECYCLING);
 
         cleanInputNBT(input, recipe);
 
@@ -125,7 +127,6 @@ public class RecyclingRecipes {
     }
 
     private static void registerExtractorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier, @Nullable OrePrefix prefix) {
-
         // Handle simple materials separately
         if (prefix != null && prefix.secondaryMaterials.isEmpty()) {
             MaterialStack ms = OreDictUnifier.getMaterial(input);
@@ -144,6 +145,7 @@ public class RecyclingRecipes {
                     .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
                     .duration((int) Math.max(1, ms.amount * ms.material.getMass() / M))
                     .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                    .category(RecipeCategories.EXTRACTOR_RECYCLING)
                     .buildAndRegister();
 
             return;
@@ -171,7 +173,8 @@ public class RecyclingRecipes {
                 .inputs(input.copy())
                 .fluidOutputs(fluidMs.material.getFluid((int) (fluidMs.amount * L / M)))
                 .duration((int) duration)
-                .EUt(GTValues.VA[GTValues.LV] * multiplier);
+                .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                .category(RecipeCategories.EXTRACTOR_RECYCLING);
 
         // Null check the Item before adding it to the Builder.
         // - Try to output an Ingot, otherwise output a Dust.
@@ -190,13 +193,20 @@ public class RecyclingRecipes {
             return;
         } else if (prefix == OrePrefix.block) {
             if (ms != null && !ms.material.hasProperty(PropertyKey.GEM)) {
-                ItemStack output = OreDictUnifier.get(OrePrefix.ingot, ms.material.getProperty(PropertyKey.INGOT).getArcSmeltInto(), 9);
-                RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+                Material arcSmeltInto = ms.material.getProperty(PropertyKey.INGOT).getArcSmeltInto();
+                ItemStack output = OreDictUnifier.get(OrePrefix.ingot, arcSmeltInto, 9);
+                RecipeBuilder<?> builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
                         .inputs(input.copy())
                         .outputs(output)
                         .duration(calculateDuration(Collections.singletonList(output)))
-                        .EUt(GTValues.VA[GTValues.LV])
-                        .buildAndRegister();
+                        .EUt(GTValues.VA[GTValues.LV]);
+
+                // separate special arc smelting recipes into the regular category
+                // i.e. Iron -> Wrought Iron, Copper -> Annealed Copper
+                if (ms.material.hasFlag(IS_MAGNETIC) || ms.material == arcSmeltInto) {
+                    builder.category(RecipeCategories.ARC_FURNACE_RECYCLING);
+                }
+                builder.buildAndRegister();
             }
             return;
         }
@@ -220,14 +230,38 @@ public class RecyclingRecipes {
         if (outputs.size() == 0) return;
 
         // Build the final Recipe.
-        RecipeBuilder<SimpleRecipeBuilder> recipe = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+        RecipeBuilder<SimpleRecipeBuilder> builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
                 .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(outputs))
                 .EUt(GTValues.VA[GTValues.LV]);
 
-        cleanInputNBT(input, recipe);
-        recipe.buildAndRegister();
+        if (needsRecyclingCategory(prefix, ms, outputs)) {
+            // all other recipes are recycling here
+            builder.category(RecipeCategories.ARC_FURNACE_RECYCLING);
+        }
+
+        cleanInputNBT(input, builder);
+        builder.buildAndRegister();
+    }
+
+    private static boolean needsRecyclingCategory(@Nullable OrePrefix prefix, @Nullable MaterialStack inputStack,
+                                                  @Nonnull List<ItemStack> outputs) {
+        // separate special arc smelting recipes into the regular category
+        // i.e. Iron -> Wrought Iron, Copper -> Annealed Copper
+        if (prefix == OrePrefix.nugget || prefix == OrePrefix.ingot || prefix == OrePrefix.block) {
+            if (outputs.size() == 1) {
+                UnificationEntry entry = OreDictUnifier.getUnificationEntry(outputs.get(0));
+                if (entry != null && inputStack != null) {
+                    Material material = inputStack.material;
+                    if (!material.hasFlag(IS_MAGNETIC) && material.hasProperty(PropertyKey.INGOT)) {
+                        // use default category for separation
+                        return material.getProperty(PropertyKey.INGOT).getArcSmeltInto() != entry.material;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     private static MaterialStack getArcSmeltingResult(MaterialStack materialStack) {
@@ -431,10 +465,10 @@ public class RecyclingRecipes {
     private static void splitStacks(List<Tuple<ItemStack, MaterialStack>> list, ItemStack originalStack, UnificationEntry entry) {
         int amount = originalStack.getCount();
         while (amount > 64) {
-            list.add(new Tuple<>(GTUtility.copyAmount(64, originalStack), new MaterialStack(entry.material, entry.orePrefix.getMaterialAmount(entry.material) * 64)));
+            list.add(new Tuple<>(GTUtility.copy(64, originalStack), new MaterialStack(entry.material, entry.orePrefix.getMaterialAmount(entry.material) * 64)));
             amount -= 64;
         }
-        list.add(new Tuple<>(GTUtility.copyAmount(amount, originalStack), new MaterialStack(entry.material, entry.orePrefix.getMaterialAmount(entry.material) * amount)));
+        list.add(new Tuple<>(GTUtility.copy(amount, originalStack), new MaterialStack(entry.material, entry.orePrefix.getMaterialAmount(entry.material) * amount)));
     }
 
     private static final List<OrePrefix> DUST_ORDER = ImmutableList.of(OrePrefix.dust, OrePrefix.dustSmall, OrePrefix.dustTiny);

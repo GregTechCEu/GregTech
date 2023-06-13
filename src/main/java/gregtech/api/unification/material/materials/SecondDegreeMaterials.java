@@ -84,9 +84,9 @@ public class SecondDegreeMaterials {
         // Free ID 2009
 
         Apatite = new Material.Builder(2010, "apatite")
-                .gem(1).ore(4, 2)
+                .gem(1).ore(2, 2)
                 .color(0xC8C8FF).iconSet(DIAMOND)
-                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_BOLT_SCREW)
+                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
                 .components(Calcium, 5, Phosphate, 3, Chlorine, 1)
                 .build();
 
@@ -114,7 +114,8 @@ public class SecondDegreeMaterials {
         TungstenSteel = new Material.Builder(2013, "tungsten_steel")
                 .ingot(4).fluid()
                 .color(0x6464A0).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME, GENERATE_SPRING, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME,
+                        GENERATE_SPRING, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Steel, 1, Tungsten, 1)
                 .toolStats(ToolProperty.Builder.of(9.0F, 7.0F, 2048, 4)
                         .enchantability(14).build())
@@ -127,7 +128,7 @@ public class SecondDegreeMaterials {
         CobaltBrass = new Material.Builder(2014, "cobalt_brass")
                 .ingot().fluid()
                 .color(0xB4B4A0).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Brass, 7, Aluminium, 1, Cobalt, 1)
                 .toolStats(ToolProperty.Builder.of(2.5F, 2.0F, 1024, 2)
                         .attackSpeed(-0.2F).enchantability(5).build())
@@ -278,7 +279,7 @@ public class SecondDegreeMaterials {
         VanadiumSteel = new Material.Builder(2036, "vanadium_steel")
                 .ingot(3).fluid()
                 .color(0xc0c0c0).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Vanadium, 1, Chrome, 1, Steel, 7)
                 .toolStats(ToolProperty.Builder.of(3.0F, 3.0F, 1536, 3)
                         .attackSpeed(-0.2F).enchantability(5).build())
@@ -291,7 +292,7 @@ public class SecondDegreeMaterials {
         Potin = new Material.Builder(2037, "potin")
                 .ingot().fluid()
                 .color(0xc99781).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Copper, 6, Tin, 2, Lead, 1)
                 .fluidPipeProperties(1456, 32, true)
                 .fluidTemp(1084)
@@ -319,7 +320,8 @@ public class SecondDegreeMaterials {
         NaquadahAlloy = new Material.Builder(2042, "naquadah_alloy")
                 .ingot(5).fluid()
                 .color(0x282828).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_RING, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_DENSE, GENERATE_FOIL, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_RING, GENERATE_ROTOR, GENERATE_SMALL_GEAR,
+                        GENERATE_FRAME, GENERATE_DENSE, GENERATE_FOIL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Naquadah, 2, Osmiridium, 1, Trinium, 1)
                 .toolStats(ToolProperty.Builder.of(40.0F, 12.0F, 3072, 5)
                         .attackSpeed(0.3F).enchantability(33).magnetic().build())
@@ -386,7 +388,6 @@ public class SecondDegreeMaterials {
 
         LiquidAir = new Material.Builder(2051, "liquid_air")
                 .fluid()
-                .color(0xA9D0F5)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Nitrogen, 70, Oxygen, 22, CarbonDioxide, 5, Helium, 2, Argon, 1, Ice, 1)
                 .fluidTemp(79)
@@ -467,7 +468,7 @@ public class SecondDegreeMaterials {
         RhodiumPlatedPalladium = new Material.Builder(2062, "rhodium_plated_palladium")
                 .ingot().fluid()
                 .color(0xDAC5C5).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Palladium, 3, Rhodium, 1)
                 .rotorStats(12.0f, 3.0f, 1024)
                 .blastTemp(4500, GasTier.HIGH, VA[IV], 1200)

@@ -27,9 +27,9 @@ public final class GTStringUtils {
             MetaItem<?> metaItem = (MetaItem<?>) stack.getItem();
             MetaItem<?>.MetaValueItem metaValueItem = metaItem.getItem(stack);
             if (metaValueItem == null) {
-                if (metaItem instanceof MetaPrefixItem) {
-                    Material material = MetaPrefixItem.getMaterial(stack);
-                    OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
+                if (metaItem instanceof MetaPrefixItem metaPrefixItem) {
+                    Material material = metaPrefixItem.getMaterial(stack);
+                    OrePrefix orePrefix = metaPrefixItem.getOrePrefix();
                     return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material + " * " + stack.getCount();
                 }
             } else {
@@ -50,9 +50,9 @@ public final class GTStringUtils {
             Block block = Block.getBlockFromItem(stack.getItem());
             String id = null;
             if (block instanceof BlockCompressed) {
-                id = "block" + ((BlockCompressed) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+                id = "block" + ((BlockCompressed) block).getGtMaterial(stack).toCamelCaseString();
             } else if (block instanceof BlockFrame) {
-                id = "frame" + ((BlockFrame) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+                id = "frame" + ((BlockFrame) block).getGtMaterial(stack).toCamelCaseString();
             } else if (block instanceof BlockMaterialPipe) {
                 id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
             }
@@ -87,7 +87,7 @@ public final class GTStringUtils {
      *
      * @param stringToDraw The String to draw
      * @param fontRenderer An instance of the MC FontRenderer
-     * @param maxLength The maximum width of the String
+     * @param maxLength    The maximum width of the String
      */
     public static void drawCenteredStringWithCutoff(String stringToDraw, FontRenderer fontRenderer, int maxLength) {
 

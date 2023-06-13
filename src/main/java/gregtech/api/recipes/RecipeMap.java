@@ -6,9 +6,8 @@ import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
-import gnu.trove.map.TByteObjectMap;
-import gnu.trove.map.hash.TByteObjectHashMap;
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
@@ -18,8 +17,7 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
-import gregtech.api.recipes.crafttweaker.CTRecipe;
-import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
+import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.map.*;
@@ -27,8 +25,15 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
-import gregtech.integration.groovy.GroovyScriptCompat;
+import gregtech.integration.crafttweaker.CTRecipeHelper;
+import gregtech.integration.crafttweaker.recipe.CTRecipe;
+import gregtech.integration.crafttweaker.recipe.CTRecipeBuilder;
+import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.integration.groovy.VirtualizedRecipeMap;
+import gregtech.modules.GregTechModules;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -80,13 +85,18 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private int maxOutputs;
     private int maxFluidInputs;
     private int maxFluidOutputs;
-    private final boolean modifyItemInputs, modifyItemOutputs, modifyFluidInputs, modifyFluidOutputs;
-    protected final TByteObjectMap<TextureArea> slotOverlays;
+    private final boolean modifyItemInputs;
+    private final boolean modifyItemOutputs;
+    private final boolean modifyFluidInputs;
+    private final boolean modifyFluidOutputs;
+    protected final Byte2ObjectMap<TextureArea> slotOverlays;
     protected TextureArea specialTexture;
     protected int[] specialTexturePosition;
     protected TextureArea progressBarTexture;
     protected MoveType moveType;
     public final boolean isHidden;
+
+    private boolean allowEmptyOutput;
 
     private final VirtualizedRecipeMap virtualizedRecipeMap;
     private final Branch lookup = new Branch();
@@ -95,13 +105,18 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private static final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> ingredientRoot = new WeakHashMap<>();
     private final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> fluidIngredientRoot = new WeakHashMap<>();
 
+    private final Map<GTRecipeCategory, List<Recipe>> recipeByCategory = new Object2ObjectOpenHashMap<>();
 
-    private Consumer<RecipeBuilder<?>> onRecipeBuildAction;
+    private Consumer<R> onRecipeBuildAction;
     protected SoundEvent sound;
     private RecipeMap<?> smallRecipeMap;
 
     /**
+     * Create and register new instance of RecipeMap with specified properties.
+     *
      * @deprecated Use {@link RecipeMap#RecipeMap(String, int, int, int, int, R, boolean)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @SuppressWarnings("unused")
     @Deprecated
@@ -112,59 +127,54 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * @param unlocalizedName the unlocalized name for the RecipeMap
-     * @param maxInputs the maximum item inputs
-     * @param maxOutputs the maximum item outputs
-     * @param maxFluidInputs the maximum fluid inputs
-     * @param maxFluidOutputs the maximum fluid outputs
+     * Create and register new instance of RecipeMap with specified properties. All
+     * maximum I/O size for item and fluids will be able to be modified.
+     *
+     * @param unlocalizedName      the unlocalized name for the RecipeMap
+     * @param maxInputs            the maximum item inputs
+     * @param maxOutputs           the maximum item outputs
+     * @param maxFluidInputs       the maximum fluid inputs
+     * @param maxFluidOutputs      the maximum fluid outputs
      * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
-     * @param isHidden if the RecipeMap should have a category in JEI
+     * @param isHidden             if the RecipeMap should have a category in JEI
      */
-    public RecipeMap(@Nonnull String unlocalizedName, @Nonnegative int maxInputs, @Nonnegative int maxOutputs,
-                     @Nonnegative int maxFluidInputs, @Nonnegative int maxFluidOutputs, @Nonnull R defaultRecipeBuilder,
+    public RecipeMap(@Nonnull String unlocalizedName,
+                     @Nonnegative int maxInputs,
+                     @Nonnegative int maxOutputs,
+                     @Nonnegative int maxFluidInputs,
+                     @Nonnegative int maxFluidOutputs,
+                     @Nonnull R defaultRecipeBuilder,
                      boolean isHidden) {
-        this.unlocalizedName = unlocalizedName;
-        this.slotOverlays = new TByteObjectHashMap<>();
-        this.progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
-        this.moveType = MoveType.HORIZONTAL;
-
-        this.maxInputs = maxInputs;
-        this.maxFluidInputs = maxFluidInputs;
-        this.maxOutputs = maxOutputs;
-        this.maxFluidOutputs = maxFluidOutputs;
-
-        this.modifyItemInputs = true;
-        this.modifyItemOutputs = true;
-        this.modifyFluidInputs = true;
-        this.modifyFluidOutputs = true;
-
-        this.isHidden = isHidden;
-        defaultRecipeBuilder.setRecipeMap(this);
-        this.recipeBuilderSample = defaultRecipeBuilder;
-        RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
-
-        this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
+        this(unlocalizedName,
+                maxInputs, true, maxOutputs, true,
+                maxFluidInputs, true, maxFluidOutputs, true,
+                defaultRecipeBuilder, isHidden);
     }
 
     /**
-     * @param unlocalizedName the unlocalized name for the RecipeMap
-     * @param maxInputs the maximum item inputs
-     * @param modifyItemInputs If the Maximum Item Inputs should be modified
-     * @param maxOutputs the maximum item outputs
-     * @param modifyItemOutputs If the Maximum Item Outputs should be modified
-     * @param maxFluidInputs the maximum fluid inputs
-     * @param modifyFluidInputs If the Maximum Fluid Inputs should be modified
-     * @param maxFluidOutputs the maximum fluid outputs
-     * @param modifyFluidOutputs If the Maximum Fluid Outputs should be modified
+     * Create and register new instance of RecipeMap with specified properties.
+     *
+     * @param unlocalizedName      the unlocalized name for the RecipeMap
+     * @param maxInputs            the maximum item inputs
+     * @param modifyItemInputs     if modification of the maximum item input is permitted
+     * @param maxOutputs           the maximum item outputs
+     * @param modifyItemOutputs    if modification of the maximum item output is permitted
+     * @param maxFluidInputs       the maximum fluid inputs
+     * @param modifyFluidInputs    if modification of the maximum fluid input is permitted
+     * @param maxFluidOutputs      the maximum fluid outputs
+     * @param modifyFluidOutputs   if modification of the maximum fluid output is permitted
      * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
-     * @param isHidden if the RecipeMap should have a category in JEI
+     * @param isHidden             if the RecipeMap should have a category in JEI
      */
-    public RecipeMap(@Nonnull String unlocalizedName, @Nonnegative int maxInputs, boolean modifyItemInputs, @Nonnegative int maxOutputs,
-                     boolean modifyItemOutputs, @Nonnegative int maxFluidInputs, boolean modifyFluidInputs,
-                     @Nonnegative int maxFluidOutputs, boolean modifyFluidOutputs, @Nonnull R defaultRecipeBuilder,
+    public RecipeMap(@Nonnull String unlocalizedName,
+                     @Nonnegative int maxInputs, boolean modifyItemInputs,
+                     @Nonnegative int maxOutputs, boolean modifyItemOutputs,
+                     @Nonnegative int maxFluidInputs, boolean modifyFluidInputs,
+                     @Nonnegative int maxFluidOutputs, boolean modifyFluidOutputs,
+                     @Nonnull R defaultRecipeBuilder,
                      boolean isHidden) {
         this.unlocalizedName = unlocalizedName;
-        this.slotOverlays = new TByteObjectHashMap<>();
+        this.slotOverlays = new Byte2ObjectOpenHashMap<>();
         this.progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
         this.moveType = MoveType.HORIZONTAL;
 
@@ -180,10 +190,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         this.isHidden = isHidden;
         defaultRecipeBuilder.setRecipeMap(this);
+        defaultRecipeBuilder.category(GTRecipeCategory.create(GTValues.MODID, unlocalizedName, getTranslationKey(), this));
         this.recipeBuilderSample = defaultRecipeBuilder;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
 
-        this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
+        this.virtualizedRecipeMap = GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS)
+                ? new VirtualizedRecipeMap(this) : null;
     }
 
 
@@ -241,8 +253,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    public RecipeMap<R> onRecipeBuild(Consumer<RecipeBuilder<?>> consumer) {
+    public RecipeMap<R> onRecipeBuild(Consumer<R> consumer) {
         onRecipeBuildAction = consumer;
+        return this;
+    }
+
+    public RecipeMap<R> allowEmptyOutput() {
+        this.allowEmptyOutput = true;
         return this;
     }
 
@@ -257,36 +274,49 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * Internal usage <strong>only</strong>, use {@link RecipeBuilder#buildAndRegister()}
+     *
      * @param validationResult the validation result from building the recipe
+     * @return if adding the recipe was successful
      */
-    public void addRecipe(@Nonnull ValidationResult<Recipe> validationResult) {
+    public boolean addRecipe(@Nonnull ValidationResult<Recipe> validationResult) {
         validationResult = postValidateRecipe(validationResult);
         switch (validationResult.getType()) {
-            case SKIP:
-                return;
-            case INVALID:
+            case SKIP -> {
+                return false;
+            }
+            case INVALID -> {
                 setFoundInvalidRecipe(true);
-                return;
+                return false;
+            }
         }
         Recipe recipe = validationResult.getResult();
 
         if (recipe.isGroovyRecipe()) {
             this.virtualizedRecipeMap.addScripted(recipe);
         }
-        compileRecipe(recipe);
+        return compileRecipe(recipe);
     }
 
     /**
      * Compiles a recipe and adds it to the ingredient tree
      *
      * @param recipe the recipe to compile
+     * @return if the recipe was successfully compiled
      */
-    public void compileRecipe(Recipe recipe) {
+    public boolean compileRecipe(Recipe recipe) {
         if (recipe == null) {
-            return;
+            return false;
         }
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
-        recurseIngredientTreeAdd(recipe, items, lookup, 0, 0);
+        if (recurseIngredientTreeAdd(recipe, items, lookup, 0, 0)) {
+            recipeByCategory.compute(recipe.getRecipeCategory(), (k, v) -> {
+                if (v == null) v = new ArrayList<>();
+                v.add(recipe);
+                return v;
+            });
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -296,7 +326,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public boolean removeRecipe(@Nonnull Recipe recipe) {
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         if (recurseIngredientTreeRemove(recipe, items, lookup, 0) != null) {
-            if (GroovyScriptCompat.isCurrentlyRunning()) {
+            if (GroovyScriptModule.isCurrentlyRunning()) {
                 this.virtualizedRecipeMap.addBackup(recipe);
             }
             return true;
@@ -328,8 +358,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
-        boolean emptyOutputs = recipe.getOutputs().isEmpty() && recipe.getFluidOutputs().isEmpty() && recipe.getChancedOutputs().isEmpty();
-        if (recipe.getEUt() > 0 && emptyOutputs) {
+        boolean emptyOutputs = !this.allowEmptyOutput && recipe.getEUt() > 0 &&
+                recipe.getOutputs().isEmpty() && recipe.getFluidOutputs().isEmpty() && recipe.getChancedOutputs().isEmpty();
+        if (emptyOutputs) {
             GTLog.logger.error("Invalid amount of recipe outputs. Recipe outputs are empty.");
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
             if (recipe.getIsCTRecipe()) {
@@ -337,14 +368,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
             }
             recipeStatus = EnumValidationResult.INVALID;
-        }
-        if (emptyInputs && emptyOutputs) {
-            GTLog.logger.error("Invalid recipe. Inputs and Outputs are empty.");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Recipe is empty"));
-            if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError("Invalid recipe. Inputs and Outputs are empty.");
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Recipe is empty"));
-            }
         }
 
         int amount = recipe.getInputs().size();
@@ -441,7 +464,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     /**
      * Prepares Items and Fluids for use in recipe search
      *
-     * @param items the items to prepare
+     * @param items  the items to prepare
      * @param fluids the fluids to prepare
      * @return a List of Lists of AbstractMapIngredients used for finding recipes
      */
@@ -467,8 +490,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * Finds a recipe using Items and Fluids.
-     * @param items a collection of items
-     * @param fluids a collection of fluids
+     *
+     * @param items     a collection of items
+     * @param fluids    a collection of fluids
      * @param canHandle a predicate for determining if a recipe is valid
      * @return the recipe found
      */
@@ -660,7 +684,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param collidingRecipes the list to store recipe collisions
      */
     private void recurseIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients,
-                                                                  @Nonnull Branch branchRoot, @Nonnull Set<Recipe> collidingRecipes) {
+                                                           @Nonnull Branch branchRoot, @Nonnull Set<Recipe> collidingRecipes) {
         // Try each ingredient as a starting point, adding it to the skip-list.
         // The skip-list is a packed long, where each 1 bit represents an index to skip
         for (int i = 0; i < ingredients.size(); i++) {
@@ -856,6 +880,32 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     /**
+     * This height is used to determine size of background texture on JEI.
+     */
+    public int getPropertyHeightShift() {
+        int maxPropertyCount = 0;
+        if (shouldShiftWidgets()) {
+            for (Recipe recipe : getRecipeList()) {
+                if (recipe.getPropertyCount() > maxPropertyCount)
+                    maxPropertyCount = recipe.getPropertyCount();
+            }
+        }
+        return maxPropertyCount * 10; // GTRecipeWrapper#LINE_HEIGHT
+    }
+
+    private boolean shouldShiftWidgets() {
+        return getMaxInputs() + getMaxOutputs() >= 6 ||
+                getMaxFluidInputs() + getMaxFluidOutputs() >= 6;
+    }
+
+    /**
+     * This height is used to determine Y position to start drawing info on JEI.
+     */
+    public int getPropertyListHeight(Recipe recipe) {
+        return (recipe.getUnhiddenPropertyCount() + 3) * 10 - 3; // GTRecipeWrapper#LINE_HEIGHT
+    }
+
+    /**
      * Adds a recipe to the map. (recursive part)
      *
      * @param recipe      the recipe to add.
@@ -930,8 +980,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             });
 
             // left branches are always either empty or contain recipes.
-            // If there's a recipe present, the addition is finished
-            if (r.left().isPresent()) return true;
+            // If there's a recipe present, the addition is finished for this ingredient
+            // Cannot return here, since each ingredient to add is a separate path to the recipe
+            if (r.left().isPresent()) continue;
 
             // recursive part: apply the addition for the next ingredient in the list, for the right branch.
             // the right branch only contains ingredients, or is empty when the left branch is present
@@ -966,7 +1017,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * Determine the correct root nodes for an ingredient
      *
      * @param ingredient the ingredient to check
-     * @param branchMap the branch containing the nodes
+     * @param branchMap  the branch containing the nodes
      * @return the correct nodes for the ingredient
      */
     @Nonnull
@@ -979,7 +1030,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * Converts a list of {@link GTRecipeInput}s for Fluids into a List of {@link AbstractMapIngredient}s.
      * Do not supply GTRecipeInputs dealing with any other type of input other than Fluids.
      *
-     * @param list the list of MapIngredients to add to
+     * @param list        the list of MapIngredients to add to
      * @param fluidInputs the GTRecipeInputs to convert
      */
     protected void buildFromRecipeFluids(@Nonnull List<List<AbstractMapIngredient>> list, @Nonnull List<GTRecipeInput> fluidInputs) {
@@ -992,9 +1043,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     /**
      * Retrieves a cached ingredient, or inserts a default one
      *
-     * @param list the list to append to
+     * @param list              the list to append to
      * @param defaultIngredient the ingredient to use as a default value, if not cached
-     * @param cache the ingredient root to retrieve from
+     * @param cache             the ingredient root to retrieve from
      */
     protected static void retrieveCachedIngredient(@Nonnull List<List<AbstractMapIngredient>> list, @Nonnull AbstractMapIngredient defaultIngredient,
                                                    @Nonnull WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> cache) {
@@ -1010,7 +1061,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     /**
      * Populates a list of MapIngredients from a list of FluidStacks
      *
-     * @param list the list to populate
+     * @param list        the list to populate
      * @param ingredients the ingredients to convert
      */
     protected void buildFromFluidStacks(@Nonnull List<List<AbstractMapIngredient>> list, @Nonnull Iterable<FluidStack> ingredients) {
@@ -1041,7 +1092,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * Converts a list of {@link GTRecipeInput}s for Items into a List of {@link AbstractMapIngredient}s.
      * Do not supply GTRecipeInputs dealing with any other type of input other than Items.
      *
-     * @param list the list of MapIngredients to add to
+     * @param list   the list of MapIngredients to add to
      * @param inputs the GTRecipeInputs to convert
      */
     protected void buildFromRecipeItems(List<List<AbstractMapIngredient>> list, @Nonnull List<GTRecipeInput> inputs) {
@@ -1086,7 +1137,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     /**
      * Populates a list of MapIngredients from a list of ItemStacks
      *
-     * @param list the list to populate
+     * @param list        the list to populate
      * @param ingredients the ingredients to convert
      */
     protected void buildFromItemStacks(@Nonnull List<List<AbstractMapIngredient>> list, @Nonnull ItemStack[] ingredients) {
@@ -1160,7 +1211,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenGetter("localizedName")
     public String getLocalizedName() {
-        return LocalizationUtils.format("recipemap." + unlocalizedName + ".name");
+        return LocalizationUtils.format(getTranslationKey());
+    }
+
+    @ZenGetter("translationKey")
+    public String getTranslationKey() {
+        return "recipemap." + unlocalizedName + ".name";
     }
 
     @ZenGetter("unlocalizedName")
@@ -1241,6 +1297,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * @deprecated this value is no longer implemented
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @ZenGetter("minInputs")
@@ -1264,6 +1322,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * @deprecated this value is no longer used
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @ZenGetter("minOutputs")
@@ -1287,6 +1347,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * @deprecated this value is no longer used
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @ZenGetter("minFluidInputs")
@@ -1310,6 +1372,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * @deprecated this value is no longer used
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @ZenGetter("minFluidOutputs")
@@ -1331,10 +1395,32 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
     }
 
+    /**
+     * <strong>This is not suitable for Recipe Lookup.</strong>
+     * Use {@link #findRecipe(long, List, List)} instead.
+     *
+     * @return the recipes stored by category.
+     */
+    @Nonnull
+    public Map<GTRecipeCategory, List<Recipe>> getRecipesByCategory() {
+        return Collections.unmodifiableMap(recipeByCategory);
+    }
+
     @Override
     @ZenMethod
     public String toString() {
         return "RecipeMap{" + "unlocalizedName='" + unlocalizedName + '\'' + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return unlocalizedName.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof RecipeMap)) return false;
+        return ((RecipeMap<?>) obj).unlocalizedName.equals(this.unlocalizedName);
     }
 
     @FunctionalInterface

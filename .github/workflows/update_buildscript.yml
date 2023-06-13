@@ -1,0 +1,42 @@
+# Checks daily to see if the buildscript is in need of an update
+name: Buildscript Updating
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *" # "min hr day month year", so run once per day
+
+jobs:
+  buildscript-update:
+    runs-on: ubuntu-latest
+    # Avoid running this workflow on forks
+    if: github.repository == 'GregTechCEu/GregTech'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Ensure build script version is up to date
+        id: update-buildscript
+        run: |
+          curl https://raw.githubusercontent.com/GregTechCEu/Buildscripts/master/build.gradle --output build.gradle
+          new_version=$(head -1 build.gradle | sed -r 's|//version: (.*)|\1|g')
+          echo "NEW_VERSION=$new_version" >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request
+        id: create-pull-request
+        uses: peter-evans/create-pull-request@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
+        with:
+          token: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          add-paths: build.gradle
+          commit-message: 'update build script version to ${{ steps.update-buildscript.outputs.NEW_VERSION }}'
+          branch: gha-update-buildscript
+          title: Update build script version to ${{ steps.update-buildscript.outputs.NEW_VERSION }}
+          body: This pull request is created by the buildscript-update workflow
+          labels: ignore changelog

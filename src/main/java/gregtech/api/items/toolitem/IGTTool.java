@@ -36,6 +36,7 @@ import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
@@ -64,7 +65,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.text.WordUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -173,8 +173,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
 
         // Set tool and material enchantments
-        Object2IntMap<Enchantment> enchantments = toolProperty.getEnchantments();
-        enchantments.putAll(toolStats.getDefaultEnchantments(stack));
+        Object2IntMap<Enchantment> enchantments = new Object2IntOpenHashMap<>();
+        toolProperty.getEnchantments().forEach((enchantment, level) -> enchantments.put(enchantment, level.getLevel(toolProperty.getToolHarvestLevel())));
+        toolStats.getDefaultEnchantments(stack).forEach((enchantment, level) -> enchantments.put(enchantment, level.getLevel(toolProperty.getToolHarvestLevel())));
         enchantments.forEach((enchantment, level) -> {
             if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
                 stack.addEnchantment(enchantment, level);
@@ -727,34 +728,35 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         tooltip.add("");
 
         // valid tools
-        tooltip.add(I18n.format("item.gt.tool.usable_as", stack.getItem().getToolClasses(stack).stream()
-                .map(GTUtility::convertUnderscoreToSpace)
-                .map(WordUtils::capitalize)
-                .collect(Collectors.joining(", "))));
+        tooltip.add(I18n.format("item.gt.tool.usable_as",
+                stack.getItem().getToolClasses(stack).stream()
+                        .map(s -> I18n.format("gt.tool.class." + s))
+                        .collect(Collectors.joining(", "))
+        ));
 
         // repair info
-        if (TooltipHelper.isShiftDown()) {
-            Material material = getToolMaterial(stack);
-            String materialName = I18n.format(getToolMaterial(stack).getUnlocalizedName());
+        if (!tagCompound.getBoolean(UNBREAKABLE_KEY)) {
+            if (TooltipHelper.isShiftDown()) {
+                Material material = getToolMaterial(stack);
 
-            Collection<String> repairItems = new ArrayList<>();
-            if (ModHandler.isMaterialWood(material)) {
-                repairItems.add(I18n.format("item.material.oreprefix.plank", materialName));
-            } else {
-                if (material.hasProperty(PropertyKey.INGOT)) {
-                    repairItems.add(I18n.format("item.material.oreprefix.ingot", materialName));
-                } else if (material.hasProperty(PropertyKey.GEM)) {
-                    repairItems.add(I18n.format("item.material.oreprefix.gem", materialName));
+                Collection<String> repairItems = new ArrayList<>();
+                if (ModHandler.isMaterialWood(material)) {
+                    repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                } else {
+                    if (material.hasProperty(PropertyKey.INGOT)) {
+                        repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                    } else if (material.hasProperty(PropertyKey.GEM)) {
+                        repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                    }
+                    repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
                 }
-                repairItems.add(I18n.format("item.material.oreprefix.plate", materialName));
+                tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", String.join(", ", repairItems)));
+            } else {
+                tooltip.add(I18n.format("item.gt.tool.tooltip.repair_info"));
             }
-            tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", String.join(", ", repairItems)));
-
-            if (this.isElectric()) {
-                tooltip.add(I18n.format("item.gt.tool.replace_tool_head"));
-            }
-        } else {
-            tooltip.add(I18n.format("item.gt.tool.tooltip.repair_info"));
+        }
+        if (this.isElectric()) {
+            tooltip.add(I18n.format("item.gt.tool.replace_tool_head"));
         }
     }
 

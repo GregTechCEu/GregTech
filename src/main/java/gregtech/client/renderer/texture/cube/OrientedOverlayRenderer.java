@@ -22,7 +22,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -98,14 +97,6 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             }
             return normalSpriteEmissive;
         }
-    }
-
-    /**
-     * @deprecated Use {@link OrientedOverlayRenderer#basePath}. OverlayFace directions are determined automatically.
-     */
-    @Deprecated
-    public OrientedOverlayRenderer(@Nonnull String basePath, @Nullable OverlayFace... ignored) {
-        this(basePath);
     }
 
     public OrientedOverlayRenderer(@Nonnull String basePath) {

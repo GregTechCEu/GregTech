@@ -1,10 +1,11 @@
 package gregtech.api.unification.material.properties;
 
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import gregtech.api.items.toolitem.EnchantmentLevel;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import net.minecraft.enchantment.Enchantment;
 
-public class ToolProperty implements IMaterialProperty<ToolProperty> {
+public class ToolProperty implements IMaterialProperty {
 
     /**
      * Harvest speed of tools made from this Material.
@@ -73,7 +74,7 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     /**
      * Enchantment to be applied to tools made from this Material.
      */
-    private final Object2IntMap<Enchantment> enchantments = new Object2IntArrayMap<>();
+    private final Object2ObjectMap<Enchantment, EnchantmentLevel> enchantments = new Object2ObjectArrayMap<>();
 
     public ToolProperty(float harvestSpeed, float attackDamage, int durability, int harvestLevel) {
         this.harvestSpeed = harvestSpeed;
@@ -150,7 +151,7 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
         this.isUnbreakable = isUnbreakable;
     }
 
-    public Object2IntMap<Enchantment> getEnchantments() {
+    public Object2ObjectMap<Enchantment, EnchantmentLevel> getEnchantments() {
         return enchantments;
     }
 
@@ -176,7 +177,11 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     }
 
     public void addEnchantmentForTools(Enchantment enchantment, int level) {
-        enchantments.put(enchantment, level);
+        this.addEnchantmentForTools(enchantment, level, 0);
+    }
+
+    public void addEnchantmentForTools(Enchantment enchantment, double level, double levelGrowth) {
+        enchantments.put(enchantment, new EnchantmentLevel(level, levelGrowth));
     }
 
     public static class Builder {

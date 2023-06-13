@@ -416,14 +416,10 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         int parallelLimit = 4;
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                1,
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("test_blast_furnace",
                 3,
-                1,
                 2,
-                0,
                 1,
-                0,
                 1,
                 new BlastRecipeBuilder(),
                 false);
@@ -466,14 +462,10 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         int parallelLimit = 4;
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                1,
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("test_blast_furnace_2",
                 3,
-                1,
                 2,
-                0,
                 1,
-                0,
                 1,
                 new BlastRecipeBuilder(),
                 false);

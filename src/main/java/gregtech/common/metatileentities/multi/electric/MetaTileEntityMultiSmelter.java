@@ -70,6 +70,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         this.heatingCoilDiscount = 0;
     }
 
+    @Nonnull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -118,7 +119,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
         @Override
         public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
-            builder.EUt(Math.max(1, 16 / heatingCoilDiscount))
+            builder.EUt(builder.getParallel() * Math.max(1, 16 / heatingCoilDiscount))
                     .duration((int) Math.max(1.0, 256 * builder.getParallel() / (getParallelLimit() * 1.0)));
         }
 

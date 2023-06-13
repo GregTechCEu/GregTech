@@ -6,7 +6,6 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
 
 import javax.annotation.Nonnull;
 
@@ -32,7 +31,7 @@ public class CircuitAssemblerRecipeBuilder extends RecipeBuilder<CircuitAssemble
     }
 
     public CircuitAssemblerRecipeBuilder solderMultiplier(int multiplier) {
-        if (!GTUtility.isBetweenInclusive(1, 64000, (long) GTValues.L * multiplier)) {
+        if (1 > GTValues.L * multiplier || GTValues.L * multiplier > 64000) {
             GTLog.logger.error("Fluid multiplier cannot exceed 64000mb total. Multiplier: {}", multiplier);
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;

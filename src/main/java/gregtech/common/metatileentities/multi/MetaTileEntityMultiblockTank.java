@@ -6,6 +6,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.PropertyFluidFilter;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.LabelWidget;
@@ -30,7 +31,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidTank;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,12 +52,12 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     protected void initializeInventory() {
         super.initializeInventory();
 
-        FluidTank tank = new FilteredFluidHandler(capacity).setFillPredicate(
-                fluidStack -> isMetal || (!fluidStack.getFluid().isGaseous() && fluidStack.getFluid().getTemperature() <= 325));
-        FluidTankList tankList = new FluidTankList(true, tank);
+        FilteredFluidHandler tank = new FilteredFluidHandler(capacity);
+        if (!isMetal) {
+            tank.setFilter(new PropertyFluidFilter(340, false, false, false, false));
+        }
 
-        this.importFluids = tankList;
-        this.exportFluids = tankList;
+        this.exportFluids = this.importFluids = new FluidTankList(true, tank);
         this.fluidInventory = tank;
     }
 
@@ -67,9 +67,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     @Override
-    protected void updateFormedValid() {
-
-    }
+    protected void updateFormedValid() {}
 
     @Override
     @Nonnull

@@ -1,17 +1,33 @@
 pluginManagement {
     repositories {
+        maven {
+            // RetroFuturaGradle
+            name 'GTNH Maven'
+            //noinspection HttpUrlsUsage
+            url 'http://jenkins.usrv.eu:8081/nexus/content/groups/public/'
+            allowInsecureProtocol = true
+            //noinspection GroovyAssignabilityCheck
+            mavenContent {
+                includeGroup 'com.gtnewhorizons'
+                includeGroup 'com.gtnewhorizons.retrofuturagradle'
+            }
+        }
         gradlePluginPortal()
-        maven {
-            name 'FancyGradle Maven'
-            url 'https://gitlab.com/api/v4/projects/26758973/packages/maven'
-        }
-        maven {
-            name 'ForgeGradle Maven'
-            url 'https://maven.minecraftforge.net'
-        }
-        maven {
-            name 'MixinGradle Maven'
-            url 'https://repo.spongepowered.org/repository/maven-public'
-        }
+        mavenCentral()
+        mavenLocal()
     }
 }
+
+plugins {
+    id 'com.diffplug.blowdryerSetup' version '1.6.0'
+    // Automatic toolchain provisioning
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.4.0'
+}
+
+blowdryerSetup {
+    repoSubfolder 'spotless'
+    github 'GregTechCEu/Buildscripts', 'tag', 'v1.0.0'
+    //devLocal '.' // Use this when testing config updated locally
+}
+
+rootProject.name = rootProject.projectDir.getName()

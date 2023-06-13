@@ -8,7 +8,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 
-public class FluidProperty implements IMaterialProperty<FluidProperty> {
+public class FluidProperty implements IMaterialProperty {
 
     public static final int BASE_TEMP = 293; // Room Temperature
 

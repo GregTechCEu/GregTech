@@ -4,31 +4,34 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.DrawableWidget;
 import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.stack.ItemVariantMap;
+import gregtech.api.unification.stack.MultiItemVariantMap;
+import gregtech.api.unification.stack.SingleItemVariantMap;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 import gregtech.common.gui.widget.HighlightedTextField;
 import gregtech.common.gui.widget.orefilter.ItemOreFilterTestSlot;
 import gregtech.common.gui.widget.orefilter.OreGlobCompileStatusWidget;
-import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class OreDictionaryItemFilter extends ItemFilter {
-
-    private static final Hash.Strategy<ItemStack> HASH_STRATEGY = ItemStackHashStrategy.builder().compareItem(true).compareDamage(true).build();
 
     protected String expression = "";
     private OreGlob glob = ImpossibleOreGlob.getInstance();
     private boolean error;
 
-    private final Object2BooleanMap<ItemStack> matchCache = new Object2BooleanOpenCustomHashMap<>(HASH_STRATEGY);
+    private final Map<Item, ItemVariantMap.Mutable<Boolean>> matchCache = new Object2ObjectOpenHashMap<>();
+    private final SingleItemVariantMap<Boolean> noOreDictMatch = new SingleItemVariantMap<>();
 
     public String getExpression() {
         return expression;
@@ -57,6 +60,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                         compilationStatus.setCompileResult(null);
                     }
                     this.matchCache.clear();
+                    this.noOreDictMatch.clear();
                     markDirty();
                     for (ItemOreFilterTestSlot slot : testSlot) {
                         slot.setGlob(this.error ? null : this.glob);
@@ -123,12 +127,44 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     public boolean matchesItemStack(ItemStack itemStack) {
         if (this.error) return false;
-        Boolean cached = this.matchCache.get(itemStack);
-        if (cached != null) {
+        Item item = itemStack.getItem();
+        ItemVariantMap<Set<String>> oreDictEntry = OreDictUnifier.getOreDictionaryEntry(item);
+
+        if (oreDictEntry == null) {
+            // no oredict entries associated
+            Boolean cached = this.noOreDictMatch.getEntry();
+            if (cached == null) {
+                cached = this.glob.matches("");
+            }
+            this.matchCache.put(item, this.noOreDictMatch);
             return cached;
         }
+
+        ItemVariantMap.Mutable<Boolean> cacheEntry = this.matchCache.get(item);
+        if (cacheEntry != null) {
+            Boolean cached = cacheEntry.get(itemStack);
+            if (cached != null) return cached;
+        }
+
+        if (cacheEntry == null) {
+            if (oreDictEntry.isEmpty()) {
+                // no oredict entries associated
+                Boolean cached = this.noOreDictMatch.getEntry();
+                if (cached == null) {
+                    cached = this.glob.matches("");
+                    this.noOreDictMatch.put(cached);
+                }
+                this.matchCache.put(item, this.noOreDictMatch);
+                return cached;
+            } else if (!item.getHasSubtypes() || !oreDictEntry.hasNonWildcardEntry()) {
+                cacheEntry = new SingleItemVariantMap<>(); // we can just ignore metadata and use shared cache
+            } else {
+                cacheEntry = new MultiItemVariantMap<>(); // variant items
+            }
+            this.matchCache.put(item, cacheEntry);
+        }
         boolean matches = this.glob.matches(itemStack);
-        this.matchCache.put(itemStack, matches);
+        cacheEntry.put(itemStack, matches);
         return matches;
     }
 

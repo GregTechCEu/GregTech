@@ -1,5 +1,6 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
@@ -7,6 +8,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -16,8 +18,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static gregtech.api.recipes.logic.OverclockingLogic.standardOverclockingLogic;
 
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
@@ -251,36 +251,29 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
+    protected void modifyOverclockPre(@Nonnull int[] values, @Nonnull IRecipePropertyStorage storage) {
+        super.modifyOverclockPre(values, storage);
+
+        // apply maintenance bonuses
+        Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
+
+        // duration bonus
+        if (maintenanceValues.getSecond() != 1.0) {
+            values[1] = (int) Math.round(values[1] * maintenanceValues.getSecond());
+        }
+    }
+
+    @Override
+    protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {
+        super.modifyOverclockPost(overclockResults, storage);
+
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
-        int[] overclock = null;
-        if (maintenanceValues.getSecond() != 1.0)
-
-            overclock = standardOverclockingLogic(
-                    Math.abs(recipeEUt),
-                    maxVoltage,
-                    (int) Math.round(recipeDuration * maintenanceValues.getSecond()),
-                    amountOC,
-                    getOverclockingDurationDivisor(),
-                    getOverclockingVoltageMultiplier()
-            );
-
-        if (overclock == null)
-            overclock = standardOverclockingLogic(
-                    Math.abs(recipeEUt),
-                    maxVoltage,
-                    recipeDuration,
-                    amountOC,
-                    getOverclockingDurationDivisor(),
-                    getOverclockingVoltageMultiplier()
-            );
-
-        if (maintenanceValues.getFirst() > 0)
-            overclock[1] = (int) (overclock[1] * (1 + 0.1 * maintenanceValues.getFirst()));
-
-        return overclock;
+        // duration penalty
+        if (maintenanceValues.getFirst() > 0) {
+            overclockResults[1] = (int) (overclockResults[1] * (1 + 0.1 * maintenanceValues.getFirst()));
+        }
     }
 
     @Override
@@ -288,6 +281,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         return getMaxVoltage();
     }
 
+    @Nonnull
     protected Tuple<Integer, Double> getMaintenanceValues() {
         MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
         int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() || !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
@@ -358,7 +352,31 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected long getMaxVoltage() {
-        return Math.max(getEnergyContainer().getInputVoltage(), getEnergyContainer().getOutputVoltage());
+        IEnergyContainer energyContainer = getEnergyContainer();
+        if (energyContainer instanceof EnergyContainerList) {
+            long voltage;
+            long amperage;
+            if (energyContainer.getInputVoltage() > energyContainer.getOutputVoltage()) {
+                voltage = energyContainer.getInputVoltage();
+                amperage = energyContainer.getInputAmperage();
+            } else {
+                voltage = energyContainer.getOutputVoltage();
+                amperage = energyContainer.getOutputAmperage();
+            }
+
+            if (amperage == 1) {
+                // amperage is 1 when the energy is not exactly on a tier
+
+                // the voltage for recipe search is always on tier, so take the closest lower tier
+                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+            } else {
+                // amperage != 1 means the voltage is exactly on a tier
+                // ignore amperage, since only the voltage is relevant for recipe search
+                // amps are never > 3 in an EnergyContainerList
+                return voltage;
+            }
+        }
+        return Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
     }
 
     @Nullable

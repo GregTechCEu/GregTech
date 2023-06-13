@@ -97,8 +97,7 @@ public class MetaTileEntities {
     // TODO Replication system
     //public static final SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     //public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    // TODO Assembly Line Research system
-    //public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new MetaTileEntityGasCollector[GTValues.V.length - 1];
     public static final MetaTileEntityRockBreaker[] ROCK_BREAKER = new MetaTileEntityRockBreaker[GTValues.V.length - 1];
     public static final MetaTileEntityMiner[] MINER = new MetaTileEntityMiner[GTValues.V.length - 1];
@@ -133,6 +132,9 @@ public class MetaTileEntities {
     public static MetaTileEntityMachineHatch MACHINE_HATCH;
     public static MetaTileEntityPassthroughHatchItem PASSTHROUGH_HATCH_ITEM;
     public static MetaTileEntityPassthroughHatchFluid PASSTHROUGH_HATCH_FLUID;
+    public static MetaTileEntityDataAccessHatch DATA_ACCESS_HATCH;
+    public static MetaTileEntityDataAccessHatch ADVANCED_DATA_ACCESS_HATCH;
+    public static MetaTileEntityDataAccessHatch CREATIVE_DATA_HATCH;
     // Used for addons if they wish to disable certain tiers of machines
     private static final Map<String, Boolean> MID_TIER = new HashMap<>();
     private static final Map<String, Boolean> HIGH_TIER = new HashMap<>();
@@ -213,6 +215,9 @@ public class MetaTileEntities {
     public static MetaTileEntityDrum ALUMINIUM_DRUM;
     public static MetaTileEntityDrum STEEL_DRUM;
     public static MetaTileEntityDrum STAINLESS_STEEL_DRUM;
+    public static MetaTileEntityDrum TITANIUM_DRUM;
+    public static MetaTileEntityDrum TUNGSTENSTEEL_DRUM;
+    public static MetaTileEntityDrum GOLD_DRUM;
     public static MetaTileEntityCrate WOODEN_CRATE;
     public static MetaTileEntityCrate BRONZE_CRATE;
     public static MetaTileEntityCrate ALUMINIUM_CRATE;
@@ -369,10 +374,8 @@ public class MetaTileEntities {
         // Lathe, IDs 440-454
         registerSimpleMetaTileEntity(LATHE, 440, "lathe", RecipeMaps.LATHE_RECIPES, Textures.LATHE_OVERLAY, true);
 
-        // TODO Assembly Line Research system
-        // TODO Should anonymously override SimpleMachineMetaTileEntity#getCircuitSlotOverlay() to display the data stick overlay
         // Scanner, IDs 455-469
-        //registerSimpleMetaTileEntity(SCANNER, 455, "scanner", RecipeMaps.SCANNER_RECIPES, Textures.SCANNER_OVERLAY, true);
+        registerSimpleMetaTileEntity(SCANNER, 455, "scanner", RecipeMaps.SCANNER_RECIPES, Textures.SCANNER_OVERLAY, true);
 
         // Mixer, IDs 470-484
         registerSimpleMetaTileEntity(MIXER, 470, "mixer", RecipeMaps.MIXER_RECIPES, Textures.MIXER_OVERLAY, false, GTUtility.hvCappedTankSizeFunction);
@@ -620,7 +623,11 @@ public class MetaTileEntities {
 
         PASSTHROUGH_HATCH_ITEM = registerMetaTileEntity(1402, new MetaTileEntityPassthroughHatchItem(gregtechId("passthrough_hatch_item"), 3));
         PASSTHROUGH_HATCH_FLUID = registerMetaTileEntity(1403, new MetaTileEntityPassthroughHatchFluid(gregtechId("passthrough_hatch_fluid"), 3));
-        // Free Range: 1404-1509
+
+        DATA_ACCESS_HATCH = registerMetaTileEntity(1404, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch"), GTValues.IV, false));
+        ADVANCED_DATA_ACCESS_HATCH = registerMetaTileEntity(1405, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.advanced"), GTValues.ZPM, false));
+        CREATIVE_DATA_HATCH = registerMetaTileEntity(1406, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.creative"), GTValues.MAX, true));
+        // Free Range: 1407-1509
 
         // Buffers, IDs 1510-1512
         BUFFER[0] = registerMetaTileEntity(1510, new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));
@@ -689,6 +696,9 @@ public class MetaTileEntities {
         STEEL_DRUM = registerMetaTileEntity(1612, new MetaTileEntityDrum(gregtechId("drum.steel"), Materials.Steel, 64000));
         ALUMINIUM_DRUM = registerMetaTileEntity(1613, new MetaTileEntityDrum(gregtechId("drum.aluminium"), Materials.Aluminium, 128000));
         STAINLESS_STEEL_DRUM = registerMetaTileEntity(1614, new MetaTileEntityDrum(gregtechId("drum.stainless_steel"), Materials.StainlessSteel, 256000));
+        TITANIUM_DRUM = registerMetaTileEntity(1615, new MetaTileEntityDrum(gregtechId("drum.titanium"), Materials.Titanium, 512000));
+        TUNGSTENSTEEL_DRUM = registerMetaTileEntity(1616, new MetaTileEntityDrum(gregtechId("drum.tungstensteel"), Materials.TungstenSteel, 1024000));
+        GOLD_DRUM = registerMetaTileEntity(1617, new MetaTileEntityDrum(gregtechId("drum.gold"), Materials.Gold, 32000));
 
         // Crates, IDs 1625-1639
         WOODEN_CRATE = registerMetaTileEntity(1625, new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27));

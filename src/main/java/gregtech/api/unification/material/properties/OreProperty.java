@@ -1,14 +1,16 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.unification.material.Material;
+import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class OreProperty implements IMaterialProperty<OreProperty> {
+public class OreProperty implements IMaterialProperty {
 
     /**
      * List of Ore byproducts.
@@ -161,6 +163,18 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
     public List<Material> getOreByProducts() {
         return this.oreByProducts;
+    }
+
+    @Nullable
+    public final Material getOreByProduct(int index) {
+        if (this.oreByProducts.isEmpty()) return null;
+        return this.oreByProducts.get(MathHelper.clamp(index, 0, this.oreByProducts.size() - 1));
+    }
+
+    @Nonnull
+    public final Material getOreByProduct(int index, @Nonnull Material fallback) {
+        Material material = getOreByProduct(index);
+        return material != null ? material : fallback;
     }
 
     @Override

@@ -1,9 +1,9 @@
 package gregtech.api.pipenet;
 
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.TObjectIntMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.map.hash.TObjectIntHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -389,7 +389,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
     protected void deserializeAllNodeList(NBTTagCompound compound) {
         NBTTagList allNodesList = compound.getTagList("NodeIndexes", NBT.TAG_COMPOUND);
         NBTTagList wirePropertiesList = compound.getTagList("WireProperties", NBT.TAG_COMPOUND);
-        TIntObjectMap<NodeDataType> readProperties = new TIntObjectHashMap<>();
+        Int2ObjectMap<NodeDataType> readProperties = new Int2ObjectOpenHashMap<>();
 
         for (int i = 0; i < wirePropertiesList.tagCount(); i++) {
             NBTTagCompound propertiesTag = wirePropertiesList.getCompoundTagAt(i);
@@ -417,7 +417,8 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
         NBTTagCompound compound = new NBTTagCompound();
         NBTTagList allNodesList = new NBTTagList();
         NBTTagList wirePropertiesList = new NBTTagList();
-        TObjectIntMap<NodeDataType> alreadyWritten = new TObjectIntHashMap<>(10, 0.5f, -1);
+        Object2IntMap<NodeDataType> alreadyWritten = new Object2IntOpenHashMap<>(10, 0.5f);
+        alreadyWritten.defaultReturnValue(-1);
         int currentIndex = 0;
 
         for (Entry<BlockPos, Node<NodeDataType>> entry : allNodes.entrySet()) {
@@ -446,11 +447,10 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             allNodesList.appendTag(nodeTag);
         }
 
-        for (NodeDataType nodeData : alreadyWritten.keySet()) {
-            int wirePropertiesIndex = alreadyWritten.get(nodeData);
+        for (Object2IntMap.Entry<NodeDataType> entry : alreadyWritten.object2IntEntrySet()) {
             NBTTagCompound propertiesTag = new NBTTagCompound();
-            propertiesTag.setInteger("index", wirePropertiesIndex);
-            writeNodeData(nodeData, propertiesTag);
+            propertiesTag.setInteger("index", entry.getIntValue());
+            writeNodeData(entry.getKey(), propertiesTag);
             wirePropertiesList.appendTag(propertiesTag);
         }
 

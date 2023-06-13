@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
@@ -16,7 +17,6 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -232,7 +232,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
             boolean hasDrainedWater = waterFluidTank.drain(1, true) != null;
             int filledSteam = 0;
             if (hasDrainedWater) {
-                filledSteam = steamFluidTank.fill(ModHandler.getSteam(fillAmount), true);
+                filledSteam = steamFluidTank.fill(Materials.Steam.getFluid(fillAmount), true);
             }
             if (this.hasNoWater && hasDrainedWater) {
                 doExplosion(2.0f);
@@ -292,7 +292,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
 
     @Override
     protected FluidTankList createImportFluidHandler() {
-        this.waterFluidTank = new FilteredFluidHandler(16000).setFillPredicate(ModHandler::isWater);
+        this.waterFluidTank = new FilteredFluidHandler(16000).setFilter(CommonFluidFilters.BOILER_FLUID);
         return new FluidTankList(false, waterFluidTank);
     }
 

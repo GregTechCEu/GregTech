@@ -6,6 +6,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.BooleanConsumer;
@@ -94,7 +95,7 @@ public class CycleButtonWidget extends Widget {
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         if (isMouseOverElement(mouseX, mouseY) && tooltipHoverString != null) {
-            List<String> hoverList = Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(tooltipHoverString)));
+            List<String> hoverList = Arrays.asList(LocalizationUtils.formatLines(tooltipHoverString));
             drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
         }
     }

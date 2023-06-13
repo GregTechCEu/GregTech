@@ -7,10 +7,12 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
+import gregtech.api.capability.IFilter;
+import gregtech.api.capability.IFilteredFluidContainer;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.ThermalFluidHandlerItemStack;
+import gregtech.api.capability.impl.GTFluidHandlerItemStack;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -35,6 +37,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -49,9 +53,11 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
@@ -62,10 +68,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     private final int maxFluidCapacity;
     protected FluidTank fluidTank;
     private boolean autoOutputFluids;
+    @Nullable
     private EnumFacing outputFacing;
     private boolean allowInputFromOutputSide = false;
     protected IFluidHandler outputFluidInventory;
 
+    @Nullable
     private FluidStack previousFluid;
     private boolean locked;
     private boolean voiding;
@@ -300,8 +308,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 .widget(new ImageWidget(7, 16, 81, 46, GuiTextures.DISPLAY))
                 .widget(new LabelWidget(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF))
                 .widget(tankWidget)
-                .dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF)
-                .dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF)
+                .widget(new AdvancedTextWidget(11, 30, getFluidAmountText(tankWidget), 0xFFFFFF))
+                .widget(new AdvancedTextWidget(11, 40, getFluidNameText(tankWidget), 0xFFFFFF))
                 .label(6, 6, getMetaFullName())
                 .widget(new FluidContainerSlotWidget(importItems, 0, 90, 17, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
@@ -321,6 +329,45 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                         .shouldUseBaseBackground())
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
+    }
+
+    private Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
+        return (list) -> {
+            String fluidName = "";
+            // If there is no fluid in the tank
+            if (tankWidget.getFluidLocalizedName().isEmpty()) {
+                // But there is a locked fluid
+                if (this.lockedFluid != null) {
+                    fluidName = this.lockedFluid.getLocalizedName();
+                }
+            } else {
+                fluidName = tankWidget.getFluidLocalizedName();
+            }
+
+            if (!fluidName.isEmpty()) {
+                list.add(new TextComponentString(fluidName));
+
+            }
+        };
+    }
+
+    private Consumer<List<ITextComponent>> getFluidAmountText(TankWidget tankWidget) {
+        return (list) -> {
+            String fluidAmount = "";
+
+            // Nothing in the tank
+            if (tankWidget.getFormattedFluidAmount().equals("0")) {
+                // Display Zero to show information about the locked fluid
+                if (this.lockedFluid != null) {
+                    fluidAmount = "0";
+                }
+            } else {
+                fluidAmount = tankWidget.getFormattedFluidAmount();
+            }
+            if (!fluidAmount.isEmpty()) {
+                list.add(new TextComponentString(fluidAmount));
+            }
+        };
     }
 
     public EnumFacing getOutputFacing() {
@@ -447,7 +494,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     public ICapabilityProvider initItemStackCapabilities(ItemStack itemStack) {
-        return new ThermalFluidHandlerItemStack(itemStack, maxFluidCapacity, Integer.MAX_VALUE, true, true, true, true);
+        return new GTFluidHandlerItemStack(itemStack, maxFluidCapacity);
     }
 
     @Override
@@ -533,7 +580,22 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         return true;
     }
 
-    private class QuantumFluidTank extends FluidTank {
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return new AxisAlignedBB(getPos());
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public int getLightOpacity() {
+        return 0;
+    }
+
+    private class QuantumFluidTank extends FluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
 
         public QuantumFluidTank(int capacity) {
             super(capacity);
@@ -551,22 +613,22 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
         @Override
         public boolean canFillFluidType(FluidStack fluid) {
-            return !locked || lockedFluid == null || fluid.isFluidEqual(lockedFluid);
+            return test(fluid);
         }
-    }
 
-    @Override
-    public AxisAlignedBB getRenderBoundingBox() {
-        return new AxisAlignedBB(getPos());
-    }
+        @Override
+        public IFilter<FluidStack> getFilter() {
+            return this;
+        }
 
-    @Override
-    public boolean isOpaqueCube() {
-        return false;
-    }
+        @Override
+        public boolean test(@Nonnull FluidStack fluidStack) {
+            return !locked || lockedFluid == null || fluidStack.isFluidEqual(lockedFluid);
+        }
 
-    @Override
-    public int getLightOpacity() {
-        return 0;
+        @Override
+        public int getPriority() {
+            return !locked || lockedFluid == null ? IFilter.noPriority() : IFilter.whitelistPriority(1);
+        }
     }
 }

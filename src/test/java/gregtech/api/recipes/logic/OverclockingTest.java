@@ -191,6 +191,8 @@ public class OverclockingTest {
         int numberOfOCs = machineTier - recipeTier;
         if (recipeTier == ULV) numberOfOCs--; // no ULV overclocking
 
+        recipeVoltage = OverclockingLogic.applyCoilEUtDiscount(recipeVoltage, machineTemperature, recipeTemperature);
+
         // cannot overclock, so return the starting values
         if (numberOfOCs <= 0) return new int[]{recipeVoltage, recipeDuration};
 

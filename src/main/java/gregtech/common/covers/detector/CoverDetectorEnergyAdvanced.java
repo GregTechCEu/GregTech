@@ -13,7 +13,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
@@ -141,18 +140,18 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     }
 
     private void setMinValue(String val) {
-        long parsedValue = GTUtility.tryParseLong(val, usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU);
-
-        this.minValue = Math.min(this.maxValue - 1, Math.max(0, parsedValue));
+        this.minValue = CoverDetectorBase.parseCapped(val,
+                0,
+                this.maxValue - 1,
+                usePercent ? DEFAULT_MIN_PERCENT : DEFAULT_MIN_EU);
     }
 
     private void setMaxValue(String val) {
-        long parsedValue = GTUtility.tryParseLong(val, usePercent ? DEFAULT_MAX_PERCENT : DEFAULT_MAX_EU);
-        long maxUpperLimit = usePercent ? 100 : Long.MAX_VALUE;
-
-        this.maxValue = Math.max(this.minValue + 1, Math.min(parsedValue, maxUpperLimit));
+        this.maxValue = CoverDetectorBase.parseCapped(val,
+                this.minValue + 1,
+                usePercent ? 100 : Long.MAX_VALUE,
+                usePercent ? DEFAULT_MAX_PERCENT : DEFAULT_MAX_EU);
     }
-
 
     private boolean isUsePercent() {
         return this.usePercent;
