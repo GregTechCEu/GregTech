@@ -511,9 +511,9 @@ metaitem.sensor.uxv.name=UXV Sensor
 metaitem.sensor.opv.name=OpV Sensor
 
 metaitem.tool.datastick.name=Data Stick
-metaitem.tool.datastick.tooltip=A Low Capacity Data Storage
+metaitem.tool.datastick.tooltip=Storage for Simple Data
 metaitem.tool.dataorb.name=Data Orb
-metaitem.tool.dataorb.tooltip=A High Capacity Data Storage
+metaitem.tool.dataorb.tooltip=Storage for Complex Data
 metaitem.circuit.integrated.name=Programmed Circuit
 metaitem.circuit.integrated.tooltip=Use to open configuration GUI/n/nShift-Right-Click on a machine/nwith a circuit slot to set it to/nthis circuit's value./n
 metaitem.circuit.integrated.gui=Programmed Circuit Configuration
@@ -2321,6 +2321,9 @@ metaitem.item_magnet.lv.name=Low Voltage Item Magnet
 metaitem.item_magnet.hv.name=High Voltage Item Magnet
 behavior.item_magnet.enabled=§aMagnetic Field Enabled
 behavior.item_magnet.disabled=§cMagnetic Field Disabled
+
+behavior.data_item.assemblyline.title=§nAssembly Line Construction Data:
+behavior.data_item.assemblyline.data=- §a%s
 
 metaitem.rubber_wood_boat.name=Rubber Wood Boat
 metaitem.treated_wood_boat.name=Treated Wood Boat
@@ -4812,6 +4815,11 @@ gregtech.machine.passthrough_hatch_item.tooltip=Sends Items from one Side to the
 gregtech.machine.passthrough_hatch_fluid.name=Fluid Passthrough Hatch
 gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to the other
 
+gregtech.machine.data_access_hatch.name=Data Access Hatch
+gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
+gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Sticks
+gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
+gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
@@ -4869,6 +4877,7 @@ gregtech.recipe.dimensions=Dimensions: %s
 gregtech.recipe.cleanroom=Requires %s
 gregtech.recipe.cleanroom.display_name=Cleanroom
 gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
+gregtech.recipe.research=Requires Research
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
