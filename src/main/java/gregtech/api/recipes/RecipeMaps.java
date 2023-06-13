@@ -939,8 +939,8 @@ public class RecipeMaps {
      * 				.duration(8).EUt(4).buildAndRegister();
      * </pre>
      *
-     * Any Recipe added to the Ore Washer not specifying an <B>EUt</B> value will default to 16.
-     * Any Recipe added to the Ore Washer not specifying a <B>duration</B> value will default to 400.
+     * Any Recipe added to the Sluice not specifying an <B>EUt</B> value will default to 16.
+     * Any Recipe added to the Sluice not specifying a <B>duration</B> value will default to 400.
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> SLUICE_RECIPES = new RecipeMap<>("sluice", 1, 3, 1, 1, new SimpleRecipeBuilder().duration(400).EUt(16), false)
