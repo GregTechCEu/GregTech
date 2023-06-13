@@ -6,11 +6,10 @@ import gregtech.common.blocks.StoneVariantBlock.StoneVariant;
 import gregtech.common.blocks.wood.BlockGregPlanks;
 import net.minecraft.init.Items;
 
-import static gregtech.api.GTValues.ULV;
-import static gregtech.api.GTValues.VA;
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_BATH_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.api.unification.ore.OrePrefix.*;
 
 public class ChemicalBathRecipes {
 
@@ -77,5 +76,29 @@ public class ChemicalBathRecipes {
                 .output(dust, TungsticAcid, 7)
                 .output(dust, LithiumChloride, 4)
                 .duration(210).EUt(960).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(ingotHot, Kanthal)
+                .fluidInputs(Water.getFluid(100))
+                .output(ingot, Kanthal)
+                .duration(400).EUt(VA[MV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(ingotHot, Kanthal)
+                .fluidInputs(DistilledWater.getFluid(100))
+                .output(ingot, Kanthal)
+                .duration(250).EUt(VA[MV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(ingotHot, Silicon)
+                .fluidInputs(Water.getFluid(100))
+                .output(ingot, Silicon)
+                .duration(200).EUt(VA[MV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(ingotHot, Silicon)
+                .fluidInputs(DistilledWater.getFluid(100))
+                .output(ingot, Silicon)
+                .duration(125).EUt(VA[MV]).buildAndRegister();
     }
 }

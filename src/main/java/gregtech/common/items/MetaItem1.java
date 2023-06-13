@@ -470,8 +470,8 @@ public class MetaItem1 extends StandardMetaItem {
         }));
 
         // Data Items: ID 261-265
-        TOOL_DATA_STICK = addItem(261, "tool.datastick");
-        TOOL_DATA_ORB = addItem(262, "tool.dataorb");
+        TOOL_DATA_STICK = addItem(261, "tool.datastick").addComponents(new DataItemBehavior());
+        TOOL_DATA_ORB = addItem(262, "tool.dataorb").addComponents(new DataItemBehavior());
 
         // Special Machine Components: ID 266-280
         COMPONENT_GRINDER_DIAMOND = addItem(266, "component.grinder.diamond")
@@ -597,13 +597,13 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Boules: ID 361-370
         SILICON_BOULE = addItem(361, "boule.silicon");
-        GLOWSTONE_BOULE = addItem(362, "boule.glowstone");
+        PHOSPHORUS_BOULE = addItem(362, "boule.phosphorus");
         NAQUADAH_BOULE = addItem(363, "boule.naquadah");
         NEUTRONIUM_BOULE = addItem(364, "boule.neutronium");
 
         // Boule-Direct Wafers: ID 371-380
         SILICON_WAFER = addItem(371, "wafer.silicon");
-        GLOWSTONE_WAFER = addItem(372, "wafer.glowstone");
+        PHOSPHORUS_WAFER = addItem(372, "wafer.phosphorus");
         NAQUADAH_WAFER = addItem(373, "wafer.naquadah");
         NEUTRONIUM_WAFER = addItem(374, "wafer.neutronium");
 

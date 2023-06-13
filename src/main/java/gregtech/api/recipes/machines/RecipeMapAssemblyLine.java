@@ -5,13 +5,24 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.recipeproperties.ResearchProperty;
+import gregtech.api.recipes.recipeproperties.ResearchPropertyData;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Map;
 
-public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap<R> {
+public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap<R> implements IResearchRecipeMap {
+
+    /** Contains the recipes for each research key */
+    private final Map<String, Collection<Recipe>> researchEntries = new Object2ObjectOpenHashMap<>();
 
     public RecipeMapAssemblyLine(String unlocalizedName, int maxInputs, boolean modifyItemInputs, int maxOutputs, boolean modifyItemOutputs,
                                  int maxFluidInputs, boolean modifyFluidInputs, int maxFluidOutputs, boolean modifyFluidOutputs, R defaultRecipe, boolean isHidden) {
@@ -31,41 +42,87 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
 
     @Override
     protected void addInventorySlotGroup(ModularUI.Builder builder, @Nonnull IItemHandlerModifiable itemHandler, @Nonnull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
-        int itemInputsCount = itemHandler.getSlots();
+        int startInputsX = 80 - 4 * 18;
         int fluidInputsCount = fluidHandler.getTanks();
-        boolean invertFluids = false;
-        if (itemInputsCount == 0) {
-            int tmp = itemInputsCount;
-            itemInputsCount = fluidInputsCount;
-            fluidInputsCount = tmp;
-            invertFluids = true;
-        }
-        int[] inputSlotGrid = determineSlotsGrid(itemInputsCount);
-        int itemSlotsToLeft = inputSlotGrid[0];
-        int itemSlotsToDown = inputSlotGrid[1];
-        int startInputsX = 80 - itemSlotsToLeft * 18;
-        int startInputsY = 37 - (int) (itemSlotsToDown / 2.0 * 18);
+        int startInputsY = 37 - 2 * 18;
 
         if (!isOutputs) {
             // Data Slot
-            builder.widget(new SlotWidget(itemHandler, 15, startInputsX + 18 * 7, 1 + 18 * 2, true, true)
+            builder.widget(new SlotWidget(itemHandler, 16, startInputsX + 18 * 7, 1 + 18 * 2, true, true)
                     .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DATA_ORB_OVERLAY));
-            for (int i = 0; i < itemSlotsToDown; i++) {
-                for (int j = 0; j < itemSlotsToLeft; j++) {
-                    int slotIndex = i * itemSlotsToLeft + j/* + 1*/; // needed for data slot
-                    addSlot(builder, startInputsX + 18 * j, startInputsY + 18 * i, slotIndex, itemHandler, fluidHandler, invertFluids, false);
+
+            // item input slots
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    int slotIndex = i * 4 + j;
+                    addSlot(builder, startInputsX + 18 * j, startInputsY + 18 * i, slotIndex, itemHandler, fluidHandler, false, false);
                 }
             }
-            if (fluidInputsCount > 0 || invertFluids) {
-                if (itemSlotsToDown >= fluidInputsCount) {
-                    int startSpecX = startInputsX + 18 * 5;
-                    for (int i = 0; i < fluidInputsCount; i++) {
-                        addSlot(builder, startSpecX, startInputsY + 18 * i, i, itemHandler, fluidHandler, true, false);
-                    }
-                }
+
+            // fluid slots
+            int startFluidX = startInputsX + 18 * 5;
+            for (int i = 0; i < 4; i++) {
+                addSlot(builder, startFluidX, startInputsY + 18 * i, i, itemHandler, fluidHandler, true, false);
             }
         } else {
-            addSlot(builder, startInputsX + 18 * 4, 1, 0/*18*/, itemHandler, fluidHandler, invertFluids, true); // Output Slot - 18 for data slot
+            // output slot
+            addSlot(builder, startInputsX + 18 * 7, 1, 0, itemHandler, fluidHandler, false, true);
         }
+    }
+
+    @Override
+    public boolean compileRecipe(Recipe recipe) {
+        if (!super.compileRecipe(recipe)) return false;
+        if (recipe.hasProperty(ResearchProperty.getInstance())) {
+            ResearchPropertyData data = recipe.getProperty(ResearchProperty.getInstance(), null);
+            if (data != null) {
+                for (ResearchPropertyData.ResearchEntry entry : data) {
+                    addDataStickEntry(entry.getResearchId(), recipe);
+                }
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean removeRecipe(@Nonnull Recipe recipe) {
+        if (!super.removeRecipe(recipe)) return false;
+        if (recipe.hasProperty(ResearchProperty.getInstance())) {
+            ResearchPropertyData data = recipe.getProperty(ResearchProperty.getInstance(), null);
+            if (data != null) {
+                for (ResearchPropertyData.ResearchEntry entry : data) {
+                    return removeDataStickEntry(entry.getResearchId(), recipe);
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void addDataStickEntry(@Nonnull String researchId, @Nonnull Recipe recipe) {
+        Collection<Recipe> collection = researchEntries.computeIfAbsent(researchId, (k) -> new ObjectOpenHashSet<>());
+        collection.add(recipe);
+    }
+
+    @Nullable
+    @Override
+    public Collection<Recipe> getDataStickEntry(@Nonnull String researchId) {
+        return researchEntries.get(researchId);
+    }
+
+    @Override
+    public boolean removeDataStickEntry(@Nonnull String researchId, @Nonnull Recipe recipe) {
+        Collection<Recipe> collection = researchEntries.get(researchId);
+        if (collection == null) return false;
+        if (collection.remove(recipe)) {
+            if (collection.isEmpty()) {
+                return researchEntries.remove(researchId) != null;
+            }
+            return true;
+        }
+        return false;
     }
 }

@@ -17,6 +17,7 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.map.*;
@@ -32,6 +33,7 @@ import gregtech.integration.groovy.VirtualizedRecipeMap;
 import gregtech.modules.GregTechModules;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -103,6 +105,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private static final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> ingredientRoot = new WeakHashMap<>();
     private final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> fluidIngredientRoot = new WeakHashMap<>();
 
+    private final Map<GTRecipeCategory, List<Recipe>> recipeByCategory = new Object2ObjectOpenHashMap<>();
 
     private Consumer<R> onRecipeBuildAction;
     protected SoundEvent sound;
@@ -187,6 +190,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         this.isHidden = isHidden;
         defaultRecipeBuilder.setRecipeMap(this);
+        defaultRecipeBuilder.category(GTRecipeCategory.create(GTValues.MODID, unlocalizedName, getTranslationKey(), this));
         this.recipeBuilderSample = defaultRecipeBuilder;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
 
@@ -272,35 +276,47 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * Internal usage <strong>only</strong>, use {@link RecipeBuilder#buildAndRegister()}
      *
      * @param validationResult the validation result from building the recipe
+     * @return if adding the recipe was successful
      */
-    public void addRecipe(@Nonnull ValidationResult<Recipe> validationResult) {
+    public boolean addRecipe(@Nonnull ValidationResult<Recipe> validationResult) {
         validationResult = postValidateRecipe(validationResult);
         switch (validationResult.getType()) {
-            case SKIP:
-                return;
-            case INVALID:
+            case SKIP -> {
+                return false;
+            }
+            case INVALID -> {
                 setFoundInvalidRecipe(true);
-                return;
+                return false;
+            }
         }
         Recipe recipe = validationResult.getResult();
 
         if (recipe.isGroovyRecipe()) {
             this.virtualizedRecipeMap.addScripted(recipe);
         }
-        compileRecipe(recipe);
+        return compileRecipe(recipe);
     }
 
     /**
      * Compiles a recipe and adds it to the ingredient tree
      *
      * @param recipe the recipe to compile
+     * @return if the recipe was successfully compiled
      */
-    public void compileRecipe(Recipe recipe) {
+    public boolean compileRecipe(Recipe recipe) {
         if (recipe == null) {
-            return;
+            return false;
         }
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
-        recurseIngredientTreeAdd(recipe, items, lookup, 0, 0);
+        if (recurseIngredientTreeAdd(recipe, items, lookup, 0, 0)) {
+            recipeByCategory.compute(recipe.getRecipeCategory(), (k, v) -> {
+                if (v == null) v = new ArrayList<>();
+                v.add(recipe);
+                return v;
+            });
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -1195,7 +1211,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenGetter("localizedName")
     public String getLocalizedName() {
-        return LocalizationUtils.format("recipemap." + unlocalizedName + ".name");
+        return LocalizationUtils.format(getTranslationKey());
+    }
+
+    @ZenGetter("translationKey")
+    public String getTranslationKey() {
+        return "recipemap." + unlocalizedName + ".name";
     }
 
     @ZenGetter("unlocalizedName")
@@ -1372,6 +1393,17 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         } else {
             throw new UnsupportedOperationException("Cannot change max fluid output amount for " + getUnlocalizedName());
         }
+    }
+
+    /**
+     * <strong>This is not suitable for Recipe Lookup.</strong>
+     * Use {@link #findRecipe(long, List, List)} instead.
+     *
+     * @return the recipes stored by category.
+     */
+    @Nonnull
+    public Map<GTRecipeCategory, List<Recipe>> getRecipesByCategory() {
+        return Collections.unmodifiableMap(recipeByCategory);
     }
 
     @Override

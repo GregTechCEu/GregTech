@@ -511,9 +511,9 @@ metaitem.sensor.uxv.name=UXV Sensor
 metaitem.sensor.opv.name=OpV Sensor
 
 metaitem.tool.datastick.name=Data Stick
-metaitem.tool.datastick.tooltip=A Low Capacity Data Storage
+metaitem.tool.datastick.tooltip=Storage for Simple Data
 metaitem.tool.dataorb.name=Data Orb
-metaitem.tool.dataorb.tooltip=A High Capacity Data Storage
+metaitem.tool.dataorb.tooltip=Storage for Complex Data
 metaitem.circuit.integrated.name=Programmed Circuit
 metaitem.circuit.integrated.tooltip=Use to open configuration GUI/n/nShift-Right-Click on a machine/nwith a circuit slot to set it to/nthis circuit's value./n
 metaitem.circuit.integrated.gui=Programmed Circuit Configuration
@@ -539,16 +539,16 @@ metaitem.glass_lens.black.name=Glass Lens (Black)
 #CIRCUITS LOCALIZATION
 metaitem.boule.silicon.name=Monocrystalline Silicon Boule
 metaitem.boule.silicon.tooltip=Raw Circuit
-metaitem.boule.glowstone.name=Glowstone-doped Monocrystalline Silicon Boule
-metaitem.boule.glowstone.tooltip=Raw Circuit
+metaitem.boule.phosphorus.name=Phosphorus-doped Monocrystalline Silicon Boule
+metaitem.boule.phosphorus.tooltip=Raw Circuit
 metaitem.boule.naquadah.name=Naquadah-doped Monocrystalline Silicon Boule
 metaitem.boule.naquadah.tooltip=Raw Circuit
 metaitem.boule.neutronium.name=Neutronium-doped Monocrystalline Silicon Boule
 metaitem.boule.neutronium.tooltip=Raw Circuit
 metaitem.wafer.silicon.name=Silicon Wafer
 metaitem.wafer.silicon.tooltip=Raw Circuit
-metaitem.wafer.glowstone.name=Glowstone-doped Wafer
-metaitem.wafer.glowstone.tooltip=Raw Circuit
+metaitem.wafer.phosphorus.name=Phosphorus-doped Wafer
+metaitem.wafer.phosphorus.tooltip=Raw Circuit
 metaitem.wafer.naquadah.name=Naquadah-doped Wafer
 metaitem.wafer.naquadah.tooltip=Raw Circuit
 metaitem.wafer.neutronium.name=Neutronium-doped Wafer
@@ -2226,6 +2226,10 @@ recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 
+gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
+gregtech.recipe.category.macerator_recycling=Macerator Recycling
+gregtech.recipe.category.extractor_recycling=Extractor Recycling
+
 behaviour.hoe=Can till dirt
 behaviour.soft_hammer=Activates and Deactivates Machines
 behaviour.soft_hammer.enabled=Working Enabled
@@ -2317,6 +2321,9 @@ metaitem.item_magnet.lv.name=Low Voltage Item Magnet
 metaitem.item_magnet.hv.name=High Voltage Item Magnet
 behavior.item_magnet.enabled=§aMagnetic Field Enabled
 behavior.item_magnet.disabled=§cMagnetic Field Disabled
+
+behavior.data_item.assemblyline.title=§nAssembly Line Construction Data:
+behavior.data_item.assemblyline.data=- §a%s
 
 metaitem.rubber_wood_boat.name=Rubber Wood Boat
 metaitem.treated_wood_boat.name=Treated Wood Boat
@@ -2542,6 +2549,7 @@ gregtech.machine.drum.aluminium.name=Aluminium Drum
 gregtech.machine.drum.stainless_steel.name=Stainless Steel Drum
 gregtech.machine.drum.titanium.name=Titanium Drum
 gregtech.machine.drum.tungstensteel.name=Tungstensteel Drum
+gregtech.machine.drum.gold.name=Gold Drum
 
 gregtech.machine.drum.enable_output=Will drain Fluid to downward adjacent Tanks
 gregtech.machine.drum.disable_output=Will not drain Fluid
@@ -4807,6 +4815,11 @@ gregtech.machine.passthrough_hatch_item.tooltip=Sends Items from one Side to the
 gregtech.machine.passthrough_hatch_fluid.name=Fluid Passthrough Hatch
 gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to the other
 
+gregtech.machine.data_access_hatch.name=Data Access Hatch
+gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
+gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Sticks
+gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
+gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
@@ -4864,6 +4877,7 @@ gregtech.recipe.dimensions=Dimensions: %s
 gregtech.recipe.cleanroom=Requires %s
 gregtech.recipe.cleanroom.display_name=Cleanroom
 gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
+gregtech.recipe.research=Requires Research
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
