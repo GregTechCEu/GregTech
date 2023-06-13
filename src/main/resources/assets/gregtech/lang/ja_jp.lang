@@ -1083,6 +1083,10 @@ metaitem.power_thruster.name=パワースラスター
 metaitem.power_thruster_advanced.name=発展型パワースラスター
 metaitem.gravitation_engine.name=重力エンジンユニット
 
+metaitem.tool.multiblock_builder.name=マルチブロックビルダー
+metaitem.tool.multiblock_builder.tooltip=マルチブロックの自動設置とデバッグに!
+metaitem.tool.multiblock_builder.tooltip2=マルチブロックのコントローラーをスニーク右クリックで自動設置
+
 metaarmor.nms.nightvision.enabled=NanoMuscle™ Suite: 暗視を有効化
 metaarmor.nms.nightvision.disabled=NanoMuscle™ Suite: 暗視を無効化
 metaarmor.nms.nightvision.error=NanoMuscle™ Suite: §cエネルギー不足!
@@ -1210,7 +1214,7 @@ cover.conveyor.blocks_input.enabled=有効にするとカバーがアイテム�
 cover.conveyor.blocks_input.disabled=有効にすると、カバーがアイテムをインベントリからパイプに搬出する設定されている場合にアイテムは搬入されない。/n§c無効
 cover.universal.manual_import_export.mode.disabled=マニュアル I/O: 無効
 cover.universal.manual_import_export.mode.filtered=マニュアル I/O: フィルタ済み
-cover.universal.manual_import_export.mode.unfiltered=マニュアル I/O: フィルタしない
+cover.universal.manual_import_export.mode.unfiltered=マニュアル I/O: フィルタされていない
 cover.universal.manual_import_export.mode.description=§e無効§r - アイテム/液体は、カバーとそのフィルターで指定されたとおりにのみ移動する。/n§eフィルタ済み§r - アイテム/流体は、存在するフィルターと一致する限り、カバーモードとは関係なく搬入/搬出できます 。/n§eフィルタされていない§r - アイテム/液体は、カバーモードとは関係なく移動できます。フィルタは、このカバーによって搬入/搬出されたアイテムに適用されます。
 cover.conveyor.item_filter.title=アイテムフィルター
 cover.conveyor.ore_dictionary.title=鉱石辞書フィルター
@@ -1219,7 +1223,7 @@ cover.robotic_arm.title=%s ロボットアーム設定
 cover.robotic_arm.transfer_mode.transfer_any=すべて移動
 cover.robotic_arm.transfer_mode.transfer_exact=供給モード
 cover.robotic_arm.transfer_mode.keep_exact=保持モード
-cover.robotic_arm.transfer_mode.description=§eすべて移動§r - このモードではフィルターに合うアイテムを移動します。/n§e供給モード§r - このモードでは、アイテムフィルターのスロット (鉱石辞書フィルターの場合はこのボタンの下の変数) で指定された数のアイテムを移動させます。アイテムの量が指定数より少ない場合、アイテムは移動されません。スマートフィルターの場合、変数は乗数として扱われます。/n§e保持モード§r - このモードでは、アイテムを移動先のインベントリに指定数保持し、必要に応じて追加のアイテムを供給します。/n§7Tip: フィルタスロットを左/右クリックすることでアイテムの量を変更でき、シフトクリックでより早く変更できます。
+cover.robotic_arm.transfer_mode.description=§eすべて移動§r - このモードではフィルターに合うアイテムを移動します。/n§e供給モード§r - このモードでは、アイテムフィルターのスロット (鉱石辞書フィルターの場合はこのボタンの下の変数) で指定された数のアイテムを移動させます。アイテムの量が指定数より少ない場合、アイテムは移動されません。§bスマートフィルター§rの場合、変数は乗数として扱われます。/n§e保持モード§r - このモードでは、アイテムを移動先のインベントリに指定数保持し、必要に応じて追加のアイテムを供給します。/n§7Tip: フィルタスロットを左/右クリックすることでアイテムの量を変更でき、シフトクリックでより早く変更できます。
 
 cover.pump.title=%s ポンプカバー設定
 cover.pump.transfer_rate=%s
@@ -2275,6 +2279,7 @@ metaitem.prospector.mode.fluid=§b液体探知モード
 metaitem.prospector.tooltip.ores=半径%sチャンクの鉱石をスキャン
 metaitem.prospector.tooltip.fluids=半径%sチャンクの液体と鉱石をスキャン
 behavior.prospector.not_enough_energy=エネルギー不足!
+behavior.prospector.added_waypoint=ウェイポイントを追加しました!
 
 metaitem.tricorder_scanner.name=ポータブルスキャナー
 metaitem.tricorder_scanner.tooltip=トライコーダー
@@ -3922,7 +3927,7 @@ gregtech.machine.transformer.description=異なる電圧間でエネルギーを
 gregtech.machine.transformer.tooltip_tool_usage=ソフトマレットで反転。最初は§f降圧§7します。
 gregtech.machine.transformer.tooltip_transform_down=§a降圧: §f%dA %dEU (%s§f) -> %dA %dEU (%s§f)
 gregtech.machine.transformer.message_transform_down=降圧: In: %dEU %dA, Out: %dEU %dA
-gregtech.machine.transformer.tooltip_transform_up=§c昇圧: %dA %dEU §f(%s§f) -> %dA %dEU (%s§f)
+gregtech.machine.transformer.tooltip_transform_up=§c昇圧: §f%dA %dEU §f(%s§f) -> %dA %dEU (%s§f)
 gregtech.machine.transformer.message_transform_up=昇圧: In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer_adjustable.description=異なる電圧間でエネルギーを輸送する。複数アンペアに対応!
 gregtech.machine.transformer_adjustable.tooltip_tool_usage=スクリュードライバーで電流値を変更。最初は§f4アンペア§7です。
@@ -5016,6 +5021,9 @@ gregtech.multiblock.preview.zoom=マウスホイールまたは右クリック+�
 gregtech.multiblock.preview.rotate=左クリックとドラッグで回転
 gregtech.multiblock.preview.select=右クリック: 置換可能なブロックを表示
 
+gregtech.multiblock.pattern.error_message_header=潜在的な構造エラー:
+gregtech.multiblock.pattern.no_errors=問題は見つからなかった!
+
 gregtech.multiblock.pattern.error=(%s)が(%s)に存在すべきです
 gregtech.multiblock.pattern.error.limited_exact=§cぴったり: %d個§r
 gregtech.multiblock.pattern.error.limited_within=§c%d個から%d個まで§r
@@ -5258,6 +5266,7 @@ terminal.prospector.list=全資源
 terminal.prospector.ore=鉱石情報
 terminal.prospector.fluid=液体情報
 terminal.prospector.fluid.info=%s %s - %s%%
+terminal.prospector.waypoint.add=[§7ダブル左クリック§r]でウェイポイントを追加
 
 terminal.ore_prospector.description=スキャナーが嫌いですか? 鉱石を探して走るのが嫌ですか? それではこちらをどうぞ!
 terminal.ore_prospector.tier.0=調査範囲Tier 1
