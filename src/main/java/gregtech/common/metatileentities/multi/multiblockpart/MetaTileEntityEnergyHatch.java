@@ -169,6 +169,12 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
             for (MetaTileEntityEnergyHatch hatch : MetaTileEntities.ENERGY_OUTPUT_HATCH_16A) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
             }
+            for (MetaTileEntityEnergyHatch hatch : MetaTileEntities.SUBSTATION_ENERGY_INPUT_HATCH) {
+                if (hatch != null) subItems.add(hatch.getStackForm());
+            }
+            for (MetaTileEntityEnergyHatch hatch : MetaTileEntities.SUBSTATION_ENERGY_OUTPUT_HATCH) {
+                if (hatch != null) subItems.add(hatch.getStackForm());
+            }
         }
     }
 

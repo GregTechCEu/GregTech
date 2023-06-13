@@ -564,6 +564,8 @@ public class MetaTileEntities {
                 ENERGY_INPUT_HATCH_16A[i - GTValues.IV]  = registerMetaTileEntity(1245 + i - GTValues.IV, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_16a." + voltageName), i, 16, false));
                 ENERGY_OUTPUT_HATCH_4A[i + 1 - GTValues.IV]  = registerMetaTileEntity(1250 + i - GTValues.IV, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a." + voltageName), i, 4, true));
                 ENERGY_OUTPUT_HATCH_16A[i - GTValues.IV] = registerMetaTileEntity(1255 + i - GTValues.IV, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_16a." + voltageName), i, 16, true));
+                SUBSTATION_ENERGY_INPUT_HATCH[i - GTValues.IV] = registerMetaTileEntity(1260 + i - GTValues.IV, new MetaTileEntitySubstationEnergyHatch(gregtechId("substation_hatch.input_64a." + voltageName), i, 64, false));
+                SUBSTATION_ENERGY_OUTPUT_HATCH[i - GTValues.IV] = registerMetaTileEntity(1265 + i - GTValues.IV, new MetaTileEntitySubstationEnergyHatch(gregtechId("substation_hatch.output_64a." + voltageName), i, 64, true));
             }
         }
         ENERGY_INPUT_HATCH_4A[0] = registerMetaTileEntity(1399, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a.ev"), GTValues.EV, 4, false));
@@ -622,7 +624,7 @@ public class MetaTileEntities {
         MACHINE_HATCH = registerMetaTileEntity(1398, new MetaTileEntityMachineHatch(gregtechId("machine_hatch"), 5));
 
         // 1399 and 1400 are taken by the EV 4A hatches, and are grouped near the other registration rather than here
-        // 1401 is taken by the Cleanroom Maintenance hatches, and is grouped with the maintenance hatch registrtation rather than here
+        // 1401 is taken by the Cleanroom Maintenance hatches, and is grouped with the maintenance hatch registration rather than here
 
         PASSTHROUGH_HATCH_ITEM = registerMetaTileEntity(1402, new MetaTileEntityPassthroughHatchItem(gregtechId("passthrough_hatch_item"), 3));
         PASSTHROUGH_HATCH_FLUID = registerMetaTileEntity(1403, new MetaTileEntityPassthroughHatchFluid(gregtechId("passthrough_hatch_fluid"), 3));

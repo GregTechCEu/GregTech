@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -8,18 +9,20 @@ import gregtech.api.metatileentity.multiblock.IBatteryDataProvider.IBatteryData;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.pattern.*;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.BlockBatteryPart;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockMetalCasing;
+import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -27,9 +30,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import javax.annotation.Nonnull;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -106,11 +107,40 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
                 .where('S', selfPredicate())
                 .where('C', states(getCasingState()))
                 .where('X' ,states(getCasingState()).setMinGlobalLimited(MIN_CASINGS)
+                        .or(abilities(MultiblockAbility.MAINTENANCE_HATCH))
                         .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY).setMinGlobalLimited(1))
                         .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY).setMinGlobalLimited(1)))
                 .where('G', states(getGlassState()))
                 .where('B', batteryPredicate())
                 .build();
+    }
+
+    @Override
+    public List<MultiblockShapeInfo> getMatchingShapes() {
+        List<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
+        MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
+                .aisle("CCCCC", "CCCCC", "GGGGG", "GGGGG", "GGGGG")
+                .aisle("CCCCC", "CCCCC", "GBBBG", "GBBBG", "GGGGG")
+                .aisle("CCCCC", "CCCCC", "GBBBG", "GBBBG", "GGGGG")
+                .aisle("CCCCC", "CCCCC", "GBBBG", "GBBBG", "GGGGG")
+                .aisle("ICSCO", "NCMCT", "GGGGG", "GGGGG", "GGGGG")
+                .where('S', MetaTileEntities.POWER_SUBSTATION, EnumFacing.SOUTH)
+                .where('C', MetaBlocks.METAL_CASING.getState(MetalCasingType.PALLADIUM_SUBSTATION))
+                .where('G', MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.LAMINATED_GLASS))
+                .where('I', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
+                .where('N', MetaTileEntities.SUBSTATION_ENERGY_INPUT_HATCH[0], EnumFacing.SOUTH)
+                .where('O', MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
+                .where('T', MetaTileEntities.SUBSTATION_ENERGY_OUTPUT_HATCH[0], EnumFacing.SOUTH)
+                .where('M', () -> ConfigHolder.machines.enableMaintenance
+                        ? MetaTileEntities.MAINTENANCE_HATCH
+                        : MetaBlocks.METAL_CASING.getState(MetalCasingType.PALLADIUM_SUBSTATION),
+                        EnumFacing.SOUTH);
+
+        Arrays.stream(BlockBatteryPart.BatteryPartType.values())
+                .sorted(Comparator.comparingLong(BlockBatteryPart.BatteryPartType::getTier))
+                .forEach(entry -> shapeInfo.add(builder.where('B', MetaBlocks.BATTERY_BLOCK.getState(entry)).build()));
+
+        return shapeInfo;
     }
 
     protected IBlockState getCasingState() {
