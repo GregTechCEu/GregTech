@@ -33,7 +33,7 @@ public class MetaTileEntityFuelRodHatch extends MetaTileEntityMultiblockNotifiab
 
     public MetaTileEntityFuelRodHatch(ResourceLocation metaTileEntityId, boolean isExportHatch) {
         super(metaTileEntityId, 4, isExportHatch);
-        this.frontFacing = EnumFacing.UP;
+        this.frontFacing = isExportHatch ? EnumFacing.DOWN : EnumFacing.UP;
     }
 
     @Override
@@ -94,12 +94,12 @@ public class MetaTileEntityFuelRodHatch extends MetaTileEntityMultiblockNotifiab
 
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
-
+        abilityList.add(isExportHatch ? this.exportItems : this.importItems);
     }
 
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
-        super.setFrontFacing(EnumFacing.UP);
+        super.setFrontFacing(isExportHatch ? EnumFacing.DOWN : EnumFacing.UP);
     }
 
     @Override
