@@ -10,14 +10,11 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.Position;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -48,7 +45,6 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -64,13 +60,13 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
 
     private final Deque<BlockPos> fluidSourceBlocks = new ArrayDeque<>();
     private final Deque<BlockPos> blocksToCheck = new ArrayDeque<>();
-    private FluidFilterContainer fluidFilter;
+    private final FluidFilterContainer fluidFilter;
     private boolean initializedQueue = false;
     private int pumpHeadY;
 
     public MetaTileEntityPump(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
-        fluidFilter = new FluidFilterContainer(getHolder());
+        this.fluidFilter = new FluidFilterContainer(this::markDirty);
     }
 
     @Override
@@ -306,7 +302,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.pumpHeadY = data.getInteger("PumpHeadDepth");
-        this.fluidFilter.deserializeNBT(data);
+        this.fluidFilter.deserializeNBT(data.getCompoundTag("Filter"));
     }
 
     @Override
