@@ -89,11 +89,6 @@ public class RecipePropertyStorage implements IRecipePropertyStorage {
         Object value = recipeProperties.get(recipeProperty);
 
         if (value == null) {
-            if (defaultValue == null) {
-                return null;
-            }
-            GTLog.logger.warn("There is no property with key {}", recipeProperty.getKey());
-            GTLog.logger.warn(STACKTRACE, new IllegalArgumentException());
             return defaultValue;
         }
 
@@ -128,9 +123,6 @@ public class RecipePropertyStorage implements IRecipePropertyStorage {
             if (recipeProperty.getKey().equals(key))
                 return recipeProperty;
         }
-
-        GTLog.logger.warn("There is no property with key {}", key);
-        GTLog.logger.warn(STACKTRACE, new IllegalArgumentException());
 
         return null;
     }
