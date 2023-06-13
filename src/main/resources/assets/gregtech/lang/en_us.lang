@@ -39,6 +39,17 @@ death.attack.screwdriver_lv=%s had their screws removed by %s
 
 enchantment.disjunction=Disjunction
 
+tile.fission_casing.reactor_vessel.name=Reactor Vessel
+tile.fission_casing.fuel_channel.name=Fuel Channel
+tile.fission_casing.control_rod_channel.name=Control Rod Channel
+tile.fission_casing.coolant_channel.name=Coolant Channel
+gregtech.machine.fission_reactor.name=Fission Reactor Controller
+gregtech.machine.fuel_rod_input.name=Fuel Rod Input Port
+gregtech.machine.fuel_rod_output.name=Fuel Rod Output port
+gregtech.machine.coolant_input.name=Coolant Input Port
+gregtech.machine.coolant_output.name=Coolant Output Port
+gregtech.machine.control_rod.name=Control Rod Port
+
 gregtech.machine.steam_grinder.name=Steam Grinder
 gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Steam Age. Requires at least 14 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.
 gregtech.multiblock.steam.low_steam=Not enough Steam to run!
