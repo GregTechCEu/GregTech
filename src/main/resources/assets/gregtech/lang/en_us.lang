@@ -5316,6 +5316,7 @@ terminal.battery.low_energy=Low power! Plz recharge the terminal.
 terminal.store.description=App store, check out what you got? Install and upgrade the app.
 terminal.store.match=Detected required item in inventory, install/upgrade App?
 terminal.store.miss=Requires %s (%d).
+terminal.store.close=Close
 
 terminal.ar.open=Open AR
 
