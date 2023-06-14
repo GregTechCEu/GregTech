@@ -56,11 +56,6 @@ public abstract class CoverEnderLinkBase extends CoverBehavior implements CoverW
     }
 
     @Override
-    public void onRemoved() {
-
-    }
-
-    @Override
     public void openUI(EntityPlayerMP player) {
         CoverBehaviorUIFactory.INSTANCE.openUI(this, player);
         isColorTemp = false;
