@@ -18,6 +18,7 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.recipeproperties.ResearchProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.client.particle.GTLaserBeamParticle;
 import gregtech.client.particle.GTParticleManager;
@@ -312,7 +313,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             }
         }
 
-        if (!ConfigHolder.machines.enableResearch) {
+        if (!ConfigHolder.machines.enableResearch || !recipe.hasProperty(ResearchProperty.getInstance())) {
             return super.checkRecipe(recipe, consumeIfSuccess);
         }
 
