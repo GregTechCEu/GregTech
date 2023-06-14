@@ -44,7 +44,7 @@ public class RecyclingRecipeHandler {
                     return ((Predicate<OrePrefix>) object).test(orePrefix);
                 else return false;
             })) {
-                GregTechAPI.oreProcessorHandler.registerHandler(orePrefix, GTUtility.gregtechId("process_crushing_recycling"), PropertyKey.DUST, RecyclingRecipeHandler::processCrushing);
+                GregTechAPI.oreProcessorHandler.registerProcessor(orePrefix, GTUtility.gregtechId("process_crushing_recycling"), PropertyKey.DUST, RecyclingRecipeHandler::processCrushing);
             }
         }
     }

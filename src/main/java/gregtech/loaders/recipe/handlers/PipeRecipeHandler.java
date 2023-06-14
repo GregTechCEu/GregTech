@@ -32,25 +32,25 @@ import static gregtech.api.unification.ore.OrePrefix.plateDouble;
 public class PipeRecipeHandler {
 
     public static void register() {
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeTinyFluid, gregtechId("process_pipe_tiny"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeTiny);
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeSmallFluid, gregtechId("process_pipe_small"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeSmall);
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeNormalFluid, gregtechId("process_pipe_normal"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeNormal);
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeLargeFluid, gregtechId("process_pipe_large"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeLarge);
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeHugeFluid, gregtechId("process_pipe_huge"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeHuge);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeTinyFluid, gregtechId("process_pipe_tiny"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeTiny);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeSmallFluid, gregtechId("process_pipe_small"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeSmall);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeNormalFluid, gregtechId("process_pipe_normal"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeNormal);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeLargeFluid, gregtechId("process_pipe_large"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeLarge);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeHugeFluid, gregtechId("process_pipe_huge"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeHuge);
 
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeQuadrupleFluid, gregtechId("process_pipe_quadruple"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeQuadruple);
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeNonupleFluid, gregtechId("process_pipe_nonuple"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeNonuple);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeQuadrupleFluid, gregtechId("process_pipe_quadruple"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeQuadruple);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeNonupleFluid, gregtechId("process_pipe_nonuple"), PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeNonuple);
 
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeTinyItem, gregtechId("process_pipe_tiny"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeTiny);
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeSmallItem, gregtechId("process_pipe_small"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeSmall);
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeNormalItem, gregtechId("process_pipe_normal"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeNormal);
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeLargeItem, gregtechId("process_pipe_large"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeLarge);
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeHugeItem, gregtechId("process_pipe_huge"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeHuge);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeTinyItem, gregtechId("process_pipe_tiny"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeTiny);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeSmallItem, gregtechId("process_pipe_small"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeSmall);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeNormalItem, gregtechId("process_pipe_normal"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeNormal);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeLargeItem, gregtechId("process_pipe_large"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeLarge);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeHugeItem, gregtechId("process_pipe_huge"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeHuge);
 
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeSmallRestrictive, gregtechId("process_pipe_small_restrictive"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processRestrictivePipe);
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeNormalRestrictive, gregtechId("process_pipe_normal_restrictive"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processRestrictivePipe);
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeLargeRestrictive, gregtechId("process_pipe_large_restrictive"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processRestrictivePipe);
-        GregTechAPI.oreProcessorHandler.registerHandler(pipeHugeRestrictive, gregtechId("process_pipe_huge_restrictive"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processRestrictivePipe);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeSmallRestrictive, gregtechId("process_pipe_small_restrictive"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processRestrictivePipe);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeNormalRestrictive, gregtechId("process_pipe_normal_restrictive"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processRestrictivePipe);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeLargeRestrictive, gregtechId("process_pipe_large_restrictive"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processRestrictivePipe);
+        GregTechAPI.oreProcessorHandler.registerProcessor(pipeHugeRestrictive, gregtechId("process_pipe_huge_restrictive"), PropertyKey.ITEM_PIPE, PipeRecipeHandler::processRestrictivePipe);
     }
 
     private static void processRestrictivePipe(OrePrefix pipePrefix, Material material, ItemPipeProperties property) {

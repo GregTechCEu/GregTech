@@ -33,26 +33,26 @@ public class OreRecipeHandler {
     // Make sure to update OreByProduct jei page with any byproduct changes made here!
 
     public static void register() {
-        GregTechAPI.oreProcessorHandler.registerHandler(ore, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
-        GregTechAPI.oreProcessorHandler.registerHandler(oreEndstone, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
-        GregTechAPI.oreProcessorHandler.registerHandler(oreNetherrack, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
+        GregTechAPI.oreProcessorHandler.registerProcessor(ore, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
+        GregTechAPI.oreProcessorHandler.registerProcessor(oreEndstone, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
+        GregTechAPI.oreProcessorHandler.registerProcessor(oreNetherrack, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
         if (ConfigHolder.worldgen.allUniqueStoneTypes) {
-            GregTechAPI.oreProcessorHandler.registerHandler(oreGranite, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
-            GregTechAPI.oreProcessorHandler.registerHandler(oreDiorite, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
-            GregTechAPI.oreProcessorHandler.registerHandler(oreAndesite, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
-            GregTechAPI.oreProcessorHandler.registerHandler(oreBasalt, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
-            GregTechAPI.oreProcessorHandler.registerHandler(oreBlackgranite, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
-            GregTechAPI.oreProcessorHandler.registerHandler(oreMarble, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
-            GregTechAPI.oreProcessorHandler.registerHandler(oreRedgranite, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
-            GregTechAPI.oreProcessorHandler.registerHandler(oreSand, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
-            GregTechAPI.oreProcessorHandler.registerHandler(oreRedSand, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
+            GregTechAPI.oreProcessorHandler.registerProcessor(oreGranite, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
+            GregTechAPI.oreProcessorHandler.registerProcessor(oreDiorite, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
+            GregTechAPI.oreProcessorHandler.registerProcessor(oreAndesite, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
+            GregTechAPI.oreProcessorHandler.registerProcessor(oreBasalt, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
+            GregTechAPI.oreProcessorHandler.registerProcessor(oreBlackgranite, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
+            GregTechAPI.oreProcessorHandler.registerProcessor(oreMarble, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
+            GregTechAPI.oreProcessorHandler.registerProcessor(oreRedgranite, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
+            GregTechAPI.oreProcessorHandler.registerProcessor(oreSand, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
+            GregTechAPI.oreProcessorHandler.registerProcessor(oreRedSand, gregtechId("process_ore"), PropertyKey.ORE, OreRecipeHandler::processOre);
         }
 
-        GregTechAPI.oreProcessorHandler.registerHandler(crushed, gregtechId("process_crushed_ore"), PropertyKey.ORE, OreRecipeHandler::processCrushedOre);
-        GregTechAPI.oreProcessorHandler.registerHandler(crushedPurified, gregtechId("process_crushed_purified"), PropertyKey.ORE, OreRecipeHandler::processCrushedPurified);
-        GregTechAPI.oreProcessorHandler.registerHandler(crushedCentrifuged, gregtechId("process_crushed_centrifuged"), PropertyKey.ORE, OreRecipeHandler::processCrushedCentrifuged);
-        GregTechAPI.oreProcessorHandler.registerHandler(dustImpure, gregtechId("process_dirty_dust"), PropertyKey.ORE, OreRecipeHandler::processDirtyDust);
-        GregTechAPI.oreProcessorHandler.registerHandler(dustPure, gregtechId("process_pure_dust"), PropertyKey.ORE, OreRecipeHandler::processPureDust);
+        GregTechAPI.oreProcessorHandler.registerProcessor(crushed, gregtechId("process_crushed_ore"), PropertyKey.ORE, OreRecipeHandler::processCrushedOre);
+        GregTechAPI.oreProcessorHandler.registerProcessor(crushedPurified, gregtechId("process_crushed_purified"), PropertyKey.ORE, OreRecipeHandler::processCrushedPurified);
+        GregTechAPI.oreProcessorHandler.registerProcessor(crushedCentrifuged, gregtechId("process_crushed_centrifuged"), PropertyKey.ORE, OreRecipeHandler::processCrushedCentrifuged);
+        GregTechAPI.oreProcessorHandler.registerProcessor(dustImpure, gregtechId("process_dirty_dust"), PropertyKey.ORE, OreRecipeHandler::processDirtyDust);
+        GregTechAPI.oreProcessorHandler.registerProcessor(dustPure, gregtechId("process_pure_dust"), PropertyKey.ORE, OreRecipeHandler::processPureDust);
     }
 
     private static void processMetalSmelting(OrePrefix crushedPrefix, Material material, OreProperty property) {

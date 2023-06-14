@@ -39,7 +39,7 @@ public final class OreProcessorHandler implements IOreProcessorHandler {
     private OreProcessorHandler() {}
 
     @Override
-    public void registerHandler(@Nonnull OrePrefix prefix, @Nonnull ResourceLocation name, @Nonnull IOreProcessor handler) {
+    public void registerProcessor(@Nonnull OrePrefix prefix, @Nonnull ResourceLocation name, @Nonnull IOreProcessor handler) {
         if (phase != Phase.REGISTRATION) {
             throw new UnsupportedOperationException("Cannot register handlers when in phase " + phase);
         }
@@ -51,9 +51,9 @@ public final class OreProcessorHandler implements IOreProcessorHandler {
     }
 
     @Override
-    public <T extends IMaterialProperty> void registerHandler(@Nonnull OrePrefix prefix, @Nonnull ResourceLocation name,
-                                                              @Nonnull PropertyKey<T> propertyKey, @Nonnull TriConsumer<OrePrefix, Material, T> handler) {
-        registerHandler(prefix, name, (orePrefix, material) -> {
+    public <T extends IMaterialProperty> void registerProcessor(@Nonnull OrePrefix prefix, @Nonnull ResourceLocation name,
+                                                                @Nonnull PropertyKey<T> propertyKey, @Nonnull TriConsumer<OrePrefix, Material, T> handler) {
+        registerProcessor(prefix, name, (orePrefix, material) -> {
             if (material.hasProperty(propertyKey) && !material.hasFlag(NO_UNIFICATION)) {
                 handler.accept(orePrefix, material, material.getProperty(propertyKey));
             }

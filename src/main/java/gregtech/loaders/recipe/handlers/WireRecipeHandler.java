@@ -53,14 +53,14 @@ public class WireRecipeHandler {
 
     public static void register() {
         // Generate 1x Wire creation recipes (Wiremill, Extruder, Wire Cutters)
-        GregTechAPI.oreProcessorHandler.registerHandler(wireGtSingle, gregtechId("process_wire_single"), PropertyKey.WIRE, WireRecipeHandler::processWireSingle);
+        GregTechAPI.oreProcessorHandler.registerProcessor(wireGtSingle, gregtechId("process_wire_single"), PropertyKey.WIRE, WireRecipeHandler::processWireSingle);
 
         // Generate Cable Covering Recipes
-        GregTechAPI.oreProcessorHandler.registerHandler(wireGtSingle, gregtechId("generate_cable_covering"), PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
-        GregTechAPI.oreProcessorHandler.registerHandler(wireGtDouble, gregtechId("generate_cable_covering"), PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
-        GregTechAPI.oreProcessorHandler.registerHandler(wireGtQuadruple, gregtechId("generate_cable_covering"), PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
-        GregTechAPI.oreProcessorHandler.registerHandler(wireGtOctal, gregtechId("generate_cable_covering"), PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
-        GregTechAPI.oreProcessorHandler.registerHandler(wireGtHex, gregtechId("generate_cable_covering"), PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
+        GregTechAPI.oreProcessorHandler.registerProcessor(wireGtSingle, gregtechId("generate_cable_covering"), PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
+        GregTechAPI.oreProcessorHandler.registerProcessor(wireGtDouble, gregtechId("generate_cable_covering"), PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
+        GregTechAPI.oreProcessorHandler.registerProcessor(wireGtQuadruple, gregtechId("generate_cable_covering"), PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
+        GregTechAPI.oreProcessorHandler.registerProcessor(wireGtOctal, gregtechId("generate_cable_covering"), PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
+        GregTechAPI.oreProcessorHandler.registerProcessor(wireGtHex, gregtechId("generate_cable_covering"), PropertyKey.WIRE, WireRecipeHandler::generateCableCovering);
     }
 
     private static final OrePrefix[] wireSizes = { wireGtDouble, wireGtQuadruple, wireGtOctal, wireGtHex };

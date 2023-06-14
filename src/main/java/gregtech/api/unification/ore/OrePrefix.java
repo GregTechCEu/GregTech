@@ -615,14 +615,14 @@ public class OrePrefix {
     /**
      * Deprecated since {@code 2.7.0} and will be removed in {@code 2.8.0}
      *
-     * @deprecated Use {@link IOreProcessorHandler#registerHandler(OrePrefix, ResourceLocation, IOreProcessor)}
+     * @deprecated Use {@link IOreProcessorHandler#registerProcessor(OrePrefix, ResourceLocation, IOreProcessor)}
      */
     @Deprecated
     public boolean addProcessingHandler(IOreProcessor... processingHandler) {
         Preconditions.checkNotNull(processingHandler);
         Validate.noNullElements(processingHandler);
         for (var handler : processingHandler) {
-            GregTechAPI.oreProcessorHandler.registerHandler(this, new ResourceLocation(GTValues.MODID, handler.toString()), handler);
+            GregTechAPI.oreProcessorHandler.registerProcessor(this, new ResourceLocation(GTValues.MODID, handler.toString()), handler);
         }
         return true;
     }
@@ -630,7 +630,7 @@ public class OrePrefix {
     /**
      * Deprecated since {@code 2.7.0} and will be removed in {@code 2.8.0}
      *
-     * @deprecated Use {@link IOreProcessorHandler#registerHandler(OrePrefix, ResourceLocation, PropertyKey, TriConsumer)}
+     * @deprecated Use {@link IOreProcessorHandler#registerProcessor(OrePrefix, ResourceLocation, PropertyKey, TriConsumer)}
      */
     @Deprecated
     public <T extends IMaterialProperty> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {

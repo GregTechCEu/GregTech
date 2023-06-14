@@ -21,7 +21,7 @@ public interface IOreProcessorHandler {
      * @param handler the handler to register
      * @throws IllegalArgumentException if a handler with the same name has already been registered for the OrePrefix
      */
-    void registerHandler(@Nonnull OrePrefix prefix, @Nonnull ResourceLocation name, @Nonnull IOreProcessor handler);
+    void registerProcessor(@Nonnull OrePrefix prefix, @Nonnull ResourceLocation name, @Nonnull IOreProcessor handler);
 
     /**
      * Register a processor for an OrePrefix.
@@ -32,8 +32,8 @@ public interface IOreProcessorHandler {
      * @param handler     the handler to register
      * @throws IllegalArgumentException if a handler with the same name has already been registered for the OrePrefix
      */
-    <T extends IMaterialProperty> void registerHandler(@Nonnull OrePrefix prefix, @Nonnull ResourceLocation name,
-                                                       @Nonnull PropertyKey<T> propertyKey, @Nonnull TriConsumer<OrePrefix, Material, T> handler);
+    <T extends IMaterialProperty> void registerProcessor(@Nonnull OrePrefix prefix, @Nonnull ResourceLocation name,
+                                                         @Nonnull PropertyKey<T> propertyKey, @Nonnull TriConsumer<OrePrefix, Material, T> handler);
 
     /**
      * Remove an {@link IOreProcessor} for an OrePrefix.

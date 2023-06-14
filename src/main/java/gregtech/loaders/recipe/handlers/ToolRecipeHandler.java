@@ -47,8 +47,8 @@ public class ToolRecipeHandler {
     public static Map<Integer, MetaValueItem> powerUnitItems = new HashMap<>();
 
     public static void register() {
-        GregTechAPI.oreProcessorHandler.registerHandler(OrePrefix.plate, GTUtility.gregtechId("process_tool"), PropertyKey.TOOL, ToolRecipeHandler::processTool);
-        GregTechAPI.oreProcessorHandler.registerHandler(OrePrefix.plate, GTUtility.gregtechId("process_tool_electric"), PropertyKey.TOOL, ToolRecipeHandler::processElectricTool);
+        GregTechAPI.oreProcessorHandler.registerProcessor(OrePrefix.plate, GTUtility.gregtechId("process_tool"), PropertyKey.TOOL, ToolRecipeHandler::processTool);
+        GregTechAPI.oreProcessorHandler.registerProcessor(OrePrefix.plate, GTUtility.gregtechId("process_tool_electric"), PropertyKey.TOOL, ToolRecipeHandler::processElectricTool);
     }
 
     public static void initializeMetaItems() {

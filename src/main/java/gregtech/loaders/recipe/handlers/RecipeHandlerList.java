@@ -13,7 +13,7 @@ public final class RecipeHandlerList {
     private RecipeHandlerList() {}
 
     @SubscribeEvent
-    public static void registerHandlers(@Nonnull OreProcessorEvent event) {
+    public static void registerProcessors(@Nonnull OreProcessorEvent event) {
         if (event.getRegistrationPhase() == IOreProcessorHandler.Phase.REGISTRATION) {
             MaterialRecipeHandler.register();
             OreRecipeHandler.register();
