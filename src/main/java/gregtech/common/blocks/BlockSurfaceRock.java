@@ -5,6 +5,7 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -17,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
 public abstract class BlockSurfaceRock extends BlockMaterialBase {
 
     private static final AxisAlignedBB STONE_AABB = new AxisAlignedBB(2.0 / 16.0, 0.0 / 16.0, 2.0 / 16.0, 14.0 / 16.0, 2.0 / 16.0, 14.0 / 16.0);
-    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "surface_rock"), "normal");
+    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(GTUtility.gregtechId("surface_rock"), "normal");
 
     public static BlockSurfaceRock create(Material[] materials) {
         PropertyMaterial property = PropertyMaterial.create("variant", materials);
