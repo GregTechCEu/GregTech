@@ -22,11 +22,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-public class CoverEnderFluidLink extends CoverEnderLinkBase<IFluidTank> implements ITickable {
+public class CoverEnderFluidLink extends CoverEnderLinkBase implements ITickable {
 
     public static final int TRANSFER_RATE = 8000; // mB/t
     protected CoverPump.PumpMode pumpMode;

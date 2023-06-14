@@ -19,7 +19,7 @@ import net.minecraft.util.EnumHand;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-public abstract class CoverEnderLinkBase<T> extends CoverBehavior implements CoverWithUI, IControllable {
+public abstract class CoverEnderLinkBase extends CoverBehavior implements CoverWithUI, IControllable {
     protected static final String FLUID_IDENTIFIER = "EFLink#";
     protected static final String ITEM_IDENTIFIER = "EILink#";
     protected static final Pattern COLOR_INPUT_PATTERN = Pattern.compile("[0-9a-fA-F]*");

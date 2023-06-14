@@ -24,9 +24,8 @@ import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class CoverEnderItemLink extends CoverEnderLinkBase<IItemHandlerModifiable> implements ITickable {
+public class CoverEnderItemLink extends CoverEnderLinkBase implements ITickable {
 
     private final int TRANSFER_RATE = 64;
     protected CoverConveyor.ConveyorMode conveyorMode;
