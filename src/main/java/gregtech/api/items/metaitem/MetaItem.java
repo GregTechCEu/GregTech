@@ -22,6 +22,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
@@ -155,7 +156,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     public ResourceLocation createItemModelPath(T metaValueItem, String postfix) {
-        return new ResourceLocation(GTValues.MODID, formatModelPath(metaValueItem) + postfix);
+        return GTUtility.gregtechId(formatModelPath(metaValueItem) + postfix);
     }
 
     protected String formatModelPath(T metaValueItem) {

@@ -3,9 +3,9 @@ package gregtech.core.advancement.internal;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import gregtech.api.GTValues;
 import gregtech.api.advancement.IAdvancementCriterion;
 import gregtech.api.advancement.IAdvancementTrigger;
+import gregtech.api.util.GTUtility;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +20,7 @@ public class AdvancementTrigger<T extends IAdvancementCriterion> implements IAdv
     private final Map<PlayerAdvancements, AdvancementListeners<T>> listeners = Maps.newHashMap();
 
     public AdvancementTrigger(String name, @Nonnull T criterion) {
-        this.id = new ResourceLocation(GTValues.MODID, name);
+        this.id = GTUtility.gregtechId(name);
         this.criterion = criterion;
     }
 

@@ -1,6 +1,6 @@
 package gregtech.api.gui.resources;
 
-import gregtech.api.GTValues;
+import gregtech.api.util.GTUtility;
 import net.minecraft.util.ResourceLocation;
 
 public class AdoptableTextureArea extends SizedTextureArea {
@@ -15,7 +15,7 @@ public class AdoptableTextureArea extends SizedTextureArea {
     }
 
     public static AdoptableTextureArea fullImage(String imageLocation, int imageWidth, int imageHeight, int cornerWidth, int cornerHeight) {
-        return new AdoptableTextureArea(new ResourceLocation(GTValues.MODID, imageLocation), 0.0, 0.0, 1.0, 1.0, imageWidth, imageHeight, cornerWidth, cornerHeight);
+        return new AdoptableTextureArea(GTUtility.gregtechId(imageLocation), 0.0, 0.0, 1.0, 1.0, imageWidth, imageHeight, cornerWidth, cornerHeight);
     }
 
     @Override
