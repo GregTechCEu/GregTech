@@ -11,9 +11,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -197,66 +198,144 @@ public class VirtualContainerRegistry extends WorldSavedData {
         }
     }
 
-    protected static class VirtualContainer implements IItemHandlerModifiable {
-        private ItemStackHandler handler;
-
+    protected static class VirtualContainer implements IItemHandlerModifiable, IItemHandler, INBTSerializable<NBTTagCompound> {
+        private NonNullList<ItemStack> stacks;
         public VirtualContainer(int size){
-            this.handler = new ItemStackHandler(size);
+            this.setSize(size);
+        }
+
+        public void setSize(int size)
+        {
+            stacks = NonNullList.withSize(size, ItemStack.EMPTY);
         }
 
         @Override
-        public int getSlots() {
-            return handler.getSlots();
+        public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+            validateSlotIndex(slot);
+            this.stacks.set(slot, stack);
         }
 
+        @Override
+        public int getSlots()
+        {
+            return stacks.size();
+        }
+
+        @Override
         @Nonnull
-        @Override
-        public ItemStack getStackInSlot(int i) {
-            return handler.getStackInSlot(i);
+        public ItemStack getStackInSlot(int slot) {
+            validateSlotIndex(slot);
+            return this.stacks.get(slot);
         }
 
-        /**
-         *
-         * @param slot index of the array to insert the ItemStack into.
-         * @param itemStack ItemStack to insert into the array
-         * @param simulate Should the List<ItemStack> be modified?
-         * @return a copy of the ItemStack with the adjusted amount
-         */
+        @Override
         @Nonnull
-        @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack itemStack, boolean simulate) {
-            return handler.insertItem(slot, itemStack, simulate);
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            if (stack.isEmpty())
+                return ItemStack.EMPTY;
+
+            validateSlotIndex(slot);
+
+            ItemStack existing = this.stacks.get(slot);
+
+            int limit = getStackLimit(slot, stack);
+
+            if (!existing.isEmpty()) {
+                if (!ItemHandlerHelper.canItemStacksStack(stack, existing))
+                    return stack;
+
+                limit -= existing.getCount();
+            }
+
+            if (limit <= 0)
+                return stack;
+
+            boolean reachedLimit = stack.getCount() > limit;
+
+            if (!simulate) {
+                if (existing.isEmpty()) {
+                    this.stacks.set(slot, reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack);
+                } else {
+                    existing.grow(reachedLimit ? limit : stack.getCount());
+                }
+            }
+
+            return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount()- limit) : ItemStack.EMPTY;
         }
 
-        /**
-         *
-         * @param slot - The slot to extract from
-         * @param amtToExtract - The amount to extract from the slot
-         * @param simulate - Should the List<ItemStack> be modified?
-         * @return - Returns the item extracted
-         */
+        @Override
         @Nonnull
-        @Override
-        public ItemStack extractItem(int slot, int amtToExtract, boolean simulate) {
-            return handler.extractItem(slot, amtToExtract, simulate);
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (amount == 0)
+                return ItemStack.EMPTY;
+
+            validateSlotIndex(slot);
+
+            ItemStack existing = this.stacks.get(slot);
+
+            if (existing.isEmpty())
+                return ItemStack.EMPTY;
+
+            int toExtract = Math.min(amount, existing.getMaxStackSize());
+
+            if (existing.getCount() <= toExtract) {
+                if (!simulate) {
+                    this.stacks.set(slot, ItemStack.EMPTY);
+                }
+                return existing;
+            } else {
+                if (!simulate) {
+                    this.stacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
+                }
+
+                return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
+            }
         }
 
         @Override
-        public int getSlotLimit(int slot) {
-            return handler.getSlotLimit(slot);
+        public int getSlotLimit(int slot)
+        {
+            return 64;
+        }
+
+        protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+            return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
         }
 
         @Override
-        public void setStackInSlot(int i, @Nonnull ItemStack itemStack) {
-            handler.setStackInSlot(i, itemStack);
+        public NBTTagCompound serializeNBT() {
+            NBTTagList nbtTagList = new NBTTagList();
+            for (int i = 0; i < stacks.size(); i++) {
+                if (!stacks.get(i).isEmpty()) {
+                    NBTTagCompound itemTag = new NBTTagCompound();
+                    itemTag.setInteger("Slot", i);
+                    stacks.get(i).writeToNBT(itemTag);
+                    nbtTagList.appendTag(itemTag);
+                }
+            }
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setTag("Items", nbtTagList);
+            nbt.setInteger("Size", stacks.size());
+            return nbt;
         }
 
-        public void deserializeNBT(NBTTagCompound tag){
-            handler.deserializeNBT(tag);
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            setSize(nbt.hasKey("Size", Constants.NBT.TAG_INT) ? nbt.getInteger("Size") : stacks.size());
+            NBTTagList tagList = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < tagList.tagCount(); i++) {
+                NBTTagCompound itemTags = tagList.getCompoundTagAt(i);
+                int slot = itemTags.getInteger("Slot");
+
+                if (slot >= 0 && slot < stacks.size()) {
+                    stacks.set(slot, new ItemStack(itemTags));
+                }
+            }
         }
 
-        public NBTTagCompound serializeNBT (){
-            return handler.serializeNBT();
+        protected void validateSlotIndex(int slot) {
+            if (slot < 0 || slot >= stacks.size())
+                throw new RuntimeException("Slot " + slot + " not in valid range - [0," + stacks.size() + ")");
         }
     }
 }
