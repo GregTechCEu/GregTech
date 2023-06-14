@@ -170,7 +170,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @SuppressWarnings("InnerClassMayBeStatic")
     protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
 
-        private static final ICleanroomProvider DUMMY_CLEANROOM = new DummyCleanroom(true);
+        private static final ICleanroomProvider DUMMY_CLEANROOM = DummyCleanroom.createForAllTypes();
 
         ItemStack currentMachineStack = ItemStack.EMPTY;
         MetaTileEntity mte = null;

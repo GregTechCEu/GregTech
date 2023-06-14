@@ -36,7 +36,7 @@ public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMa
     }
 
     // must come after the static block
-    private static final ICleanroomProvider DUMMY_CLEANROOM = new DummyCleanroom(CLEANED_TYPES);
+    private static final ICleanroomProvider DUMMY_CLEANROOM = DummyCleanroom.createForTypes(CLEANED_TYPES);
 
     public MetaTileEntityCleaningMaintenanceHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
