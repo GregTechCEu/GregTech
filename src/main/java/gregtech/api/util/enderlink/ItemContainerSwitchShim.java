@@ -1,15 +1,21 @@
 package gregtech.api.util.enderlink;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class ItemContainerSwitchShim extends SwitchShimBase<IItemHandlerModifiable> implements IItemHandlerModifiable {
-
+public class ItemContainerSwitchShim implements IItemHandlerModifiable {
+    IItemHandlerModifiable container;
     public ItemContainerSwitchShim(IItemHandlerModifiable container) {
-        super(container);
+        changeInventory(container);
+    }
+
+    public void changeInventory(IItemHandlerModifiable container) {
+        this.container = container;
     }
 
     @Override

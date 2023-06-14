@@ -9,52 +9,60 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import javax.annotation.Nullable;
 
 // probably causes problems
-public class FluidTankSwitchShim extends SwitchShimBase<IFluidTank> implements IFluidTank, IFluidHandler {
+public class FluidTankSwitchShim implements IFluidTank, IFluidHandler {
 
+    IFluidTank tank;
     public FluidTankSwitchShim(IFluidTank tank) {
-        super(tank);
+        changeTank(tank);
+    }
+
+    public void changeTank(IFluidTank tank) {
+        if (!(tank instanceof IFluidHandler)) {
+            throw new IllegalArgumentException("Shim tank must be both IFluidTank and IFluidHandler!");
+        }
+        this.tank = tank;
     }
 
     @Nullable
     @Override
     public FluidStack getFluid() {
-        return container.getFluid();
+        return tank.getFluid();
     }
 
     @Override
     public int getFluidAmount() {
-        return container.getFluidAmount();
+        return tank.getFluidAmount();
     }
 
     @Override
     public int getCapacity() {
-        return container.getCapacity();
+        return tank.getCapacity();
     }
 
     @Override
     public FluidTankInfo getInfo() {
-        return container.getInfo();
+        return tank.getInfo();
     }
 
     @Override
     public IFluidTankProperties[] getTankProperties() {
-        return ((IFluidHandler) container).getTankProperties();
+        return ((IFluidHandler) tank).getTankProperties();
     }
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
-        return ((IFluidHandler) container).fill(resource, doFill);
+        return ((IFluidHandler) tank).fill(resource, doFill);
     }
 
     @Nullable
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain) {
-        return ((IFluidHandler) container).drain(resource, doDrain);
+        return ((IFluidHandler) tank).drain(resource, doDrain);
     }
 
     @Nullable
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
-        return container.drain(maxDrain, doDrain);
+        return tank.drain(maxDrain, doDrain);
     }
 }

@@ -57,7 +57,7 @@ public class CoverEnderFluidLink extends CoverEnderLinkBase implements ITickable
 
     @Override
     protected void updateLink() {
-        this.linkedShim.changeInventory(VirtualTankRegistry.getTankCreate(makeName(FLUID_IDENTIFIER), getUUID()));
+        this.linkedShim.changeTank(VirtualTankRegistry.getTankCreate(makeName(FLUID_IDENTIFIER), getUUID()));
         coverHolder.markDirty();
     }
 
