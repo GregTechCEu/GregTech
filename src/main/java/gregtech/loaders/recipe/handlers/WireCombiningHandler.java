@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe.handlers;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import static gregtech.api.recipes.RecipeMaps.PACKER_RECIPES;
 import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.api.util.GTUtility.gregtechId;
 
 public class WireCombiningHandler {
 
@@ -33,16 +35,16 @@ public class WireCombiningHandler {
 
     public static void register() {
         // Generate Wire Packer/Unpacker recipes TODO Move into generateWireCombining?
-        wireGtSingle.addProcessingHandler(PropertyKey.WIRE, WireCombiningHandler::processWireCompression);
+        GregTechAPI.oreProcessorHandler.registerHandler(wireGtSingle, gregtechId("process_wire_compression"), PropertyKey.WIRE, WireCombiningHandler::processWireCompression);
 
         // Generate manual recipes for combining Wires/Cables
         for (OrePrefix wirePrefix : WIRE_DOUBLING_ORDER) {
-            wirePrefix.addProcessingHandler(PropertyKey.WIRE, WireCombiningHandler::generateWireCombiningRecipe);
+            GregTechAPI.oreProcessorHandler.registerHandler(wirePrefix, gregtechId("process_wire_combining"), PropertyKey.WIRE, WireCombiningHandler::generateWireCombiningRecipe);
         }
 
         // Generate Cable -> Wire recipes in the unpacker
         for (OrePrefix cablePrefix : cableToWireMap.keySet()) {
-            cablePrefix.addProcessingHandler(PropertyKey.WIRE, WireCombiningHandler::processCableStripping);
+            GregTechAPI.oreProcessorHandler.registerHandler(cablePrefix, gregtechId("process_cable_stripping"), PropertyKey.WIRE, WireCombiningHandler::processCableStripping);
         }
     }
 

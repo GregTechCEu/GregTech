@@ -6,6 +6,7 @@ import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.ore.handler.OreProcessorHandler;
 import gregtech.api.util.GTLog;
 import gregtech.common.items.MetaItems;
 import gregtech.core.unification.material.internal.MaterialRegistryManager;
@@ -77,7 +78,8 @@ public final class Bootstrap {
 
         // loadGregtechLangFile();
 
-        OrePrefix.runMaterialHandlers();
+        GregTechAPI.oreProcessorHandler = OreProcessorHandler.getInstance();
+        OrePrefix.runMaterialHandlers(false);
         GTFluidRegistration.INSTANCE.register();
         MetaItems.init();
         bootstrapped = true;

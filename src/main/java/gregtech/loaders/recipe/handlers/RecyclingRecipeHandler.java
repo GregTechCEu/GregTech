@@ -1,11 +1,13 @@
 package gregtech.loaders.recipe.handlers;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTUtility;
 import gregtech.loaders.recipe.RecyclingRecipes;
 
 import java.util.ArrayList;
@@ -41,7 +43,9 @@ public class RecyclingRecipeHandler {
                 else if (object instanceof Predicate)
                     return ((Predicate<OrePrefix>) object).test(orePrefix);
                 else return false;
-            })) orePrefix.addProcessingHandler(PropertyKey.DUST, RecyclingRecipeHandler::processCrushing);
+            })) {
+                GregTechAPI.oreProcessorHandler.registerHandler(orePrefix, GTUtility.gregtechId("process_crushing_recycling"), PropertyKey.DUST, RecyclingRecipeHandler::processCrushing);
+            }
         }
     }
 

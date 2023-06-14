@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.handlers;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
@@ -28,32 +29,33 @@ import static gregtech.api.recipes.RecipeMaps.LATHE_RECIPES;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.api.util.DyeUtil.determineDyeColor;
+import static gregtech.api.util.GTUtility.gregtechId;
 
 public class PartsRecipeHandler {
 
     private PartsRecipeHandler() {}
 
     public static void register() {
-        OrePrefix.stick.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processStick);
-        OrePrefix.stickLong.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processLongStick);
-        OrePrefix.plate.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processPlate);
-        OrePrefix.plateDouble.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processPlateDouble);
-        OrePrefix.plateDense.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processPlateDense);
+        GregTechAPI.oreProcessorHandler.registerHandler(stick, gregtechId("process_stick"), PropertyKey.DUST, PartsRecipeHandler::processStick);
+        GregTechAPI.oreProcessorHandler.registerHandler(stickLong, gregtechId("process_stick_long"), PropertyKey.DUST, PartsRecipeHandler::processLongStick);
+        GregTechAPI.oreProcessorHandler.registerHandler(plate, gregtechId("process_plate"), PropertyKey.DUST, PartsRecipeHandler::processPlate);
+        GregTechAPI.oreProcessorHandler.registerHandler(plateDouble, gregtechId("process_plate_double"), PropertyKey.INGOT, PartsRecipeHandler::processPlateDouble);
+        GregTechAPI.oreProcessorHandler.registerHandler(plateDense, gregtechId("process_plate_dense"), PropertyKey.DUST, PartsRecipeHandler::processPlateDense);
 
-        OrePrefix.turbineBlade.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processTurbine);
-        OrePrefix.rotor.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRotor);
-        OrePrefix.bolt.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processBolt);
-        OrePrefix.screw.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processScrew);
-        OrePrefix.wireFine.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processFineWire);
-        OrePrefix.foil.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processFoil);
-        OrePrefix.lens.addProcessingHandler(PropertyKey.GEM, PartsRecipeHandler::processLens);
+        GregTechAPI.oreProcessorHandler.registerHandler(turbineBlade, gregtechId("process_turbine"), PropertyKey.INGOT, PartsRecipeHandler::processTurbine);
+        GregTechAPI.oreProcessorHandler.registerHandler(rotor, gregtechId("process_rotor"), PropertyKey.INGOT, PartsRecipeHandler::processRotor);
+        GregTechAPI.oreProcessorHandler.registerHandler(bolt, gregtechId("process_bolt"), PropertyKey.DUST, PartsRecipeHandler::processBolt);
+        GregTechAPI.oreProcessorHandler.registerHandler(screw, gregtechId("process_screw"), PropertyKey.DUST, PartsRecipeHandler::processScrew);
+        GregTechAPI.oreProcessorHandler.registerHandler(wireFine, gregtechId("process_wire_fine"), PropertyKey.INGOT, PartsRecipeHandler::processFineWire);
+        GregTechAPI.oreProcessorHandler.registerHandler(foil, gregtechId("process_foil"), PropertyKey.INGOT, PartsRecipeHandler::processFoil);
+        GregTechAPI.oreProcessorHandler.registerHandler(lens, gregtechId("process_lens"), PropertyKey.GEM, PartsRecipeHandler::processLens);
 
-        OrePrefix.gear.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processGear);
-        OrePrefix.gearSmall.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processGear);
-        OrePrefix.ring.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRing);
-        OrePrefix.springSmall.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processSpringSmall);
-        OrePrefix.spring.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processSpring);
-        OrePrefix.round.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRound);
+        GregTechAPI.oreProcessorHandler.registerHandler(gear, gregtechId("process_gear"), PropertyKey.DUST, PartsRecipeHandler::processGear);
+        GregTechAPI.oreProcessorHandler.registerHandler(gearSmall, gregtechId("process_gear_small"), PropertyKey.DUST, PartsRecipeHandler::processGear);
+        GregTechAPI.oreProcessorHandler.registerHandler(ring, gregtechId("process_ring"), PropertyKey.INGOT, PartsRecipeHandler::processRing);
+        GregTechAPI.oreProcessorHandler.registerHandler(springSmall, gregtechId("process_spring_small"), PropertyKey.INGOT, PartsRecipeHandler::processSpringSmall);
+        GregTechAPI.oreProcessorHandler.registerHandler(spring, gregtechId("process_spring"), PropertyKey.INGOT, PartsRecipeHandler::processSpring);
+        GregTechAPI.oreProcessorHandler.registerHandler(round, gregtechId("process_round"), PropertyKey.INGOT, PartsRecipeHandler::processRound);
     }
 
     public static void processBolt(OrePrefix boltPrefix, Material material, DustProperty property) {

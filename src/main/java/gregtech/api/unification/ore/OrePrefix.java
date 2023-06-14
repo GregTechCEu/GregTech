@@ -1,23 +1,32 @@
 package gregtech.api.unification.ore;
 
+import com.google.common.base.Preconditions;
+import crafttweaker.annotations.ZenRegister;
+import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.ore.handler.IOreProcessor;
+import gregtech.api.unification.ore.handler.IOreProcessorHandler;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.ConfigHolder;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
 
 import com.google.common.base.Preconditions;
 import crafttweaker.annotations.ZenRegister;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -46,8 +55,8 @@ import static gregtech.api.unification.ore.OrePrefix.Flags.SELF_REFERENCING;
 @ZenRegister
 public class OrePrefix {
 
-    private final static Map<String, OrePrefix> PREFIXES = new HashMap<>();
-    private final static AtomicInteger idCounter = new AtomicInteger(0);
+    private static final Map<String, OrePrefix> PREFIXES = new Object2ObjectOpenHashMap<>();
+    private static final AtomicInteger idCounter = new AtomicInteger(0);
 
     // Regular Ore Prefix. Ore -> Material is a Oneway Operation! Introduced by Eloraam
     public static final OrePrefix ore = new OrePrefix("ore", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION,
@@ -518,7 +527,7 @@ public class OrePrefix {
      */
     public @Nullable Material materialType;
 
-    private final List<IOreRegistrationHandler> oreProcessingHandlers = new ArrayList<>();
+    private final Map<ResourceLocation, IOreProcessor> processingHandlers = new Object2ObjectOpenHashMap<>();
     private final Set<Material> ignoredMaterials = new HashSet<>();
     private final Set<Material> generatedMaterials = new HashSet<>();
     private final Object2FloatMap<Material> materialAmounts = new Object2FloatOpenHashMap<>();
@@ -593,14 +602,38 @@ public class OrePrefix {
         generationCondition = in;
     }
 
-    public boolean addProcessingHandler(IOreRegistrationHandler... processingHandler) {
-        Preconditions.checkNotNull(processingHandler);
-        Validate.noNullElements(processingHandler);
-        return oreProcessingHandlers.addAll(Arrays.asList(processingHandler));
+    @ApiStatus.Internal
+    public Collection<Material> getGeneratedMaterials() {
+        return generatedMaterials;
     }
 
-    public <T extends IMaterialProperty> void addProcessingHandler(PropertyKey<T> propertyKey,
-                                                                   TriConsumer<OrePrefix, Material, T> handler) {
+    @ApiStatus.Internal
+    public void clearGeneratedMaterials() {
+        generatedMaterials.clear();
+    }
+
+    /**
+     * Deprecated since {@code 2.7.0} and will be removed in {@code 2.8.0}
+     *
+     * @deprecated Use {@link IOreProcessorHandler#registerHandler(OrePrefix, ResourceLocation, IOreProcessor)}
+     */
+    @Deprecated
+    public boolean addProcessingHandler(IOreProcessor... processingHandler) {
+        Preconditions.checkNotNull(processingHandler);
+        Validate.noNullElements(processingHandler);
+        for (var handler : processingHandler) {
+            GregTechAPI.oreProcessorHandler.registerHandler(this, new ResourceLocation(GTValues.MODID, handler.toString()), handler);
+        }
+        return true;
+    }
+
+    /**
+     * Deprecated since {@code 2.7.0} and will be removed in {@code 2.8.0}
+     *
+     * @deprecated Use {@link IOreProcessorHandler#registerHandler(OrePrefix, ResourceLocation, PropertyKey, TriConsumer)}
+     */
+    @Deprecated
+    public <T extends IMaterialProperty> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
             if (material.hasProperty(propertyKey) && !material.hasFlag(NO_UNIFICATION)) {
                 handler.accept(orePrefix, material, material.getProperty(propertyKey));
@@ -615,35 +648,41 @@ public class OrePrefix {
         if (material != null) generatedMaterials.add(material);
     }
 
-    public static void runMaterialHandlers() {
+    @ApiStatus.Internal
+    public static void runMaterialHandlers(boolean isLate) {
         for (OrePrefix orePrefix : PREFIXES.values()) {
-            orePrefix.runGeneratedMaterialHandlers();
+            GregTechAPI.oreProcessorHandler.runGeneratedMaterialHandlers(orePrefix, isLate);
         }
     }
 
-    private static final ThreadLocal<OrePrefix> currentProcessingPrefix = new ThreadLocal<>();
-    private static final ThreadLocal<Material> currentMaterial = new ThreadLocal<>();
+    /**
+     * Deprecated since {@code 2.7.0} and will be removed in {@code 2.8.0}
+     *
+     * @deprecated Use {@link IOreProcessorHandler#getCurrentProcessingHandler()}
+     */
+    @Deprecated
+    public static ResourceLocation getCurrentProcessingHandler() {
+        return GregTechAPI.oreProcessorHandler.getCurrentProcessingHandler();
+    }
 
+    /**
+     * Deprecated since {@code 2.7.0} and will be removed in {@code 2.8.0}
+     *
+     * @deprecated Use {@link IOreProcessorHandler#getCurrentProcessingPrefix()}
+     */
+    @Deprecated
     public static OrePrefix getCurrentProcessingPrefix() {
-        return currentProcessingPrefix.get();
+        return GregTechAPI.oreProcessorHandler.getCurrentProcessingPrefix();
     }
 
+    /**
+     * Deprecated since {@code 2.7.0} and will be removed in {@code 2.8.0}
+     *
+     * @deprecated Use {@link IOreProcessorHandler#getCurrentMaterial()}
+     */
+    @Deprecated
     public static Material getCurrentMaterial() {
-        return currentMaterial.get();
-    }
-
-    private void runGeneratedMaterialHandlers() {
-        currentProcessingPrefix.set(this);
-        for (Material registeredMaterial : generatedMaterials) {
-            currentMaterial.set(registeredMaterial);
-            for (IOreRegistrationHandler registrationHandler : oreProcessingHandlers) {
-                registrationHandler.processMaterial(this, registeredMaterial);
-            }
-            currentMaterial.remove();
-        }
-        // clear generated materials for next pass
-        generatedMaterials.clear();
-        currentProcessingPrefix.remove();
+        return GregTechAPI.oreProcessorHandler.getCurrentMaterial();
     }
 
     public void setAlternativeOreName(String name) {
