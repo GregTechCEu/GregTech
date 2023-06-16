@@ -9,6 +9,7 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.common.pipelike.optical.net.WorldOpticalPipeNet;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
+import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipeTickable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -56,7 +57,8 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
 
     @Override
     public TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> createNewTileEntity(boolean supportsTicking) {
-        return new TileEntityOpticalPipe();
+        return supportsTicking ? new TileEntityOpticalPipe() : new TileEntityOpticalPipeTickable();
+
     }
 
     @Override
@@ -104,7 +106,7 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
 
     @Override
     public boolean canPipesConnect(IPipeTile<OpticalPipeType, OpticalPipeProperties> selfTile, EnumFacing side, IPipeTile<OpticalPipeType, OpticalPipeProperties> sideTile) {
-        return false;
+        return selfTile instanceof TileEntityOpticalPipe && sideTile instanceof TileEntityOpticalPipe;
     }
 
     @Override

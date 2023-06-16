@@ -3,6 +3,7 @@ package gregtech.common.pipelike.optical.net;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.recipes.Recipe;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
+import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipeTickable;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
@@ -13,6 +14,7 @@ public class OpticalNetHandler implements IDataAccessHatch {
 
     private OpticalPipeNet net;
     private TileEntityOpticalPipe pipe;
+    private TileEntityOpticalPipeTickable tickingPipe;
     private final World world;
     private final EnumFacing facing;
 
@@ -33,16 +35,26 @@ public class OpticalNetHandler implements IDataAccessHatch {
 
     @Override
     public boolean isRecipeAvailable(@Nonnull Recipe recipe) {
-        if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
-            return insertFirst(recipe);
+        // only set pipe to ticking when something is inserted
+        if (tickingPipe == null) {
+            this.tickingPipe = (TileEntityOpticalPipeTickable) pipe.setSupportsTicking();
+            this.pipe = tickingPipe;
         }
-        return false;
+
+        if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
+            return false;
+        }
+        return insertFirst(recipe);
     }
 
     public boolean insertFirst(@Nonnull Recipe recipe) {
         for (OpticalPipeNet.OpticalInventory inv : net.getNetData(pipe.getPipePos(), facing)) {
             IDataAccessHatch hatch = inv.getHandler(world);
-            if (hatch.isRecipeAvailable(recipe)) return true;
+            if (hatch.isTransmitter()) {
+                if (hatch.isRecipeAvailable(recipe)) {
+                    return true;
+                }
+            }
         }
         return false;
     }

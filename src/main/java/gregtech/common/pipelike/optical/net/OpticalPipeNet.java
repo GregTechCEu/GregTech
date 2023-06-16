@@ -36,8 +36,14 @@ public class OpticalPipeNet extends PipeNet<OpticalPipeProperties> {
                 // walker failed, don't cache, so it tries again on next insertion
                 return Collections.emptyList();
             }
-            data.sort(Comparator.comparingInt(inv -> inv.properties.hashCode()));
-            NET_DATA.put(pipePos, data);
+
+            // TODO choose valid state by number of connected inventories - count does not include source tile
+//            if (data.size() == 1) {
+                data.sort(Comparator.comparingInt(inv -> inv.properties.hashCode()));
+                NET_DATA.put(pipePos, data);
+//            } else {
+//                return Collections.emptyList();
+//            }
         }
         return data;
     }
