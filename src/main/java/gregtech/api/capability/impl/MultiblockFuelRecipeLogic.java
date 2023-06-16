@@ -105,7 +105,12 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     public String[] getRecipeFluidInputAmount() {
-        IRotorHolder rotorHolder = metaTileEntity instanceof MetaTileEntityLargeTurbine ? ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder() : null;
+        IRotorHolder rotorHolder = null;
+
+        if (metaTileEntity instanceof MultiblockWithDisplayBase multiblockWithDisplayBase) {
+            List<IRotorHolder> abilities = multiblockWithDisplayBase.getAbilities(MultiblockAbility.ROTOR_HOLDER);
+            rotorHolder = abilities.size() > 0 ? abilities.get(0) : null;
+        }
 
         FluidStack requiredFluidInput = previousRecipe.getFluidInputs().get(0).getInputFluidStack().copy();
         int ocAmount = (int) (getMaxVoltage() / -previousRecipe.getEUt());
