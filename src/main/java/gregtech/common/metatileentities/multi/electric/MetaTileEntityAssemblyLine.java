@@ -18,6 +18,8 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.recipeproperties.ResearchProperty;
+import gregtech.api.util.GTUtility;
 import gregtech.client.particle.GTLaserBeamParticle;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.ICubeRenderer;
@@ -48,8 +50,8 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
-    private static final ResourceLocation LASER_LOCATION = new ResourceLocation(GTValues.MODID, "textures/fx/laser/laser.png");
-    private static final ResourceLocation LASER_HEAD_LOCATION = new ResourceLocation(GTValues.MODID, "textures/fx/laser/laser_start.png");
+    private static final ResourceLocation LASER_LOCATION = GTUtility.gregtechId("textures/fx/laser/laser.png");
+    private static final ResourceLocation LASER_HEAD_LOCATION = GTUtility.gregtechId("textures/fx/laser/laser_start.png");
 
     @SideOnly(Side.CLIENT)
     private GTLaserBeamParticle[][] beamParticles;
@@ -311,7 +313,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             }
         }
 
-        if (!ConfigHolder.machines.enableResearch) {
+        if (!ConfigHolder.machines.enableResearch || !recipe.hasProperty(ResearchProperty.getInstance())) {
             return super.checkRecipe(recipe, consumeIfSuccess);
         }
 

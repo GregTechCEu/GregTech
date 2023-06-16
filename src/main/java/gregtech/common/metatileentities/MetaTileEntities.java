@@ -49,6 +49,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static gregtech.api.util.GTUtility.gregtechId;
+
 public class MetaTileEntities {
 
     //HULLS
@@ -800,7 +802,7 @@ public class MetaTileEntities {
                                                      ICubeRenderer texture,
                                                     boolean hasFrontFacing,
                                                     Function<Integer, Integer> tankScalingFunction) {
-        registerSimpleMetaTileEntity(machines, startId, name, map, texture, hasFrontFacing, MetaTileEntities::gregtechId, tankScalingFunction);
+        registerSimpleMetaTileEntity(machines, startId, name, map, texture, hasFrontFacing, GTUtility::gregtechId, tankScalingFunction);
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,
@@ -842,10 +844,6 @@ public class MetaTileEntities {
         }
         GregTechAPI.MTE_REGISTRY.register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);
         return sampleMetaTileEntity;
-    }
-
-    private static ResourceLocation gregtechId(String name) {
-        return new ResourceLocation(GTValues.MODID, name);
     }
 
     @SuppressWarnings("unused")

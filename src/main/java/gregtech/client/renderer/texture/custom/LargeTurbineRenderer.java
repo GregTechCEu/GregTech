@@ -6,7 +6,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.GTValues;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.cclop.ColourOperation;
 import gregtech.client.renderer.cclop.LightMapOperation;
@@ -15,7 +14,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
@@ -38,10 +36,10 @@ public class LargeTurbineRenderer implements IIconRegister {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(TextureMap textureMap) {
-        this.baseRingSprite = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/multiblock/large_turbine/base_ring"));
-        this.baseBackgroundSprite = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/multiblock/large_turbine/base_bg"));
-        this.idleBladeSprite = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/multiblock/large_turbine/rotor_idle"));
-        this.activeBladeSprite = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/multiblock/large_turbine/rotor_spinning"));
+        this.baseRingSprite = textureMap.registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/base_ring"));
+        this.baseBackgroundSprite = textureMap.registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/base_bg"));
+        this.idleBladeSprite = textureMap.registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/rotor_idle"));
+        this.activeBladeSprite = textureMap.registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/rotor_spinning"));
     }
 
     @SideOnly(Side.CLIENT)
