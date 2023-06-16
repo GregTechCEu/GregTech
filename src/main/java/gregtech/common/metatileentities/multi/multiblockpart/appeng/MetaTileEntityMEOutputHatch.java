@@ -19,6 +19,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEFluidGridWidget;
 import gregtech.common.inventory.appeng.SerializableFluidList;
@@ -46,7 +48,7 @@ import java.util.List;
  * @Description The Output Hatch that can directly send its contents to ME storage network.
  * @Date 2023/4/19-1:18
  */
-public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart implements IMultiblockAbilityPart<IFluidTank>, InfinitySink {
+public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart implements IMultiblockAbilityPart<IFluidTank> {
 
     public final static String FLUID_BUFFER_TAG = "FluidBuffer";
     public final static String WORKING_TAG = "WorkingEnabled";
@@ -187,6 +189,14 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart im
     @Override
     public void registerAbilities(List<IFluidTank> list) {
         list.add(new InaccessibleInfiniteTank(this.internalBuffer, this.getController()));
+    }
+
+    @Override
+    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+        super.addToMultiBlock(controllerBase);
+        if (controllerBase instanceof MultiblockWithDisplayBase) {
+            ((MultiblockWithDisplayBase) controllerBase).enableFluidInfSink();
+        }
     }
 
     private static class InaccessibleInfiniteTank implements IFluidTank, INotifiableHandler {

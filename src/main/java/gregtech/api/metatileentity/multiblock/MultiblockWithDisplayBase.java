@@ -17,7 +17,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.InfinitySink;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -287,6 +286,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
         this.lastActive = false;
         this.replaceVariantBlocksActive(false);
+        this.fluidInfSink = false;
+        this.itemInfSink = false;
         super.invalidateStructure();
     }
 
@@ -548,21 +549,11 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return voidingItems || itemInfSink;
     }
 
-    public void checkStructurePattern() {
-        super.checkStructurePattern();
-        this.fluidInfSink = false;
-        this.itemInfSink = false;
-        for (IMultiblockPart part : this.getMultiblockParts()) {
-            if (part instanceof InfinitySink) {
-                if (part instanceof IMultiblockAbilityPart) {
-                    if (((IMultiblockAbilityPart<?>) part).getAbility() == MultiblockAbility.EXPORT_FLUIDS) {
-                        this.fluidInfSink = true;
-                    }
-                    if (((IMultiblockAbilityPart<?>) part).getAbility() == MultiblockAbility.EXPORT_ITEMS) {
-                        this.itemInfSink = true;
-                    }
-                }
-            }
-        }
+    public void enableFluidInfSink() {
+        this.fluidInfSink = true;
+    }
+
+    public void enableItemInfSink() {
+        this.itemInfSink = true;
     }
 }

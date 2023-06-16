@@ -49,7 +49,8 @@ public class SerializableFluidList implements IItemList<IAEFluidStack>, INBTSeri
 
     @Override
     public Collection<IAEFluidStack> findFuzzy(IAEFluidStack filter, FuzzyMode fuzzy) {
-        return Collections.singleton(findPrecise(filter));
+        IAEFluidStack stack = findPrecise(filter);
+        return stack != null ? Collections.singleton(stack) : Collections.emptyList();
     }
 
     @Override

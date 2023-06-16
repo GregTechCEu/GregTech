@@ -19,6 +19,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEItemGridWidget;
 import gregtech.common.inventory.appeng.SerializableItemList;
@@ -44,7 +46,7 @@ import java.util.List;
  * @Description The Output Bus that can directly send its contents to ME storage network.
  * @Date 2023/4/19-20:37
  */
-public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, InfinitySink {
+public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
     public final static String ITEM_BUFFER_TAG = "ItemBuffer";
     public final static String WORKING_TAG = "WorkingEnabled";
@@ -185,6 +187,14 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart impl
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
         abilityList.add(new InaccessibleInfiniteSlot(this.internalBuffer, this.getController()));
+    }
+
+    @Override
+    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+        super.addToMultiBlock(controllerBase);
+        if (controllerBase instanceof MultiblockWithDisplayBase) {
+            ((MultiblockWithDisplayBase) controllerBase).enableItemInfSink();
+        }
     }
 
     private static class InaccessibleInfiniteSlot implements IItemHandlerModifiable, INotifiableHandler {
