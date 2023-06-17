@@ -74,11 +74,13 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     @Override
     public void onRemoval() {
         if (link != null) {
+            // invalidate linked endpoint
             link.invalidateLink();
             invalidateLink();
         }
         setType(Type.NONE);
         LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
+        // remove endpoint from network
         if (network != null) network.onRemoveEndpoint(this);
     }
 
@@ -89,15 +91,19 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
         List<LongDistanceNetwork> networks = findNetworks();
         LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
         if (network == null) {
+            // shouldn't happen
             if (networks.isEmpty()) {
+                // create new network since there are no neighbouring networks
                 network = this.pipeType.createNetwork(getWorld());
                 network.onPlaceEndpoint(this);
             } else if (networks.size() == 1) {
+                // add to neighbour network
                 networks.get(0).onPlaceEndpoint(this);
             }
         } else {
             if (networks.size() > 1) {
-                network.onRemoveEndpoint(this);
+                // suddenly there are more than one neighbouring networks, invalidate
+                onRemoval();
             }
         }
         if (networks.size() != 1) {
@@ -111,11 +117,13 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
         // only check input and output side
         network = LongDistanceNetwork.get(getWorld(), getPos().offset(getFrontFacing()));
         if (network != null && pipeType == network.getPipeType()) {
+            // found a network on the input face, therefore this is an output of the network
             networks.add(network);
             setType(Type.OUTPUT);
         }
         network = LongDistanceNetwork.get(getWorld(), getPos().offset(getOutputFacing()));
         if (network != null && pipeType == network.getPipeType()) {
+            // found a network on the output face, therefore this is an input of the network
             networks.add(network);
             setType(Type.INPUT);
         }

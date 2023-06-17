@@ -90,12 +90,14 @@ public class LongDistanceNetwork {
      * Removes the pipe at the given position and recalculates all neighbour positions if necessary
      */
     public void onRemovePipe(BlockPos pos) {
+        // remove the network from that pos
         this.longDistancePipeBlocks.remove(pos);
         this.world.removeNetwork(pos);
         if (this.longDistancePipeBlocks.isEmpty()) {
             invalidateNetwork();
             return;
         }
+        // find amount of neighbour networks
         List<BlockPos> neighbours = new ArrayList<>();
         BlockPos.PooledMutableBlockPos offsetPos = BlockPos.PooledMutableBlockPos.retain();
         for (EnumFacing facing : EnumFacing.VALUES) {
@@ -107,6 +109,8 @@ public class LongDistanceNetwork {
         }
         offsetPos.release();
         if (neighbours.size() > 1) {
+            // the pipe had more than 1 neighbour
+            // the network might need to be recalculated for each neighbour
             recalculateNetwork(neighbours);
         }
     }
@@ -179,33 +183,47 @@ public class LongDistanceNetwork {
         }
     }
 
+    /**
+     * Finds the first other endpoint for the given endpoint connected to this network.
+     *
+     * @param endpoint endpoint to find another endpoint for
+     * @return other endpoint or null if none is found
+     */
     @Nullable
     public ILDEndpoint getOtherEndpoint(ILDEndpoint endpoint) {
+        // return null for invalid network configurations
         if (!isValid() || (!endpoint.isInput() && !endpoint.isOutput())) return null;
 
         if (this.activeInputIndex >= 0 && this.activeOutputIndex >= 0) {
+            // there is an active input and output endpoint
             ILDEndpoint in = this.endpoints.get(this.activeInputIndex);
             ILDEndpoint out = this.endpoints.get(this.activeOutputIndex);
             if (in == endpoint) {
                 if (!endpoint.isInput()) throw new IllegalStateException("Other endpoint from input was itself");
+                // given endpoint is the current input, and therefore we return the output
                 return out;
             }
             if (out == endpoint) {
                 if (!endpoint.isOutput()) throw new IllegalStateException("Other endpoint from output was itself");
+                // given endpoint is the current output, and therefore we return the input
                 return in;
             }
             return null;
         } else if (this.activeInputIndex < 0 != this.activeOutputIndex < 0) {
+            // only input or output is active
             GTLog.logger.warn("Long Distance Network has an {}. This should not happen!", this.activeInputIndex < 0 ? "active input, but not an active output" : "active output, but not an active input");
             invalidateEndpoints(); // shouldn't happen
         }
 
+        // find a valid endpoint in this net
         int otherIndex = find(endpoint);
         if (otherIndex >= 0) {
+            // found other endpoint
             int thisIndex = this.endpoints.indexOf(endpoint);
             if (thisIndex < 0)
                 throw new IllegalStateException("Tried to get endpoint that is not part of this network. Something is seriously wrong!");
             ILDEndpoint other = this.endpoints.get(otherIndex);
+            // set active endpoints
             this.activeOutputIndex = endpoint.isOutput() ? thisIndex : otherIndex;
             this.activeInputIndex = endpoint.isInput() ? thisIndex : otherIndex;
             return other;
@@ -220,10 +238,7 @@ public class LongDistanceNetwork {
                     (other.isOutput() || other.isInput()) &&
                     other.isInput() != endpoint.isInput() &&
                     endpoint.getPos().getDistance(other.getPos().getX(), other.getPos().getY(), other.getPos().getZ()) > this.pipeType.getMinLength()) {
-                if (i > 1) {
-                    this.endpoints.remove(i);
-                    this.endpoints.add(i, other);
-                }
+                // found valid endpoint with minimum distance
                 return i;
             }
         }
@@ -277,7 +292,9 @@ public class LongDistanceNetwork {
 
         private static final Object2ObjectOpenHashMap<World, WorldData> WORLD_DATA_MAP = new Object2ObjectOpenHashMap<>();
 
+        // A chunk pos to block pos to network map map
         private final Long2ObjectMap<Object2ObjectMap<BlockPos, LongDistanceNetwork>> networks = new Long2ObjectOpenHashMap<>();
+        // All existing networks in this world
         private final ObjectOpenHashSet<LongDistanceNetwork> networkList = new ObjectOpenHashSet<>();
         private WeakReference<World> worldRef = new WeakReference<>(null);
 

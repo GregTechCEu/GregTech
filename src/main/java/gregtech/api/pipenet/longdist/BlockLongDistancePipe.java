@@ -38,6 +38,7 @@ public class BlockLongDistancePipe extends Block {
     public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
         if (worldIn.isRemote) return;
+        // first find all neighbouring networks
         List<LongDistanceNetwork> networks = new ArrayList<>();
         BlockPos.PooledMutableBlockPos offsetPos = BlockPos.PooledMutableBlockPos.retain();
         for (EnumFacing facing : EnumFacing.VALUES) {
