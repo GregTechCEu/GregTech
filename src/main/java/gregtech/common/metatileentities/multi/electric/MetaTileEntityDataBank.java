@@ -46,6 +46,8 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     private boolean isActive = false;
     private boolean isWorkingEnabled = true;
+    protected boolean hasNotEnoughEnergy;
+
     private int energyUsage = 0;
 
     public MetaTileEntityDataBank(ResourceLocation metaTileEntityId) {
@@ -62,12 +64,16 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
+        calculateEnergyUsage();
+    }
 
-        boolean isChained = !getAbilities(MultiblockAbility.OPTICAL_DATA_TRANSMISSION).isEmpty();
+    private void calculateEnergyUsage() {
+        int receivers = getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION).size();
+        int transmitters = getAbilities(MultiblockAbility.OPTICAL_DATA_TRANSMISSION).size();
+        int regulars = getAbilities(MultiblockAbility.DATA_ACCESS_HATCH).size();
 
-        // do not include optical hatches in energy calculation
-        int dataHatches = getAbilities(MultiblockAbility.DATA_ACCESS_HATCH).size();
-        int tier = isChained ? GTValues.LuV : GTValues.EV;
+        int dataHatches = receivers + transmitters + regulars;
+        int tier = receivers > 0 ? GTValues.LuV : GTValues.EV;
         this.energyUsage = GTValues.VA[tier] * dataHatches;
     }
 
@@ -87,14 +93,26 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
             energyToConsume += getNumMaintenanceProblems() * this.energyUsage / 10;
         }
 
+        if (this.hasNotEnoughEnergy && energyContainer.getInputPerSec() > 19L * energyToConsume) {
+            this.hasNotEnoughEnergy = false;
+        }
+
         if (this.energyContainer.getEnergyStored() >= energyToConsume) {
-            long consumed = this.energyContainer.removeEnergy(energyToConsume);
-            if (consumed == -energyToConsume) {
-                setActive(true);
-                if (hasMaintenance) {
-                    calculateMaintenance(1);
+            if (!hasNotEnoughEnergy) {
+                long consumed = this.energyContainer.removeEnergy(energyToConsume);
+                if (consumed == -energyToConsume) {
+                    setActive(true);
+                    if (hasMaintenance) {
+                        calculateMaintenance(1);
+                    }
+                } else {
+                    this.hasNotEnoughEnergy = true;
+                    setActive(false);
                 }
             }
+        } else {
+            this.hasNotEnoughEnergy = true;
+            setActive(false);
         }
     }
 
