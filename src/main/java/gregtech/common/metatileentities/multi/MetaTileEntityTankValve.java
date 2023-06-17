@@ -27,11 +27,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart {
+public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidHandler> {
 
     private final boolean isMetal;
 
@@ -119,12 +117,12 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     }
 
     @Override
-    public Collection<MultiblockAbility<?>> getAbilities() {
-        return Collections.singletonList(MultiblockAbility.TANK_VALVE);
+    public MultiblockAbility<IFluidHandler> getAbility() {
+        return MultiblockAbility.TANK_VALVE;
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<Object> abilityList) {
+    public void registerAbilities(@Nonnull List<IFluidHandler> abilityList) {
         abilityList.add(this.getImportFluids());
     }
 

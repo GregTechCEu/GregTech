@@ -46,7 +46,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart, IDataAccessHatch, IDataInfoProvider {
+public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IDataAccessHatch>, IDataAccessHatch, IDataInfoProvider {
 
     private final Set<Recipe> recipes;
     private final boolean isCreative;
@@ -202,12 +202,12 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public Collection<MultiblockAbility<?>> getAbilities() {
-        return Collections.singletonList(MultiblockAbility.DATA_ACCESS_HATCH);
+    public MultiblockAbility<IDataAccessHatch> getAbility() {
+        return MultiblockAbility.DATA_ACCESS_HATCH;
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<Object> abilityList) {
+    public void registerAbilities(List<IDataAccessHatch> abilityList) {
         abilityList.add(this);
     }
 }

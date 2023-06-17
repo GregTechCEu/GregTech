@@ -37,11 +37,9 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart, IControllable {
+public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable {
 
     private boolean workingEnabled;
     private boolean autoCollapse;
@@ -127,8 +125,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public Collection<MultiblockAbility<?>> getAbilities() {
-        return Collections.singletonList(isExportHatch ? MultiblockAbility.EXPORT_ITEMS : MultiblockAbility.IMPORT_ITEMS);
+    public MultiblockAbility<IItemHandlerModifiable> getAbility() {
+        return isExportHatch ? MultiblockAbility.EXPORT_ITEMS : MultiblockAbility.IMPORT_ITEMS;
     }
 
     @Override
@@ -173,7 +171,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public void registerAbilities(List<Object> abilityList) {
+    public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
         abilityList.add(isExportHatch ? this.exportItems : this.importItems);
     }
 

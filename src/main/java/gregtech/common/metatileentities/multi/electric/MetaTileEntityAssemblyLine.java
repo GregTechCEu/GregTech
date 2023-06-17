@@ -116,7 +116,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     protected static TraceabilityPredicate dataHatchPredicate() {
         // if research is enabled, require the data hatch, otherwise use a grate instead
         if (ConfigHolder.machines.enableResearch) {
-            return abilities(MultiblockAbility.DATA_ACCESS_HATCH)
+            return abilities(MultiblockAbility.DATA_ACCESS_HATCH, MultiblockAbility.OPTICAL_DATA_RECEPTION)
                     .setExactLimit(1)
                     .or(states(getGrateState()));
         }
@@ -316,8 +316,12 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             return super.checkRecipe(recipe, consumeIfSuccess);
         }
 
-        // check for research
-        for (IDataAccessHatch hatch : getAbilities(MultiblockAbility.DATA_ACCESS_HATCH)) {
+        return isRecipeAvailable(getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), recipe) ||
+                isRecipeAvailable(getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), recipe);
+    }
+
+    private static boolean isRecipeAvailable(@Nonnull Iterable<? extends IDataAccessHatch> hatches, @Nonnull Recipe recipe) {
+        for (IDataAccessHatch hatch : hatches) {
             // creative hatches do not need to check, they always have the recipe
             if (hatch.isCreative()) return true;
 

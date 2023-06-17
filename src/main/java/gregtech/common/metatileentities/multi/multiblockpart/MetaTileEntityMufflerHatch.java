@@ -33,11 +33,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart, ITieredMetaTileEntity, IMufflerHatch {
+public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMufflerHatch>, ITieredMetaTileEntity, IMufflerHatch {
 
     private final int recoveryChance;
     private final ItemStackHandler inventory;
@@ -162,12 +160,12 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     }
 
     @Override
-    public Collection<MultiblockAbility<?>> getAbilities() {
-        return Collections.singletonList(MultiblockAbility.MUFFLER_HATCH);
+    public MultiblockAbility<IMufflerHatch> getAbility() {
+        return MultiblockAbility.MUFFLER_HATCH;
     }
 
     @Override
-    public void registerAbilities(List<Object> abilityList) {
+    public void registerAbilities(List<IMufflerHatch> abilityList) {
         abilityList.add(this);
     }
 

@@ -63,16 +63,10 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
         super.formStructure(context);
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
 
-        List<IOpticalDataAccessHatch> opticalHatches = getAbilities(MultiblockAbility.OPTICAL_DATA_ACCESS_HATCH);
-        boolean isChained = false;
-        for (IOpticalDataAccessHatch hatch : opticalHatches) {
-            if (!hatch.isTransmitter()) {
-                isChained = true;
-            }
-        }
+        boolean isChained = !getAbilities(MultiblockAbility.OPTICAL_DATA_TRANSMISSION).isEmpty();
 
         // do not include optical hatches in energy calculation
-        int dataHatches = getAbilities(MultiblockAbility.DATA_ACCESS_HATCH).size() - opticalHatches.size();
+        int dataHatches = getAbilities(MultiblockAbility.DATA_ACCESS_HATCH).size();
         int tier = isChained ? GTValues.LuV : GTValues.EV;
         this.energyUsage = GTValues.VA[tier] * dataHatches;
     }
@@ -146,11 +140,12 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
                 .where('X', states(getOuterState()))
                 .where('D', states(getInnerState()).setMinGlobalLimited(3)
                         .or(abilities(MultiblockAbility.DATA_ACCESS_HATCH))
-                        .or(abilities(MultiblockAbility.OPTICAL_DATA_ACCESS_HATCH)
-                                .setMinGlobalLimited(1)))
+                        .or(abilities(MultiblockAbility.OPTICAL_DATA_TRANSMISSION)
+                                .setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.OPTICAL_DATA_RECEPTION)))
                 .where('A', states(getInnerState()))
                 .where('C', states(getFrontState())
-                        .setMinLayerLimited(4)
+                        .setMinGlobalLimited(4)
                         .or(autoAbilities())
                         .or(abilities(MultiblockAbility.INPUT_ENERGY)
                                 .setMinGlobalLimited(1).setMaxGlobalLimited(2)))

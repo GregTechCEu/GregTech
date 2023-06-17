@@ -22,11 +22,9 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart, IMaintenanceHatch {
+public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
     public MetaTileEntityAutoMaintenanceHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 3);
@@ -107,12 +105,12 @@ public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblock
     }
 
     @Override
-    public Collection<MultiblockAbility<?>> getAbilities() {
-        return Collections.singletonList(MultiblockAbility.MAINTENANCE_HATCH);
+    public MultiblockAbility<IMaintenanceHatch> getAbility() {
+        return MultiblockAbility.MAINTENANCE_HATCH;
     }
 
     @Override
-    public void registerAbilities(List<Object> abilityList) {
+    public void registerAbilities(List<IMaintenanceHatch> abilityList) {
         abilityList.add(this);
     }
 

@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.electric;
 import appeng.api.util.AECableType;
 import appeng.api.util.AEPartLocation;
 import appeng.me.helpers.AENetworkProxy;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -22,6 +23,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -30,11 +32,9 @@ import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart {
+public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
 
     protected IEnergyContainer energyContainer;
     private AENetworkProxy gridProxy;
@@ -118,12 +118,12 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart implements 
     }
 
     @Override
-    public Collection<MultiblockAbility<?>> getAbilities() {
-        return Collections.singletonList(MultiblockAbility.PASSTHROUGH_HATCH);
+    public MultiblockAbility<IPassthroughHatch> getAbility() {
+        return MultiblockAbility.PASSTHROUGH_HATCH;
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<Object> abilityList) {
+    public void registerAbilities(@Nonnull List<IPassthroughHatch> abilityList) {
         abilityList.add(this);
     }
 

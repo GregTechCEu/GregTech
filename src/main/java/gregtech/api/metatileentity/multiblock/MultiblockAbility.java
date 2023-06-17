@@ -44,7 +44,8 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<IPassthroughHatch> PASSTHROUGH_HATCH = new MultiblockAbility<>("passthrough_hatch");
 
     public static final MultiblockAbility<IDataAccessHatch> DATA_ACCESS_HATCH = new MultiblockAbility<>("data_access_hatch");
-    public static final MultiblockAbility<IOpticalDataAccessHatch> OPTICAL_DATA_ACCESS_HATCH = new MultiblockAbility<>("optical_data_access_hatch");
+    public static final MultiblockAbility<IOpticalDataAccessHatch> OPTICAL_DATA_RECEPTION = new MultiblockAbility<>("optical_data_reception");
+    public static final MultiblockAbility<IOpticalDataAccessHatch> OPTICAL_DATA_TRANSMISSION = new MultiblockAbility<>("optical_data_transmission");
 
     public static void registerMultiblockAbility(MultiblockAbility<?> ability, MetaTileEntity part) {
         if (!REGISTRY.containsKey(ability)) {

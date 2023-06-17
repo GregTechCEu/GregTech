@@ -1169,6 +1169,4 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR, MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.TURBINE)
             .allowEmptyOutput();
-
-    public static final RecipeMap<SimpleRecipeBuilder> GREENHOUSE_RECIPES = new RecipeMap<>("greenhouse", 3, 4, 1, 0, new SimpleRecipeBuilder(), false);
 }

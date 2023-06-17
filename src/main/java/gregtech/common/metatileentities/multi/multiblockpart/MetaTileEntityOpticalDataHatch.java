@@ -4,7 +4,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataAccessHatch;
@@ -28,10 +27,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
 import java.util.List;
 
-public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart, IOpticalDataAccessHatch {
+public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IOpticalDataAccessHatch>, IOpticalDataAccessHatch {
 
     private final boolean isTransmitter;
 
@@ -82,12 +80,8 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
                 MultiblockControllerBase controller = getController();
                 if (!controller.isActive()) return false;
 
-                for (IDataAccessHatch hatch : controller.getAbilities(MultiblockAbility.DATA_ACCESS_HATCH)) {
-                    if (hatch == this) continue;
-                    if (hatch.isRecipeAvailable(recipe)) {
-                        return true;
-                    }
-                }
+                return isRecipeAvailable(controller.getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), recipe) ||
+                        isRecipeAvailable(controller.getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), recipe);
             } else {
                 TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(getFrontFacing()));
                 if (tileEntity == null) return false;
@@ -96,6 +90,16 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
                     IDataAccessHatch cap = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, getFrontFacing().getOpposite());
                     return cap != null && cap.isRecipeAvailable(recipe);
                 }
+            }
+        }
+        return false;
+    }
+
+    private boolean isRecipeAvailable(@Nonnull Iterable<? extends IDataAccessHatch> hatches, @Nonnull Recipe recipe) {
+        for (IDataAccessHatch hatch : hatches) {
+            if (hatch == this) continue;
+            if (hatch.isRecipeAvailable(recipe)) {
+                return true;
             }
         }
         return false;
@@ -120,12 +124,12 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
     }
 
     @Override
-    public Collection<MultiblockAbility<?>> getAbilities() {
-        return ImmutableList.of(MultiblockAbility.DATA_ACCESS_HATCH, MultiblockAbility.OPTICAL_DATA_ACCESS_HATCH);
+    public MultiblockAbility<IOpticalDataAccessHatch> getAbility() {
+        return isTransmitter() ? MultiblockAbility.OPTICAL_DATA_TRANSMISSION : MultiblockAbility.OPTICAL_DATA_RECEPTION;
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<Object> abilityList) {
+    public void registerAbilities(@Nonnull List<IOpticalDataAccessHatch> abilityList) {
         abilityList.add(this);
     }
 }

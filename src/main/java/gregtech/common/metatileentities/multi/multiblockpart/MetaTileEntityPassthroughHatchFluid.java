@@ -26,11 +26,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart {
+public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
 
     private static final int TANK_SIZE = 16_000;
 
@@ -138,12 +136,12 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     }
 
     @Override
-    public Collection<MultiblockAbility<?>> getAbilities() {
-        return Collections.singletonList(MultiblockAbility.PASSTHROUGH_HATCH);
+    public MultiblockAbility<IPassthroughHatch> getAbility() {
+        return MultiblockAbility.PASSTHROUGH_HATCH;
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<Object> abilityList) {
+    public void registerAbilities(@Nonnull List<IPassthroughHatch> abilityList) {
         abilityList.add(this);
     }
 
