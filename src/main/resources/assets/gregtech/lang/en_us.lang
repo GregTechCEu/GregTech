@@ -4566,6 +4566,7 @@ gregtech.machine.data_bank.name=Data Bank
 gregtech.machine.data_bank.tooltip.1=Your Personal NAS
 gregtech.machine.data_bank.tooltip.2=Bulk Data Storage. Transfer with Optical Cables.
 gregtech.machine.data_bank.tooltip.3=Data Banks can be chained together.
+gregtech.machine.data_bank.tooltip.4=Uses %sEU/t per Data Hatch and %sEU/t when chained.
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
@@ -4832,8 +4833,8 @@ gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
 gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Sticks
 gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
 gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
-gregtech.machine.data_access_hatch.optical.receiver=Optical Data Reception Hatch
-gregtech.machine.data_access_hatch.optical.transmitter=Optical Data Transmission Hatch
+gregtech.machine.data_access_hatch.optical.receiver.name=Optical Data Reception Hatch
+gregtech.machine.data_access_hatch.optical.transmitter.name=Optical Data Transmission Hatch
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
@@ -5103,6 +5104,8 @@ gregtech.machine.miner.errorradius=§cCannot change radius while working!
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
+
+gregtech.multiblock.energy_consumption=Energy Usage: %s EU/t
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>

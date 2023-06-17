@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -78,7 +79,10 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
     public boolean isRecipeAvailable(@Nonnull Recipe recipe) {
         if (isAttachedToMultiBlock()) {
             if (isTransmitter()) {
-                for (IDataAccessHatch hatch : getController().getAbilities(MultiblockAbility.DATA_ACCESS_HATCH)) {
+                MultiblockControllerBase controller = getController();
+                if (!controller.isActive()) return false;
+
+                for (IDataAccessHatch hatch : controller.getAbilities(MultiblockAbility.DATA_ACCESS_HATCH)) {
                     if (hatch == this) continue;
                     if (hatch.isRecipeAvailable(recipe)) {
                         return true;

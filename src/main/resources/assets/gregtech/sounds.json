@@ -208,6 +208,15 @@
       }
     ]
   },
+  "tick.computation": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:computation",
+        "stream": false
+      }
+    ]
+  },
   "use.wrench": {
     "subtitle" : "Wrench turns",
     "category": "block",
