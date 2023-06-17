@@ -6,6 +6,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataAccessHatch;
+import gregtech.api.capability.IOpticalDataAccessHatch;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -13,7 +14,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.recipes.Recipe;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityAssemblyLine;
+import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -23,15 +24,18 @@ import net.minecraftforge.common.capabilities.Capability;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class MetaTileEntityRemoteDataHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IDataAccessHatch>, IDataAccessHatch {
+public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IDataAccessHatch>, IOpticalDataAccessHatch {
 
-    public MetaTileEntityRemoteDataHatch(ResourceLocation metaTileEntityId) {
+    private final boolean isTransmitter;
+
+    public MetaTileEntityOpticalDataHatch(ResourceLocation metaTileEntityId, boolean isTransmitter) {
         super(metaTileEntityId, GTValues.ZPM, false);
+        this.isTransmitter = isTransmitter;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityRemoteDataHatch(metaTileEntityId);
+        return new MetaTileEntityOpticalDataHatch(metaTileEntityId, this.isTransmitter);
     }
 
     @Override
@@ -52,17 +56,23 @@ public class MetaTileEntityRemoteDataHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public boolean isRecipeAvailable(@Nonnull Recipe recipe) {
-        if (isReceiver()) {
-            TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(getFrontFacing()));
-            if (tileEntity == null) return false;
+        if (isAttachedToMultiBlock()) {
+            if (isTransmitter()) {
+                for (IDataAccessHatch hatch : getController().getAbilities(MultiblockAbility.DATA_ACCESS_HATCH)) {
+                    if (hatch == this) continue;
+                    if (hatch.isRecipeAvailable(recipe)) {
+                        return true;
+                    }
+                }
+            } else {
+                TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(getFrontFacing()));
+                if (tileEntity == null) return false;
 
-            EnumFacing oppositeFacing = getFrontFacing().getOpposite();
-            if (tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, oppositeFacing)) {
-                IDataAccessHatch cap = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, oppositeFacing);
-                return cap != null && cap.isRecipeAvailable(recipe);
+                if (tileEntity instanceof TileEntityOpticalPipe) {
+                    IDataAccessHatch cap = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, getFrontFacing().getOpposite());
+                    return cap != null && cap.isRecipeAvailable(recipe);
+                }
             }
-        } else if (isTransmitter()) {
-            return true; //TODO
         }
         return false;
     }
@@ -73,16 +83,8 @@ public class MetaTileEntityRemoteDataHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public boolean isReceiver() {
-        if (this.isAttachedToMultiBlock()) {
-            return getController() instanceof MetaTileEntityAssemblyLine; //TODO
-        }
-        return false;
-    }
-
-    @Override
     public boolean isTransmitter() {
-        return !this.isAttachedToMultiBlock(); //TODO
+        return this.isTransmitter;
     }
 
     @Override

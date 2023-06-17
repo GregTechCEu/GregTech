@@ -26,7 +26,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     private final EnumMap<EnumFacing, OpticalNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     private final Map<FacingPos, Integer> transferred = new HashMap<>();
     private OpticalNetHandler defaultHandler;
-    // the ItemNetHandler can only be created on the server, so we have a empty placeholder for the client
+    // the OpticalNetHandler can only be created on the server, so we have an empty placeholder for the client
     private final IDataAccessHatch clientCapability = new DefaultDataHandler();
     private WeakReference<OpticalPipeNet> currentPipeNet = new WeakReference<>(null);
 

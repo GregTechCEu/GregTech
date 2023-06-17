@@ -133,7 +133,8 @@ public class MetaTileEntities {
     public static MetaTileEntityDataAccessHatch DATA_ACCESS_HATCH;
     public static MetaTileEntityDataAccessHatch ADVANCED_DATA_ACCESS_HATCH;
     public static MetaTileEntityDataAccessHatch CREATIVE_DATA_HATCH;
-    public static MetaTileEntityRemoteDataHatch DATA_ACCESS_REMOTE_HATCH;
+    public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_RECEIVER;
+    public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_TRANSMITTER;
     // Used for addons if they wish to disable certain tiers of machines
     private static final Map<String, Boolean> MID_TIER = new HashMap<>();
     private static final Map<String, Boolean> HIGH_TIER = new HashMap<>();
@@ -203,6 +204,7 @@ public class MetaTileEntities {
     public static MetaTileEntityFluidDrill ADVANCED_FLUID_DRILLING_RIG;
     public static MetaTileEntityCleanroom CLEANROOM;
     public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
+    public static MetaTileEntityDataBank DATA_BANK;
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -522,6 +524,8 @@ public class MetaTileEntities {
 
         CHARCOAL_PILE_IGNITER = registerMetaTileEntity(1036, new MetaTileEntityCharcoalPileIgniter(gregtechId("charcoal_pile")));
 
+        DATA_BANK = registerMetaTileEntity(1037, new MetaTileEntityDataBank(gregtechId("data_bank")));
+
         // MISC MTE's START: IDs 1150-2000
 
         // Import/Export Buses/Hatches, IDs 1150-1209
@@ -622,7 +626,8 @@ public class MetaTileEntities {
         DATA_ACCESS_HATCH = registerMetaTileEntity(1404, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch"), GTValues.IV, false));
         ADVANCED_DATA_ACCESS_HATCH = registerMetaTileEntity(1405, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.advanced"), GTValues.ZPM, false));
         CREATIVE_DATA_HATCH = registerMetaTileEntity(1406, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.creative"), GTValues.MAX, true));
-        DATA_ACCESS_REMOTE_HATCH = registerMetaTileEntity(1407, new MetaTileEntityRemoteDataHatch(gregtechId("data_access_hatch.remote")));
+        OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1407, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.remote"), false));
+        OPTICAL_DATA_HATCH_TRANSMITTER = registerMetaTileEntity(1408, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.remote"), true));
         // Free Range: 1408-1509
 
         // Buffers, IDs 1510-1512

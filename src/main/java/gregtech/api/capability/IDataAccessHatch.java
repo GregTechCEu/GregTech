@@ -16,18 +16,4 @@ public interface IDataAccessHatch {
      * @return true if this Data Access Hatch is creative or not
      */
     boolean isCreative();
-
-    /**
-     * @return if this hatch receives data from cables
-     */
-    default boolean isReceiver() {
-        return false;
-    }
-
-    /**
-     * @return if this hatch transmits data through cables
-     */
-    default boolean isTransmitter() {
-        return false;
-    }
 }

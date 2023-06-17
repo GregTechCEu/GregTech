@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.optical.net;
 
 import gregtech.api.capability.IDataAccessHatch;
+import gregtech.api.capability.IOpticalDataAccessHatch;
 import gregtech.api.recipes.Recipe;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipeTickable;
@@ -49,7 +50,7 @@ public class OpticalNetHandler implements IDataAccessHatch {
 
     public boolean insertFirst(@Nonnull Recipe recipe) {
         for (OpticalPipeNet.OpticalInventory inv : net.getNetData(pipe.getPipePos(), facing)) {
-            IDataAccessHatch hatch = inv.getHandler(world);
+            IOpticalDataAccessHatch hatch = inv.getHandler(world);
             if (hatch.isTransmitter()) {
                 if (hatch.isRecipeAvailable(recipe)) {
                     return true;

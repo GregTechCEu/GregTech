@@ -2,6 +2,7 @@ package gregtech.common.pipelike.optical.net;
 
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataAccessHatch;
+import gregtech.api.capability.IOpticalDataAccessHatch;
 import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
@@ -109,10 +110,12 @@ public class OpticalPipeNet extends PipeNet<OpticalPipeProperties> {
             return pipePos.offset(faceToHandler);
         }
 
-        public IDataAccessHatch getHandler(@Nonnull World world) {
+        public IOpticalDataAccessHatch getHandler(@Nonnull World world) {
             TileEntity tile = world.getTileEntity(getHandlerPos());
-            if (tile != null)
-                return tile.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, faceToHandler.getOpposite());
+            if (tile != null) {
+                IDataAccessHatch hatch = tile.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, faceToHandler.getOpposite());
+                return hatch instanceof IOpticalDataAccessHatch opticalHatch ? opticalHatch : null;
+            }
             return null;
         }
 
