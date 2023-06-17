@@ -18,9 +18,9 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -369,7 +369,7 @@ public class LongDistanceNetwork {
         }
 
         @Override
-        public void readFromNBT(@Nonnull NBTTagCompound nbtTagCompound) {
+        public void readFromNBT(@NotNull NBTTagCompound nbtTagCompound) {
             this.networks.clear();
             this.networkList.clear();
             NBTTagList list = nbtTagCompound.getTagList("nets", Constants.NBT.TAG_COMPOUND);
