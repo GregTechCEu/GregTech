@@ -35,8 +35,6 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     public void updateNetwork() {
         LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
         if (network != null) {
-            // the network only consists of this endpoint and therefore doesn't need any updates
-            if (network.getTotalSize() == 1)  return;
             // manually remove this endpoint from the network
             network.onRemoveEndpoint(this);
         }

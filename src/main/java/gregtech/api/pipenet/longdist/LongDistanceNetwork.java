@@ -394,9 +394,9 @@ public class LongDistanceNetwork {
             }
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbtTagCompound) {
+        public NBTTagCompound writeToNBT(@NotNull NBTTagCompound nbtTagCompound) {
             NBTTagList list = new NBTTagList();
             for (LongDistanceNetwork network : this.networkList) {
                 NBTTagCompound tag = new NBTTagCompound();
