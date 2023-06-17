@@ -203,6 +203,11 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
+    public boolean canPartShare() {
+        return false;
+    }
+
+    @Override
     public MultiblockAbility<IDataAccessHatch> getAbility() {
         return MultiblockAbility.DATA_ACCESS_HATCH;
     }

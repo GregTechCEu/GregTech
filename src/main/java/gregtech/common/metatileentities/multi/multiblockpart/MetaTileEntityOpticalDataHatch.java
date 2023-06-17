@@ -120,6 +120,11 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
     }
 
     @Override
+    public boolean canPartShare() {
+        return false;
+    }
+
+    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (side == getFrontFacing() && capability == GregtechTileCapabilities.CAPABILITY_DATA_ACCESS) {
             return GregtechTileCapabilities.CAPABILITY_DATA_ACCESS.cast(this);
