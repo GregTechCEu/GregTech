@@ -209,6 +209,7 @@
     ]
   },
   "tick.computation": {
+    "subtitle" : "Computers processing",
     "category": "block",
     "sounds": [
       {
