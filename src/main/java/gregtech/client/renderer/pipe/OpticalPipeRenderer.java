@@ -15,7 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nullable;
 import java.util.EnumMap;
 
-public class OpticalPipeRenderer extends PipeRenderer {
+public final class OpticalPipeRenderer extends PipeRenderer {
 
     public static final OpticalPipeRenderer INSTANCE = new OpticalPipeRenderer();
     private final EnumMap<OpticalPipeType, TextureAtlasSprite> pipeTextures = new EnumMap<>(OpticalPipeType.class);
@@ -26,19 +26,19 @@ public class OpticalPipeRenderer extends PipeRenderer {
 
     @Override
     public void registerIcons(TextureMap map) {
-        pipeTextures.put(OpticalPipeType.NORMAL, Textures.PIPE_NORMAL); //TODO make texture
+        pipeTextures.put(OpticalPipeType.NORMAL, Textures.OPTICAL_PIPE_IN);
     }
 
     @Override
     public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe, @Nullable IPipeTile<?, ?> pipeTile, IPipeType<?> pipeType, @Nullable Material material) {
         if (pipeType instanceof OpticalPipeType) {
             renderContext.addOpenFaceRender(new IconTransformation(pipeTextures.get(pipeType)))
-                    .addSideRender(new IconTransformation(Textures.PIPE_SIDE)); //TODO make texture
+                    .addSideRender(new IconTransformation(Textures.OPTICAL_PIPE_SIDE));
         }
     }
 
     @Override
     public TextureAtlasSprite getParticleTexture(IPipeType<?> pipeType, @Nullable Material material) {
-        return Textures.PIPE_SIDE; //TODO make texture
+        return Textures.OPTICAL_PIPE_SIDE;
     }
 }

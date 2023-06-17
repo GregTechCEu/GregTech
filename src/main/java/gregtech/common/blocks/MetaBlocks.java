@@ -101,6 +101,7 @@ public class MetaBlocks {
     public static BlockWarningSign1 WARNING_SIGN_1;
     public static BlockHermeticCasing HERMETIC_CASING;
     public static BlockCleanroomCasing CLEANROOM_CASING;
+    public static BlockComputerCasing COMPUTER_CASING;
 
     public static final EnumMap<EnumDyeColor, BlockLamp> LAMPS = new EnumMap<>(EnumDyeColor.class);
     public static final EnumMap<EnumDyeColor, BlockLamp> BORDERLESS_LAMPS = new EnumMap<>(EnumDyeColor.class);
@@ -161,6 +162,7 @@ public class MetaBlocks {
         for (OpticalPipeType type : OpticalPipeType.values()) {
             OPTICAL_PIPES[type.ordinal()] = new BlockOpticalPipe(type);
             OPTICAL_PIPES[type.ordinal()].setRegistryName(String.format("optical_pipe_%s", type.getName()));
+            OPTICAL_PIPES[type.ordinal()].setTranslationKey(String.format("optical_pipe_%s", type.getName()));
         }
 
         BOILER_CASING = new BlockBoilerCasing();
@@ -191,6 +193,8 @@ public class MetaBlocks {
         HERMETIC_CASING.setRegistryName("hermetic_casing");
         CLEANROOM_CASING = new BlockCleanroomCasing();
         CLEANROOM_CASING.setRegistryName("cleanroom_casing");
+        COMPUTER_CASING = new BlockComputerCasing();
+        COMPUTER_CASING.setRegistryName("computer_casing");
 
         for (EnumDyeColor color : EnumDyeColor.values()) {
             BlockLamp block = new BlockLamp(color);
@@ -370,6 +374,7 @@ public class MetaBlocks {
         registerItemModel(WARNING_SIGN_1);
         registerItemModel(HERMETIC_CASING);
         registerItemModel(CLEANROOM_CASING);
+        registerItemModel(COMPUTER_CASING);
         registerItemModel(ASPHALT);
         for (StoneVariantBlock block : STONE_BLOCKS.values())
             registerItemModel(block);
@@ -448,6 +453,7 @@ public class MetaBlocks {
         for (BlockItemPipe pipe : ITEM_PIPES) {
             ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
         }
+        normalStateMapper = new SimpleStateMapper(OpticalPipeRenderer.INSTANCE.getModelLocation());
         for (BlockOpticalPipe pipe : OPTICAL_PIPES) {
             ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
         }
