@@ -67,7 +67,6 @@ public class Textures {
     public static final SimpleOverlayRenderer FUSION_TEXTURE = new SimpleOverlayRenderer("casings/fusion/machine_casing_fusion_hatch");
     public static final SimpleOverlayRenderer ACTIVE_FUSION_TEXTURE = new SimpleOverlayRenderer("casings/fusion/machine_casing_fusion_hatch_yellow");
     public static final SimpleOverlayRenderer GRATE_CASING = new SimpleOverlayRenderer("casings/pipe/machine_casing_grate");
-    public static final SimpleOverlayRenderer COMPUTER_CASING = new SimpleOverlayRenderer("casings/computer/computer_casing");
     public static final SimpleOverlayRenderer HIGH_POWER_CASING = new SimpleOverlayRenderer("casings/computer/high_power_casing");
 
     // Simple Sided Cube Renderers
@@ -210,6 +209,7 @@ public class Textures {
     public static final ICubeRenderer TITANIUM_FIREBOX_ACTIVE = new FireboxActiveRenderer("casings/firebox/overlay/titanium/active");
     public static final ICubeRenderer TUNGSTENSTEEL_FIREBOX = new SidedCubeRenderer("casings/firebox/overlay/tungstensteel");
     public static final ICubeRenderer TUNGSTENSTEEL_FIREBOX_ACTIVE = new FireboxActiveRenderer("casings/firebox/overlay/tungstensteel/active");
+    public static final ICubeRenderer COMPUTER_CASING = new SidedCubeRenderer("casings/computer/computer_casing");
 
     public static final SimpleOverlayRenderer ROTOR_HOLDER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_rotor_holder");
     public static final SimpleOverlayRenderer ADV_PUMP_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_adv_pump");

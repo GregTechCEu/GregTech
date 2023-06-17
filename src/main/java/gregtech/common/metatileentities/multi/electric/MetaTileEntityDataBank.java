@@ -182,6 +182,13 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
+        if (isStructureFormed()) {
+            Textures.HIGH_POWER_CASING.render(renderState, translation, pipeline);
+        } else {
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                Textures.COMPUTER_CASING.renderSided(facing, renderState, translation, pipeline);
+            }
+        }
         getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(), this.isWorkingEnabled());
     }
 
