@@ -89,12 +89,17 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         if (getController() instanceof MetaTileEntityAssemblyLine && getController().isStructureFormed()) {
             IVertexOperation colourMultiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             for (EnumFacing facing : EnumFacing.VALUES) {
-                // render grate texture on all sides if formed
-                Textures.GRATE_CASING.renderSided(facing, renderState, translation, ArrayUtils.add(pipeline, colourMultiplier));
+                // render grate texture on all sides but from if formed
+                if (facing == getFrontFacing()) {
+                    getBaseTexture().renderSided(facing, renderState, translation, ArrayUtils.add(pipeline, colourMultiplier));
+                } else {
+                    Textures.GRATE_CASING.renderSided(facing, renderState, translation, ArrayUtils.add(pipeline, colourMultiplier));
+                }
             }
         } else {
             super.renderMetaTileEntity(renderState, translation, pipeline);
         }
+
         if (shouldRenderOverlay()) {
             if (isCreative) {
                 Textures.CREATIVE_DATA_ACCESS_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);

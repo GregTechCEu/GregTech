@@ -72,7 +72,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         FactoryBlockPattern pattern = FactoryBlockPattern.start(FRONT, UP, RIGHT)
                 .aisle("FIF", "RTR", "SAG", " Y ")
                 .aisle("FIF", "RTR", "DAG", " Y ").setRepeatable(3, 15)
-                .aisle("FOF", "RTR", "GAG", " Y ")
+                .aisle("FOF", "RTR", "DAG", " Y ")
                 .where('S', selfPredicate())
                 .where('F', states(getCasingState())
                         .or(autoAbilities(false, true, false, false, false, false, false))
@@ -117,8 +117,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         // if research is enabled, require the data hatch, otherwise use a grate instead
         if (ConfigHolder.machines.enableResearch) {
             return abilities(MultiblockAbility.DATA_ACCESS_HATCH)
-                    .setMinGlobalLimited(1)
-                    .setMaxGlobalLimited(2)
+                    .setExactLimit(1)
                     .or(states(getGrateState()));
         }
         return states(getGrateState());
