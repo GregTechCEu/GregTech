@@ -57,7 +57,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Nullable
     public BlockPattern structurePattern;
 
-    private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
+    private final Map<MultiblockAbility<?>, List<Object>> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
     private boolean structureFormed;
 
@@ -160,9 +160,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
-        return tilePredicate((state, tile) -> tile instanceof IMultiblockAbilityPart<?> &&
-                        ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()),
-                getCandidates(Arrays.stream(allowedAbilities).flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream()).toArray(MetaTileEntity[]::new)));
+        return tilePredicate((state, tile) -> {
+            if (tile instanceof IMultiblockAbilityPart part) {
+                return part.getAbilities().stream()
+                        .anyMatch(ability -> ArrayUtils.contains(allowedAbilities, ability));
+            }
+            return false;
+        }, getCandidates(Arrays.stream(allowedAbilities)
+                .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
+                .toArray(MetaTileEntity[]::new)));
     }
 
     public static TraceabilityPredicate states(IBlockState... allowedStates) {
@@ -249,13 +255,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     }
                 }
             }
-            Map<MultiblockAbility<Object>, List<Object>> abilities = new HashMap<>();
+            Map<MultiblockAbility<?>, List<Object>> abilities = new HashMap<>();
             for (IMultiblockPart multiblockPart : parts) {
-                if (multiblockPart instanceof IMultiblockAbilityPart) {
-                    @SuppressWarnings("unchecked")
-                    IMultiblockAbilityPart<Object> abilityPart = (IMultiblockAbilityPart<Object>) multiblockPart;
-                    List<Object> abilityInstancesList = abilities.computeIfAbsent(abilityPart.getAbility(), k -> new ArrayList<>());
-                    abilityPart.registerAbilities(abilityInstancesList);
+                if (multiblockPart instanceof IMultiblockAbilityPart abilityPart) {
+                    for (MultiblockAbility<?> ability : abilityPart.getAbilities()) {
+                        List<Object> abilityInstancesList = abilities.computeIfAbsent(ability, k -> new ArrayList<>());
+                        abilityPart.registerAbilities(abilityInstancesList);
+                    }
                 }
             }
             parts.forEach(part -> part.addToMultiBlock(this));

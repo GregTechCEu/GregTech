@@ -626,8 +626,8 @@ public class MetaTileEntities {
         DATA_ACCESS_HATCH = registerMetaTileEntity(1404, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch"), GTValues.IV, false));
         ADVANCED_DATA_ACCESS_HATCH = registerMetaTileEntity(1405, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.advanced"), GTValues.ZPM, false));
         CREATIVE_DATA_HATCH = registerMetaTileEntity(1406, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.creative"), GTValues.MAX, true));
-        OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1407, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.remote"), false));
-        OPTICAL_DATA_HATCH_TRANSMITTER = registerMetaTileEntity(1408, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.remote"), true));
+        OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1407, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.receiver"), false));
+        OPTICAL_DATA_HATCH_TRANSMITTER = registerMetaTileEntity(1408, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.transmitter"), true));
         // Free Range: 1408-1509
 
         // Buffers, IDs 1510-1512
@@ -824,9 +824,10 @@ public class MetaTileEntities {
     }
 
     public static <T extends MetaTileEntity> T registerMetaTileEntity(int id, T sampleMetaTileEntity) {
-        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart) {
-            IMultiblockAbilityPart<?> abilityPart = (IMultiblockAbilityPart<?>) sampleMetaTileEntity;
-            MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), sampleMetaTileEntity);
+        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart abilityPart) {
+            for (MultiblockAbility<?> ability : abilityPart.getAbilities()) {
+                MultiblockAbility.registerMultiblockAbility(ability, sampleMetaTileEntity);
+            }
         }
         if (sampleMetaTileEntity instanceof MultiblockControllerBase && Loader.isModLoaded(GTValues.MODID_JEI)) {
             if (((MultiblockControllerBase) sampleMetaTileEntity).shouldShowInJei()) {

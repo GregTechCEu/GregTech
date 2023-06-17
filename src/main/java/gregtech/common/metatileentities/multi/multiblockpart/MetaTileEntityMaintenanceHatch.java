@@ -46,16 +46,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
+public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart, IMaintenanceHatch {
 
     private final boolean isConfigurable;
     private ItemStackHandler itemStackHandler;
@@ -475,12 +473,12 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public MultiblockAbility<IMaintenanceHatch> getAbility() {
-        return MultiblockAbility.MAINTENANCE_HATCH;
+    public Collection<MultiblockAbility<?>> getAbilities() {
+        return Collections.singletonList(MultiblockAbility.MAINTENANCE_HATCH);
     }
 
     @Override
-    public void registerAbilities(List<IMaintenanceHatch> abilityList) {
+    public void registerAbilities(List<Object> abilityList) {
         abilityList.add(this);
     }
 

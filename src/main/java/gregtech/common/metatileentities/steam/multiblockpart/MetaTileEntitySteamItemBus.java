@@ -21,13 +21,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements IMultiblockAbilityPart {
 
     private static final boolean IS_STEEL = ConfigHolder.machines.steelSteamMultiblocks;
 
@@ -42,12 +43,12 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements
     }
 
     @Override
-    public MultiblockAbility<IItemHandlerModifiable> getAbility() {
-        return isExportHatch ? MultiblockAbility.STEAM_EXPORT_ITEMS : MultiblockAbility.STEAM_IMPORT_ITEMS;
+    public Collection<MultiblockAbility<?>> getAbilities() {
+        return Collections.singletonList(isExportHatch ? MultiblockAbility.STEAM_EXPORT_ITEMS : MultiblockAbility.STEAM_IMPORT_ITEMS);
     }
 
     @Override
-    public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
+    public void registerAbilities(List<Object> abilityList) {
         abilityList.add(isExportHatch ? this.exportItems : this.importItems);
     }
 

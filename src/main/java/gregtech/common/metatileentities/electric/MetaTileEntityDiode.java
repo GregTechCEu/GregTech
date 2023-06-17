@@ -31,11 +31,13 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.AMP_INDEX;
 
-public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
+public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart {
 
     protected IEnergyContainer energyContainer;
 
@@ -168,12 +170,12 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
     }
 
     @Override
-    public MultiblockAbility<IPassthroughHatch> getAbility() {
-        return MultiblockAbility.PASSTHROUGH_HATCH;
+    public Collection<MultiblockAbility<?>> getAbilities() {
+        return Collections.singletonList(MultiblockAbility.PASSTHROUGH_HATCH);
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<IPassthroughHatch> abilityList) {
+    public void registerAbilities(@Nonnull List<Object> abilityList) {
         abilityList.add(this);
     }
 

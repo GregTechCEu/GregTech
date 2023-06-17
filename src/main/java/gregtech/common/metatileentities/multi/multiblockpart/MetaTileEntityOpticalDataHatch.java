@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataAccessHatch;
@@ -22,9 +23,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.List;
 
-public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IDataAccessHatch>, IOpticalDataAccessHatch {
+public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart, IOpticalDataAccessHatch {
 
     private final boolean isTransmitter;
 
@@ -96,12 +98,12 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
     }
 
     @Override
-    public MultiblockAbility<IDataAccessHatch> getAbility() {
-        return MultiblockAbility.DATA_ACCESS_HATCH;
+    public Collection<MultiblockAbility<?>> getAbilities() {
+        return ImmutableList.of(MultiblockAbility.DATA_ACCESS_HATCH, MultiblockAbility.OPTICAL_DATA_ACCESS_HATCH);
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<IDataAccessHatch> abilityList) {
+    public void registerAbilities(@Nonnull List<Object> abilityList) {
         abilityList.add(this);
     }
 }
