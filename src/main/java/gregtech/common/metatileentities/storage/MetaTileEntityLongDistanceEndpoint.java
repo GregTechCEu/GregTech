@@ -35,24 +35,24 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     public void updateNetwork() {
         LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
         if (network != null) {
-            int endpointAmount = network.getEndpointAmount();
-            if (endpointAmount == 2) return;
-
-            if (endpointAmount == 1) {
-                network.onPlaceEndpoint(this);
-                return;
-            }
+            // the network only consists of this endpoint and therefore doesn't need any updates
+            if (network.getTotalSize() == 1)  return;
+            // manually remove this endpoint from the network
             network.onRemoveEndpoint(this);
         }
 
+        // find networks on input and output face
         List<LongDistanceNetwork> networks = findNetworks();
         if (networks.isEmpty()) {
+            // no neighbours found, create new network
             network = this.pipeType.createNetwork(getWorld());
             network.onPlaceEndpoint(this);
             setType(Type.NONE);
         } else if (networks.size() == 1) {
+            // one neighbour network found, attach self to neighbour network
             networks.get(0).onPlaceEndpoint(this);
         } else {
+            // two neighbour networks found, configuration invalid
             setType(Type.NONE);
         }
     }
@@ -79,7 +79,7 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
         }
         setType(Type.NONE);
         LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
-        if (network != null) network.onPlaceEndpoint(this);
+        if (network != null) network.onRemoveEndpoint(this);
     }
 
     @Override
