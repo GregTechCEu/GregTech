@@ -27,6 +27,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.List;
 
 public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IOpticalDataAccessHatch>, IOpticalDataAccessHatch {
@@ -74,31 +75,34 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
     }
 
     @Override
-    public boolean isRecipeAvailable(@Nonnull Recipe recipe) {
+    public boolean isRecipeAvailable(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
+        seen.add(this);
         if (isAttachedToMultiBlock()) {
             if (isTransmitter()) {
                 MultiblockControllerBase controller = getController();
                 if (!controller.isActive()) return false;
 
-                return isRecipeAvailable(controller.getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), recipe) ||
-                        isRecipeAvailable(controller.getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), recipe);
+                return isRecipeAvailable(controller.getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), seen, recipe) ||
+                        isRecipeAvailable(controller.getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), seen, recipe);
             } else {
                 TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(getFrontFacing()));
                 if (tileEntity == null) return false;
 
                 if (tileEntity instanceof TileEntityOpticalPipe) {
                     IDataAccessHatch cap = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, getFrontFacing().getOpposite());
-                    return cap != null && cap.isRecipeAvailable(recipe);
+                    return cap != null && cap.isRecipeAvailable(recipe, seen);
                 }
             }
         }
         return false;
     }
 
-    private boolean isRecipeAvailable(@Nonnull Iterable<? extends IDataAccessHatch> hatches, @Nonnull Recipe recipe) {
+    private static boolean isRecipeAvailable(@Nonnull Iterable<? extends IDataAccessHatch> hatches,
+                                             @Nonnull Collection<IDataAccessHatch> seen,
+                                             @Nonnull Recipe recipe) {
         for (IDataAccessHatch hatch : hatches) {
-            if (hatch == this) continue;
-            if (hatch.isRecipeAvailable(recipe)) {
+            if (seen.contains(hatch)) continue;
+            if (hatch.isRecipeAvailable(recipe, seen)) {
                 return true;
             }
         }

@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 public class OpticalNetHandler implements IDataAccessHatch {
 
@@ -35,7 +36,7 @@ public class OpticalNetHandler implements IDataAccessHatch {
     }
 
     @Override
-    public boolean isRecipeAvailable(@Nonnull Recipe recipe) {
+    public boolean isRecipeAvailable(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
         // only set pipe to ticking when something is inserted
         if (tickingPipe == null) {
             this.tickingPipe = (TileEntityOpticalPipeTickable) pipe.setSupportsTicking();
@@ -45,14 +46,15 @@ public class OpticalNetHandler implements IDataAccessHatch {
         if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
             return false;
         }
-        return insertFirst(recipe);
+        return insertFirst(recipe, seen);
     }
 
-    public boolean insertFirst(@Nonnull Recipe recipe) {
+    public boolean insertFirst(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
         for (OpticalPipeNet.OpticalInventory inv : net.getNetData(pipe.getPipePos(), facing)) {
             IOpticalDataAccessHatch hatch = inv.getHandler(world);
+            if (seen.contains(hatch)) continue;
             if (hatch.isTransmitter()) {
-                if (hatch.isRecipeAvailable(recipe)) {
+                if (hatch.isRecipeAvailable(recipe, seen)) {
                     return true;
                 }
             }

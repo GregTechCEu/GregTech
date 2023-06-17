@@ -17,6 +17,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -122,7 +123,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     private static class DefaultDataHandler implements IDataAccessHatch {
 
         @Override
-        public boolean isRecipeAvailable(@Nonnull Recipe recipe) {
+        public boolean isRecipeAvailable(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
             return false;
         }
 
