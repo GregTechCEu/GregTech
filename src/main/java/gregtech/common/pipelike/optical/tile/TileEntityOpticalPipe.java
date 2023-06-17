@@ -85,8 +85,8 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
         if (currentPipeNet != null && currentPipeNet.isValid() &&
                 currentPipeNet.containsNode(getPipePos()))
             return currentPipeNet; //if current net is valid and does contain position, return it
-        WorldOpticalPipeNet worldFluidPipeNet = (WorldOpticalPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
-        currentPipeNet = worldFluidPipeNet.getNetFromPos(getPipePos());
+        WorldOpticalPipeNet worldNet = (WorldOpticalPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
+        currentPipeNet = worldNet.getNetFromPos(getPipePos());
         if (currentPipeNet != null) {
             this.currentPipeNet = new WeakReference<>(currentPipeNet);
         }
