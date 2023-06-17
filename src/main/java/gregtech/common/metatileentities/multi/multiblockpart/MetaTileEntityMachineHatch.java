@@ -26,6 +26,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
@@ -44,8 +46,8 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public MultiblockAbility<IItemHandlerModifiable> getAbility() {
-        return MultiblockAbility.MACHINE_HATCH;
+    public Collection<MultiblockAbility<IItemHandlerModifiable>> getAbilities() {
+        return Collections.singletonList(MultiblockAbility.MACHINE_HATCH);
     }
 
     @Override

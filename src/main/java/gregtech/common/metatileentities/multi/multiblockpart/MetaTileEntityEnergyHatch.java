@@ -25,6 +25,8 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IEnergyContainer> {
@@ -86,8 +88,8 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
-    public MultiblockAbility<IEnergyContainer> getAbility() {
-        return isExportHatch ? MultiblockAbility.OUTPUT_ENERGY : MultiblockAbility.INPUT_ENERGY;
+    public Collection<MultiblockAbility<IEnergyContainer>> getAbilities() {
+        return Collections.singletonList(isExportHatch ? MultiblockAbility.OUTPUT_ENERGY : MultiblockAbility.INPUT_ENERGY);
     }
 
     @Override

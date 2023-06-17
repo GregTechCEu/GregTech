@@ -201,8 +201,8 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public MultiblockAbility<IDataAccessHatch> getAbility() {
-        return MultiblockAbility.DATA_ACCESS_HATCH;
+    public Collection<MultiblockAbility<IDataAccessHatch>> getAbilities() {
+        return Collections.singletonList(MultiblockAbility.DATA_ACCESS_HATCH);
     }
 
     @Override

@@ -35,6 +35,8 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
@@ -86,8 +88,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
-    public MultiblockAbility<IRotorHolder> getAbility() {
-        return MultiblockAbility.ROTOR_HOLDER;
+    public Collection<MultiblockAbility<IRotorHolder>> getAbilities() {
+        return Collections.singletonList(MultiblockAbility.ROTOR_HOLDER);
     }
 
     @Override

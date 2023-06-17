@@ -25,6 +25,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements IMultiblockAbilityPart<IItemHandlerModifiable> {
@@ -42,8 +44,8 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements
     }
 
     @Override
-    public MultiblockAbility<IItemHandlerModifiable> getAbility() {
-        return isExportHatch ? MultiblockAbility.STEAM_EXPORT_ITEMS : MultiblockAbility.STEAM_IMPORT_ITEMS;
+    public Collection<MultiblockAbility<IItemHandlerModifiable>> getAbilities() {
+        return Collections.singletonList(isExportHatch ? MultiblockAbility.STEAM_EXPORT_ITEMS : MultiblockAbility.STEAM_IMPORT_ITEMS);
     }
 
     @Override

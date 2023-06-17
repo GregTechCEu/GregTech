@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.steam.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
@@ -17,7 +18,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -36,6 +36,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
@@ -109,8 +111,8 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     }
 
     @Override
-    public MultiblockAbility<IFluidTank> getAbility() {
-        return MultiblockAbility.STEAM;
+    public Collection<MultiblockAbility<IFluidTank>> getAbilities() {
+        return Collections.singletonList(MultiblockAbility.STEAM);
     }
 
     @Override

@@ -31,6 +31,8 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.AMP_INDEX;
@@ -168,8 +170,8 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
     }
 
     @Override
-    public MultiblockAbility<IPassthroughHatch> getAbility() {
-        return MultiblockAbility.PASSTHROUGH_HATCH;
+    public Collection<MultiblockAbility<IPassthroughHatch>> getAbilities() {
+        return Collections.singletonList(MultiblockAbility.PASSTHROUGH_HATCH);
     }
 
     @Override

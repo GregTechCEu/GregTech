@@ -32,6 +32,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
@@ -88,8 +90,8 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implem
     }
 
     @Override
-    public MultiblockAbility<IFluidTank> getAbility() {
-        return MultiblockAbility.PUMP_FLUID_HATCH;
+    public Collection<MultiblockAbility<IFluidTank>> getAbilities() {
+        return Collections.singletonList(MultiblockAbility.PUMP_FLUID_HATCH);
     }
 
     @Override

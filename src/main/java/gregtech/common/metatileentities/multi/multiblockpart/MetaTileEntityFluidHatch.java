@@ -39,6 +39,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank>, IControllable {
@@ -165,8 +167,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public MultiblockAbility<IFluidTank> getAbility() {
-        return isExportHatch ? MultiblockAbility.EXPORT_FLUIDS : MultiblockAbility.IMPORT_FLUIDS;
+    public Collection<MultiblockAbility<IFluidTank>> getAbilities() {
+        return Collections.singletonList(isExportHatch ? MultiblockAbility.EXPORT_FLUIDS : MultiblockAbility.IMPORT_FLUIDS);
     }
 
     @Override

@@ -25,6 +25,8 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
@@ -138,8 +140,8 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     }
 
     @Override
-    public MultiblockAbility<IPassthroughHatch> getAbility() {
-        return MultiblockAbility.PASSTHROUGH_HATCH;
+    public Collection<MultiblockAbility<IPassthroughHatch>> getAbilities() {
+        return Collections.singletonList(MultiblockAbility.PASSTHROUGH_HATCH);
     }
 
     @Override

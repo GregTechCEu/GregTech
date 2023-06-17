@@ -160,9 +160,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
-        return tilePredicate((state, tile) -> tile instanceof IMultiblockAbilityPart<?> &&
-                        ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()),
-                getCandidates(Arrays.stream(allowedAbilities).flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream()).toArray(MetaTileEntity[]::new)));
+        return tilePredicate((state, tile) -> {
+            if (tile instanceof IMultiblockAbilityPart<?> part) {
+                return part.getAbilities().stream()
+                        .anyMatch(ability -> ArrayUtils.contains(allowedAbilities, ability));
+            }
+            return false;
+        }, getCandidates(Arrays.stream(allowedAbilities)
+                .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
+                .toArray(MetaTileEntity[]::new)));
     }
 
     public static TraceabilityPredicate states(IBlockState... allowedStates) {
@@ -254,8 +260,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 if (multiblockPart instanceof IMultiblockAbilityPart) {
                     @SuppressWarnings("unchecked")
                     IMultiblockAbilityPart<Object> abilityPart = (IMultiblockAbilityPart<Object>) multiblockPart;
-                    List<Object> abilityInstancesList = abilities.computeIfAbsent(abilityPart.getAbility(), k -> new ArrayList<>());
-                    abilityPart.registerAbilities(abilityInstancesList);
+                    for (MultiblockAbility<Object> ability : abilityPart.getAbilities()) {
+                        List<Object> abilityInstancesList = abilities.computeIfAbsent(ability, k -> new ArrayList<>());
+                        abilityPart.registerAbilities(abilityInstancesList);
+                    }
                 }
             }
             parts.forEach(part -> part.addToMultiBlock(this));

@@ -817,9 +817,10 @@ public class MetaTileEntities {
     }
 
     public static <T extends MetaTileEntity> T registerMetaTileEntity(int id, T sampleMetaTileEntity) {
-        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart) {
-            IMultiblockAbilityPart<?> abilityPart = (IMultiblockAbilityPart<?>) sampleMetaTileEntity;
-            MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), sampleMetaTileEntity);
+        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart<?> abilityPart) {
+            for (MultiblockAbility<?> ability : abilityPart.getAbilities()) {
+                MultiblockAbility.registerMultiblockAbility(ability, sampleMetaTileEntity);
+            }
         }
         if (sampleMetaTileEntity instanceof MultiblockControllerBase && Loader.isModLoaded(GTValues.MODID_JEI)) {
             if (((MultiblockControllerBase) sampleMetaTileEntity).shouldShowInJei()) {

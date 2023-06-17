@@ -33,6 +33,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMufflerHatch>, ITieredMetaTileEntity, IMufflerHatch {
@@ -160,8 +162,8 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     }
 
     @Override
-    public MultiblockAbility<IMufflerHatch> getAbility() {
-        return MultiblockAbility.MUFFLER_HATCH;
+    public Collection<MultiblockAbility<IMufflerHatch>> getAbilities() {
+        return Collections.singletonList(MultiblockAbility.MUFFLER_HATCH);
     }
 
     @Override
