@@ -49,6 +49,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
     private PowerStationEnergyBank energyBank;
     private EnergyContainerList inputHatches;
     private EnergyContainerList outputHatches;
+    private long passiveDrain;
 
     public MetaTileEntityPowerSubstation(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -79,6 +80,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
         } else {
             this.energyBank = energyBank.rebuild(parts);
         }
+        this.passiveDrain = this.energyBank.getPassiveDrainPerTick();
     }
 
     @Override
@@ -88,7 +90,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
             long energyBanked = energyBank.fill(inputHatches.getEnergyStored());
             inputHatches.changeEnergy(-energyBanked);
 
-            // TODO passive drain from bank here
+            // Passive drain
+            energyBank.drain(this.passiveDrain);
 
             // Debank to Dynamo Hatches
             long energyDebanked = energyBank.drain(outputHatches.getEnergyCapacity() - outputHatches.getEnergyStored());
@@ -358,6 +361,27 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
                 retVal = retVal.add(BigInteger.valueOf(currentSum));
             }
             return retVal;
+        }
+
+        private long getPassiveDrainPerTick() {
+            // 1% capacity per 24 hours
+            final long divisor = 20 * 60 * 60 * 24 * 100;
+            // no more than 100kEU/t per storage block
+            final long maxPerStored = 100_000L;
+
+            long[] maximumsExcl = new long[maximums.length];
+            int index = 0;
+            int numExcl = 0;
+            for (long maximum : maximums) {
+                if (maximum / divisor >= maxPerStored) {
+                    numExcl++;
+                } else {
+                    maximumsExcl[index++] = maximum;
+                }
+            }
+            maximumsExcl = Arrays.copyOf(maximumsExcl, index);
+            BigInteger capacityExcl = summarize(maximumsExcl);
+            return capacityExcl.divide(BigInteger.valueOf(divisor)).add(BigInteger.valueOf(maxPerStored * numExcl)).longValue();
         }
     }
 
