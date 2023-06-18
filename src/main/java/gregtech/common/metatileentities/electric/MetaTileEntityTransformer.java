@@ -111,14 +111,16 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
+        renderOverlays(renderState, translation, pipeline);
+    }
 
+    protected void renderOverlays(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         SimpleOverlayRenderer otherFaceTexture = isTransformUp ? Textures.ENERGY_IN : Textures.ENERGY_OUT;
         SimpleOverlayRenderer frontFaceTexture = isTransformUp ? Textures.ENERGY_OUT_MULTI : Textures.ENERGY_IN_MULTI;
         frontFaceTexture.renderSided(frontFacing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() + 1]));
         Arrays.stream(EnumFacing.values()).filter(f -> f != frontFacing)
                 .forEach((f -> otherFaceTexture.renderSided(f, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]))));
     }
-
 
     @Override
     public boolean isValidFrontFacing(EnumFacing facing) {

@@ -107,27 +107,27 @@ public class MetaTileEntityAdjustableTransformer extends MetaTileEntityTransform
     }
 
     @Override
-    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        super.renderMetaTileEntity(renderState, translation, pipeline);
-
+    protected void renderOverlays(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         SimpleOverlayRenderer otherFaceTexture;
         SimpleOverlayRenderer frontFaceTexture;
+
         switch (this.ampIndex) {
-            case 1:
+            case 1 -> { // 2A <-> 8A
                 otherFaceTexture = isInverted() ? Textures.ENERGY_IN_MULTI : Textures.ENERGY_OUT_MULTI;
                 frontFaceTexture = isInverted() ? Textures.ENERGY_OUT_HI : Textures.ENERGY_IN_HI;
-                break;
-            case 2:
+            }
+            case 2 -> { // 4A <-> 16A
                 otherFaceTexture = isInverted() ? Textures.ENERGY_IN_HI : Textures.ENERGY_OUT_HI;
                 frontFaceTexture = isInverted() ? Textures.ENERGY_OUT_ULTRA : Textures.ENERGY_IN_ULTRA;
-                break;
-            case 3:
+            }
+            case 3 -> { // 16A <-> 64A
                 otherFaceTexture = isInverted() ? Textures.ENERGY_IN_ULTRA : Textures.ENERGY_OUT_ULTRA;
                 frontFaceTexture = isInverted() ? Textures.ENERGY_OUT_MAX : Textures.ENERGY_IN_MAX;
-                break;
-            default:
+            }
+            default -> { // (0), 1A <-> 4A
                 otherFaceTexture = isInverted() ? Textures.ENERGY_IN : Textures.ENERGY_OUT;
                 frontFaceTexture = isInverted() ? Textures.ENERGY_OUT_MULTI : Textures.ENERGY_IN_MULTI;
+            }
         }
 
         frontFaceTexture.renderSided(frontFacing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() + 1]));
