@@ -26,6 +26,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import javax.annotation.Nonnull;
 
@@ -37,8 +38,14 @@ import static gregtech.api.util.RelativeDirection.*;
 public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
 
     // Structure Constants
-    private static final int MAX_BATTERY_LAYERS = 18;
+    public static final int MAX_BATTERY_LAYERS = 18;
     private static final int MIN_CASINGS = 14;
+
+    // Passive Drain Constants
+    // 1% capacity per 24 hours
+    public static final long PASSIVE_DRAIN_DIVISOR = 20 * 60 * 60 * 24 * 100;
+    // no more than 100kEU/t per storage block
+    public static final long PASSIVE_DRAIN_MAX_PER_STORAGE = 100_000L;
 
     // NBT Keys
     private static final String NBT_ENERGY_BANK = "EnergyBank";
@@ -363,17 +370,13 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
             return retVal;
         }
 
-        private long getPassiveDrainPerTick() {
-            // 1% capacity per 24 hours
-            final long divisor = 20 * 60 * 60 * 24 * 100;
-            // no more than 100kEU/t per storage block
-            final long maxPerStored = 100_000L;
-
+        @VisibleForTesting
+        public long getPassiveDrainPerTick() {
             long[] maximumsExcl = new long[maximums.length];
             int index = 0;
             int numExcl = 0;
             for (long maximum : maximums) {
-                if (maximum / divisor >= maxPerStored) {
+                if (maximum / PASSIVE_DRAIN_DIVISOR >= PASSIVE_DRAIN_MAX_PER_STORAGE) {
                     numExcl++;
                 } else {
                     maximumsExcl[index++] = maximum;
@@ -381,7 +384,10 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
             }
             maximumsExcl = Arrays.copyOf(maximumsExcl, index);
             BigInteger capacityExcl = summarize(maximumsExcl);
-            return capacityExcl.divide(BigInteger.valueOf(divisor)).add(BigInteger.valueOf(maxPerStored * numExcl)).longValue();
+
+            return capacityExcl.divide(BigInteger.valueOf(PASSIVE_DRAIN_DIVISOR))
+                    .add(BigInteger.valueOf(PASSIVE_DRAIN_MAX_PER_STORAGE * numExcl))
+                    .longValue();
         }
     }
 

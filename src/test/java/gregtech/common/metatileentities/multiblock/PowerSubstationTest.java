@@ -13,7 +13,12 @@ import javax.annotation.Nonnull;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.function.Consumer;
 
+import static gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation.MAX_BATTERY_LAYERS;
+import static gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation.PASSIVE_DRAIN_DIVISOR;
+import static gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation.PASSIVE_DRAIN_MAX_PER_STORAGE;
 import static org.hamcrest.Matchers.is;
 
 public class PowerSubstationTest {
@@ -247,6 +252,60 @@ public class PowerSubstationTest {
         storage = rebuildStorage(storage, 100, 100, 400, 500);
         MatcherAssert.assertThat(storage.getCapacity(), isBigInt(1100));
         MatcherAssert.assertThat(storage.getStored(), isBigInt(1100));
+    }
+
+    @Test
+    public void Test_Optimized_Big_Integer_Summarize() {
+        Consumer<Random> testRunner = r -> {
+            BigInteger summation = BigInteger.ZERO;
+            long[] storageValues = new long[9 * MAX_BATTERY_LAYERS];
+            for (int i = 0; i < storageValues.length; i++) {
+                long randomLong = Math.abs(r.nextLong());
+                storageValues[i] = randomLong;
+                summation = summation.add(BigInteger.valueOf(randomLong));
+            }
+
+            PowerStationEnergyBank storage = createStorage(storageValues);
+            MatcherAssert.assertThat(storage.getCapacity(), is(summation));
+        };
+
+        for (int i = 0; i < 100; i++) {
+            testRunner.accept(new Random());
+        }
+    }
+
+    @Test
+    public void Test_Passive_Drain_Calculation() {
+        // 100kEU/t per storage block "too large" (like max long)
+        PowerStationEnergyBank storage = createStorage(Long.MAX_VALUE, Long.MAX_VALUE);
+        MatcherAssert.assertThat(storage.getPassiveDrainPerTick(),
+                is(2 * PASSIVE_DRAIN_MAX_PER_STORAGE));
+
+        Consumer<Random> testRunner = r -> {
+            int numTruncated = 0;
+            BigInteger nonTruncated = BigInteger.ZERO;
+
+            long[] storageValues = new long[9 * MAX_BATTERY_LAYERS];
+            for (int i = 0; i < storageValues.length; i++) {
+                long randomLong = Math.abs(r.nextLong());
+                storageValues[i] = randomLong;
+                if (randomLong / PASSIVE_DRAIN_DIVISOR >= PASSIVE_DRAIN_MAX_PER_STORAGE) {
+                    numTruncated++;
+                } else {
+                    nonTruncated = nonTruncated.add(BigInteger.valueOf(randomLong));
+                }
+            }
+
+            PowerStationEnergyBank testStorage = createStorage(storageValues);
+            MatcherAssert.assertThat(testStorage.getPassiveDrainPerTick(),
+                    is(nonTruncated.divide(BigInteger.valueOf(PASSIVE_DRAIN_DIVISOR))
+                            .add(BigInteger.valueOf(numTruncated * PASSIVE_DRAIN_MAX_PER_STORAGE))
+                            .longValue()));
+        };
+
+        for (int i = 0; i < 100; i++) {
+            testRunner.accept(new Random());
+        }
     }
 
     private static Matcher<BigInteger> isBigInt(long value, long... additional) {
