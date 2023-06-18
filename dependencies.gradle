@@ -37,9 +37,7 @@ dependencies {
     implementation files("libs/groovyscript-0.4.0.jar")
     //implementation rfg.deobf("curse.maven:groovyscript-687577:4487379") // GRS 0.4.6
 
-    compileOnlyApi rfg.deobf("curse.maven:ae2-extended-life-570458:4402048") // AE2UEL 0.55.6
-    // ae2 is a transitive dependency for MTE, so it's also needed at test-time
-    testImplementation rfg.deobf("curse.maven:ae2-extended-life-570458:4402048")
+    implementation rfg.deobf("curse.maven:ae2-extended-life-570458:4402048") // AE2UEL 0.55.6
 
     compileOnlyApi rfg.deobf("curse.maven:opencomputers-223008:4526246") // OpenComputers 1.8.0+9833087
     compileOnlyApi "curse.maven:journeymap-32274:2916002" // Journeymap 5.7.1
