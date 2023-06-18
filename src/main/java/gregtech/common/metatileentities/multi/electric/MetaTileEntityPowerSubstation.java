@@ -26,9 +26,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
-
-import javax.annotation.Nonnull;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -106,7 +105,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start(RIGHT, FRONT, UP)
@@ -186,7 +185,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
         return Textures.PALLADIUM_SUBSTATION_CASING;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return super.getFrontOverlay();
@@ -273,7 +272,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
          * Will use existing stored power and try to map it onto new batteries.
          * If there was more power before the rebuild operation, it will be lost.
          */
-        public PowerStationEnergyBank rebuild(@Nonnull List<IBatteryData> batteries) {
+        public PowerStationEnergyBank rebuild(@NotNull List<IBatteryData> batteries) {
             if (batteries.size() == 0) {
                 throw new IllegalArgumentException("Cannot rebuild Power Substation power bank with no batteries!");
             }

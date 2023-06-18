@@ -5,11 +5,11 @@ import gregtech.api.metatileentity.multiblock.IBatteryDataProvider.IBatteryData;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation.PowerStationEnergyBank;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nonnull;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -406,7 +406,7 @@ public class PowerSubstationTest {
         }
 
         // not used in this test
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return "";
