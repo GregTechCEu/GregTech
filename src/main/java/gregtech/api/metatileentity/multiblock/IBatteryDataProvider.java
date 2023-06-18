@@ -1,8 +1,7 @@
 package gregtech.api.metatileentity.multiblock;
 
 import net.minecraft.block.state.IBlockState;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface IBatteryDataProvider {
 
@@ -13,6 +12,6 @@ public interface IBatteryDataProvider {
 
         long getCapacity();
 
-        @Nonnull String getName();
+        @NotNull String getName();
     }
 }
