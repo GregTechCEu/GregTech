@@ -205,8 +205,8 @@ public class Textures {
     public static final ICubeRenderer TUNGSTENSTEEL_FIREBOX = new SidedCubeRenderer("casings/firebox/overlay/tungstensteel");
     public static final ICubeRenderer TUNGSTENSTEEL_FIREBOX_ACTIVE = new FireboxActiveRenderer("casings/firebox/overlay/tungstensteel/active");
 
-    public static final SidedCubeRenderer LD_ITEM_PIPE = new SidedCubeRenderer("pipe/ld_item_pipe");
-    public static final SidedCubeRenderer LD_FLUID_PIPE = new SidedCubeRenderer("pipe/ld_fluid_pipe");
+    public static final AlignedOrientedOverlayRenderer LD_ITEM_PIPE = new AlignedOrientedOverlayRenderer("pipe/ld_item_pipe");
+    public static final AlignedOrientedOverlayRenderer LD_FLUID_PIPE = new AlignedOrientedOverlayRenderer("pipe/ld_fluid_pipe");
 
     public static final SimpleOverlayRenderer ROTOR_HOLDER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_rotor_holder");
     public static final SimpleOverlayRenderer ADV_PUMP_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_adv_pump");
