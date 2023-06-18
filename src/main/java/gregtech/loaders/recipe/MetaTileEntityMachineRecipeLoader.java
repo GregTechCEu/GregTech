@@ -14,6 +14,7 @@ import static gregtech.api.unification.material.MarkerMaterials.Tier;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.blocks.MetaBlocks.LD_ITEM_PIPE;
+import static gregtech.common.blocks.MetaBlocks.LD_FLUID_PIPE;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
 
@@ -690,7 +691,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(plate, Steel, 8)
                 .circuitMeta(2)
                 .fluidInputs(SolderingAlloy.getFluid(L / 2))
-                .output(MetaBlocks.LD_FLUID_PIPE, 64)
+                .output(LD_FLUID_PIPE, 64)
                 .duration(600).EUt(24).buildAndRegister();
     }
 
