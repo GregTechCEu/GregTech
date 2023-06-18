@@ -308,6 +308,58 @@ public class PowerSubstationTest {
         }
     }
 
+    @Test
+    public void Test_Fill_Drain_Randomized() {
+        Consumer<Random> testRunner = r -> {
+            BigInteger totalStorage = BigInteger.ZERO;
+            long[] storageValues = new long[9 * MAX_BATTERY_LAYERS];
+            for (int i = 0; i < storageValues.length; i++) {
+                long randomLong = Math.abs(r.nextLong());
+                storageValues[i] = randomLong;
+                totalStorage = totalStorage.add(BigInteger.valueOf(randomLong));
+            }
+
+            PowerStationEnergyBank storage = createStorage(storageValues);
+
+            // test capacity
+            MatcherAssert.assertThat(storage.getCapacity(), is(totalStorage));
+
+            // test fill
+            BigInteger amountToFill = totalStorage;
+            do {
+                long randomLong = Math.abs(r.nextLong());
+                BigInteger randomBigInt = BigInteger.valueOf(randomLong);
+
+                if (amountToFill.compareTo(randomBigInt) <= 0) {
+                    MatcherAssert.assertThat(storage.fill(randomLong), is(amountToFill.longValue()));
+                    amountToFill = BigInteger.ZERO;
+                } else {
+                    MatcherAssert.assertThat(storage.fill(randomLong), is(randomLong));
+                    amountToFill = amountToFill.subtract(randomBigInt);
+                }
+            } while (!amountToFill.equals(BigInteger.ZERO));
+
+            // test drain
+            BigInteger amountToDrain = totalStorage;
+            do {
+                long randomLong = Math.abs(r.nextLong());
+                BigInteger randomBigInt = BigInteger.valueOf(randomLong);
+
+                if (amountToDrain.compareTo(randomBigInt) <= 0) {
+                    MatcherAssert.assertThat(storage.drain(randomLong), is(amountToDrain.longValue()));
+                    amountToDrain = BigInteger.ZERO;
+                } else {
+                    MatcherAssert.assertThat(storage.drain(randomLong), is(randomLong));
+                    amountToDrain = amountToDrain.subtract(randomBigInt);
+                }
+            } while (!amountToDrain.equals(BigInteger.ZERO));
+        };
+
+        for (int i = 0; i < 100; i++) {
+            testRunner.accept(new Random());
+        }
+    }
+
     private static Matcher<BigInteger> isBigInt(long value, long... additional) {
         BigInteger retVal = BigInteger.valueOf(value);
         if (additional != null) {
