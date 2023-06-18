@@ -42,7 +42,7 @@ public class LDPipeProvider implements IProbeInfoProvider {
                         addIOText(probeInfo, endpoint);
 
                         if (entityPlayer.isSneaking()) {
-                            ILDEndpoint other = network.getOtherEndpoint(endpoint);
+                            ILDEndpoint other = endpoint.getLink();
                             if (other != null) {
                                 BlockPos otherPos = other.getPos();
                                 String prefix = null;
