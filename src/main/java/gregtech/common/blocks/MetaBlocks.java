@@ -1,7 +1,6 @@
 package gregtech.common.blocks;
 
 import com.google.common.collect.ImmutableMap;
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -55,7 +54,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -73,6 +71,7 @@ import java.util.stream.Collectors;
 
 import static gregtech.api.unification.material.info.MaterialFlags.FORCE_GENERATE_BLOCK;
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FRAME;
+import static gregtech.api.util.GTUtility.gregtechId;
 
 public class MetaBlocks {
 
@@ -337,13 +336,13 @@ public class MetaBlocks {
     }
 
     public static void registerTileEntity() {
-        GameRegistry.registerTileEntity(MetaTileEntityHolder.class, new ResourceLocation(GTValues.MODID, "machine"));
-        GameRegistry.registerTileEntity(TileEntityCable.class, new ResourceLocation(GTValues.MODID, "cable"));
-        GameRegistry.registerTileEntity(TileEntityCableTickable.class, new ResourceLocation(GTValues.MODID, "cable_tickable"));
-        GameRegistry.registerTileEntity(TileEntityFluidPipe.class, new ResourceLocation(GTValues.MODID, "fluid_pipe"));
-        GameRegistry.registerTileEntity(TileEntityItemPipe.class, new ResourceLocation(GTValues.MODID, "item_pipe"));
-        GameRegistry.registerTileEntity(TileEntityFluidPipeTickable.class, new ResourceLocation(GTValues.MODID, "fluid_pipe_active"));
-        GameRegistry.registerTileEntity(TileEntityItemPipeTickable.class, new ResourceLocation(GTValues.MODID, "item_pipe_active"));
+        GameRegistry.registerTileEntity(MetaTileEntityHolder.class, gregtechId("machine"));
+        GameRegistry.registerTileEntity(TileEntityCable.class, gregtechId("cable"));
+        GameRegistry.registerTileEntity(TileEntityCableTickable.class, gregtechId("cable_tickable"));
+        GameRegistry.registerTileEntity(TileEntityFluidPipe.class, gregtechId("fluid_pipe"));
+        GameRegistry.registerTileEntity(TileEntityItemPipe.class, gregtechId("item_pipe"));
+        GameRegistry.registerTileEntity(TileEntityFluidPipeTickable.class, gregtechId("fluid_pipe_active"));
+        GameRegistry.registerTileEntity(TileEntityItemPipeTickable.class, gregtechId("item_pipe_active"));
     }
 
     @SideOnly(Side.CLIENT)

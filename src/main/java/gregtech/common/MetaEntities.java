@@ -1,7 +1,7 @@
 package gregtech.common;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.handler.DynamiteRenderer;
 import gregtech.client.renderer.handler.GTBoatRenderer;
 import gregtech.client.renderer.handler.PortalRenderer;
@@ -9,7 +9,6 @@ import gregtech.common.entities.DynamiteEntity;
 import gregtech.common.entities.GTBoatEntity;
 import gregtech.common.entities.PortalEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,9 +17,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class MetaEntities {
 
     public static void init() {
-        EntityRegistry.registerModEntity(new ResourceLocation(GTValues.MODID, "dynamite"), DynamiteEntity.class, "Dynamite", 1, GregTechAPI.instance, 64, 3, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(GTValues.MODID, "gtportal"), PortalEntity.class, "GTPortal", 2, GregTechAPI.instance, 64, 5, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(GTValues.MODID, "gtboat"), GTBoatEntity.class, "GTBoat", 3, GregTechAPI.instance, 64, 2, true);
+        EntityRegistry.registerModEntity(GTUtility.gregtechId("dynamite"), DynamiteEntity.class, "Dynamite", 1, GregTechAPI.instance, 64, 3, true);
+        EntityRegistry.registerModEntity(GTUtility.gregtechId("gtportal"), PortalEntity.class, "GTPortal", 2, GregTechAPI.instance, 64, 5, true);
+        EntityRegistry.registerModEntity(GTUtility.gregtechId("gtboat"), GTBoatEntity.class, "GTBoat", 3, GregTechAPI.instance, 64, 2, true);
     }
 
     @SideOnly(Side.CLIENT)

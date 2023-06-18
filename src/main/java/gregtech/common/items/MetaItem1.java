@@ -18,6 +18,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.RandomPotionEffect;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.MetaBlocks;
@@ -171,13 +172,13 @@ public class MetaItem1 extends StandardMetaItem {
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
         TOOL_LIGHTER_INVAR = addItem(91, "tool.lighter.invar")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Invar, M * 2)))
-                .addComponents(new LighterBehaviour(new ResourceLocation(GTValues.MODID, "lighter_open"), true, true, true))
+                .addComponents(new LighterBehaviour(GTUtility.gregtechId("lighter_open"), true, true, true))
                 .addComponents(new FilteredFluidStats(100, true, CommonFluidFilters.LIGHTER_FUEL))
                 .setMaxStackSize(1)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
         TOOL_LIGHTER_PLATINUM = addItem(92, "tool.lighter.platinum")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, M * 2)))
-                .addComponents(new LighterBehaviour(new ResourceLocation(GTValues.MODID, "lighter_open"), true, true, true))
+                .addComponents(new LighterBehaviour(GTUtility.gregtechId("lighter_open"), true, true, true))
                 .addComponents(new FilteredFluidStats(1000, true, CommonFluidFilters.LIGHTER_FUEL))
                 .setMaxStackSize(1)
                 .setRarity(EnumRarity.UNCOMMON)
@@ -470,8 +471,8 @@ public class MetaItem1 extends StandardMetaItem {
         }));
 
         // Data Items: ID 261-265
-        TOOL_DATA_STICK = addItem(261, "tool.datastick");
-        TOOL_DATA_ORB = addItem(262, "tool.dataorb");
+        TOOL_DATA_STICK = addItem(261, "tool.datastick").addComponents(new DataItemBehavior());
+        TOOL_DATA_ORB = addItem(262, "tool.dataorb").addComponents(new DataItemBehavior());
 
         // Special Machine Components: ID 266-280
         COMPONENT_GRINDER_DIAMOND = addItem(266, "component.grinder.diamond")
@@ -597,13 +598,13 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Boules: ID 361-370
         SILICON_BOULE = addItem(361, "boule.silicon");
-        GLOWSTONE_BOULE = addItem(362, "boule.glowstone");
+        PHOSPHORUS_BOULE = addItem(362, "boule.phosphorus");
         NAQUADAH_BOULE = addItem(363, "boule.naquadah");
         NEUTRONIUM_BOULE = addItem(364, "boule.neutronium");
 
         // Boule-Direct Wafers: ID 371-380
         SILICON_WAFER = addItem(371, "wafer.silicon");
-        GLOWSTONE_WAFER = addItem(372, "wafer.glowstone");
+        PHOSPHORUS_WAFER = addItem(372, "wafer.phosphorus");
         NAQUADAH_WAFER = addItem(373, "wafer.naquadah");
         NEUTRONIUM_WAFER = addItem(374, "wafer.neutronium");
 

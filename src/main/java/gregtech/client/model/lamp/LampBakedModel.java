@@ -1,6 +1,7 @@
 package gregtech.client.model.lamp;
 
 import gregtech.api.GTValues;
+import gregtech.api.util.GTUtility;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -11,7 +12,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -205,9 +205,9 @@ public class LampBakedModel implements IBakedModel {
                 String baseModelId = "active_lamp_" + key.modelType.modelName.getNamespace() +
                         "_" + key.modelType.modelName.getPath() + "_" + key.color.getName();
                 this.customItemModel = new ModelResourceLocation(
-                        new ResourceLocation(GTValues.MODID, baseModelId + "_item"), "");
+                        GTUtility.gregtechId(baseModelId + "_item"), "");
                 this.customBlockModel = new ModelResourceLocation(
-                        new ResourceLocation(GTValues.MODID, baseModelId + "_block" + (key.bloom ? "_bloom" : "")), "");
+                        GTUtility.gregtechId(baseModelId + "_block" + (key.bloom ? "_bloom" : "")), "");
             } else { // just use original model, no custom code required
                 this.customItemModel = this.customBlockModel = null;
             }

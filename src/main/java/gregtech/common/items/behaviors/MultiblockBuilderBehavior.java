@@ -1,11 +1,11 @@
 package gregtech.common.items.behaviors;
 
-import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.PatternError;
+import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -14,7 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -64,7 +63,7 @@ public class MultiblockBuilderBehavior implements IItemBehaviour {
 
     @Override
     public void addPropertyOverride(@Nonnull Item item) {
-        item.addPropertyOverride(new ResourceLocation(GTValues.MODID, "auto_mode"),
+        item.addPropertyOverride(GTUtility.gregtechId("auto_mode"),
                 (stack, world, entity) -> (entity != null && entity.isSneaking()) ? 1.0F : 0.0F);
     }
 

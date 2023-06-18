@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static gregtech.api.util.GTUtility.gregtechId;
+
 public class Textures {
 
     public static final Map<String, ICubeRenderer> CUBE_RENDERER_REGISTRY = new HashMap<>();
@@ -64,6 +66,7 @@ public class Textures {
     public static final SimpleOverlayRenderer PLASCRETE = new SimpleOverlayRenderer("casings/cleanroom/plascrete");
     public static final SimpleOverlayRenderer FUSION_TEXTURE = new SimpleOverlayRenderer("casings/fusion/machine_casing_fusion_hatch");
     public static final SimpleOverlayRenderer ACTIVE_FUSION_TEXTURE = new SimpleOverlayRenderer("casings/fusion/machine_casing_fusion_hatch_yellow");
+    public static final SimpleOverlayRenderer GRATE_CASING = new SimpleOverlayRenderer("casings/pipe/machine_casing_grate");
 
     // Simple Sided Cube Renderers
     public static final SimpleSidedCubeRenderer STEAM_CASING_BRONZE = new SimpleSidedCubeRenderer("casings/steam/bronze");
@@ -249,6 +252,8 @@ public class Textures {
     public static final SimpleOverlayRenderer STEAM_MINER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_steam_miner");
     public static final SimpleOverlayRenderer CHUNK_MINER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_chunk_miner");
     public static final SimpleOverlayRenderer BLANK_SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_blank_screen");
+    public static final SimpleOverlayRenderer DATA_ACCESS_HATCH = new SimpleOverlayRenderer("overlay/machine/overlay_data_hatch");
+    public static final SimpleOverlayRenderer CREATIVE_DATA_ACCESS_HATCH = new SimpleOverlayRenderer("overlay/machine/overlay_data_hatch_creative");
 
     public static final SimpleOverlayRenderer COVER_INTERFACE_FLUID = new SimpleOverlayRenderer("cover/cover_interface_fluid");
     public static final SimpleOverlayRenderer COVER_INTERFACE_FLUID_GLASS = new SimpleOverlayRenderer("cover/cover_interface_fluid_glass");
@@ -262,10 +267,10 @@ public class Textures {
     public static final SimpleOverlayRenderer CONVERTER_FE_OUT = new SimpleOverlayRenderer("overlay/converter/converter_fe_out");
     public static final SimpleOverlayRenderer CONVERTER_FE_IN = new SimpleOverlayRenderer("overlay/converter/converter_fe_in");
 
-    public static final ResourceLocation GREGTECH_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/gregtechcape.png");
-    public static final ResourceLocation RED_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/redcape.png");
-    public static final ResourceLocation YELLOW_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/yellowcape.png");
-    public static final ResourceLocation GREEN_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/greencape.png");
+    public static final ResourceLocation GREGTECH_CAPE_TEXTURE = gregtechId("textures/capes/gregtechcape.png");
+    public static final ResourceLocation RED_CAPE_TEXTURE = gregtechId("textures/capes/redcape.png");
+    public static final ResourceLocation YELLOW_CAPE_TEXTURE = gregtechId("textures/capes/yellowcape.png");
+    public static final ResourceLocation GREEN_CAPE_TEXTURE = gregtechId("textures/capes/greencape.png");
 
     @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite RESTRICTIVE_OVERLAY;
@@ -317,20 +322,20 @@ public class Textures {
             iconRegister.registerIcons(textureMap);
         }
 
-        RESTRICTIVE_OVERLAY = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_restrictive"));
-        PIPE_BLOCKED_OVERLAY = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_blocked"));
-        PIPE_TINY = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_tiny_in"));
-        PIPE_SMALL = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_small_in"));
-        PIPE_NORMAL = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_normal_in"));
-        PIPE_LARGE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_large_in"));
-        PIPE_HUGE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_huge_in"));
-        PIPE_QUADRUPLE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_quadruple_in"));
-        PIPE_NONUPLE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_nonuple_in"));
-        PIPE_SIDE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_side"));
-        PIPE_SMALL_WOOD = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_small_in_wood"));
-        PIPE_NORMAL_WOOD = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_normal_in_wood"));
-        PIPE_LARGE_WOOD = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_large_in_wood"));
-        PIPE_SIDE_WOOD = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_side_wood"));
+        RESTRICTIVE_OVERLAY = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_restrictive"));
+        PIPE_BLOCKED_OVERLAY = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_blocked"));
+        PIPE_TINY = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_tiny_in"));
+        PIPE_SMALL = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_small_in"));
+        PIPE_NORMAL = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in"));
+        PIPE_LARGE = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in"));
+        PIPE_HUGE = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_huge_in"));
+        PIPE_QUADRUPLE = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_quadruple_in"));
+        PIPE_NONUPLE = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_nonuple_in"));
+        PIPE_SIDE = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side"));
+        PIPE_SMALL_WOOD = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_small_in_wood"));
+        PIPE_NORMAL_WOOD = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in_wood"));
+        PIPE_LARGE_WOOD = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in_wood"));
+        PIPE_SIDE_WOOD = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side_wood"));
 
         for (MaterialIconSet iconSet : MaterialIconSet.ICON_SETS.values()) {
             textureMap.registerSprite(MaterialIconType.frameGt.getBlockTexturePath(iconSet));

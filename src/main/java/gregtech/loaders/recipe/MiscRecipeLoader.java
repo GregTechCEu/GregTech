@@ -6,6 +6,7 @@ import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.category.RecipeCategories;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.unification.OreDictUnifier;
@@ -349,11 +350,13 @@ public class MiscRecipeLoader {
             EXTRACTOR_RECIPES.recipeBuilder().EUt(VA[LV]).duration(15)
                     .input(item)
                     .fluidOutputs(Glass.getFluid(108))
+                    .category(RecipeCategories.EXTRACTOR_RECYCLING)
                     .buildAndRegister();
 
             MACERATOR_RECIPES.recipeBuilder().duration(15)
                     .input(item)
                     .output(dustSmall, Glass, 3)
+                    .category(RecipeCategories.MACERATOR_RECYCLING)
                     .buildAndRegister();
         }
 

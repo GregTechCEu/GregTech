@@ -3,8 +3,8 @@ package gregtech.api.util;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.core.network.packets.PacketNotifyCapeChange;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.core.network.packets.PacketNotifyCapeChange;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -139,10 +139,10 @@ public class CapesRegistry {
     }
 
     public static void checkAdvancements(World world) {
-        registerCape(new ResourceLocation(GTValues.MODID, "ultimate_voltage/74_wetware_mainframe"), Textures.GREGTECH_CAPE_TEXTURE, world);
-        registerCape(new ResourceLocation(GTValues.MODID, "steam/12_electronic_circuit"), Textures.RED_CAPE_TEXTURE, world);
-        registerCape(new ResourceLocation(GTValues.MODID, "high_voltage/82_large_chemical_reactor"), Textures.YELLOW_CAPE_TEXTURE, world);
-        registerCape(new ResourceLocation(GTValues.MODID, "ludicrous_voltage/60_fusion"), Textures.GREEN_CAPE_TEXTURE, world);
+        registerCape(GTUtility.gregtechId("ultimate_voltage/74_wetware_mainframe"), Textures.GREGTECH_CAPE_TEXTURE, world);
+        registerCape(GTUtility.gregtechId("steam/12_electronic_circuit"), Textures.RED_CAPE_TEXTURE, world);
+        registerCape(GTUtility.gregtechId("high_voltage/82_large_chemical_reactor"), Textures.YELLOW_CAPE_TEXTURE, world);
+        registerCape(GTUtility.gregtechId("ludicrous_voltage/60_fusion"), Textures.GREEN_CAPE_TEXTURE, world);
         for (Tuple<ResourceLocation, ResourceLocation> tuple : ctRegisterCapes) {
             registerCape(tuple.getFirst(), tuple.getSecond(), world);
         }

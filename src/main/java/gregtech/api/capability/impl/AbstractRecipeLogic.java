@@ -325,22 +325,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if the recipe can progress, otherwise false
      */
     protected boolean canProgressRecipe() {
-        if (previousRecipe == null)
-            return true;
-
-        CleanroomType requiredType = null;
-        if (previousRecipe.hasProperty(CleanroomProperty.getInstance())) {
-            requiredType = previousRecipe.getProperty(CleanroomProperty.getInstance(), null);
-        }
-
-        if (requiredType == null) return true;
-
-        if (getMetaTileEntity() instanceof IMultiblockController && ConfigHolder.machines.cleanMultiblocks) return true;
-
-        ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
-        if (cleanroomProvider == null) return false;
-
-        return cleanroomProvider.isClean() && cleanroomProvider.getTypes().contains(requiredType);
+        if (previousRecipe == null) return true;
+        return checkCleanroomRequirement(previousRecipe);
     }
 
     /**
@@ -396,19 +382,28 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if the recipe is allowed to be used, else false
      */
     public boolean checkRecipe(@Nonnull Recipe recipe) {
-        CleanroomType requiredType = null;
-        if (recipe.hasProperty(CleanroomProperty.getInstance())) {
-            requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
-        }
+        return checkCleanroomRequirement(recipe);
+    }
 
+    /**
+     * @param recipe the recipe to check
+     * @return if the cleanroom requirement is met
+     */
+    protected boolean checkCleanroomRequirement(@Nonnull Recipe recipe) {
+        CleanroomType requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
         if (requiredType == null) return true;
 
-        if (getMetaTileEntity() instanceof IMultiblockController && ConfigHolder.machines.cleanMultiblocks) return true;
+        MetaTileEntity mte = getMetaTileEntity();
+        if (mte instanceof ICleanroomReceiver receiver) {
+            if (ConfigHolder.machines.cleanMultiblocks && mte instanceof IMultiblockController) return true;
 
-        ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
-        if (cleanroomProvider == null) return false;
+            ICleanroomProvider cleanroomProvider = receiver.getCleanroom();
+            if (cleanroomProvider == null) return false;
 
-        return cleanroomProvider.isClean() && cleanroomProvider.getTypes().contains(requiredType);
+            return cleanroomProvider.isClean() && cleanroomProvider.checkCleanroomType(requiredType);
+        }
+
+        return false;
     }
 
     /**
