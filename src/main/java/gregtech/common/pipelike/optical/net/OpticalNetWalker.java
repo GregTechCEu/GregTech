@@ -13,34 +13,32 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class OpticalNetWalker extends PipeNetWalker {
 
     @Nullable
-    public static List<OpticalPipeNet.OpticalInventory> createNetData(World world, BlockPos sourcePipe, EnumFacing faceToSourceHandler) {
-        OpticalNetWalker walker = new OpticalNetWalker(world, sourcePipe, 1, new ArrayList<>(), null);
+    public static OpticalPipeNet.OpticalInventory createNetData(World world, BlockPos sourcePipe, EnumFacing faceToSourceHandler) {
+        OpticalNetWalker walker = new OpticalNetWalker(world, sourcePipe, 1, null, null);
         walker.sourcePipe = sourcePipe;
         walker.facingToHandler = faceToSourceHandler;
         walker.traversePipeNet();
-        return walker.isFailed() ? null : walker.inventories;
+        return walker.isFailed() ? null : walker.inventory;
     }
 
     private OpticalPipeProperties minProperties;
-    private final List<OpticalPipeNet.OpticalInventory> inventories;
+    private OpticalPipeNet.OpticalInventory inventory;
     private BlockPos sourcePipe;
     private EnumFacing facingToHandler;
 
-    protected OpticalNetWalker(World world, BlockPos sourcePipe, int distance, List<OpticalPipeNet.OpticalInventory> inventories, OpticalPipeProperties properties) {
+    protected OpticalNetWalker(World world, BlockPos sourcePipe, int distance, OpticalPipeNet.OpticalInventory inventory, OpticalPipeProperties properties) {
         super(world, sourcePipe, distance);
-        this.inventories = inventories;
+        this.inventory = inventory;
         this.minProperties = properties;
     }
 
     @Override
     protected PipeNetWalker createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks) {
-        OpticalNetWalker walker = new OpticalNetWalker(world, nextPos, walkedBlocks, inventories, minProperties);
+        OpticalNetWalker walker = new OpticalNetWalker(world, nextPos, walkedBlocks, inventory, minProperties);
         walker.facingToHandler = facingToHandler;
         walker.sourcePipe = sourcePipe;
         return walker;
@@ -61,9 +59,12 @@ public class OpticalNetWalker extends PipeNetWalker {
         if (neighbourTile == null || (GTUtility.arePosEqual(pipePos, sourcePipe) && faceToNeighbour == facingToHandler)) {
             return;
         }
-        IDataAccessHatch handler = neighbourTile.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, faceToNeighbour.getOpposite());
-        if (handler != null) {
-            inventories.add(new OpticalPipeNet.OpticalInventory(new BlockPos(pipePos), faceToNeighbour, getWalkedBlocks(), minProperties));
+
+        if (inventory == null) {
+            IDataAccessHatch handler = neighbourTile.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, faceToNeighbour.getOpposite());
+            if (handler != null) {
+                inventory = new OpticalPipeNet.OpticalInventory(new BlockPos(pipePos), faceToNeighbour, getWalkedBlocks(), minProperties);
+            }
         }
     }
 

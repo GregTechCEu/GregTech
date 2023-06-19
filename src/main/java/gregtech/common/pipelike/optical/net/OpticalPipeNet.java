@@ -16,33 +16,28 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class OpticalPipeNet extends PipeNet<OpticalPipeProperties> {
 
-    private final Map<BlockPos, List<OpticalInventory>> NET_DATA = new Object2ObjectOpenHashMap<>();
+    private final Map<BlockPos, OpticalInventory> NET_DATA = new Object2ObjectOpenHashMap<>();
 
     public OpticalPipeNet(WorldPipeNet<OpticalPipeProperties, ? extends PipeNet<OpticalPipeProperties>> world) {
         super(world);
     }
 
-    public List<OpticalInventory> getNetData(BlockPos pipePos, EnumFacing facing) {
-        List<OpticalInventory> data = NET_DATA.get(pipePos);
+    @Nullable
+    public OpticalInventory getNetData(BlockPos pipePos, EnumFacing facing) {
+        OpticalInventory data = NET_DATA.get(pipePos);
         if (data == null) {
             data = OpticalNetWalker.createNetData(getWorldData(), pipePos, facing);
             if (data == null) {
                 // walker failed, don't cache, so it tries again on next insertion
-                return Collections.emptyList();
+                return null;
             }
 
-            // only allow one other connection
-            if (data.size() == 1) {
-                NET_DATA.put(pipePos, data);
-            } else {
-                return Collections.emptyList();
-            }
+            NET_DATA.put(pipePos, data);
         }
         return data;
     }
@@ -108,6 +103,7 @@ public class OpticalPipeNet extends PipeNet<OpticalPipeProperties> {
             return pipePos.offset(faceToHandler);
         }
 
+        @Nullable
         public IOpticalDataAccessHatch getHandler(@Nonnull World world) {
             TileEntity tile = world.getTileEntity(getHandlerPos());
             if (tile != null) {

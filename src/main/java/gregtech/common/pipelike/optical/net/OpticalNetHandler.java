@@ -40,8 +40,7 @@ public class OpticalNetHandler implements IDataAccessHatch {
         if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
             return false;
         }
-
-        if (insertFirst(recipe, seen)) {
+        if (findRecipe(recipe, seen)) {
             for (BlockPos pos : net.getAllNodes().keySet()) {
                 if (world.getTileEntity(pos) instanceof TileEntityOpticalPipe opticalPipe) {
                     opticalPipe.setActive(true, 100);
@@ -49,19 +48,19 @@ public class OpticalNetHandler implements IDataAccessHatch {
             }
             return true;
         }
-
         return false;
     }
 
-    public boolean insertFirst(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
-        for (OpticalPipeNet.OpticalInventory inv : net.getNetData(pipe.getPipePos(), facing)) {
-            IOpticalDataAccessHatch hatch = inv.getHandler(world);
-            if (seen.contains(hatch)) continue;
-            if (hatch.isTransmitter()) {
-                if (hatch.isRecipeAvailable(recipe, seen)) {
-                    return true;
-                }
-            }
+    private boolean findRecipe(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
+        OpticalPipeNet.OpticalInventory inv = net.getNetData(pipe.getPipePos(), facing);
+        if (inv == null) return false;
+
+        IOpticalDataAccessHatch hatch = inv.getHandler(world);
+        if (hatch == null) return false;
+        if (seen.contains(hatch)) return false;
+
+        if (hatch.isTransmitter()) {
+            return hatch.isRecipeAvailable(recipe, seen);
         }
         return false;
     }
