@@ -124,7 +124,6 @@ public final class MaterialRegistryManager implements IMaterialRegistryManager {
             collection.addAll(registry.getAllMaterials());
         }
         registeredMaterials = Collections.unmodifiableCollection(collection);
-        Material.Builder.setConstructionRegistry(null);
         registrationPhase = Phase.CLOSED;
     }
 

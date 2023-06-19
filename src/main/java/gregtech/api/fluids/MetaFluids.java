@@ -266,13 +266,16 @@ public class MetaFluids {
         fluidToMaterialMappings.put(fluid.getName(), material);
         return fluid;
     }
+
     /**
      * Fixes all registered fluids being under the gregtech modid
      *
      * @param fluid the fluid to correct
      * @param modid the correct modid for the fluid
      */
-     private static void fixFluidRegistryName(@Nonnull Fluid fluid, @Nonnull String modid) {
+    private static void fixFluidRegistryName(@Nonnull Fluid fluid, @Nonnull String modid) {
+        if (GTValues.MODID.equals(modid)) return;
+
         if (MASTER_FLUID_REFERENCE == null) {
             try {
                 Field field = FluidRegistry.class.getDeclaredField("masterFluidReference");

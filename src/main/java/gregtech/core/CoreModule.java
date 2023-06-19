@@ -130,9 +130,7 @@ public class CoreModule implements IGregTechModule {
         managerInternal.unfreezeRegistries();
         MaterialEvent materialEvent = new MaterialEvent();
         logger.info("Registering GTCEu Materials");
-        materialEvent.startRegistration(GTValues.MODID);
         Materials.register();
-        materialEvent.completeRegistration();
         MaterialRegistryManager.getInstance()
                 .getRegistry(GTValues.MODID)
                 .setFallbackMaterial(Materials.Aluminium);
