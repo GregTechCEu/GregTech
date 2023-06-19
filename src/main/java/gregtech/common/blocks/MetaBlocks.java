@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import com.google.common.collect.ImmutableMap;
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -18,6 +19,7 @@ import gregtech.client.renderer.handler.MetaTileEntityTESR;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
@@ -35,6 +37,10 @@ import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
+import gregtech.common.pipelike.optical.BlockOpticalPipe;
+import gregtech.common.pipelike.optical.OpticalPipeType;
+import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
+import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipeTickable;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.*;
 import net.minecraft.block.BlockLog.EnumAxis;
@@ -51,6 +57,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -78,6 +85,7 @@ public class MetaBlocks {
     public static final BlockCable[] CABLES = new BlockCable[10];
     public static final BlockFluidPipe[] FLUID_PIPES = new BlockFluidPipe[7];
     public static final BlockItemPipe[] ITEM_PIPES = new BlockItemPipe[8];
+    public static final BlockOpticalPipe[] OPTICAL_PIPES = new BlockOpticalPipe[OpticalPipeType.values().length];
 
     public static BlockBoilerCasing BOILER_CASING;
     public static BlockFireboxCasing BOILER_FIREBOX_CASING;
@@ -93,6 +101,7 @@ public class MetaBlocks {
     public static BlockWarningSign1 WARNING_SIGN_1;
     public static BlockHermeticCasing HERMETIC_CASING;
     public static BlockCleanroomCasing CLEANROOM_CASING;
+    public static BlockComputerCasing COMPUTER_CASING;
 
     public static final EnumMap<EnumDyeColor, BlockLamp> LAMPS = new EnumMap<>(EnumDyeColor.class);
     public static final EnumMap<EnumDyeColor, BlockLamp> BORDERLESS_LAMPS = new EnumMap<>(EnumDyeColor.class);
@@ -150,6 +159,11 @@ public class MetaBlocks {
             ITEM_PIPES[type.ordinal()] = new BlockItemPipe(type);
             ITEM_PIPES[type.ordinal()].setRegistryName(String.format("item_pipe_%s", type.name));
         }
+        for (OpticalPipeType type : OpticalPipeType.values()) {
+            OPTICAL_PIPES[type.ordinal()] = new BlockOpticalPipe(type);
+            OPTICAL_PIPES[type.ordinal()].setRegistryName(String.format("optical_pipe_%s", type.getName()));
+            OPTICAL_PIPES[type.ordinal()].setTranslationKey(String.format("optical_pipe_%s", type.getName()));
+        }
 
         BOILER_CASING = new BlockBoilerCasing();
         BOILER_CASING.setRegistryName("boiler_casing");
@@ -179,6 +193,8 @@ public class MetaBlocks {
         HERMETIC_CASING.setRegistryName("hermetic_casing");
         CLEANROOM_CASING = new BlockCleanroomCasing();
         CLEANROOM_CASING.setRegistryName("cleanroom_casing");
+        COMPUTER_CASING = new BlockComputerCasing();
+        COMPUTER_CASING.setRegistryName("computer_casing");
 
         for (EnumDyeColor color : EnumDyeColor.values()) {
             BlockLamp block = new BlockLamp(color);
@@ -332,8 +348,10 @@ public class MetaBlocks {
         GameRegistry.registerTileEntity(TileEntityCableTickable.class, gregtechId("cable_tickable"));
         GameRegistry.registerTileEntity(TileEntityFluidPipe.class, gregtechId("fluid_pipe"));
         GameRegistry.registerTileEntity(TileEntityItemPipe.class, gregtechId("item_pipe"));
+        GameRegistry.registerTileEntity(TileEntityOpticalPipe.class, gregtechId("optical_pipe"));
         GameRegistry.registerTileEntity(TileEntityFluidPipeTickable.class, gregtechId("fluid_pipe_active"));
         GameRegistry.registerTileEntity(TileEntityItemPipeTickable.class, gregtechId("item_pipe_active"));
+        GameRegistry.registerTileEntity(TileEntityOpticalPipeTickable.class, gregtechId("optical_pipe_active"));
     }
 
     @SideOnly(Side.CLIENT)
@@ -345,6 +363,8 @@ public class MetaBlocks {
             ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> FluidPipeRenderer.INSTANCE.getModelLocation());
         for (BlockItemPipe pipe : ITEM_PIPES)
             ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> ItemPipeRenderer.INSTANCE.getModelLocation());
+        for (BlockOpticalPipe pipe : OPTICAL_PIPES)
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> OpticalPipeRenderer.INSTANCE.getModelLocation());
         registerItemModel(BOILER_CASING);
         registerItemModel(METAL_CASING);
         registerItemModel(TURBINE_CASING);
@@ -354,6 +374,7 @@ public class MetaBlocks {
         registerItemModel(WARNING_SIGN_1);
         registerItemModel(HERMETIC_CASING);
         registerItemModel(CLEANROOM_CASING);
+        registerItemModel(COMPUTER_CASING);
         registerItemModel(ASPHALT);
         for (StoneVariantBlock block : STONE_BLOCKS.values())
             registerItemModel(block);
@@ -430,6 +451,10 @@ public class MetaBlocks {
         }
         normalStateMapper = new SimpleStateMapper(ItemPipeRenderer.INSTANCE.getModelLocation());
         for (BlockItemPipe pipe : ITEM_PIPES) {
+            ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
+        }
+        normalStateMapper = new SimpleStateMapper(OpticalPipeRenderer.INSTANCE.getModelLocation());
+        for (BlockOpticalPipe pipe : OPTICAL_PIPES) {
             ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
         }
         normalStateMapper = new SimpleStateMapper(BlockSurfaceRock.MODEL_LOCATION);

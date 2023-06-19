@@ -76,7 +76,6 @@ public class ProgressWidget extends Widget {
             emptyBarArea.draw(pos.x, pos.y, size.width, size.height);
         }
         if (filledBarArea != null) {
-            //fuck this precision-dependent things, they are so fucking annoying
             if (moveType == MoveType.HORIZONTAL) {
                 filledBarArea[0].drawSubArea(pos.x, pos.y, (int) (size.width * lastProgressValue), size.height,
                         0.0, 0.0, ((int) (size.width * lastProgressValue)) / (size.width * 1.0), 1.0);

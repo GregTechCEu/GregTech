@@ -425,14 +425,14 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Override
     public int getLightValue(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        //why mc is so fucking retarded to call this method on fucking NEIGHBOUR BLOCKS!
+        // since it is called on neighbor blocks
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         return metaTileEntity == null ? 0 : metaTileEntity.getLightValue();
     }
 
     @Override
     public int getLightOpacity(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        //why mc is so fucking retarded to call this method on fucking NEIGHBOUR BLOCKS!
+        // since it is called on neighbor blocks
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         return metaTileEntity == null ? 0 : metaTileEntity.getLightOpacity();
     }

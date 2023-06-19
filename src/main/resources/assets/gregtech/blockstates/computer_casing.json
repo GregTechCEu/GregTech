@@ -1,0 +1,35 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecraft:cube_all"
+  },
+  "variants": {
+    "variant": {
+      "computer_casing": {
+        "model": "minecraft:cube",
+        "textures": {
+          "particle": "gregtech:blocks/casings/computer/computer_casing/front",
+          "down": "gregtech:blocks/casings/computer/computer_casing/bottom",
+          "up": "gregtech:blocks/casings/computer/computer_casing/top",
+          "north": "gregtech:blocks/casings/computer/computer_casing/side",
+          "east": "gregtech:blocks/casings/computer/computer_casing/side",
+          "south": "gregtech:blocks/casings/computer/computer_casing/side",
+          "west": "gregtech:blocks/casings/computer/computer_casing/side"
+        }
+      },
+      "computer_heat_vent": {
+        "model": "minecraft:cube_bottom_top",
+        "textures": {
+          "bottom": "gregtech:blocks/casings/computer/computer_heat_vent_top_bot",
+          "top": "#bottom",
+          "side": "gregtech:blocks/casings/computer/computer_heat_vent_side"
+        }
+      },
+      "high_power_casing": {
+        "textures": {
+          "all": "gregtech:blocks/casings/computer/high_power_casing"
+        }
+      }
+    }
+  }
+}

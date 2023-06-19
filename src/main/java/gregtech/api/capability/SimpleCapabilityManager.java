@@ -45,6 +45,7 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(IMaintenance.class);
         registerCapabilityWithNoDefault(IMultipleRecipeMaps.class);
         registerCapabilityWithNoDefault(AbstractRecipeLogic.class);
+        registerCapabilityWithNoDefault(IDataAccessHatch.class);
         registerCapabilityWithNoDefault(HardwareProvider.class);
         registerCapabilityWithNoDefault(ConverterTrait.class);
 
