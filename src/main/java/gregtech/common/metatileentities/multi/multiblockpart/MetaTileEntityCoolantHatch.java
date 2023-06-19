@@ -118,7 +118,7 @@ public class MetaTileEntityCoolantHatch extends MetaTileEntityMultiblockNotifiab
 
     @Override
     public MultiblockAbility<IFluidTank> getAbility() {
-        return isExportHatch ? MultiblockAbility.EXPORT_FLUIDS : MultiblockAbility.IMPORT_FLUIDS;
+        return isExportHatch ? MultiblockAbility.EXPORT_COOLANT : MultiblockAbility.IMPORT_COOLANT;
     }
 
     @Override

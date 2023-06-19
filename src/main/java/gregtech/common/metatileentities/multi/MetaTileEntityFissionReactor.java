@@ -4,6 +4,7 @@ import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.nuclear.fission.FissionReactor;
 import gregtech.api.pattern.BlockPattern;
@@ -61,7 +62,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     public int findDiameter() {
         int i = 1;
         while (i <= 15) {
-            if (this.isBlockEdge(this.getWorld(), new BlockPos.MutableBlockPos(this.getPos()), this.getFrontFacing().getOpposite(), i)) break;
+            if (this.isBlockEdge(this.getWorld(), new BlockPos.MutableBlockPos(this.getPos()), this.getFrontFacing().getOpposite(), i))
+                break;
             i++;
         }
         return i;
@@ -73,7 +75,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     public int findHeight(boolean top) {
         int i = 1;
         while (i <= 15) {
-            if (this.isBlockEdge(this.getWorld(), new BlockPos.MutableBlockPos(this.getPos()), top ? EnumFacing.UP : EnumFacing.DOWN, i)) break;
+            if (this.isBlockEdge(this.getWorld(), new BlockPos.MutableBlockPos(this.getPos()), top ? EnumFacing.UP : EnumFacing.DOWN, i))
+                break;
             i++;
         }
         return i - 1;
@@ -98,7 +101,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
         this.diameter = this.getWorld() != null ? Math.max(Math.min(this.findDiameter(), 15), 5) : 5;
 
-        int radius = this.diameter % 2 == 0 ? (int) Math.floor(this.diameter / 2.f) : Math.round((this.diameter - 1)/2.f);
+        int radius = this.diameter % 2 == 0 ? (int) Math.floor(this.diameter / 2.f) : Math.round((this.diameter - 1) / 2.f);
 
         StringBuilder interiorBuilder = new StringBuilder();
 
@@ -111,7 +114,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         for (int i = 0; i < this.diameter; i++) {
             for (int j = 0; j < this.diameter; j++) {
 
-                if (Math.pow(i - Math.floor(this.diameter/2.), 2) + Math.pow(j - Math.floor(this.diameter/2.), 2) < Math.pow(radius + 0.5f, 2)) {
+                if (Math.pow(i - Math.floor(this.diameter / 2.), 2) + Math.pow(j - Math.floor(this.diameter / 2.), 2) < Math.pow(radius + 0.5f, 2)) {
                     interiorBuilder.append('A');
                 } else {
                     interiorBuilder.append(' ');
@@ -141,7 +144,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         controllerSlice = interiorSlice.clone();
         topSlice = interiorSlice.clone();
         bottomSlice = interiorSlice.clone();
-        controllerSlice[0] = controllerSlice[0].substring(0, (int) Math.floor(this.diameter/2.)) + 'S' + controllerSlice[0].substring((int) Math.floor(this.diameter/2.) + 1);
+        controllerSlice[0] = controllerSlice[0].substring(0, (int) Math.floor(this.diameter / 2.)) + 'S' + controllerSlice[0].substring((int) Math.floor(this.diameter / 2.) + 1);
         for (int i = 0; i < this.diameter; i++) {
             topSlice[i] = topSlice[i].replace('A', 'I');
             bottomSlice[i] = bottomSlice[i].replace('A', 'O');
@@ -154,10 +157,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 .aisle(interiorSlice).setRepeatable(heightTop - 1)
                 .aisle(topSlice)
                 .where('S', selfPredicate())
-                .where('A', states(getFuelChannelState()))              //A for interior components
-                .where('I', states(getCoolantChannelState()))           //I for the inputs on the top
-                .where('O', states(getControlRodChannelState()))        //O for the outputs on the bottom
-                .where('B', states(getVesselState()))                   //B for the vessel blocks on the walls
+                .where('A', states(getFuelChannelState(), getControlRodChannelState(), getCoolantChannelState()))              //A for interior components
+                .where('I', states(getVesselState()).or(abilities(MultiblockAbility.IMPORT_COOLANT, MultiblockAbility.IMPORT_FUEL_ROD, MultiblockAbility.CONTROL_ROD_PORT)))           //I for the inputs on the top
+                .where('O', states(getVesselState()).or(abilities(MultiblockAbility.EXPORT_COOLANT, MultiblockAbility.EXPORT_FUEL_ROD)))        //O for the outputs on the bottom
+                .where('B', states(getVesselState()).or(abilities(MultiblockAbility.MAINTENANCE_HATCH)))                   //B for the vessel blocks on the walls
                 .where(' ', any())
                 .build();
     }
@@ -188,7 +191,12 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.CONTROL_ROD_CHANNEL);
     }
 
-    @Nonnull IBlockState getCoolantChannelState() {
+    @Nonnull
+    IBlockState getCoolantChannelState() {
+        return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL);
+    }
+    @Nonnull
+    IBlockState getTopHatchState() {
         return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL);
     }
 
