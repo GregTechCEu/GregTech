@@ -73,7 +73,7 @@ public class LampBakedModel implements IBakedModel {
         if (!emissive && !nonEmissive) return Collections.emptyList();
         List<BakedQuad> quads = new ArrayList<>();
         BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
-        ForgeHooksClient.setRenderLayer(null); // Fuck you CTM
+        ForgeHooksClient.setRenderLayer(null); // ctm
         List<BakedQuad> originalQuads = getModel().getQuads(state, side, rand);
         ForgeHooksClient.setRenderLayer(layer);
         for (BakedQuad q : originalQuads) {
