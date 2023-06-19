@@ -51,8 +51,9 @@ public class MetaTileEntities {
 
     //HULLS
     public static final MetaTileEntityHull[] HULL = new MetaTileEntityHull[GTValues.V.length];
-    public static final MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; // no ULV, no MAX
-    public static final MetaTileEntityAdjustableTransformer[] ADJUSTABLE_TRANSFORMER = new MetaTileEntityAdjustableTransformer[GTValues.V.length - 1]; // no ULV, no MAX
+    public static final MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; // no MAX
+    public static final MetaTileEntityTransformer[] HI_AMP_TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; /// no MAX
+    public static final MetaTileEntityTransformer[] POWER_TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; // no MAX
     public static final MetaTileEntityDiode[] DIODES = new MetaTileEntityDiode[GTValues.V.length];
     public static final MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[3][GTValues.V.length];
     public static final MetaTileEntityCharger[] CHARGER = new MetaTileEntityCharger[GTValues.V.length];
@@ -575,10 +576,15 @@ public class MetaTileEntities {
         // Transformer, IDs 1270-1299
         endPos = GregTechAPI.isHighTier() ? TRANSFORMER.length - 1 : Math.min(TRANSFORMER.length - 1, GTValues.UV);
         for (int i = 0; i <= endPos; i++) {
+            // 1A <-> 4A
             MetaTileEntityTransformer transformer = new MetaTileEntityTransformer(gregtechId("transformer." + GTValues.VN[i].toLowerCase()), i);
             TRANSFORMER[i] = registerMetaTileEntity(1270 + (i), transformer);
-            MetaTileEntityAdjustableTransformer adjustableTransformer = new MetaTileEntityAdjustableTransformer(gregtechId("transformer.adjustable." + GTValues.VN[i].toLowerCase()), i);
-            ADJUSTABLE_TRANSFORMER[i] = registerMetaTileEntity(1285 + (i), adjustableTransformer);
+            // 2A <-> 8A and 4A <-> 16A
+            MetaTileEntityTransformer adjustableTransformer = new MetaTileEntityTransformer(gregtechId("transformer.hi_amp." + GTValues.VN[i].toLowerCase()), i, 2, 4);
+            HI_AMP_TRANSFORMER[i] = registerMetaTileEntity(1730 + i, adjustableTransformer);
+            // 16A <-> 64A (can do other amperages because of legacy compat)
+            adjustableTransformer = new MetaTileEntityTransformer(gregtechId("transformer.adjustable." + GTValues.VN[i].toLowerCase()), i, 1, 2, 4, 16);
+            POWER_TRANSFORMER[i] = registerMetaTileEntity(1285 + (i), adjustableTransformer);
         }
 
         // Diode, IDs 1300-1314
@@ -768,6 +774,8 @@ public class MetaTileEntities {
                 ENERGY_CONVERTER[j][i] = registerMetaTileEntity(1670 + j + i * 4, converter);
             }
         }
+
+        // IDs 1730-1744 are taken by 4A <-> 16A Transformers. They are grouped with other transformers for organization.
 
         /*
          * FOR ADDON DEVELOPERS:

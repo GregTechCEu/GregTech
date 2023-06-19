@@ -3934,13 +3934,13 @@ gregtech.battery_buffer.average_output=Average output: %s EU/t
 
 # Transformers
 gregtech.machine.transformer.description=Transforms Energy between voltage tiers
+gregtech.machine.transformer.higher_amp.description=Transforms Energy between voltage tiers, now with more Amps!
 gregtech.machine.transformer.tooltip_tool_usage=Starts as §fTransform Down§7, use Soft Mallet to change
 gregtech.machine.transformer.tooltip_transform_down=§aTransform Down: §f%dA %d EU (%s§f) -> %dA %d EU (%s§f)
 gregtech.machine.transformer.message_transform_down=Transforming Down, In: %d EU %dA, Out: %d EU %dA
 gregtech.machine.transformer.tooltip_transform_up=§cTransform Up: §f%dA %d EU (%s§f) -> %dA %d EU (%s§f)
 gregtech.machine.transformer.message_transform_up=Transforming Up, In: %d EU %dA, Out: %d EU %dA
-gregtech.machine.transformer_adjustable.description=Transforms Energy between voltage tiers, now with more Amps!
-gregtech.machine.transformer_adjustable.tooltip_tool_usage=Starts as §f4A§7, use Screwdriver to change
+gregtech.machine.transformer_adjustable.tooltip_tool_usage=Starts as §f%dA§7, use Screwdriver to change
 gregtech.machine.transformer_adjustable.message_adjust=Adjusted Hi-Amp to %d EU %dA, Lo-Amp to %d EU %dA
 
 gregtech.machine.transformer.ulv.name=Ultra Low Voltage Transformer
@@ -3950,7 +3950,7 @@ gregtech.machine.transformer.hv.name=High Voltage Transformer
 gregtech.machine.transformer.ev.name=Extreme Voltage Transformer
 gregtech.machine.transformer.iv.name=Insane Voltage Transformer
 gregtech.machine.transformer.luv.name=Ludicrous Voltage Transformer
-gregtech.machine.transformer.zpm.name=Zero Point Module Transformer
+gregtech.machine.transformer.zpm.name=ZPM Voltage Transformer
 gregtech.machine.transformer.uv.name=Ultimate Voltage Transformer
 gregtech.machine.transformer.uhv.name=Ultra High Voltage Transformer
 gregtech.machine.transformer.uev.name=Ultra Excessive Voltage Transformer
@@ -3958,20 +3958,35 @@ gregtech.machine.transformer.uiv.name=Ultra Immense Voltage Transformer
 gregtech.machine.transformer.uxv.name=Ultra Extreme Voltage Transformer
 gregtech.machine.transformer.opv.name=Overpowered Voltage Transformer
 
-gregtech.machine.transformer.adjustable.ulv.name=Ultra Low Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.lv.name=Low Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.mv.name=Medium Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.hv.name=High Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.ev.name=Extreme Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.iv.name=Insane Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.luv.name=Ludicrous Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.zpm.name=Zero Point Module Transformer
-gregtech.machine.transformer.adjustable.uv.name=Ultimate Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.uhv.name=Ultra High Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.uev.name=Ultra Excessive Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.uiv.name=Ultra Immense Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.uxv.name=Ultra Extreme Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.opv.name=Overpowered Voltage Adjustable Transformer
+gregtech.machine.transformer.hi_amp.ulv.name=Ultra Low Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.lv.name=Low Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.mv.name=Medium Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.hv.name=High Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.ev.name=Extreme Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.iv.name=Insane Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.luv.name=Ludicrous Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.zpm.name=ZPM Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.uv.name=Ultimate Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.uhv.name=Ultra High Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.uev.name=Ultra Excessive Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.uiv.name=Ultra Immense Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.uxv.name=Ultra Extreme Voltage Hi-Amp Transformer
+gregtech.machine.transformer.hi_amp.opv.name=Overpowered Voltage Hi-Amp Transformer
+
+gregtech.machine.transformer.adjustable.ulv.name=Ultra Low Voltage Power Transformer
+gregtech.machine.transformer.adjustable.lv.name=Low Voltage Power Transformer
+gregtech.machine.transformer.adjustable.mv.name=Medium Voltage Power Transformer
+gregtech.machine.transformer.adjustable.hv.name=High Voltage Power Transformer
+gregtech.machine.transformer.adjustable.ev.name=Extreme Voltage Power Transformer
+gregtech.machine.transformer.adjustable.iv.name=Insane Voltage Power Transformer
+gregtech.machine.transformer.adjustable.luv.name=Ludicrous Voltage Power Transformer
+gregtech.machine.transformer.adjustable.zpm.name=ZPM Voltage Power Transformer
+gregtech.machine.transformer.adjustable.uv.name=Ultimate Voltage Power Transformer
+gregtech.machine.transformer.adjustable.uhv.name=Ultra High Voltage Power Transformer
+gregtech.machine.transformer.adjustable.uev.name=Ultra Excessive Voltage Power Transformer
+gregtech.machine.transformer.adjustable.uiv.name=Ultra Immense Voltage Power Transformer
+gregtech.machine.transformer.adjustable.uxv.name=Ultra Extreme Voltage Power Transformer
+gregtech.machine.transformer.adjustable.opv.name=Overpowered Voltage Power Transformer
 
 # Diodes
 gregtech.machine.diode.message=Max Amperage throughput: %s
