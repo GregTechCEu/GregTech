@@ -46,6 +46,12 @@ public class MultiblockAbility<T> {
 
     public static final MultiblockAbility<IPassthroughHatch> PASSTHROUGH_HATCH = new MultiblockAbility<>("passthrough_hatch");
 
+    public static final MultiblockAbility<IItemHandlerModifiable> IMPORT_FUEL_ROD = new MultiblockAbility<>("import_fuel_rod");
+    public static final MultiblockAbility<IItemHandlerModifiable> EXPORT_FUEL_ROD = new MultiblockAbility<>("export_fuel_rod");
+    public static final MultiblockAbility<IFluidTank> IMPORT_COOLANT = new MultiblockAbility<>("import_coolant");
+    public static final MultiblockAbility<IFluidTank> EXPORT_COOLANT = new MultiblockAbility<>("export_coolant");
+    public static final MultiblockAbility<IControlRodPort> CONTROL_ROD_PORT = new MultiblockAbility<>("control_rod_port");
+
     public static void registerMultiblockAbility(MultiblockAbility<?> ability, MetaTileEntity part) {
         if (!REGISTRY.containsKey(ability)) {
             REGISTRY.put(ability, new ArrayList<>());
@@ -53,7 +59,7 @@ public class MultiblockAbility<T> {
         REGISTRY.get(ability).add(part);
     }
 
-    public MultiblockAbility(String name){
+    public MultiblockAbility(String name) {
         NAME_REGISTRY.put(name.toLowerCase(), this);
     }
 }
