@@ -341,6 +341,9 @@ public class MetaTileEntityLoader {
         registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.TRANSFORMER, GTValues.ULV, GTValues.MV), " CC", "TH ", " CC", 'C', CABLE, 'T', CABLE_TIER_UP, 'H', HULL);
         registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.TRANSFORMER, GTValues.MV, GTValues.UHV), "WCC", "TH ", "WCC", 'W', POWER_COMPONENT, 'C', CABLE, 'T', CABLE_TIER_UP, 'H', HULL);
 
+        registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.HI_AMP_TRANSFORMER, GTValues.ULV, GTValues.MV), " CC", "TH ", " CC", 'C', CABLE_QUAD, 'T', CABLE_QUAD_TIER_UP, 'H', TRANSFORMER);
+        registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.HI_AMP_TRANSFORMER, GTValues.MV, GTValues.UHV), "WCC", "TH ", "WCC", 'W', VOLTAGE_COIL, 'C', CABLE_QUAD, 'T', CABLE_QUAD_TIER_UP, 'H', TRANSFORMER);
+
         registerMachineRecipe(MetaTileEntities.BATTERY_BUFFER[0], "WTW", "WMW", 'M', HULL, 'W', WIRE_QUAD, 'T', OreDictNames.chestWood);
         registerMachineRecipe(MetaTileEntities.BATTERY_BUFFER[1], "WTW", "WMW", 'M', HULL, 'W', WIRE_OCT, 'T', OreDictNames.chestWood);
         registerMachineRecipe(MetaTileEntities.BATTERY_BUFFER[2], "WTW", "WMW", 'M', HULL, 'W', WIRE_HEX, 'T', OreDictNames.chestWood);
