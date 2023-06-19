@@ -375,7 +375,7 @@ public class ConfigHolder {
             public int scrollSpeed = 13;
 
             @Config.Comment({"If progress bars should move smoothly.",
-                    "False is incrementally like the Minecraft furnace.",
+                    "False is incremental like the Minecraft furnace.",
                     "Default: true"})
             public boolean smoothProgressBars = true;
         }
