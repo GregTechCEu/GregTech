@@ -3,9 +3,11 @@ package gregtech.common.pipelike.optical.net;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.capability.IOpticalDataAccessHatch;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipeTickable;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -46,7 +48,19 @@ public class OpticalNetHandler implements IDataAccessHatch {
         if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
             return false;
         }
-        return insertFirst(recipe, seen);
+
+        if (insertFirst(recipe, seen)) {
+            int count = 0;
+            for (BlockPos pos : net.getAllNodes().keySet()) {
+                if (world.getTileEntity(pos) instanceof TileEntityOpticalPipe opticalPipe) {
+                    GTLog.logger.fatal("Pipe in net {} at pos {} in chunk {}", count++, pos, world.getChunk(pos));
+                    opticalPipe.setActive(true, 100);
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     public boolean insertFirst(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
