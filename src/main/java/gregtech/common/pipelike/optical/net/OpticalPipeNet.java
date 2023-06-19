@@ -17,7 +17,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -38,13 +37,12 @@ public class OpticalPipeNet extends PipeNet<OpticalPipeProperties> {
                 return Collections.emptyList();
             }
 
-            // TODO choose valid state by number of connected inventories - count does not include source tile
-//            if (data.size() == 1) {
-                data.sort(Comparator.comparingInt(inv -> inv.properties.hashCode()));
+            // only allow one other connection
+            if (data.size() == 1) {
                 NET_DATA.put(pipePos, data);
-//            } else {
-//                return Collections.emptyList();
-//            }
+            } else {
+                return Collections.emptyList();
+            }
         }
         return data;
     }
