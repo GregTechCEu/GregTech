@@ -4,16 +4,20 @@ import gregtech.api.capability.IControllable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.IControlRodPort;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifiablePart implements IControllable, IFissionReactorHatch {
+import java.util.List;
+
+public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifiablePart implements IControllable, IFissionReactorHatch, IMultiblockAbilityPart<IControlRodPort>, IControlRodPort {
 
     private boolean workingEnabled;
     private boolean valid;
@@ -64,5 +68,21 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
     @Override
     public void setValid(boolean valid) {
         this.valid = valid;
+    }
+
+
+    @Override
+    public MultiblockAbility<IControlRodPort> getAbility() {
+        return MultiblockAbility.CONTROL_ROD_PORT;
+    }
+
+    @Override
+    public void registerAbilities(List<IControlRodPort> abilityList) {
+        abilityList.add(this);
+    }
+
+    @Override
+    public byte getInsertionAmount() {
+        return this.insertion;
     }
 }
