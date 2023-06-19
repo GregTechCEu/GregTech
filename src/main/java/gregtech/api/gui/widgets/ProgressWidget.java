@@ -248,11 +248,11 @@ public class ProgressWidget extends Widget {
         private double calculateTime() {
             long currentTime = System.currentTimeMillis();
             long msPassed = (currentTime - startTime) % msPerCycle;
-            double currentValue = msPassed * (maxValue + 1.0) / msPerCycle;
+            double currentValue = 1.0 * msPassed * maxValue / msPerCycle;
             if (countDown) {
-                return (maxValue - currentValue) / (maxValue * 1.0);
+                return (maxValue - currentValue) / maxValue;
             }
-            return currentValue / (maxValue * 1.0);
+            return currentValue / maxValue;
         }
     }
 }
