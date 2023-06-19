@@ -89,7 +89,7 @@ public class MetaTileEntityFuelRodHatch extends MetaTileEntityMultiblockNotifiab
 
     @Override
     public MultiblockAbility<IItemHandlerModifiable> getAbility() {
-        return isExportHatch ? MultiblockAbility.EXPORT_ITEMS : MultiblockAbility.IMPORT_ITEMS;
+        return isExportHatch ? MultiblockAbility.EXPORT_FUEL_ROD : MultiblockAbility.IMPORT_FUEL_ROD;
     }
 
     @Override
