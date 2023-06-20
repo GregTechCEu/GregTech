@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
@@ -217,6 +218,14 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             reinitializeStructurePattern();
         }
         super.checkStructurePattern();
+        for (IMultiblockPart part : this.getMultiblockParts()) {
+            if (part instanceof IFissionReactorHatch hatchPart) {
+                if (!hatchPart.checkValidity(height - 1)) {
+                    this.invalidateStructure();
+                    break;
+                }
+            }
+        }
     }
 
     @Override

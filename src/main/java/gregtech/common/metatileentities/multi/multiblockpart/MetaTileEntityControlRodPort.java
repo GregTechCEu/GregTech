@@ -56,13 +56,13 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
     @Override
     public boolean checkValidity(int depth) {
         //Export ports are always considered valid
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
-        for(int i = 0; i < depth; i++) {
-            if (getWorld().getBlockState(pos.move(EnumFacing.DOWN, i)) != MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.CONTROL_ROD_CHANNEL)) {
+        BlockPos pos = this.getPos();
+        for(int i = 1; i < depth; i++) {
+            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) != MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.CONTROL_ROD_CHANNEL)) {
                 return false;
             }
         }
-        return getWorld().getBlockState(pos.move(EnumFacing.DOWN, depth)) == MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.REACTOR_VESSEL);
+        return getWorld().getBlockState(pos.offset(EnumFacing.DOWN, depth)) == MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.REACTOR_VESSEL);
     }
 
     @Override

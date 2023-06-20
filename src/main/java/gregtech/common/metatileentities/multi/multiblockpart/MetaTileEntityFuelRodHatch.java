@@ -62,7 +62,7 @@ public class MetaTileEntityFuelRodHatch extends MetaTileEntityMultiblockNotifiab
     }
 
     private ModularUI.Builder createUITemplate(EntityPlayer player) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,143)
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 143)
                 .label(10, 5, getMetaFullName());
 
         builder.widget(new SlotWidget(isExportHatch ? exportItems : importItems, 0, 79, 18, true, !isExportHatch)
@@ -105,15 +105,15 @@ public class MetaTileEntityFuelRodHatch extends MetaTileEntityMultiblockNotifiab
     @Override
     public boolean checkValidity(int depth) {
         //Export ports are always considered valid
-        if(isExportHatch) return true;
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
-        for(int i = 0; i < depth; i++) {
-            if (getWorld().getBlockState(pos.move(EnumFacing.DOWN, i)) != MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.FUEL_CHANNEL)) {
+        if (isExportHatch) return true;
+        BlockPos pos = this.getPos();
+        for (int i = 1; i < depth; i++) {
+            if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) != MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.FUEL_CHANNEL)) {
                 return false;
             }
         }
-        if (getWorld().getTileEntity(pos.move(EnumFacing.DOWN, depth)) instanceof IGregTechTileEntity gtTe) {
-            return gtTe.getMetaTileEntity() == MetaTileEntities.FUEL_ROD_OUTPUT;
+        if (getWorld().getTileEntity(pos.offset(EnumFacing.DOWN, depth)) instanceof IGregTechTileEntity gtTe) {
+            return gtTe.getMetaTileEntity().metaTileEntityId.equals(MetaTileEntities.FUEL_ROD_OUTPUT.metaTileEntityId);
         }
         return false;
     }
