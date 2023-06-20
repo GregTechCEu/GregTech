@@ -387,6 +387,11 @@ public class ConfigHolder {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})
             @Config.RangeInt(min = 1)
             public int scrollSpeed = 13;
+
+            @Config.Comment({"If progress bars should move smoothly.",
+                    "False is incremental like the Minecraft furnace.",
+                    "Default: true"})
+            public boolean smoothProgressBars = true;
         }
 
         public static class ArmorHud {
