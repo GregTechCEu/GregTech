@@ -214,7 +214,7 @@ public class SeparationRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(80)
                 .fluidInputs(Lava.getFluid(1000))
-                .chancedOutput(OreDictUnifier.get(dust, SiliconDioxide, 2), 62500, 320)
+                .chancedOutput(OreDictUnifier.get(dust, SiliconDioxide, 2), 6250, 320)
                 .chancedOutput(dust, Magnesia, 2500, 270)
                 .chancedOutput(dust, Quicklime, 2500, 270)
                 .chancedOutput(nugget, Gold, 2500, 80)
