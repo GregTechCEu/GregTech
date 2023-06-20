@@ -89,7 +89,7 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
 
     @Override
     public void getDrops(NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
-        int amount = 3 + GTValues.RNG.nextInt((int) (2 + fortune * 1.5));
+        int amount = 1 + GTValues.RNG.nextInt((int) (2 + fortune * 1.5));
         drops.add(getDropStack(state, amount));
     }
 
