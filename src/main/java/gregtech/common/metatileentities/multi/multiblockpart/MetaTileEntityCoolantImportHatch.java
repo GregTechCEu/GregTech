@@ -4,7 +4,9 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IControllable;
-import gregtech.api.capability.impl.NotifiableFluidTank;
+import gregtech.api.capability.ILockableTank;
+import gregtech.api.capability.impl.FilteredItemHandler;
+import gregtech.api.capability.impl.LockableFluidTank;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.FluidContainerSlotWidget;
@@ -25,21 +27,23 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.List;
 
-public class MetaTileEntityCoolantHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank>, IControllable, IFissionReactorHatch {
+public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<ILockableTank>, IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private boolean valid;
-    private final FluidTank fluidTank;
+    private final LockableFluidTank fluidTank;
 
-    public MetaTileEntityCoolantHatch(ResourceLocation metaTileEntityId, boolean isExportHatch) {
-        super(metaTileEntityId, 4, isExportHatch);
-        this.fluidTank = new NotifiableFluidTank(16000, this, isExportHatch);
-        this.frontFacing = isExportHatch ? EnumFacing.DOWN : EnumFacing.UP;
+    public MetaTileEntityCoolantImportHatch(ResourceLocation metaTileEntityId) {
+        super(metaTileEntityId, 4, false);
+        this.fluidTank = new LockableFluidTank(16000, this, false);
+        this.frontFacing = EnumFacing.UP;
     }
     @Override
     public boolean isWorkingEnabled() {
@@ -53,7 +57,7 @@ public class MetaTileEntityCoolantHatch extends MetaTileEntityMultiblockNotifiab
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityCoolantHatch(metaTileEntityId, isExportHatch);
+        return new MetaTileEntityCoolantImportHatch(metaTileEntityId);
     }
 
     @Override
@@ -83,22 +87,21 @@ public class MetaTileEntityCoolantHatch extends MetaTileEntityMultiblockNotifiab
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            SimpleOverlayRenderer renderer = isExportHatch ? Textures.PIPE_OUT_OVERLAY : Textures.PIPE_IN_OVERLAY;
+            SimpleOverlayRenderer renderer = Textures.PIPE_IN_OVERLAY;
             renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            SimpleOverlayRenderer overlay = isExportHatch ? Textures.FLUID_HATCH_OUTPUT_OVERLAY : Textures.FLUID_HATCH_INPUT_OVERLAY;
+            SimpleOverlayRenderer overlay = Textures.FLUID_HATCH_INPUT_OVERLAY;
             overlay.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
-        super.setFrontFacing(isExportHatch ? EnumFacing.DOWN : EnumFacing.UP);
+        super.setFrontFacing(EnumFacing.UP);
     }
 
     @Override
     public boolean checkValidity(int depth) {
         //Export ports are always considered valid
-        if(isExportHatch) return true;
         BlockPos pos = this.getPos();
         for(int i = 1; i < depth; i++) {
             if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) != MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL)) {
@@ -117,12 +120,23 @@ public class MetaTileEntityCoolantHatch extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public MultiblockAbility<IFluidTank> getAbility() {
-        return isExportHatch ? MultiblockAbility.EXPORT_COOLANT : MultiblockAbility.IMPORT_COOLANT;
+    public MultiblockAbility<ILockableTank> getAbility() {
+        return MultiblockAbility.IMPORT_COOLANT;
     }
 
     @Override
-    public void registerAbilities(List<IFluidTank> abilityList) {
+    public void registerAbilities(List<ILockableTank> abilityList) {
         abilityList.add(fluidTank);
     }
+
+    @Override
+    protected IItemHandlerModifiable createImportItemHandler() {
+        return new FilteredItemHandler(1).setFillPredicate(FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
+    }
+
+    @Override
+    protected IItemHandlerModifiable createExportItemHandler() {
+        return new ItemStackHandler(1);
+    }
+
 }
