@@ -1,6 +1,7 @@
 package gregtech.common.gui.widget.appeng.slot;
 
 import appeng.api.storage.data.IAEItemStack;
+import com.google.common.collect.Lists;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.util.Position;
@@ -9,10 +10,15 @@ import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.gui.widget.appeng.AEConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
+import mezz.jei.api.gui.IGhostIngredientHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
+import javax.annotation.Nonnull;
+import java.awt.*;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @Author GlodBlock
@@ -132,6 +138,30 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
             } catch (IOException ignored) {
             }
         }
+    }
+
+    @Override
+    public List<IGhostIngredientHandler.Target<?>> getPhantomTargets(Object ingredient) {
+        if (!(ingredient instanceof ItemStack)) {
+            return Collections.emptyList();
+        }
+        Rectangle rectangle = toRectangleBox();
+        rectangle.height /= 2;
+        return Lists.newArrayList(new IGhostIngredientHandler.Target<>() {
+
+            @Nonnull
+            @Override
+            public Rectangle getArea() {
+                return rectangle;
+            }
+
+            @Override
+            public void accept(@Nonnull Object ingredient) {
+                if (ingredient instanceof ItemStack) {
+                    writeClientAction(UPDATE_ID, buf -> buf.writeItemStack((ItemStack) ingredient));
+                }
+            }
+        });
     }
 
 }

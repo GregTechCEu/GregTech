@@ -1,6 +1,7 @@
 package gregtech.common.gui.widget.appeng.slot;
 
 import appeng.api.storage.data.IAEFluidStack;
+import com.google.common.collect.Lists;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.util.FluidTooltipUtil;
@@ -11,14 +12,25 @@ import gregtech.client.utils.RenderUtil;
 import gregtech.common.gui.widget.appeng.AEConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
+import mezz.jei.api.gui.IGhostIngredientHandler;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
+import javax.annotation.Nonnull;
+import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import static gregtech.api.capability.GregtechDataCodes.LOAD_PHANTOM_FLUID_STACK_FROM_NBT;
+import static gregtech.api.util.GTUtility.getFluidFromContainer;
 
 /**
  * @Author GlodBlock
@@ -136,6 +148,21 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
                 });
             }
         }
+        if (id == LOAD_PHANTOM_FLUID_STACK_FROM_NBT) {
+            try {
+                FluidStack fluid = FluidStack.loadFluidStackFromNBT(buffer.readCompoundTag());
+                slot.setConfig(WrappedFluidStack.fromFluidStack(fluid));
+                this.parentWidget.enableAmount(this.index);
+                if (fluid != null) {
+                    writeUpdateInfo(UPDATE_ID, buf -> {
+                        buf.writeString(fluid.getFluid().getName());
+                        buf.writeVarInt(fluid.amount);
+                    });
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Override
@@ -149,6 +176,33 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
             FluidStack fluid = FluidRegistry.getFluidStack(buffer.readString(Integer.MAX_VALUE / 16), buffer.readVarInt());
             slot.setConfig(WrappedFluidStack.fromFluidStack(fluid));
         }
+    }
+
+    @Override
+    public List<IGhostIngredientHandler.Target<?>> getPhantomTargets(Object ingredient) {
+        if (getFluidFromContainer(ingredient) == null) {
+            return Collections.emptyList();
+        }
+        Rectangle rectangle = toRectangleBox();
+        rectangle.height /= 2;
+        return Lists.newArrayList(new IGhostIngredientHandler.Target<>() {
+
+            @Nonnull
+            @Override
+            public Rectangle getArea() {
+                return rectangle;
+            }
+
+            @Override
+            public void accept(@Nonnull Object ingredient) {
+                FluidStack stack = getFluidFromContainer(ingredient);
+
+                if (stack != null) {
+                    NBTTagCompound compound = stack.writeToNBT(new NBTTagCompound());
+                    writeClientAction(LOAD_PHANTOM_FLUID_STACK_FROM_NBT, buf -> buf.writeCompoundTag(compound));
+                }
+            }
+        });
     }
 
 }
