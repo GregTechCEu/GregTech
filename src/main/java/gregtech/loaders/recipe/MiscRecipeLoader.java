@@ -355,7 +355,7 @@ public class MiscRecipeLoader {
 
             MACERATOR_RECIPES.recipeBuilder().duration(15)
                     .input(item)
-                    .output(dustSmall, Glass, 3)
+                    .output(dust, Glass, 1)
                     .category(RecipeCategories.MACERATOR_RECYCLING)
                     .buildAndRegister();
         }

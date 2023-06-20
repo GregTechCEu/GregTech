@@ -738,7 +738,7 @@ public class MachineRecipeLoader {
                 .input(dust, Tetrahedrite)
                 .fluidInputs(Oxygen.getFluid(3000))
                 .output(dust, CupricOxide)
-                .output(dustTiny, AntimonyTrioxide, 3)
+                .chancedOutput(dust, AntimonyTrioxide, 3333, 100)
                 .fluidOutputs(SulfurDioxide.getFluid(2000))
                 .buildAndRegister();
 
@@ -771,7 +771,7 @@ public class MachineRecipeLoader {
                 .input(dust, SiliconDioxide, 3)
                 .input(dust, Carbon, 2)
                 .output(ingotHot, Silicon)
-                .output(dustTiny, Ash)
+                .chancedOutput(dust, Ash, 1111, 50)
                 .fluidOutputs(CarbonMonoxide.getFluid(2000))
                 .buildAndRegister();
     }
@@ -845,7 +845,7 @@ public class MachineRecipeLoader {
             MACERATOR_RECIPES.recipeBuilder()
                     .input(stone, Soapstone)
                     .output(dustImpure, Talc)
-                    .chancedOutput(dustTiny, Chromite, 1000, 280)
+                    .chancedOutput(dust, Chromite, 100, 28)
                     .buildAndRegister();
 
         if (!OreDictionary.getOres("stoneRedrock").isEmpty())
@@ -876,61 +876,61 @@ public class MachineRecipeLoader {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, GraniteRed)
                 .output(dust, GraniteRed)
-                .chancedOutput(dustSmall, Uranium238, 100, 40)
+                .chancedOutput(dust, Uranium238, 30, 7)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Andesite)
                 .output(dust, Andesite)
-                .chancedOutput(dustSmall, Stone, 100, 40)
+                .chancedOutput(dust, Stone, 30, 7)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Diorite)
                 .output(dust, Diorite)
-                .chancedOutput(dustSmall, Stone, 100, 40)
+                .chancedOutput(dust, Stone, 30, 7)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Granite)
                 .output(dust, Granite)
-                .chancedOutput(dustSmall, Stone, 100, 40)
+                .chancedOutput(dust, Stone, 30, 7)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.PORKCHOP))
                 .output(dustSmall, Meat, 6)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.FISH, 1, GTValues.W))
                 .output(dustSmall, Meat, 6)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.CHICKEN))
                 .output(dust, Meat)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.BEEF))
                 .output(dustSmall, Meat, 6)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.RABBIT))
                 .output(dustSmall, Meat, 6)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.MUTTON))
                 .output(dust, Meat)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
 

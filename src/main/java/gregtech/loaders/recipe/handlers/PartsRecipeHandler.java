@@ -254,7 +254,6 @@ public class PartsRecipeHandler {
         LATHE_RECIPES.recipeBuilder()
                 .input(plate, material)
                 .output(lens, material)
-                .output(dustSmall, material)
                 .duration(1200).EUt(120).buildAndRegister();
 
         if (!OreDictUnifier.get(gemExquisite, material).isEmpty()) {
@@ -427,13 +426,12 @@ public class PartsRecipeHandler {
     public static void processStick(OrePrefix stickPrefix, Material material, DustProperty property) {
         if (material.hasProperty(PropertyKey.GEM) || material.hasProperty(PropertyKey.INGOT)) {
             RecipeBuilder<?> builder = RecipeMaps.LATHE_RECIPES.recipeBuilder()
-                    .input(material.hasProperty(PropertyKey.GEM) ? OrePrefix.gem : OrePrefix.ingot, material)
+                    .input(material.hasProperty(PropertyKey.GEM) ? OrePrefix.gem : OrePrefix.ingot, material, ConfigHolder.recipes.harderRods ? 2 : 1)
                     .duration((int) Math.max(material.getMass() * 2, 1))
                     .EUt(16);
 
             if (ConfigHolder.recipes.harderRods) {
-                builder.output(OrePrefix.stick, material);
-                builder.output(OrePrefix.dustSmall, material, 2);
+                builder.output(OrePrefix.stick, material, 3);
             } else {
                 builder.output(OrePrefix.stick, material, 2);
             }

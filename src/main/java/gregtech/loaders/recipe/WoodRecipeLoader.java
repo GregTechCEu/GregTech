@@ -662,21 +662,21 @@ public class WoodRecipeLoader {
         // COAL TAR ============================================
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
                 .inputs(new ItemStack(Items.COAL, 32, 1))
-                .output(dustSmall, Ash, 2)
+                .chancedOutput(dust, Ash, 5000, 500)
                 .fluidOutputs(CoalTar.getFluid(1000))
                 .duration(640).EUt(64)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
                 .inputs(new ItemStack(Items.COAL, 12))
-                .output(dustSmall, DarkAsh, 2)
+                .chancedOutput(dust, DarkAsh, 5000, 500)
                 .fluidOutputs(CoalTar.getFluid(3000))
                 .duration(320).EUt(96)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
                 .input(gem, Coke, 8)
-                .output(dustSmall, Ash, 3)
+                .chancedOutput(dust, Ash, 7500, 500)
                 .fluidOutputs(CoalTar.getFluid(4000))
                 .duration(320).EUt(96)
                 .buildAndRegister();
