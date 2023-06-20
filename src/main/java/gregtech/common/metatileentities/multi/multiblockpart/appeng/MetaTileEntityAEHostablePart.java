@@ -24,11 +24,13 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockNotifiablePart;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.EnumSet;
 
 /**
  * @Author GlodBlock
@@ -133,6 +135,14 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     }
 
     @Override
+    public void setFrontFacing(EnumFacing frontFacing) {
+        super.setFrontFacing(frontFacing);
+        if (this.aeProxy != null) {
+            this.aeProxy.setValidSides(EnumSet.of(this.getFrontFacing()));
+        }
+    }
+
+    @Override
     public void gridChanged() {
         // NO-OP
     }
@@ -168,6 +178,7 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
             AENetworkProxy proxy = new AENetworkProxy((IGridProxyable) this.getHolder(), "mte_proxy", this.getStackForm(), true);
             proxy.setFlags(GridFlags.REQUIRE_CHANNEL);
             proxy.setIdlePowerUsage(ConfigHolder.compat.ae2.meHatchEnergyUsage);
+            proxy.setValidSides(EnumSet.of(this.getFrontFacing()));
             return proxy;
         }
         return null;
