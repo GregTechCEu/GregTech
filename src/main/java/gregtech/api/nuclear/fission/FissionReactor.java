@@ -102,8 +102,11 @@ public class FissionReactor {
         return Math.max(value * criticalRate / rate * Math.sqrt(target / value), equilibrium);
     }
 
-    public FissionReactor() {
-
+    public FissionReactor(int size) {
+        reactorLayout = new ReactorComponent[size][size];
+        fuelRods = new ArrayList<>();
+        controlRods = new ArrayList<>();
+        coolantChannels = new ArrayList<>();
     }
 
     public boolean canCoolantBoil() {
