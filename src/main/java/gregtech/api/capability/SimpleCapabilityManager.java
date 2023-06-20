@@ -45,6 +45,7 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(IMultipleRecipeMaps.class);
         registerCapabilityWithNoDefault(AbstractRecipeLogic.class);
         registerCapabilityWithNoDefault(IDataAccessHatch.class);
+        registerCapabilityWithNoDefault(IOpticalComputationProvider.class);
         registerCapabilityWithNoDefault(HardwareProvider.class);
         registerCapabilityWithNoDefault(ConverterTrait.class);
         registerCapabilityWithNoDefault(ILaserContainer.class);

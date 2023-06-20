@@ -1,6 +1,8 @@
 package gregtech.api.recipes.ingredients.nbtmatch;
 
 import gregtech.api.util.GTLog;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -39,6 +41,24 @@ public class NBTCondition {
             GTLog.logger.error("NBTCondition must not have null parameters.");
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
         }
+    }
+
+    @Nullable
+    public NBTTagCompound sampleTag(@Nullable NBTTagCompound tag) {
+        if (tagType == null) return null;
+        if (tag == null) tag = new NBTTagCompound();
+        if (NBTTagType.isNumeric(tagType)) {
+            tag.setLong(nbtKey, (long) value);
+        } else {
+            switch (tagType) {
+                case BOOLEAN -> tag.setBoolean(nbtKey, (boolean) value);
+                case BYTE_ARRAY -> tag.setByteArray(nbtKey, (byte[]) value);
+                case STRING -> tag.setString(nbtKey, (String) value);
+                case INT_ARRAY -> tag.setIntArray(nbtKey, (int[]) value);
+                case COMPOUND, LONG_ARRAY, LIST -> tag.setTag(nbtKey, (NBTBase) value);
+            }
+        }
+        return tag;
     }
 
     @Override

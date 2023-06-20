@@ -64,17 +64,17 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        calculateEnergyUsage();
+        this.energyUsage = calculateEnergyUsage();
     }
 
-    private void calculateEnergyUsage() {
+    protected int calculateEnergyUsage() {
         int receivers = getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION).size();
         int transmitters = getAbilities(MultiblockAbility.OPTICAL_DATA_TRANSMISSION).size();
         int regulars = getAbilities(MultiblockAbility.DATA_ACCESS_HATCH).size();
 
         int dataHatches = receivers + transmitters + regulars;
         int tier = receivers > 0 ? GTValues.LuV : GTValues.EV;
-        this.energyUsage = GTValues.VA[tier] * dataHatches;
+        return GTValues.VA[tier] * dataHatches;
     }
 
     @Override
@@ -86,11 +86,11 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     @Override
     protected void updateFormedValid() {
-        int energyToConsume = this.energyUsage;
+        int energyToConsume = this.getEnergyUsage();
         boolean hasMaintenance = ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics();
         if (hasMaintenance) {
             // 10% more energy per maintenance problem
-            energyToConsume += getNumMaintenanceProblems() * this.energyUsage / 10;
+            energyToConsume += getNumMaintenanceProblems() * energyToConsume / 10;
         }
 
         if (this.hasNotEnoughEnergy && energyContainer.getInputPerSec() > 19L * energyToConsume) {
@@ -114,6 +114,10 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
             this.hasNotEnoughEnergy = true;
             setActive(false);
         }
+    }
+
+    protected int getEnergyUsage() {
+        return energyUsage;
     }
 
     @Override
@@ -195,6 +199,10 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
+        renderTextures(renderState, translation, pipeline);
+    }
+
+    protected void renderTextures(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         if (isStructureFormed()) {
             Textures.HIGH_POWER_CASING.render(renderState, translation, pipeline);
         } else {
@@ -209,6 +217,11 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.DATA_BANK_OVERLAY;
+    }
+
+    @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
     }
 
     @SideOnly(Side.CLIENT)
@@ -229,7 +242,9 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        textList.add(new TextComponentTranslation("gregtech.multiblock.energy_consumption", this.energyUsage));
+        if (isStructureFormed()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.energy_consumption", getEnergyUsage()));
+        }
     }
 
     @Override

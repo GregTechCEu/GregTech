@@ -22,8 +22,13 @@ public final class AssemblyLineManager {
     public static final String RESEARCH_ID_NBT_TAG = "researchId";
 
     @Nonnull
-    public static ItemStack getDefaultDataItem() {
+    public static ItemStack getDefaultScannerItem() {
         return MetaItems.TOOL_DATA_STICK.getStackForm();
+    }
+
+    @Nonnull
+    public static ItemStack getDefaultResearchStationItem() {
+        return MetaItems.TOOL_DATA_ORB.getStackForm();
     }
 
     private AssemblyLineManager() {}
@@ -95,22 +100,33 @@ public final class AssemblyLineManager {
         if (!ConfigHolder.machines.enableResearch) return;
 
         for (AssemblyLineRecipeBuilder.ResearchRecipeEntry entry : builder.getRecipeEntries()) {
-            createDefaultResearchRecipe(entry.getResearchId(), entry.getResearchStack(), entry.getDataStack(), entry.getDuration(), entry.getEUt());
+            createDefaultResearchRecipe(entry.getResearchId(), entry.getResearchStack(), entry.getDataStack(), entry.getDuration(), entry.getEUt(), entry.getCWUt());
         }
     }
 
-    public static void createDefaultResearchRecipe(@Nonnull String researchId, @Nonnull ItemStack researchItem, @Nonnull ItemStack dataItem, int duration, int EUt) {
+    public static void createDefaultResearchRecipe(@Nonnull String researchId, @Nonnull ItemStack researchItem, @Nonnull ItemStack dataItem, int duration, int EUt, int CWUt) {
         if (!ConfigHolder.machines.enableResearch) return;
 
         NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(dataItem);
         writeResearchToNBT(compound, researchId);
 
-        RecipeMaps.SCANNER_RECIPES.recipeBuilder()
-                .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
-                .inputs(researchItem)
-                .outputs(dataItem)
-                .duration(duration)
-                .EUt(EUt)
-                .buildAndRegister();
+        if (CWUt > 0) {
+            RecipeMaps.RESEARCH_STATION_RECIPES.recipeBuilder()
+                    .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
+                    .inputs(researchItem)
+                    .outputs(dataItem)
+                    .duration(duration)
+                    .EUt(EUt)
+                    .CWUt(CWUt)
+                    .buildAndRegister();
+        } else {
+            RecipeMaps.SCANNER_RECIPES.recipeBuilder()
+                    .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
+                    .inputs(researchItem)
+                    .outputs(dataItem)
+                    .duration(duration)
+                    .EUt(EUt)
+                    .buildAndRegister();
+        }
     }
 }

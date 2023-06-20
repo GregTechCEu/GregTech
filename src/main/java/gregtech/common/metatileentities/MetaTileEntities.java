@@ -31,6 +31,10 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEnti
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCABridge;
+import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCAComputation;
+import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCACooler;
+import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCAEmpty;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
 import gregtech.common.metatileentities.primitive.MetaTileEntityCharcoalPileIgniter;
@@ -146,6 +150,16 @@ public class MetaTileEntities {
     public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_TRANSMITTER;
     public static MetaTileEntityLaserHatch LASER_INPUT_HATCH;
     public static MetaTileEntityLaserHatch LASER_OUTPUT_HATCH;
+    public static MetaTileEntityComputationHatch COMPUTATION_HATCH_RECEIVER;
+    public static MetaTileEntityComputationHatch COMPUTATION_HATCH_TRANSMITTER;
+    public static MetaTileEntityObjectHolder OBJECT_HOLDER;
+    public static MetaTileEntityHPCAEmpty HPCA_EMPTY_COMPONENT;
+    public static MetaTileEntityHPCAComputation HPCA_COMPUTATION_COMPONENT;
+    public static MetaTileEntityHPCAComputation HPCA_ADVANCED_COMPUTATION_COMPONENT;
+    public static MetaTileEntityHPCACooler HPCA_HEAT_SINK_COMPONENT;
+    public static MetaTileEntityHPCACooler HPCA_ACTIVE_COOLER_COMPONENT;
+    public static MetaTileEntityHPCABridge HPCA_BRIDGE_COMPONENT;
+
     // Used for addons if they wish to disable certain tiers of machines
     private static final Map<String, Boolean> MID_TIER = new HashMap<>();
     private static final Map<String, Boolean> HIGH_TIER = new HashMap<>();
@@ -216,8 +230,12 @@ public class MetaTileEntities {
     public static MetaTileEntityCleanroom CLEANROOM;
     public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
     public static MetaTileEntityDataBank DATA_BANK;
+    public static MetaTileEntityResearchStation RESEARCH_STATION;
+    public static MetaTileEntityHPCA HIGH_PERFORMANCE_COMPUTING_ARRAY;
+    public static MetaTileEntityNetworkSwitch NETWORK_SWITCH;
     public static MetaTileEntityPowerSubstation POWER_SUBSTATION;
     public static MetaTileEntityActiveTransformer ACTIVE_TRANSFORMER;
+
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -544,6 +562,9 @@ public class MetaTileEntities {
         CHARCOAL_PILE_IGNITER = registerMetaTileEntity(1036, new MetaTileEntityCharcoalPileIgniter(gregtechId("charcoal_pile")));
 
         DATA_BANK = registerMetaTileEntity(1037, new MetaTileEntityDataBank(gregtechId("data_bank")));
+        RESEARCH_STATION = registerMetaTileEntity(1038, new MetaTileEntityResearchStation(gregtechId("research_station")));
+        HIGH_PERFORMANCE_COMPUTING_ARRAY = registerMetaTileEntity(1039, new MetaTileEntityHPCA(gregtechId("high_performance_computing_array")));
+        NETWORK_SWITCH = registerMetaTileEntity(1040, new MetaTileEntityNetworkSwitch(gregtechId("network_switch")));
 
         POWER_SUBSTATION = registerMetaTileEntity(1041, new MetaTileEntityPowerSubstation(gregtechId("power_substation")));
         ACTIVE_TRANSFORMER = registerMetaTileEntity(1042, new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
@@ -657,10 +678,20 @@ public class MetaTileEntities {
         CREATIVE_DATA_HATCH = registerMetaTileEntity(1406, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.creative"), GTValues.MAX, true));
         OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1407, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.receiver"), false));
         OPTICAL_DATA_HATCH_TRANSMITTER = registerMetaTileEntity(1408, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.transmitter"), true));
-
+        COMPUTATION_HATCH_RECEIVER = registerMetaTileEntity(1409, new MetaTileEntityComputationHatch(gregtechId("computation_hatch.receiver"), false));
+        COMPUTATION_HATCH_TRANSMITTER = registerMetaTileEntity(1410, new MetaTileEntityComputationHatch(gregtechId("computation_hatch.transmitter"), true));
+        OBJECT_HOLDER = registerMetaTileEntity(1411, new MetaTileEntityObjectHolder(gregtechId("research_station.object_holder")));
+        HPCA_EMPTY_COMPONENT = registerMetaTileEntity(1412, new MetaTileEntityHPCAEmpty(gregtechId("hpca.empty_component")));
+        HPCA_COMPUTATION_COMPONENT = registerMetaTileEntity(1413, new MetaTileEntityHPCAComputation(gregtechId("hpca.computation_component"), false));
+        HPCA_ADVANCED_COMPUTATION_COMPONENT = registerMetaTileEntity(1414, new MetaTileEntityHPCAComputation(gregtechId("hpca.advanced_computation_component"), true));
+        HPCA_HEAT_SINK_COMPONENT = registerMetaTileEntity(1415, new MetaTileEntityHPCACooler(gregtechId("hpca.heat_sink_component"), false));
+        HPCA_ACTIVE_COOLER_COMPONENT = registerMetaTileEntity(1416, new MetaTileEntityHPCACooler(gregtechId("hpca.active_cooler_component"), true));
+        HPCA_BRIDGE_COMPONENT = registerMetaTileEntity(1417, new MetaTileEntityHPCABridge(gregtechId("hpca.bridge_component")));
+        // Free IDs 1418, 1419
         LASER_INPUT_HATCH = registerMetaTileEntity(1420, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source"), true));
         LASER_OUTPUT_HATCH = registerMetaTileEntity(1421, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target"), false));
         // Free Range: 1422-1509
+
 
         // Buffers, IDs 1510-1512
         BUFFER[0] = registerMetaTileEntity(1510, new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));

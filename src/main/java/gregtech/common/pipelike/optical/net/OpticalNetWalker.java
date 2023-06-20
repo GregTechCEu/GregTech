@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.optical.net;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
@@ -61,8 +60,8 @@ public class OpticalNetWalker extends PipeNetWalker {
         }
 
         if (inventory == null) {
-            IDataAccessHatch handler = neighbourTile.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, faceToNeighbour.getOpposite());
-            if (handler != null) {
+            if (neighbourTile.hasCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, faceToNeighbour.getOpposite()) ||
+                    neighbourTile.hasCapability(GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER, faceToNeighbour.getOpposite())) {
                 inventory = new OpticalPipeNet.OpticalInventory(new BlockPos(pipePos), faceToNeighbour, getWalkedBlocks(), minProperties);
             }
         }
