@@ -131,7 +131,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     }
 
     /**
-     * @param active if the pipe should become active
+     * @param active   if the pipe should become active
      * @param duration how long the pipe should be active for
      */
     public void setActive(boolean active, int duration) {

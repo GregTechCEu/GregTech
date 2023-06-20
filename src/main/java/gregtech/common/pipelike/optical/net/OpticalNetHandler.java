@@ -3,7 +3,6 @@ package gregtech.common.pipelike.optical.net;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.capability.IOpticalDataAccessHatch;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipeTickable;
 import net.minecraft.util.EnumFacing;
@@ -40,20 +39,18 @@ public class OpticalNetHandler implements IDataAccessHatch {
     @Override
     public boolean isRecipeAvailable(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
         // only set pipe to ticking when something is inserted
-        if (tickingPipe == null) {
-            this.tickingPipe = (TileEntityOpticalPipeTickable) pipe.setSupportsTicking();
-            this.pipe = tickingPipe;
-        }
+//        if (tickingPipe == null) {
+//            this.tickingPipe = (TileEntityOpticalPipeTickable) pipe.setSupportsTicking();
+//            this.pipe = tickingPipe;
+//        }
 
         if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
             return false;
         }
 
         if (insertFirst(recipe, seen)) {
-            int count = 0;
             for (BlockPos pos : net.getAllNodes().keySet()) {
                 if (world.getTileEntity(pos) instanceof TileEntityOpticalPipe opticalPipe) {
-                    GTLog.logger.fatal("Pipe in net {} at pos {} in chunk {}", count++, pos, world.getChunk(pos));
                     opticalPipe.setActive(true, 100);
                 }
             }
