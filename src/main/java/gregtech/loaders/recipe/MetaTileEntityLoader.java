@@ -346,12 +346,6 @@ public class MetaTileEntityLoader {
 
         registerMachineRecipe(MetaTileEntities.CHARGER, "WTW", "WMW", "BCB", 'M', HULL, 'W', WIRE_QUAD, 'T', OreDictNames.chestWood, 'B', CABLE, 'C', CIRCUIT);
 
-        registerMachineRecipe(MetaTileEntities.FLUID_IMPORT_HATCH, " G", " M", 'M', HULL, 'G', GLASS);
-        registerMachineRecipe(MetaTileEntities.FLUID_EXPORT_HATCH, " M", " G", 'M', HULL, 'G', GLASS);
-
-        registerMachineRecipe(MetaTileEntities.ITEM_IMPORT_BUS, " C", " M", 'M', HULL, 'C', OreDictNames.chestWood);
-        registerMachineRecipe(MetaTileEntities.ITEM_EXPORT_BUS, " M", " C", 'M', HULL, 'C', OreDictNames.chestWood);
-
         if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
             ModHandler.addShapedRecipe(false, "me_export_hatch", MetaTileEntities.FLUID_EXPORT_HATCH_ME.getStackForm(), "H", "X", 'X', GameRegistry.makeItemStack(GTValues.MODID_APPENG + ":fluid_interface", 0, 1, null), 'H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.EV].getStackForm());
             ModHandler.addShapedRecipe(false, "me_import_hatch", MetaTileEntities.FLUID_IMPORT_HATCH_ME.getStackForm(), "X", "H", 'X', GameRegistry.makeItemStack(GTValues.MODID_APPENG + ":fluid_interface", 0, 1, null), 'H', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.EV].getStackForm());
