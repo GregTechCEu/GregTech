@@ -49,12 +49,12 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         return new MetaTileEntityFissionReactor(metaTileEntityId);
     }
 
-    public boolean isBlockEdge(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction) {
+    public boolean isBlockEdge(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing direction) {
         return this.isBlockEdge(world, pos, direction, 1);
     }
 
-    public boolean isBlockEdge(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction, int steps) {
-        return world.getBlockState(pos.move(direction, steps)).getBlock() != MetaBlocks.FISSION_CASING;
+    public boolean isBlockEdge(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing direction, int steps) {
+        return world.getBlockState(pos.offset(direction, steps)).getBlock() != MetaBlocks.FISSION_CASING;
     }
 
     /**
@@ -63,7 +63,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     public int findDiameter() {
         int i = 1;
         while (i <= 15) {
-            if (this.isBlockEdge(this.getWorld(), new BlockPos.MutableBlockPos(this.getPos()), this.getFrontFacing().getOpposite(), i))
+            if (this.isBlockEdge(this.getWorld(), this.getPos(), this.getFrontFacing().getOpposite(), i))
                 break;
             i++;
         }
@@ -76,7 +76,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     public int findHeight(boolean top) {
         int i = 1;
         while (i <= 15) {
-            if (this.isBlockEdge(this.getWorld(), new BlockPos.MutableBlockPos(this.getPos()), top ? EnumFacing.UP : EnumFacing.DOWN, i))
+            if (this.isBlockEdge(this.getWorld(), this.getPos(), top ? EnumFacing.UP : EnumFacing.DOWN, i))
                 break;
             i++;
         }
@@ -217,6 +217,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         if (!this.isStructureFormed()) {
             reinitializeStructurePattern();
         }
+        fissionReactor = new FissionReactor(this.diameter - 2);
         super.checkStructurePattern();
         for (IMultiblockPart part : this.getMultiblockParts()) {
             if (part instanceof IFissionReactorHatch hatchPart) {

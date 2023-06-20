@@ -4,9 +4,11 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.ILockableItemHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.items.itemhandlers.LockableItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
@@ -26,14 +28,14 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.List;
 
-public class MetaTileEntityFuelRodHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable, IFissionReactorHatch {
+public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<ILockableItemHandler>, IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private boolean valid;
 
-    public MetaTileEntityFuelRodHatch(ResourceLocation metaTileEntityId, boolean isExportHatch) {
-        super(metaTileEntityId, 4, isExportHatch);
-        this.frontFacing = isExportHatch ? EnumFacing.DOWN : EnumFacing.UP;
+    public MetaTileEntityFuelRodImportHatch(ResourceLocation metaTileEntityId) {
+        super(metaTileEntityId, 4, false);
+        this.frontFacing = EnumFacing.UP;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class MetaTileEntityFuelRodHatch extends MetaTileEntityMultiblockNotifiab
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityFuelRodHatch(metaTileEntityId, isExportHatch);
+        return new MetaTileEntityFuelRodImportHatch(metaTileEntityId);
     }
 
     @Override
@@ -58,14 +60,14 @@ public class MetaTileEntityFuelRodHatch extends MetaTileEntityMultiblockNotifiab
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(1);
+        return new LockableItemStackHandler(this, false);
     }
 
     private ModularUI.Builder createUITemplate(EntityPlayer player) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 143)
                 .label(10, 5, getMetaFullName());
 
-        builder.widget(new SlotWidget(isExportHatch ? exportItems : importItems, 0, 79, 18, true, !isExportHatch)
+        builder.widget(new SlotWidget(importItems, 0, 79, 18, true, true)
                 .setBackgroundTexture(GuiTextures.SLOT));
 
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 60);
@@ -88,24 +90,22 @@ public class MetaTileEntityFuelRodHatch extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public MultiblockAbility<IItemHandlerModifiable> getAbility() {
-        return isExportHatch ? MultiblockAbility.EXPORT_FUEL_ROD : MultiblockAbility.IMPORT_FUEL_ROD;
+    public MultiblockAbility<ILockableItemHandler> getAbility() {
+        return MultiblockAbility.IMPORT_FUEL_ROD;
     }
 
     @Override
-    public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
-        abilityList.add(isExportHatch ? this.exportItems : this.importItems);
+    public void registerAbilities(List<ILockableItemHandler> abilityList) {
+        abilityList.add((ILockableItemHandler) this.importItems);
     }
 
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
-        super.setFrontFacing(isExportHatch ? EnumFacing.DOWN : EnumFacing.UP);
+        super.setFrontFacing(EnumFacing.UP);
     }
 
     @Override
     public boolean checkValidity(int depth) {
-        //Export ports are always considered valid
-        if (isExportHatch) return true;
         BlockPos pos = this.getPos();
         for (int i = 1; i < depth; i++) {
             if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) != MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.FUEL_CHANNEL)) {
