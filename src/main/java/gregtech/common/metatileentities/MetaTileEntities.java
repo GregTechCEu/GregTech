@@ -199,10 +199,10 @@ public class MetaTileEntities {
     public static MetaTileEntityCleanroom CLEANROOM;
     public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
     public static MetaTileEntityFissionReactor FISSION_REACTOR;
-    public static MetaTileEntityFuelRodHatch FUEL_ROD_INPUT;
-    public static MetaTileEntityFuelRodHatch FUEL_ROD_OUTPUT;
-    public static MetaTileEntityCoolantHatch COOLANT_INPUT;
-    public static MetaTileEntityCoolantHatch COOLANT_OUTPUT;
+    public static MetaTileEntityFuelRodImportHatch FUEL_ROD_INPUT;
+    public static MetaTileEntityFuelRodExportHatch FUEL_ROD_OUTPUT;
+    public static MetaTileEntityCoolantImportHatch COOLANT_INPUT;
+    public static MetaTileEntityCoolantExportHatch COOLANT_OUTPUT;
     public static MetaTileEntityControlRodPort CONTROL_ROD;
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
@@ -752,10 +752,10 @@ public class MetaTileEntities {
             }
         }
 
-        FUEL_ROD_INPUT = registerMetaTileEntity(1730, new MetaTileEntityFuelRodHatch(gregtechId("fuel_rod_input"), false));
-        FUEL_ROD_OUTPUT = registerMetaTileEntity(1731, new MetaTileEntityFuelRodHatch(gregtechId("fuel_rod_output"), true));
-        COOLANT_INPUT = registerMetaTileEntity(1733, new MetaTileEntityCoolantHatch(gregtechId("coolant_input"), false));
-        COOLANT_OUTPUT = registerMetaTileEntity(1734, new MetaTileEntityCoolantHatch(gregtechId("coolant_output"), true));
+        FUEL_ROD_INPUT = registerMetaTileEntity(1730, new MetaTileEntityFuelRodImportHatch(gregtechId("fuel_rod_input")));
+        FUEL_ROD_OUTPUT = registerMetaTileEntity(1731, new MetaTileEntityFuelRodExportHatch(gregtechId("fuel_rod_output")));
+        COOLANT_INPUT = registerMetaTileEntity(1733, new MetaTileEntityCoolantImportHatch(gregtechId("coolant_input")));
+        COOLANT_OUTPUT = registerMetaTileEntity(1734, new MetaTileEntityCoolantExportHatch(gregtechId("coolant_output")));
         CONTROL_ROD = registerMetaTileEntity(1735, new MetaTileEntityControlRodPort(gregtechId("control_rod"), false));
 
         /*

@@ -1,9 +1,6 @@
 package gregtech.api.metatileentity.multiblock;
 
-import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMaintenanceHatch;
-import gregtech.api.capability.IMufflerHatch;
-import gregtech.api.capability.IRotorHolder;
+import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraftforge.fluids.IFluidTank;
@@ -46,9 +43,9 @@ public class MultiblockAbility<T> {
 
     public static final MultiblockAbility<IPassthroughHatch> PASSTHROUGH_HATCH = new MultiblockAbility<>("passthrough_hatch");
 
-    public static final MultiblockAbility<IItemHandlerModifiable> IMPORT_FUEL_ROD = new MultiblockAbility<>("import_fuel_rod");
+    public static final MultiblockAbility<ILockableItemHandler> IMPORT_FUEL_ROD = new MultiblockAbility<>("import_fuel_rod");
     public static final MultiblockAbility<IItemHandlerModifiable> EXPORT_FUEL_ROD = new MultiblockAbility<>("export_fuel_rod");
-    public static final MultiblockAbility<IFluidTank> IMPORT_COOLANT = new MultiblockAbility<>("import_coolant");
+    public static final MultiblockAbility<ILockableTank> IMPORT_COOLANT = new MultiblockAbility<>("import_coolant");
     public static final MultiblockAbility<IFluidTank> EXPORT_COOLANT = new MultiblockAbility<>("export_coolant");
     public static final MultiblockAbility<IControlRodPort> CONTROL_ROD_PORT = new MultiblockAbility<>("control_rod_port");
 
