@@ -90,6 +90,18 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart im
     }
 
     @Override
+    public void onRemoval() {
+        try {
+            IMEMonitor<IAEFluidStack> aeNetwork = this.getProxy().getStorage().getInventory(FLUID_NET);
+            for (IAEFluidStack fluid : this.internalBuffer) {
+                aeNetwork.injectItems(fluid.copy(), Actionable.MODULATE, this.getActionSource());
+            }
+        } catch (GridAccessException ignore) {
+        }
+        super.onRemoval();
+    }
+
+    @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
         return new MetaTileEntityMEOutputHatch(this.metaTileEntityId);
     }

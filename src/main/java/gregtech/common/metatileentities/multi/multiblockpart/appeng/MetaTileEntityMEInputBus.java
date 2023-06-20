@@ -112,6 +112,24 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
     }
 
     @Override
+    public void onRemoval() {
+        try {
+            IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
+            for (ExportOnlyAEItem aeSlot : this.aeItemSlots) {
+                IAEItemStack stock = aeSlot.stock;
+                if (stock instanceof WrappedItemStack) {
+                    stock = ((WrappedItemStack) stock).getAEStack();
+                }
+                if (stock != null) {
+                    aeNetwork.injectItems(stock, Actionable.MODULATE, this.getActionSource());
+                }
+            }
+        } catch (GridAccessException ignore) {
+        }
+        super.onRemoval();
+    }
+
+    @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
         return new MetaTileEntityMEInputBus(this.metaTileEntityId);
     }

@@ -88,6 +88,18 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart impl
     }
 
     @Override
+    public void onRemoval() {
+        try {
+            IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
+            for (IAEItemStack item : this.internalBuffer) {
+                aeNetwork.injectItems(item.copy(), Actionable.MODULATE, this.getActionSource());
+            }
+        } catch (GridAccessException ignore) {
+        }
+        super.onRemoval();
+    }
+
+    @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
         return new MetaTileEntityMEOutputBus(this.metaTileEntityId);
     }

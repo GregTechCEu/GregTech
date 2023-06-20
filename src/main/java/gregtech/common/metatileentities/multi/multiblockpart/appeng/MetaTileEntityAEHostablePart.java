@@ -22,9 +22,11 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockNotifiablePart;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -59,6 +61,15 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         if (!this.getWorld().isRemote) {
             this.meUpdateTick++;
         }
+    }
+
+    /**
+     * ME hatch will try to put its buffer back to me system when removal.
+     * So there is no need to drop them.
+     */
+    @Override
+    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+        // NO-OP
     }
 
     @Override

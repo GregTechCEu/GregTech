@@ -113,6 +113,24 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
     }
 
     @Override
+    public void onRemoval() {
+        try {
+            IMEMonitor<IAEFluidStack> aeNetwork = this.getProxy().getStorage().getInventory(FLUID_NET);
+            for (ExportOnlyAEFluid aeTank : this.aeFluidTanks) {
+                IAEFluidStack stock = aeTank.stock;
+                if (stock instanceof WrappedFluidStack) {
+                    stock = ((WrappedFluidStack) stock).getAEStack();
+                }
+                if (stock != null) {
+                    aeNetwork.injectItems(stock, Actionable.MODULATE, this.getActionSource());
+                }
+            }
+        } catch (GridAccessException ignore) {
+        }
+        super.onRemoval();
+    }
+
+    @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
         return new MetaTileEntityMEInputHatch(this.metaTileEntityId);
     }
