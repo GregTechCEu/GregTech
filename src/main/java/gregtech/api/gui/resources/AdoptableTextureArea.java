@@ -19,7 +19,7 @@ public class AdoptableTextureArea extends SizedTextureArea {
     }
 
     @Override
-    public void drawSubArea(double x, double y, int width, int height, double drawnU, double drawnV, double drawnWidth, double drawnHeight) {
+    public void drawSubArea(double x, double y, double width, double height, double drawnU, double drawnV, double drawnWidth, double drawnHeight) {
         //compute relative sizes
         double cornerWidth = pixelCornerWidth / pixelImageWidth;
         double cornerHeight = pixelCornerHeight / pixelImageHeight;
