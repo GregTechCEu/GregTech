@@ -10,11 +10,15 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.XSTR;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.client.utils.PipelineUtil;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +32,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -157,22 +162,25 @@ public class MetaTileEntityLightningRod extends TieredMetaTileEntity {
         return null; //No GUI Machine
     }
 
-    @SideOnly(Side.CLIENT)
-    private ICubeRenderer getRenderer() {
-        return switch (getTier()) {
-            case GTValues.HV -> isActive ? Textures.LIGHTNING_ROD_ACTIVE_HV : Textures.LIGHTNING_ROD_HV;
-            case GTValues.EV -> isActive ? Textures.LIGHTNING_ROD_ACTIVE_EV : Textures.LIGHTNING_ROD_EV;
-            case GTValues.IV -> isActive ? Textures.LIGHTNING_ROD_ACTIVE_IV : Textures.LIGHTNING_ROD_IV;
-            default -> Textures.LIGHTNING_ROD_HV;
-        };
-    }
-
     @Override
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
-        getRenderer().render(renderState, translation, colouredPipeline);
+        getBaseRenderer().render(renderState, translation, colouredPipeline);
+        Textures.LIGHTNING_ROD_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive, isActive);
         for(EnumFacing facing : EnumFacing.HORIZONTALS) Textures.ENERGY_OUT.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected SimpleSidedCubeRenderer getBaseRenderer() {
+        return Textures.VOLTAGE_CASINGS[getTier()];
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
+        return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override
