@@ -95,7 +95,9 @@ public class Materials {
          * - GregTech Food Option: 21500-22499
          * - FREE RANGE 22500-23599
          * - MechTech: 23600-23999
-         * - FREE RANGE 24000-31999
+         * - TJCore: 24000-25000
+         * - Gregica++: 25000-27000
+         * - FREE RANGE 27000-31999
          * - Reserved for CraftTweaker: 32000-32767
          */
 
