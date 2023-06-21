@@ -836,7 +836,7 @@ metaitem.cover.storage.name=収納カバー
 metaitem.cover.storage.tooltip=小物用の収納スペースを持つカバー
 
 metaitem.cover.facade.name=%sの外装
-metaitem.cover.facade.tooltip=カーブルを装飾する§fカバー§7
+metaitem.cover.facade.tooltip=ケーブルを装飾する§fカバー§7
 
 metaitem.cover.screen.name=コンピュータモニター
 metaitem.cover.screen.tooltip=§fデータ§7を表示する§fカバー§7
@@ -1687,7 +1687,7 @@ material.depleted_uranium_hexafluoride=劣化六フッ化ウラン
 material.nitrous_oxide=亜酸化窒素
 material.ender_pearl=エンダーパール
 material.potassium_feldspar=カリウム長石
-material.neodymium_magnetic=磁化ネオジウム
+material.neodymium_magnetic=磁化ネオジム
 material.hydrochloric_acid=塩酸
 material.steam=蒸気
 material.distilled_water=蒸留水
