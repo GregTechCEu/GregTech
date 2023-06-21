@@ -19,12 +19,12 @@ public class CoolantChannel extends ReactorComponent {
         this.weight = 0;
     }
 
-    public static void NormalizeWeights(ArrayList<CoolantChannel> effective_coolant_channels) {
+    public static void normalizeWeights(ArrayList<CoolantChannel> effectiveCoolantChannels) {
         double sum = 0;
-        for (CoolantChannel channel : effective_coolant_channels) {
+        for (CoolantChannel channel : effectiveCoolantChannels) {
             sum += channel.weight;
         }
-        for (CoolantChannel channel : effective_coolant_channels) {
+        for (CoolantChannel channel : effectiveCoolantChannels) {
             channel.weight /= sum;
         }
     }

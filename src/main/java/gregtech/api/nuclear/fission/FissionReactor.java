@@ -282,7 +282,7 @@ public class FissionReactor {
         this.computeControlRodWeights();
         this.computeCoolantChannelWeights();
 
-        controlRodFactor = ControlRod.ControlRodFactor(effectiveControlRods);
+        controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods);
         avgCoolantTemperature /= coolantChannels.size();
 
         this.prepareInitialConditions();
@@ -308,7 +308,7 @@ public class FissionReactor {
                 effectiveControlRods.add(rod);
             }
         }
-        ControlRod.NormalizeWeights(effectiveControlRods);
+        ControlRod.normalizeWeights(effectiveControlRods);
     }
 
     /**
@@ -321,7 +321,7 @@ public class FissionReactor {
                 effectiveCoolantChannels.add(channel);
             }
         }
-        CoolantChannel.NormalizeWeights(effectiveCoolantChannels);
+        CoolantChannel.normalizeWeights(effectiveCoolantChannels);
     }
 
     public void prepareInitialConditions() {
@@ -395,6 +395,10 @@ public class FissionReactor {
 
     public boolean checkForSecondaryExplosion() {
         return this.accumulatedHydrogen > 0.;
+    }
+
+    public void addComponent(ReactorComponent component, int x, int y) {
+        reactorLayout[x][y] = component;
     }
 
 }

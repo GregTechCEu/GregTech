@@ -45,6 +45,7 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
         this.fluidTank = new LockableFluidTank(16000, this, false);
         this.frontFacing = EnumFacing.UP;
     }
+
     @Override
     public boolean isWorkingEnabled() {
         return workingEnabled;
@@ -103,7 +104,7 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
     public boolean checkValidity(int depth) {
         //Export ports are always considered valid
         BlockPos pos = this.getPos();
-        for(int i = 1; i < depth; i++) {
+        for (int i = 1; i < depth; i++) {
             if (getWorld().getBlockState(pos.offset(EnumFacing.DOWN, i)) != MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL)) {
                 return false;
             }
@@ -139,4 +140,13 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
         return new ItemStackHandler(1);
     }
 
+    @Override
+    public void update() {
+        super.update();
+        if (!getWorld().isRemote) {
+            fillContainerFromInternalTank(fluidTank);
+            fillInternalTankFromFluidContainer(fluidTank);
+            pullFluidsFromNearbyHandlers(getFrontFacing());
+        }
+    }
 }
