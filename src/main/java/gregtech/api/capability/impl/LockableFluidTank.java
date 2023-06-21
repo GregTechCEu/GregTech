@@ -17,7 +17,10 @@ public class LockableFluidTank extends NotifiableFluidTank implements ILockableT
     @Override
     public void lock() {
         locked = true;
-        lockedFluid = this.getFluid().getFluid();
+        if (this.getFluid() == null)
+            lockedFluid = null;
+        else
+            lockedFluid = this.getFluid().getFluid();
     }
 
     @Override

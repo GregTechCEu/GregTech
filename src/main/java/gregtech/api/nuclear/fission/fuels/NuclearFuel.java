@@ -3,7 +3,6 @@ package gregtech.api.nuclear.fission.fuels;
 import gregtech.api.unification.material.Material;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NuclearFuel {
@@ -11,13 +10,13 @@ public class NuclearFuel {
     private final double duration;
     private final double temperatureCoefficient;
     private Double[][] delayedNeutronsGroups = new Double[6][];
-    private final double[] cs_vector;
+    private final double[] csVector;
 
     public NuclearFuel(List<Pair<Material, Double>> nuclearMaterials, double duration, double temperatureCoefficient) {
         this.nuclearMaterials = nuclearMaterials;
         this.duration = duration;
         this.temperatureCoefficient = temperatureCoefficient;
-        this.cs_vector = getMacroCrossSections();
+        this.csVector = getMacroCrossSections();
     }
 
     double[] getMacroCrossSections() {
@@ -53,6 +52,6 @@ public class NuclearFuel {
     }
 
     public double[] getCrossSectionVector() {
-        return cs_vector;
+        return csVector;
     }
 }

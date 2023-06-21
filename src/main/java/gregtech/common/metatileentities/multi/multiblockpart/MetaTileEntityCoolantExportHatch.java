@@ -127,4 +127,12 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
         return new ItemStackHandler(1);
     }
 
+    @Override
+    public void update() {
+        super.update();
+        if (!getWorld().isRemote) {
+            fillContainerFromInternalTank(fluidTank);
+            pushFluidsIntoNearbyHandlers(getFrontFacing());
+        }
+    }
 }

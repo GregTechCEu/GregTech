@@ -1,5 +1,8 @@
 package gregtech.common.metatileentities.multi;
 
+import gregtech.api.GregTechAPI;
+import gregtech.api.capability.ILockableHandler;
+import gregtech.api.gui.Widget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -8,29 +11,35 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.nuclear.fission.FissionReactor;
+import gregtech.api.nuclear.fission.components.CoolantChannel;
+import gregtech.api.nuclear.fission.components.FuelRod;
+import gregtech.api.nuclear.fission.components.ReactorComponent;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.unification.material.Material;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantImportHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportHatch;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+
+import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 
 public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase implements IDataInfoProvider {
 
@@ -39,6 +48,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     private int heightTop;
     private int heightBottom;
     private int height;
+    private boolean locked;
 
     public MetaTileEntityFissionReactor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -196,6 +206,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     IBlockState getCoolantChannelState() {
         return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL);
     }
+
     @Nonnull
     IBlockState getTopHatchState() {
         return MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL);
@@ -217,7 +228,6 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         if (!this.isStructureFormed()) {
             reinitializeStructurePattern();
         }
-        fissionReactor = new FissionReactor(this.diameter - 2);
         super.checkStructurePattern();
         for (IMultiblockPart part : this.getMultiblockParts()) {
             if (part instanceof IFissionReactorHatch hatchPart) {
@@ -234,6 +244,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         data.setInteger("diameter", this.diameter);
         data.setInteger("heightTop", this.heightTop);
         data.setInteger("heightBottom", this.heightBottom);
+        data.setBoolean("locked", this.locked);
         return super.writeToNBT(data);
     }
 
@@ -244,6 +255,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         this.heightTop = data.getInteger("heightTop");
         this.heightBottom = data.getInteger("heightBottom");
         this.height = this.heightTop + this.heightBottom + 1;
+        this.locked = data.getBoolean("locked");
     }
 
     @Override
@@ -252,6 +264,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         buf.writeInt(this.diameter);
         buf.writeInt(this.heightTop);
         buf.writeInt(this.heightBottom);
+        buf.writeBoolean(this.locked);
     }
 
     @Override
@@ -260,5 +273,65 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         this.diameter = buf.readInt();
         this.heightTop = buf.readInt();
         this.heightBottom = buf.readInt();
+        this.locked = buf.readBoolean();
+    }
+
+    @Override
+    protected void addDisplayText(List<ITextComponent> textList) {
+        super.addDisplayText(textList);
+        ITextComponent toggleText = locked ?
+                new TextComponentTranslation("gregtech.multiblock.fission_reactor.turn_on")
+                : new TextComponentTranslation("gregtech.multiblock.fission_reactor.turn_off");
+        toggleText.appendSibling(withButton(new TextComponentString(" [Toggle]"), "toggle"));
+        textList.add(toggleText);
+    }
+
+    @Override
+    protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
+        super.handleDisplayClick(componentData, clickData);
+        if (componentData.equals("toggle")) {
+            this.locked = !this.locked;
+            if (this.locked) {
+                for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
+                    handler.lock();
+                }
+                for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+                    handler.lock();
+                }
+                fissionReactor = new FissionReactor(this.diameter - 2);
+                int radius = this.diameter % 2 == 0 ? (int) Math.floor(this.diameter / 2.f) : Math.round((this.diameter - 1) / 2.f);
+                radius--; // Get rid of the outside ring
+                BlockPos reactorOrigin = this.getPos().offset(this.frontFacing.getOpposite()).offset(this.frontFacing.rotateY(), radius);
+                GTLog.logger.info(reactorOrigin.toString());
+                for (int i = 0; i < diameter - 2; i++) {
+                    for (int j = 0; j < diameter - 2; j++) {
+                        if (Math.pow(i, 2) + Math.pow(j, 2) > Math.pow(radius, 2))
+                            continue;
+                        BlockPos currentPos = reactorOrigin.offset(this.frontFacing.rotateYCCW(), i).offset(this.frontFacing.getOpposite(), j).offset(EnumFacing.UP, height - 2);
+                        if (getWorld().getTileEntity(currentPos) instanceof IGregTechTileEntity gtTe) {
+                            MetaTileEntity mte = gtTe.getMetaTileEntity();
+                            ReactorComponent component = null;
+
+                            if (mte instanceof MetaTileEntityCoolantImportHatch coolantIn) {
+                                Material mat = GregTechAPI.MaterialRegistry.get(coolantIn.getImportFluids().getTankAt(0).getFluid().getFluid().getName());
+                                if (mat != null) component = new CoolantChannel(0, 0, mat);
+                            } else if (mte instanceof MetaTileEntityFuelRodImportHatch fuelIn) {
+                                component = new FuelRod(0, 0, )
+                            }
+                            if (component != null)
+                                fissionReactor.addComponent(component, i, j);
+
+                        }
+                    }
+                }
+            } else {
+                for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
+                    handler.unlock();
+                }
+                for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+                    handler.unlock();
+                }
+            }
+        }
     }
 }

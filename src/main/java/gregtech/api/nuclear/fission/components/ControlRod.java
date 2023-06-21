@@ -19,19 +19,19 @@ public class ControlRod extends ReactorComponent {
         this.weight = 0;
     }
 
-    public static void NormalizeWeights(ArrayList<ControlRod> effective_control_rods) {
+    public static void normalizeWeights(ArrayList<ControlRod> effectiveControlRods) {
         double sum = 0;
-        for (ControlRod control_rod : effective_control_rods) {
+        for (ControlRod control_rod : effectiveControlRods) {
             sum += control_rod.weight;
         }
-        for (ControlRod control_rod : effective_control_rods) {
+        for (ControlRod control_rod : effectiveControlRods) {
             control_rod.weight /= sum;
         }
     }
 
-    public static double ControlRodFactor(ArrayList<ControlRod> effective_control_rods) {
+    public static double controlRodFactor(ArrayList<ControlRod> effectiveControlRods) {
         double crf = 0;
-        for (ControlRod control_rod : effective_control_rods) {
+        for (ControlRod control_rod : effectiveControlRods) {
             if (control_rod.hasModeratorTip()) {
                 if (control_rod.insertion <= 0.3) {
                     crf += control_rod.insertion / 3 * control_rod.weight;
