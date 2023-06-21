@@ -26,6 +26,7 @@ import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEn
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
+import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLightningRod;
 import gregtech.common.metatileentities.multi.multiblockpart.*;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
@@ -205,6 +206,7 @@ public class MetaTileEntities {
     public static MetaTileEntityCleanroom CLEANROOM;
     public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
     public static MetaTileEntityDataBank DATA_BANK;
+    public static MetaTileEntityLightningRod[] LIGHTNING_ROD = new MetaTileEntityLightningRod[3];
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -525,6 +527,10 @@ public class MetaTileEntities {
         CHARCOAL_PILE_IGNITER = registerMetaTileEntity(1036, new MetaTileEntityCharcoalPileIgniter(gregtechId("charcoal_pile")));
 
         DATA_BANK = registerMetaTileEntity(1037, new MetaTileEntityDataBank(gregtechId("data_bank")));
+
+        LIGHTNING_ROD[0] = registerMetaTileEntity(1038, new MetaTileEntityLightningRod(gregtechId("lightning_rod.hv"), GTValues.HV));
+        LIGHTNING_ROD[1] = registerMetaTileEntity(1039, new MetaTileEntityLightningRod(gregtechId("lightning_rod.ev"), GTValues.EV));
+        LIGHTNING_ROD[2] = registerMetaTileEntity(1040, new MetaTileEntityLightningRod(gregtechId("lightning_rod.iv"), GTValues.IV));
 
         // MISC MTE's START: IDs 1150-2000
 

@@ -80,6 +80,12 @@ public class Textures {
     public static final SimpleSidedCubeRenderer MAGIC_ENERGY_ABSORBER = new SimpleSidedCubeRenderer("casings/magic/absorber/normal");
     public static final SimpleSidedCubeRenderer MAGIC_ENERGY_ABSORBER_ACTIVE = new SimpleSidedCubeRenderer("casings/magic/absorber/active");
     public static final SimpleSidedCubeRenderer DRUM_OVERLAY = new SimpleSidedCubeRenderer("storage/drums/drum_top");
+    public static final SimpleSidedCubeRenderer LIGHTNING_ROD_HV = new SimpleSidedCubeRenderer("generators/lightning_rod/hv/normal");
+    public static final SimpleSidedCubeRenderer LIGHTNING_ROD_ACTIVE_HV = new SimpleSidedCubeRenderer("generators/lightning_rod/hv/active");
+    public static final SimpleSidedCubeRenderer LIGHTNING_ROD_EV = new SimpleSidedCubeRenderer("generators/lightning_rod/ev/normal");
+    public static final SimpleSidedCubeRenderer LIGHTNING_ROD_ACTIVE_EV = new SimpleSidedCubeRenderer("generators/lightning_rod/ev/active");
+    public static final SimpleSidedCubeRenderer LIGHTNING_ROD_IV = new SimpleSidedCubeRenderer("generators/lightning_rod/iv/normal");
+    public static final SimpleSidedCubeRenderer LIGHTNING_ROD_ACTIVE_IV = new SimpleSidedCubeRenderer("generators/lightning_rod/iv/active");
 
     // Simple Oriented Cube Renderers
     public static final SimpleOrientedCubeRenderer CRAFTING_TABLE = new SimpleOrientedCubeRenderer("casings/crafting_table");

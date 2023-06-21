@@ -2792,6 +2792,11 @@ gregtech.machine.gas_turbine.hv.name=Turbo Gas Turbine
 gregtech.machine.magic_energy_absorber.name=Magic Energy Absorber
 gregtech.machine.magic_energy_absorber.tooltip=Max Voltage OUT: §a2048 §7(§5EV§7)/nCollects energy from end crystals on naturally generated obsidian pillars in the End within 64 blocks./nEach ender crystal adds 32 EU/t to output/nPlace Dragon Egg on top to amplify output/n/nWhen amplified:/nEach ender crystal adds 128 EU/t
 
+gregtech.machine.lightning_rod.hv.name=Lightning Rod
+gregtech.machine.lightning_rod.ev.name=Lightning Rod II
+gregtech.machine.lightning_rod.iv.name=Lightning Rod III
+gregtech.machine.lightning_rod.usage=§bUsage§r: Place §bVanilla§r Iron Bars on it, It generates EU whenever rain or thunderstorm weather.
+
 # Machines
 
 # Block Breaker

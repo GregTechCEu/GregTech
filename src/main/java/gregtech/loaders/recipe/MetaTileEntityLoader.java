@@ -421,6 +421,24 @@ public class MetaTileEntityLoader {
             registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[2], " WW", "RMC", " WW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_OCT, 'R', new UnificationEntry(OrePrefix.cableGtOctal, Materials.RedAlloy));
             registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[3], " WW", "RMC", " WW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_HEX, 'R', new UnificationEntry(OrePrefix.cableGtHex, Materials.RedAlloy));
         }
+
+        ModHandler.addShapedRecipe("lightning_rod_iv", MetaTileEntities.LIGHTNING_ROD[0].getStackForm(),
+                "LML", "MCM", "LML",
+                'L', MetaItems.ENERGY_LAPOTRONIC_ORB,
+                'C', new ItemStack(MetaBlocks.MACHINE_CASING, 1, 6),
+                'M', MetaTileEntities.TRANSFORMER[6].getStackForm());
+
+        ModHandler.addShapedRecipe("lightning_rod_luv", MetaTileEntities.LIGHTNING_ROD[1].getStackForm(),
+                "LML", "MCM", "LML",
+                'L', MetaItems.ENERGY_LAPOTRONIC_ORB_CLUSTER,
+                'C', new ItemStack(MetaBlocks.MACHINE_CASING, 1, 7),
+                'M', MetaTileEntities.TRANSFORMER[7].getStackForm());
+
+        ModHandler.addShapedRecipe("lightning_rod_zpm", MetaTileEntities.LIGHTNING_ROD[2].getStackForm(),
+                "LML", "MCM", "LML",
+                'L', MetaItems.ULTIMATE_BATTERY,
+                'C', new ItemStack(MetaBlocks.MACHINE_CASING, 1, 8),
+                'M', MetaTileEntities.TRANSFORMER[8].getStackForm());
     }
 
     // Can only accept a subset of "Item" types:
