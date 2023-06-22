@@ -94,7 +94,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 }
             }
 
-            if (isStructureObstructed())
+            if (checkIntakesObstructed())
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.obstructed").setStyle(new Style().setColor(TextFormatting.RED)));
         }
     }
