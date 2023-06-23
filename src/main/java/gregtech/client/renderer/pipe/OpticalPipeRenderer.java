@@ -7,6 +7,7 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.optical.OpticalPipeType;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -35,7 +36,9 @@ public final class OpticalPipeRenderer extends PipeRenderer {
             renderContext.addOpenFaceRender(new IconTransformation(pipeTextures.get(pipeType)))
                     .addSideRender(false, new IconTransformation(Textures.OPTICAL_PIPE_SIDE));
 
-            if (pipeTile instanceof TileEntityOpticalPipe opticalPipe && opticalPipe.isActive()) {
+            if (ConfigHolder.client.preventAnimatedOpticalCables) {
+                renderContext.addSideRender(new IconTransformation(Textures.OPTICAL_PIPE_SIDE_OVERLAY));
+            } else if (pipeTile instanceof TileEntityOpticalPipe opticalPipe && opticalPipe.isActive()) {
                 renderContext.addSideRender(new IconTransformation(Textures.OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE));
             } else {
                 renderContext.addSideRender(new IconTransformation(Textures.OPTICAL_PIPE_SIDE_OVERLAY));

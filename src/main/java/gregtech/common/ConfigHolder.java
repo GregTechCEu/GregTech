@@ -369,6 +369,9 @@ public class ConfigHolder {
         @Config.Comment("Prevent tooltips from blinking for better visibility")
         public boolean preventBlinkingTooltips = false;
 
+        @Config.Comment({"Prevent optical cables from animating when active.", "Default: false"})
+        public boolean preventAnimatedOpticalCables = false;
+
         public static class GuiConfig {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})
             @Config.RangeInt(min = 1)
