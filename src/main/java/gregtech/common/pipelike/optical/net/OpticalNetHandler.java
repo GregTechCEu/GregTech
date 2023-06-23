@@ -6,6 +6,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipeTickable;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -38,15 +39,25 @@ public class OpticalNetHandler implements IDataAccessHatch {
     @Override
     public boolean isRecipeAvailable(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
         // only set pipe to ticking when something is inserted
-        if (tickingPipe == null) {
-            this.tickingPipe = (TileEntityOpticalPipeTickable) pipe.setSupportsTicking();
-            this.pipe = tickingPipe;
-        }
+//        if (tickingPipe == null) {
+//            this.tickingPipe = (TileEntityOpticalPipeTickable) pipe.setSupportsTicking();
+//            this.pipe = tickingPipe;
+//        }
 
         if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
             return false;
         }
-        return insertFirst(recipe, seen);
+
+        if (insertFirst(recipe, seen)) {
+            for (BlockPos pos : net.getAllNodes().keySet()) {
+                if (world.getTileEntity(pos) instanceof TileEntityOpticalPipe opticalPipe) {
+                    opticalPipe.setActive(true, 100);
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     public boolean insertFirst(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {

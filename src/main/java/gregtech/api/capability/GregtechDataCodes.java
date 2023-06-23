@@ -60,7 +60,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_COVER_DATA_PIPE = 0;
     public static final int COVER_ATTACHED_PIPE = 1;
     public static final int COVER_REMOVED_PIPE = 2;
-    public static final int CABLE_UPDATE_TEMP = 3;
+    public static final int PIPE_OPTICAL_ACTIVE = 3;
 
     // Multiblock implementation update codes
     public static final int SYNC_CONTROLLER = 100;
