@@ -49,6 +49,8 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<IDataAccessHatch> DATA_ACCESS_HATCH = new MultiblockAbility<>("data_access_hatch");
     public static final MultiblockAbility<IOpticalDataAccessHatch> OPTICAL_DATA_RECEPTION = new MultiblockAbility<>("optical_data_reception");
     public static final MultiblockAbility<IOpticalDataAccessHatch> OPTICAL_DATA_TRANSMISSION = new MultiblockAbility<>("optical_data_transmission");
+    public static final MultiblockAbility<ILaserContainer> INPUT_LASER = new MultiblockAbility<>("input_laser");
+    public static final MultiblockAbility<ILaserContainer> OUTPUT_LASER = new MultiblockAbility<>("output_laser");
 
     public static void registerMultiblockAbility(MultiblockAbility<?> ability, MetaTileEntity part) {
         if (!REGISTRY.containsKey(ability)) {
