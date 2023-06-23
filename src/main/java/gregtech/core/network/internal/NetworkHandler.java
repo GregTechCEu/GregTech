@@ -1,12 +1,12 @@
 package gregtech.core.network.internal;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
+import gregtech.api.modules.ModuleStage;
 import gregtech.api.network.IClientExecutor;
 import gregtech.api.network.INetworkHandler;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
-import gregtech.api.GregTechAPI;
-import gregtech.api.modules.ModuleStage;
 import gregtech.core.CoreModule;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -139,6 +139,7 @@ public class NetworkHandler implements INetworkHandler {
         PacketBuffer payload = (PacketBuffer) proxyPacket.payload();
         IPacket packet = packetHandler.getPacketClass(payload.readVarInt()).newInstance();
         packet.decode(payload);
+        payload.release();
         return packet;
     }
 }
