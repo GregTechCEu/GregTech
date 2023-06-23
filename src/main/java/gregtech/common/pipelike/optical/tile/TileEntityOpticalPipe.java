@@ -22,17 +22,14 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> {
 
     private final EnumMap<EnumFacing, OpticalNetHandler> handlers = new EnumMap<>(EnumFacing.class);
-    private final Map<FacingPos, Integer> transferred = new HashMap<>();
-    private OpticalNetHandler defaultHandler;
     // the OpticalNetHandler can only be created on the server, so we have an empty placeholder for the client
     private final IDataAccessHatch clientCapability = new DefaultDataHandler();
     private WeakReference<OpticalPipeNet> currentPipeNet = new WeakReference<>(null);
+    private OpticalNetHandler defaultHandler;
 
     private int ticksActive = 0;
     private boolean isActive;
@@ -89,8 +86,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
         if (world == null || world.isRemote)
             return null;
         OpticalPipeNet currentPipeNet = this.currentPipeNet.get();
-        if (currentPipeNet != null && currentPipeNet.isValid() &&
-                currentPipeNet.containsNode(getPipePos()))
+        if (currentPipeNet != null && currentPipeNet.isValid() && currentPipeNet.containsNode(getPipePos()))
             return currentPipeNet; //if current net is valid and does contain position, return it
         WorldOpticalPipeNet worldNet = (WorldOpticalPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
         currentPipeNet = worldNet.getNetFromPos(getPipePos());
@@ -98,14 +94,6 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
             this.currentPipeNet = new WeakReference<>(currentPipeNet);
         }
         return currentPipeNet;
-    }
-
-    public void resetTransferred() {
-        transferred.clear();
-    }
-
-    public Map<FacingPos, Integer> getTransferred() {
-        return transferred;
     }
 
     @Override
