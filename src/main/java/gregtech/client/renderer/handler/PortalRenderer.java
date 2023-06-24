@@ -1,6 +1,6 @@
 package gregtech.client.renderer.handler;
 
-import gregtech.api.GTValues;
+import gregtech.api.util.GTUtility;
 import gregtech.common.entities.PortalEntity;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 @SideOnly(Side.CLIENT)
 public class PortalRenderer extends Render<PortalEntity> {
 
-    private static final ResourceLocation texture = new ResourceLocation(GTValues.MODID, "textures/entity/gtportal.png");
+    private static final ResourceLocation texture = GTUtility.gregtechId("textures/entity/gtportal.png");
     protected PortalModel model = new PortalModel();
 
     public PortalRenderer(RenderManager renderManagerIn){

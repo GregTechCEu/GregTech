@@ -170,6 +170,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @SuppressWarnings("InnerClassMayBeStatic")
     protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
 
+        private static final ICleanroomProvider DUMMY_CLEANROOM = DummyCleanroom.createForAllTypes();
+
         ItemStack currentMachineStack = ItemStack.EMPTY;
         MetaTileEntity mte = null;
         //The Voltage Tier of the machines the PA is operating upon, from GTValues.V
@@ -261,12 +263,15 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 holder.setWorld(this.metaTileEntity.getWorld());
 
                 // Set the cleanroom of the MTEs to the PA's cleanroom reference
-                ICleanroomProvider cleanroom = controller.getCleanroom();
-                if (cleanroom != null && mte instanceof ICleanroomReceiver) {
-                    ((ICleanroomReceiver) mte).setCleanroom(cleanroom);
+                if (mte instanceof ICleanroomReceiver receiver) {
+                    if (ConfigHolder.machines.cleanMultiblocks) {
+                        receiver.setCleanroom(DUMMY_CLEANROOM);
+                    } else {
+                        ICleanroomProvider provider = controller.getCleanroom();
+                        if (provider != null) receiver.setCleanroom(provider);
+                    }
                 }
             }
-
 
             //Find the voltage tier of the machine.
             this.machineTier = mte instanceof ITieredMetaTileEntity ? ((ITieredMetaTileEntity) mte).getTier() : 0;
