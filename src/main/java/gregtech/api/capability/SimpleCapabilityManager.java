@@ -40,7 +40,6 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(ICoverable.class);
         registerCapabilityWithNoDefault(IControllable.class);
         registerCapabilityWithNoDefault(IActiveOutputSide.class);
-        registerCapabilityWithNoDefault(IFuelable.class);
         registerCapabilityWithNoDefault(IMultiblockController.class);
         registerCapabilityWithNoDefault(IMaintenance.class);
         registerCapabilityWithNoDefault(IMultipleRecipeMaps.class);
