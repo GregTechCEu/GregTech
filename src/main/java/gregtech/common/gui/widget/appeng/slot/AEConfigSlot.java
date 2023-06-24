@@ -26,6 +26,7 @@ public class AEConfigSlot<T extends IAEStack<T>> extends Widget implements IGhos
     protected int index;
     protected final static int REMOVE_ID = 1000;
     protected final static int UPDATE_ID = 1001;
+    protected final static int AMOUNT_CHANGE_ID = 1002;
     protected boolean select = false;
 
     public AEConfigSlot(Position pos, Size size, AEConfigWidget<T> widget, int index) {

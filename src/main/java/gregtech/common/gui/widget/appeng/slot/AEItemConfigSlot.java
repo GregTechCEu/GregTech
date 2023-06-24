@@ -13,6 +13,8 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.Wrappe
 import mezz.jei.api.gui.IGhostIngredientHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -122,6 +124,13 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
             } catch (IOException ignored) {
             }
         }
+        if (id == AMOUNT_CHANGE_ID) {
+            if (slot.getConfig() != null) {
+                int amt = buffer.readInt();
+                slot.getConfig().setStackSize(amt);
+                writeUpdateInfo(AMOUNT_CHANGE_ID, buf -> buf.writeInt(amt));
+            }
+        }
     }
 
     @Override
@@ -136,6 +145,12 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
                 ItemStack item = buffer.readItemStack();
                 slot.setConfig(WrappedItemStack.fromItemStack(item));
             } catch (IOException ignored) {
+            }
+        }
+        if (id == AMOUNT_CHANGE_ID) {
+            if (slot.getConfig() != null) {
+                int amt = buffer.readInt();
+                slot.getConfig().setStackSize(amt);
             }
         }
     }
@@ -162,6 +177,24 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
                 }
             }
         });
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
+        IConfigurableSlot<IAEItemStack> slot = this.parentWidget.getDisplay(this.index);
+        Rectangle rectangle = toRectangleBox();
+        rectangle.height /= 2;
+        if (!this.select || slot.getConfig() == null || wheelDelta == 0 || !rectangle.contains(mouseX, mouseY)) {
+            return false;
+        }
+        ItemStack stack = slot.getConfig().createItemStack();
+        long amt = wheelDelta > 0 ? stack.getCount() + 1L : stack.getCount() - 1L;
+        if (amt > 0 && amt < Integer.MAX_VALUE + 1L) {
+            int finalAmt = (int) amt;
+            writeClientAction(AMOUNT_CHANGE_ID, buf -> buf.writeInt(finalAmt));
+            return true;
+        }
+        return false;
     }
 
 }
