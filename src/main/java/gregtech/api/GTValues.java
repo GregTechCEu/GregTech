@@ -142,7 +142,8 @@ public class GTValues {
             MODID_OC = "opencomputers",
             MODID_JOURNEYMAP = "journeymap",
             MODID_VOXELMAP = "voxelmap",
-            MODID_XAERO_MINIMAP = "xaerominimap";
+            MODID_XAERO_MINIMAP = "xaerominimap",
+            MODID_HWYLA = "hwyla";
 
     private static Boolean isClient;
 
