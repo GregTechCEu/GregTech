@@ -21,10 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -96,6 +93,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     @Override
     public void causeMaintenanceProblems() {
         this.maintenance_problems &= ~(1 << ((int) (GTValues.RNG.nextFloat() * 5)));
+        this.getWorld().playSound(null, this.getPos().getX(), this.getPos().getY(), this.getPos().getZ(), this.getBreakdownSound(), SoundCategory.BLOCKS, 1.f, 1.f);
     }
 
     /**
