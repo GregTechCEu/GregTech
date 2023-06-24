@@ -1,6 +1,7 @@
 package gregtech.integration.hwyla;
 
 import mcp.mobius.waila.api.IWailaDataProvider;
+import mcp.mobius.waila.api.IWailaRegistrar;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -10,6 +11,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class CapabilityDataProvider<T> implements IWailaDataProvider {
+
+    public abstract void register(@NotNull IWailaRegistrar registrar);
 
     protected abstract @NotNull Capability<T> getCapability();
 

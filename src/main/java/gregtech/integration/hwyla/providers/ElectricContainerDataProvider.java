@@ -1,15 +1,13 @@
 package gregtech.integration.hwyla.providers;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.integration.hwyla.CapabilityDataProvider;
-import gregtech.integration.hwyla.HWYLAConfigKeys;
-import mcp.mobius.waila.api.ITaggedList;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import mcp.mobius.waila.api.IWailaDataProvider;
+import mcp.mobius.waila.api.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +15,14 @@ import java.util.List;
 
 public class ElectricContainerDataProvider extends CapabilityDataProvider<IEnergyContainer> {
 
-    public static final IWailaDataProvider INSTANCE = new ElectricContainerDataProvider();
+    public static final ElectricContainerDataProvider INSTANCE = new ElectricContainerDataProvider();
+
+    @Override
+    public void register(@NotNull IWailaRegistrar registrar) {
+        registrar.registerBodyProvider(this, TileEntity.class);
+        registrar.registerNBTProvider(this, TileEntity.class);
+        registrar.addConfig(GTValues.MODID, "gtceu.energy");
+    }
 
     @Override
     protected @NotNull Capability<IEnergyContainer> getCapability() {
@@ -34,19 +39,19 @@ public class ElectricContainerDataProvider extends CapabilityDataProvider<IEnerg
         NBTTagCompound subTag = new NBTTagCompound();
         subTag.setLong("Capacity", capability.getEnergyCapacity());
         subTag.setLong("Stored", capability.getEnergyStored());
-        tag.setTag("EnergyContainerEU", subTag);
+        tag.setTag("gtceu.IEnergyContainer", subTag);
         return tag;
     }
 
     @NotNull
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        if (!config.getConfig(HWYLAConfigKeys.ENERGY_CONTAINER) || accessor.getTileEntity() == null) {
+        if (!config.getConfig("gtceu.energy") || accessor.getTileEntity() == null) {
             return tooltip;
         }
 
-        if (accessor.getNBTData().hasKey("EnergyContainerEU")) {
-            NBTTagCompound energyTag = accessor.getNBTData().getCompoundTag("EnergyContainerEU");
+        if (accessor.getNBTData().hasKey("gtceu.IEnergyContainer")) {
+            NBTTagCompound energyTag = accessor.getNBTData().getCompoundTag("gtceu.IEnergyContainer");
             long stored = energyTag.getLong("Stored");
             long capacity = energyTag.getLong("Capacity");
 

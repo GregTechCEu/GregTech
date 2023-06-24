@@ -3,12 +3,15 @@ package gregtech.integration.hwyla;
 import gregtech.api.GTValues;
 import gregtech.api.modules.GregTechModule;
 import gregtech.integration.IntegrationSubmodule;
+import gregtech.integration.hwyla.providers.BlockOreDataProvider;
+import gregtech.integration.hwyla.providers.ControllableDataProvider;
 import gregtech.integration.hwyla.providers.ElectricContainerDataProvider;
 import gregtech.modules.GregTechModules;
 import mcp.mobius.waila.api.IWailaPlugin;
 import mcp.mobius.waila.api.IWailaRegistrar;
+import mcp.mobius.waila.api.SpecialChars;
 import mcp.mobius.waila.api.WailaPlugin;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.item.ItemStack;
 
 @WailaPlugin
 @GregTechModule(
@@ -22,8 +25,27 @@ public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
 
     @Override
     public void register(IWailaRegistrar registrar) {
-        registrar.registerBodyProvider(ElectricContainerDataProvider.INSTANCE, TileEntity.class);
-        registrar.registerNBTProvider(ElectricContainerDataProvider.INSTANCE, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, HWYLAConfigKeys.ENERGY_CONTAINER);
+        ElectricContainerDataProvider.INSTANCE.register(registrar);
+        ControllableDataProvider.INSTANCE.register(registrar);
+        BlockOreDataProvider.INSTANCE.register(registrar);
+    }
+
+    /** Render an ItemStack. */
+    public static String wailaStack(ItemStack stack) {
+        String name = stack.getItem().getRegistryName().toString();
+        String count = String.valueOf(stack.getCount());
+        String damage = String.valueOf(stack.getItemDamage());
+        String nbt = stack.hasTagCompound() ? stack.getTagCompound().toString() : "";
+        return SpecialChars.getRenderString("waila.stack", "1", name, count, damage, nbt);
+    }
+
+    /** Render a string with an X/Y offset. */
+    public static String offsetText(String s, int x, int y) {
+        return SpecialChars.getRenderString("gtceu.text", s, Integer.toString(x), Integer.toString(y));
+    }
+
+    /** Render an ItemStack with its display name offset to the right. */
+    public static String wailaStackWithName(ItemStack stack) {
+        return wailaStack(stack) + offsetText(stack.getDisplayName(), 0, 4);
     }
 }
