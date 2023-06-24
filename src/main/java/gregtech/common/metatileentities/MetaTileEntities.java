@@ -217,6 +217,7 @@ public class MetaTileEntities {
     public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
     public static MetaTileEntityDataBank DATA_BANK;
     public static MetaTileEntityPowerSubstation POWER_SUBSTATION;
+    public static MetaTileEntityActiveTransformer ACTIVE_TRANSFORMER;
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -545,6 +546,7 @@ public class MetaTileEntities {
         DATA_BANK = registerMetaTileEntity(1037, new MetaTileEntityDataBank(gregtechId("data_bank")));
 
         POWER_SUBSTATION = registerMetaTileEntity(1041, new MetaTileEntityPowerSubstation(gregtechId("power_substation")));
+        ACTIVE_TRANSFORMER = registerMetaTileEntity(1042, new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
 
         // MISC MTE's START: IDs 1150-2000
 
@@ -656,9 +658,9 @@ public class MetaTileEntities {
         OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1407, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.receiver"), false));
         OPTICAL_DATA_HATCH_TRANSMITTER = registerMetaTileEntity(1408, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.transmitter"), true));
 
-        LASER_INPUT_HATCH = registerMetaTileEntity(1409, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source"), true));
-        LASER_OUTPUT_HATCH = registerMetaTileEntity(1410, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target"), false));
-        // Free Range: 1411-1509
+        LASER_INPUT_HATCH = registerMetaTileEntity(1420, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source"), true));
+        LASER_OUTPUT_HATCH = registerMetaTileEntity(1421, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target"), false));
+        // Free Range: 1422-1509
 
         // Buffers, IDs 1510-1512
         BUFFER[0] = registerMetaTileEntity(1510, new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));
