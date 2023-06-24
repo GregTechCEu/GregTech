@@ -87,6 +87,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.duration = recipe.getDuration();
         this.EUt = recipe.getEUt();
         this.hidden = recipe.isHidden();
+        this.category = recipe.getRecipeCategory();
         this.recipePropertyStorage = recipe.getRecipePropertyStorage().copy();
         if (this.recipePropertyStorage != null) {
             this.recipePropertyStorage.freeze(false);
