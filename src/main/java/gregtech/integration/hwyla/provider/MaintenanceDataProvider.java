@@ -18,7 +18,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public class MaintenanceDataProvider extends CapabilityDataProvider<IMaintenance> {
@@ -53,7 +52,7 @@ public class MaintenanceDataProvider extends CapabilityDataProvider<IMaintenance
         return tag;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         if (!config.getConfig("gregtech.maintenance") || accessor.getTileEntity() == null) {
