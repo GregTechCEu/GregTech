@@ -544,7 +544,7 @@ metaitem.glass_lens.black.name=黒いガラスレンズ
 #CIRCUITS LOCALIZATION
 metaitem.boule.silicon.name=シリコン単結晶
 metaitem.boule.silicon.tooltip=回路の原料
-metaitem.boule.phosphorus.name=グロウストーン添加シリコン単結晶
+metaitem.boule.phosphorus.name=リン添加シリコン単結晶
 metaitem.boule.phosphorus.tooltip=回路の原料
 metaitem.boule.naquadah.name=ナクアダ添加シリコン単結晶
 metaitem.boule.naquadah.tooltip=回路の原料
@@ -552,7 +552,7 @@ metaitem.boule.neutronium.name=ニュートロニウム添加シリコン単結�
 metaitem.boule.neutronium.tooltip=回路の原料
 metaitem.wafer.silicon.name=シリコンウェハー
 metaitem.wafer.silicon.tooltip=回路の原料
-metaitem.wafer.phosphorus.name=グロウストーン添加シリコンウェハー
+metaitem.wafer.phosphorus.name=リン添加シリコンウェハー
 metaitem.wafer.phosphorus.tooltip=回路の原料
 metaitem.wafer.naquadah.name=ナクアダ添加シリコンウェハー
 metaitem.wafer.naquadah.tooltip=回路の原料
