@@ -3,9 +3,7 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
+import gregtech.api.capability.*;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTank;
@@ -37,6 +35,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
@@ -261,8 +260,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 if (this.lockedFluid != null) {
                     fluidName = this.lockedFluid.getLocalizedName();
                 }
-            }
-            else {
+            } else {
                 fluidName = tankWidget.getFluidLocalizedName();
             }
 
@@ -282,8 +280,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 if (this.lockedFluid != null) {
                     fluidAmount = "0";
                 }
-            }
-            else {
+            } else {
                 fluidAmount = tankWidget.getFormattedFluidAmount();
             }
             if (!fluidAmount.isEmpty()) {
@@ -293,7 +290,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         if (this.isExportHatch)
             tooltip.add(I18n.format("gregtech.machine.fluid_hatch.export.tooltip"));
         else
@@ -329,7 +326,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         fluidTank.onContentsChanged();
     }
 
-    private class HatchFluidTank extends NotifiableFluidTank {
+    private class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
 
         public HatchFluidTank(int capacity, MetaTileEntity entityToNotify, boolean isExport) {
             super(capacity, entityToNotify, isExport);
@@ -348,13 +345,31 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
 
         @Override
         public boolean canFillFluidType(FluidStack fluid) {
-            if (!isExportHatch) return super.canFillFluidType(fluid);
-            return !locked || lockedFluid == null || fluid.isFluidEqual(lockedFluid);
+            return test(fluid);
         }
 
+        // override for visibility
         @Override
         public void onContentsChanged() {
             super.onContentsChanged();
+        }
+
+        @Nullable
+        @Override
+        public IFilter<FluidStack> getFilter() {
+            return this;
+        }
+
+        @Override
+        public boolean test(@Nonnull FluidStack fluidStack) {
+            if (!isExportHatch) return true;
+            return !locked || lockedFluid == null || fluidStack.isFluidEqual(lockedFluid);
+        }
+
+        @Override
+        public int getPriority() {
+            if (!isExportHatch) return IFilter.noPriority();
+            return !locked || lockedFluid == null ? IFilter.noPriority() : IFilter.whitelistPriority(1);
         }
     }
 }
