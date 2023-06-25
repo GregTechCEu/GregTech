@@ -13,6 +13,6 @@ public class HWYLAClient implements IWailaPlugin {
 
     @Override
     public void register(IWailaRegistrar registrar) {
-        registrar.registerTooltipRenderer("gtceu.text", new RendererOffsetString());
+        registrar.registerTooltipRenderer("gregtech.text", new RendererOffsetString());
     }
 }

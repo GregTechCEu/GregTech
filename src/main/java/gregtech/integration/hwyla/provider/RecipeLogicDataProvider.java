@@ -6,7 +6,6 @@ import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
-import gregtech.integration.hwyla.CapabilityDataProvider;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaRegistrar;
@@ -28,7 +27,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gtceu.recipe_logic");
+        registrar.addConfig(GTValues.MODID, "gregtech.recipe_logic");
     }
 
     @Override
@@ -43,19 +42,19 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
         if (capability.isWorking()) {
             subTag.setInteger("RecipeEUt", capability.getRecipeEUt());
         }
-        tag.setTag("gtceu.AbstractRecipeLogic", subTag);
+        tag.setTag("gregtech.AbstractRecipeLogic", subTag);
         return tag;
     }
 
     @NotNull
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        if (!config.getConfig("gtceu.recipe_logic") || accessor.getTileEntity() == null) {
+        if (!config.getConfig("gregtech.recipe_logic") || accessor.getTileEntity() == null) {
             return tooltip;
         }
 
-        if (accessor.getNBTData().hasKey("gtceu.AbstractRecipeLogic")) {
-            NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gtceu.AbstractRecipeLogic");
+        if (accessor.getNBTData().hasKey("gregtech.AbstractRecipeLogic")) {
+            NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gregtech.AbstractRecipeLogic");
             if (tag.getBoolean("Working")) {
                 int EUt = tag.getInteger("RecipeEUt");
                 int absEUt = Math.abs(EUt);

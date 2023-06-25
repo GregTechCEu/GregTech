@@ -18,7 +18,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CoverProvider extends CapabilityInfoProvider<ICoverable> {
+public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
 
     @Nonnull
     @Override

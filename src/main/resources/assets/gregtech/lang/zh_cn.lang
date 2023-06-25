@@ -58,10 +58,10 @@ gregtech.top.working_disabled=工作暂停
 gregtech.top.energy_consumption=耗能
 gregtech.top.energy_production=产能
 
-gregtech.top.transform_up=§c升压§r
-gregtech.top.transform_down=§a降压§r
-gregtech.top.transform_input=§6输入：§r
-gregtech.top.transform_output=§9输出：§r
+gregtech.top.transform_up=升压
+gregtech.top.transform_down=降压
+gregtech.top.transform_input=输入：
+gregtech.top.transform_output=输出：
 
 gregtech.top.convert_eu=将 §eEU§r 转换为 §cFE§r
 gregtech.top.convert_fe=将 §cFE§r 转换为 §eEU§r

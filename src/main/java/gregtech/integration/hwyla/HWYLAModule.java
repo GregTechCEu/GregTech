@@ -27,16 +27,16 @@ public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
         WorkableDataProvider.INSTANCE.register(registrar);
         ControllableDataProvider.INSTANCE.register(registrar);
         TransformerDataProvider.INSTANCE.register(registrar);
-        // todo diode
+        DiodeDataProvider.INSTANCE.register(registrar);
         MultiblockDataProvider.INSTANCE.register(registrar);
-        // todo maintenance
-        // todo multi-recipe
-        // todo converter
+        MaintenanceDataProvider.INSTANCE.register(registrar);
+        MultiRecipeMapDataProvider.INSTANCE.register(registrar);
+        ConverterDataProvider.INSTANCE.register(registrar);
         RecipeLogicDataProvider.INSTANCE.register(registrar);
         PrimitivePumpDataProvider.INSTANCE.register(registrar);
-        // todo cover
+        // one day, if cover provider is ported to waila, register it right here
         BlockOreDataProvider.INSTANCE.register(registrar);
-        // todo lamp
+        LampDataProvider.INSTANCE.register(registrar);
     }
 
     /** Render an ItemStack. */
@@ -50,11 +50,16 @@ public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
 
     /** Render a string with an X/Y offset. */
     public static String offsetText(String s, int x, int y) {
-        return SpecialChars.getRenderString("gtceu.text", s, Integer.toString(x), Integer.toString(y));
+        return SpecialChars.getRenderString("gregtech.text", s, Integer.toString(x), Integer.toString(y));
     }
 
     /** Render an ItemStack with its display name offset to the right. */
     public static String wailaStackWithName(ItemStack stack) {
-        return wailaStack(stack) + offsetText(stack.getDisplayName(), 0, 4);
+        return wailaStackWithName(stack, stack.getDisplayName());
+    }
+
+    /** Render an ItemStack with a custom String displayed offset to the right. */
+    public static String wailaStackWithName(ItemStack stack, String name) {
+        return wailaStack(stack) + offsetText(name, 0, 4);
     }
 }

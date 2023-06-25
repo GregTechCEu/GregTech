@@ -26,7 +26,7 @@ public class TransformerDataProvider extends ElectricContainerDataProvider {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gtceu.transformer");
+        registrar.addConfig(GTValues.MODID, "gregtech.transformer");
     }
 
     @Override
@@ -53,20 +53,20 @@ public class TransformerDataProvider extends ElectricContainerDataProvider {
             }
         }
         subTag.setInteger("FrontFacing", frontFace.getIndex());
-        tag.setTag("gtceu.MetaTileEntityTransformer", subTag);
+        tag.setTag("gregtech.MetaTileEntityTransformer", subTag);
         return tag;
     }
 
     @NotNull
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        if (!config.getConfig("gtceu.transformer")
+        if (!config.getConfig("gregtech.transformer")
                 || !(accessor.getTileEntity() instanceof IGregTechTileEntity gtte)
                 || !(gtte.getMetaTileEntity() instanceof MetaTileEntityTransformer)) {
             return tooltip;
         }
-        if (accessor.getNBTData().hasKey("gtceu.MetaTileEntityTransformer")) {
-            NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gtceu.MetaTileEntityTransformer");
+        if (accessor.getNBTData().hasKey("gregtech.MetaTileEntityTransformer")) {
+            NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gregtech.MetaTileEntityTransformer");
             final long inputVoltage = tag.getLong("InputVoltage");
             final long outputVoltage = tag.getLong("OutputVoltage");
             final long inputAmperage = tag.getLong("InputAmperage");

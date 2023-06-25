@@ -34,7 +34,7 @@ public class TheOneProbeModule extends IntegrationSubmodule {
         oneProbe.registerProvider(new ConverterInfoProvider());
         oneProbe.registerProvider(new RecipeLogicInfoProvider());
         oneProbe.registerProvider(new PrimitivePumpInfoProvider());
-        oneProbe.registerProvider(new CoverProvider());
+        oneProbe.registerProvider(new CoverInfoProvider());
         oneProbe.registerProvider(new BlockOreInfoProvider());
         oneProbe.registerProvider(new LampInfoProvider());
     }

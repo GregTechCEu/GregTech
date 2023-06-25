@@ -26,7 +26,7 @@ public class PrimitivePumpDataProvider implements IWailaDataProvider {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, IGregTechTileEntity.class);
         registrar.registerNBTProvider(this, IGregTechTileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gtceu.primitive_pump");
+        registrar.addConfig(GTValues.MODID, "gregtech.primitive_pump");
     }
 
     @NotNull
@@ -36,7 +36,7 @@ public class PrimitivePumpDataProvider implements IWailaDataProvider {
             if (gtte.getMetaTileEntity() instanceof IPrimitivePump pump) {
                 NBTTagCompound subTag = new NBTTagCompound();
                 subTag.setInteger("Production", pump.getFluidProduction());
-                tag.setTag("gtceu.IPrimitivePump", subTag);
+                tag.setTag("gregtech.IPrimitivePump", subTag);
             }
         }
         return tag;
@@ -45,14 +45,14 @@ public class PrimitivePumpDataProvider implements IWailaDataProvider {
     @NotNull
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        if (!config.getConfig("gtceu.primitive_pump")
+        if (!config.getConfig("gregtech.primitive_pump")
                 || !(accessor.getTileEntity() instanceof IGregTechTileEntity gtte)
                 || !(gtte.getMetaTileEntity() instanceof IPrimitivePump)) {
             return tooltip;
         }
 
-        if (accessor.getNBTData().hasKey("gtceu.IPrimitivePump")) {
-            NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gtceu.IPrimitivePump");
+        if (accessor.getNBTData().hasKey("gregtech.IPrimitivePump")) {
+            NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gregtech.IPrimitivePump");
             int production = tag.getInteger("Production");
             tooltip.add(I18n.format("gregtech.top.primitive_pump_production") + " " + TextFormatting.AQUA + production + TextFormatting.RESET + " L/s");
         }

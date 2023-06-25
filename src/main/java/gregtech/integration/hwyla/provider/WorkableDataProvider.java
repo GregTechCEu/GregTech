@@ -3,7 +3,6 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
-import gregtech.integration.hwyla.CapabilityDataProvider;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaRegistrar;
@@ -24,7 +23,7 @@ public class WorkableDataProvider extends CapabilityDataProvider<IWorkable> {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gtceu.workable");
+        registrar.addConfig(GTValues.MODID, "gregtech.workable");
     }
 
     @Override
@@ -40,19 +39,19 @@ public class WorkableDataProvider extends CapabilityDataProvider<IWorkable> {
             subTag.setInteger("Progress", capability.getProgress());
             subTag.setInteger("MaxProgress", capability.getMaxProgress());
         }
-        tag.setTag("gtceu.IWorkable", subTag);
+        tag.setTag("gregtech.IWorkable", subTag);
         return tag;
     }
 
     @NotNull
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        if (!config.getConfig("gtceu.workable") || accessor.getTileEntity() == null) {
+        if (!config.getConfig("gregtech.workable") || accessor.getTileEntity() == null) {
             return tooltip;
         }
 
-        if (accessor.getNBTData().hasKey("gtceu.IWorkable")) {
-            NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gtceu.IWorkable");
+        if (accessor.getNBTData().hasKey("gregtech.IWorkable")) {
+            NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gregtech.IWorkable");
             boolean active = tag.getBoolean("Active");
             if (active) {
                 int progress = tag.getInteger("Progress");

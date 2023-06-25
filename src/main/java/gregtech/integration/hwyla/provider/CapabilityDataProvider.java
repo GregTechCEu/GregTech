@@ -1,4 +1,4 @@
-package gregtech.integration.hwyla;
+package gregtech.integration.hwyla.provider;
 
 import mcp.mobius.waila.api.IWailaDataProvider;
 import mcp.mobius.waila.api.IWailaRegistrar;

@@ -3,7 +3,6 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.integration.hwyla.CapabilityDataProvider;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaRegistrar;
@@ -24,7 +23,7 @@ public class ElectricContainerDataProvider extends CapabilityDataProvider<IEnerg
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gtceu.energy");
+        registrar.addConfig(GTValues.MODID, "gregtech.energy");
     }
 
     @Override
@@ -42,19 +41,19 @@ public class ElectricContainerDataProvider extends CapabilityDataProvider<IEnerg
         NBTTagCompound subTag = new NBTTagCompound();
         subTag.setLong("Capacity", capability.getEnergyCapacity());
         subTag.setLong("Stored", capability.getEnergyStored());
-        tag.setTag("gtceu.IEnergyContainer", subTag);
+        tag.setTag("gregtech.IEnergyContainer", subTag);
         return tag;
     }
 
     @NotNull
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        if (!config.getConfig("gtceu.energy") || accessor.getTileEntity() == null) {
+        if (!config.getConfig("gregtech.energy") || accessor.getTileEntity() == null) {
             return tooltip;
         }
 
-        if (accessor.getNBTData().hasKey("gtceu.IEnergyContainer")) {
-            NBTTagCompound energyTag = accessor.getNBTData().getCompoundTag("gtceu.IEnergyContainer");
+        if (accessor.getNBTData().hasKey("gregtech.IEnergyContainer")) {
+            NBTTagCompound energyTag = accessor.getNBTData().getCompoundTag("gregtech.IEnergyContainer");
             long stored = energyTag.getLong("Stored");
             long capacity = energyTag.getLong("Capacity");
             tooltip.add(I18n.format("gregtech.waila.energy_stored", stored, capacity));

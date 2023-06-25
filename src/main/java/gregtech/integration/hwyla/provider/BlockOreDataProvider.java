@@ -17,13 +17,13 @@ public class BlockOreDataProvider implements IWailaDataProvider {
 
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, BlockOre.class);
-        registrar.addConfig(GTValues.MODID, "gtceu.block_ore");
+        registrar.addConfig(GTValues.MODID, "gregtech.block_ore");
     }
 
     @NotNull
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        if (!config.getConfig("gtceu.block_ore")) {
+        if (!config.getConfig("gregtech.block_ore")) {
             return tooltip;
         }
 
