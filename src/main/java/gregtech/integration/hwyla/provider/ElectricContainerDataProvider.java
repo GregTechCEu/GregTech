@@ -1,10 +1,13 @@
-package gregtech.integration.hwyla.providers;
+package gregtech.integration.hwyla.provider;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.integration.hwyla.CapabilityDataProvider;
-import mcp.mobius.waila.api.*;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import mcp.mobius.waila.api.IWailaRegistrar;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -54,9 +57,7 @@ public class ElectricContainerDataProvider extends CapabilityDataProvider<IEnerg
             NBTTagCompound energyTag = accessor.getNBTData().getCompoundTag("gtceu.IEnergyContainer");
             long stored = energyTag.getLong("Stored");
             long capacity = energyTag.getLong("Capacity");
-
-            ((ITaggedList<String, String>) tooltip).add(String.format("%d / %d EU", stored, capacity), "IEnergyContainer");
-            return tooltip;
+            tooltip.add(I18n.format("gregtech.waila.energy_stored", stored, capacity));
         }
         return tooltip;
     }

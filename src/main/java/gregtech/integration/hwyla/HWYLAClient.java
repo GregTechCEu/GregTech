@@ -1,6 +1,6 @@
 package gregtech.integration.hwyla;
 
-import gregtech.integration.hwyla.renderers.OffsetString;
+import gregtech.integration.hwyla.renderer.RendererOffsetString;
 import mcp.mobius.waila.api.IWailaPlugin;
 import mcp.mobius.waila.api.IWailaRegistrar;
 import mcp.mobius.waila.api.WailaPlugin;
@@ -13,6 +13,6 @@ public class HWYLAClient implements IWailaPlugin {
 
     @Override
     public void register(IWailaRegistrar registrar) {
-        registrar.registerTooltipRenderer("gtceu.text", new OffsetString());
+        registrar.registerTooltipRenderer("gtceu.text", new RendererOffsetString());
     }
 }

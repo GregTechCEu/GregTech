@@ -1,4 +1,4 @@
-package gregtech.integration.hwyla.renderers;
+package gregtech.integration.hwyla.renderer;
 
 import mcp.mobius.waila.api.IWailaCommonAccessor;
 import mcp.mobius.waila.api.IWailaTooltipRenderer;
@@ -11,7 +11,7 @@ import java.awt.*;
 
 /** Adapted from Jade 1.12.2, a HWYLA addon mod. */
 @ParametersAreNonnullByDefault
-public class OffsetString implements IWailaTooltipRenderer {
+public class RendererOffsetString implements IWailaTooltipRenderer {
 
     @NotNull
     @Override

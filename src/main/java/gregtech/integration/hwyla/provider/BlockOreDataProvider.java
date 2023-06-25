@@ -1,4 +1,4 @@
-package gregtech.integration.hwyla.providers;
+package gregtech.integration.hwyla.provider;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.ore.StoneType;

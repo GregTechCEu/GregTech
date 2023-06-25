@@ -3,9 +3,7 @@ package gregtech.integration.hwyla;
 import gregtech.api.GTValues;
 import gregtech.api.modules.GregTechModule;
 import gregtech.integration.IntegrationSubmodule;
-import gregtech.integration.hwyla.providers.BlockOreDataProvider;
-import gregtech.integration.hwyla.providers.ControllableDataProvider;
-import gregtech.integration.hwyla.providers.ElectricContainerDataProvider;
+import gregtech.integration.hwyla.provider.*;
 import gregtech.modules.GregTechModules;
 import mcp.mobius.waila.api.IWailaPlugin;
 import mcp.mobius.waila.api.IWailaRegistrar;
@@ -26,8 +24,19 @@ public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
     @Override
     public void register(IWailaRegistrar registrar) {
         ElectricContainerDataProvider.INSTANCE.register(registrar);
+        WorkableDataProvider.INSTANCE.register(registrar);
         ControllableDataProvider.INSTANCE.register(registrar);
+        TransformerDataProvider.INSTANCE.register(registrar);
+        // todo diode
+        MultiblockDataProvider.INSTANCE.register(registrar);
+        // todo maintenance
+        // todo multi-recipe
+        // todo converter
+        RecipeLogicDataProvider.INSTANCE.register(registrar);
+        PrimitivePumpDataProvider.INSTANCE.register(registrar);
+        // todo cover
         BlockOreDataProvider.INSTANCE.register(registrar);
+        // todo lamp
     }
 
     /** Render an ItemStack. */
