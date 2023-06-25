@@ -52,8 +52,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
 
     @Override
     protected void updateFormedValid() {
-        long maxInput = energyInputContainer.getEnergyStored();
-        energyInputContainer.removeEnergy(energyOutputContainer.addEnergy(maxInput));
+        long maxEnergyInput = energyInputContainer.getEnergyStored();
+        energyInputContainer.removeEnergy(energyOutputContainer.addEnergy(maxEnergyInput));
     }
 
     @Override

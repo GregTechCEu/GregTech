@@ -1,9 +1,11 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +30,7 @@ public class LaserContainerHandler extends MTETrait implements ILaserContainer {
     public LaserContainerHandler(@NotNull MetaTileEntity metaTileEntity, long capacity, boolean isOutput) {
         super(metaTileEntity);
         this.capacity = capacity;
+        this.isOutput = isOutput;
     }
 
     public void setSideInputCondition(Predicate<EnumFacing> sideInputCondition) {
@@ -52,7 +55,7 @@ public class LaserContainerHandler extends MTETrait implements ILaserContainer {
     public long changeEnergy(long amount) {
         if (amount > 0) {
             long space = capacity - energyStored;
-            if (amount - space >= 0) {
+            if (space - amount >= 0) {
                 energyStored += amount;
                 return amount;
             } else {
@@ -100,6 +103,9 @@ public class LaserContainerHandler extends MTETrait implements ILaserContainer {
 
     @Override
     public <T> T getCapability(Capability<T> capability) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_LASER) {
+            return GregtechTileCapabilities.CAPABILITY_LASER.cast(this);
+        }
         return null;
     }
 
@@ -114,5 +120,24 @@ public class LaserContainerHandler extends MTETrait implements ILaserContainer {
     @Override
     public void deserializeNBT(@Nonnull NBTTagCompound compound) {
         this.energyStored = compound.getLong("EnergyStored");
+    }
+
+    @Override
+    public void update() {
+        if (getMetaTileEntity().getWorld().isRemote) {
+            return;
+        }
+        if (isOutput && getEnergyStored() > 0) {
+            for (EnumFacing side : EnumFacing.VALUES) {
+                if (!outputsEnergy(side)) continue;
+                TileEntity tileEntity = metaTileEntity.getWorld().getTileEntity(metaTileEntity.getPos().offset(side));
+                EnumFacing oppositeSide = side.getOpposite();
+                if (tileEntity != null && tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide)) {
+                    ILaserContainer laserContainer = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide);
+                    if (laserContainer == null || !laserContainer.inputsEnergy(oppositeSide)) continue;
+                    energyStored -= laserContainer.acceptEnergy(oppositeSide, energyStored);
+                }
+            }
+        }
     }
 }
