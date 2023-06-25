@@ -790,6 +790,7 @@ public class ElementMaterials {
                 .flags(EXT_METAL)
                 .element(Elements.U238)
                 .fluidTemp(1405)
+                .fissionFuelProperties(400, 40, 0.1, 0.1, 0.1, 0.1)
                 .build();
 
         Uranium235 = new Material.Builder(117, "uranium_235")
