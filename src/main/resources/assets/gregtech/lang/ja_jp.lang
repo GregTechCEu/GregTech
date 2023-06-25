@@ -2274,6 +2274,8 @@ tile.brittle_charcoal.name=脆い木炭
 tile.brittle_charcoal.tooltip.1=炭窯で製造される。
 tile.brittle_charcoal.tooltip.2=採掘すると木炭を得られる。
 
+tile.optical_pipe_normal.name=光ファイバーケーブル
+
 metaitem.prospector.lv.name=LV電動探知機
 metaitem.prospector.hv.name=HV電動探知機
 metaitem.prospector.luv.name=LuV電動探知機
@@ -2603,6 +2605,11 @@ tile.cleanroom_casing.filter_casing.name=フィルター外装
 tile.cleanroom_casing.filter_casing_sterile.name=滅菌フィルター外装
 tile.cleanroom_casing.filter.tooltip=§a無塵§7環境を構築する
 tile.cleanroom_casing.filter_sterile.tooltip=§a滅菌§7環境を構築する
+
+# Computer Casings
+tile.computer_casing.computer_casing.name=コンピュータ外装
+tile.computer_casing.computer_heat_vent.name=コンピュータ排熱口
+tile.computer_casing.high_power_casing.name=高出力外装
 
 # Asphalt
 tile.asphalt.asphalt.name=アスファルト
@@ -4559,6 +4566,12 @@ gregtech.machine.charcoal_pile.tooltip.3=炭焼きはこのブロック下最大
 gregtech.machine.charcoal_pile.tooltip.4=原木は§e空気§7に接してはならない!
 gregtech.multiblock.charcoal_pile.description=最大9×4×9の範囲の原木を脆い木炭に変える。\n\n窯の床はレンガブロックでなければならないが、壁や屋根には地面に関連するあらゆるブロックが使用できる。窯内に空気があってはならない。\n\n大きな窯を作ると原木の変換により時間がかかるようになるが、より効率的である。
 
+gregtech.machine.data_bank.name=データバンク
+gregtech.machine.data_bank.tooltip.1=個人用NAS (ネットワークHDD)
+gregtech.machine.data_bank.tooltip.2=大容量データストレージ。光ファイバーで輸送。
+gregtech.machine.data_bank.tooltip.3=データバンクは連結可能
+gregtech.machine.data_bank.tooltip.4=データハッチ1つにつき%sEU/t、連結時%sEU/t消費する。
+
 gregtech.machine.central_monitor.name=セントラルモニター
 gregtech.multiblock.central_monitor.low_power=電力不足
 gregtech.multiblock.central_monitor.height=スクリーンの高さ:
@@ -4824,6 +4837,8 @@ gregtech.machine.data_access_hatch.tooltip.1=マルチブロックのための�
 gregtech.machine.data_access_hatch.tooltip.2=データスティック用の§a%s§7スロットを追加する
 gregtech.machine.data_access_hatch.advanced.name=発展型データアクセスハッチ
 gregtech.machine.data_access_hatch.creative.name=クリエイティブデータアクセスハッチ
+gregtech.machine.data_access_hatch.optical.receiver.name=光学データ受付ハッチ
+gregtech.machine.data_access_hatch.optical.transmitter.name=光学データ伝送ハッチ
 
 gregtech.machine.fluid_tank.max_multiblock=最大サイズ: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=内容物: %s L の %s
@@ -5095,6 +5110,8 @@ gregtech.machine.miner.errorradius=§c動作中は変更できない!
 gregtech.multiblock.pyrolyse_oven.speed=処理速度: %s%%
 
 gregtech.multiblock.cracking_unit.energy=エネルギー使用量: %s%%
+
+gregtech.multiblock.energy_consumption=エネルギー使用量: %s EU/t
 
 gregtech.command.usage=使い方: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=使い方: /gregtech worldgen <reload>
