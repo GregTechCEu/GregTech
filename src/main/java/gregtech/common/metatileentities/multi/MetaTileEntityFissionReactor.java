@@ -11,22 +11,29 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.nuclear.fission.FissionReactor;
+import gregtech.api.nuclear.fission.components.ControlRod;
 import gregtech.api.nuclear.fission.components.CoolantChannel;
 import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.nuclear.fission.components.ReactorComponent;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
-import gregtech.api.util.GTLog;
+import gregtech.api.unification.material.properties.FissionFuelProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityControlRodPort;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantImportHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportHatch;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -265,6 +272,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         buf.writeInt(this.heightTop);
         buf.writeInt(this.heightBottom);
         buf.writeBoolean(this.locked);
+        if (this.locked) {
+            this.lockAndPrepareReactor();
+        }
     }
 
     @Override
@@ -274,6 +284,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         this.heightTop = buf.readInt();
         this.heightBottom = buf.readInt();
         this.locked = buf.readBoolean();
+
     }
 
     @Override
@@ -292,38 +303,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         if (componentData.equals("toggle")) {
             this.locked = !this.locked;
             if (this.locked) {
-                for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
-                    handler.lock();
-                }
-                for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-                    handler.lock();
-                }
-                fissionReactor = new FissionReactor(this.diameter - 2);
-                int radius = this.diameter % 2 == 0 ? (int) Math.floor(this.diameter / 2.f) : Math.round((this.diameter - 1) / 2.f);
-                radius--; // Get rid of the outside ring
-                BlockPos reactorOrigin = this.getPos().offset(this.frontFacing.getOpposite()).offset(this.frontFacing.rotateY(), radius);
-                GTLog.logger.info(reactorOrigin.toString());
-                for (int i = 0; i < diameter - 2; i++) {
-                    for (int j = 0; j < diameter - 2; j++) {
-                        if (Math.pow(i, 2) + Math.pow(j, 2) > Math.pow(radius, 2))
-                            continue;
-                        BlockPos currentPos = reactorOrigin.offset(this.frontFacing.rotateYCCW(), i).offset(this.frontFacing.getOpposite(), j).offset(EnumFacing.UP, height - 2);
-                        if (getWorld().getTileEntity(currentPos) instanceof IGregTechTileEntity gtTe) {
-                            MetaTileEntity mte = gtTe.getMetaTileEntity();
-                            ReactorComponent component = null;
-
-                            if (mte instanceof MetaTileEntityCoolantImportHatch coolantIn) {
-                                Material mat = GregTechAPI.MaterialRegistry.get(coolantIn.getImportFluids().getTankAt(0).getFluid().getFluid().getName());
-                                if (mat != null) component = new CoolantChannel(0, 0, mat);
-                            } else if (mte instanceof MetaTileEntityFuelRodImportHatch fuelIn) {
-                                component = new FuelRod(0, 0, )
-                            }
-                            if (component != null)
-                                fissionReactor.addComponent(component, i, j);
-
-                        }
-                    }
-                }
+                lockAndPrepareReactor();
             } else {
                 for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
                     handler.unlock();
@@ -333,5 +313,49 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 }
             }
         }
+    }
+
+    private void lockAndPrepareReactor() {
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
+            handler.lock();
+        }
+        for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+            handler.lock();
+        }
+        fissionReactor = new FissionReactor(this.diameter - 2);
+        int radius = this.diameter % 2 == 0 ? (int) Math.floor(this.diameter / 2.f) : Math.round((this.diameter - 1) / 2.f);
+        radius--; // Get rid of the outside ring
+        BlockPos reactorOrigin = this.getPos().offset(this.frontFacing.getOpposite()).offset(this.frontFacing.rotateY(), radius);
+        for (int i = 0; i < diameter - 2; i++) {
+            for (int j = 0; j < diameter - 2; j++) {
+                if (Math.pow(i, 2) + Math.pow(j, 2) > Math.pow(radius, 2))
+                    continue;
+                BlockPos currentPos = reactorOrigin.offset(this.frontFacing.rotateYCCW(), i).offset(this.frontFacing.getOpposite(), j).offset(EnumFacing.UP, height - 2);
+                if (getWorld().getTileEntity(currentPos) instanceof IGregTechTileEntity gtTe) {
+                    MetaTileEntity mte = gtTe.getMetaTileEntity();
+                    ReactorComponent component = null;
+
+                    if (mte instanceof MetaTileEntityCoolantImportHatch coolantIn) {
+                        Material mat = GregTechAPI.MaterialRegistry.get(coolantIn.getImportFluids().getTankAt(0).getFluid().getFluid().getName());
+                        if (mat != null) component = new CoolantChannel(0, 0, mat);
+                    } else if (mte instanceof MetaTileEntityFuelRodImportHatch fuelIn) {
+                        ItemStack lockedFuel = fuelIn.getImportItems().getStackInSlot(0);
+                        if (lockedFuel != null && !lockedFuel.isEmpty()) {
+                            MaterialStack mat = OreDictUnifier.getMaterial(lockedFuel);
+                            if (mat != null && OreDictUnifier.getPrefix(lockedFuel) == OrePrefix.dust) {
+                                FissionFuelProperty property = mat.material.getProperty(PropertyKey.FISSION_FUEL);
+                                if (property != null)
+                                    component = new FuelRod(0, 1, property, 3);
+                            }
+                        }
+                    } else if (mte instanceof MetaTileEntityControlRodPort controlIn) {
+                        component = new ControlRod(0, true, 1, controlIn.getInsertionAmount());
+                    }
+                    if (component != null)
+                        fissionReactor.addComponent(component, i, j);
+                }
+            }
+        }
+        fissionReactor.computeGeometry();
     }
 }
