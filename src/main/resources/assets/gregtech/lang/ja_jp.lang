@@ -2232,6 +2232,10 @@ recipemap.rock_breaker.name=破砕機
 recipemap.primitive_blast_furnace.name=初歩的な溶鉱炉
 recipemap.coke_oven.name=コークス炉
 
+gregtech.recipe.category.arc_furnace_recycling=リサイクル (アーク炉)
+gregtech.recipe.category.macerator_recycling=リサイクル (粉砕機)
+gregtech.recipe.category.extractor_recycling=リサイクル (抽出機)
+
 behaviour.hoe=土を耕せる
 behaviour.soft_hammer=機械のON/OFFを切り替える
 behaviour.soft_hammer.enabled=作業開始
@@ -5312,6 +5316,7 @@ terminal.battery.low_energy=電源不足! ターミナルを充電してくだ�
 terminal.store.description=アプリストア。購入履歴を確認しますか? アプリのインストールとアップグレードに。
 terminal.store.match=インベントリで必要なアイテムが検出されました。アプリのインストール/アップグレードを行いますか？
 terminal.store.miss=要求 %s (%d)
+terminal.store.close=Close
 
 terminal.ar.open=ARを開く
 
