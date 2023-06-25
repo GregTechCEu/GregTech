@@ -1334,7 +1334,7 @@ item.material.oreprefix.toolHeadPickaxe=%s製ピッケルヘッド
 item.material.oreprefix.toolHeadShovel=%s製シャベルヘッド
 item.material.oreprefix.toolHeadAxe=%s製斧刃
 item.material.oreprefix.toolHeadHoe=%s製クワ刃
-item.material.oreprefix.toolHeadSense=%s製鎌刃
+item.material.oreprefix.toolHeadScythe=%s製鎌刃
 item.material.oreprefix.toolHeadFile=%s製やすりヘッド
 item.material.oreprefix.toolHeadHammer=%s製ハンマーヘッド
 item.material.oreprefix.toolHeadSaw=%s製のこぎり刃
@@ -2239,7 +2239,6 @@ behaviour.soft_hammer.disabled=作業停止
 behaviour.lighter.tooltip=着火可能
 behaviour.lighter.fluid.tooltip=プロパンまたはブタンを用いて着火する
 behaviour.lighter.uses=残り使用回数: %,d
-behavior.plunger.description=機械の搬出タンクから液体を1,000 mb消去する。/nスニーク中に使用すると搬入タンクから液体を1,000 mb分消去する。/n搬入タンクの液体消去はGregの機械のみ!
 behavior.toggle_energy_consumer.tooltip=使うことでモード切替
 
 enchantment.damage.disjunction=ディスジャンクション
