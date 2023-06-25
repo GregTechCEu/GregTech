@@ -1,6 +1,5 @@
 package gregtech.api.items.metaitem;
 
-import baubles.api.BaublesApi;
 import gregtech.api.GTValues;
 import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
@@ -13,7 +12,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,7 +29,6 @@ import net.minecraftforge.fml.common.Loader;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.function.Function;
 
 public class ElectricStats implements IItemComponent, IItemCapabilityProvider, IItemMaxStackSizeProvider, IItemBehaviour, ISubItemHandler {
 
@@ -91,7 +88,8 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
                         transferLimit -= chargedAmount;
                         if (transferLimit == 0L) break;
                     }
-                } else if(ConfigHolder.compat.energy.nativeEUToFE && feEnergyItem != null) {
+                }
+                else if(ConfigHolder.compat.energy.nativeEUToFE && feEnergyItem != null) {
                     if(feEnergyItem.getEnergyStored() < feEnergyItem.getMaxEnergyStored()) {
                        int energyMissing = feEnergyItem.getMaxEnergyStored() - feEnergyItem.getEnergyStored();
                        long euToCharge = FeCompat.toEu(energyMissing, ConfigHolder.compat.energy.feToEuRatio);
