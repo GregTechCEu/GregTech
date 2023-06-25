@@ -179,7 +179,7 @@ public class MetaFluids {
         String path = "blocks/fluids/fluid." + material;
         if (fluidType.equals(FluidTypes.PLASMA))
             path += ".plasma";
-        ResourceLocation resourceLocation = new ResourceLocation(GTValues.MODID, path);
+        ResourceLocation resourceLocation = GTUtility.gregtechId(path);
         setMaterialFluidTexture(material, fluidType, resourceLocation);
     }
 

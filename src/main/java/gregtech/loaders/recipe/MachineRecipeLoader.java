@@ -967,6 +967,9 @@ public class MachineRecipeLoader {
         ModHandler.addShapelessNBTClearingRecipe("cell_nbt_tungstensteel", MetaItems.FLUID_CELL_LARGE_TUNGSTEN_STEEL.getStackForm(), MetaItems.FLUID_CELL_LARGE_TUNGSTEN_STEEL.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("cell_vial_nbt", MetaItems.FLUID_CELL_GLASS_VIAL.getStackForm(), MetaItems.FLUID_CELL_GLASS_VIAL.getStackForm());
 
+        // Data Items
+        ModHandler.addShapelessNBTClearingRecipe("data_stick_nbt", TOOL_DATA_STICK.getStackForm(), TOOL_DATA_STICK.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("data_orb_nbt", TOOL_DATA_ORB.getStackForm(), TOOL_DATA_ORB.getStackForm());
 
         //Jetpacks
         ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(), SEMIFLUID_JETPACK.getStackForm());

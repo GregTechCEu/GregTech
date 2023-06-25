@@ -1,7 +1,6 @@
 package gregtech.api.recipes.logic;
 
 import gregtech.Bootstrap;
-import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
@@ -14,6 +13,7 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -54,7 +54,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     }
 
     private static ResourceLocation gregtechId(String name) {
-        return new ResourceLocation(GTValues.MODID, name);
+        return GTUtility.gregtechId(name);
     }
 
     private static MetaTileEntityElectricBlastFurnace initEBF(int id) {
@@ -63,7 +63,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         mbt = MetaTileEntities.registerMetaTileEntity(id,
                 new MetaTileEntityElectricBlastFurnace(
                         // super function calls the world, which equal null in test
-                        new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
+                        GTUtility.gregtechId("electric_blast_furnace")) {
 
                     @Override
                     public boolean canBeDistinct() {
