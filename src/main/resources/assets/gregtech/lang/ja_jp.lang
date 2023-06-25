@@ -71,9 +71,6 @@ gregtech.top.transform_output=§9出力:§r
 gregtech.top.convert_eu=§eEU§rを§cFE§rに変換中
 gregtech.top.convert_fe=§cFE§rを§eEU§rに変換中
 
-gregtech.top.fuel_min_consume=必要量
-gregtech.top.fuel_none=燃料がありません
-
 gregtech.top.invalid_structure=構造に不備あり
 gregtech.top.valid_structure=構造に問題なし
 gregtech.top.obstructed_structure=どこかが塞がれている

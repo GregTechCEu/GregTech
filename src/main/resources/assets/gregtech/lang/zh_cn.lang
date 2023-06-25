@@ -66,9 +66,6 @@ gregtech.top.transform_output=§9输出：§r
 gregtech.top.convert_eu=将 §eEU§r 转换为 §cFE§r
 gregtech.top.convert_fe=将 §cFE§r 转换为 §eEU§r
 
-gregtech.top.fuel_min_consume=需要
-gregtech.top.fuel_none=无燃料
-
 gregtech.top.invalid_structure=§c结构不完整
 gregtech.top.valid_structure=§a结构已成型
 gregtech.top.obstructed_structure=§c结构受阻

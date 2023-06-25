@@ -66,9 +66,6 @@ gregtech.top.transform_output=§9Output:§r
 gregtech.top.convert_eu=Converting §eEU§r -> §cFE§r
 gregtech.top.convert_fe=Converting §cFE§r -> §eEU§r
 
-gregtech.top.fuel_min_consume=Needs
-gregtech.top.fuel_none=No fuel
-
 gregtech.top.invalid_structure=Structure Incomplete
 gregtech.top.valid_structure=Structure Formed
 gregtech.top.obstructed_structure=Structure Obstructed
