@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static gregtech.api.unification.ore.OrePrefix.dust;
@@ -333,7 +334,31 @@ public class OreProperty implements IMaterialProperty {
         return bathRecipe;
     }
 
-    public void setOreByProducts(Material... materials) {
+    /**
+     * Set the ore byproducts for this property
+     *
+     * @param materials the materials to use as byproducts
+     */
+    public void setOreByProducts(@Nonnull Material... materials) {
+        setOreByProducts(Arrays.asList(materials));
+    }
+
+    /**
+     * Set the ore byproducts for this property
+     *
+     * @param materials the materials to use as byproducts
+     */
+    public void setOreByProducts(@Nonnull Collection<Material> materials) {
+        this.oreByProducts.clear();
+        this.oreByProducts.addAll(materials);
+    }
+
+    /**
+     * Add ore byproducts to this property
+     *
+     * @param materials the materials to add as byproducts
+     */
+    public void addOreByProducts(@Nonnull Material... materials) {
         this.oreByProducts.addAll(Arrays.asList(materials));
     }
 
