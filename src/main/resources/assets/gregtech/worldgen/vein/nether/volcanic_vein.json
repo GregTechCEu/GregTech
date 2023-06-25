@@ -1,6 +1,6 @@
 {
   "weight": 90,
-  "density": 0.1,
+  "density": 0.2,
   "min_height": 10,
   "max_height": 30,
   "vein_populator": {
@@ -11,30 +11,27 @@
     "is_nether"
   ],
   "generator": {
-    "type": "ellipsoid",
+    "type": "layered",
     "radius": [
       17,
       24
     ]
   },
   "filler": {
-    "type" : "simple",
-	"value" : {
-	  "type" : "weight_random",
-      "values" : [
-        {
-          "weight" : 50,
-          "value" : "ore:sulfur"
-        },
-        {
-          "weight" : 30,
-          "value" : "ore:saltpeter"
-        },
-        {
-          "weight" : 20,
-          "value" : "ore:pyrite"
-        }
-      ]
-	}
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:sphalerite"
+      },
+      {
+        "secondary": "ore:saltpeter"
+      },
+      {
+        "between": "ore:pyrite"
+      },
+	  {
+		"sporadic": "ore:sulfur"
+	  }
+    ]
   }
 }
