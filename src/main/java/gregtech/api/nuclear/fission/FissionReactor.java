@@ -107,6 +107,8 @@ public class FissionReactor {
         fuelRods = new ArrayList<>();
         controlRods = new ArrayList<>();
         coolantChannels = new ArrayList<>();
+        effectiveControlRods = new ArrayList<>();
+        effectiveCoolantChannels = new ArrayList<>();
     }
 
     public boolean canCoolantBoil() {
@@ -158,7 +160,7 @@ public class FissionReactor {
         }
     }
 
-    protected void computeGeometry() {
+    public void computeGeometry() {
 
         double[][] geometricMatrixSlowNeutrons = new double[fuelRods.size()][fuelRods.size()];
         double[][] geometricMatrixFastNeutrons = new double[fuelRods.size()][fuelRods.size()];

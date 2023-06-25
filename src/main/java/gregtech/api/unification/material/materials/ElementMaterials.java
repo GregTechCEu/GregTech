@@ -871,6 +871,7 @@ public class ElementMaterials {
                 .color(0x32F032).iconSet(METALLIC)
                 .flags(EXT_METAL)
                 .element(Elements.U238)
+                .fissionFuelProperties(400, 40, 0.1, 0.1, 0.1, 0.1)
                 .build();
 
         Uranium235 = new Material.Builder(117, gregtechId("uranium_235"))
