@@ -43,9 +43,9 @@ public class LaserContainerHandler extends MTETrait implements ILaserContainer {
 
     @Override
     public long acceptEnergy(EnumFacing side, long amount) {
-        if (amount > 0 && !isOutput && (side == null || inputsEnergy(side))) {
+        if (amount > 0 && (side == null || inputsEnergy(side))) {
             return changeEnergy(amount);
-        } else if (amount < 0 && isOutput && (side == null || outputsEnergy(side))) {
+        } else if (amount < 0 && (side == null || outputsEnergy(side))) {
             return changeEnergy(amount);
         }
         return 0;

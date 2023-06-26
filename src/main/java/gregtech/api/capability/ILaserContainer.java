@@ -14,12 +14,33 @@ public interface ILaserContainer {
     long acceptEnergy(EnumFacing side, long amount);
 
     /**
-     * This method accepts energy from a side, and stores it in the container
+     * This method accepts energy, and stores it in the container
      *
      * @param amount amount of energy to add/remove to the container
      * @return amount of energy actually accepted
      */
     long changeEnergy(long amount);
+
+    /**
+     * Removes specified amount of energy from this container
+     *
+     * @param amount amount of energy to remove
+     * @return amount of energy removed
+     */
+    default long removeEnergy(long amount) {
+        return changeEnergy(-amount);
+    }
+
+    /**
+     * Adds specified amount of energy from this container
+     *
+     * @param amount amount of energy to add
+     * @return amount of energy added
+     */
+    default long addEnergy(long amount) {
+        return changeEnergy(amount);
+    }
+
 
     /**
      * @return if this container accepts energy from the given side

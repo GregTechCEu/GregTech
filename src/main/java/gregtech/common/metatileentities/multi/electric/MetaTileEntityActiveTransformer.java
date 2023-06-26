@@ -3,11 +3,9 @@ package gregtech.common.metatileentities.multi.electric;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
-import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.*;
 import gregtech.api.capability.impl.EnergyContainerList;
+import gregtech.api.capability.impl.LaserContainerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -37,12 +35,16 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     private boolean isWorkingEnabled = true;
     private IEnergyContainer energyInputContainer;
     private IEnergyContainer energyOutputContainer;
+    private ILaserContainer laserInputContainer;
+    private ILaserContainer laserOutputContainer;
     private boolean isActive = true;
 
     public MetaTileEntityActiveTransformer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.energyInputContainer = new EnergyContainerList(new ArrayList<>());
         this.energyOutputContainer = new EnergyContainerList(new ArrayList<>());
+        this.laserInputContainer = new LaserContainerList(new ArrayList<>());
+        this.laserOutputContainer = new LaserContainerList(new ArrayList<>());
     }
 
     @Override
@@ -53,7 +55,28 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     @Override
     protected void updateFormedValid() {
         long maxEnergyInput = energyInputContainer.getEnergyStored();
-        energyInputContainer.removeEnergy(energyOutputContainer.addEnergy(maxEnergyInput));
+        long maxLaserInput = laserInputContainer.getEnergyStored();
+
+        if (maxLaserInput == 0 && maxEnergyInput == 0) {
+            setActive(false);
+            return;
+        }
+
+        long energyUsed = 0;
+        long laserUsed = 0;
+
+        energyUsed += energyOutputContainer.addEnergy(maxEnergyInput - energyUsed);
+        laserUsed += energyOutputContainer.addEnergy(maxLaserInput - laserUsed);
+        energyUsed += laserOutputContainer.addEnergy(maxEnergyInput - energyUsed);
+        laserUsed += laserOutputContainer.addEnergy(maxLaserInput - laserUsed);
+
+        if (energyUsed == 0 && laserUsed == 0) {
+            setActive(false);
+        } else {
+            setActive(true);
+            energyInputContainer.removeEnergy(energyUsed);
+            laserInputContainer.removeEnergy(laserUsed);
+        }
     }
 
     @Override
@@ -61,6 +84,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         super.formStructure(context);
         this.energyInputContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
         this.energyOutputContainer = new EnergyContainerList(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
+        this.laserInputContainer = new LaserContainerList(getAbilities(MultiblockAbility.INPUT_LASER));
+        this.laserOutputContainer = new LaserContainerList(getAbilities(MultiblockAbility.OUTPUT_LASER));
     }
 
     @Override
@@ -68,6 +93,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         super.invalidateStructure();
         this.energyInputContainer = new EnergyContainerList(new ArrayList<>());
         this.energyOutputContainer = new EnergyContainerList(new ArrayList<>());
+        this.laserInputContainer = new LaserContainerList(new ArrayList<>());
+        this.laserOutputContainer = new LaserContainerList(new ArrayList<>());
     }
 
     @NotNull
