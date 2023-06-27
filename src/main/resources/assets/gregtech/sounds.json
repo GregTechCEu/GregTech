@@ -367,5 +367,25 @@
         "stream": false
       }
     ]
+  },
+  "maintenance.electrical": {
+    "subtitle" : "Electrical breakdown",
+    "category" : "block",
+    "sounds" : [
+      {
+        "name" : "gregtech:breakdown_electric",
+        "stream" : false
+      }
+    ]
+  },
+  "maintenance.mechanical": {
+    "subtitle" : "Mechanical breakdown",
+    "category" : "block",
+    "sounds" : [
+      {
+        "name" : "gregtech:breakdown_mechanical",
+        "stream" : false
+      }
+    ]
   }
 }
