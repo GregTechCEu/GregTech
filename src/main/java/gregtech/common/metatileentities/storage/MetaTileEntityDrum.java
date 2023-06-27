@@ -91,19 +91,19 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public net.minecraft.block.material.Material getMaterial() {
-        return isMaterialWood(material)
+        return ModHandler.isMaterialWood(material)
                 ? net.minecraft.block.material.Material.WOOD
                 : super.getMaterial();
     }
 
     @Override
     public SoundType getSoundType() {
-        return isMaterialWood(material) ? SoundType.WOOD : super.getSoundType();
+        return ModHandler.isMaterialWood(material) ? SoundType.WOOD : super.getSoundType();
     }
 
     @Override
     public String getHarvestTool() {
-        return isMaterialWood(material) ? ToolClasses.AXE : super.getHarvestTool();
+        return ModHandler.isMaterialWood(material) ? ToolClasses.AXE : super.getHarvestTool();
     }
 
     @Override

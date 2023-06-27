@@ -2,16 +2,16 @@ package gregtech.integration;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.block.machines.MetaTileEntityItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.integration.crafttweaker.CTRecipeHelper;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
+import gregtech.integration.crafttweaker.CTRecipeHelper;
 import gregtech.integration.groovy.GrSRecipeHelper;
 import gregtech.modules.GregTechModules;
 import net.minecraft.block.Block;
@@ -54,7 +54,7 @@ public final class RecipeCompatUtil {
         }
         if (item.getItem() instanceof ItemBlock) {
             Block block = ((ItemBlock) item.getItem()).getBlock();
-            if (item.getItem() instanceof MachineItemBlock) {
+            if (item.getItem() instanceof MetaTileEntityItemBlock) {
                 MetaTileEntity mte = GTUtility.getMetaTileEntity(item);
                 if (mte != null) {
                     return (mte.metaTileEntityId.getNamespace().equals(GTValues.MODID) ? mte.metaTileEntityId.getPath() : mte.metaTileEntityId.toString());
