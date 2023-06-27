@@ -611,8 +611,6 @@ public final class MetaItems {
     public static void init() {
         MetaItem1 first = new MetaItem1();
         first.setRegistryName("meta_item_1");
-        MetaArmor armor = new MetaArmor();
-        armor.setRegistryName("gt_armor");
         for (OrePrefix prefix : orePrefixes) {
             for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
                 String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, prefix.name());

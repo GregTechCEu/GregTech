@@ -2,9 +2,13 @@ package gregtech.api.util.input;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.core.network.packets.PacketKeyPressed;
+import gregtech.core.network.packets.PacketKeysDown;
 import gregtech.api.util.GTLog;
 import gregtech.core.network.packets.PacketKeysPressed;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,18 +57,27 @@ public enum KeyBind {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public static void onInputEvent(InputEvent.KeyInputEvent event) {
-        List<KeyBind> updating = new ArrayList<>();
+        List<KeyBind> updatingKeyDown = new ArrayList<>();
+        IntList updatingPressed = new IntArrayList();
         for (KeyBind keybind : VALUES) {
-            boolean previousPressed = keybind.isPressed;
+            // handle isKeyDown todo this can be removed after full armor rewrite
+
             boolean previousKeyDown = keybind.isKeyDown;
-            keybind.isPressed = keybind.isPressed();
             keybind.isKeyDown = keybind.isKeyDown();
-            if (previousPressed != keybind.isPressed || previousKeyDown != keybind.isKeyDown) {
-                updating.add(keybind);
+            if (previousKeyDown != keybind.isKeyDown) {
+                updatingKeyDown.add(keybind);
+            }
+
+            // handle isPressed
+            if (keybind.isPressed()) {
+                updatingPressed.add(keybind.ordinal());
             }
         }
-        if (!updating.isEmpty()) {
-            GregTechAPI.networkHandler.sendToServer(new PacketKeysPressed(updating));
+        if (!updatingKeyDown.isEmpty()) {
+            GregTechAPI.networkHandler.sendToServer(new PacketKeysDown(updatingKeyDown));
+        }
+        if (!updatingPressed.isEmpty()) {
+            GregTechAPI.networkHandler.sendToServer(new PacketKeyPressed(updatingPressed));
         }
     }
 
@@ -86,9 +99,9 @@ public enum KeyBind {
     @SideOnly(Side.CLIENT)
     private KeyBinding keybinding;
     @SideOnly(Side.CLIENT)
-    private boolean isPressed, isKeyDown;
+    private boolean isKeyDown;
 
-    private final WeakHashMap<EntityPlayerMP, MutablePair<Boolean, Boolean>> mapping = new WeakHashMap<>();
+    private final WeakHashMap<EntityPlayerMP, Boolean> mapping = new WeakHashMap<>();
     private final WeakHashMap<EntityPlayerMP, Set<IKeyPressedListener>> listeners = new WeakHashMap<>();
 
     // For Vanilla/Other Mod keybinds
@@ -128,46 +141,32 @@ public enum KeyBind {
         return this.keybinding.isKeyDown();
     }
 
-    public void update(boolean pressed, boolean keyDown, EntityPlayerMP player) {
-        MutablePair<Boolean, Boolean> pair = this.mapping.get(player);
-        if (pair == null) {
-            this.mapping.put(player, MutablePair.of(pressed, keyDown));
-        } else {
-            pair.left = pressed;
-            pair.right = keyDown;
-            if (pressed) {
-                Set<IKeyPressedListener> listenerSet = listeners.get(player);
-                if (listenerSet != null && !listenerSet.isEmpty()) {
-                    for (var listener : listenerSet) listener.onKeyPressed(player);
-                }
+    public void updateKeyDown(boolean keyDown, EntityPlayerMP player) {
+        this.mapping.put(player, keyDown);
+    }
+
+    public void onKeyPressed(EntityPlayerMP player) {
+        Set<IKeyPressedListener> listenerSet = listeners.get(player);
+        if (listenerSet != null && !listenerSet.isEmpty()) {
+            for (var listener : listenerSet) {
+                listener.onKeyPressed(player, this);
             }
         }
     }
 
-    public boolean isPressed(EntityPlayer player) {
-        if (player.world.isRemote) {
-            return isPressed();
-        } else {
-            MutablePair<Boolean, Boolean> pair = this.mapping.get((EntityPlayerMP) player);
-            return pair != null && pair.left;
-        }
-    }
-
     public boolean isKeyDown(EntityPlayer player) {
-        if (player.world.isRemote) {
-            return isKeyDown();
-        } else {
-            MutablePair<Boolean, Boolean> pair = this.mapping.get((EntityPlayerMP) player);
-            return pair != null && pair.right;
-        }
+        if (player.world.isRemote) return isKeyDown();
+        return mapping.get((EntityPlayerMP) player);
     }
 
     public void registerListener(EntityPlayerMP player, IKeyPressedListener listener) {
+        System.out.println("Listener registered");
         Set<IKeyPressedListener> listenerSet = listeners.computeIfAbsent(player, k -> new HashSet<>());
         listenerSet.add(listener);
     }
 
     public void removeListener(EntityPlayerMP player, IKeyPressedListener listener) {
+        System.out.println("Listener removed");
         Set<IKeyPressedListener> listenerSet = listeners.get(player);
         if (listenerSet != null) {
             listenerSet.remove(listener);

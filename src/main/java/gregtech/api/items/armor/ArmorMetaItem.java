@@ -1,17 +1,16 @@
 package gregtech.api.items.armor;
 
+import com.google.common.base.Preconditions;
+import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IEnchantabilityHelper;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.common.creativetab.GTCreativeTabs;
 
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -20,8 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multimap;
@@ -48,6 +45,7 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
         return metaValueItem == null ? new DummyArmorLogic() : metaValueItem.getArmorLogic();
     }
 
+
     @NotNull
     @Override
     public Multimap<String, AttributeModifier> getAttributeModifiers(@NotNull EntityEquipmentSlot slot,
@@ -58,6 +56,10 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
         return multimap;
     }
 
+    // todo
+    // todo Definition: done
+    // todo Item: todo
+    // todo
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source,
                                          double damage, int slot) {
@@ -68,6 +70,10 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
         return new ArmorProperties(0, 0, Integer.MAX_VALUE);
     }
 
+    // todo
+    // todo Definition: done
+    // todo Item: todo
+    // todo
     @Override
     public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
         IArmorLogic armorLogic = getArmorLogic(armor);
@@ -77,6 +83,10 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
         return 0;
     }
 
+    // todo
+    // todo Definition: nothing needed?
+    // todo Item: todo
+    // todo
     @Override
     public void damageArmor(EntityLivingBase entity, @NotNull ItemStack stack, DamageSource source, int damage,
                             int slot) {
@@ -84,6 +94,10 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
         armorLogic.damageArmor(entity, stack, source, damage, getSlotByIndex(slot));
     }
 
+    // todo
+    // todo Definition: done
+    // todo Item: done
+    // todo
     @Override
     public boolean handleUnblockableDamage(EntityLivingBase entity, @NotNull ItemStack armor, DamageSource source,
                                            double damage, int slot) {
@@ -95,12 +109,17 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
         return false;
     }
 
+    // todo
+    // todo Definition: done
+    // todo Item: done
+    // todo
     @Override
     public void onArmorTick(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack itemStack) {
         IArmorLogic armorLogic = getArmorLogic(itemStack);
         armorLogic.onArmorTick(world, player, itemStack);
     }
 
+    // todo not needed since we now extend ItemArmor
     @Override
     public boolean isValidArmor(@NotNull ItemStack stack, @NotNull EntityEquipmentSlot armorType,
                                 @NotNull Entity entity) {
@@ -109,6 +128,7 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
                 armorLogic.isValidArmor(stack, entity, armorType);
     }
 
+    // todo not needed since we now extend ItemArmor
     @Nullable
     @Override
     public EntityEquipmentSlot getEquipmentSlot(@NotNull ItemStack stack) {
@@ -116,40 +136,13 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
         return armorLogic.getEquipmentSlot(stack);
     }
 
+    // todo Need to get this onto the Definition somehow
     @Nullable
     @Override
     public String getArmorTexture(@NotNull ItemStack stack, @NotNull Entity entity, @NotNull EntityEquipmentSlot slot,
                                   @NotNull String type) {
         IArmorLogic armorLogic = getArmorLogic(stack);
         return armorLogic.getArmorTexture(stack, entity, slot, type);
-    }
-
-    @Nullable
-    @Override
-    @SideOnly(Side.CLIENT)
-    public ModelBiped getArmorModel(@NotNull EntityLivingBase entityLiving, @NotNull ItemStack itemStack,
-                                    @NotNull EntityEquipmentSlot armorSlot, @NotNull ModelBiped _default) {
-        IArmorLogic armorLogic = getArmorLogic(itemStack);
-        return armorLogic.getArmorModel(entityLiving, itemStack, armorSlot, _default);
-    }
-
-    @Override
-    public int getArmorLayersAmount(ItemStack itemStack) {
-        IArmorLogic armorLogic = getArmorLogic(itemStack);
-        return armorLogic.getArmorLayersAmount(itemStack);
-    }
-
-    @Override
-    public int getArmorLayerColor(ItemStack itemStack, int layerIndex) {
-        IArmorLogic armorLogic = getArmorLogic(itemStack);
-        return armorLogic.getArmorLayerColor(itemStack, layerIndex);
-    }
-
-    @Override
-    public void renderHelmetOverlay(@NotNull ItemStack stack, @NotNull EntityPlayer player,
-                                    @NotNull ScaledResolution resolution, float partialTicks) {
-        IArmorLogic armorLogic = getArmorLogic(stack);
-        armorLogic.renderHelmetOverlay(stack, player, resolution, partialTicks);
     }
 
     private static EntityEquipmentSlot getSlotByIndex(int index) {
