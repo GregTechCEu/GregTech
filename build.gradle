@@ -1,9 +1,8 @@
-//version: 1687160402
+//version: 1686205143
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
  * Please check https://github.com/GregTechCEu/Buildscripts/blob/master/build.gradle for updates.
- * You can also run ./gradlew updateBuildScript to update your buildscript.
  */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
@@ -54,7 +53,6 @@ checkPropertyExists("containsMixinsAndOrCoreModOnly")
 
 // Optional properties: we can assume some default behavior if these are missing
 propertyDefaultIfUnset("modVersion", "")
-propertyDefaultIfUnset("includeMCVersionJar", false)
 propertyDefaultIfUnset("autoUpdateBuildScript", false)
 propertyDefaultIfUnset("modArchivesBaseName", project.modId)
 propertyDefaultIfUnsetWithEnvVar("developmentEnvironmentUserName", "Developer", "DEV_USERNAME")
@@ -265,13 +263,7 @@ if (!modVersion) {
     }
 }
 
-if (includeMCVersionJar.toBoolean()){
-    version = "${minecraftVersion}-${modVersion}"
-}
-else {
-    version = modVersion
-}
-
+version = modVersion
 group = modGroup
 archivesBaseName = modArchivesBaseName
 
@@ -680,31 +672,21 @@ idea {
     project {
         settings {
             runConfigurations {
-                '1. Setup Workspace'(Gradle) {
-                    taskNames = ['setupDecompWorkspace']
-                }
-                '2. Run Client'(Gradle) {
+                '1. Run Client'(Gradle) {
                     taskNames = ['runClient']
                 }
-                '3. Run Server'(Gradle) {
+                '2. Run Server'(Gradle) {
                     taskNames = ['runServer']
                 }
-                '4. Run Obfuscated Client'(Gradle) {
+                '3. Run Obfuscated Client'(Gradle) {
                     taskNames = ['runObfClient']
                 }
-                '5. Run Obfuscated Server'(Gradle) {
+                '4. Run Obfuscated Server'(Gradle) {
                     taskNames = ['runObfServer']
                 }
                 if (enableSpotless.toBoolean()) {
-                    '6. Apply Spotless'(Gradle) {
+                    "5. Apply Spotless"(Gradle) {
                         taskNames = ["spotlessApply"]
-                    }
-                    '7. Build Jars'(Gradle) {
-                        taskNames = ['build']
-                    }
-                } else {
-                    '6. Build Jars'(Gradle) {
-                        taskNames = ['build']
                     }
                 }
                 'Update Buildscript'(Gradle) {

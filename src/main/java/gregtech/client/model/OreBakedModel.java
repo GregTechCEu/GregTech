@@ -6,7 +6,6 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
-import gregtech.api.util.GTUtility;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -140,7 +139,7 @@ public class OreBakedModel implements IBakedModel {
         }
 
         public ModelResourceLocation getModelId() {
-            return new ModelResourceLocation(GTUtility.gregtechId(
+            return new ModelResourceLocation(new ResourceLocation(GTValues.MODID,
                     "ore_" + this.stoneType.name + "_" + this.iconSet.name + (this.emissive ? "_emissive" : "")), "");
         }
 

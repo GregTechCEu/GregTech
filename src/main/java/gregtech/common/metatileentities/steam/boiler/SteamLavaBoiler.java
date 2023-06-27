@@ -1,9 +1,13 @@
 package gregtech.common.metatileentities.steam.boiler;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IFilter;
+import gregtech.api.capability.IFuelInfo;
+import gregtech.api.capability.IFuelable;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
+import gregtech.api.capability.impl.FluidFuelInfo;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -16,8 +20,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -25,9 +31,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
-public class SteamLavaBoiler extends SteamBoiler {
+public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
 
     private static final Object2IntMap<Fluid> BOILER_FUEL_TO_CONSUMPTION = new Object2IntOpenHashMap<>();
     private static boolean initialized;
@@ -111,6 +119,27 @@ public class SteamLavaBoiler extends SteamBoiler {
     @Override
     protected int getCoolDownRate() {
         return 1;
+    }
+
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        T result = super.getCapability(capability, side);
+        if (result != null)
+            return result;
+        if (capability == GregtechCapabilities.CAPABILITY_FUELABLE) {
+            return GregtechCapabilities.CAPABILITY_FUELABLE.cast(this);
+        }
+        return null;
+    }
+
+    @Override
+    public Collection<IFuelInfo> getFuels() {
+        FluidStack fuel = fuelFluidTank.drain(Integer.MAX_VALUE, false);
+        if (fuel == null || fuel.amount == 0)
+            return Collections.emptySet();
+        final int fuelRemaining = fuel.amount;
+        final int fuelCapacity = fuelFluidTank.getCapacity();
+        final long burnTime = (long) fuelRemaining * (this.isHighPressure ? 6 : 12); // 100 mb lasts 600 or 1200 ticks
+        return Collections.singleton(new FluidFuelInfo(fuel, fuelRemaining, fuelCapacity, getBoilerFuelToConsumption().get(fuel.getFluid()), burnTime));
     }
 
     @Override

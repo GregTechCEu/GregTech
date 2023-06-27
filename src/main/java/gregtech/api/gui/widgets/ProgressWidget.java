@@ -5,7 +5,6 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
-import gregtech.common.ConfigHolder;
 import net.minecraft.network.PacketBuffer;
 
 import java.util.function.DoubleSupplier;
@@ -13,15 +12,10 @@ import java.util.function.DoubleSupplier;
 public class ProgressWidget extends Widget {
 
     public enum MoveType {
-        /** Fills the progress bar upwards, from the bottom */
         VERTICAL,
-        /** Fills the progress bar left to right */
         HORIZONTAL,
-        /** Progress bar starts full, and empties upwards from the bottom */
         VERTICAL_INVERTED,
-        /** Fills the progress bar clockwise in a circle, starting from the bottom left */
         CIRCULAR,
-        /** Fills the progress bar downwards, from the top */
         VERTICAL_DOWNWARDS
     }
 
@@ -63,7 +57,7 @@ public class ProgressWidget extends Widget {
         this(new TimedProgressSupplier(
                 ticksPerCycle,
                 moveType == MoveType.HORIZONTAL ? width : height,
-                false
+                moveType == MoveType.VERTICAL_INVERTED
         ), x, y, width, height, fullImage, moveType);
     }
 
@@ -82,130 +76,64 @@ public class ProgressWidget extends Widget {
             emptyBarArea.draw(pos.x, pos.y, size.width, size.height);
         }
         if (filledBarArea != null) {
-            final boolean smooth = ConfigHolder.client.guiConfig.smoothProgressBars;
+            //fuck this precision-dependent things, they are so fucking annoying
             if (moveType == MoveType.HORIZONTAL) {
-                double width = size.width * lastProgressValue;
-                if (!smooth) width = (int) width;
-                double drawnWidth = smooth ? lastProgressValue : width / (size.width * 1.0);
-                filledBarArea[0].drawSubArea(
-                        pos.x,
-                        pos.y,
-                        width,
-                        size.height,
-                        0.0,
-                        0.0,
-                        drawnWidth,
-                        1.0);
+                filledBarArea[0].drawSubArea(pos.x, pos.y, (int) (size.width * lastProgressValue), size.height,
+                        0.0, 0.0, ((int) (size.width * lastProgressValue)) / (size.width * 1.0), 1.0);
             } else if (moveType == MoveType.VERTICAL) {
-                double height = size.height * lastProgressValue;
-                if (!smooth) height = (int) height;
-                double drawnHeight = height / size.height;
-                filledBarArea[0].drawSubArea(
-                        pos.x,
-                        pos.y + size.height - height,
-                        size.width,
-                        height,
-                        0.0,
-                        1.0 - drawnHeight,
-                        1.0,
-                        drawnHeight);
+                int progressValueScaled = (int) (size.height * lastProgressValue);
+                filledBarArea[0].drawSubArea(pos.x, pos.y + size.height - progressValueScaled, size.width, progressValueScaled,
+                        0.0, 1.0 - (progressValueScaled / (size.height * 1.0)),
+                        1.0, (progressValueScaled / (size.height * 1.0)));
             } else if (moveType == MoveType.VERTICAL_INVERTED) {
-                double height = size.height * (1.0 - lastProgressValue);
-                if (!smooth) height = (int) height;
-                double drawnHeight = height / size.height;
-                filledBarArea[0].drawSubArea(
-                        pos.x,
-                        pos.y,
-                        size.width,
-                        height,
-                        0.0,
-                        0.0,
-                        1.0,
-                        drawnHeight);
+                int progressValueScaled = (int) (size.height * lastProgressValue);
+                filledBarArea[0].drawSubArea(pos.x, pos.y, size.width, progressValueScaled,
+                        0.0, 0.0,
+                        1.0, (progressValueScaled / (size.height * 1.0)));
             } else if (moveType == MoveType.CIRCULAR) {
-                double[] subAreas = {
+                double[] subAreas = new double[] {
                         Math.min(1, Math.max(0, lastProgressValue / 0.25)),
                         Math.min(1, Math.max(0, (lastProgressValue - 0.25) / 0.25)),
                         Math.min(1, Math.max(0, (lastProgressValue - 0.5) / 0.25)),
                         Math.min(1, Math.max(0, (lastProgressValue - 0.75) / 0.25)),
                 };
-
                 int halfWidth = size.width / 2;
                 int halfHeight = size.height / 2;
 
-                double progressScaled = subAreas[0] * halfHeight;
-                if (!smooth) progressScaled = Math.round(progressScaled);
-                double progressScaledDrawnHeight = progressScaled / halfHeight;
-
-                // BL, draw UP
+                int progressScaled = (int) Math.round(subAreas[0] * halfHeight);
                 filledBarArea[0].drawSubArea(
-                        pos.x,
-                        pos.y + size.height - progressScaled,
-                        halfWidth,
-                        progressScaled,
-                        0.0,
-                        1.0 - progressScaledDrawnHeight,
-                        1.0,
-                        progressScaledDrawnHeight
-                );
+                        pos.x, pos.y + size.height - progressScaled,
+                        halfWidth, progressScaled,
+                        0.0, 1.0 - progressScaled / (halfHeight * 1.0),
+                        1.0, progressScaled / (halfHeight * 1.0)
+                ); // BL, draw UP
 
-                // TL, draw RIGHT
-                progressScaled = subAreas[1] * halfWidth;
-                if (!smooth) progressScaled = Math.round(progressScaled);
-                double progressScaledDrawnWidth = progressScaled / halfWidth;
+                progressScaled = (int) Math.round(subAreas[1] * halfWidth);
                 filledBarArea[1].drawSubArea(
-                        pos.x,
-                        pos.y,
-                        progressScaled,
-                        halfHeight,
-                        0.0,
-                        0.0,
-                        progressScaledDrawnWidth,
-                        1.0
-                );
+                        pos.x, pos.y,
+                        progressScaled, halfHeight,
+                        0.0, 0.0,
+                        progressScaled / (halfWidth * 1.0), 1.0
+                ); // TL, draw RIGHT
 
-                // TR, draw DOWN
-                progressScaled = subAreas[2] * halfWidth;
-                if (!smooth) progressScaled = Math.round(progressScaled);
-                progressScaledDrawnHeight = progressScaled / halfHeight;
+                progressScaled = (int) Math.round(subAreas[2] * halfHeight);
                 filledBarArea[2].drawSubArea(
-                        pos.x + halfWidth,
-                        pos.y,
-                        halfWidth,
-                        progressScaled,
-                        0.0,
-                        0.0,
-                        1.0,
-                        progressScaledDrawnHeight
-                );
+                        pos.x + halfWidth, pos.y,
+                        halfWidth, progressScaled,
+                        0.0, 0.0,
+                        1.0, progressScaled / (halfHeight * 1.0)
+                ); // TR, draw DOWN
 
-                // BR, draw LEFT
-                progressScaled = subAreas[3] * halfWidth;
-                if (!smooth) progressScaled = Math.round(progressScaled);
-                progressScaledDrawnWidth = progressScaled / halfWidth;
+                progressScaled = (int) Math.round(subAreas[3] * halfWidth);
                 filledBarArea[3].drawSubArea(
-                        pos.x + size.width - progressScaled,
-                        pos.y + halfHeight,
-                        progressScaled,
-                        halfHeight,
-                        1.0 - progressScaledDrawnWidth,
-                        0.0,
-                        progressScaledDrawnWidth,
-                        1.0
-                );
+                        pos.x + size.width - progressScaled, pos.y + halfHeight,
+                        progressScaled, halfHeight,
+                        1.0 - progressScaled / (halfWidth * 1.0), 0.0,
+                        progressScaled / (halfWidth * 1.0), 1.0
+                ); // BR, draw LEFT
             } else if (moveType == MoveType.VERTICAL_DOWNWARDS) {
-                double height = size.height * lastProgressValue;
-                if (!smooth) height = (int) height;
-                double drawnHeight = height / size.height;
-                filledBarArea[0].drawSubArea(
-                        pos.x,
-                        pos.y,
-                        size.width,
-                        height,
-                        0.0,
-                        0.0,
-                        1.0,
-                        drawnHeight);
+                filledBarArea[0].drawSubArea(pos.x, pos.y, size.width, (int) (size.height * lastProgressValue),
+                        0.0, 0.0, 1.0, ((int) (size.height * lastProgressValue)) / (size.height * 1.0));
             }
         }
     }
@@ -248,11 +176,11 @@ public class ProgressWidget extends Widget {
         private double calculateTime() {
             long currentTime = System.currentTimeMillis();
             long msPassed = (currentTime - startTime) % msPerCycle;
-            double currentValue = 1.0 * msPassed * maxValue / msPerCycle;
+            int currentValue = (int) Math.floorDiv(msPassed * (maxValue + 1), msPerCycle);
             if (countDown) {
-                return (maxValue - currentValue) / maxValue;
+                return (maxValue - currentValue) / (maxValue * 1.0);
             }
-            return currentValue / maxValue;
+            return currentValue / (maxValue * 1.0);
         }
     }
 }

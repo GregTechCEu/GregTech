@@ -1,17 +1,18 @@
 package gregtech.integration.jei.recipe;
 
 import com.google.common.collect.Lists;
+import gregtech.api.GTValues;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.GTUtility;
 import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.FacadeItem;
 import mezz.jei.api.recipe.*;
 import mezz.jei.api.recipe.IFocus.Mode;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -71,7 +72,7 @@ public class FacadeRegistryPlugin implements IRecipeRegistryPlugin {
     private static IRecipeWrapper createFacadeRecipe(ItemStack itemStack, Material material, int facadeAmount) {
         ItemStack itemStackCopy = itemStack.copy();
         itemStackCopy.setCount(facadeAmount);
-        return new FacadeRecipeWrapper(GTUtility.gregtechId("facade_" + material),
+        return new FacadeRecipeWrapper(new ResourceLocation(GTValues.MODID, "facade_" + material),
                 OreDictUnifier.get(OrePrefix.plate, material), itemStackCopy);
     }
 

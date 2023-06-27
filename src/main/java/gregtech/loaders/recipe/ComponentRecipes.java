@@ -86,7 +86,6 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L))
                 .fluidInputs(Lubricant.getFluid(250))
                 .output(ELECTRIC_MOTOR_LuV)
-                .research(ELECTRIC_MOTOR_IV.getStackForm())
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()

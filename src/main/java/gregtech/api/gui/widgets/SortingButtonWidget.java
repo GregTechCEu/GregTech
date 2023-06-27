@@ -55,7 +55,7 @@ public class SortingButtonWidget extends ClickButtonWidget {
                 sortKeyBinding = (KeyBinding) proxyClass.getField("KEYBINDING_SORT").get(null);
             }
             return sortKeyBinding.getKeyCode();
-        } catch (ReflectiveOperationException e) {
+        } catch (ReflectiveOperationException iDontGiveAShit) {
             return 0;
         }
     }

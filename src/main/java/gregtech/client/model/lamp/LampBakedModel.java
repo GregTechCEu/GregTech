@@ -1,7 +1,6 @@
 package gregtech.client.model.lamp;
 
 import gregtech.api.GTValues;
-import gregtech.api.util.GTUtility;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -12,6 +11,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -73,7 +73,7 @@ public class LampBakedModel implements IBakedModel {
         if (!emissive && !nonEmissive) return Collections.emptyList();
         List<BakedQuad> quads = new ArrayList<>();
         BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
-        ForgeHooksClient.setRenderLayer(null); // ctm
+        ForgeHooksClient.setRenderLayer(null); // Fuck you CTM
         List<BakedQuad> originalQuads = getModel().getQuads(state, side, rand);
         ForgeHooksClient.setRenderLayer(layer);
         for (BakedQuad q : originalQuads) {
@@ -205,9 +205,9 @@ public class LampBakedModel implements IBakedModel {
                 String baseModelId = "active_lamp_" + key.modelType.modelName.getNamespace() +
                         "_" + key.modelType.modelName.getPath() + "_" + key.color.getName();
                 this.customItemModel = new ModelResourceLocation(
-                        GTUtility.gregtechId(baseModelId + "_item"), "");
+                        new ResourceLocation(GTValues.MODID, baseModelId + "_item"), "");
                 this.customBlockModel = new ModelResourceLocation(
-                        GTUtility.gregtechId(baseModelId + "_block" + (key.bloom ? "_bloom" : "")), "");
+                        new ResourceLocation(GTValues.MODID, baseModelId + "_block" + (key.bloom ? "_bloom" : "")), "");
             } else { // just use original model, no custom code required
                 this.customItemModel = this.customBlockModel = null;
             }

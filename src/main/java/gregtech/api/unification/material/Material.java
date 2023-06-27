@@ -905,7 +905,7 @@ public class Material implements Comparable<Material> {
 
         public Builder addOreByproducts(Material... byproducts) {
             properties.ensureSet(PropertyKey.ORE);
-            properties.getProperty(PropertyKey.ORE).addOreByProducts(byproducts);
+            properties.getProperty(PropertyKey.ORE).setOreByProducts(byproducts);
             return this;
         }
 

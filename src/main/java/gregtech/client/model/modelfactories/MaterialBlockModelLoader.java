@@ -6,7 +6,6 @@ import gregtech.api.GTValues;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -95,8 +94,8 @@ public class MaterialBlockModelLoader {
             this.iconType = iconType;
             this.iconSet = iconSet;
 
-            this.blockModelId = new ModelResourceLocation(GTUtility.gregtechId("material_" + iconType.name + "_" + iconSet.name), "normal");
-            this.itemModelId = new ModelResourceLocation(GTUtility.gregtechId("material_" + iconType.name + "_" + iconSet.name), "inventory");
+            this.blockModelId = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "material_" + iconType.name + "_" + iconSet.name), "normal");
+            this.itemModelId = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "material_" + iconType.name + "_" + iconSet.name), "inventory");
         }
 
         ResourceLocation getBlockModelLocation() {

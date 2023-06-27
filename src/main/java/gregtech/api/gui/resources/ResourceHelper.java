@@ -1,7 +1,6 @@
 package gregtech.api.gui.resources;
 
 import gregtech.api.GTValues;
-import gregtech.api.util.GTUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
@@ -57,7 +56,7 @@ public final class ResourceHelper {
         if (!cachedResources.containsKey(rs)) {
             URL url = ResourceHelper.class.getResource(String.format("/assets/%s/%s", GTValues.MODID, rs));
             if (url == null) return false;
-            cachedResources.put(rs, GTUtility.gregtechId(rs));
+            cachedResources.put(rs, new ResourceLocation(GTValues.MODID, rs));
         }
         return true;
     }

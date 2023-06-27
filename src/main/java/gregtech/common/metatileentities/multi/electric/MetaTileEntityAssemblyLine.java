@@ -1,12 +1,8 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -14,12 +10,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
-import gregtech.api.recipes.recipeproperties.ResearchProperty;
-import gregtech.api.util.GTUtility;
 import gregtech.client.particle.GTLaserBeamParticle;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.ICubeRenderer;
@@ -30,32 +21,20 @@ import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
-import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.function.Function;
 
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
-    private static final ResourceLocation LASER_LOCATION = GTUtility.gregtechId("textures/fx/laser/laser.png");
-    private static final ResourceLocation LASER_HEAD_LOCATION = GTUtility.gregtechId("textures/fx/laser/laser_start.png");
-
-    @SideOnly(Side.CLIENT)
-    private GTLaserBeamParticle[][] beamParticles;
-    private int beamCount;
+    private static final ResourceLocation LASER_LOCATION = new ResourceLocation(GTValues.MODID, "textures/fx/laser/laser.png");
+    private static final ResourceLocation LASER_HEAD_LOCATION = new ResourceLocation(GTValues.MODID, "textures/fx/laser/laser_start.png");
 
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
@@ -66,99 +45,39 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         return new MetaTileEntityAssemblyLine(metaTileEntityId);
     }
 
-    @Nonnull
     @Override
     protected BlockPattern createStructurePattern() {
-        FactoryBlockPattern pattern = FactoryBlockPattern.start(FRONT, UP, RIGHT)
-                .aisle("FIF", "RTR", "SAG", " Y ")
-                .aisle("FIF", "RTR", "DAG", " Y ").setRepeatable(3, 15)
-                .aisle("FOF", "RTR", "DAG", " Y ")
+        return FactoryBlockPattern.start(FRONT, UP, RIGHT)
+                .aisle("FIF", "RTR", "SAG", "#Y#")
+                .aisle("FIF", "RTR", "GAG", "#Y#").setRepeatable(3, 15)
+                .aisle("FOF", "RTR", "GAG", "#Y#")
                 .where('S', selfPredicate())
                 .where('F', states(getCasingState())
                         .or(autoAbilities(false, true, false, false, false, false, false))
-                        .or(fluidInputPredicate()))
-                .where('O', abilities(MultiblockAbility.EXPORT_ITEMS)
-                        .addTooltips("gregtech.multiblock.pattern.location_end"))
-                .where('Y', states(getCasingState())
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY)
-                                .setMinGlobalLimited(1)
-                                .setMaxGlobalLimited(3)))
-                .where('I', metaTileEntities(MetaTileEntities.ITEM_IMPORT_BUS[GTValues.ULV]))
-                .where('G', states(getGrateState()))
+                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(4)))
+                .where('O', abilities(MultiblockAbility.EXPORT_ITEMS).addTooltips("gregtech.multiblock.pattern.location_end"))
+                .where('Y', states(getCasingState()).or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3)))
+                .where('I', metaTileEntities(MetaTileEntities.ITEM_IMPORT_BUS[0]))
+                .where('G', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING)))
                 .where('A', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_CONTROL)))
                 .where('R', states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.LAMINATED_GLASS)))
                 .where('T', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING)))
-                .where('D', dataHatchPredicate())
-                .where(' ', any());
-        return pattern.build();
+                .where('#', any())
+                .build();
     }
-
-    @Nonnull
-    protected static IBlockState getCasingState() {
-        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
-    }
-
-    @Nonnull
-    protected static IBlockState getGrateState() {
-        return MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING);
-    }
-
-    @Nonnull
-    protected static TraceabilityPredicate fluidInputPredicate() {
-        // block multi-fluid hatches
-        return metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.IMPORT_FLUIDS).stream()
-                .filter(mte -> !(mte instanceof MetaTileEntityMultiFluidHatch))
-                .toArray(MetaTileEntity[]::new))
-                .setMaxGlobalLimited(4);
-    }
-
-    @Nonnull
-    protected static TraceabilityPredicate dataHatchPredicate() {
-        // if research is enabled, require the data hatch, otherwise use a grate instead
-        if (ConfigHolder.machines.enableResearch) {
-            return abilities(MultiblockAbility.DATA_ACCESS_HATCH, MultiblockAbility.OPTICAL_DATA_RECEPTION)
-                    .setExactLimit(1)
-                    .or(states(getGrateState()));
-        }
-        return states(getGrateState());
-    }
-
-    @Override
-    protected Function<BlockPos, Integer> multiblockPartSorter() {
-        // ensure the inputs are always in order
-        return switch (getFrontFacing()) {
-            case NORTH -> pos -> -pos.getX();
-            case SOUTH -> BlockPos::getX;
-            case EAST -> pos -> -pos.getZ();
-            case WEST -> BlockPos::getZ;
-            default -> BlockPos::hashCode;
-        };
-    }
-
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.SOLID_STEEL_CASING;
     }
 
-    @Override
-    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if (this.isStructureFormed()) {
-            // render the grate on the top, bottom, and left side of the controller
-            Textures.GRATE_CASING.renderSided(EnumFacing.UP, renderState, translation, pipeline);
-            Textures.GRATE_CASING.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
-            Textures.GRATE_CASING.renderSided(getFrontFacing().rotateY(), renderState, translation, pipeline);
-
-            // render the base texture on all other sides
-            ICubeRenderer baseTexture = getBaseTexture(null);
-            baseTexture.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            baseTexture.renderSided(getFrontFacing().rotateYCCW(), renderState, translation, pipeline);
-            baseTexture.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
-            this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
-        } else {
-            super.renderMetaTileEntity(renderState, translation, pipeline);
-        }
+    protected IBlockState getCasingState() {
+        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
     }
+
+    private int beamCount;
+    @SideOnly(Side.CLIENT)
+    private GTLaserBeamParticle[][] beamParticles;
 
     @Override
     public void update() {
@@ -220,11 +139,11 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
     }
 
-    private void writeParticles(@Nonnull PacketBuffer buf) {
+    private void writeParticles(PacketBuffer buf) {
         buf.writeVarInt(beamCount);
     }
 
-    private void readParticles(@Nonnull PacketBuffer buf) {
+    private void readParticles(PacketBuffer buf) {
         beamCount = buf.readVarInt();
         if (beamParticles == null) {
             beamParticles = new GTLaserBeamParticle[17][2];
@@ -260,7 +179,6 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
     }
 
-    @Nonnull
     private GTLaserBeamParticle createALParticles(World world, Vector3 startPos, Vector3 endPos) {
         GTLaserBeamParticle particle = new GTLaserBeamParticle(world, startPos, endPos)
                 .setBody(LASER_LOCATION)
@@ -278,57 +196,5 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         });
 
         return particle;
-    }
-
-    @Override
-    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
-        if (consumeIfSuccess) return true; // don't check twice
-        // check ordered items
-        if (ConfigHolder.machines.orderedAssembly) {
-            List<GTRecipeInput> inputs = recipe.getInputs();
-            List<IItemHandlerModifiable> itemInputInventory = getAbilities(MultiblockAbility.IMPORT_ITEMS);
-
-            // slot count is not enough, so don't try to match it
-            if (itemInputInventory.size() < inputs.size()) return false;
-
-            for (int i = 0; i < inputs.size(); i++) {
-                if (!inputs.get(i).acceptsStack(itemInputInventory.get(i).getStackInSlot(0))) {
-                    return false;
-                }
-            }
-
-            // check ordered fluids
-            if (ConfigHolder.machines.orderedFluidAssembly) {
-                inputs = recipe.getFluidInputs();
-                List<IFluidTank> fluidInputInventory = getAbilities(MultiblockAbility.IMPORT_FLUIDS);
-
-                // slot count is not enough, so don't try to match it
-                if (fluidInputInventory.size() < inputs.size()) return false;
-
-                for (int i = 0; i < inputs.size(); i++) {
-                    if (!inputs.get(i).acceptsFluid(fluidInputInventory.get(i).getFluid())) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        if (!ConfigHolder.machines.enableResearch || !recipe.hasProperty(ResearchProperty.getInstance())) {
-            return super.checkRecipe(recipe, consumeIfSuccess);
-        }
-
-        return isRecipeAvailable(getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), recipe) ||
-                isRecipeAvailable(getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), recipe);
-    }
-
-    private static boolean isRecipeAvailable(@Nonnull Iterable<? extends IDataAccessHatch> hatches, @Nonnull Recipe recipe) {
-        for (IDataAccessHatch hatch : hatches) {
-            // creative hatches do not need to check, they always have the recipe
-            if (hatch.isCreative()) return true;
-
-            // hatches need to have the recipe available
-            if (hatch.isRecipeAvailable(recipe)) return true;
-        }
-        return false;
     }
 }

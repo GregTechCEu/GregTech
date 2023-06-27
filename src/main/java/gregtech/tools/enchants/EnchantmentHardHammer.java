@@ -1,12 +1,13 @@
 package gregtech.tools.enchants;
 
+import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.ToolClasses;
-import gregtech.api.util.GTUtility;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
@@ -16,7 +17,7 @@ public class EnchantmentHardHammer extends Enchantment {
 
     private EnchantmentHardHammer() {
         super(Rarity.UNCOMMON, EnumEnchantmentType.DIGGER, new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
-        this.setRegistryName(GTUtility.gregtechId("hard_hammer"));
+        this.setRegistryName(new ResourceLocation(GTValues.MODID, "hard_hammer"));
         this.setName("hard_hammer");
     }
 
