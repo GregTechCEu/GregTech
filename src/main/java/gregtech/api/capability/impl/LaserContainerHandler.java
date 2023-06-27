@@ -17,7 +17,7 @@ public class LaserContainerHandler extends MTETrait implements ILaserContainer {
 
     private final long capacity;
     private long energyStored;
-    private boolean isOutput;
+    private final boolean isOutput;
 
     private Predicate<EnumFacing> sideInputCondition;
     private Predicate<EnumFacing> sideOutputCondition;
