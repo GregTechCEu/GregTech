@@ -7,8 +7,8 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.MetaTileEntities;
+import net.minecraft.util.ResourceLocation;
 
 public class SimpleMachineGuideApp extends GuideApp<MetaTileEntity> {
 
@@ -38,7 +38,7 @@ public class SimpleMachineGuideApp extends GuideApp<MetaTileEntity> {
             for (String valid : valids) {
                 JsonElement id = json.getAsJsonObject().get(valid);
                 if (id != null && id.isJsonPrimitive())
-                    return GregTechAPI.MTE_REGISTRY.getObject(GTUtility.gregtechId(id.getAsString()));
+                    return GregTechAPI.MTE_REGISTRY.getObject(new ResourceLocation(GTValues.MODID, id.getAsString()));
             }
         }
         return null;

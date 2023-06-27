@@ -20,11 +20,11 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemB
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static gregtech.api.recipes.logic.ParallelLogic.doParallelRecipes;
-import static gregtech.api.util.GTUtility.gregtechId;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -40,6 +40,10 @@ public class ParallelLogicTest {
     @BeforeAll
     public static void bootstrap() {
         Bootstrap.perform();
+    }
+
+    private static ResourceLocation gregtechId(String name) {
+        return new ResourceLocation(GTValues.MODID, name);
     }
 
     @Test
@@ -957,7 +961,7 @@ public class ParallelLogicTest {
                 .build().getResult();
 
         MetaTileEntityMacerator macerator = MetaTileEntities.registerMetaTileEntity(1, new MetaTileEntityMacerator(
-                gregtechId("macerator"),
+                new ResourceLocation(GTValues.MODID, "macerator"),
                 RecipeMaps.MACERATOR_RECIPES,
                 4,
                 null,

@@ -66,6 +66,9 @@ gregtech.top.transform_output=§9Output:§r
 gregtech.top.convert_eu=Converting §eEU§r -> §cFE§r
 gregtech.top.convert_fe=Converting §cFE§r -> §eEU§r
 
+gregtech.top.fuel_min_consume=Needs
+gregtech.top.fuel_none=No fuel
+
 gregtech.top.invalid_structure=Structure Incomplete
 gregtech.top.valid_structure=Structure Formed
 gregtech.top.obstructed_structure=Structure Obstructed
@@ -508,9 +511,9 @@ metaitem.sensor.uxv.name=UXV Sensor
 metaitem.sensor.opv.name=OpV Sensor
 
 metaitem.tool.datastick.name=Data Stick
-metaitem.tool.datastick.tooltip=Storage for Simple Data
+metaitem.tool.datastick.tooltip=A Low Capacity Data Storage
 metaitem.tool.dataorb.name=Data Orb
-metaitem.tool.dataorb.tooltip=Storage for Complex Data
+metaitem.tool.dataorb.tooltip=A High Capacity Data Storage
 metaitem.circuit.integrated.name=Programmed Circuit
 metaitem.circuit.integrated.tooltip=Use to open configuration GUI/n/nShift-Right-Click on a machine/nwith a circuit slot to set it to/nthis circuit's value./n
 metaitem.circuit.integrated.gui=Programmed Circuit Configuration
@@ -2302,8 +2305,6 @@ tile.brittle_charcoal.name=Brittle Charcoal
 tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.
 tile.brittle_charcoal.tooltip.2=Mine this to get Charcoal.
 
-tile.optical_pipe_normal.name=Optical Fiber Cable
-
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
 metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)
@@ -2357,9 +2358,6 @@ metaitem.item_magnet.lv.name=Low Voltage Item Magnet
 metaitem.item_magnet.hv.name=High Voltage Item Magnet
 behavior.item_magnet.enabled=§aMagnetic Field Enabled
 behavior.item_magnet.disabled=§cMagnetic Field Disabled
-
-behavior.data_item.assemblyline.title=§nAssembly Line Construction Data:
-behavior.data_item.assemblyline.data=- §a%s
 
 metaitem.rubber_wood_boat.name=Rubber Wood Boat
 metaitem.treated_wood_boat.name=Treated Wood Boat
@@ -2627,11 +2625,6 @@ tile.cleanroom_casing.filter_casing.name=Filter Casing
 tile.cleanroom_casing.filter_casing_sterile.name=Sterilizing Filter Casing
 tile.cleanroom_casing.filter.tooltip=Creates a §aParticle-Free§7 environment
 tile.cleanroom_casing.filter_sterile.tooltip=Creates a §aSterilized§7 environment
-
-# Computer Casings
-tile.computer_casing.computer_casing.name=Computer Casing
-tile.computer_casing.computer_heat_vent.name=Computer Heat Vent
-tile.computer_casing.high_power_casing.name=High Power Casing
 
 # Asphalt
 tile.asphalt.asphalt.name=Asphalt
@@ -4589,12 +4582,6 @@ gregtech.machine.charcoal_pile.tooltip.3=Pyrolysis occurs in up to a §b9x4x9§7
 gregtech.machine.charcoal_pile.tooltip.4=Logs must be not be exposed to §eAir§7!
 gregtech.multiblock.charcoal_pile.description=Converts logs into Brittle Charcoal in a 9x4x9 area beneath it.\n\nThe floor of the pit must be made from bricks, and any ground-related block can be used for the walls and roof. No air can be inside the pit.\n\nLarger pits take more time to process logs, but are more efficient.
 
-gregtech.machine.data_bank.name=Data Bank
-gregtech.machine.data_bank.tooltip.1=Your Personal NAS
-gregtech.machine.data_bank.tooltip.2=Bulk Data Storage. Transfer with Optical Cables.
-gregtech.machine.data_bank.tooltip.3=Data Banks can be chained together.
-gregtech.machine.data_bank.tooltip.4=Uses %sEU/t per Data Hatch and %sEU/t when chained.
-
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
 gregtech.multiblock.central_monitor.height=Screen Height:
@@ -4858,13 +4845,6 @@ gregtech.machine.passthrough_hatch_item.tooltip=Sends Items from one Side to the
 gregtech.machine.passthrough_hatch_fluid.name=Fluid Passthrough Hatch
 gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to the other
 
-gregtech.machine.data_access_hatch.name=Data Access Hatch
-gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
-gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Sticks
-gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
-gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
-gregtech.machine.data_access_hatch.optical.receiver.name=Optical Data Reception Hatch
-gregtech.machine.data_access_hatch.optical.transmitter.name=Optical Data Transmission Hatch
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
@@ -4922,7 +4902,6 @@ gregtech.recipe.dimensions=Dimensions: %s
 gregtech.recipe.cleanroom=Requires %s
 gregtech.recipe.cleanroom.display_name=Cleanroom
 gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
-gregtech.recipe.research=Requires Research
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
@@ -5134,8 +5113,6 @@ gregtech.machine.miner.errorradius=§cCannot change radius while working!
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
-
-gregtech.multiblock.energy_consumption=Energy Usage: %s EU/t
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
@@ -5363,7 +5340,6 @@ terminal.battery.low_energy=Low power! Plz recharge the terminal.
 terminal.store.description=App store, check out what you got? Install and upgrade the app.
 terminal.store.match=Detected required item in inventory, install/upgrade App?
 terminal.store.miss=Requires %s (%d).
-terminal.store.close=Close
 
 terminal.ar.open=Open AR
 

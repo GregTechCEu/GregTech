@@ -1,15 +1,16 @@
 package gregtech.api.items.gui;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.util.GTUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -26,7 +27,7 @@ public class PlayerInventoryUIFactory extends UIFactory<PlayerInventoryHolder> {
     }
 
     public void init() {
-        GregTechAPI.UI_FACTORY_REGISTRY.register(1, GTUtility.gregtechId("player_inventory_factory"), this);
+        GregTechAPI.UI_FACTORY_REGISTRY.register(1, new ResourceLocation(GTValues.MODID, "player_inventory_factory"), this);
     }
 
     @Override

@@ -4,7 +4,7 @@ import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Transformation;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
-import gregtech.api.util.GTUtility;
+import gregtech.api.GTValues;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;
 import gregtech.api.util.Size;
@@ -41,7 +41,7 @@ public class TextureArea implements IGuiTexture {
     }
 
     public static TextureArea fullImage(String imageLocation) {
-        return new TextureArea(GTUtility.gregtechId(imageLocation), 0.0, 0.0, 1.0, 1.0);
+        return new TextureArea(new ResourceLocation(GTValues.MODID, imageLocation), 0.0, 0.0, 1.0, 1.0);
     }
 
     public static TextureArea areaOfImage(String imageLocation, int imageSizeX, int imageSizeY, int u, int v, int width, int height) {
@@ -106,7 +106,7 @@ public class TextureArea implements IGuiTexture {
     }
 
     @SideOnly(Side.CLIENT)
-    public void drawSubArea(double x, double y, double width, double height, double drawnU, double drawnV, double drawnWidth, double drawnHeight) {
+    public void drawSubArea(double x, double y, int width, int height, double drawnU, double drawnV, double drawnWidth, double drawnHeight) {
         //sub area is just different width and height
         double imageU = this.offsetX + (this.imageWidth * drawnU);
         double imageV = this.offsetY + (this.imageHeight * drawnV);

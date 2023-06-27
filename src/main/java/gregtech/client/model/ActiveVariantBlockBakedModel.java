@@ -2,7 +2,6 @@ package gregtech.client.model;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.VariantActiveBlock;
-import gregtech.api.util.GTUtility;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -15,6 +14,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -49,7 +49,7 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
         this.activeModelLocation = activeModelLocation;
         this.bloomConfig = bloomConfig;
         this.modelLocation = new ModelResourceLocation(
-                GTUtility.gregtechId("active_variant_block_" + inactiveModelLocation.getNamespace() + "_" + inactiveModelLocation.getPath()),
+                new ResourceLocation(GTValues.MODID, "active_variant_block_" + inactiveModelLocation.getNamespace() + "_" + inactiveModelLocation.getPath()),
                 inactiveModelLocation.getVariant().replaceAll(",active=(?:true|false)|active=(?:true|false),?", ""));
         INSTANCES.put(modelLocation, this);
     }

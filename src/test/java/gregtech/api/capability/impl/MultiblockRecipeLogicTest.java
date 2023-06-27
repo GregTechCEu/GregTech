@@ -2,6 +2,7 @@ package gregtech.api.capability.impl;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.Bootstrap;
+import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -33,7 +34,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gregtech.api.util.GTUtility.gregtechId;
 import static org.hamcrest.CoreMatchers.*;
 
 public class MultiblockRecipeLogicTest {
@@ -41,6 +41,10 @@ public class MultiblockRecipeLogicTest {
     @BeforeAll
     public static void bootstrap() {
         Bootstrap.perform();
+    }
+
+    private static ResourceLocation gregtechId(String name) {
+        return new ResourceLocation(GTValues.MODID, name);
     }
 
     @Test
@@ -72,7 +76,7 @@ public class MultiblockRecipeLogicTest {
                 MetaTileEntities.registerMetaTileEntity(509,
                         new MetaTileEntityElectricBlastFurnace(
                                 // super function calls the world, which equal null in test
-                                gregtechId("electric_blast_furnace")) {
+                                new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
                             @Override
                             public boolean canBeDistinct() {
                                 return false;
@@ -309,7 +313,7 @@ public class MultiblockRecipeLogicTest {
                 MetaTileEntities.registerMetaTileEntity(510,
                         new MetaTileEntityElectricBlastFurnace(
                                 // super function calls the world, which equal null in test
-                                gregtechId("electric_blast_furnace")) {
+                                new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
 
                             @Override
                             public boolean hasMufflerMechanics() {
@@ -553,7 +557,7 @@ public class MultiblockRecipeLogicTest {
         RecipeMapMultiblockController mbt = MetaTileEntities.registerMetaTileEntity(508,
                 new MetaTileEntityElectricBlastFurnace(
                         // super function calls the world, which equal null in test
-                        gregtechId("electric_blast_furnace")) {
+                        new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
                     @Override
                     public boolean canBeDistinct() {
                         return false;

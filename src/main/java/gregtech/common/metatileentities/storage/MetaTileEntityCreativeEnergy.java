@@ -27,6 +27,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.ArrayUtils;
@@ -54,7 +55,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     private boolean doExplosion = false;
 
     public MetaTileEntityCreativeEnergy() {
-        super(GTUtility.gregtechId("infinite_energy"));
+        super(new ResourceLocation(GTValues.MODID, "infinite_energy"));
     }
 
     @Override

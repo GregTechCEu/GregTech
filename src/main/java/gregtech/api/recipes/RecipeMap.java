@@ -276,36 +276,32 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * Internal usage <strong>only</strong>, use {@link RecipeBuilder#buildAndRegister()}
      *
      * @param validationResult the validation result from building the recipe
-     * @return if adding the recipe was successful
      */
-    public boolean addRecipe(@Nonnull ValidationResult<Recipe> validationResult) {
+    public void addRecipe(@Nonnull ValidationResult<Recipe> validationResult) {
         validationResult = postValidateRecipe(validationResult);
         switch (validationResult.getType()) {
-            case SKIP -> {
-                return false;
-            }
-            case INVALID -> {
+            case SKIP:
+                return;
+            case INVALID:
                 setFoundInvalidRecipe(true);
-                return false;
-            }
+                return;
         }
         Recipe recipe = validationResult.getResult();
 
         if (recipe.isGroovyRecipe()) {
             this.virtualizedRecipeMap.addScripted(recipe);
         }
-        return compileRecipe(recipe);
+        compileRecipe(recipe);
     }
 
     /**
      * Compiles a recipe and adds it to the ingredient tree
      *
      * @param recipe the recipe to compile
-     * @return if the recipe was successfully compiled
      */
-    public boolean compileRecipe(Recipe recipe) {
+    public void compileRecipe(Recipe recipe) {
         if (recipe == null) {
-            return false;
+            return;
         }
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         if (recurseIngredientTreeAdd(recipe, items, lookup, 0, 0)) {
@@ -314,9 +310,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 v.add(recipe);
                 return v;
             });
-            return true;
         }
-        return false;
     }
 
     /**

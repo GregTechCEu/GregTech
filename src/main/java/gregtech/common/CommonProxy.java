@@ -26,8 +26,6 @@ import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
-import gregtech.common.pipelike.optical.BlockOpticalPipe;
-import gregtech.common.pipelike.optical.ItemBlockOpticalPipe;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
@@ -101,11 +99,9 @@ public class CommonProxy {
         for (BlockCable cable : CABLES) registry.register(cable);
         for (BlockFluidPipe pipe : FLUID_PIPES) registry.register(pipe);
         for (BlockItemPipe pipe : ITEM_PIPES) registry.register(pipe);
-        for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(pipe);
 
         registry.register(HERMETIC_CASING);
         registry.register(CLEANROOM_CASING);
-        registry.register(COMPUTER_CASING);
         registry.register(FOAM);
         registry.register(REINFORCED_FOAM);
         registry.register(PETRIFIED_FOAM);
@@ -205,11 +201,9 @@ public class CommonProxy {
         for (BlockCable cable : CABLES) registry.register(createItemBlock(cable, ItemBlockCable::new));
         for (BlockFluidPipe pipe : FLUID_PIPES) registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
         for (BlockItemPipe pipe : ITEM_PIPES) registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
-        for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemBlockOpticalPipe::new));
 
         registry.register(createItemBlock(HERMETIC_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(CLEANROOM_CASING, VariantItemBlock::new));
-        registry.register(createItemBlock(COMPUTER_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_FIREBOX_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(METAL_CASING, VariantItemBlock::new));

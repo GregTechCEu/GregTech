@@ -29,7 +29,4 @@ public class GregtechTileCapabilities {
     @CapabilityInject(IMaintenance.class)
     public static Capability<IMaintenance> CAPABILITY_MAINTENANCE = null;
 
-    @CapabilityInject(IDataAccessHatch.class)
-    public static Capability<IDataAccessHatch> CAPABILITY_DATA_ACCESS = null;
-
 }

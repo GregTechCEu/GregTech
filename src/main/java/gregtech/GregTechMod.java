@@ -25,8 +25,7 @@ import net.minecraftforge.fml.common.event.*;
                 + "after:forestry;"
                 + "after:jei@[4.15.0,);"
                 + "after:crafttweaker@[4.1.20,);"
-                + "after:groovyscript@[0.4.0,);"
-                + "after:theoneprobe")
+                + "after:groovyscript@[0.4.0,);")
 public class GregTechMod {
 
     // Hold this so that we can reference non-interface methods without

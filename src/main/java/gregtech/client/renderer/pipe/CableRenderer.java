@@ -4,6 +4,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.uv.IconTransformation;
+import gregtech.api.GTValues;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
@@ -25,15 +26,15 @@ public class CableRenderer extends PipeRenderer {
     private TextureAtlasSprite wireTexture;
 
     private CableRenderer() {
-        super("gt_cable", GTUtility.gregtechId("cable"));
+        super("gt_cable", new ResourceLocation(GTValues.MODID, "cable"));
     }
 
     @Override
     public void registerIcons(TextureMap map) {
-        ResourceLocation wireLocation = GTUtility.gregtechId("blocks/cable/wire");
+        ResourceLocation wireLocation = new ResourceLocation(GTValues.MODID, "blocks/cable/wire");
         this.wireTexture = map.registerSprite(wireLocation);
         for (int i = 0; i < insulationTextures.length; i++) {
-            ResourceLocation location = GTUtility.gregtechId("blocks/cable/insulation_" + i);
+            ResourceLocation location = new ResourceLocation(GTValues.MODID, "blocks/cable/insulation_" + i);
             this.insulationTextures[i] = map.registerSprite(location);
         }
     }

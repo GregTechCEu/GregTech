@@ -428,7 +428,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             nodeTag.setInteger("x", nodePos.getX());
             nodeTag.setInteger("y", nodePos.getY());
             nodeTag.setInteger("z", nodePos.getZ());
-            int wirePropertiesIndex = alreadyWritten.getInt(node.data);
+            int wirePropertiesIndex = alreadyWritten.get(node.data);
             if (wirePropertiesIndex == -1) {
                 wirePropertiesIndex = currentIndex;
                 alreadyWritten.put(node.data, wirePropertiesIndex);

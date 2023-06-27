@@ -1,6 +1,5 @@
 package gregtech.api.modules;
 
-import gregtech.api.util.GTUtility;
 import net.minecraft.util.ResourceLocation;
 
 public interface IModuleManager {
@@ -10,7 +9,7 @@ public interface IModuleManager {
     }
 
     default boolean isModuleEnabled(String moduleID) {
-        return isModuleEnabled(GTUtility.gregtechId(moduleID));
+        return isModuleEnabled(new ResourceLocation("gregtech", moduleID));
     }
 
     boolean isModuleEnabled(ResourceLocation id);

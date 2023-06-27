@@ -61,7 +61,7 @@ public class AppPageWidget extends TerminalDialogWidget {
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_3.getColor())
                 .setIcon(GuiTextures.ICON_REMOVE)
-                .setHoverText("terminal.store.close")
+                .setHoverText("terminal.guide_editor.remove")
                 .setClickListener(cd->close()));
         if (store.getOs().isRemote()) {
             // profile

@@ -208,16 +208,6 @@
       }
     ]
   },
-  "tick.computation": {
-    "subtitle" : "Computers processing",
-    "category": "block",
-    "sounds": [
-      {
-        "name": "gregtech:computation",
-        "stream": false
-      }
-    ]
-  },
   "use.wrench": {
     "subtitle" : "Wrench turns",
     "category": "block",
