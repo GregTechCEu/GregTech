@@ -11,14 +11,14 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
-public class PacketKeysPressed implements IPacket, IServerExecutor {
+public class PacketKeysDown implements IPacket, IServerExecutor {
 
     private Object updateKeys;
 
     @SuppressWarnings("unused")
-    public PacketKeysPressed() {}
+    public PacketKeysDown() {}
 
-    public PacketKeysPressed(List<KeyBind> updateKeys) {
+    public PacketKeysDown(List<KeyBind> updateKeys) {
         this.updateKeys = updateKeys;
     }
 
@@ -28,30 +28,26 @@ public class PacketKeysPressed implements IPacket, IServerExecutor {
         buf.writeVarInt(updateKeys.size());
         for (KeyBind keyBind : updateKeys) {
             buf.writeVarInt(keyBind.ordinal());
-            buf.writeBoolean(keyBind.isPressed());
             buf.writeBoolean(keyBind.isKeyDown());
         }
     }
 
     @Override
     public void decode(PacketBuffer buf) {
-        this.updateKeys = new Pair[KeyBind.VALUES.length];
-        Pair<Boolean, Boolean>[] updateKeys = (Pair<Boolean, Boolean>[]) this.updateKeys;
+        this.updateKeys = new boolean[KeyBind.VALUES.length];
+        boolean[] updateKeys = (boolean[]) this.updateKeys;
         int size = buf.readVarInt();
         for (int i = 0; i < size; i++) {
-            updateKeys[buf.readVarInt()] = Pair.of(buf.readBoolean(), buf.readBoolean());
+            updateKeys[buf.readVarInt()] = buf.readBoolean();
         }
     }
 
     @Override
     public void executeServer(NetHandlerPlayServer handler) {
         KeyBind[] keybinds = KeyBind.VALUES;
-        Pair<Boolean, Boolean>[] updateKeys = (Pair<Boolean, Boolean>[]) this.updateKeys;
+        boolean[] updateKeys = (boolean[]) this.updateKeys;
         for (int i = 0; i < updateKeys.length; i++) {
-            Pair<Boolean, Boolean> pair = updateKeys[i];
-            if (pair != null) {
-                keybinds[i].update(pair.getLeft(), pair.getRight(), handler.player);
-            }
+            keybinds[i].updateKeyDown(updateKeys[i], handler.player);
         }
     }
 }

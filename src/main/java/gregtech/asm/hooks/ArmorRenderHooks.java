@@ -47,17 +47,10 @@ public class ArmorRenderHooks {
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA);
 
-            int layers = armorItem.getArmorLayersAmount(itemStack);
-            for (int layerIndex = 0; layerIndex < layers; layerIndex++) {
-                int i = armorItem.getArmorLayerColor(itemStack, layerIndex);
-                float f = (float) (i >> 16 & 255) / 255.0F;
-                float f1 = (float) (i >> 8 & 255) / 255.0F;
-                float f2 = (float) (i & 255) / 255.0F;
-                GlStateManager.color(f, f1, f2, 1.0f);
-                String type = layerIndex == 0 ? null : "layer_" + layerIndex;
-                layer.renderer.bindTexture(getArmorTexture(entity, itemStack, slotIn, type));
-                armorModel.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
-            }
+            GlStateManager.color(1, 1, 1, 1);
+            layer.renderer.bindTexture(getArmorTexture(entity, itemStack, slotIn));
+            armorModel.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+
             if (itemStack.hasEffect()) {
                 LayerArmorBase.renderEnchantedGlint(layer.renderer, entity, armorModel, limbSwing, limbSwingAmount,
                         partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
@@ -69,17 +62,15 @@ public class ArmorRenderHooks {
         return equipmentSlot == EntityEquipmentSlot.LEGS;
     }
 
-    private static ResourceLocation getArmorTexture(EntityLivingBase entity, ItemStack itemStack,
-                                                    EntityEquipmentSlot slot, String type) {
+    private static ResourceLocation getArmorTexture(EntityLivingBase entity, ItemStack itemStack, EntityEquipmentSlot slot) {
         ResourceLocation registryName = itemStack.getItem().getRegistryName();
         if (registryName == null) {
             throw new IllegalArgumentException(
                     "ItemStack " + itemStack.getTranslationKey() + "has a null registry name");
         }
 
-        String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", registryName.getNamespace(),
-                registryName.getPath(),
-                (isLegSlot(slot) ? 2 : 1), type == null ? "" : String.format("_%s", type));
-        return new ResourceLocation(ForgeHooksClient.getArmorTexture(entity, itemStack, s1, slot, type));
+        String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", registryName.getNamespace(), registryName.getPath(),
+                (isLegSlot(slot) ? 2 : 1), "");
+        return new ResourceLocation(ForgeHooksClient.getArmorTexture(entity, itemStack, s1, slot, null));
     }
 }

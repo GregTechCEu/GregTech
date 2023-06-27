@@ -42,35 +42,13 @@ public interface IArmorLogic {
     default void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage,
                              EntityEquipmentSlot equipmentSlot) {}
 
-    default Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
-        return ImmutableMultimap.of();
-    }
-
     default boolean isValidArmor(ItemStack itemStack, Entity entity, EntityEquipmentSlot equipmentSlot) {
         return getEquipmentSlot(itemStack) == equipmentSlot;
     }
 
     default void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {}
 
-    @SideOnly(Side.CLIENT)
-    default void renderHelmetOverlay(ItemStack itemStack, EntityPlayer player, ScaledResolution resolution,
-                                     float partialTicks) {}
-
-    default int getArmorLayersAmount(ItemStack itemStack) {
-        return 1;
-    }
-
-    default int getArmorLayerColor(ItemStack itemStack, int layerIndex) {
-        return 0xFFFFFF;
-    }
-
     String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type);
-
-    @Nullable
-    default ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot,
-                                     ModelBiped defaultModel) {
-        return null;
-    }
 
     /**
      *

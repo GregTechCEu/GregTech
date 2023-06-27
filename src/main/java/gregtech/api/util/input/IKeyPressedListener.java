@@ -4,5 +4,5 @@ import net.minecraft.entity.player.EntityPlayerMP;
 
 public interface IKeyPressedListener {
 
-    void onKeyPressed(EntityPlayerMP player);
+    void onKeyPressed(EntityPlayerMP player, KeyBind keyPressed);
 }
