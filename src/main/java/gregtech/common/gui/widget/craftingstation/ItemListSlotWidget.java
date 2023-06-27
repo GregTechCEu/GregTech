@@ -45,9 +45,14 @@ public class ItemListSlotWidget extends Widget {
         int stackY = position.y + 1;
         if (itemInfo != null) {
             ItemStack itemStack = itemInfo.getItemStack();
+            // Used to reset the ItemStack count after drawing. Avoids copying the itemStack
+            int cachedCount = itemStack.getCount();
+            // Set the count to 1 to prevent stack size from being drawn in drawItemStack
+            itemStack.setCount(1);
             String itemAmountStr = formatItemAmount(itemInfo.getTotalItemAmount());
             drawItemStack(itemStack, stackX, stackY, null);
             drawStringFixedCorner(itemAmountStr, stackX + 17, stackY + 17, 16777215, true, 0.5f);
+            itemStack.setCount(cachedCount);
         }
         if (isMouseOverElement(mouseX, mouseY)) {
             drawSelectionOverlay(stackX, stackY, 16, 16);

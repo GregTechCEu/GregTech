@@ -45,6 +45,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static gregtech.api.util.GTUtility.gregtechId;
+
 public class MetaTileEntities {
 
     //HULLS
@@ -93,8 +95,7 @@ public class MetaTileEntities {
     // TODO Replication system
     //public static final SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     //public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    // TODO Assembly Line Research system
-    //public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new MetaTileEntityGasCollector[GTValues.V.length - 1];
     public static final MetaTileEntityRockBreaker[] ROCK_BREAKER = new MetaTileEntityRockBreaker[GTValues.V.length - 1];
     public static final MetaTileEntityMiner[] MINER = new MetaTileEntityMiner[GTValues.V.length - 1];
@@ -129,6 +130,11 @@ public class MetaTileEntities {
     public static MetaTileEntityMachineHatch MACHINE_HATCH;
     public static MetaTileEntityPassthroughHatchItem PASSTHROUGH_HATCH_ITEM;
     public static MetaTileEntityPassthroughHatchFluid PASSTHROUGH_HATCH_FLUID;
+    public static MetaTileEntityDataAccessHatch DATA_ACCESS_HATCH;
+    public static MetaTileEntityDataAccessHatch ADVANCED_DATA_ACCESS_HATCH;
+    public static MetaTileEntityDataAccessHatch CREATIVE_DATA_HATCH;
+    public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_RECEIVER;
+    public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_TRANSMITTER;
     // Used for addons if they wish to disable certain tiers of machines
     private static final Map<String, Boolean> MID_TIER = new HashMap<>();
     private static final Map<String, Boolean> HIGH_TIER = new HashMap<>();
@@ -199,6 +205,8 @@ public class MetaTileEntities {
     public static MetaTileEntityCleanroom CLEANROOM;
     public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
     public static MetaTileEntityFlotationCell FLOTATION_CELL;
+    public static MetaTileEntityDataBank DATA_BANK;
+
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -365,10 +373,8 @@ public class MetaTileEntities {
         // Lathe, IDs 440-454
         registerSimpleMetaTileEntity(LATHE, 440, "lathe", RecipeMaps.LATHE_RECIPES, Textures.LATHE_OVERLAY, true);
 
-        // TODO Assembly Line Research system
-        // TODO Should anonymously override SimpleMachineMetaTileEntity#getCircuitSlotOverlay() to display the data stick overlay
         // Scanner, IDs 455-469
-        //registerSimpleMetaTileEntity(SCANNER, 455, "scanner", RecipeMaps.SCANNER_RECIPES, Textures.SCANNER_OVERLAY, true);
+        registerSimpleMetaTileEntity(SCANNER, 455, "scanner", RecipeMaps.SCANNER_RECIPES, Textures.SCANNER_OVERLAY, true);
 
         // Mixer, IDs 470-484
         registerSimpleMetaTileEntity(MIXER, 470, "mixer", RecipeMaps.MIXER_RECIPES, Textures.MIXER_OVERLAY, false, GTUtility.hvCappedTankSizeFunction);
@@ -522,6 +528,8 @@ public class MetaTileEntities {
 
         FLOTATION_CELL = registerMetaTileEntity(1037, new MetaTileEntityFlotationCell(gregtechId("flotation_cell")));
 
+        DATA_BANK = registerMetaTileEntity(1038, new MetaTileEntityDataBank(gregtechId("data_bank")));
+
         // MISC MTE's START: IDs 1150-2000
 
         // Import/Export Buses/Hatches, IDs 1150-1209
@@ -618,7 +626,13 @@ public class MetaTileEntities {
 
         PASSTHROUGH_HATCH_ITEM = registerMetaTileEntity(1402, new MetaTileEntityPassthroughHatchItem(gregtechId("passthrough_hatch_item"), 3));
         PASSTHROUGH_HATCH_FLUID = registerMetaTileEntity(1403, new MetaTileEntityPassthroughHatchFluid(gregtechId("passthrough_hatch_fluid"), 3));
-        // Free Range: 1404-1509
+
+        DATA_ACCESS_HATCH = registerMetaTileEntity(1404, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch"), GTValues.IV, false));
+        ADVANCED_DATA_ACCESS_HATCH = registerMetaTileEntity(1405, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.advanced"), GTValues.ZPM, false));
+        CREATIVE_DATA_HATCH = registerMetaTileEntity(1406, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.creative"), GTValues.MAX, true));
+        OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1407, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.receiver"), false));
+        OPTICAL_DATA_HATCH_TRANSMITTER = registerMetaTileEntity(1408, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.transmitter"), true));
+        // Free Range: 1408-1509
 
         // Buffers, IDs 1510-1512
         BUFFER[0] = registerMetaTileEntity(1510, new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));
@@ -783,7 +797,7 @@ public class MetaTileEntities {
                                                      ICubeRenderer texture,
                                                     boolean hasFrontFacing,
                                                     Function<Integer, Integer> tankScalingFunction) {
-        registerSimpleMetaTileEntity(machines, startId, name, map, texture, hasFrontFacing, MetaTileEntities::gregtechId, tankScalingFunction);
+        registerSimpleMetaTileEntity(machines, startId, name, map, texture, hasFrontFacing, GTUtility::gregtechId, tankScalingFunction);
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,
@@ -814,8 +828,7 @@ public class MetaTileEntities {
     }
 
     public static <T extends MetaTileEntity> T registerMetaTileEntity(int id, T sampleMetaTileEntity) {
-        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart) {
-            IMultiblockAbilityPart<?> abilityPart = (IMultiblockAbilityPart<?>) sampleMetaTileEntity;
+        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart abilityPart) {
             MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), sampleMetaTileEntity);
         }
         if (sampleMetaTileEntity instanceof MultiblockControllerBase && Loader.isModLoaded(GTValues.MODID_JEI)) {
@@ -825,10 +838,6 @@ public class MetaTileEntities {
         }
         GregTechAPI.MTE_REGISTRY.register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);
         return sampleMetaTileEntity;
-    }
-
-    private static ResourceLocation gregtechId(String name) {
-        return new ResourceLocation(GTValues.MODID, name);
     }
 
     @SuppressWarnings("unused")

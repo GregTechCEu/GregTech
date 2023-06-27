@@ -1,6 +1,7 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import net.minecraftforge.common.config.Config;
 
 @Config(modid = GTValues.MODID)
@@ -117,9 +118,21 @@ public class ConfigHolder {
         @Config.Comment({"Block to replace mined ores with in the miner and multiblock miner.", "Default: minecraft:cobblestone"})
         public String replaceMinedBlocksWith = "minecraft:cobblestone";
 
+        @Config.Comment({"Whether to enable Assembly Line research for recipes.", "Default: true"})
+        @Config.RequiresMcRestart
+        public boolean enableResearch = true;
+
+        @Config.Comment({"Whether the Assembly Line should require the item inputs to be in order.", "Default: true"})
+        public boolean orderedAssembly = true;
+
+        @Config.Comment({"Whether the Assembly Line should require the fluid inputs to be in order.",
+                "This does nothing if B:orderedAssembly is false.",
+                "Default: false"})
+        public boolean orderedFluidAssembly = false;
+
         /**
          * <strong>Addons mods should not reference this config directly.</strong>
-         * Use {@link gregtech.api.GregTechAPI#highTier} instead.
+         * Use {@link GregTechAPI#isHighTier()} instead.
          */
         @Config.Comment({"If High Tier (>UV-tier) GT content should be registered.",
                 "Items and Machines enabled with this config will have missing recipes by default.",
@@ -365,10 +378,18 @@ public class ConfigHolder {
         @Config.Comment("Prevent tooltips from blinking for better visibility")
         public boolean preventBlinkingTooltips = false;
 
+        @Config.Comment({"Prevent optical cables from animating when active.", "Default: false"})
+        public boolean preventAnimatedOpticalCables = false;
+
         public static class GuiConfig {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})
             @Config.RangeInt(min = 1)
             public int scrollSpeed = 13;
+
+            @Config.Comment({"If progress bars should move smoothly.",
+                    "False is incremental like the Minecraft furnace.",
+                    "Default: true"})
+            public boolean smoothProgressBars = true;
         }
 
         public static class ArmorHud {
