@@ -89,6 +89,7 @@ public enum KeyBind {
     private boolean isPressed, isKeyDown;
 
     private final WeakHashMap<EntityPlayerMP, MutablePair<Boolean, Boolean>> mapping = new WeakHashMap<>();
+    private final WeakHashMap<EntityPlayerMP, Set<IKeyPressedListener>> listeners = new WeakHashMap<>();
 
     // For Vanilla/Other Mod keybinds
     // Double Supplier to keep client classes from loading
@@ -134,6 +135,12 @@ public enum KeyBind {
         } else {
             pair.left = pressed;
             pair.right = keyDown;
+            if (pressed) {
+                Set<IKeyPressedListener> listenerSet = listeners.get(player);
+                if (listenerSet != null && !listenerSet.isEmpty()) {
+                    for (var listener : listenerSet) listener.onKeyPressed(player);
+                }
+            }
         }
     }
 
@@ -154,4 +161,17 @@ public enum KeyBind {
             return pair != null && pair.right;
         }
     }
+
+    public void registerListener(EntityPlayerMP player, IKeyPressedListener listener) {
+        Set<IKeyPressedListener> listenerSet = listeners.computeIfAbsent(player, k -> new HashSet<>());
+        listenerSet.add(listener);
+    }
+
+    public void removeListener(EntityPlayerMP player, IKeyPressedListener listener) {
+        Set<IKeyPressedListener> listenerSet = listeners.get(player);
+        if (listenerSet != null) {
+            listenerSet.remove(listener);
+        }
+    }
+
 }
