@@ -43,9 +43,9 @@ public class MultiblockAbility<T> {
 
     public static final MultiblockAbility<IPassthroughHatch> PASSTHROUGH_HATCH = new MultiblockAbility<>("passthrough_hatch");
 
-    public static final MultiblockAbility<ILockableItemHandler> IMPORT_FUEL_ROD = new MultiblockAbility<>("import_fuel_rod");
+    public static final MultiblockAbility<ILockableHandler> IMPORT_FUEL_ROD = new MultiblockAbility<>("import_fuel_rod");
     public static final MultiblockAbility<IItemHandlerModifiable> EXPORT_FUEL_ROD = new MultiblockAbility<>("export_fuel_rod");
-    public static final MultiblockAbility<ILockableTank> IMPORT_COOLANT = new MultiblockAbility<>("import_coolant");
+    public static final MultiblockAbility<ILockableHandler> IMPORT_COOLANT = new MultiblockAbility<>("import_coolant");
     public static final MultiblockAbility<IFluidTank> EXPORT_COOLANT = new MultiblockAbility<>("export_coolant");
     public static final MultiblockAbility<IControlRodPort> CONTROL_ROD_PORT = new MultiblockAbility<>("control_rod_port");
 

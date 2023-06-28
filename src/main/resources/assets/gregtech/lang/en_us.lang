@@ -5089,6 +5089,9 @@ gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
+gregtech.multiblock.fission_reactor.turn_on=Turn on the reactor? (Locks all hatches)
+gregtech.multiblock.fission_reactor.turn_off=Turn off the reactor?
+
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload

@@ -1,11 +1,11 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.capability.ILockableTank;
+import gregtech.api.capability.ILockableHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-public class LockableFluidTank extends NotifiableFluidTank implements ILockableTank {
+public class LockableFluidTank extends NotifiableFluidTank implements ILockableHandler {
     boolean locked;
     Fluid lockedFluid;
 
@@ -13,19 +13,15 @@ public class LockableFluidTank extends NotifiableFluidTank implements ILockableT
         super(capacity, entityToNotify, isExport);
     }
 
-
     @Override
-    public void lock() {
-        locked = true;
-        if (this.getFluid() == null)
-            lockedFluid = null;
-        else
-            lockedFluid = this.getFluid().getFluid();
-    }
-
-    @Override
-    public void unlock() {
-        locked = false;
+    public void setLock(boolean isLocked) {
+        locked = isLocked;
+        if (isLocked) {
+            if (this.getFluid() == null)
+                lockedFluid = null;
+            else
+                lockedFluid = this.getFluid().getFluid();
+        }
     }
 
     @Override

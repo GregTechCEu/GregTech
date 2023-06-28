@@ -130,6 +130,9 @@ public class GregtechDataCodes {
     // Detector Covers
     public static final int UPDATE_INVERTED = 100;
 
+    // Fission Hatches
+    public static final int LOCK_UPDATE = 17;
+
     // NBT Keys
 
     // From MetaTileEntityHolder
