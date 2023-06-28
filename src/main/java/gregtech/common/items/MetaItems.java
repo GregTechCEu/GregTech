@@ -531,13 +531,6 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem CLIPBOARD;
 
-    public static ArmorMetaItem<?>.ArmorMetaValueItem NIGHTVISION_GOGGLES;
-
-    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_CHESTPLATE;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_LEGGINGS;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_BOOTS;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_HELMET;
-
     public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_CHESTPLATE;
     public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_LEGGINGS;
     public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_BOOTS;

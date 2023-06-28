@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.List;
 
+@Deprecated
 public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
 
     // A replacement for checking the current world time, to get around the gamerule that stops it

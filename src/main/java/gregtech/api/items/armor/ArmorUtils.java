@@ -2,7 +2,6 @@ package gregtech.api.items.armor;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.Minecraft;
@@ -31,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public class ArmorUtils {
 
     public static final Side SIDE = FMLCommonHandler.instance().getSide();
@@ -133,7 +133,6 @@ public class ArmorUtils {
     /**
      * Resets private field, amount of ticks player in the sky
      */
-    @SuppressWarnings("deprecation")
     public static void resetPlayerFloatingTime(EntityPlayer player) {
         if (player instanceof EntityPlayerMP) {
             ObfuscationReflectionHelper.setPrivateValue(NetHandlerPlayServer.class,
@@ -176,41 +175,6 @@ public class ArmorUtils {
         } else {
             return new ActionResult<>(EnumActionResult.FAIL, food);
         }
-    }
-
-    /**
-     * Format itemstacks list from [1xitem@1, 1xitem@1, 1xitem@2] to
-     * [2xitem@1, 1xitem@2]
-     *
-     * @return Formated list
-     */
-    public static List<ItemStack> format(List<ItemStack> input) {
-        Object2IntMap<ItemStack> items = new Object2IntOpenCustomHashMap<>(
-                ItemStackHashStrategy.comparingAllButCount());
-        List<ItemStack> output = new ArrayList<>();
-        for (ItemStack itemStack : input) {
-            if (items.containsKey(itemStack)) {
-                int amount = items.get(itemStack);
-                items.replace(itemStack, ++amount);
-            } else {
-                items.put(itemStack, 1);
-            }
-        }
-        for (Object2IntMap.Entry<ItemStack> entry : items.object2IntEntrySet()) {
-            ItemStack stack = entry.getKey().copy();
-            stack.setCount(entry.getIntValue());
-            output.add(stack);
-        }
-        return output;
-    }
-
-    @NotNull
-    public static String format(long value) {
-        return new DecimalFormat("###,###.##").format(value);
-    }
-
-    public static String format(double value) {
-        return new DecimalFormat("###,###.##").format(value);
     }
 
     /**

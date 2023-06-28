@@ -1,5 +1,7 @@
 package gregtech.api.items.armoritem;
 
+import gregtech.api.items.armoritem.armorset.IArmorSet;
+import gregtech.api.items.armoritem.jetpack.JetpackBuilder;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.util.DamageSource;
@@ -19,13 +21,13 @@ public abstract class ArmorBuilder<T extends IGTArmor, U extends ArmorBuilder<T,
     /* IGTToolDefinition held values, extended builders do not need to access these */
     private final EntityEquipmentSlot slot;
     private final List<IArmorBehavior> behaviors = new ArrayList<>();
+    private IArmorSet armorSet;
     private double damageAbsorption;
     private final List<DamageSource> handledUnblockableSources = new ArrayList<>();
-    private String armorTexture;
-    private boolean canBreakWithDamage; // todo
-    private boolean isEnchantable;
-    private int enchantability;
+    private boolean isEnchantable = true;
+    private int enchantability = 10; // default to vanilla diamond armor enchantability
     private IRarity rarity = EnumRarity.COMMON;
+    private int durability;
 
     protected ArmorBuilder(@NotNull String domain, @NotNull String id, @NotNull EntityEquipmentSlot slot) {
         this.domain = domain;
@@ -38,14 +40,33 @@ public abstract class ArmorBuilder<T extends IGTArmor, U extends ArmorBuilder<T,
         return cast(this);
     }
 
-    public U texture(String armorTexture) {
-        this.armorTexture = armorTexture;
-        return cast(this);
-    }
-
     public U rarity(IRarity rarity) {
         this.rarity = rarity;
         return cast(this);
+    }
+
+    public U durability(int durability) {
+        this.durability = durability;
+        return cast(this);
+    }
+
+    public U enchantability(int enchantability) {
+        this.enchantability = enchantability;
+        return cast(this);
+    }
+
+    public U allowBlocking(DamageSource... sources) {
+        Collections.addAll(handledUnblockableSources, sources);
+        return cast(this);
+    }
+
+    public U armorSet(IArmorSet armorSet) {
+        this.armorSet = armorSet;
+        return cast(this);
+    }
+
+    public <V extends JetpackBuilder<V>> U jetpack(JetpackBuilder<V> b) {
+        return behaviors(b.build());
     }
 
     public abstract Supplier<T> supply(IGTArmorDefinition definition);
@@ -53,20 +74,24 @@ public abstract class ArmorBuilder<T extends IGTArmor, U extends ArmorBuilder<T,
     public abstract U cast(ArmorBuilder<T, U> builder);
 
     public final T build() {
-        // todo more here?
         return supply(buildDefinition()).get();
     }
 
     protected final IGTArmorDefinition buildDefinition() {
         return new IGTArmorDefinition() {
             @Override
-            public EntityEquipmentSlot getEquippedSlot() {
+            public @NotNull EntityEquipmentSlot getEquippedSlot() {
                 return slot;
             }
 
             @Override
-            public List<IArmorBehavior> getBehaviors() {
+            public @NotNull List<IArmorBehavior> getBehaviors() {
                 return behaviors;
+            }
+
+            @Override
+            public @Nullable IArmorSet getArmorSet() {
+                return armorSet;
             }
 
             @Override
@@ -75,18 +100,8 @@ public abstract class ArmorBuilder<T extends IGTArmor, U extends ArmorBuilder<T,
             }
 
             @Override
-            public List<DamageSource> handledUnblockableSources() {
+            public @NotNull List<DamageSource> handledUnblockableSources() {
                 return handledUnblockableSources;
-            }
-
-            @Override
-            public String getArmorTexture() {
-                return armorTexture;
-            }
-
-            @Override
-            public boolean canBreakWithDamage() {
-                return canBreakWithDamage;
             }
 
             @Override
@@ -100,8 +115,13 @@ public abstract class ArmorBuilder<T extends IGTArmor, U extends ArmorBuilder<T,
             }
 
             @Override
-            public IRarity getRarity() {
+            public @NotNull IRarity getRarity() {
                 return rarity;
+            }
+
+            @Override
+            public int getMaxDurability() {
+                return durability;
             }
         };
     }

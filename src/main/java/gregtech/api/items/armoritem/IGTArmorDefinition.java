@@ -1,8 +1,10 @@
 package gregtech.api.items.armoritem;
 
+import gregtech.api.items.armoritem.armorset.IArmorSet;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.IRarity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -10,23 +12,26 @@ import java.util.List;
 // TODO A lot of these do not need to be in the "definition" class, but in the Item class
 public interface IGTArmorDefinition {
 
-    EntityEquipmentSlot getEquippedSlot();
+    @NotNull EntityEquipmentSlot getEquippedSlot();
 
-    List<IArmorBehavior> getBehaviors();
+    @NotNull List<IArmorBehavior> getBehaviors();
+
+    @Nullable IArmorSet getArmorSet();
 
     /* ArmorProperties */
     double getDamageAbsorption(EntityEquipmentSlot slot, @Nullable DamageSource damageSource);
 
-    List<DamageSource> handledUnblockableSources();
-
-    String getArmorTexture();
-
-    // meaning, does this item ever break or does it just use power or something
-    boolean canBreakWithDamage();
+    @NotNull List<DamageSource> handledUnblockableSources();
 
     boolean isEnchantable();
 
     int getEnchantability();
 
-    IRarity getRarity();
+    @NotNull IRarity getRarity();
+
+    int getMaxDurability();
+
+    default boolean hasDurability() {
+        return getMaxDurability() > 0;
+    }
 }

@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * Logic from SimplyJetpacks2:
  * https://github.com/Tomson124/SimplyJetpacks2/blob/1.12/src/main/java/tonius/simplyjetpacks/item/ItemJetpack.java
  */
+@Deprecated
 public interface IJetpack {
 
     default double getSprintEnergyModifier() {

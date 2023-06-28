@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@Deprecated
 public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDProvider {
 
     public static final int tankCapacity = 16000;

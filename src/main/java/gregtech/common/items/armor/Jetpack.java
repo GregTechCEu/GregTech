@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@Deprecated
 public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
     @SideOnly(Side.CLIENT)

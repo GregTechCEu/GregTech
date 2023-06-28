@@ -1,6 +1,8 @@
 package gregtech.common.items.armor;
 
-import gregtech.api.items.armoritem.IArmorBehavior;
+import gregtech.api.capability.IElectricItem;
+import gregtech.api.items.armoritem.ArmorHelper;
+import gregtech.api.items.armoritem.IElectricArmorBehavior;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -20,7 +22,7 @@ import java.util.Set;
 
 // All MobEffects warn that they "might be null" for some reason, so suppress it
 @SuppressWarnings("ConstantConditions")
-public class NightvisionBehavior implements IArmorBehavior {
+public class NightvisionBehavior implements IElectricArmorBehavior {
 
     public static final NightvisionBehavior INSTANCE = new NightvisionBehavior();
 
@@ -36,34 +38,39 @@ public class NightvisionBehavior implements IArmorBehavior {
     @Override
     public void onKeyPressed(@NotNull ItemStack stack, @NotNull EntityPlayer player, KeyBind keyPressed) {
         if (keyPressed == KeyBind.ARMOR_MODE_SWITCH) {
-            NBTTagCompound tag = getBehaviorTag(stack, NBT_NIGHTVISION);
-            boolean wasEnabled = tag.getBoolean("Enabled");
-            tag.setBoolean("Enabled", !wasEnabled);
+            NBTTagCompound tag = ArmorHelper.getBehaviorsTag(stack);
+            boolean wasEnabled = tag.getBoolean(ArmorHelper.NIGHT_VISION_KEY);
+            tag.setBoolean(ArmorHelper.NIGHT_VISION_KEY, !wasEnabled);
+
             if (wasEnabled) {
                 player.removePotionEffect(MobEffects.NIGHT_VISION);
                 player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.disabled"), true);
             } else {
                 player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.enabled"), true);
             }
-            player.inventoryContainer.detectAndSendChanges();
         }
     }
 
     @Override
-    public boolean onArmorTick(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack stack) {
-        if (world.isRemote) return false;
+    public void onArmorTick(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack stack, @NotNull IElectricItem electricItem) {
+        if (world.isRemote) return;
         NBTTagCompound tag = getBehaviorTag(stack, NBT_NIGHTVISION);
         boolean enabled = tag.getBoolean("Enabled");
-        if (enabled) {
+        if (enabled && electricItem.canUse(2)) {
+            electricItem.discharge(2, Integer.MAX_VALUE, true, false, false);
             player.removePotionEffect(MobEffects.BLINDNESS);
             player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 999999, 0, true, false));
         }
-        return enabled;
     }
 
     @Override
     public void onArmorUnequip(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack stack) {
         player.removePotionEffect(MobEffects.NIGHT_VISION);
+    }
+
+    @Override
+    public void addBehaviorNBT(@NotNull ItemStack stack, @NotNull NBTTagCompound tag) {
+        tag.setBoolean(ArmorHelper.NIGHT_VISION_KEY, false); // disabled by default
     }
 
     @Override
