@@ -5,8 +5,8 @@ import gregtech.api.GregTechAPI;
 import gregtech.core.network.packets.PacketKeyPressed;
 import gregtech.core.network.packets.PacketKeysDown;
 import gregtech.api.util.GTLog;
-import gregtech.core.network.packets.PacketKeysPressed;
-
+import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
+import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
@@ -20,6 +20,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,12 +35,15 @@ import java.util.function.Supplier;
 
 public enum KeyBind {
 
+    /* Held keys */
     VANILLA_JUMP(() -> () -> Minecraft.getMinecraft().gameSettings.keyBindJump),
     VANILLA_SNEAK(() -> () -> Minecraft.getMinecraft().gameSettings.keyBindSneak),
     VANILLA_FORWARD(() -> () -> Minecraft.getMinecraft().gameSettings.keyBindForward),
     VANILLA_BACKWARD(() -> () -> Minecraft.getMinecraft().gameSettings.keyBindBack),
     VANILLA_LEFT(() -> () -> Minecraft.getMinecraft().gameSettings.keyBindLeft),
     VANILLA_RIGHT(() -> () -> Minecraft.getMinecraft().gameSettings.keyBindRight),
+
+    /* Pressed keys */
     ARMOR_MODE_SWITCH("gregtech.key.armor_mode_switch", KeyConflictContext.IN_GAME, Keyboard.KEY_M),
     ARMOR_HOVER("gregtech.key.armor_hover", KeyConflictContext.IN_GAME, Keyboard.KEY_H),
     ARMOR_CHARGING("gregtech.key.armor_charging", KeyConflictContext.IN_GAME, Keyboard.KEY_N),
@@ -54,27 +58,40 @@ public enum KeyBind {
         }
     }
 
+    /**
+     * Handle Keys which we track for "holds" on the server, meaning if a key is being pressed
+     * down for a prolonged period of time. This is a state which gets saved on the server.
+     */
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) {
+            Int2BooleanMap updatingKeyDown = new Int2BooleanOpenHashMap();
+            for (KeyBind keybind : VALUES) {
+                boolean previousKeyDown = keybind.isKeyDown;
+                keybind.isKeyDown = keybind.isKeyDown();
+                if (previousKeyDown != keybind.isKeyDown) {
+                    updatingKeyDown.put(keybind.ordinal(), keybind.isKeyDown);
+                }
+            }
+            if (!updatingKeyDown.isEmpty()) {
+                GregTechAPI.networkHandler.sendToServer(new PacketKeysDown(updatingKeyDown));
+            }
+        }
+    }
+
+    /**
+     * Handle Keys which we track for "presses" on the server, meaning a single input which
+     * sends a packet to the server which informs all listeners.
+     */
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public static void onInputEvent(InputEvent.KeyInputEvent event) {
-        List<KeyBind> updatingKeyDown = new ArrayList<>();
         IntList updatingPressed = new IntArrayList();
         for (KeyBind keybind : VALUES) {
-            // handle isKeyDown todo this can be removed after full armor rewrite
-
-            boolean previousKeyDown = keybind.isKeyDown;
-            keybind.isKeyDown = keybind.isKeyDown();
-            if (previousKeyDown != keybind.isKeyDown) {
-                updatingKeyDown.add(keybind);
-            }
-
-            // handle isPressed
             if (keybind.isPressed()) {
                 updatingPressed.add(keybind.ordinal());
             }
-        }
-        if (!updatingKeyDown.isEmpty()) {
-            GregTechAPI.networkHandler.sendToServer(new PacketKeysDown(updatingKeyDown));
         }
         if (!updatingPressed.isEmpty()) {
             GregTechAPI.networkHandler.sendToServer(new PacketKeyPressed(updatingPressed));
@@ -160,17 +177,14 @@ public enum KeyBind {
     }
 
     public void registerListener(EntityPlayerMP player, IKeyPressedListener listener) {
-        System.out.println("Listener registered");
         Set<IKeyPressedListener> listenerSet = listeners.computeIfAbsent(player, k -> new HashSet<>());
         listenerSet.add(listener);
     }
 
     public void removeListener(EntityPlayerMP player, IKeyPressedListener listener) {
-        System.out.println("Listener removed");
         Set<IKeyPressedListener> listenerSet = listeners.get(player);
         if (listenerSet != null) {
             listenerSet.remove(listener);
         }
     }
-
 }

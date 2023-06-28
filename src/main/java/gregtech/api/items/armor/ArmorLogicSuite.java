@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@Deprecated
 public abstract class ArmorLogicSuite implements ISpecialArmorLogic, IItemHUDProvider {
 
     protected final int energyPerUse;

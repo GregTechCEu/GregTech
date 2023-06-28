@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated
 public class AdvancedJetpack extends Jetpack {
 
     public AdvancedJetpack(int energyPerUse, long capacity, int tier) {

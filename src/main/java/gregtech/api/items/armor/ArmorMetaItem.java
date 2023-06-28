@@ -3,8 +3,9 @@ package gregtech.api.items.armor;
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.stats.IEnchantabilityHelper;
 import gregtech.api.items.metaitem.stats.IItemComponent;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.enchantment.Enchantment;
@@ -12,11 +13,11 @@ import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 
@@ -25,6 +26,9 @@ import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
+@Deprecated
 public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extends MetaItem<T>
                           implements IArmorItem, ISpecialArmor, IEnchantabilityHelper {
 
@@ -42,93 +46,30 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
     @NotNull
     private IArmorLogic getArmorLogic(ItemStack itemStack) {
         T metaValueItem = getItem(itemStack);
-        return metaValueItem == null ? new DummyArmorLogic() : metaValueItem.getArmorLogic();
+        return metaValueItem == null ? new DummyArmorLogic(EntityEquipmentSlot.HEAD, "") : metaValueItem.getArmorLogic();
     }
 
-
-    @NotNull
     @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(@NotNull EntityEquipmentSlot slot,
-                                                                     @NotNull ItemStack stack) {
-        Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
-        IArmorLogic armorLogic = getArmorLogic(stack);
-        multimap.putAll(armorLogic.getAttributeModifiers(slot, stack));
-        return multimap;
-    }
-
-    // todo
-    // todo Definition: done
-    // todo Item: todo
-    // todo
-    @Override
-    public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source,
-                                         double damage, int slot) {
-        IArmorLogic armorLogic = getArmorLogic(armor);
-        if (armorLogic instanceof ISpecialArmorLogic) {
-            return ((ISpecialArmorLogic) armorLogic).getProperties(player, armor, source, damage, getSlotByIndex(slot));
-        }
+    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, int slot) {
         return new ArmorProperties(0, 0, Integer.MAX_VALUE);
     }
 
-    // todo
-    // todo Definition: done
-    // todo Item: todo
-    // todo
     @Override
-    public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
-        IArmorLogic armorLogic = getArmorLogic(armor);
-        if (armorLogic instanceof ISpecialArmorLogic) {
-            return ((ISpecialArmorLogic) armorLogic).getArmorDisplay(player, armor, slot);
-        }
+    public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
         return 0;
     }
 
-    // todo
-    // todo Definition: nothing needed?
-    // todo Item: todo
-    // todo
     @Override
-    public void damageArmor(EntityLivingBase entity, @NotNull ItemStack stack, DamageSource source, int damage,
-                            int slot) {
-        IArmorLogic armorLogic = getArmorLogic(stack);
-        armorLogic.damageArmor(entity, stack, source, damage, getSlotByIndex(slot));
+    public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot) {
     }
 
-    // todo
-    // todo Definition: done
-    // todo Item: done
-    // todo
-    @Override
-    public boolean handleUnblockableDamage(EntityLivingBase entity, @NotNull ItemStack armor, DamageSource source,
-                                           double damage, int slot) {
-        IArmorLogic armorLogic = getArmorLogic(armor);
-        if (armorLogic instanceof ISpecialArmorLogic) {
-            return ((ISpecialArmorLogic) armorLogic).handleUnblockableDamage(entity, armor, source, damage,
-                    getSlotByIndex(slot));
-        }
-        return false;
-    }
-
-    // todo
-    // todo Definition: done
-    // todo Item: done
-    // todo
-    @Override
-    public void onArmorTick(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack itemStack) {
-        IArmorLogic armorLogic = getArmorLogic(itemStack);
-        armorLogic.onArmorTick(world, player, itemStack);
-    }
-
-    // todo not needed since we now extend ItemArmor
     @Override
     public boolean isValidArmor(@NotNull ItemStack stack, @NotNull EntityEquipmentSlot armorType,
                                 @NotNull Entity entity) {
         IArmorLogic armorLogic = getArmorLogic(stack);
-        return super.isValidArmor(stack, armorType, entity) &&
-                armorLogic.isValidArmor(stack, entity, armorType);
+        return super.isValidArmor(stack, armorType, entity) && armorLogic.getEquipmentSlot(stack) == armorType;
     }
 
-    // todo not needed since we now extend ItemArmor
     @Nullable
     @Override
     public EntityEquipmentSlot getEquipmentSlot(@NotNull ItemStack stack) {
@@ -136,7 +77,6 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
         return armorLogic.getEquipmentSlot(stack);
     }
 
-    // todo Need to get this onto the Definition somehow
     @Nullable
     @Override
     public String getArmorTexture(@NotNull ItemStack stack, @NotNull Entity entity, @NotNull EntityEquipmentSlot slot,
@@ -145,22 +85,19 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
         return armorLogic.getArmorTexture(stack, entity, slot, type);
     }
 
-    private static EntityEquipmentSlot getSlotByIndex(int index) {
-        switch (index) {
-            case 0:
-                return EntityEquipmentSlot.FEET;
-            case 1:
-                return EntityEquipmentSlot.LEGS;
-            case 2:
-                return EntityEquipmentSlot.CHEST;
-            default:
-                return EntityEquipmentSlot.HEAD;
-        }
+    @Override
+    public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, @Nonnull List<String> lines, @Nonnull ITooltipFlag tooltipFlag) {
+        lines.add(TextFormatting.RED + "Deprecated Item! Convert in an Assembler to get the new version"); // todo lang
+    }
+
+    @Override
+    public boolean isEnchantable(@Nonnull ItemStack stack) {
+        return false;
     }
 
     public class ArmorMetaValueItem extends MetaValueItem {
 
-        private IArmorLogic armorLogic = new DummyArmorLogic();
+        private IArmorLogic armorLogic;
 
         protected ArmorMetaValueItem(int metaValue, String unlocalizedName) {
             super(metaValue, unlocalizedName);
@@ -172,10 +109,14 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
             return armorLogic;
         }
 
+        public ArmorMetaValueItem setArmorLogic(EntityEquipmentSlot slot, String armorTextureName) {
+            this.armorLogic = new DummyArmorLogic(slot, armorTextureName);
+            return this;
+        }
+
         public ArmorMetaValueItem setArmorLogic(IArmorLogic armorLogic) {
             Preconditions.checkNotNull(armorLogic, "Cannot set ArmorLogic to null");
             this.armorLogic = armorLogic;
-            this.armorLogic.addToolComponents(this);
             return this;
         }
 
@@ -194,41 +135,32 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
         public ArmorMetaValueItem setRarity(EnumRarity rarity) {
             return (ArmorMetaValueItem) super.setRarity(rarity);
         }
+
+        @Override
+        public ArmorMetaValueItem setInvisible() {
+            super.setInvisible();
+            return this;
+        }
     }
 
-    @Override
-    public boolean isEnchantable(@NotNull ItemStack stack) {
-        return true;
-    }
+    private static class DummyArmorLogic implements IArmorLogic {
 
-    @Override
-    public int getItemEnchantability(@NotNull ItemStack stack) {
-        return 50;
-    }
+        private final EntityEquipmentSlot slot;
+        private final String armorTextureName;
 
-    @Override
-    public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack, @NotNull Enchantment enchantment) {
-        EntityEquipmentSlot slot = this.getEquipmentSlot(stack);
-        if (slot == null || enchantment.type == null) {
-            return false;
+        public DummyArmorLogic(EntityEquipmentSlot slot, String armorTextureName) {
+            this.slot = slot;
+            this.armorTextureName = armorTextureName;
         }
 
-        IArmorLogic armorLogic = getArmorLogic(stack);
-        if (!armorLogic.canBreakWithDamage(stack) && enchantment.type == EnumEnchantmentType.BREAKABLE) {
-            return false;
+        @Override
+        public EntityEquipmentSlot getEquipmentSlot(ItemStack itemStack) {
+            return slot;
         }
 
-        switch (slot) {
-            case HEAD:
-                return enchantment.type.canEnchantItem(Items.DIAMOND_HELMET);
-            case CHEST:
-                return enchantment.type.canEnchantItem(Items.DIAMOND_CHESTPLATE);
-            case LEGS:
-                return enchantment.type.canEnchantItem(Items.DIAMOND_LEGGINGS);
-            case FEET:
-                return enchantment.type.canEnchantItem(Items.DIAMOND_BOOTS);
-            default:
-                return enchantment.isAllowedOnBooks();
+        @Override
+        public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
+            return String.format("gregtech:textures/items/armors/%s.png", armorTextureName);
         }
     }
 }

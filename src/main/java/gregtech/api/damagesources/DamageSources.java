@@ -20,7 +20,6 @@ public class DamageSources {
     private static final DamageSource ELECTRIC = new DamageSource("electric");
     private static final DamageSource RADIATION = new DamageSource("radiation").setDamageBypassesArmor();
     private static final DamageSource TURBINE = new DamageSource("turbine");
-    private static final DamageSource USE_ARMOR_DURABILITY = new DamageSource("armor_durability");
 
     public static DamageSource getExplodingDamage() {
         return EXPLOSION;
@@ -48,10 +47,6 @@ public class DamageSources {
 
     public static DamageSource getTurbineDamage() {
         return TURBINE;
-    }
-
-    public static DamageSource getArmorDurabilityDamage() {
-        return USE_ARMOR_DURABILITY;
     }
 
     public static DamageSource getPlayerDamage(@Nullable EntityPlayer source) {

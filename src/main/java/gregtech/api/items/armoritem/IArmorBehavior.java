@@ -21,11 +21,8 @@ public interface IArmorBehavior {
 
     /**
      * Called every tick that this behavior's armor item is equipped.
-     *
-     * @return If something was done this tick that needs durability loss or energy drain to be applied.
      */
-    default boolean onArmorTick(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack stack) {
-        return false;
+    default void onArmorTick(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack stack) {
     }
 
     /** Called when this behavior's armor item is unequipped. */
@@ -45,6 +42,9 @@ public interface IArmorBehavior {
     }
 
     default void onKeyPressed(@NotNull ItemStack stack, @NotNull EntityPlayer player, KeyBind keyPressed) {
+    }
+
+    default void addBehaviorNBT(@NotNull ItemStack stack, @NotNull NBTTagCompound tag) {
     }
 
     /**

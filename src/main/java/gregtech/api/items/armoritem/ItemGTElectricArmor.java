@@ -3,7 +3,6 @@ package gregtech.api.items.armoritem;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
-import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.metaitem.ElectricStats;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 
+/** For armors which use power, either instead of or in addition to durability. */
 public class ItemGTElectricArmor extends ItemGTArmor {
 
     private static final IElectricItem EMPTY_STATS = new ElectricItem(ItemStack.EMPTY, 0, 0, false, false);
@@ -51,11 +51,7 @@ public class ItemGTElectricArmor extends ItemGTArmor {
     @Override
     public void damageArmor(EntityLivingBase entity, @NotNull ItemStack stack, @Nullable DamageSource source, int damage, int slot) {
         IElectricItem electricItem = getElectricItem(stack);
-        long amountDrawn, amountToDraw = energyPerUse * damage;
-        if (source != DamageSources.getArmorDurabilityDamage()) {
-            // armor durability damage is an internal source. if it is that source, draw the full amount instead of scaling
-            amountToDraw /= energyScaleFactor;
-        }
+        long amountDrawn, amountToDraw = energyPerUse * damage / energyScaleFactor;
         amountDrawn = electricItem.discharge(amountToDraw, electricItem.getTier(), true, false, false);
         if (amountDrawn < amountToDraw) {
             // send remaining damage to durability (will be tested in super if it should be checked)
@@ -73,6 +69,12 @@ public class ItemGTElectricArmor extends ItemGTArmor {
     }
 
     @Override
+    public boolean areBehaviorsActive(@NotNull ItemStack stack) {
+        // all behaviors for electric armors need power to work, even if they don't have their own cost
+        return getElectricItem(stack).getCharge() > 0;
+    }
+
+    @Override
     protected @NotNull List<ICapabilityProvider> getCapabilityProviders(@NotNull ItemStack stack, @Nullable NBTTagCompound tag) {
         List<ICapabilityProvider> providers = super.getCapabilityProviders(stack, tag);
         ElectricStats stats = new ElectricStats(maxCharge, tier, true, canChargeExternally);
@@ -85,7 +87,7 @@ public class ItemGTElectricArmor extends ItemGTArmor {
         protected int tier;
         protected long maxCharge;
         protected long energyPerUse;
-        protected int energyScaleFactor;
+        protected int energyScaleFactor = 1; // todo, just setting this because of div by 0
         protected boolean canChargeExternally;
 
         public static @NotNull Builder of(@NotNull String domain, @NotNull String id, @NotNull EntityEquipmentSlot slot) {
@@ -103,7 +105,8 @@ public class ItemGTElectricArmor extends ItemGTArmor {
         }
 
         public Builder electricCost(long energyPerUse) {
-            return electricCost(energyPerUse, 0);
+            this.energyPerUse = energyPerUse;
+            return this;
         }
 
         public Builder electricCost(long energyPerUse, int energyScaleFactor) {

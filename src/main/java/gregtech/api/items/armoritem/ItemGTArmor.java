@@ -2,10 +2,11 @@ package gregtech.api.items.armoritem;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.impl.CombinedCapabilityProvider;
-import gregtech.api.damagesources.DamageSources;
+import gregtech.api.items.armoritem.armorset.IArmorSet;
 import gregtech.api.util.input.IKeyPressedListener;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
@@ -13,13 +14,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IRarity;
-import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,17 +30,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ItemGTArmor extends ItemArmor implements IGTArmor, ISpecialArmor, IKeyPressedListener {
+/** For armors which use durability or have infinite durability. */
+public class ItemGTArmor extends ItemArmor implements IGTArmor, IKeyPressedListener {
 
+    private final String domain, id;
     private final IGTArmorDefinition armorDefinition;
 
     public ItemGTArmor(String domain, String id, IGTArmorDefinition armorDefinition) {
         super(ArmorMaterial.DIAMOND, 0, armorDefinition.getEquippedSlot());
+        this.domain = domain;
+        this.id = id;
         this.armorDefinition = armorDefinition;
         setMaxStackSize(1);
         setCreativeTab(GregTechAPI.TAB_GREGTECH_TOOLS);
         setTranslationKey("gt.armor." + id);
         setRegistryName(domain, id);
+        if (armorDefinition.hasDurability()) {
+            setMaxDamage(armorDefinition.getMaxDurability(), true);
+        }
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public @NotNull ItemStack getStack() {
+        ItemStack stack = new ItemStack(get());
+
+        // Set behaviors
+        NBTTagCompound behaviorTag = ArmorHelper.getBehaviorsTag(stack);
+        getBehaviors().forEach(behavior -> behavior.addBehaviorNBT(stack, behaviorTag));
+        return stack;
     }
 
     public @NotNull IGTArmorDefinition getDefinition() {
@@ -56,6 +85,16 @@ public class ItemGTArmor extends ItemArmor implements IGTArmor, ISpecialArmor, I
     }
 
     @Override
+    public @Nullable IArmorSet getArmorSet() {
+        return getDefinition().getArmorSet();
+    }
+
+    @Override
+    public boolean areBehaviorsActive(@NotNull ItemStack stack) {
+        return true;
+    }
+
+    @Override
     public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source, double damage, int slot) {
         // todo this is gonna be a huge mess to unravel
         return new ArmorProperties(0, 0, 0);
@@ -68,10 +107,26 @@ public class ItemGTArmor extends ItemArmor implements IGTArmor, ISpecialArmor, I
 
     @Override
     public void damageArmor(EntityLivingBase entity, @NotNull ItemStack stack, @Nullable DamageSource source, int damage, int slot) {
-        if (getDefinition().canBreakWithDamage()) {
+        if (getDefinition().hasDurability()) {
             // todo need to do actual damage and save to NBT here, as "default" armor can break
             // todo then override in ItemGTElectricArmor can do it as energy instead (or in addition to)
         }
+    }
+
+    @Override
+    public final @NotNull Item setMaxDamage(int maxDamageIn) {
+        // block this call from going through because we need additional information
+        // not yet available to us when MC calls this method initially.
+        return this;
+    }
+
+    public void setMaxDamage(int maxDamageIn, @SuppressWarnings("unused") boolean forced) {
+        super.setMaxDamage(maxDamageIn);
+    }
+
+    @Override
+    public boolean getIsRepairable(@NotNull ItemStack toRepair, @NotNull ItemStack repair) {
+        return false;
     }
 
     @Override
@@ -81,17 +136,14 @@ public class ItemGTArmor extends ItemArmor implements IGTArmor, ISpecialArmor, I
 
     @Override
     public void onArmorTick(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack stack) {
-        int numEffects = 0;
-        for (IArmorBehavior behavior : getDefinition().getBehaviors()) {
-            if (behavior.onArmorTick(world, player, stack)) {
-                numEffects++;
+        if (areBehaviorsActive(stack)) {
+            for (IArmorBehavior behavior : getDefinition().getBehaviors()) {
+                behavior.onArmorTick(world, player, stack);
             }
-        }
-        if (numEffects > 0 && !world.isRemote) {
-            damageArmor(player, stack, DamageSources.getArmorDurabilityDamage(), numEffects, getEquipmentSlot().getIndex());
         }
     }
 
+    @Override
     public void onArmorUnequip(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack stack) {
         for (IArmorBehavior behavior : getDefinition().getBehaviors()) {
             if (player instanceof EntityPlayerMP playerMP) {
@@ -103,6 +155,7 @@ public class ItemGTArmor extends ItemArmor implements IGTArmor, ISpecialArmor, I
         }
     }
 
+    @Override
     public void onArmorEquip(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack stack) {
         for (IArmorBehavior behavior : getDefinition().getBehaviors()) {
             if (player instanceof EntityPlayerMP playerMP) {
@@ -123,10 +176,9 @@ public class ItemGTArmor extends ItemArmor implements IGTArmor, ISpecialArmor, I
         }
     }
 
-    // todo make sure this works with how we end up doing the builder class
     @Override
     public @Nullable String getArmorTexture(@NotNull ItemStack stack, @NotNull Entity entity, @NotNull EntityEquipmentSlot slot, @NotNull String type) {
-        return getDefinition().getArmorTexture();
+        return String.format("%s:textures/items/armors/%s.png", getDomain(), getId());
     }
 
     @Override
@@ -148,7 +200,7 @@ public class ItemGTArmor extends ItemArmor implements IGTArmor, ISpecialArmor, I
     public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack, @NotNull Enchantment enchantment) {
         if (enchantment.type == null) return false;
 
-        if (!getDefinition().canBreakWithDamage() && enchantment.type == EnumEnchantmentType.BREAKABLE) {
+        if (!getDefinition().hasDurability() && enchantment.type == EnumEnchantmentType.BREAKABLE) {
             return false;
         }
 
@@ -169,6 +221,13 @@ public class ItemGTArmor extends ItemArmor implements IGTArmor, ISpecialArmor, I
         // todo armor toughness tooltip
         for (IArmorBehavior behavior : getDefinition().getBehaviors()) {
             behavior.addInformation(stack, world, tooltip, flag);
+        }
+    }
+
+    @Override
+    public void getSubItems(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> items) {
+        if (this.isInCreativeTab(tab)) {
+            items.add(getStack());
         }
     }
 
