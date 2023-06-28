@@ -291,8 +291,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         ITextComponent toggleText = locked ?
-                new TextComponentTranslation("gregtech.multiblock.fission_reactor.turn_on")
-                : new TextComponentTranslation("gregtech.multiblock.fission_reactor.turn_off");
+                new TextComponentTranslation("gregtech.multiblock.fission_reactor.turn_off")
+                : new TextComponentTranslation("gregtech.multiblock.fission_reactor.turn_on");
         toggleText.appendSibling(withButton(new TextComponentString(" [Toggle]"), "toggle"));
         textList.add(toggleText);
     }
@@ -306,10 +306,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 lockAndPrepareReactor();
             } else {
                 for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
-                    handler.unlock();
+                    handler.setLock(false);
                 }
                 for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-                    handler.unlock();
+                    handler.setLock(false);
                 }
             }
         }
@@ -317,10 +317,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
     private void lockAndPrepareReactor() {
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
-            handler.lock();
+            handler.setLock(true);
         }
         for (ILockableHandler handler : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-            handler.lock();
+            handler.setLock(true);
         }
         fissionReactor = new FissionReactor(this.diameter - 2);
         int radius = this.diameter % 2 == 0 ? (int) Math.floor(this.diameter / 2.f) : Math.round((this.diameter - 1) / 2.f);

@@ -1,7 +1,6 @@
 package gregtech.api.capability;
 
 public interface ILockableHandler {
-    void lock();
-    void unlock();
+    void setLock(boolean isLocked);
     boolean isLocked();
 }
