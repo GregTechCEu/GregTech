@@ -115,15 +115,18 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
             rotorHolder = abilities.size() > 0 ? abilities.get(0) : null;
         }
 
-        FluidStack requiredFluidInput = previousRecipe.getFluidInputs().get(0).getInputFluidStack().copy();
+        FluidStack requiredFluidInput = previousRecipe.getFluidInputs().get(0).getInputFluidStack();
+        int neededAmount = requiredFluidInput.amount;
+        String neededName = requiredFluidInput.getLocalizedName();
+
         int ocAmount = (int) (getMaxVoltage() / -previousRecipe.getEUt());
-        requiredFluidInput.amount *= ocAmount;
+        neededAmount *= ocAmount;
         if (rotorHolder != null && rotorHolder.hasRotor()) {
-            requiredFluidInput.amount /= (rotorHolder.getTotalEfficiency() / 100f);
+            neededAmount /= (rotorHolder.getTotalEfficiency() / 100f);
         }
         return new String[] {
-                TextFormatting.RED + TextFormattingUtil.formatNumbers(requiredFluidInput.amount) + "L",
-                requiredFluidInput.getLocalizedName()
+                TextFormatting.RED + TextFormattingUtil.formatNumbers(neededAmount) + "L",
+                neededName
         };
     }
 }
