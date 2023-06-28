@@ -51,7 +51,6 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
@@ -61,7 +60,6 @@ import java.util.function.Predicate;
 import static gregtech.api.GTValues.V;
 
 public class GTUtility {
-    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
     public static <T> String[] mapToString(T[] array, Function<T, String> mapper) {
         String[] result = new String[array.length];

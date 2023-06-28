@@ -8,15 +8,12 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.util.TextFormattingUtil;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
