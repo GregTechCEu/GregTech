@@ -50,7 +50,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             if (recipeMapWorkable.getPreviousRecipe() != null) {
                 String[] recipeInput = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getRecipeFluidInputAmount();
                 textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed",
-                        recipeInput[0], recipeInput[1], "§b" + TextFormattingUtil.formatNumbers(recipeMapWorkable.getPreviousRecipeDuration())));
+                        recipeInput[0], recipeInput[1], TextFormatting.AQUA + TextFormattingUtil.formatNumbers(recipeMapWorkable.getPreviousRecipeDuration())));
             }
 
             if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics())
