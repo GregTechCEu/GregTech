@@ -4,7 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IControllable;
-import gregtech.api.capability.ILockableTank;
+import gregtech.api.capability.ILockableHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.LockableFluidTank;
 import gregtech.api.gui.GuiTextures;
@@ -24,6 +24,7 @@ import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -34,7 +35,9 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.List;
 
-public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<ILockableTank>, IControllable, IFissionReactorHatch {
+import static gregtech.api.capability.GregtechDataCodes.LOCK_UPDATE;
+
+public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<ILockableHandler>, ILockableHandler, IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private boolean valid;
@@ -121,13 +124,13 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
     }
 
     @Override
-    public MultiblockAbility<ILockableTank> getAbility() {
+    public MultiblockAbility<ILockableHandler> getAbility() {
         return MultiblockAbility.IMPORT_COOLANT;
     }
 
     @Override
-    public void registerAbilities(List<ILockableTank> abilityList) {
-        abilityList.add(fluidTank);
+    public void registerAbilities(List<ILockableHandler> abilityList) {
+        abilityList.add(this);
     }
 
     @Override
@@ -149,4 +152,29 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
             pullFluidsFromNearbyHandlers(getFrontFacing());
         }
     }
+
+    private LockableFluidTank getLockedImport() {
+        return (LockableFluidTank) importItems;
+    }
+
+    @Override
+    public void setLock(boolean isLocked) {
+        getLockedImport().setLock(isLocked);
+        writeCustomData(LOCK_UPDATE, (packetBuffer -> packetBuffer.writeBoolean(isLocked)));
+    }
+
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == LOCK_UPDATE) {
+            getLockedImport().setLock(buf.readBoolean());
+        }
+    }
+
+    @Override
+    public boolean isLocked() {
+        return getLockedImport().isLocked();
+    }
+
 }

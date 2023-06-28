@@ -1,26 +1,23 @@
 package gregtech.api.items.itemhandlers;
 
-import gregtech.api.capability.ILockableItemHandler;
+import gregtech.api.capability.ILockableHandler;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public class LockableItemStackHandler extends NotifiableItemStackHandler implements ILockableItemHandler {
-    protected boolean locked = false;
+public class LockableItemStackHandler extends NotifiableItemStackHandler implements ILockableHandler {
+    protected boolean locked;
     protected ItemStack lockedItemStack;
     public LockableItemStackHandler(MetaTileEntity entityToNotify, boolean isExport) {
         super(1, entityToNotify, isExport);
     }
-
-    public void lock() {
-        this.locked = true;
-        lockedItemStack = this.getStackInSlot(0).copy();
-    }
-
-    public void unlock() {
-        this.locked = false;
+    @Override
+    public void setLock(boolean isLocked) {
+        this.locked = isLocked;
+        if (isLocked)
+            lockedItemStack = this.getStackInSlot(0).copy();
     }
 
     public boolean isLocked() {
