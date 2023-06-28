@@ -97,6 +97,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
+        super.addDisplayText(textList);
         if (isStructureFormed()) {
             IRotorHolder rotorHolder = getRotorHolder();
 
@@ -104,7 +105,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
             if (fuelStack != null && fuelStack.amount > 0) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", TextFormattingUtil.formatNumbers(fuelStack.amount), fuelStack.getLocalizedName()));
             }
-            super.addDisplayText(textList);
+
             if (rotorHolder.getRotorEfficiency() > 0) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_speed", TextFormattingUtil.formatNumbers(rotorHolder.getRotorSpeed()), TextFormattingUtil.formatNumbers(rotorHolder.getMaxRotorHolderSpeed())));
                 textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.efficiency", rotorHolder.getTotalEfficiency()));
