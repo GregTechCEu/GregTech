@@ -65,8 +65,12 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-                String voltageName = GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
-                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatNumbers(maxVoltage), voltageName));
+                if (maxVoltage < -recipeMapWorkable.getRecipeEUt()) {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy_output"));
+                } else {
+                    String voltageName = GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatNumbers(maxVoltage), voltageName));
+                }
             }
 
             if (!recipeMapWorkable.isWorkingEnabled()) {
