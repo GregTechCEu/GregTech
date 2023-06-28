@@ -149,6 +149,9 @@ public class GregtechDataCodes {
     public static final int LOCK_OBJECT_HOLDER = assignId();
     public static final int CACHED_CWU = assignId();
 
+    // Fission Hatches
+    public static final int LOCK_UPDATE = 17;
+
     // NBT Keys
 
     // From MetaTileEntityHolder
