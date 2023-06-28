@@ -9,6 +9,7 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.TextFormattingUtil;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
@@ -121,7 +122,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
             requiredFluidInput.amount /= (rotorHolder.getTotalEfficiency() / 100f);
         }
         return new String[] {
-                "§c" + TextFormattingUtil.formatNumbers(requiredFluidInput.amount) + "L",
+                TextFormatting.RED + TextFormattingUtil.formatNumbers(requiredFluidInput.amount) + "L",
                 requiredFluidInput.getLocalizedName()
         };
     }
