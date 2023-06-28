@@ -5749,6 +5749,9 @@ gregtech.multiblock.hpca.info_coolant_name=PCB Coolant
 gregtech.multiblock.hpca.info_bridging_enabled=Bridging Enabled
 gregtech.multiblock.hpca.info_bridging_disabled=Bridging Disabled
 
+gregtech.multiblock.fission_reactor.turn_on=Turn on the reactor? (Locks all hatches)
+gregtech.multiblock.fission_reactor.turn_off=Turn off the reactor?
+
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload

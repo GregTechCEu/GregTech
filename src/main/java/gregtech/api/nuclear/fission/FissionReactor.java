@@ -63,6 +63,9 @@ public class FissionReactor {
 
     public boolean moderatorTipped;
 
+    /**
+     * Megawatts
+     */
     public double power;
     public double prevPower;
     public double temperature;
