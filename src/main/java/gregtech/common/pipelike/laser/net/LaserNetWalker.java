@@ -68,6 +68,14 @@ public class LaserNetWalker extends PipeNetWalker {
 
     @Override
     protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
+        if (neighbourPipe instanceof TileEntityLaserPipe pipe) {
+            // I really cannot think of what else i could do
+            boolean yAxisSame = sourcePipe.getY() == pipe.getPipePos().getY() && sourcePipe.getY() == pipePos.getY();
+            boolean xAxisSame = sourcePipe.getX() == pipe.getPipePos().getX() && sourcePipe.getX() == pipePos.getX();
+            boolean zAxisSame = sourcePipe.getZ() == pipe.getPipePos().getZ() && sourcePipe.getZ() == pipePos.getZ();
+
+            return yAxisSame && zAxisSame || zAxisSame && xAxisSame || xAxisSame && yAxisSame;
+        }
         return false;
     }
 }
