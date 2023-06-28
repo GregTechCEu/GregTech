@@ -20,26 +20,43 @@ public class LaserNetWalker extends PipeNetWalker {
         LaserNetWalker walker = new LaserNetWalker(world, sourcePipe, 1, null, null);
         walker.sourcePipe = sourcePipe;
         walker.facingToHandler = faceToSourceHandler;
+        walker.axis = faceToSourceHandler.getAxis();
         walker.traversePipeNet();
         return walker.isFailed() ? null : walker.laserData;
     }
+
+    private static final EnumFacing[] X_AXIS_FACINGS = {EnumFacing.WEST, EnumFacing.EAST};
+    private static final EnumFacing[] Y_AXIS_FACINGS = {EnumFacing.UP, EnumFacing.DOWN};
+    private static final EnumFacing[] Z_AXIS_FACINGS = {EnumFacing.NORTH, EnumFacing.SOUTH};
 
     private LaserPipeProperties minProperties;
     private LaserPipeNet.LaserData laserData;
     private BlockPos sourcePipe;
     private EnumFacing facingToHandler;
+    private EnumFacing.Axis axis;
 
     protected LaserNetWalker(World world, BlockPos sourcePipe, int distance, LaserPipeNet.LaserData laserData, LaserPipeProperties properties) {
         super(world, sourcePipe, distance);
         this.laserData = laserData;
         this.minProperties = properties;
     }
+
     @Override
     protected PipeNetWalker createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks) {
         LaserNetWalker walker = new LaserNetWalker(world, nextPos, walkedBlocks, laserData, minProperties);
         walker.facingToHandler = facingToHandler;
         walker.sourcePipe = sourcePipe;
+        walker.axis = axis;
         return walker;
+    }
+
+    @Override
+    protected EnumFacing[] getSurroundingPipeSides() {
+        return switch (axis) {
+            case X -> X_AXIS_FACINGS;
+            case Y -> Y_AXIS_FACINGS;
+            case Z -> Z_AXIS_FACINGS;
+        };
     }
 
     @Override
@@ -68,14 +85,6 @@ public class LaserNetWalker extends PipeNetWalker {
 
     @Override
     protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
-        if (neighbourPipe instanceof TileEntityLaserPipe pipe) {
-            // I really cannot think of what else i could do
-            boolean yAxisSame = sourcePipe.getY() == pipe.getPipePos().getY() && sourcePipe.getY() == pipePos.getY();
-            boolean xAxisSame = sourcePipe.getX() == pipe.getPipePos().getX() && sourcePipe.getX() == pipePos.getX();
-            boolean zAxisSame = sourcePipe.getZ() == pipe.getPipePos().getZ() && sourcePipe.getZ() == pipePos.getZ();
-
-            return yAxisSame && zAxisSame || zAxisSame && xAxisSame || xAxisSame && yAxisSame;
-        }
-        return false;
+        return neighbourPipe instanceof TileEntityLaserPipe;
     }
 }
