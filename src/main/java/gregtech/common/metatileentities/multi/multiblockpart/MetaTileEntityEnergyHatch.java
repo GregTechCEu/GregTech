@@ -110,28 +110,35 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         String tierName = GTValues.VNF[getTier()];
+        addDescriptorTooltip(stack, world, tooltip, advanced);
 
+        if (isExportHatch) {
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
+        } else {
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
+        }
+        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(I18n.format("gregtech.universal.enabled"));
+    }
+
+    protected void addDescriptorTooltip(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         if (isExportHatch) {
             if (amperage > 2) {
                 tooltip.add(I18n.format("gregtech.machine.energy_hatch.output_hi_amp.tooltip"));
             } else {
                 tooltip.add(I18n.format("gregtech.machine.energy_hatch.output.tooltip"));
             }
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
-            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
         } else {
             if (amperage > 2) {
                 tooltip.add(I18n.format("gregtech.machine.energy_hatch.input_hi_amp.tooltip"));
             } else {
                 tooltip.add(I18n.format("gregtech.machine.energy_hatch.input.tooltip"));
             }
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
-            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
         }
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
     @Override

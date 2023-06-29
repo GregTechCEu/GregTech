@@ -1,6 +1,12 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -21,12 +27,20 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.math.BigInteger;
@@ -34,7 +48,7 @@ import java.util.*;
 
 import static gregtech.api.util.RelativeDirection.*;
 
-public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
+public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase implements IControllable {
 
     // Structure Constants
     public static final int MAX_BATTERY_LAYERS = 18;
@@ -56,6 +70,11 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
     private EnergyContainerList inputHatches;
     private EnergyContainerList outputHatches;
     private long passiveDrain;
+    private boolean isActive, isWorkingEnabled = true;
+
+    // Stats tracked for UI display
+    private long totalIOLastSec;
+    private long averageIOLastSec;
 
     public MetaTileEntityPowerSubstation(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -92,17 +111,69 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
     @Override
     protected void updateFormedValid() {
         if (!getWorld().isRemote) {
-            // Bank from Energy Input Hatches
-            long energyBanked = energyBank.fill(inputHatches.getEnergyStored());
-            inputHatches.changeEnergy(-energyBanked);
+            if (getOffsetTimer() % 20 == 0) {
+                // active here is just used for rendering
+                setActive(energyBank.hasEnergy());
+                averageIOLastSec = totalIOLastSec / 20;
+                totalIOLastSec = 0;
+            }
 
-            // Passive drain
-            energyBank.drain(this.passiveDrain);
+            if (isWorkingEnabled()) {
+                // Bank from Energy Input Hatches
+                long energyBanked = energyBank.fill(inputHatches.getEnergyStored());
+                inputHatches.changeEnergy(-energyBanked);
+                totalIOLastSec += energyBanked;
 
-            // Debank to Dynamo Hatches
-            long energyDebanked = energyBank.drain(outputHatches.getEnergyCapacity() - outputHatches.getEnergyStored());
-            outputHatches.changeEnergy(energyDebanked);
+                // Passive drain
+                int multiplier = 1; // set to 1 so that there is still passive drain with no maintenance problems
+                if (ConfigHolder.machines.enableMaintenance) {
+                    multiplier += getNumMaintenanceProblems();
+                }
+                long energyPassiveDrained = energyBank.drain(this.passiveDrain * multiplier);
+                totalIOLastSec -= energyPassiveDrained;
+
+                // Debank to Dynamo Hatches
+                long energyDebanked = energyBank.drain(outputHatches.getEnergyCapacity() - outputHatches.getEnergyStored());
+                outputHatches.changeEnergy(energyDebanked);
+                totalIOLastSec -= energyDebanked;
+            }
         }
+    }
+
+    @Override
+    public boolean isActive() {
+        return super.isActive() && this.isActive;
+    }
+
+    public void setActive(boolean active) {
+        if (this.isActive != active) {
+            this.isActive = active;
+            markDirty();
+            World world = getWorld();
+            if (world != null && !world.isRemote) {
+                writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(active));
+            }
+        }
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return this.isWorkingEnabled;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        this.isWorkingEnabled = isWorkingAllowed;
+        markDirty();
+        World world = getWorld();
+        if (world != null && !world.isRemote) {
+            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(isWorkingEnabled));
+        }
+    }
+
+    @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
     }
 
     @NotNull
@@ -116,7 +187,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
                 .where('S', selfPredicate())
                 .where('C', states(getCasingState()))
                 .where('X' ,states(getCasingState()).setMinGlobalLimited(MIN_CASINGS)
-                        .or(abilities(MultiblockAbility.MAINTENANCE_HATCH))
+                        .or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setExactLimit(1))
                         .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY).setMinGlobalLimited(1))
                         .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY).setMinGlobalLimited(1)))
                 .where('G', states(getGlassState()))
@@ -188,7 +259,13 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
     @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
-        return super.getFrontOverlay();
+        return Textures.POWER_SUBSTATION_OVERLAY;
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(), true);
     }
 
     @Override
@@ -198,7 +275,12 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
             if (energyBank != null) {
                 BigInteger energyStored = energyBank.getStored();
                 BigInteger energyCapacity = energyBank.getCapacity();
-                textList.add(new TextComponentTranslation("gregtech.multiblock.energy_stored", energyStored, energyCapacity));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.stored", energyStored));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.capacity", energyCapacity));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.passive_drain", passiveDrain));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.average_io", averageIOLastSec)
+                        .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                new TextComponentTranslation("gregtech.multiblock.power_substation.average_io_hover")))));
             }
         }
     }
@@ -206,6 +288,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
+        data.setBoolean("isActive", isActive);
+        data.setBoolean("isWorkingEnabled", isWorkingEnabled);
         if (energyBank != null) {
             data.setTag(NBT_ENERGY_BANK, energyBank.writeToNBT(new NBTTagCompound()));
         }
@@ -215,9 +299,54 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
+        isActive = data.getBoolean("isActive");
+        isWorkingEnabled = data.getBoolean("isWorkingEnabled");
         if (data.hasKey(NBT_ENERGY_BANK)) {
             energyBank = new PowerStationEnergyBank(data.getCompoundTag(NBT_ENERGY_BANK));
         }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(isActive);
+        buf.writeBoolean(isWorkingEnabled);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        isActive = buf.readBoolean();
+        isWorkingEnabled = buf.readBoolean();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+            isActive = buf.readBoolean();
+            scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+            isWorkingEnabled = buf.readBoolean();
+            scheduleRenderUpdate();
+        }
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip1"));
+        tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip2"));
+        tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip3", MAX_BATTERY_LAYERS));
+        tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip4"));
+        tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip5", PASSIVE_DRAIN_MAX_PER_STORAGE));
     }
 
     public static class PowerStationEnergyBank {
@@ -350,6 +479,13 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase {
 
         public BigInteger getStored() {
             return summarize(storage);
+        }
+
+        public boolean hasEnergy() {
+            for (long l : storage) {
+                if (l > 0) return true;
+            }
+            return false;
         }
 
         private static BigInteger summarize(long[] values) {

@@ -121,6 +121,7 @@ public class Textures {
     public static final OrientedOverlayRenderer MULTIBLOCK_TANK_OVERLAY = new OrientedOverlayRenderer("multiblock/multiblock_tank");
     public static final OrientedOverlayRenderer CHARCOAL_PILE_OVERLAY = new OrientedOverlayRenderer("multiblock/charcoal_pile_igniter");
     public static final OrientedOverlayRenderer DATA_BANK_OVERLAY = new OrientedOverlayRenderer("multiblock/data_bank");
+    public static final OrientedOverlayRenderer POWER_SUBSTATION_OVERLAY = new OrientedOverlayRenderer("multiblock/power_substation");
 
     public static final OrientedOverlayRenderer ALLOY_SMELTER_OVERLAY = new OrientedOverlayRenderer("machines/alloy_smelter");
     public static final OrientedOverlayRenderer FURNACE_OVERLAY = new OrientedOverlayRenderer("machines/furnace");

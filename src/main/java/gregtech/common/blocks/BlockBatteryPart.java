@@ -6,11 +6,18 @@ import gregtech.api.metatileentity.multiblock.IBatteryDataProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartType> implements IBatteryDataProvider {
 
@@ -26,6 +33,16 @@ public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartT
     @Override
     public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EntityLiving.SpawnPlacementType placementType) {
         return false;
+    }
+
+    @Override
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, List<String> tooltip, @NotNull ITooltipFlag advanced) {
+        super.addInformation(stack, world, tooltip, advanced);
+
+        BatteryPartType batteryType = getState(stack);
+        if (batteryType.getCapacity() != 0) {
+            tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", batteryType.getCapacity()));
+        }
     }
 
     @Override

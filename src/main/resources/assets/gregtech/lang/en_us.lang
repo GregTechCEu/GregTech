@@ -2474,6 +2474,7 @@ tile.metal_casing.titanium_stable.name=Stable Titanium Machine Casing
 tile.metal_casing.tungstensteel_robust.name=Robust Tungstensteel Machine Casing
 tile.metal_casing.ptfe_inert.name=Chemically Inert PTFE Machine Casing
 tile.metal_casing.hsse_sturdy.name=Sturdy HSS-E Machine Casing
+tile.metal_casing.palladium_substation.name=Palladium Substation Casing
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULV Machine Casing
@@ -2534,6 +2535,16 @@ tile.transparent_casing.tempered_glass.name=Tempered Glass
 tile.transparent_casing.fusion_glass.name=Fusion Glass
 tile.transparent_casing.laminated_glass.name=Laminated Glass
 tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
+
+# Battery blocks
+tile.battery_block.empty.name=Empty Capacitor
+tile.battery_block.empty.tooltip=For filling space in your Power Substation
+tile.battery_block.lapotronic_ev.name=EV Lapotronic Capacitor
+tile.battery_block.lapotronic_iv.name=IV Lapotronic Capacitor
+tile.battery_block.lapotronic_luv.name=LuV Lapotronic Capacitor
+tile.battery_block.lapotronic_zpm.name=ZPM Lapotronic Capacitor
+tile.battery_block.lapotronic_uv.name=UV Lapotronic Capacitor
+tile.battery_block.ultimate_uhv.name=UHV Ultimate Capacitor
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -4585,6 +4596,14 @@ gregtech.machine.data_bank.tooltip.2=Bulk Data Storage. Transfer with Optical Ca
 gregtech.machine.data_bank.tooltip.3=Data Banks can be chained together.
 gregtech.machine.data_bank.tooltip.4=Uses %sEU/t per Data Hatch and %sEU/t when chained.
 
+gregtech.machine.power_substation.name=Power Substation
+gregtech.machine.power_substation.tooltip1=The heart of a centralized power grid
+gregtech.machine.power_substation.tooltip2=§fCapacitors§7 do not need to be all the same tier.
+gregtech.machine.power_substation.tooltip3=Allows up to §f%d Capacitor Layers§7.
+gregtech.machine.power_substation.tooltip4=Loses energy equal to §f1%%§7 of total capacity every §f24 hours§7.
+gregtech.machine.power_substation.tooltip5=Capped at §f%,d EU/t§7 passive loss per Capacitor Block.
+gregtech.multiblock.power_substation.description=
+
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
 gregtech.multiblock.central_monitor.height=Screen Height:
@@ -4748,6 +4767,14 @@ gregtech.machine.energy_hatch.input_16a.zpm.name=ZPM 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.uv.name=UV 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.uhv.name=UHV 16A Energy Hatch
 
+gregtech.machine.substation_hatch.input.tooltip=Energy Input for the Power Substation
+
+gregtech.machine.substation_hatch.input_64a.iv.name=IV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.luv.name=LuV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.zpm.name=ZPM 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.uv.name=UV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.uhv.name=UHV 64A Substation Energy Hatch
+
 gregtech.machine.energy_hatch.output.tooltip=Energy Output for Multiblocks
 
 gregtech.machine.energy_hatch.output.ulv.name=ULV Dynamo Hatch
@@ -4780,6 +4807,14 @@ gregtech.machine.energy_hatch.output_16a.luv.name=LuV 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.zpm.name=ZPM 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.uv.name=UV 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.uhv.name=UHV 16A Dynamo Hatch
+
+gregtech.machine.substation_hatch.output.tooltip=Energy Output for the Power Substation
+
+gregtech.machine.substation_hatch.output_64a.iv.name=IV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.luv.name=LuV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.zpm.name=ZPM 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.uv.name=UV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.uhv.name=UHV 64A Substation Dynamo Hatch
 
 gregtech.machine.rotor_holder.tooltip1=Rotor Holder for Multiblocks
 gregtech.machine.rotor_holder.tooltip2=Holds Rotor in place so it will not fly away
@@ -4869,7 +4904,7 @@ gregtech.universal.tooltip.amperage_out=§eAmperage OUT: §f%,dA
 gregtech.universal.tooltip.amperage_out_till=§eAmperage OUT up to: §f%,dA
 gregtech.universal.tooltip.amperage_in_out=§eAmperage IN/OUT: §f%,dA
 gregtech.universal.tooltip.amperage_in_out_till=§eAmperage IN/OUT up to: §f%,dA
-gregtech.universal.tooltip.energy_storage_capacity=§cEnergy Capacity: §r%,d EU
+gregtech.universal.tooltip.energy_storage_capacity=§cEnergy Capacity: §f%,d EU
 gregtech.universal.tooltip.energy_tier_range=§aAllowed Voltage Tiers: §f%s §f- %s
 gregtech.universal.tooltip.item_storage_capacity=§6Item Slots: §f%,d
 gregtech.universal.tooltip.item_storage_total=§6Item Capacity: §f%,d items
@@ -5126,6 +5161,12 @@ gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
 gregtech.multiblock.energy_consumption=Energy Usage: %s EU/t
+
+gregtech.multiblock.power_substation.stored=Stored: %s EU
+gregtech.multiblock.power_substation.capacity=Capacity: %s EU
+gregtech.multiblock.power_substation.passive_drain=Passive Drain: %s EU/t
+gregtech.multiblock.power_substation.average_io=Average I/O: %s EU/t
+gregtech.multiblock.power_substation.average_io_hover=The average change in energy of the Power Substation's internal energy bank
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
