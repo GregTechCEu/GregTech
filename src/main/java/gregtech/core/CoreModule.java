@@ -23,6 +23,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.event.MaterialRegistryEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
+import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
@@ -122,6 +123,8 @@ public class CoreModule implements IGregTechModule {
         SimpleCapabilityManager.init();
 
         /* Start Material Registration */
+
+        GregTechAPI.markerMaterialRegistry = new MarkerMaterialRegistry();
 
         // First, register other mods' Registries
         MaterialRegistryManager managerInternal = (MaterialRegistryManager) GregTechAPI.materialManager;
