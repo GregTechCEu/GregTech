@@ -417,6 +417,24 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
         tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip5", PASSIVE_DRAIN_MAX_PER_STORAGE));
     }
 
+    public String getStored() {
+        if (energyBank == null) {
+            return "0";
+        }
+        return TextFormattingUtil.formatNumbers(energyBank.getStored());
+    }
+
+    public String getCapacity() {
+        if (energyBank == null) {
+            return "0";
+        }
+        return TextFormattingUtil.formatNumbers(energyBank.getCapacity());
+    }
+
+    public long getAverageIOLastSec() {
+        return averageIOLastSec;
+    }
+
     public static class PowerStationEnergyBank {
 
         private static final String NBT_SIZE = "Size";
