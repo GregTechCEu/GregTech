@@ -121,6 +121,19 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
     }
 
     @Override
+    public void invalidateStructure() {
+        // don't null out energyBank since it holds the stored energy, which
+        // we need to hold on to across rebuilds to not void all energy if a
+        // multiblock part or block other than the controller is broken.
+        inputHatches = null;
+        outputHatches = null;
+        passiveDrain = 0;
+        totalIOLastSec = 0;
+        averageIOLastSec = 0;
+        super.invalidateStructure();
+    }
+
+    @Override
     protected void updateFormedValid() {
         if (!getWorld().isRemote) {
             if (getOffsetTimer() % 20 == 0) {
@@ -297,12 +310,13 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.average_io", TextFormattingUtil.formatNumbers(averageIOLastSec))
                         .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 new TextComponentTranslation("gregtech.multiblock.power_substation.average_io_hover")))));
-                if (averageIOLastSec != 0) {
+
+                if (averageIOLastSec > 0) {
                     BigInteger timeToFillSeconds = energyCapacity.subtract(energyStored).divide(BigInteger.valueOf(averageIOLastSec * 20));
-                    ITextComponent timeToFillDrainText = getTimeToFillDrainText(timeToFillSeconds.abs());
-                    textList.add(new TextComponentTranslation((averageIOLastSec > 0
-                            ? "gregtech.multiblock.power_substation.time_to_fill"
-                            : "gregtech.multiblock.power_substation.time_to_drain"), timeToFillDrainText));
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.time_to_fill", getTimeToFillDrainText(timeToFillSeconds)));
+                } else if (averageIOLastSec < 0) {
+                    BigInteger timeToDrainSeconds = energyStored.divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20));
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.time_to_drain", getTimeToFillDrainText(timeToDrainSeconds)));
                 }
             }
         }
