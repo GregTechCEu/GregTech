@@ -1,6 +1,9 @@
 package gregtech.api.unification.material;
 
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.util.GTUtility;
+
+import javax.annotation.Nonnull;
 
 /**
  * MarkerMaterial is type of material used for generic things like material re-registration and use in recipes
@@ -10,11 +13,8 @@ import gregtech.api.unification.OreDictUnifier;
  */
 public final class MarkerMaterial extends Material {
 
-    private final String name;
-
-    public MarkerMaterial(String name) {
-        super(name);
-        this.name = name;
+    public MarkerMaterial(@Nonnull String name) {
+        super(GTUtility.gregtechId(name));
         OreDictUnifier.registerMarkerMaterial(this);
     }
 
@@ -24,11 +24,5 @@ public final class MarkerMaterial extends Material {
 
     @Override
     public void verifyMaterial() {
-    }
-
-    @Override
-    //since we're not registered, return overriden name
-    public String toString() {
-        return name;
     }
 }

@@ -2,9 +2,9 @@ package gregtech.integration.crafttweaker;
 
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.modules.GregTechModule;
+import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.crafttweaker.recipe.MetaItemBracketHandler;
@@ -50,7 +50,7 @@ public class CraftTweakerModule extends IntegrationSubmodule {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onMaterialEvent(GregTechAPI.MaterialEvent event) {
+    public static void onMaterialEvent(MaterialEvent event) {
         IntegrationModule.logger.info("Running early CraftTweaker initialization scripts...");
         CraftTweakerAPI.tweaker.loadScript(false, "gregtech");
     }

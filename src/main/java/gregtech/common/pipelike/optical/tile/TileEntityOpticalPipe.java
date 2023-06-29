@@ -1,16 +1,19 @@
 package gregtech.common.pipelike.optical.tile;
 
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.util.FacingPos;
+import gregtech.api.util.TaskScheduler;
 import gregtech.common.pipelike.optical.OpticalPipeProperties;
 import gregtech.common.pipelike.optical.OpticalPipeType;
 import gregtech.common.pipelike.optical.net.OpticalNetHandler;
 import gregtech.common.pipelike.optical.net.OpticalPipeNet;
 import gregtech.common.pipelike.optical.net.WorldOpticalPipeNet;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
@@ -19,17 +22,17 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> {
 
     private final EnumMap<EnumFacing, OpticalNetHandler> handlers = new EnumMap<>(EnumFacing.class);
-    private final Map<FacingPos, Integer> transferred = new HashMap<>();
-    private OpticalNetHandler defaultHandler;
     // the OpticalNetHandler can only be created on the server, so we have an empty placeholder for the client
     private final IDataAccessHatch clientCapability = new DefaultDataHandler();
     private WeakReference<OpticalPipeNet> currentPipeNet = new WeakReference<>(null);
+    private OpticalNetHandler defaultHandler;
+
+    private int ticksActive = 0;
+    private boolean isActive;
 
     @Override
     public Class<OpticalPipeType> getPipeTypeClass() {
@@ -83,8 +86,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
         if (world == null || world.isRemote)
             return null;
         OpticalPipeNet currentPipeNet = this.currentPipeNet.get();
-        if (currentPipeNet != null && currentPipeNet.isValid() &&
-                currentPipeNet.containsNode(getPipePos()))
+        if (currentPipeNet != null && currentPipeNet.isValid() && currentPipeNet.containsNode(getPipePos()))
             return currentPipeNet; //if current net is valid and does contain position, return it
         WorldOpticalPipeNet worldNet = (WorldOpticalPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
         currentPipeNet = worldNet.getNetFromPos(getPipePos());
@@ -92,14 +94,6 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
             this.currentPipeNet = new WeakReference<>(currentPipeNet);
         }
         return currentPipeNet;
-    }
-
-    public void resetTransferred() {
-        transferred.clear();
-    }
-
-    public Map<FacingPos, Integer> getTransferred() {
-        return transferred;
     }
 
     @Override
@@ -117,6 +111,50 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
         } else {
             // create new handlers
             initHandlers();
+        }
+    }
+
+    public boolean isActive() {
+        return this.isActive;
+    }
+
+    /**
+     * @param active   if the pipe should become active
+     * @param duration how long the pipe should be active for
+     */
+    public void setActive(boolean active, int duration) {
+        boolean stateChanged = false;
+        if (this.isActive && !active) {
+            this.isActive = false;
+            stateChanged = true;
+        } else if (!this.isActive && active) {
+            this.isActive = true;
+            stateChanged = true;
+            TaskScheduler.scheduleTask(getWorld(), () -> {
+                if (++this.ticksActive % duration == 0) {
+                    this.ticksActive = 0;
+                    setActive(false, -1);
+                    return false;
+                }
+                return true;
+            });
+        }
+
+        if (stateChanged) {
+            writeCustomData(GregtechDataCodes.PIPE_OPTICAL_ACTIVE, buf -> {
+                buf.writeBoolean(this.isActive);
+            });
+            notifyBlockUpdate();
+            markDirty();
+        }
+    }
+
+    @Override
+    public void receiveCustomData(int discriminator, PacketBuffer buf) {
+        super.receiveCustomData(discriminator, buf);
+        if (discriminator == GregtechDataCodes.PIPE_OPTICAL_ACTIVE) {
+            this.isActive = buf.readBoolean();
+            scheduleChunkForRenderUpdate();
         }
     }
 

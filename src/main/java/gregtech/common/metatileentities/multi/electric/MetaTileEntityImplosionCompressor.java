@@ -11,8 +11,10 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 
 import javax.annotation.Nonnull;
 
@@ -52,6 +54,11 @@ public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockContro
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.IMPLOSION_COMPRESSOR_OVERLAY;
+    }
+
+    @Override
+    public SoundEvent getBreakdownSound() {
+        return GTSoundEvents.BREAKDOWN_MECHANICAL;
     }
 
     @Override

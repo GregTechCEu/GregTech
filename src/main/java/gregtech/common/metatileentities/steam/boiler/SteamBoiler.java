@@ -20,6 +20,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
@@ -358,7 +359,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        return Collections.singletonList(new TextComponentTranslation("gregtech.machine.steam_boiler.heat_amount", GTUtility.formatNumbers((int) (this.getTemperaturePercent() * 100))));
+        return Collections.singletonList(new TextComponentTranslation("gregtech.machine.steam_boiler.heat_amount", TextFormattingUtil.formatNumbers((int) (this.getTemperaturePercent() * 100))));
     }
 
     @SideOnly(Side.CLIENT)

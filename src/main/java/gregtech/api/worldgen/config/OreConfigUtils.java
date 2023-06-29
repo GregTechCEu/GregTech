@@ -74,7 +74,7 @@ public class OreConfigUtils {
     }
 
     public static Material getMaterialByName(String name) {
-        Material material = GregTechAPI.MATERIAL_REGISTRY.getObject(name);
+        Material material = GregTechAPI.materialManager.getMaterial(name);
         if (material == null || !material.hasProperty(PropertyKey.ORE))
             throw new IllegalArgumentException("Material with name " + name + " not found!");
         return material;
