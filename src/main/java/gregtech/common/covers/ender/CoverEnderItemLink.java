@@ -128,8 +128,6 @@ public class CoverEnderItemLink extends CoverEnderLinkBase implements ITickable 
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-        int ROW = 3;
-        int COL = 3;
 
         WidgetGroup widgetGroup = new WidgetGroup();
         widgetGroup.addWidget(new LabelWidget(10, 5, "cover.ender_item_link.title"));
@@ -151,18 +149,20 @@ public class CoverEnderItemLink extends CoverEnderLinkBase implements ITickable 
                 CoverConveyor.ConveyorMode.class, this::getConveyorMode, this::setConveyorMode));
         widgetGroup.addWidget(new CycleButtonWidget(92, 42, 75, 18,
                 this::isIoEnabled, this::setIoEnabled, "cover.ender_item_link.iomode.disabled", "cover.ender_item_link.iomode.enabled"));
-        this.itemFilter.initUI(65, widgetGroup::addWidget);
 
-        WidgetGroup containerGroup = new WidgetGroup(widgetGroup.getPosition().add(new Position(18 + 5, 0)));
-        for (int i = 0; i < ROW * COL; i++) {
-            containerGroup.addWidget(new SlotWidget(this.linkedShim, i, 154 + (i % COL) * 18, 10 + Math.floorDiv(i, COL) * 18, true, true)
-                    .setBackgroundTexture(GuiTextures.SLOT_DARKENED));
+        WidgetGroup containerGroup = new WidgetGroup();
+        for (int i = 0; i < this.linkedShim.getSlots(); i++) {
+            int offset = (i * 18);
+            containerGroup.addWidget(new SlotWidget(this.linkedShim, i, 8 + offset, 65, false, false)
+                    .setBackgroundTexture(GuiTextures.SLOT));
         }
 
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 221 + 24)
+        this.itemFilter.initUI(88, widgetGroup::addWidget);
+
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 221 + 47)
                 .widget(widgetGroup)
-                .widget(containerGroup)
-                .bindPlayerInventory(player.inventory, 139 + 24)
+                // .widget(containerGroup) goddamit it doesn't work again
+                .bindPlayerInventory(player.inventory, 139 + 47)
                 .build(this, player);
     }
 
