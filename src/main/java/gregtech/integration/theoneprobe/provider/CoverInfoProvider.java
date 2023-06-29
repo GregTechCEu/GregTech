@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.*;
 import gregtech.common.covers.filter.*;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -177,7 +177,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
      */
     private static void transferRateText(@Nonnull IProbeInfo probeInfo, @Nonnull IIOMode mode, @Nonnull String rateUnit, int rate) {
         String modeText = mode.isImport() ? "{*gregtech.top.mode.import*} " : "{*gregtech.top.mode.export*} ";
-        probeInfo.text(TextStyleClass.OK + modeText + TextStyleClass.LABEL + GTUtility.formatNumbers(rate) + rateUnit);
+        probeInfo.text(TextStyleClass.OK + modeText + TextStyleClass.LABEL + TextFormattingUtil.formatNumbers(rate) + rateUnit);
     }
 
     /**

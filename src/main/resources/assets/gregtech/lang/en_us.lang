@@ -5013,7 +5013,8 @@ gregtech.item_pipe.priority=§9Priority: §f%,d
 gregtech.multiblock.work_paused=Work Paused.
 gregtech.multiblock.running=Running perfectly.
 gregtech.multiblock.idling=Idling.
-gregtech.multiblock.not_enough_energy=WARNING: Machine needs more energy.
+gregtech.multiblock.not_enough_energy=§cWARNING:§f Machine needs more energy.
+gregtech.multiblock.not_enough_energy_output=§eADVISE:§f Energy Dynamo Tier Too Low!
 gregtech.multiblock.progress=Progress: %s%%
 gregtech.multiblock.invalid_structure=Invalid structure.
 gregtech.multiblock.invalid_structure.tooltip=This block is a controller of the multiblock structure. For building help, see structure template in JEI.
@@ -5078,11 +5079,12 @@ gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=Supply
 gregtech.multiblock.large_combustion_engine.obstructed=Engine Intakes Obstructed.
 
 gregtech.multiblock.turbine.fuel_amount=Fuel Amount: %sL (%s)
+gregtech.multiblock.turbine.fuel_needed=Needs %s %s per %s ticks!
 gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=Rotor Durability: %s%%
 gregtech.multiblock.turbine.efficiency=Turbine Efficiency: %s%%
-gregtech.multiblock.turbine.energy_per_tick=Energy Output: %s/%s EU/t
-gregtech.multiblock.turbine.energy_per_tick_maxed=Energy Output: %s EU/t
+gregtech.multiblock.turbine.energy_per_tick=Energy Output: %s/%s EU/t (%s)
+gregtech.multiblock.turbine.energy_per_tick_maxed=Energy Output: %s EU/t (%s)
 gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed
 gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 adds §f10%% efficiency§7.
 

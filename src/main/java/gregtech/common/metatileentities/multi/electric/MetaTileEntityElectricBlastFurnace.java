@@ -18,6 +18,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -63,7 +64,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     protected void addDisplayText(List<ITextComponent> textList) {
         if (isStructureFormed()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.blast_furnace.max_temperature",
-                    new TextComponentTranslation(GTUtility.formatNumbers(blastFurnaceTemperature) + "K").setStyle(new Style().setColor(TextFormatting.RED))));
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(blastFurnaceTemperature) + "K").setStyle(new Style().setColor(TextFormatting.RED))));
         }
         super.addDisplayText(textList);
     }
@@ -178,7 +179,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = super.getDataInfo();
         list.add(new TextComponentTranslation("gregtech.multiblock.blast_furnace.max_temperature",
-                new TextComponentTranslation(GTUtility.formatNumbers(blastFurnaceTemperature) + "K").setStyle(new Style().setColor(TextFormatting.RED))));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(blastFurnaceTemperature) + "K").setStyle(new Style().setColor(TextFormatting.RED))));
         return list;
     }
 }
