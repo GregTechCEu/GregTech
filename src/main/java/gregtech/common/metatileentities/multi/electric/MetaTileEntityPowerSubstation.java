@@ -46,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.math.BigInteger;
+import java.time.Duration;
 import java.util.*;
 
 import static gregtech.api.util.RelativeDirection.*;
@@ -67,6 +68,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
 
     // Match Context Headers
     private static final String PMC_BATTERY_HEADER = "PSSBattery_";
+
+    private static final BigInteger BIG_INTEGER_MAX_LONG = BigInteger.valueOf(Long.MAX_VALUE);
 
     private PowerStationEnergyBank energyBank;
     private EnergyContainerList inputHatches;
@@ -134,11 +137,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 totalIOLastSec += energyBanked;
 
                 // Passive drain
-                int multiplier = 1; // set to 1 so that there is still passive drain with no maintenance problems
-                if (ConfigHolder.machines.enableMaintenance) {
-                    multiplier += getNumMaintenanceProblems();
-                }
-                long energyPassiveDrained = energyBank.drain(this.passiveDrain * multiplier);
+                long energyPassiveDrained = energyBank.drain(getPassiveDrain());
                 totalIOLastSec -= energyPassiveDrained;
 
                 // Debank to Dynamo Hatches
@@ -147,6 +146,14 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 totalIOLastSec -= energyDebanked;
             }
         }
+    }
+
+    public long getPassiveDrain() {
+        if (ConfigHolder.machines.enableMaintenance) {
+            // +1 so that there is still passive drain when there are no maintenance problems
+            return passiveDrain * (getNumMaintenanceProblems() + 1);
+        }
+        return passiveDrain;
     }
 
     @Override
@@ -286,12 +293,50 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 BigInteger energyCapacity = energyBank.getCapacity();
                 textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.stored", TextFormattingUtil.formatNumbers(energyStored)));
                 textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.capacity", TextFormattingUtil.formatNumbers(energyCapacity)));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.passive_drain", TextFormattingUtil.formatNumbers(passiveDrain)));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.passive_drain", TextFormattingUtil.formatNumbers(getPassiveDrain())));
                 textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.average_io", TextFormattingUtil.formatNumbers(averageIOLastSec))
                         .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 new TextComponentTranslation("gregtech.multiblock.power_substation.average_io_hover")))));
+                if (averageIOLastSec != 0) {
+                    BigInteger timeToFillSeconds = energyCapacity.subtract(energyStored).divide(BigInteger.valueOf(averageIOLastSec * 20));
+                    ITextComponent timeToFillDrainText = getTimeToFillDrainText(timeToFillSeconds.abs());
+                    textList.add(new TextComponentTranslation((averageIOLastSec > 0
+                            ? "gregtech.multiblock.power_substation.time_to_fill"
+                            : "gregtech.multiblock.power_substation.time_to_drain"), timeToFillDrainText));
+                }
             }
         }
+    }
+
+    private static ITextComponent getTimeToFillDrainText(BigInteger timeToFillSeconds) {
+        if (timeToFillSeconds.compareTo(BIG_INTEGER_MAX_LONG) > 0) {
+            // too large to represent in a java Duration
+            timeToFillSeconds = BIG_INTEGER_MAX_LONG;
+        }
+
+        Duration duration = Duration.ofSeconds(timeToFillSeconds.longValue());
+        String key;
+        long fillTime;
+        if (duration.getSeconds() <= 180) {
+            fillTime = duration.getSeconds();
+            key = "gregtech.multiblock.power_substation.time_seconds";
+        } else if (duration.toMinutes() <= 180) {
+            fillTime = duration.toMinutes();
+            key = "gregtech.multiblock.power_substation.time_minutes";
+        } else if (duration.toHours() <= 72) {
+            fillTime = duration.toHours();
+            key = "gregtech.multiblock.power_substation.time_hours";
+        } else if (duration.toDays() <= 730) { // 2 years
+            fillTime = duration.toDays();
+            key = "gregtech.multiblock.power_substation.time_days";
+        } else if (duration.toDays() / 365 < 1_000_000) {
+            fillTime = duration.toDays() / 365;
+            key = "gregtech.multiblock.power_substation.time_years";
+        } else {
+            return new TextComponentTranslation("gregtech.multiblock.power_substation.time_forever");
+        }
+
+        return new TextComponentTranslation(key, TextFormattingUtil.formatNumbers(fillTime));
     }
 
     @Override
