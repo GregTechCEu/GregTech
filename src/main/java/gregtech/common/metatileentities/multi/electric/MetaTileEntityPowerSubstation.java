@@ -7,6 +7,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -16,6 +17,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.*;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -88,8 +90,15 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        this.inputHatches = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        this.outputHatches = new EnergyContainerList(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
+        List<IEnergyContainer> inputs = new ArrayList<>();
+        inputs.addAll(getAbilities(MultiblockAbility.INPUT_ENERGY));
+        inputs.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
+        this.inputHatches = new EnergyContainerList(inputs);
+
+        List<IEnergyContainer> outputs = new ArrayList<>();
+        outputs.addAll(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
+        outputs.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
+        this.outputHatches = new EnergyContainerList(outputs);
 
         List<IBatteryData> parts = new ArrayList<>();
         for (Map.Entry<String, Object> battery : context.entrySet()) {
@@ -275,10 +284,10 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
             if (energyBank != null) {
                 BigInteger energyStored = energyBank.getStored();
                 BigInteger energyCapacity = energyBank.getCapacity();
-                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.stored", energyStored));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.capacity", energyCapacity));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.passive_drain", passiveDrain));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.average_io", averageIOLastSec)
+                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.stored", TextFormattingUtil.formatNumbers(energyStored)));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.capacity", TextFormattingUtil.formatNumbers(energyCapacity)));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.passive_drain", TextFormattingUtil.formatNumbers(passiveDrain)));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.average_io", TextFormattingUtil.formatNumbers(averageIOLastSec))
                         .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 new TextComponentTranslation("gregtech.multiblock.power_substation.average_io_hover")))));
             }
