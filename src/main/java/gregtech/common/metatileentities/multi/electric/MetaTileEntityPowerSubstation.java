@@ -112,6 +112,11 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 }
             }
         }
+        if (parts.isEmpty()) {
+            // only empty batteries found in the structure
+            invalidateStructure();
+            return;
+        }
         if (this.energyBank == null) {
             this.energyBank = new PowerStationEnergyBank(parts);
         } else {
@@ -246,6 +251,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                         EnumFacing.SOUTH);
 
         Arrays.stream(BlockBatteryPart.BatteryPartType.values())
+                .filter(p -> p.getCapacity() != 0)
                 .sorted(Comparator.comparingLong(BlockBatteryPart.BatteryPartType::getTier))
                 .forEach(entry -> shapeInfo.add(builder.where('B', MetaBlocks.BATTERY_BLOCK.getState(entry)).build()));
 

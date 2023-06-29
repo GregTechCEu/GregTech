@@ -7,11 +7,13 @@ import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.common.blocks.BlockBatteryPart.BatteryPartType;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.common.blocks.MetaBlocks.BATTERY_BLOCK;
 import static gregtech.common.items.MetaItems.*;
 
 public class BatteryRecipes {
@@ -19,6 +21,7 @@ public class BatteryRecipes {
     public static void init() {
         standardBatteries();
         gemBatteries();
+        batteryBlocks();
     }
 
     private static void standardBatteries() {
@@ -407,5 +410,116 @@ public class BatteryRecipes {
                 .fluidInputs(Naquadria.getFluid(L * 18))
                 .output(ULTIMATE_BATTERY)
                 .buildAndRegister();
+    }
+
+    private static void batteryBlocks() {
+
+        // Empty Tier I
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(frameGt, Ultimet)
+                .input(plate, Ultimet, 6)
+                .input(screw, Ultimet, 24)
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_I))
+                .duration(400).EUt(VA[HV]).buildAndRegister();
+
+        // Lapotronic EV
+        CANNER_RECIPES.recipeBuilder()
+                .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_I))
+                .inputNBT(LAPOTRON_CRYSTAL, NBTMatcher.ANY, NBTCondition.ANY)
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.LAPOTRONIC_EV))
+                .duration(200).EUt(VA[HV]).buildAndRegister();
+
+        PACKER_RECIPES.recipeBuilder()
+                .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.LAPOTRONIC_EV))
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_I))
+                .output(LAPOTRON_CRYSTAL)
+                .circuitMeta(2)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        // Lapotronic IV
+        CANNER_RECIPES.recipeBuilder()
+                .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_I))
+                .inputNBT(ENERGY_LAPOTRONIC_ORB, NBTMatcher.ANY, NBTCondition.ANY)
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.LAPOTRONIC_IV))
+                .duration(400).EUt(VA[HV]).buildAndRegister();
+
+        PACKER_RECIPES.recipeBuilder()
+                .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.LAPOTRONIC_IV))
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_I))
+                .output(ENERGY_LAPOTRONIC_ORB)
+                .circuitMeta(2)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        // Empty Tier II
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(frameGt, Ruridit)
+                .input(plate, Ruridit, 6)
+                .input(screw, Ruridit, 24)
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_II))
+                .duration(400).EUt(VA[IV]).buildAndRegister();
+
+        // Lapotronic LuV
+        CANNER_RECIPES.recipeBuilder()
+                .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_II))
+                .inputNBT(ENERGY_LAPOTRONIC_ORB_CLUSTER, NBTMatcher.ANY, NBTCondition.ANY)
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.LAPOTRONIC_LuV))
+                .duration(200).EUt(VA[EV]).buildAndRegister();
+
+        PACKER_RECIPES.recipeBuilder()
+                .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.LAPOTRONIC_LuV))
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_II))
+                .output(ENERGY_LAPOTRONIC_ORB_CLUSTER)
+                .circuitMeta(2)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        // Lapotronic ZPM
+        CANNER_RECIPES.recipeBuilder()
+                .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_II))
+                .inputNBT(ENERGY_MODULE, NBTMatcher.ANY, NBTCondition.ANY)
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.LAPOTRONIC_ZPM))
+                .duration(400).EUt(VA[EV]).buildAndRegister();
+
+        PACKER_RECIPES.recipeBuilder()
+                .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.LAPOTRONIC_ZPM))
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_II))
+                .output(ENERGY_MODULE)
+                .circuitMeta(2)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        // Empty Tier III
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(frameGt, Neutronium)
+                .input(plate, Neutronium, 6)
+                .input(screw, Neutronium, 24)
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_III))
+                .duration(400).EUt(VA[ZPM]).buildAndRegister();
+
+        // Lapotronic UV
+        CANNER_RECIPES.recipeBuilder()
+                .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_III))
+                .inputNBT(ENERGY_CLUSTER, NBTMatcher.ANY, NBTCondition.ANY)
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.LAPOTRONIC_UV))
+                .duration(200).EUt(VA[IV]).buildAndRegister();
+
+        PACKER_RECIPES.recipeBuilder()
+                .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.LAPOTRONIC_UV))
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_III))
+                .output(ENERGY_CLUSTER)
+                .circuitMeta(2)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        // Ultimate UHV
+        CANNER_RECIPES.recipeBuilder()
+                .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_III))
+                .inputNBT(ULTIMATE_BATTERY, NBTMatcher.ANY, NBTCondition.ANY)
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.ULTIMATE_UHV))
+                .duration(400).EUt(VA[IV]).buildAndRegister();
+
+        PACKER_RECIPES.recipeBuilder()
+                .inputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.ULTIMATE_UHV))
+                .outputs(BATTERY_BLOCK.getItemVariant(BatteryPartType.EMPTY_TIER_III))
+                .output(ULTIMATE_BATTERY)
+                .circuitMeta(2)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
     }
 }
