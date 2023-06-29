@@ -9,7 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class BlockOreProvider implements IProbeInfoProvider {
+public class BlockOreInfoProvider implements IProbeInfoProvider {
+
     @Override
     public String getID() {
         return GTValues.MODID + ":ore_block_provider";

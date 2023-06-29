@@ -63,10 +63,10 @@ gregtech.top.working_disabled=停止中
 gregtech.top.energy_consumption=使用量:
 gregtech.top.energy_production=発電量:
 
-gregtech.top.transform_up=§c昇圧§r
-gregtech.top.transform_down=§a降圧§r
-gregtech.top.transform_input=§6入力:§r
-gregtech.top.transform_output=§9出力:§r
+gregtech.top.transform_up=昇圧
+gregtech.top.transform_down=降圧
+gregtech.top.transform_input=入力:
+gregtech.top.transform_output=出力:
 
 gregtech.top.convert_eu=§eEU§rを§cFE§rに変換中
 gregtech.top.convert_fe=§cFE§rを§eEU§rに変換中
