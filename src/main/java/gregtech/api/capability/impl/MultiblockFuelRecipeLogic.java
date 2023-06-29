@@ -107,7 +107,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         totalContinuousRunningTime = 0;
     }
 
-    public String[] getRecipeFluidInputAmount() {
+    public String[] getRecipeFluidInputInfo() {
         IRotorHolder rotorHolder = null;
 
         if (metaTileEntity instanceof MultiblockWithDisplayBase multiblockWithDisplayBase) {

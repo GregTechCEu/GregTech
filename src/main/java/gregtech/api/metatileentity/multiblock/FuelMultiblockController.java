@@ -48,7 +48,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                             .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
         } else {
             if (recipeMapWorkable.getPreviousRecipe() != null) {
-                String[] recipeInput = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getRecipeFluidInputAmount();
+                String[] recipeInput = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getRecipeFluidInputInfo();
                 textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed",
                         recipeInput[0], recipeInput[1], TextFormatting.AQUA + TextFormattingUtil.formatNumbers(recipeMapWorkable.getPreviousRecipeDuration())));
             }
