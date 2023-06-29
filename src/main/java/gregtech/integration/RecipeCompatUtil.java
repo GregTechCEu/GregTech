@@ -12,6 +12,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
+import gregtech.core.unification.material.internal.MaterialRegistryManager;
 import gregtech.integration.crafttweaker.CTRecipeHelper;
 import gregtech.integration.groovy.GrSRecipeHelper;
 import gregtech.modules.GregTechModules;
@@ -19,6 +20,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -96,22 +98,16 @@ public final class RecipeCompatUtil {
         return TweakerType.NONE;
     }
 
+    /**
+     * Deprecated since 2.7 and will be removed in 2.8
+     *
+     * @deprecated Use {@link MaterialRegistryManager#getMaterial(String)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.8")
+    @Deprecated
     @Nullable
     public static Material getMaterial(@Nonnull String name) {
-        if (!name.isEmpty()) {
-            String modid;
-            String materialName;
-            int index = name.indexOf(':');
-            if (index >= 0) {
-                modid = name.substring(0, index);
-                materialName = name.substring(index + 1);
-            } else {
-                modid = GTValues.MODID;
-                materialName = name;
-            }
-            return GregTechAPI.materialManager.getRegistry(modid).getObject(materialName);
-        }
-        return null;
+        return GregTechAPI.materialManager.getMaterial(name);
     }
 
     public static boolean isTweakerLoaded() {
