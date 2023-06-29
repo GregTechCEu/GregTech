@@ -529,7 +529,8 @@ public class MetaTileEntities {
         CHARCOAL_PILE_IGNITER = registerMetaTileEntity(1036, new MetaTileEntityCharcoalPileIgniter(gregtechId("charcoal_pile")));
 
         DATA_BANK = registerMetaTileEntity(1037, new MetaTileEntityDataBank(gregtechId("data_bank")));
-        POWER_SUBSTATION = registerMetaTileEntity(1038, new MetaTileEntityPowerSubstation(gregtechId("power_substation")));
+
+        POWER_SUBSTATION = registerMetaTileEntity(1041, new MetaTileEntityPowerSubstation(gregtechId("power_substation")));
 
         // MISC MTE's START: IDs 1150-2000
 
