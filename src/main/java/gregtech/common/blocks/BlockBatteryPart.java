@@ -27,7 +27,7 @@ public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartT
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setDefaultState(getState(BatteryPartType.EMPTY));
+        setDefaultState(getState(BatteryPartType.EMPTY_TIER_I));
     }
 
     @Override
@@ -42,6 +42,8 @@ public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartT
         BatteryPartType batteryType = getState(stack);
         if (batteryType.getCapacity() != 0) {
             tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", batteryType.getCapacity()));
+        } else {
+            tooltip.add(I18n.format("tile.battery_block.tooltip_empty"));
         }
     }
 
@@ -51,11 +53,15 @@ public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartT
     }
 
     public enum BatteryPartType implements IStringSerializable, IBatteryDataProvider.IBatteryData {
-        EMPTY(-1, 0),
+        EMPTY_TIER_I(-1, 0),
         LAPOTRONIC_EV(GTValues.EV, 25_000_000L * 6),      // Lapotron Crystal * 6
         LAPOTRONIC_IV(GTValues.IV, 250_000_000L * 6),     // Lapotronic Orb * 6
+
+        EMPTY_TIER_II(-1, 0),
         LAPOTRONIC_LuV(GTValues.LuV, 1_000_000_000L * 6), // Lapotronic Orb Cluster * 6
         LAPOTRONIC_ZPM(GTValues.ZPM, 4_000_000_000L * 6), // Energy Orb * 6
+
+        EMPTY_TIER_III(-1, 0),
         LAPOTRONIC_UV(GTValues.UV, 16_000_000_000L * 6),  // Energy Cluster * 6
         ULTIMATE_UHV(GTValues.UHV, Long.MAX_VALUE),       // Ultimate Battery
         ;

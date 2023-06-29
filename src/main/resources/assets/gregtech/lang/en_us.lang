@@ -2537,14 +2537,16 @@ tile.transparent_casing.laminated_glass.name=Laminated Glass
 tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
 
 # Battery blocks
-tile.battery_block.empty.name=Empty Capacitor
-tile.battery_block.empty.tooltip=For filling space in your Power Substation
+tile.battery_block.empty_tier_i.name=Empty Tier I Capacitor
 tile.battery_block.lapotronic_ev.name=EV Lapotronic Capacitor
 tile.battery_block.lapotronic_iv.name=IV Lapotronic Capacitor
+tile.battery_block.empty_tier_ii.name=Empty Tier II Capacitor
 tile.battery_block.lapotronic_luv.name=LuV Lapotronic Capacitor
-tile.battery_block.lapotronic_zpm.name=ZPM Lapotronic Capacitor
-tile.battery_block.lapotronic_uv.name=UV Lapotronic Capacitor
+tile.battery_block.energy_zpm.name=ZPM Lapotronic Capacitor
+tile.battery_block.empty_tier_iii.name=Empty Tier III Capacitor
+tile.battery_block.energy_uv.name=UV Lapotronic Capacitor
 tile.battery_block.ultimate_uhv.name=UHV Ultimate Capacitor
+tile.battery_block.tooltip_empty=For filling space in your Power Substation
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech

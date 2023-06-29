@@ -5,11 +5,11 @@
   },
   "variants": {
     "variant": {
-      "empty": {
+      "empty_tier_i": {
         "textures": {
-          "bottom": "gregtech:blocks/casings/battery/empty/top",
-          "top": "gregtech:blocks/casings/battery/empty/top",
-          "side": "gregtech:blocks/casings/battery/empty/side"
+          "bottom": "gregtech:blocks/casings/battery/empty_tier_i/top",
+          "top": "gregtech:blocks/casings/battery/empty_tier_i/top",
+          "side": "gregtech:blocks/casings/battery/empty_tier_i/side"
         }
       },
       "lapotronic_ev": {
@@ -26,6 +26,13 @@
           "side": "gregtech:blocks/casings/battery/lapotronic_iv/side"
         }
       },
+      "empty_tier_ii": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/battery/empty_tier_ii/top",
+          "top": "gregtech:blocks/casings/battery/empty_tier_ii/top",
+          "side": "gregtech:blocks/casings/battery/empty_tier_ii/side"
+        }
+      },
       "lapotronic_luv": {
         "textures": {
           "bottom": "gregtech:blocks/casings/battery/lapotronic_luv/top",
@@ -38,6 +45,13 @@
           "bottom": "gregtech:blocks/casings/battery/lapotronic_zpm/top",
           "top": "gregtech:blocks/casings/battery/lapotronic_zpm/top",
           "side": "gregtech:blocks/casings/battery/lapotronic_zpm/side"
+        }
+      },
+      "empty_tier_iii": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/battery/empty_tier_iii/top",
+          "top": "gregtech:blocks/casings/battery/empty_tier_iii/top",
+          "side": "gregtech:blocks/casings/battery/empty_tier_iii/side"
         }
       },
       "lapotronic_uv": {
