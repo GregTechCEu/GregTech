@@ -2,7 +2,6 @@ package gregtech.api.util.enderlink;
 
 import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -17,7 +16,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class VirtualContainerRegistry extends WorldSavedData {
     private static final int DEFAULT_SIZE = 9; // 9 slots
