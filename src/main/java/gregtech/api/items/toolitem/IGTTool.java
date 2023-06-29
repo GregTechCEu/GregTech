@@ -146,7 +146,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         stackCompound.setInteger(HIDE_FLAGS, 2);
 
         // Set Material
-        toolTag.setString(MATERIAL_KEY, material.toString());
+        toolTag.setString(MATERIAL_KEY, material.getRegistryName());
 
         // Grab the definition here because we cannot use getMaxAoEDefinition as it is not initialized yet
         AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
@@ -222,7 +222,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default Material getToolMaterial(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
         String string = toolTag.getString(MATERIAL_KEY);
-        Material material = GregTechAPI.MaterialRegistry.get(string);
+        Material material = GregTechAPI.materialManager.getMaterial(string);
         if (material == null) {
             toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).toString());
         }
