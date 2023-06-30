@@ -78,7 +78,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
     private boolean isActive, isWorkingEnabled = true;
 
     // Stats tracked for UI display
-    private long totalIOLastSec;
+    private long netIOLastSec;
     private long averageIOLastSec;
 
     public MetaTileEntityPowerSubstation(ResourceLocation metaTileEntityId) {
@@ -105,8 +105,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
 
         List<IBatteryData> parts = new ArrayList<>();
         for (Map.Entry<String, Object> battery : context.entrySet()) {
-            if (battery.getKey().startsWith(PMC_BATTERY_HEADER)) {
-                BatteryMatchWrapper wrapper = (BatteryMatchWrapper) battery.getValue();
+            if (battery.getKey().startsWith(PMC_BATTERY_HEADER) && battery.getValue() instanceof BatteryMatchWrapper wrapper) {
                 for (int i = 0; i < wrapper.amount; i++) {
                     parts.add(wrapper.partType);
                 }
@@ -133,7 +132,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
         inputHatches = null;
         outputHatches = null;
         passiveDrain = 0;
-        totalIOLastSec = 0;
+        netIOLastSec = 0;
         averageIOLastSec = 0;
         super.invalidateStructure();
     }
@@ -144,24 +143,24 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
             if (getOffsetTimer() % 20 == 0) {
                 // active here is just used for rendering
                 setActive(energyBank.hasEnergy());
-                averageIOLastSec = totalIOLastSec / 20;
-                totalIOLastSec = 0;
+                averageIOLastSec = netIOLastSec / 20;
+                netIOLastSec = 0;
             }
 
             if (isWorkingEnabled()) {
                 // Bank from Energy Input Hatches
                 long energyBanked = energyBank.fill(inputHatches.getEnergyStored());
                 inputHatches.changeEnergy(-energyBanked);
-                totalIOLastSec += energyBanked;
+                netIOLastSec += energyBanked;
 
                 // Passive drain
                 long energyPassiveDrained = energyBank.drain(getPassiveDrain());
-                totalIOLastSec -= energyPassiveDrained;
+                netIOLastSec -= energyPassiveDrained;
 
                 // Debank to Dynamo Hatches
                 long energyDebanked = energyBank.drain(outputHatches.getEnergyCapacity() - outputHatches.getEnergyStored());
                 outputHatches.changeEnergy(energyDebanked);
-                totalIOLastSec -= energyDebanked;
+                netIOLastSec -= energyDebanked;
             }
         }
     }
@@ -239,8 +238,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 .aisle("CCCCC", "CCCCC", "GBBBG", "GBBBG", "GGGGG")
                 .aisle("ICSCO", "NCMCT", "GGGGG", "GGGGG", "GGGGG")
                 .where('S', MetaTileEntities.POWER_SUBSTATION, EnumFacing.SOUTH)
-                .where('C', MetaBlocks.METAL_CASING.getState(MetalCasingType.PALLADIUM_SUBSTATION))
-                .where('G', MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.LAMINATED_GLASS))
+                .where('C', getCasingState())
+                .where('G', getGlassState())
                 .where('I', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
                 .where('N', MetaTileEntities.SUBSTATION_ENERGY_INPUT_HATCH[0], EnumFacing.SOUTH)
                 .where('O', MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
@@ -275,7 +274,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
             // Allow unfilled batteries in the structure, but do not add them to match context.
             // This lets you use empty batteries as "filler slots" for convenience if desired.
             if (battery.getTier() != -1 && battery.getCapacity() > 0) {
-                String key = String.format("%s%s", PMC_BATTERY_HEADER, battery.getName());
+                String key = PMC_BATTERY_HEADER + battery.getName();
                 BatteryMatchWrapper wrapper = blockWorldState.getMatchContext().get(key);
                 if (wrapper == null) wrapper = new BatteryMatchWrapper(battery);
                 blockWorldState.getMatchContext().set(key, wrapper.increment());
@@ -303,7 +302,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(), true);
+        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(), this.isWorkingEnabled());
     }
 
     @Override
@@ -497,7 +496,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
          * If there was more power before the rebuild operation, it will be lost.
          */
         public PowerStationEnergyBank rebuild(@NotNull List<IBatteryData> batteries) {
-            if (batteries.size() == 0) {
+            if (batteries.isEmpty()) {
                 throw new IllegalArgumentException("Cannot rebuild Power Substation power bank with no batteries!");
             }
             PowerStationEnergyBank newStorage = new PowerStationEnergyBank(batteries);

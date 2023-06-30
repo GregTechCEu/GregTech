@@ -48,21 +48,26 @@ public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartT
     }
 
     public enum BatteryPartType implements IStringSerializable, IBatteryData {
-        EMPTY_TIER_I(-1, 0),
+        EMPTY_TIER_I,
         LAPOTRONIC_EV(GTValues.EV, 25_000_000L * 6),      // Lapotron Crystal * 6
         LAPOTRONIC_IV(GTValues.IV, 250_000_000L * 6),     // Lapotronic Orb * 6
 
-        EMPTY_TIER_II(-1, 0),
+        EMPTY_TIER_II,
         LAPOTRONIC_LuV(GTValues.LuV, 1_000_000_000L * 6), // Lapotronic Orb Cluster * 6
         LAPOTRONIC_ZPM(GTValues.ZPM, 4_000_000_000L * 6), // Energy Orb * 6
 
-        EMPTY_TIER_III(-1, 0),
+        EMPTY_TIER_III,
         LAPOTRONIC_UV(GTValues.UV, 16_000_000_000L * 6),  // Energy Cluster * 6
         ULTIMATE_UHV(GTValues.UHV, Long.MAX_VALUE),       // Ultimate Battery
         ;
 
         private final int tier;
         private final long capacity;
+
+        BatteryPartType() {
+            this.tier = -1;
+            this.capacity = 0;
+        }
 
         BatteryPartType(int tier, long capacity) {
             this.tier = tier;
