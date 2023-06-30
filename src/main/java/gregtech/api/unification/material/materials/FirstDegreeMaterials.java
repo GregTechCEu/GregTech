@@ -488,7 +488,7 @@ public class FirstDegreeMaterials {
         Ruridit = new Material.Builder(310, gregtechId("ruridit"))
                 .ingot(3).fluid()
                 .colorAverage().iconSet(BRIGHT)
-                .flags(GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_LONG_ROD)
+                .flags(GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW, GENERATE_FRAME)
                 .components(Ruthenium, 2, Iridium, 1)
                 .blastTemp(4500, GasTier.HIGH, VA[EV], 1600)
                 .build();
@@ -647,7 +647,7 @@ public class FirstDegreeMaterials {
         Ultimet = new Material.Builder(331, gregtechId("ultimet"))
                 .ingot(4).fluid()
                 .color(0xB4B4E6).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
+                .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE, GENERATE_FRAME)
                 .components(Cobalt, 5, Chrome, 2, Nickel, 1, Molybdenum, 1)
                 .toolStats(ToolProperty.Builder.of(10.0F, 7.0F, 2048, 4)
                         .attackSpeed(0.1F).enchantability(21).build())

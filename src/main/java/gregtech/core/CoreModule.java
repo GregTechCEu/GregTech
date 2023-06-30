@@ -30,6 +30,7 @@ import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
+import gregtech.common.blocks.BlockBatteryPart;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.command.CommandHand;
@@ -164,11 +165,14 @@ public class CoreModule implements IGregTechModule {
 
         MetaEntities.init();
 
-        /* Start Heating Coil Registration */
+        /* Start API Block Registration */
         for (BlockWireCoil.CoilType type : BlockWireCoil.CoilType.values()) {
             HEATING_COILS.put(MetaBlocks.WIRE_COIL.getState(type), type);
         }
-        /* End Heating Coil Registration */
+        for (BlockBatteryPart.BatteryPartType type : BlockBatteryPart.BatteryPartType.values()) {
+            PSS_BATTERIES.put(MetaBlocks.BATTERY_BLOCK.getState(type), type);
+        }
+        /* End API Block Registration */
 
         proxy.onPreLoad();
         KeyBind.init();

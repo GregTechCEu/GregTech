@@ -54,4 +54,9 @@ public class TextFormattingUtil {
     public static String formatNumbers(double number) {
         return NUMBER_FORMAT.format(number);
     }
+
+    /** Allows for formatting Long, Integer, Short, Byte, Number, AtomicInteger, AtomicLong, and BigInteger. */
+    public static String formatNumbers(Object number) {
+        return NUMBER_FORMAT.format(number);
+    }
 }
