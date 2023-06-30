@@ -5018,7 +5018,8 @@ gregtech.item_pipe.priority=§9優先度: %d
 gregtech.multiblock.work_paused=一時停止中
 gregtech.multiblock.running=完璧に動作中
 gregtech.multiblock.idling=停止中
-gregtech.multiblock.not_enough_energy=警告: エネルギー不足
+gregtech.multiblock.not_enough_energy=§c警告:§f エネルギー不足
+gregtech.multiblock.not_enough_energy_output=§eアドバイス:§f ダイナモハッチの電圧が低すぎる!
 gregtech.multiblock.progress=進捗: %s%%
 gregtech.multiblock.invalid_structure=構造が間違っている
 gregtech.multiblock.invalid_structure.tooltip=このブロックはマルチブロックのコントローラーです。構造はJEIのマルチブロック機械の構造を参考にしてください。
@@ -5084,11 +5085,12 @@ gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=液体
 gregtech.multiblock.large_combustion_engine.obstructed=エンジンの吸気口が塞がれている。
 
 gregtech.multiblock.turbine.fuel_amount=燃料残量: %sL (%s)
+gregtech.multiblock.turbine.fuel_needed=%s %sが%s tick必要!
 gregtech.multiblock.turbine.rotor_speed=ローター速度: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=ローター耐久値: %s%%
 gregtech.multiblock.turbine.efficiency=タービン効率: %s%%
-gregtech.multiblock.turbine.energy_per_tick=エネルギー出力: %s/%s EU/t
-gregtech.multiblock.turbine.energy_per_tick_maxed=エネルギー出力: %s EU/t
+gregtech.multiblock.turbine.energy_per_tick=エネルギー出力: %s/%s EU/t (%s)
+gregtech.multiblock.turbine.energy_per_tick_maxed=エネルギー出力: %s EU/t (%s)
 gregtech.multiblock.turbine.obstructed=タービン正面が塞がれている。
 gregtech.multiblock.turbine.efficiency_tooltip=%s§7以上のローターホルダーごとに§610%%§7の効率化。
 
