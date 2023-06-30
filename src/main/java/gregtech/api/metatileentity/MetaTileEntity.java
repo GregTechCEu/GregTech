@@ -916,7 +916,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
             MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
-            } else trait.receiveInitialData(buf);
+            } else trait.receiveInitialSyncData(buf);
         }
         CoverIO.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
         this.muffled = buf.readBoolean();

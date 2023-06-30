@@ -102,6 +102,7 @@ public abstract class MTETrait implements ISyncedTileEntity {
      *
      * @deprecated use {@link #receiveInitialSyncData(PacketBuffer)}
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.8")
     @Deprecated
     public void receiveInitialData(@NotNull PacketBuffer buffer) {}
 
