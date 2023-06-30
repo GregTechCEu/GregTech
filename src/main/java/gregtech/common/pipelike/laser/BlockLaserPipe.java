@@ -10,6 +10,7 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.LaserPipeRenderer;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 import net.minecraft.block.state.IBlockState;
@@ -18,6 +19,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
@@ -145,5 +147,11 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     @SuppressWarnings("deprecation")
     public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
         return LaserPipeRenderer.INSTANCE.getBlockRenderType();
+    }
+
+    @Override
+    public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
+        if (layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.CUTOUT) return true;
+        return layer == BloomEffectUtil.getRealBloomLayer();
     }
 }

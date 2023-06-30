@@ -1,16 +1,22 @@
 package gregtech.common.pipelike.laser.tile;
 
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.util.TaskScheduler;
 import gregtech.common.pipelike.laser.LaserPipeProperties;
 import gregtech.common.pipelike.laser.LaserPipeType;
 import gregtech.common.pipelike.laser.net.LaserNetHandler;
 import gregtech.common.pipelike.laser.net.LaserPipeNet;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
@@ -22,6 +28,11 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     private final ILaserContainer clientCapability = new DefaultLaserContainer();
     private WeakReference<LaserPipeNet> currentPipeNet = new WeakReference<>(null);
     private LaserNetHandler defaultHandler;
+
+    private int ticksActive = 0;
+    private int activeDuration = 0;
+    private boolean isActive = false;
+
     @Override
     public Class<LaserPipeType> getPipeTypeClass() {
         return LaserPipeType.class;
@@ -102,6 +113,74 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         } else {
             // create new handlers
             initHandlers();
+        }
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0x6dcecff; // The lightest blue colour in the laser pipe texture
+    }
+
+    public boolean isActive() {
+        return this.isActive;
+    }
+
+    /**
+     * @param active   if the pipe should become active
+     * @param duration how long the pipe should be active for
+     */
+    public void setActive(boolean active, int duration) {
+        boolean stateChanged = false;
+        if (this.isActive && !active) {
+            this.isActive = false;
+            stateChanged = true;
+        } else if (!this.isActive && active) {
+            this.isActive = true;
+            stateChanged = true;
+            activeDuration = duration;
+            TaskScheduler.scheduleTask(getWorld(), () -> {
+                if (++this.ticksActive % activeDuration == 0) {
+                    this.ticksActive = 0;
+                    setActive(false, -1);
+                    return false;
+                }
+                return true;
+            });
+        } else if (this.isActive) {
+            this.ticksActive = 0;
+            this.activeDuration = duration;
+        }
+
+        if (stateChanged) {
+            writeCustomData(GregtechDataCodes.PIPE_LASER_ACTIVE, buf -> {
+                buf.writeBoolean(this.isActive);
+            });
+            notifyBlockUpdate();
+            markDirty();
+        }
+    }
+
+    @Override
+    public void receiveCustomData(int discriminator, PacketBuffer buf) {
+        super.receiveCustomData(discriminator, buf);
+        if (discriminator == GregtechDataCodes.PIPE_LASER_ACTIVE) {
+            this.isActive = buf.readBoolean();
+            scheduleChunkForRenderUpdate();
+        }
+    }
+
+    @NotNull
+    @Override
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
+        compound.setBoolean("Active", isActive);
+        return super.writeToNBT(compound);
+    }
+
+    @Override
+    public void readFromNBT(@NotNull NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        if (compound.hasKey("Active", Constants.NBT.TAG_BYTE)) {
+            isActive = compound.getBoolean("Active");
         }
     }
 

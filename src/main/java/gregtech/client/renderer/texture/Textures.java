@@ -328,7 +328,13 @@ public class Textures {
     public static TextureAtlasSprite OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE;
 
     @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite LASER_PIPE_IN;
+    @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite LASER_PIPE_SIDE;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite LASER_PIPE_OVERLAY;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite LASER_PIPE_OVERLAY_EMISSIVE;
 
     @SideOnly(Side.CLIENT)
     public static ThreadLocal<CubeRendererState> RENDER_STATE;
@@ -371,6 +377,9 @@ public class Textures {
         OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side_overlay_active"));
 
         LASER_PIPE_SIDE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_side"));
+        LASER_PIPE_IN = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_in"));
+        LASER_PIPE_OVERLAY = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_side_overlay"));
+        LASER_PIPE_OVERLAY_EMISSIVE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_side_overlay_emissive"));
 
         for (MaterialIconSet iconSet : MaterialIconSet.ICON_SETS.values()) {
             textureMap.registerSprite(MaterialIconType.frameGt.getBlockTexturePath(iconSet));
