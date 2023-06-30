@@ -40,6 +40,7 @@ dependencies {
     compileOnlyApi "curse.maven:xaeros-263420:4516832" // Xaero's Minimap 23.4.1
     compileOnlyApi rfg.deobf("curse.maven:hwyla-253449:2568751") // HWYLA 1.8.26-B41
     compileOnlyApi rfg.deobf("curse.maven:baubles-227083:2518667") // Baubles 1.5.2
+    compileOnlyApi rfg.deobf("curse.maven:forestry-59751:2684780") // Forestry 5.8.2.387
 }
 
 minecraft {

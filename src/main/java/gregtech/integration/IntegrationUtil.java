@@ -2,9 +2,11 @@ package gregtech.integration;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiErrorScreen;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -33,6 +35,21 @@ public class IntegrationUtil {
         } else {
             throwClientIncompatibility(messages);
         }
+    }
+
+    public static ItemStack getModItem(String modid, String name, int meta) {
+        return getModItem(modid, name, meta, 1, null);
+    }
+
+    public static ItemStack getModItem(String modid, String name, int meta, int amount) {
+        return getModItem(modid, name, meta, amount, null);
+    }
+
+    public static ItemStack getModItem(String modid, String name, int meta, int amount, String nbt) {
+        if (!Loader.isModLoaded(modid)) {
+            return ItemStack.EMPTY;
+        }
+        return GameRegistry.makeItemStack(modid + ":" + name, meta, amount, nbt);
     }
 
     @SideOnly(Side.CLIENT)

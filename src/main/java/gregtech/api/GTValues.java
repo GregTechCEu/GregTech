@@ -146,7 +146,15 @@ public class GTValues {
             MODID_XAERO_MINIMAP = "xaerominimap",
             MODID_HWYLA = "hwyla",
             MODID_BAUBLES = "baubles",
-            MODID_TOP_ADDONS = "topaddons";
+            MODID_TOP_ADDONS = "topaddons",
+            MODID_IC2 = "ic2",
+            MODID_BINNIE = "binniecore",
+            MODID_XU2 = "extrautils2",
+            MODID_TR = "techreborn",
+            MODID_MB = "magicbees",
+            MODID_EB = "extrabees",
+            MODID_BOP = "biomesoplenty",
+            MODID_TCON = "tconstruct";
 
     private static Boolean isClient;
 

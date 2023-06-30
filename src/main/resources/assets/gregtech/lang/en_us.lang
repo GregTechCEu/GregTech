@@ -5782,3 +5782,33 @@ gregtech.subtitle.maintenance.mechanical=Mechanical breakdown
 
 # Debug messaging
 gregtech.debug.f3_h.enabled=GregTech has modified the debug info! For Developers: enable the misc:debug config option in the GregTech config file to see more
+
+### Forestry Integration
+# Frames
+item.gt.frame_working.name=Working Frame
+item.gt.frame_mutagenic.name=Mutagenic Frame
+item.gt.frame_accelerated.name=Accelerated Frame
+item.gt.frame_stabilizing.name=Stabilizing Frame
+item.gt.frame_arborist.name=Arborist's Frame
+item.gt.frame_decaying.name=Decaying Frame
+item.gt.frame_slowing.name=Slowing Frame
+
+# Electrodes
+metaitem.electrode.apatite.name=Apatine Electrode
+metaitem.electrode.blaze.name=Blazing Electrode
+metaitem.electrode.bronze.name=Bronze Electrode
+metaitem.electrode.copper.name=Copper Electrode
+metaitem.electrode.diamond.name=Diamantine Electrode
+metaitem.electrode.emerald.name=Emerald Electrode
+metaitem.electrode.ender.name=Ender Electrode
+metaitem.electrode.gold.name=Golden Electrode
+metaitem.electrode.iron.name=Iron Electrode
+metaitem.electrode.lapis.name=Lapis Electrode
+metaitem.electrode.obsidian.name=Obsidian Electrode
+metaitem.electrode.orchid.name=Orchid Electrode
+metaitem.electrode.rubber.name=Rubberised Electrode
+metaitem.electrode.tin.name=Tin Electrode
+
+# Scoop
+item.gt.tool.scoop.name=%s Scoop
+item.gt.tool.behavior.scoop=§dArborist: §fCatches Butterflies on Left-Click
