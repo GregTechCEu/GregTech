@@ -274,7 +274,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
             // Allow unfilled batteries in the structure, but do not add them to match context.
             // This lets you use empty batteries as "filler slots" for convenience if desired.
             if (battery.getTier() != -1 && battery.getCapacity() > 0) {
-                String key = PMC_BATTERY_HEADER + battery.getName();
+                String key = PMC_BATTERY_HEADER + battery.getBatteryName();
                 BatteryMatchWrapper wrapper = blockWorldState.getMatchContext().get(key);
                 if (wrapper == null) wrapper = new BatteryMatchWrapper(battery);
                 blockWorldState.getMatchContext().set(key, wrapper.increment());
