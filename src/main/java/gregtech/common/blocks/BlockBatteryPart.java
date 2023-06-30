@@ -2,7 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.VariantBlock;
-import gregtech.api.metatileentity.multiblock.IBatteryDataProvider;
+import gregtech.api.metatileentity.multiblock.IBatteryData;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartType> implements IBatteryDataProvider {
+public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartType> {
 
     public BlockBatteryPart() {
         super(Material.IRON);
@@ -47,12 +47,7 @@ public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartT
         }
     }
 
-    @Override
-    public IBatteryData getData(IBlockState state) {
-        return getState(state);
-    }
-
-    public enum BatteryPartType implements IStringSerializable, IBatteryDataProvider.IBatteryData {
+    public enum BatteryPartType implements IStringSerializable, IBatteryData {
         EMPTY_TIER_I(-1, 0),
         LAPOTRONIC_EV(GTValues.EV, 25_000_000L * 6),      // Lapotron Crystal * 6
         LAPOTRONIC_IV(GTValues.IV, 250_000_000L * 6),     // Lapotronic Orb * 6

@@ -4,6 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -11,23 +12,21 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IBatteryDataProvider;
-import gregtech.api.metatileentity.multiblock.IBatteryDataProvider.IBatteryData;
+import gregtech.api.metatileentity.multiblock.IBatteryData;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.*;
+import gregtech.api.util.BlockInfo;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
-import gregtech.common.blocks.BlockBatteryPart;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -48,6 +47,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.util.*;
+import java.util.function.Supplier;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -225,7 +225,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                         .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY).setMinGlobalLimited(1))
                         .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY).setMinGlobalLimited(1)))
                 .where('G', states(getGlassState()))
-                .where('B', batteryPredicate())
+                .where('B', BATTERY_PREDICATE.get())
                 .build();
     }
 
@@ -250,10 +250,12 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                         : MetaBlocks.METAL_CASING.getState(MetalCasingType.PALLADIUM_SUBSTATION),
                         EnumFacing.SOUTH);
 
-        Arrays.stream(BlockBatteryPart.BatteryPartType.values())
-                .filter(p -> p.getCapacity() != 0)
-                .sorted(Comparator.comparingLong(BlockBatteryPart.BatteryPartType::getTier))
-                .forEach(entry -> shapeInfo.add(builder.where('B', MetaBlocks.BATTERY_BLOCK.getState(entry)).build()));
+        GregTechAPI.PSS_BATTERIES.entrySet().stream()
+                // filter out empty batteries in example structures, though they are still
+                // allowed in the predicate (so you can see them on right-click)
+                .filter(entry -> entry.getValue().getCapacity() > 0)
+                .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
+                .forEach(entry -> shapeInfo.add(builder.where('B', entry.getKey()).build()));
 
         return shapeInfo;
     }
@@ -266,25 +268,26 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
         return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.LAMINATED_GLASS);
     }
 
-    protected TraceabilityPredicate batteryPredicate() {
-        return new TraceabilityPredicate(state -> {
-            Block block = state.getBlockState().getBlock();
-            if (!(block instanceof IBatteryDataProvider)) {
-                return false;
-            }
-            IBatteryData battery = ((IBatteryDataProvider) block).getData(state.getBlockState());
-
+    protected static final Supplier<TraceabilityPredicate> BATTERY_PREDICATE = () -> new TraceabilityPredicate(blockWorldState -> {
+        IBlockState state = blockWorldState.getBlockState();
+        if (GregTechAPI.PSS_BATTERIES.containsKey(state)) {
+            IBatteryData battery = GregTechAPI.PSS_BATTERIES.get(state);
             // Allow unfilled batteries in the structure, but do not add them to match context.
             // This lets you use empty batteries as "filler slots" for convenience if desired.
             if (battery.getTier() != -1 && battery.getCapacity() > 0) {
                 String key = String.format("%s%s", PMC_BATTERY_HEADER, battery.getName());
-                BatteryMatchWrapper wrapper = state.getMatchContext().get(key);
+                BatteryMatchWrapper wrapper = blockWorldState.getMatchContext().get(key);
                 if (wrapper == null) wrapper = new BatteryMatchWrapper(battery);
-                state.getMatchContext().set(key, wrapper.increment());
+                blockWorldState.getMatchContext().set(key, wrapper.increment());
             }
             return true;
-        });
-    }
+        }
+        return false;
+    }, () -> GregTechAPI.PSS_BATTERIES.entrySet().stream()
+            .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
+            .map(entry -> new BlockInfo(entry.getKey(), null))
+            .toArray(BlockInfo[]::new))
+            .addTooltips("gregtech.multiblock.pattern.error.batteries");
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
