@@ -44,6 +44,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
+import org.jetbrains.annotations.ApiStatus;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.*;
 
@@ -332,6 +333,18 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Removes all recipes.
+     *
+     * @see GTRecipeHandler#removeAllRecipes(RecipeMap)
+     */
+    @ApiStatus.Internal
+    void removeAllRecipes() {
+        this.lookup.getRecipes(false).forEach(this.virtualizedRecipeMap::addBackup);
+        this.lookup.getNodes().clear();
+        this.lookup.getSpecialNodes().clear();
     }
 
     /**
