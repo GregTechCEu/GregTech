@@ -2012,21 +2012,21 @@ gregtech.material.hsss=HSS-S
 
 
 # Marker Material Tiers
-gregtech.material.primitive=初歩的な
-gregtech.material.basic=基本的な
-gregtech.material.good=良い
-gregtech.material.advanced=発展
-gregtech.material.data=素晴らしい
-gregtech.material.elite=精鋭
-gregtech.material.master=マスター
-gregtech.material.ultimate=究極の
-gregtech.material.super=スーパー
-gregtech.material.infinite=無限の
-gregtech.material.ultra=ウルトラ
-gregtech.material.insane=非常識な
-gregtech.material.epic=史上最高の
-gregtech.material.legendary=伝説の
-gregtech.material.maximum=マキシマム
+material.primitive=初歩的な
+material.basic=基本的な
+material.good=良い
+material.advanced=発展
+material.data=素晴らしい
+material.elite=精鋭
+material.master=マスター
+material.ultimate=究極の
+material.super=スーパー
+material.infinite=無限の
+material.ultra=ウルトラ
+material.insane=非常識な
+material.epic=史上最高の
+material.legendary=伝説の
+material.maximum=マキシマム
 
 
 # Item Renaming
