@@ -12,6 +12,7 @@ import gregtech.api.recipes.recipeproperties.ResearchPropertyData;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTStringUtils;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 
@@ -129,7 +130,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * @return this
      */
     public AssemblyLineRecipeBuilder research(@Nonnull ItemStack researchStack, @Nonnull ItemStack dataStack) {
-        return research(researchStack, dataStack, researchStack.toString());
+        return research(researchStack, dataStack, GTStringUtils.itemStackToString(researchStack));
     }
 
     /**
