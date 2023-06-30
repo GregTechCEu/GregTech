@@ -96,7 +96,12 @@ gregtech.top.unit.items=アイテム
 gregtech.top.unit.fluid_milibuckets=L
 gregtech.top.unit.fluid_buckets=kL
 
-gregtech.top.block_drops=Drops
+gregtech.top.block_drops=ドロップ
+
+gregtech.waila.energy_stored=エネルギー: %d EU / %d EU
+gregtech.waila.progress_idle=停止中
+gregtech.waila.progress_tick=進捗: %d t / %d t
+gregtech.waila.progress_sec=進捗: %d s / %d s
 
 gregtech.multiblock.title=マルチブロックの構造
 gregtech.multiblock.primitive_blast_furnace.bronze.description=初歩的な溶鉱炉(PBF)は序盤にスチールを得るためのマルチブロック機械です。 動作は遅いですが、最初の高圧蒸気機械を作るためのスチールを提供します。
