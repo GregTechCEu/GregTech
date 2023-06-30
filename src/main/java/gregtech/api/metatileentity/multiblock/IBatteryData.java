@@ -8,5 +8,5 @@ public interface IBatteryData {
 
     long getCapacity();
 
-    @NotNull String getName();
+    @NotNull String getBatteryName();
 }

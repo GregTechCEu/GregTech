@@ -84,10 +84,17 @@ public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartT
             return capacity;
         }
 
+        // must be separately named because of reobf issue
+        @NotNull
+        @Override
+        public String getBatteryName() {
+            return name().toLowerCase();
+        }
+
         @NotNull
         @Override
         public String getName() {
-            return name().toLowerCase();
+            return getBatteryName();
         }
     }
 }
