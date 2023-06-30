@@ -42,13 +42,18 @@ public class TransformerInfoProvider extends ElectricContainerInfoProvider {
                         .append("A)");
 
                 // Step Up/Step Down line
-                probeInfo.text(TextStyleClass.INFO + (((MetaTileEntityTransformer) metaTileEntity).isInverted() ? "{*gregtech.top.transform_up*} " : "{*gregtech.top.transform_down*} ") + input + " -> " + output);
+                probeInfo.text(TextStyleClass.INFO + (((MetaTileEntityTransformer) metaTileEntity).isInverted()
+                        ? TextFormatting.RED + "{*gregtech.top.transform_up*} " + TextFormatting.RESET
+                        : TextFormatting.GREEN + "{*gregtech.top.transform_down*} " + TextFormatting.RESET)
+                        + input + " -> " + output);
 
                 // Input/Output side line
                 if (capability.inputsEnergy(data.getSideHit())) {
-                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.transform_input*} " + input);
+                    probeInfo.text(TextStyleClass.INFO
+                            + TextFormatting.GOLD.toString() + "{*gregtech.top.transform_input*} " + TextFormatting.RESET + input);
                 } else if (capability.outputsEnergy(data.getSideHit())) {
-                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.transform_output*} " + output);
+                    probeInfo.text(TextStyleClass.INFO
+                            + TextFormatting.BLUE.toString() + "{*gregtech.top.transform_output*} " + TextFormatting.RESET + output);
                 }
             }
         }

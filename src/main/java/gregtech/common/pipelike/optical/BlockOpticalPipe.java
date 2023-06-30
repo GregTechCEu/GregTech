@@ -12,7 +12,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.common.pipelike.optical.net.WorldOpticalPipeNet;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
-import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipeTickable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -61,7 +60,7 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
 
     @Override
     public TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> createNewTileEntity(boolean supportsTicking) {
-        return supportsTicking ? new TileEntityOpticalPipe() : new TileEntityOpticalPipeTickable();
+        return new TileEntityOpticalPipe();
     }
 
     @Override

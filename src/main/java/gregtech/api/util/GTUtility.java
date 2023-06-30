@@ -53,7 +53,6 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
@@ -63,8 +62,6 @@ import java.util.function.Predicate;
 import static gregtech.api.GTValues.V;
 
 public class GTUtility {
-
-    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
     public static <T> String[] mapToString(T[] array, Function<T, String> mapper) {
         String[] result = new String[array.length];
@@ -661,12 +658,24 @@ public class GTUtility {
         return result.toString();
     }
 
+    /**
+     * @deprecated Use {@link TextFormattingUtil#formatNumbers(long)} instead.
+     *
+     * </p> This class was deprecated in 2.7 and will be removed in 2.8
+     */
+    @Deprecated
     public static String formatNumbers(long number) {
-        return NUMBER_FORMAT.format(number);
+        return TextFormattingUtil.formatNumbers(number);
     }
 
+    /**
+     * @deprecated Use {@link TextFormattingUtil#formatNumbers(double)} instead.
+     *
+     * </p> This class was deprecated in 2.7 and will be removed in 2.8
+     */
+    @Deprecated
     public static String formatNumbers(double number) {
-        return NUMBER_FORMAT.format(number);
+        return TextFormattingUtil.formatNumbers(number);
     }
 
     public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {

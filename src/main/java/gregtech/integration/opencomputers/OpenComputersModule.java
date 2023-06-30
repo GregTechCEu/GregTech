@@ -42,6 +42,7 @@ public class OpenComputersModule extends IntegrationSubmodule {
         registerDriver(new DriverFusionReactor());
         registerDriver(new DriverWorldAccelerator());
         registerDriver(new DriverConverter());
+        registerDriver(new DriverPowerSubstation());
     }
 
     public static void registerDriver(DriverBlock driver) {

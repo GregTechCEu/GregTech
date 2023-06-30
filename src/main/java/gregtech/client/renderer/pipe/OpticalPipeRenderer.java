@@ -1,16 +1,17 @@
 package gregtech.client.renderer.pipe;
 
 import codechicken.lib.vec.uv.IconTransformation;
-import gregtech.api.GTValues;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.optical.OpticalPipeType;
+import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.EnumMap;
@@ -21,7 +22,7 @@ public final class OpticalPipeRenderer extends PipeRenderer {
     private final EnumMap<OpticalPipeType, TextureAtlasSprite> pipeTextures = new EnumMap<>(OpticalPipeType.class);
 
     private OpticalPipeRenderer() {
-        super("gt_optical_pipe", new ResourceLocation(GTValues.MODID, "optical_pipe"));
+        super("gt_optical_pipe", GTUtility.gregtechId("optical_pipe"));
     }
 
     @Override
@@ -33,7 +34,15 @@ public final class OpticalPipeRenderer extends PipeRenderer {
     public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe, @Nullable IPipeTile<?, ?> pipeTile, IPipeType<?> pipeType, @Nullable Material material) {
         if (pipeType instanceof OpticalPipeType) {
             renderContext.addOpenFaceRender(new IconTransformation(pipeTextures.get(pipeType)))
-                    .addSideRender(new IconTransformation(Textures.OPTICAL_PIPE_SIDE));
+                    .addSideRender(false, new IconTransformation(Textures.OPTICAL_PIPE_SIDE));
+
+            if (ConfigHolder.client.preventAnimatedOpticalCables) {
+                renderContext.addSideRender(new IconTransformation(Textures.OPTICAL_PIPE_SIDE_OVERLAY));
+            } else if (pipeTile instanceof TileEntityOpticalPipe opticalPipe && opticalPipe.isActive()) {
+                renderContext.addSideRender(new IconTransformation(Textures.OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE));
+            } else {
+                renderContext.addSideRender(new IconTransformation(Textures.OPTICAL_PIPE_SIDE_OVERLAY));
+            }
         }
     }
 

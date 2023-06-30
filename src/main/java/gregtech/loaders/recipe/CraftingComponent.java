@@ -37,8 +37,10 @@ public class CraftingComponent {
     public static Component CABLE_OCT;
     public static Component CABLE_HEX;
     public static Component CABLE_TIER_UP;
+    public static Component CABLE_QUAD_TIER_UP;
     public static Component CASING;
     public static Component HULL;
+    public static Component TRANSFORMER;
     public static Component PIPE_NORMAL;
     public static Component PIPE_LARGE;
     public static Component GLASS;
@@ -276,6 +278,21 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
+        CABLE_QUAD_TIER_UP = new Component(Stream.of(new Object[][]{
+
+                {0, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Tin)},
+                {1, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Copper)},
+                {2, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Gold)},
+                {3, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Aluminium)},
+                {4, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Platinum)},
+                {5, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.NiobiumTitanium)},
+                {6, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.VanadiumGallium)},
+                {7, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.YttriumBariumCuprate)},
+                {8, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Europium)},
+                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Europium)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
         HULL = new Component(Stream.of(new Object[][]{
 
                 {0, MetaTileEntities.HULL[0].getStackForm()},
@@ -298,6 +315,30 @@ public class CraftingComponent {
                     {12, MetaTileEntities.HULL[12].getStackForm()},
                     {13, MetaTileEntities.HULL[13].getStackForm()},
                     {14, MetaTileEntities.HULL[14].getStackForm()},
+            }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+        }
+
+        TRANSFORMER = new Component(Stream.of(new Object[][]{
+
+                {0, MetaTileEntities.TRANSFORMER[0].getStackForm()},
+                {1, MetaTileEntities.TRANSFORMER[1].getStackForm()},
+                {2, MetaTileEntities.TRANSFORMER[2].getStackForm()},
+                {3, MetaTileEntities.TRANSFORMER[3].getStackForm()},
+                {4, MetaTileEntities.TRANSFORMER[4].getStackForm()},
+                {5, MetaTileEntities.TRANSFORMER[5].getStackForm()},
+                {6, MetaTileEntities.TRANSFORMER[6].getStackForm()},
+                {7, MetaTileEntities.TRANSFORMER[7].getStackForm()},
+                {8, MetaTileEntities.TRANSFORMER[8].getStackForm()},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        if (GregTechAPI.isHighTier()) {
+            TRANSFORMER.appendIngredients(Stream.of(new Object[][]{
+                    {9, MetaTileEntities.TRANSFORMER[9].getStackForm()},
+                    {10, MetaTileEntities.TRANSFORMER[10].getStackForm()},
+                    {11, MetaTileEntities.TRANSFORMER[11].getStackForm()},
+                    {12, MetaTileEntities.TRANSFORMER[12].getStackForm()},
+                    {13, MetaTileEntities.TRANSFORMER[13].getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
