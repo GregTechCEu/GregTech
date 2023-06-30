@@ -27,4 +27,10 @@ public class HPCAComponentHatchTestImpl implements IHPCAComponentHatch {
     public boolean canBeDamaged() {
         return false;
     }
+
+    // not tested
+    @Override
+    public boolean isBridge() {
+        return false;
+    }
 }
