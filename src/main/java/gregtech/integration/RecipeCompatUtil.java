@@ -8,16 +8,19 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.integration.crafttweaker.CTRecipeHelper;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
+import gregtech.core.unification.material.internal.MaterialRegistryManager;
+import gregtech.integration.crafttweaker.CTRecipeHelper;
 import gregtech.integration.groovy.GrSRecipeHelper;
 import gregtech.modules.GregTechModules;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,8 +69,8 @@ public final class RecipeCompatUtil {
             if (block instanceof BlockFrame) {
                 return "frame" + ((BlockFrame) block).getGtMaterial(item).toCamelCaseString();
             }
-            if (block instanceof BlockMaterialPipe) {
-                return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(item).toCamelCaseString();
+            if (block instanceof BlockMaterialPipe blockMaterialPipe) {
+                return blockMaterialPipe.getPrefix().name + blockMaterialPipe.getItemMaterial(item).toCamelCaseString();
             }
         }
         return null;
@@ -93,6 +96,18 @@ public final class RecipeCompatUtil {
             return TweakerType.CRAFTTWEAKER;
         }
         return TweakerType.NONE;
+    }
+
+    /**
+     * Deprecated since 2.7 and will be removed in 2.8
+     *
+     * @deprecated Use {@link MaterialRegistryManager#getMaterial(String)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.8")
+    @Deprecated
+    @Nullable
+    public static Material getMaterial(@Nonnull String name) {
+        return GregTechAPI.materialManager.getMaterial(name);
     }
 
     public static boolean isTweakerLoaded() {

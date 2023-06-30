@@ -9,6 +9,7 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
 
@@ -25,9 +26,11 @@ public class DiodeInfoProvider extends ElectricContainerInfoProvider {
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (metaTileEntity instanceof MetaTileEntityDiode) {
                 if (capability.inputsEnergy(data.getSideHit())) {
-                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.transform_input*} " + capability.getInputAmperage() + " A");
+                    probeInfo.text(TextStyleClass.INFO + TextFormatting.GOLD.toString()
+                            + "{*gregtech.top.transform_input*} " + TextFormatting.RESET + capability.getInputAmperage() + " A");
                 } else if (capability.outputsEnergy(data.getSideHit())) {
-                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.transform_output*} " + capability.getOutputAmperage() + " A");
+                    probeInfo.text(TextStyleClass.INFO + TextFormatting.BLUE.toString()
+                            + "{*gregtech.top.transform_output*} " + TextFormatting.RESET + capability.getOutputAmperage() + " A");
                 }
             }
         }

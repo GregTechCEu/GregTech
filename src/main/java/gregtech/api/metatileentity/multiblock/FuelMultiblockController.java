@@ -4,9 +4,15 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -41,6 +47,12 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                     .setStyle(new Style().setColor(TextFormatting.RED)
                             .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
         } else {
+            if (recipeMapWorkable.getPreviousRecipe() != null) {
+                String[] recipeInput = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getRecipeFluidInputInfo();
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed",
+                        recipeInput[0], recipeInput[1], TextFormatting.AQUA + TextFormattingUtil.formatNumbers(recipeMapWorkable.getPreviousRecipeDuration())));
+            }
+
             if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics())
                 addMaintenanceText(textList);
 
@@ -53,8 +65,12 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-                String voltageName = GTValues.VN[GTUtility.getFloorTierByVoltage(maxVoltage)];
-                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
+                if (maxVoltage < -recipeMapWorkable.getRecipeEUt()) {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy_output"));
+                } else {
+                    String voltageName = GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatNumbers(maxVoltage), voltageName));
+                }
             }
 
             if (!recipeMapWorkable.isWorkingEnabled()) {
@@ -68,6 +84,22 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             }
         }
     }
+    @Override
+    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
+        ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 176 + 90, 216);
+        builder.image(7, 4, 162 + 90, 121 + 6, GuiTextures.DISPLAY);
+        builder.label(13, 9, getMetaFullName(), 0xFFFFFF);
+        builder.widget(new AdvancedTextWidget(13, 19, this::addDisplayText, 0xFFFFFF)
+                .setMaxWidthLimit(156 + 90)
+                .setClickHandler(this::handleDisplayClick));
+        if (shouldShowVoidingModeButton()) {
+            builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
+                    4, this::getVoidingMode, this::setVoidingMode)
+                    .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
+        }
+        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7 + 45, 134);
+        return builder;
+    }
 
     @Nonnull
     @Override
@@ -75,31 +107,31 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         List<ITextComponent> list = new ArrayList<>();
         if (recipeMapWorkable.getMaxProgress() > 0) {
             list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
-                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
             ));
         }
 
         list.add(new TextComponentTranslation("behavior.tricorder.energy_container_storage",
-                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
         ));
 
         if (recipeMapWorkable.getRecipeEUt() < 0) {
             list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
-                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() * -1)).setStyle(new Style().setColor(TextFormatting.RED)),
-                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getRecipeEUt() * -1)).setStyle(new Style().setColor(TextFormatting.RED)),
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
             ));
         }
 
         list.add(new TextComponentTranslation("behavior.tricorder.multiblock_energy_output",
-                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getOutputVoltage())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getOutputVoltage())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
                 new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getOutputVoltage())]).setStyle(new Style().setColor(TextFormatting.YELLOW))
         ));
 
         if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
             list.add(new TextComponentTranslation("behavior.tricorder.multiblock_maintenance",
-                    new TextComponentTranslation(GTUtility.formatNumbers(getNumMaintenanceProblems())).setStyle(new Style().setColor(TextFormatting.RED))
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(getNumMaintenanceProblems())).setStyle(new Style().setColor(TextFormatting.RED))
             ));
         }
 

@@ -35,14 +35,13 @@ public class MetaTileEntityBracketHandler implements IBracketHandler {
     }
 
     @Nullable
-    public static ItemStack getMetaTileEntityItem(String name) {
-        String[] resultName = splitObjectName(name);
-        MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(new ResourceLocation(resultName[0], resultName[1]));
+    public static ItemStack getMetaTileEntityItem(String[] split) {
+        MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(new ResourceLocation(split[0], split[1]));
         return metaTileEntity == null ? null : metaTileEntity.getStackForm();
     }
 
     public static IItemStack getCtMetaTileEntityItem(String name) {
-        ItemStack itemStack = getMetaTileEntityItem(name);
+        ItemStack itemStack = getMetaTileEntityItem(splitObjectName(name));
         return itemStack == null || itemStack.isEmpty() ? MCItemStack.EMPTY : new MCItemStack(itemStack);
     }
 

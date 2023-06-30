@@ -25,6 +25,7 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
@@ -185,9 +186,9 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.description"));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.depletion", GTUtility.formatNumbers(100.0 / getDepletionChance())));
+        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.depletion", TextFormattingUtil.formatNumbers(100.0 / getDepletionChance())));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_tier_range", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier(), GTUtility.formatNumbers(getRigMultiplier() * 1.5)));
+        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier(), TextFormattingUtil.formatNumbers(getRigMultiplier() * 1.5)));
     }
 
     @Override

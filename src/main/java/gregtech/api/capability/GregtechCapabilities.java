@@ -22,9 +22,6 @@ public class GregtechCapabilities {
     @CapabilityInject(IElectricItem.class)
     public static Capability<IElectricItem> CAPABILITY_ELECTRIC_ITEM = null;
 
-    @CapabilityInject(IFuelable.class)
-    public static Capability<IFuelable> CAPABILITY_FUELABLE = null;
-
     @CapabilityInject(IMultiblockController.class)
     public static Capability<IMultiblockController> CAPABILITY_MULTIBLOCK_CONTROLLER = null;
 

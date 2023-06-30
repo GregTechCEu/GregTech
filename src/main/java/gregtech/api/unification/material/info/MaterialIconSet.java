@@ -16,6 +16,9 @@ import java.util.Map;
 @ZenRegister
 public class MaterialIconSet {
 
+    // Keep this before all the static instatiations not to reset it
+    private static int idCounter = 0;
+
     public static final Map<String, MaterialIconSet> ICON_SETS = new HashMap<>();
     public static final MaterialIconSet DULL = new MaterialIconSet("dull", null, true);
     public static final MaterialIconSet METALLIC = new MaterialIconSet("metallic");
@@ -43,8 +46,6 @@ public class MaterialIconSet {
     public static final MaterialIconSet GAS = new MaterialIconSet("gas");
 
     // Implementation -----------------------------------------------------------------------------------------------
-
-    private static int idCounter = 0;
 
     public final String name;
     public final int id;
