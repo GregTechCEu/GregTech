@@ -6,6 +6,7 @@ import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
@@ -53,9 +54,9 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
     @Override
     public void onDataPacket(@Nonnull NetworkManager net, SPacketUpdateTileEntity pkt) {
         for (var entry : pkt.getNbtCompound().tagMap.entrySet()) {
-            if (entry.getValue() instanceof NBTTagCompound compound) {
+            if (entry.getValue() instanceof NBTTagByteArray compound) {
                 String key = entry.getKey();
-                ByteBuf buf = Unpooled.wrappedBuffer(compound.getByteArray(key)).asReadOnly();
+                ByteBuf buf = Unpooled.wrappedBuffer(compound.getByteArray()).asReadOnly();
                 receiveCustomData(Integer.parseInt(key), new PacketBuffer(buf));
             }
         }
