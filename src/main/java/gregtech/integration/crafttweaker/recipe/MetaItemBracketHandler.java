@@ -107,11 +107,16 @@ public class MetaItemBracketHandler implements IBracketHandler {
         Map<String, ItemStack> itemMap = metaItemNames.get(modid);
         Map<String, ItemStack> blockMap = metaBlockNames.get(modid);
 
-        ItemStack item = itemMap.get(itemName);
-        if (item != null) return item.copy();
+        ItemStack item;
+        if (itemMap != null) {
+            item = itemMap.get(itemName);
+            if (item != null) return item.copy();
+        }
 
-        item = blockMap.get(itemName);
-        if (item != null) return item.copy();
+        if (blockMap != null) {
+            item = blockMap.get(itemName);
+            if (item != null) return item.copy();
+        }
 
         item = MetaTileEntityBracketHandler.getMetaTileEntityItem(split);
         if (item != null) return item.copy();
