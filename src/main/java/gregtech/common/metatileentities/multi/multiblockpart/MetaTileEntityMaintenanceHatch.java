@@ -22,6 +22,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
 import gregtech.common.inventory.handlers.TapeItemStackHandler;
@@ -500,6 +501,15 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.disabled"));
+        if (isConfigurable) {
+            tooltip.add(I18n.format("gregtech.maintenance.configurable.tooltip_basic"));
+            if (!TooltipHelper.isShiftDown()) {
+                tooltip.add(I18n.format("gregtech.maintenance.configurable.tooltip_more_info"));
+            } else {
+                tooltip.add(I18n.format("gregtech.maintenance.configurable.tooltip_pss_header"));
+                tooltip.add(I18n.format("gregtech.maintenance.configurable.tooltip_pss_info"));
+            }
+        }
     }
 
     @Override

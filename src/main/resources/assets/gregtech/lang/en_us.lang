@@ -4945,6 +4945,11 @@ gregtech.maintenance.configurable_time=Time: %fx
 gregtech.maintenance.configurable_time.unchanged_description=Maintenance problems will occur at normal rate. Change configuration to update.
 gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur at %fx the normal rate.
 
+gregtech.maintenance.configurable.tooltip_basic=Speeds up machine processing time at the cost of more frequent maintenance problems
+gregtech.maintenance.configurable.tooltip_more_info=Hold SHIFT for special interactions
+gregtech.maintenance.configurable.tooltip_pss_header=§8Power Substation:
+gregtech.maintenance.configurable.tooltip_pss_info=  §fReduces passive EU drain
+
 gregtech.machine.muffler_hatch.tooltip1=Recovers waste from machines
 gregtech.machine.muffler_hatch.tooltip2=DO NOT OBSTRUCT THE OUTPUT!
 

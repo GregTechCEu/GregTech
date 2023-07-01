@@ -51,6 +51,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private boolean fluidInfSink = false;
     private boolean itemInfSink = false;
 
+    // Held since it is frequently accessed
+    private IMaintenanceHatch maintenanceHatch;
+
     /**
      * Items to recover in a muffler hatch
      */
@@ -138,10 +141,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Used to calculate whether a maintenance problem should happen based on machine time active
      */
     public void calculateMaintenance() {
-        if (!ConfigHolder.machines.enableMaintenance || !hasMaintenanceMechanics())
+        if (!ConfigHolder.machines.enableMaintenance || !hasMaintenanceMechanics() || maintenanceHatch == null)
             return;
 
-        IMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
         if (maintenanceHatch.isFullAuto()) {
             return;
         }
@@ -155,6 +157,17 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
     }
 
+    /**
+     * Configurable Maintenance modifier applied to external effects, like recipe durations.
+     * Ranges from 0.9 to 1.1. Lower is a "better" effect than normal, higher is a "worse" effect than normal.
+     */
+    public double getMaintenanceDurationMultiplier() {
+        if (!ConfigHolder.machines.enableMaintenance || !hasMaintenanceMechanics() || maintenanceHatch == null) {
+            return 1.0;
+        }
+        return maintenanceHatch.getDurationMultiplier();
+    }
+
     @Override
     public boolean isStructureObstructed() {
         return hasMufflerMechanics() && !isMufflerFaceFree();
@@ -166,7 +179,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (this.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) { // nothing extra if no maintenance
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
-            IMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
+            maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
             if (maintenanceHatch.startWithoutProblems() && !initialMaintenanceDone) {
                 this.maintenance_problems = (byte) 0b111111;
                 this.timeActive = 0;
@@ -288,6 +301,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         this.replaceVariantBlocksActive(false);
         this.fluidInfSink = false;
         this.itemInfSink = false;
+        this.maintenanceHatch = null;
         super.invalidateStructure();
     }
 
