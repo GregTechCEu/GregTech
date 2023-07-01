@@ -57,7 +57,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     protected final List<ItemStack> recoveryItems = new ArrayList<>(Collections.singleton(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Ash)));
 
     private int timeActive;
-    private static final int minimumMaintenanceTime = 72000; // 1 hour
 
     /**
      * This value stores whether each of the 5 maintenance problems have been fixed.
@@ -65,6 +64,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Value positions correspond to the following from left to right: 0=Wrench, 1=Screwdriver, 2=Soft Mallet, 3=Hard Hammer, 4=Wire Cutter, 5=Crowbar
      */
     protected byte maintenance_problems;
+    // Used for tracking if this is the initial state of the machine, for maintenance hatches which automatically fix initial issues.
+    private boolean initialMaintenanceDone;
 
     // Used for data preservation with Maintenance Hatch
     private boolean storedTaped = false;
@@ -135,10 +136,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     /**
      * Used to calculate whether a maintenance problem should happen based on machine time active
-     *
-     * @param duration in ticks to add to the counter of active time
      */
-    public void calculateMaintenance(int duration) {
+    public void calculateMaintenance() {
         if (!ConfigHolder.machines.enableMaintenance || !hasMaintenanceMechanics())
             return;
 
@@ -147,10 +146,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             return;
         }
 
-        timeActive += duration * maintenanceHatch.getTimeMultiplier();
-        if (timeActive >= minimumMaintenanceTime) {
-            timeActive %= minimumMaintenanceTime;
-            if (GTValues.RNG.nextFloat() <= 0.05f) {
+        if (++timeActive >= 1000 / maintenanceHatch.getTimeMultiplier()) {
+            timeActive = 0;
+            if (GTValues.RNG.nextInt(6000) == 0) {
                 causeMaintenanceProblems();
                 maintenanceHatch.setTaped(false);
             }
@@ -169,9 +167,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
             IMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-            if (maintenanceHatch.startWithoutProblems()) {
+            if (maintenanceHatch.startWithoutProblems() && !initialMaintenanceDone) {
                 this.maintenance_problems = (byte) 0b111111;
                 this.timeActive = 0;
+                this.initialMaintenanceDone = true;
             }
             readMaintenanceData(maintenanceHatch);
             if (storedTaped) {
@@ -192,6 +191,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 this.setLastActive(state);
                 this.markDirty();
                 this.replaceVariantBlocksActive(lastActive);
+            }
+            if (state) {
+                calculateMaintenance();
             }
         }
     }
@@ -509,6 +511,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setByte("Maintenance", maintenance_problems);
+        data.setBoolean("InitialMaintenance", initialMaintenanceDone);
         data.setInteger("ActiveTimer", timeActive);
         data.setBoolean(NBT_VOIDING_ITEMS, voidingItems);
         data.setBoolean(NBT_VOIDING_FLUIDS, voidingFluids);
@@ -520,6 +523,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         maintenance_problems = data.getByte("Maintenance");
+        initialMaintenanceDone = data.getBoolean("InitialMaintenance");
         timeActive = data.getInteger("ActiveTimer");
         if (data.hasKey(NBT_VOIDING_ITEMS)) {
             voidingItems = data.getBoolean(NBT_VOIDING_ITEMS);

@@ -104,9 +104,6 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
                 long consumed = this.energyContainer.removeEnergy(energyToConsume);
                 if (consumed == -energyToConsume) {
                     setActive(true);
-                    if (hasMaintenance) {
-                        calculateMaintenance(1);
-                    }
                 } else {
                     this.hasNotEnoughEnergy = true;
                     setActive(false);

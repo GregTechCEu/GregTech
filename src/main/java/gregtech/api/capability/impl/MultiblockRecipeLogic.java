@@ -327,24 +327,20 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected void completeRecipe() {
-        performMaintenanceMufflerOperations();
+        performMufflerOperations();
         super.completeRecipe();
     }
 
-    protected void performMaintenanceMufflerOperations() {
-        if (metaTileEntity instanceof MultiblockWithDisplayBase) {
-            MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-
+    protected void performMufflerOperations() {
+        if (metaTileEntity instanceof MultiblockWithDisplayBase controller) {
             // output muffler items
             if (controller.hasMufflerMechanics()) {
-                if (parallelRecipesPerformed > 1)
+                if (parallelRecipesPerformed > 1) {
                     controller.outputRecoveryItems(parallelRecipesPerformed);
-                else controller.outputRecoveryItems();
+                } else {
+                    controller.outputRecoveryItems();
+                }
             }
-
-            // increase total on time
-            if (controller.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance)
-                controller.calculateMaintenance(this.progressTime);
         }
     }
 
