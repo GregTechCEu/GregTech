@@ -57,7 +57,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     protected final List<ItemStack> recoveryItems = new ArrayList<>(Collections.singleton(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Ash)));
 
     private int timeActive;
-    private static final int minimumMaintenanceTime = 3456000; // 48 real-life hours = 3456000 ticks
+    private static final int minimumMaintenanceTime = 72000; // 1 hour
 
     /**
      * This value stores whether each of the 5 maintenance problems have been fixed.
@@ -148,12 +148,13 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
 
         timeActive += duration * maintenanceHatch.getTimeMultiplier();
-        if (minimumMaintenanceTime - timeActive <= 0)
-            if (GTValues.RNG.nextFloat() - 0.75f >= 0) {
+        if (timeActive >= minimumMaintenanceTime) {
+            timeActive %= minimumMaintenanceTime;
+            if (GTValues.RNG.nextFloat() <= 0.1f) {
                 causeMaintenanceProblems();
                 maintenanceHatch.setTaped(false);
-                timeActive = timeActive - minimumMaintenanceTime;
             }
+        }
     }
 
     @Override
