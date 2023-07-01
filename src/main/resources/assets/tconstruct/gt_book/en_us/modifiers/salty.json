@@ -1,0 +1,17 @@
+{
+  "modifier": "gt_salty",
+  "text": [
+    {
+      "text": "Adding Salt or Rock Salt to a melee weapon or projectile prevents enemies from healing for a short time."
+    }
+  ],
+  "effects": [
+    "Prevents enemies from healing",
+    "Adding more salt increases the duration of the healing prevention",
+    "Multiple levels"
+  ],
+  "demoTool": [
+    "tconstruct:broadsword",
+    "tconstruct:arrow"
+  ]
+}

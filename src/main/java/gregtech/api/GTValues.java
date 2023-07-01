@@ -159,7 +159,8 @@ public class GTValues {
             MODID_PROJRED_CORE = "projectred-core",
             MODID_RC = "railcraft",
             MODID_CHISEL = "chisel",
-            MODID_RS = "refinedstorage";
+            MODID_RS = "refinedstorage",
+            MODID_TICON = "tconstruct"; // todo
 
     private static Boolean isClient;
 
