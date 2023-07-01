@@ -6224,4 +6224,5 @@ gregtech.scanner.forestry.pollen=§oScanned Pollen
 modifier.gt_radioactive.name=Radioactive
 modifier.gt_radioactive.desc=§oIntoxicating!§r\nCan afflict enemies with hunger and poison, but can also afflict the user. Also applies to mining blocks.
 modifier.gt_salty.name=Salty
+modifier.gt_explosive.name=Explosive
 gregtech.potion.gt_unhealing=No Healing

@@ -9,6 +9,7 @@ import gregtech.integration.tinkers.effect.GTTinkerEffects;
 import gregtech.modules.GregTechModules;
 import net.minecraft.potion.Potion;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -33,11 +34,15 @@ public class TinkersModule extends IntegrationSubmodule {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        GTTinkerEffects.registerModifiers();
-        GTTinkerEffects.registerTraits();
         if (event.getSide() == Side.CLIENT) {
             GTBook.register();
         }
+    }
+
+    @Override
+    public void init(FMLInitializationEvent event) {
+        GTTinkerEffects.registerModifiers();
+        GTTinkerEffects.registerTraits();
     }
 
     @SubscribeEvent

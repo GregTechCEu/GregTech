@@ -1,0 +1,17 @@
+{
+  "modifier": "gt_explosive",
+  "text": [
+    {
+      "text": "Adding Gelled Toluene to a melee weapon or projectile gives it a 25% chance to cause an explosion on critical hits."
+    }
+  ],
+  "effects": [
+    "Does not damage blocks",
+    "Adding more Gelled Toluene increases the size of the explosion",
+    "Multiple levels"
+  ],
+  "demoTool": [
+    "tconstruct:broadsword",
+    "tconstruct:arrow"
+  ]
+}
