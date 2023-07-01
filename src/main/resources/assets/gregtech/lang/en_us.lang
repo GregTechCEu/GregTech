@@ -6219,3 +6219,9 @@ gregtech.scanner.forestry.larvae=§oScanned Larvae
 gregtech.scanner.forestry.serum=§oScanned Serum
 gregtech.scanner.forestry.caterpillar=§oScanned Caterpillar
 gregtech.scanner.forestry.pollen=§oScanned Pollen
+
+# Tinkers' Construct Module
+modifier.gt_radioactive.name=Radioactive
+modifier.gt_radioactive.desc=§oIntoxicating!§r\nCan afflict enemies with hunger and poison, but can also afflict the user. Also applies to mining blocks.
+modifier.gt_salty.name=Salty
+gregtech.potion.gt_unhealing=No Healing
