@@ -150,7 +150,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         timeActive += duration * maintenanceHatch.getTimeMultiplier();
         if (timeActive >= minimumMaintenanceTime) {
             timeActive %= minimumMaintenanceTime;
-            if (GTValues.RNG.nextFloat() <= 0.1f) {
+            if (GTValues.RNG.nextFloat() <= 0.05f) {
                 causeMaintenanceProblems();
                 maintenanceHatch.setTaped(false);
             }
