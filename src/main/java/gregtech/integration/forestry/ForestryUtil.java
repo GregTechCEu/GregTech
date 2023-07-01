@@ -6,6 +6,10 @@ import forestry.api.genetics.AlleleManager;
 import forestry.api.genetics.IAlleleFlowers;
 import forestry.modules.ModuleHelper;
 import gregtech.api.GTValues;
+import gregtech.integration.IntegrationModule;
+import gregtech.integration.forestry.bees.GTCombType;
+import gregtech.integration.forestry.bees.GTDropType;
+import net.minecraft.item.ItemStack;
 
 public class ForestryUtil {
 
@@ -41,5 +45,37 @@ public class ForestryUtil {
             default -> "forestry.species" + name;
         };
         return (IAlleleBeeSpecies) AlleleManager.alleleRegistry.getAllele(s);
+    }
+
+    public static ItemStack getCombStack(GTCombType type) {
+        return getCombStack(type, 1);
+    }
+
+    public static ItemStack getCombStack(GTCombType type, int amount) {
+        if (!ForestryConfig.enableGTBees) {
+            IntegrationModule.logger.error("Tried to get GregTech Comb stack, but GregTech Bees config is not enabled!");
+            return ItemStack.EMPTY;
+        }
+        if (!apicultureEnabled()) {
+            IntegrationModule.logger.error("Tried to get GregTech Comb stack, but Apiculture module is not enabled!");
+            return ItemStack.EMPTY;
+        }
+        return new ItemStack(ForestryModule.combs, amount, type.ordinal());
+    }
+
+    public static ItemStack getDropStack(GTDropType type) {
+        return getDropStack(type, 1);
+    }
+
+    public static ItemStack getDropStack(GTDropType type, int amount) {
+        if (!ForestryConfig.enableGTBees) {
+            IntegrationModule.logger.error("Tried to get GregTech Drop stack, but GregTech Bees config is not enabled!");
+            return ItemStack.EMPTY;
+        }
+        if (!apicultureEnabled()) {
+            IntegrationModule.logger.error("Tried to get GregTech Drop stack, but Apiculture module is not enabled!");
+            return ItemStack.EMPTY;
+        }
+        return new ItemStack(ForestryModule.drops, amount, type.ordinal());
     }
 }

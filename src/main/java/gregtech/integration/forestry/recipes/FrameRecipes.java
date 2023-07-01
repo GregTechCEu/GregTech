@@ -1,4 +1,4 @@
-package gregtech.integration.forestry.frames;
+package gregtech.integration.forestry.recipes;
 
 import forestry.api.recipes.RecipeManagers;
 import forestry.apiculture.ModuleApiculture;

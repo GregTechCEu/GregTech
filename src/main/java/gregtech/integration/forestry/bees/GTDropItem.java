@@ -38,6 +38,7 @@ public class GTDropItem extends Item implements IColoredItem, IItemModelRegister
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void registerModel(@Nonnull Item item, @Nonnull IModelManager manager) {
         manager.registerItemModel(item, 0);
@@ -66,9 +67,5 @@ public class GTDropItem extends Item implements IColoredItem, IItemModelRegister
     public int getColorFromItemstack(@Nonnull ItemStack stack, int i) {
         GTDropType type = GTDropType.getDrop(stack.getItemDamage());
         return type.color[i == 0 ? 0 : 1];
-    }
-
-    public ItemStack get(GTDropType type) {
-        return new ItemStack(this, 1, type.ordinal());
     }
 }

@@ -1,4 +1,4 @@
-package gregtech.integration.forestry.electrodes;
+package gregtech.integration.forestry.recipes;
 
 import forestry.api.recipes.RecipeManagers;
 import forestry.core.ModuleCore;

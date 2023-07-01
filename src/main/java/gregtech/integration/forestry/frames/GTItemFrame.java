@@ -56,6 +56,7 @@ public class GTItemFrame extends Item implements IHiveFrame, IItemModelRegister 
         return this.type;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void registerModel(@Nonnull Item item, @Nonnull IModelManager manager) {
         manager.registerItemModel(item, 0, GTValues.MODID_FR, "gt.frame_" + type.getName().toLowerCase());

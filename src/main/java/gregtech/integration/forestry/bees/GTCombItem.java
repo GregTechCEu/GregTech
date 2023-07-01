@@ -29,6 +29,7 @@ public class GTCombItem extends Item implements IColoredItem, IItemModelRegister
         setTranslationKey("gt.comb");
     }
 
+    @SuppressWarnings("deprecation")
     @SideOnly(Side.CLIENT)
     @Override
     public void registerModel(@Nonnull Item item, IModelManager manager) {
@@ -65,9 +66,5 @@ public class GTCombItem extends Item implements IColoredItem, IItemModelRegister
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         ItemTooltipUtil.addInformation(stack, worldIn, tooltip, flagIn);
-    }
-
-    public ItemStack get(GTCombType type, int amount) {
-        return new ItemStack(this, 1, type.ordinal());
     }
 }

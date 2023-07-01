@@ -17,12 +17,13 @@ import gregtech.integration.forestry.bees.GTAlleleBeeSpecies;
 import gregtech.integration.forestry.bees.GTBeeDefinition;
 import gregtech.integration.forestry.bees.GTCombItem;
 import gregtech.integration.forestry.bees.GTDropItem;
-import gregtech.integration.forestry.electrodes.ElectrodeRecipes;
-import gregtech.integration.forestry.frames.FrameRecipes;
+import gregtech.integration.forestry.recipes.CombRecipes;
+import gregtech.integration.forestry.recipes.ElectrodeRecipes;
+import gregtech.integration.forestry.recipes.FrameRecipes;
 import gregtech.integration.forestry.frames.GTFrameType;
 import gregtech.integration.forestry.frames.GTItemFrame;
 import gregtech.integration.forestry.tools.ScoopBehavior;
-import gregtech.integration.forestry.tools.ToolRecipes;
+import gregtech.integration.forestry.recipes.ToolRecipes;
 import gregtech.modules.GregTechModules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
@@ -31,6 +32,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -157,6 +159,14 @@ public class ForestryModule extends IntegrationSubmodule {
         }
     }
 
+    @Override
+    public void postInit(FMLPostInitializationEvent event) {
+        if (ForestryUtil.apicultureEnabled()) {
+            getLogger().info("Copying Forestry Centrifuge recipes to GT Centrifuge");
+            CombRecipes.initForestryCombs();
+        }
+    }
+
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -244,6 +254,11 @@ public class ForestryModule extends IntegrationSubmodule {
         // GT Scoop
         if (ForestryConfig.enableGTScoop) {
             ToolRecipes.registerHandlers();
+        }
+
+        // GT Combs
+        if (ForestryConfig.enableGTBees) {
+            CombRecipes.initGTCombs();
         }
     }
 

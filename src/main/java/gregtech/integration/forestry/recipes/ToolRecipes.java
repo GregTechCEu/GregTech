@@ -1,4 +1,4 @@
-package gregtech.integration.forestry.tools;
+package gregtech.integration.forestry.recipes;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
