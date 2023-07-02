@@ -2480,6 +2480,7 @@ tile.metal_casing.titanium_stable.name=堅牢なチタン製マシン外装
 tile.metal_casing.tungstensteel_robust.name=強化タングステンスチール製マシン外装
 tile.metal_casing.ptfe_inert.name=PTFE製耐薬品マシン外装
 tile.metal_casing.hsse_sturdy.name=頑丈なHSS-E製マシン外装
+tile.metal_casing.palladium_substation.name=パラジウム製変電所用外装
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULVマシン外装
@@ -2540,6 +2541,18 @@ tile.transparent_casing.tempered_glass.name=強化ガラス
 tile.transparent_casing.fusion_glass.name=核融合炉ガラス
 tile.transparent_casing.laminated_glass.name=合わせガラス
 tile.transparent_casing.cleanroom_glass.name=クリーンルーム用ガラス
+
+# Battery blocks
+tile.battery_block.empty_tier_i.name=蓄電ブロック Tier I (空)
+tile.battery_block.lapotronic_ev.name=ラポトロニック蓄電ブロック (EV)
+tile.battery_block.lapotronic_iv.name=ラポトロニック蓄電ブロック (IV)
+tile.battery_block.empty_tier_ii.name=蓄電ブロック Tier II (空)
+tile.battery_block.lapotronic_luv.name=ラポトロニック蓄電ブロック (LuV)
+tile.battery_block.lapotronic_zpm.name=ラポトロニック蓄電ブロック (ZPM)
+tile.battery_block.empty_tier_iii.name=蓄電ブロック Tier III (空)
+tile.battery_block.lapotronic_uv.name=ラポトロニック蓄電ブロック (UV)
+tile.battery_block.ultimate_uhv.name=アルティメット蓄電ブロック (UHV)
+tile.battery_block.tooltip_empty=変電所の空間を埋めるために
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -3939,13 +3952,13 @@ gregtech.battery_buffer.average_output=出力平均: %s EU/t
 
 # Transformers
 gregtech.machine.transformer.description=異なる電圧間でエネルギーを輸送する
+gregtech.machine.transformer.higher_amp.description=異なる電圧間でエネルギーを輸送する。 複数のアンペアに対応!
 gregtech.machine.transformer.tooltip_tool_usage=ソフトマレットで反転。最初は§f降圧§7します。
 gregtech.machine.transformer.tooltip_transform_down=§a降圧: §f%dA %dEU (%s§f) -> %dA %dEU (%s§f)
 gregtech.machine.transformer.message_transform_down=降圧: In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer.tooltip_transform_up=§c昇圧: §f%dA %dEU §f(%s§f) -> %dA %dEU (%s§f)
 gregtech.machine.transformer.message_transform_up=昇圧: In: %dEU %dA, Out: %dEU %dA
-gregtech.machine.transformer_adjustable.description=異なる電圧間でエネルギーを輸送する。複数アンペアに対応!
-gregtech.machine.transformer_adjustable.tooltip_tool_usage=スクリュードライバーで電流値を変更。最初は§f4アンペア§7です。
+gregtech.machine.transformer_adjustable.tooltip_tool_usage=スクリュードライバーで電流値を変更。最初は§f%dアンペア§7です。
 gregtech.machine.transformer_adjustable.message_adjust=%dEU %dAを%dEU %dAに変圧
 
 gregtech.machine.transformer.ulv.name=ULV変圧器
@@ -3963,20 +3976,35 @@ gregtech.machine.transformer.uiv.name=UIV変圧器
 gregtech.machine.transformer.uxv.name=UXV変圧器
 gregtech.machine.transformer.opv.name=OpV変圧器
 
-gregtech.machine.transformer.adjustable.ulv.name=UVV可変変圧器
-gregtech.machine.transformer.adjustable.lv.name=LV可変変圧器
-gregtech.machine.transformer.adjustable.mv.name=MV可変変圧器
-gregtech.machine.transformer.adjustable.hv.name=HV可変変圧器
-gregtech.machine.transformer.adjustable.ev.name=EV可変変圧器
-gregtech.machine.transformer.adjustable.iv.name=IV可変変圧器
-gregtech.machine.transformer.adjustable.luv.name=LuV可変変圧器
-gregtech.machine.transformer.adjustable.zpm.name=ZPM可変変圧器
-gregtech.machine.transformer.adjustable.uv.name=UV可変変圧器
-gregtech.machine.transformer.adjustable.uhv.name=UHV可変変圧器
-gregtech.machine.transformer.adjustable.uev.name=UEV可変変圧器
-gregtech.machine.transformer.adjustable.uiv.name=UIV可変変圧器
-gregtech.machine.transformer.adjustable.uxv.name=UXV可変変圧器
-gregtech.machine.transformer.adjustable.opv.name=OpV可変変圧器
+gregtech.machine.transformer.hi_amp.ulv.name=4アンペア対応ULV変圧器
+gregtech.machine.transformer.hi_amp.lv.name=4アンペア対応LV変圧器
+gregtech.machine.transformer.hi_amp.mv.name=4アンペア対応MV変圧器
+gregtech.machine.transformer.hi_amp.hv.name=4アンペア対応HV変圧器
+gregtech.machine.transformer.hi_amp.ev.name=4アンペア対応EV変圧器
+gregtech.machine.transformer.hi_amp.iv.name=4アンペア対応IV変圧器
+gregtech.machine.transformer.hi_amp.luv.name=4アンペア対応LuV変圧器
+gregtech.machine.transformer.hi_amp.zpm.name=4アンペア対応ZPM変圧器
+gregtech.machine.transformer.hi_amp.uv.name=4アンペア対応UV変圧器
+gregtech.machine.transformer.hi_amp.uhv.name=4アンペア対応UHV4変圧器
+gregtech.machine.transformer.hi_amp.uev.name=4アンペア対応UEV変圧器
+gregtech.machine.transformer.hi_amp.uiv.name=4アンペア対応UIV変圧器
+gregtech.machine.transformer.hi_amp.uxv.name=4アンペア対応UXV変圧器
+gregtech.machine.transformer.hi_amp.opv.name=4アンペア対応OpV変圧器
+
+gregtech.machine.transformer.adjustable.ulv.name=16アンペア対応UVV変圧器
+gregtech.machine.transformer.adjustable.lv.name=16アンペア対応LV変圧器
+gregtech.machine.transformer.adjustable.mv.name=16アンペア対応MV変圧器
+gregtech.machine.transformer.adjustable.hv.name=16アンペア対応HV変圧器
+gregtech.machine.transformer.adjustable.ev.name=16アンペア対応EV変圧器
+gregtech.machine.transformer.adjustable.iv.name=16アンペア対応IV変圧器
+gregtech.machine.transformer.adjustable.luv.name=16アンペア対応LuV変圧器
+gregtech.machine.transformer.adjustable.zpm.name=16アンペア対応ZPM変圧器
+gregtech.machine.transformer.adjustable.uv.name=16アンペア対応UV変圧器
+gregtech.machine.transformer.adjustable.uhv.name=16アンペア対応UHV変圧器
+gregtech.machine.transformer.adjustable.uev.name=16アンペア対応UEV変圧器
+gregtech.machine.transformer.adjustable.uiv.name=16アンペア対応UIV変圧器
+gregtech.machine.transformer.adjustable.uxv.name=16アンペア対応UXV変圧器
+gregtech.machine.transformer.adjustable.opv.name=16アンペア対応OpV変圧器
 
 # Diodes
 gregtech.machine.diode.message=通す最大アンペア数: %s
@@ -4574,6 +4602,14 @@ gregtech.machine.data_bank.tooltip.2=大容量データストレージ。光フ�
 gregtech.machine.data_bank.tooltip.3=データバンクは連結可能
 gregtech.machine.data_bank.tooltip.4=データハッチ1つにつき%sEU/t、連結時%sEU/t消費する。
 
+gregtech.machine.power_substation.name=変電所
+gregtech.machine.power_substation.tooltip1=中央集権型送電網の心臓部
+gregtech.machine.power_substation.tooltip2=§f蓄電ブロック§7のTierを揃える必要はない。
+gregtech.machine.power_substation.tooltip3=§f蓄電ブロック§7は§%d層§7まで増築できる。
+gregtech.machine.power_substation.tooltip4=§f24時間毎に§7最大蓄電量の§f1%%§7を損失する。
+gregtech.machine.power_substation.tooltip5=蓄電ブロック当たり§f%,d EU/t§7の受動損失。
+gregtech.multiblock.power_substation.description=
+
 gregtech.machine.central_monitor.name=セントラルモニター
 gregtech.multiblock.central_monitor.low_power=電力不足
 gregtech.multiblock.central_monitor.height=スクリーンの高さ:
@@ -4737,6 +4773,14 @@ gregtech.machine.energy_hatch.input_16a.zpm.name=ZPM 16Aエネルギーハッチ
 gregtech.machine.energy_hatch.input_16a.uv.name=UV 16Aエネルギーハッチ
 gregtech.machine.energy_hatch.input_16a.uhv.name=UHV 16Aエネルギーハッチ
 
+gregtech.machine.substation_hatch.input.tooltip=変電所へのエネルギー入力
+
+gregtech.machine.substation_hatch.input_64a.iv.name=IV 64A変電所用ハッチ
+gregtech.machine.substation_hatch.input_64a.luv.name=LuV 64A変電所用ハッチ
+gregtech.machine.substation_hatch.input_64a.zpm.name=ZPM 64A変電所用ハッチ
+gregtech.machine.substation_hatch.input_64a.uv.name=UV 64A変電所用ハッチ
+gregtech.machine.substation_hatch.input_64a.uhv.name=UHV 64A変電所用ハッチ
+
 gregtech.machine.energy_hatch.output.tooltip=マルチブロックからのエネルギー出力
 
 gregtech.machine.energy_hatch.output.ulv.name=ULV ダイナモハッチ
@@ -4769,6 +4813,14 @@ gregtech.machine.energy_hatch.output_16a.luv.name=LuV 16A ダイナモハッチ
 gregtech.machine.energy_hatch.output_16a.zpm.name=ZPM 16A ダイナモハッチ
 gregtech.machine.energy_hatch.output_16a.uv.name=UV 16A ダイナモハッチ
 gregtech.machine.energy_hatch.output_16a.uhv.name=UHV 16A ダイナモハッチ
+
+gregtech.machine.substation_hatch.output.tooltip=変電所からのエネルギー出力
+
+gregtech.machine.substation_hatch.output_64a.iv.name=IV 64A変電所用ダイナモハッチ
+gregtech.machine.substation_hatch.output_64a.luv.name=LuV 64A変電所用ダイナモハッチ
+gregtech.machine.substation_hatch.output_64a.zpm.name=ZPM 64A変電所用ダイナモハッチ
+gregtech.machine.substation_hatch.output_64a.uv.name=UV 64A変電所用ダイナモハッチ
+gregtech.machine.substation_hatch.output_64a.uhv.name=UHV 64A変電所用ダイナモハッチ
 
 gregtech.machine.rotor_holder.tooltip1=マルチブロックのローターホルダー
 gregtech.machine.rotor_holder.tooltip2=ローターが飛び散らないように所定の位置に固定する
@@ -4858,7 +4910,7 @@ gregtech.universal.tooltip.amperage_out=§e出力電流: §f%,dA
 gregtech.universal.tooltip.amperage_out_till=§e最大出力電流: §f%,dA
 gregtech.universal.tooltip.amperage_in_out=§e入出力電流: §f%,dA
 gregtech.universal.tooltip.amperage_in_out_till=§e最大入出力電流: §f%,dA
-gregtech.universal.tooltip.energy_storage_capacity=§c蓄電量: §r%,d EU
+gregtech.universal.tooltip.energy_storage_capacity=§c蓄電量: §f%,d EU
 gregtech.universal.tooltip.energy_tier_range=§a許容電圧: §f%s §f- %s
 gregtech.universal.tooltip.item_storage_capacity=§6アイテムスロット数: §f%,d
 gregtech.universal.tooltip.item_storage_total=§6アイテム容量: §f%,d アイテム
@@ -5046,6 +5098,7 @@ gregtech.multiblock.multiple_recipemaps.header=マシンモード:
 gregtech.multiblock.multiple_recipemaps.tooltip=スクリュードライバーでコントローラーを右クリックすると使う機械を変更できる。
 gregtech.multiblock.multiple_recipemaps_recipes.tooltip=マシンモード: §e%s§r
 gregtech.multiblock.multiple_recipemaps.switch_message=モード変更時は機械をオフにしてください!
+gregtech.multiblock.energy_stored=蓄電量: %s EU / %s EU
 
 gregtech.multiblock.preview.zoom=マウスホイールまたは右クリック+ドラッグでズーム
 gregtech.multiblock.preview.rotate=左クリックとドラッグで回転
@@ -5062,6 +5115,7 @@ gregtech.multiblock.pattern.error.limited.1=§c最少: %d§r
 gregtech.multiblock.pattern.error.limited.2=§c最多: %d/層§r
 gregtech.multiblock.pattern.error.limited.3=§c最少: %d/層§r
 gregtech.multiblock.pattern.error.coils=§cコイルは全て同じものでなければならない。§r
+gregtech.multiblock.pattern.error.batteries=§c最低1つの空ではない蓄電ブロックが必要§r
 gregtech.multiblock.pattern.error.filters=§cフィルターは全て同じものでなければならない。§r
 gregtech.multiblock.pattern.clear_amount_1=§6正面に1x1x1の空間が必須§r
 gregtech.multiblock.pattern.clear_amount_3=§6正面に3x3x1の空間が必須§r
@@ -5116,6 +5170,20 @@ gregtech.multiblock.pyrolyse_oven.speed=処理速度: %s%%
 gregtech.multiblock.cracking_unit.energy=エネルギー使用量: %s%%
 
 gregtech.multiblock.energy_consumption=エネルギー使用量: %s EU/t
+
+gregtech.multiblock.power_substation.stored=蓄電量: %s EU
+gregtech.multiblock.power_substation.capacity=最大蓄電量: %s EU
+gregtech.multiblock.power_substation.passive_drain=損失量: %s EU/t
+gregtech.multiblock.power_substation.average_io=平均入出力: %s EU/t
+gregtech.multiblock.power_substation.average_io_hover=変電所の平均エネルギー変化量
+gregtech.multiblock.power_substation.time_to_fill=満タンまで: %s
+gregtech.multiblock.power_substation.time_to_drain=枯渇まで: %s
+gregtech.multiblock.power_substation.time_seconds=%s 秒
+gregtech.multiblock.power_substation.time_minutes=%s 分
+gregtech.multiblock.power_substation.time_hours=%s 時間
+gregtech.multiblock.power_substation.time_days=%s 日
+gregtech.multiblock.power_substation.time_years=%s 年
+gregtech.multiblock.power_substation.time_forever=永遠
 
 gregtech.command.usage=使い方: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=使い方: /gregtech worldgen <reload>
