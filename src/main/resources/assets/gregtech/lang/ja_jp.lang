@@ -5085,7 +5085,7 @@ gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=液体
 gregtech.multiblock.large_combustion_engine.obstructed=エンジンの吸気口が塞がれている。
 
 gregtech.multiblock.turbine.fuel_amount=燃料残量: %sL (%s)
-gregtech.multiblock.turbine.fuel_needed=%s %sが%s tick必要!
+gregtech.multiblock.turbine.fuel_needed=%sの%sを%s tickで毎に消費します!
 gregtech.multiblock.turbine.rotor_speed=ローター速度: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=ローター耐久値: %s%%
 gregtech.multiblock.turbine.efficiency=タービン効率: %s%%
