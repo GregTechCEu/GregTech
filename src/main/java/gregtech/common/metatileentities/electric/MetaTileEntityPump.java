@@ -10,6 +10,7 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
@@ -48,6 +49,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.PUMP_HEAD_LEVEL;
 
@@ -134,25 +136,28 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        // Builder builder = ModularUI.defaultBuilder();
-        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + 64, 166);
-        builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
+        WidgetGroup tankDisplay = new WidgetGroup();
+        tankDisplay.addWidget(new ImageWidget(7, 16, 81, 55, GuiTextures.DISPLAY));
+        tankDisplay.addWidget(new FluidContainerSlotWidget(importItems, 0, 90, 16, false)
+                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY));
+        tankDisplay.addWidget(new ImageWidget(91, 36, 14, 14, GuiTextures.TANK_ICON));
+        tankDisplay.addWidget(new SlotWidget(exportItems, 0, 90, 53, true, false)
+                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY));
+
         TankWidget tankWidget = new TankWidget(exportFluids.getTankAt(0), 69, 52, 18, 18)
                 .setHideTooltip(true).setAlwaysShowFull(true);
-        builder.widget(tankWidget);
-        WidgetGroup filterWidget = new WidgetGroup(new Position(108, 6));
+        tankDisplay.addWidget(tankWidget);
+        tankDisplay.addWidget(new LabelWidget(6, 6, getMetaFullName()));
+        tankDisplay.addWidget(new LabelWidget(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF));
+        tankDisplay.addWidget(new DynamicLabelWidget(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF));
+        tankDisplay.addWidget(new DynamicLabelWidget(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF));
+
+        WidgetGroup filterWidget = new WidgetGroup(new Position(102, 6));
         fluidFilter.initUI(0, filterWidget::addWidget);
-        builder.label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF);
-        builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
-        builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
-        return builder.label(6, 6, getMetaFullName())
-                .widget(new FluidContainerSlotWidget(importItems, 0, 90, 17, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
-                .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
-                .widget(new SlotWidget(exportItems, 0, 90, 54, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176 + 94, 166)
+                .widget(tankDisplay)
                 .widget(filterWidget)
-                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 32, 166 - 82)
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 47, 166 - 82)
                 .build(getHolder(), entityPlayer);
     }
 
