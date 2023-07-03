@@ -29,14 +29,8 @@ public abstract class JetpackBehavior implements IArmorBehavior {
     /** How much Fuel (or Energy) to use per tick while flying. Can be modified by stats in {@link IJetpackStats}. */
     protected abstract int getFuelPerUse();
 
-    /** Check for if this Jetpack has at least the specified amount of Fuel (or Energy). */
-    protected abstract boolean hasEnoughFuel(@NotNull ItemStack stack, int amount);
-
     /** Drain the specified amount of Fuel (or Energy) from this Jetpack. */
-    protected abstract void drainFuel(@NotNull ItemStack stack, int amount);
-
-    /** Check for if this Jetpack has any Fuel (or Energy). */
-    protected abstract boolean hasFuel(@NotNull ItemStack stack);
+    protected abstract boolean drainFuel(@NotNull ItemStack stack, int amount, boolean simulate);
 
     @Override
     public Set<KeyBind> getListenedKeys() {
@@ -75,38 +69,35 @@ public abstract class JetpackBehavior implements IArmorBehavior {
         boolean flyKeyDown = KeyBind.VANILLA_JUMP.isKeyDown(player);
         boolean descendKeyDown = KeyBind.VANILLA_SNEAK.isKeyDown(player);
 
-        if (!player.isInWater() && !player.isInLava() && hasEnoughFuel(stack, getFuelPerUse())) {
-            if (flyKeyDown || hover && !player.onGround) {
-                drainFuel(stack, (int) (player.isSprinting() ? Math.round(getFuelPerUse() * jetpackStats.getSprintEnergyModifier()) : getFuelPerUse()));
+        if (flyKeyDown || hover && !player.onGround) {
+            if (!player.isInWater() && !player.isInLava() && drainFuel(stack, getFuelPerUse(), true)) {
+                drainFuel(stack, (int) (player.isSprinting() ? Math.round(getFuelPerUse() * jetpackStats.getSprintEnergyModifier()) : getFuelPerUse()), false);
 
-                if (hasFuel(stack)) {
-                    if (flyKeyDown) {
-                        if (!hover) {
-                            player.motionY = Math.min(player.motionY + currentAccel, currentSpeedVertical);
-                        } else {
-                            if (descendKeyDown) player.motionY = Math.min(player.motionY + currentAccel, jetpackStats.getVerticalHoverSlowSpeed());
-                            else player.motionY = Math.min(player.motionY + currentAccel, jetpackStats.getVerticalHoverSpeed());
-                        }
-                    } else if (descendKeyDown) {
-                        player.motionY = Math.min(player.motionY + currentAccel, -jetpackStats.getVerticalHoverSpeed());
+                if (flyKeyDown) {
+                    if (!hover) {
+                        player.motionY = Math.min(player.motionY + currentAccel, currentSpeedVertical);
                     } else {
-                        player.motionY = Math.min(player.motionY + currentAccel, -jetpackStats.getVerticalHoverSlowSpeed());
+                        if (descendKeyDown) player.motionY = Math.min(player.motionY + currentAccel, jetpackStats.getVerticalHoverSlowSpeed());
+                        else player.motionY = Math.min(player.motionY + currentAccel, jetpackStats.getVerticalHoverSpeed());
                     }
-                    float speedSideways = (float) (player.isSneaking() ? jetpackStats.getSidewaysSpeed() * 0.5f : jetpackStats.getSidewaysSpeed());
-                    float speedForward = (float) (player.isSprinting() ? speedSideways * jetpackStats.getSprintSpeedModifier() : speedSideways);
+                } else if (descendKeyDown) {
+                    player.motionY = Math.min(player.motionY + currentAccel, -jetpackStats.getVerticalHoverSpeed());
+                } else {
+                    player.motionY = Math.min(player.motionY + currentAccel, -jetpackStats.getVerticalHoverSlowSpeed());
+                }
+                float speedSideways = (float) (player.isSneaking() ? jetpackStats.getSidewaysSpeed() * 0.5f : jetpackStats.getSidewaysSpeed());
+                float speedForward = (float) (player.isSprinting() ? speedSideways * jetpackStats.getSprintSpeedModifier() : speedSideways);
 
-                    if (KeyBind.VANILLA_FORWARD.isKeyDown(player))
-                        player.moveRelative(0, 0, speedForward, speedForward);
-                    if (KeyBind.VANILLA_BACKWARD.isKeyDown(player))
-                        player.moveRelative(0, 0, -speedSideways, speedSideways * 0.8f);
-                    if (KeyBind.VANILLA_LEFT.isKeyDown(player))
-                        player.moveRelative(speedSideways, 0, 0, speedSideways);
-                    if (KeyBind.VANILLA_RIGHT.isKeyDown(player))
-                        player.moveRelative(-speedSideways, 0, 0, speedSideways);
-                    if (!player.getEntityWorld().isRemote) {
-                        player.fallDistance = 0;
-                    }
-
+                if (KeyBind.VANILLA_FORWARD.isKeyDown(player))
+                    player.moveRelative(0, 0, speedForward, speedForward);
+                if (KeyBind.VANILLA_BACKWARD.isKeyDown(player))
+                    player.moveRelative(0, 0, -speedSideways, speedSideways * 0.8f);
+                if (KeyBind.VANILLA_LEFT.isKeyDown(player))
+                    player.moveRelative(speedSideways, 0, 0, speedSideways);
+                if (KeyBind.VANILLA_RIGHT.isKeyDown(player))
+                    player.moveRelative(-speedSideways, 0, 0, speedSideways);
+                if (!player.getEntityWorld().isRemote) {
+                    player.fallDistance = 0;
                 }
                 spawnParticle(player.getEntityWorld(), player, jetpackStats.getParticle());
             }

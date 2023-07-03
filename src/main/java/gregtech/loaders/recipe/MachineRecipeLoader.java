@@ -23,6 +23,7 @@ import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.StoneVariantBlock.StoneVariant;
+import gregtech.common.items.ArmorItems;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
@@ -1397,11 +1398,15 @@ public class MachineRecipeLoader {
                 ORE_DICTIONARY_FILTER.getStackForm(), ORE_DICTIONARY_FILTER);
 
         // Jetpacks
+        //Jetpacks
+        ModHandler.addShapelessRecipe("fueled_jetpack_nbt", ArmorItems.FUELED_JETPACK.getStack(), ArmorItems.FUELED_JETPACK.getStack());
+
         ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(),
                 SEMIFLUID_JETPACK.getStackForm());
 
         // ClipBoard
         ModHandler.addShapelessNBTClearingRecipe("clipboard_nbt", CLIPBOARD.getStackForm(), CLIPBOARD.getStackForm());
+
     }
 
     private static void ConvertHatchToHatch() {

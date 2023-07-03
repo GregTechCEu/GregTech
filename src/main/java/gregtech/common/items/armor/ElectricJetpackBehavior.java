@@ -22,23 +22,12 @@ public class ElectricJetpackBehavior extends JetpackBehavior {
     }
 
     @Override
-    protected boolean hasEnoughFuel(@NotNull ItemStack stack, int amount) {
-        IElectricItem electricItem = getElectricItem(stack);
-        return electricItem != null && electricItem.canUse(amount);
-    }
-
-    @Override
-    protected void drainFuel(@NotNull ItemStack stack, int amount) {
+    protected boolean drainFuel(@NotNull ItemStack stack, int amount, boolean simulate) {
         IElectricItem electricItem = getElectricItem(stack);
         if (electricItem != null) {
-            electricItem.discharge(amount, Integer.MAX_VALUE, true, false, false);
+            return electricItem.discharge(amount, Integer.MAX_VALUE, true, false, simulate) >= amount;
         }
-    }
-
-    @Override
-    protected boolean hasFuel(@NotNull ItemStack stack) {
-        IElectricItem electricItem = getElectricItem(stack);
-        return electricItem != null && electricItem.getCharge() > 0;
+        return false;
     }
 
     private static IElectricItem getElectricItem(@NotNull ItemStack stack) {

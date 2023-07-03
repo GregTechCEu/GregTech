@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Deprecated
-public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDProvider {
+public class PowerlessJetpack {
 
     public static final int tankCapacity = 16000;
 
@@ -61,66 +61,25 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
             HUD = new ArmorUtils.ModularHUD();
     }
 
-    @Override
     public void onArmorTick(World world, EntityPlayer player, @NotNull ItemStack stack) {
-        IFluidHandlerItem internalTank = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
-                null);
+        IFluidHandlerItem internalTank = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (internalTank == null)
             return;
 
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
-        byte toggleTimer = 0;
-        boolean hover = false;
 
         if (data.hasKey("burnTimer")) burnTimer = data.getShort("burnTimer");
-        if (data.hasKey("toggleTimer")) toggleTimer = data.getByte("toggleTimer");
-        if (data.hasKey("hover")) hover = data.getBoolean("hover");
-
-        if (toggleTimer == 0 && KeyBind.ARMOR_HOVER.isKeyDown(player)) {
-            hover = !hover;
-            toggleTimer = 5;
-            data.setBoolean("hover", hover);
-            if (!world.isRemote) {
-                if (hover)
-                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.hover.enable"), true);
-                else
-                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.hover.disable"), true);
-            }
-        }
 
         // This causes a caching issue. currentRecipe is only set to null in findNewRecipe, so the fuel is never updated
         // Rewrite in Armor Rework
         if (currentRecipe == null)
             findNewRecipe(stack);
 
-        performFlying(player, hover, stack);
 
-        if (toggleTimer > 0)
-            toggleTimer--;
-
-        data.setBoolean("hover", hover);
         data.setShort("burnTimer", (short) burnTimer);
-        data.setByte("toggleTimer", toggleTimer);
-        player.inventoryContainer.detectAndSendChanges();
-    }
-
-    @Override
-    public EntityEquipmentSlot getEquipmentSlot(ItemStack itemStack) {
-        return EntityEquipmentSlot.CHEST;
-    }
-
-    @Override
-    public void addToolComponents(@NotNull ArmorMetaValueItem mvi) {
-        mvi.addComponents(new Behaviour(tankCapacity));
-    }
-
-    @Override
-    public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-        return "gregtech:textures/armor/liquid_fuel_jetpack.png";
     }
 
     @SideOnly(Side.CLIENT)
-    @Override
     public void drawHUD(@NotNull ItemStack item) {
         IFluidHandlerItem tank = item.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (tank != null) {
@@ -148,12 +107,6 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         this.HUD.reset();
     }
 
-    @Override
-    public int getEnergyPerUse() {
-        return 1;
-    }
-
-    @Override
     public boolean canUseEnergy(ItemStack stack, int amount) {
         FluidStack fuel = getFuel();
         if (fuel == null) {
@@ -171,7 +124,6 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         return fluidStack.amount >= fuel.amount;
     }
 
-    @Override
     public void drainEnergy(ItemStack stack, int amount) {
         if (this.burnTimer == 0) {
             FluidStack fuel = getFuel();
@@ -182,7 +134,6 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         this.burnTimer--;
     }
 
-    @Override
     public boolean hasEnergy(ItemStack stack) {
         return burnTimer > 0 || currentRecipe != null;
     }
@@ -226,37 +177,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         return null;
     }
 
-    public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand) {
-        if (player.getHeldItem(hand).getItem() instanceof ArmorMetaItem) {
-            ItemStack armor = player.getHeldItem(hand);
-            if (armor.getItem() instanceof ArmorMetaItem && player.inventory.armorInventory
-                    .get(getEquipmentSlot(player.getHeldItem(hand)).getIndex()).isEmpty() && !player.isSneaking()) {
-                player.inventory.armorInventory.set(getEquipmentSlot(player.getHeldItem(hand)).getIndex(),
-                        armor.copy());
-                player.setHeldItem(hand, ItemStack.EMPTY);
-                player.playSound(new SoundEvent(new ResourceLocation("item.armor.equip_generic")), 1.0F, 1.0F);
-                return ActionResult.newResult(EnumActionResult.SUCCESS, armor);
-            }
-        }
-
-        return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
-    }
-
-    @Override
-    public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor,
-                                                       @NotNull DamageSource source, double damage,
-                                                       EntityEquipmentSlot equipmentSlot) {
-        int damageLimit = (int) Math.min(Integer.MAX_VALUE, burnTimer * 1.0 / 32 * 25.0);
-        if (source.isUnblockable()) return new ISpecialArmor.ArmorProperties(0, 0.0, 0);
-        return new ISpecialArmor.ArmorProperties(0, 0, damageLimit);
-    }
-
-    @Override
-    public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
-        return 0;
-    }
-
-    public class Behaviour implements IItemDurabilityManager, IItemCapabilityProvider, IItemBehaviour, ISubItemHandler {
+    public class Behaviour {
 
         private static final IFilter<FluidStack> JETPACK_FUEL_FILTER = new IFilter<>() {
 
@@ -280,10 +201,8 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
             this.durabilityBarColors = GradientUtil.getGradient(0xB7AF08, 10);
         }
 
-        @Override
         public double getDurabilityForDisplay(@NotNull ItemStack itemStack) {
-            IFluidHandlerItem fluidHandlerItem = itemStack
-                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem fluidHandlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem == null) return 0;
             IFluidTankProperties fluidTankProperties = fluidHandlerItem.getTankProperties()[0];
             FluidStack fluidStack = fluidTankProperties.getContents();
@@ -291,40 +210,10 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         }
 
         @Nullable
-        @Override
         public Pair<Color, Color> getDurabilityColorsForDisplay(ItemStack itemStack) {
             return durabilityBarColors;
         }
 
-        @Override
-        public ICapabilityProvider createProvider(ItemStack itemStack) {
-            return new GTFluidHandlerItemStack(itemStack, maxCapacity)
-                    .setFilter(JETPACK_FUEL_FILTER);
-        }
-
-        @Override
-        public void addInformation(ItemStack itemStack, List<String> lines) {
-            IItemBehaviour.super.addInformation(itemStack, lines);
-            NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
-            String status = I18n.format("metaarmor.hud.status.disabled");
-            if (data.hasKey("hover")) {
-                if (data.getBoolean("hover"))
-                    status = I18n.format("metaarmor.hud.status.enabled");
-            }
-            lines.add(I18n.format("metaarmor.hud.hover_mode", status));
-        }
-
-        @Override
-        public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-            return onRightClick(world, player, hand);
-        }
-
-        @Override
-        public String getItemSubType(ItemStack itemStack) {
-            return "";
-        }
-
-        @Override
         public void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
             ItemStack copy = itemStack.copy();
             IFluidHandlerItem fluidHandlerItem = copy

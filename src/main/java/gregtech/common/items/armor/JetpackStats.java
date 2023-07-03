@@ -6,11 +6,11 @@ import org.jetbrains.annotations.Nullable;
 
 public enum JetpackStats implements IJetpackStats {
 
-    SEMI_FLUID_FUELED          (1.0f, 1.0f, 0.18f, 0.14f , 0.1f , 0.22f, 0.0f , 0.0f, EnumParticleTypes.SMOKE_LARGE),
-    ELECTRIC                   (1.0f, 1.0f, 0.18f, 0.1f  , 0.12f, 0.3f , 0.08f, 0.0f, EnumParticleTypes.SMOKE_NORMAL),
-    ADVANCED_ELECTRIC          (2.5f, 1.3f, 0.34f, 0.03f , 0.13f, 0.48f, 0.14f, 2.0f, EnumParticleTypes.CLOUD),
-    ADVANCED_NANO_CHESTPLATE   (4.0f, 1.8f, 0.4f , 0.005f, 0.14f, 0.8f , 0.19f, 3.5f, null),
-    ADVANCED_QUANTUM_CHESTPLATE(6.0f, 2.4f, 0.45f, 0.0f  , 0.15f, 0.9f , 0.21f, 8.0f, null);
+    FUELED   (1.0f, 1.0f, 0.18f, 0.14f , 0.1f , 0.22f, 0.0f , 0.0f, EnumParticleTypes.SMOKE_LARGE),
+    ELECTRIC (1.0f, 1.0f, 0.18f, 0.1f  , 0.12f, 0.3f , 0.08f, 0.0f, EnumParticleTypes.SMOKE_NORMAL),
+    ADVANCED (2.5f, 1.3f, 0.34f, 0.03f , 0.13f, 0.48f, 0.14f, 2.0f, EnumParticleTypes.CLOUD),
+    NANO     (4.0f, 1.8f, 0.4f , 0.005f, 0.14f, 0.8f , 0.19f, 3.5f, null),
+    QUANTUM  (6.0f, 2.4f, 0.45f, 0.0f  , 0.15f, 0.9f , 0.21f, 8.0f, null);
 
     private final float sprintEnergyMod;
     private final float sprintSpeedMod;
