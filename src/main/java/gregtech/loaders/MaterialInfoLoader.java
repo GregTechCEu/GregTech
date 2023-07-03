@@ -2,14 +2,12 @@ package gregtech.loaders;
 
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.ConfigHolder;
-import gregtech.common.blocks.BlockCleanroomCasing;
-import gregtech.common.blocks.BlockGlassCasing;
-import gregtech.common.blocks.BlockMetalCasing;
+import gregtech.common.blocks.*;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
-import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.loaders.recipe.WoodRecipeLoader;
 import net.minecraft.init.Blocks;
@@ -175,6 +173,13 @@ public class MaterialInfoLoader {
         ));
 
         OreDictUnifier.registerOre(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.PRIMITIVE_BRICKS), new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M * 4)));
+
+        OreDictUnifier.registerOre(MetaBlocks.BATTERY_BLOCK.getItemVariant(BlockBatteryPart.BatteryPartType.EMPTY_TIER_I), new ItemMaterialInfo(
+                new MaterialStack(Materials.Ultimet, M * 2 + M * 6 + (M / 9 * 24)))); // frame + 6 plates + 24 screws
+        OreDictUnifier.registerOre(MetaBlocks.BATTERY_BLOCK.getItemVariant(BlockBatteryPart.BatteryPartType.EMPTY_TIER_II), new ItemMaterialInfo(
+                new MaterialStack(Materials.Ruridit, M * 2 + M * 6 + (M / 9 * 24)))); // frame + 6 plates + 24 screws
+        OreDictUnifier.registerOre(MetaBlocks.BATTERY_BLOCK.getItemVariant(BlockBatteryPart.BatteryPartType.EMPTY_TIER_III), new ItemMaterialInfo(
+                new MaterialStack(Materials.Neutronium, M * 2 + M * 6 + (M / 9 * 24)))); // frame + 6 plates + 24 screws
 
         if (ConfigHolder.recipes.hardIronRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.IRON_DOOR, 1), new ItemMaterialInfo(

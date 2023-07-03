@@ -133,6 +133,11 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
+    public SoundEvent getBreakdownSound() {
+        return GTSoundEvents.BREAKDOWN_MECHANICAL;
+    }
+
+    @Override
     public SoundEvent getSound() {
         return GTSoundEvents.ARC;
     }

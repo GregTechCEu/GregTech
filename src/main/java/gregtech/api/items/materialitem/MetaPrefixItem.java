@@ -12,6 +12,7 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
+import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
@@ -35,18 +36,20 @@ import java.util.Objects;
 
 public class MetaPrefixItem extends StandardMetaItem {
 
+    private final MaterialRegistry registry;
     private final OrePrefix prefix;
 
-public MetaPrefixItem(@Nonnull OrePrefix orePrefix) {
+    public MetaPrefixItem(@Nonnull MaterialRegistry registry, @Nonnull OrePrefix orePrefix) {
         super();
+        this.registry = registry;
         this.prefix = orePrefix;
         this.setCreativeTab(GregTechAPI.TAB_GREGTECH_MATERIALS);
     }
 
     @Override
     public void registerSubItems() {
-        for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            short i = (short) GregTechAPI.MATERIAL_REGISTRY.getIDForObject(material);
+        for (Material material : registry) {
+            short i = (short) registry.getIDForObject(material);
             if (prefix != null && canGenerate(prefix, material)) {
                 addItem(i, new UnificationEntry(prefix, material).toString());
             }
@@ -174,7 +177,7 @@ public MetaPrefixItem(@Nonnull OrePrefix orePrefix) {
      */
     @Nullable
     public Material getMaterial(@Nonnull ItemStack stack) {
-        return GregTechAPI.MATERIAL_REGISTRY.getObjectById(stack.getMetadata());
+        return registry.getObjectById(stack.getMetadata());
     }
 
     /**
@@ -184,7 +187,7 @@ public MetaPrefixItem(@Nonnull OrePrefix orePrefix) {
      */
     @Nonnull
     protected Material getMaterial(int metadata) {
-        return Objects.requireNonNull(GregTechAPI.MATERIAL_REGISTRY.getObjectById(metadata));
+        return Objects.requireNonNull(registry.getObjectById(metadata));
     }
 
     /**

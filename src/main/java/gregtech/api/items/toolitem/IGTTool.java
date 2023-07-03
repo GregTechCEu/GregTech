@@ -32,6 +32,7 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
@@ -146,7 +147,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         stackCompound.setInteger(HIDE_FLAGS, 2);
 
         // Set Material
-        toolTag.setString(MATERIAL_KEY, material.toString());
+        toolTag.setString(MATERIAL_KEY, material.getRegistryName());
 
         // Grab the definition here because we cannot use getMaxAoEDefinition as it is not initialized yet
         AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
@@ -222,7 +223,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default Material getToolMaterial(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
         String string = toolTag.getString(MATERIAL_KEY);
-        Material material = GregTechAPI.MaterialRegistry.get(string);
+        Material material = GregTechAPI.materialManager.getMaterial(string);
         if (material == null) {
             toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).toString());
         }
@@ -668,22 +669,22 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (!tagCompound.getBoolean(UNBREAKABLE_KEY)) {
             int damageRemaining = tool.getTotalMaxDurability(stack) - stack.getItemDamage();
             if (toolStats.isSuitableForCrafting(stack)) {
-                tooltip.add(I18n.format("item.gt.tool.tooltip.crafting_uses", GTUtility.formatNumbers(damageRemaining / Math.max(1, toolStats.getToolDamagePerCraft(stack)))));
+                tooltip.add(I18n.format("item.gt.tool.tooltip.crafting_uses", TextFormattingUtil.formatNumbers(damageRemaining / Math.max(1, toolStats.getToolDamagePerCraft(stack)))));
             }
 
             // Plus 1 to match vanilla behavior where tools can still be used once at zero durability
-            tooltip.add(I18n.format("item.gt.tool.tooltip.general_uses", GTUtility.formatNumbers(damageRemaining)));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.general_uses", TextFormattingUtil.formatNumbers(damageRemaining)));
         }
 
         // attack info
         if (toolStats.isSuitableForAttacking(stack)) {
-            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_damage", GTUtility.formatNumbers(2 + tool.getTotalAttackDamage(stack))));
-            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_speed", GTUtility.formatNumbers(4 + tool.getTotalAttackSpeed(stack))));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_damage", TextFormattingUtil.formatNumbers(2 + tool.getTotalAttackDamage(stack))));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_speed", TextFormattingUtil.formatNumbers(4 + tool.getTotalAttackSpeed(stack))));
         }
 
         // mining info
         if (toolStats.isSuitableForBlockBreak(stack)) {
-            tooltip.add(I18n.format("item.gt.tool.tooltip.mining_speed", GTUtility.formatNumbers(tool.getTotalToolSpeed(stack))));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.mining_speed", TextFormattingUtil.formatNumbers(tool.getTotalToolSpeed(stack))));
 
             int harvestLevel = tool.getTotalHarvestLevel(stack);
             String harvestName = "item.gt.tool.harvest_level." + harvestLevel;

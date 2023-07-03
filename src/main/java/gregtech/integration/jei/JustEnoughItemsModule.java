@@ -183,7 +183,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_TUNGSTENSTEEL_BOILER.getStackForm(), semiFluidMapId);
 
         List<OreByProduct> oreByproductList = new CopyOnWriteArrayList<>();
-        for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
+        for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
             if (material.hasProperty(PropertyKey.ORE)) {
                 oreByproductList.add(new OreByProduct(material));
             }
@@ -204,7 +204,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         //Material Tree
         List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
-        for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
+        for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
             if (material.hasProperty(PropertyKey.DUST)) {
                 materialTreeList.add(new MaterialTree(material));
             }

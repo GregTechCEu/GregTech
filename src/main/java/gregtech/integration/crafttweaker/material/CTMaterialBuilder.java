@@ -12,6 +12,7 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTUtility;
 import net.minecraft.enchantment.Enchantment;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -32,7 +33,7 @@ public class CTMaterialBuilder {
 
     @ZenConstructor
     public CTMaterialBuilder(int id, String name) {
-        this.backingBuilder = new Material.Builder(id, name);
+        this.backingBuilder = new Material.Builder(id, GTUtility.gregtechId(name));
     }
 
     @ZenConstructor

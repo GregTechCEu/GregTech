@@ -51,6 +51,10 @@ public class GTSoundEvents {
     public static SoundEvent PORTAL_OPENING;
     public static SoundEvent PORTAL_CLOSING;
 
+    // Maintenance Sounds
+    public static SoundEvent BREAKDOWN_ELECTRICAL;
+    public static SoundEvent BREAKDOWN_MECHANICAL;
+
     public static void register() {
         FORGE_HAMMER = soundManager.registerSound("tick.forge_hammer");
         MACERATOR = soundManager.registerSound("tick.macerator");
@@ -90,5 +94,8 @@ public class GTSoundEvents {
         SUS_RECORD = soundManager.registerSound("record.sus");
         PORTAL_OPENING = soundManager.registerSound("entity.portal_opening");
         PORTAL_CLOSING = soundManager.registerSound("entity.portal_closing");
+
+        BREAKDOWN_ELECTRICAL = soundManager.registerSound("maintenance.electrical");
+        BREAKDOWN_MECHANICAL = soundManager.registerSound("maintenance.mechanical");
     }
 }

@@ -12,6 +12,7 @@ import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.material.info.MaterialIconSet.*;
+import static gregtech.api.util.GTUtility.gregtechId;
 
 public class SecondDegreeMaterials {
 
@@ -22,104 +23,102 @@ public class SecondDegreeMaterials {
         // but had to be left as-is when moved to
         // avoid voiding items in worlds.
 
-        Almandine = new Material.Builder(250, "almandine")
+        Almandine = new Material.Builder(250, gregtechId("almandine"))
                 .gem(1).ore()
                 .color(0xFF0000)
                 .components(Alumina, 5, Iron, 3, SiliconDioxide, 3, Oxygen, 3)
                 .build()
                 .setFormula("(Al2O3)Fe3(SiO2)3O3", true);
 
-        Asbestos = new Material.Builder(253, "asbestos")
+        Asbestos = new Material.Builder(253, gregtechId("asbestos"))
                 .dust(1).ore()
                 .color(0xE6E6E6)
                 .flags(DISABLE_DECOMPOSITION, PURIFY_BY_SIFTING)
                 .components(Magnesium, 3, SiliconDioxide, 2, Water, 2, Oxygen, 3)
                 .build();
 
-        BlueTopaz = new Material.Builder(257, "blue_topaz")
+        BlueTopaz = new Material.Builder(257, gregtechId("blue_topaz"))
                 .gem(3).ore()
                 .color(0x7B96DC).iconSet(GEM_HORIZONTAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING)
                 .components(Alumina, 5, Silicon, 1, Fluorine, 2, Water, 1)
                 .build().setFormula("(Al2O3)(SiO2)F2(H2O)", true);
 
-        Emerald = new Material.Builder(278, "emerald")
+        Emerald = new Material.Builder(278, gregtechId("emerald"))
                 .gem().ore()
                 .color(0x50FF50).iconSet(EMERALD)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_LENS)
                 .components(Alumina, 1, Beryllium, 3, SiliconDioxide, 6, Oxygen, 3)
                 .build();
 
-        Grossular = new Material.Builder(282, "grossular")
+        Grossular = new Material.Builder(282, gregtechId("grossular"))
                 .gem(1).ore()
                 .color(0xC86400).iconSet(RUBY)
                 .components(Alumina, 5, Calcium, 3, SiliconDioxide, 3, Oxygen, 3)
                 .build().setFormula("(Al2O3)Ca3(SiO2)3O3", true);
 
-        Pyrope = new Material.Builder(308, "pyrope")
+        Pyrope = new Material.Builder(308, gregtechId("pyrope"))
                 .gem().ore()
                 .color(0x783264).iconSet(RUBY)
                 .components(Alumina, 5, Magnesium, 3, SiliconDioxide, 3, Oxygen, 3)
                 .build().setFormula("(Al2O3)Mg3(SiO2)3O3", true);
 
-        Ruby = new Material.Builder(311, "ruby")
+        Ruby = new Material.Builder(311, gregtechId("ruby"))
                 .gem().ore()
                 .color(0xFF6464).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, GENERATE_LENS, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Alumina, 5, Chromium, 1)
                 .build().setFormula("(Al2O3)Cr", true);
 
-        Spessartine = new Material.Builder(321, "spessartine")
+        Spessartine = new Material.Builder(321, gregtechId("spessartine"))
                 .gem().ore()
                 .color(0xFF6464).iconSet(RUBY)
                 .components(Alumina, 5, Manganese, 3, SiliconDioxide, 3, Oxygen, 3)
                 .build().setFormula("(Al2O3)Mn3(SiO2)3O3", true);
 
-        Topaz = new Material.Builder(329, "topaz")
+        Topaz = new Material.Builder(329, gregtechId("topaz"))
                 .gem(3).ore()
                 .color(0xFF8000).iconSet(GEM_HORIZONTAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING)
                 .components(Alumina, 5, Fluorine, 1, SiliconDioxide, 1, Water, 1)
                 .build().setFormula("(Al2O3)F(SiO2)(H2O)", true);
 
-        Spodumene = new Material.Builder(381, "spodumene")
+        Spodumene = new Material.Builder(381, gregtechId("spodumene"))
                 .dust().ore()
                 .color(0xBEAAAA)
                 .components(Alumina, 5, Lithium, 2, SiliconDioxide, 4, Oxygen, 1)
                 .build().setFormula("(Al2O3)Li2(SiO2)4O", true);
 
-        Lepidolite = new Material.Builder(382, "lepidolite")
+        Lepidolite = new Material.Builder(382, gregtechId("lepidolite"))
                 .dust().ore()
                 .color(0xF0328C).iconSet(FINE)
                 .components(Alumina, 2, Potassium, 1, Lithium, 3, Fluorine, 2, Oxygen, 6)
                 .build();
 
-        Talc = new Material.Builder(392, "talc")
+        Talc = new Material.Builder(392, gregtechId("talc"))
                 .dust().ore()
                 .color(0x5AB45A).iconSet(FINE)
                 .components(Magnesium, 3, SiliconDioxide, 4, Water, 1, Oxygen, 3)
                 .build();
 
-        Soapstone = new Material.Builder(393, "soapstone")
+        Soapstone = new Material.Builder(393, gregtechId("soapstone"))
                 .dust(1).ore()
                 .color(0x5F915F)
                 .components(Magnesium, 3, SiliconDioxide, 4, Water, 1, Oxygen, 3)
                 .build();
 
-        Kyanite = new Material.Builder(394, "kyanite")
+        Kyanite = new Material.Builder(394, gregtechId("kyanite"))
                 .dust().ore()
                 .color(0x6E6EFA).iconSet(FLINT)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Alumina, 1, SiliconDioxide, 1)
                 .build();
 
-
         ////////////////////////////
         // Start of new Materials //
         ////////////////////////////
 
-
-        Glass = new Material.Builder(2000, "glass")
+        Glass = new Material.Builder(2000, gregtechId("glass"))
                 .gem(0).fluid()
                 .color(0xFAFAFA).iconSet(GLASS)
                 .flags(GENERATE_LENS, NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
@@ -129,41 +128,41 @@ public class SecondDegreeMaterials {
 
         // FREE ID 2001
 
-        Borax = new Material.Builder(2002, "borax")
+        Borax = new Material.Builder(2002, gregtechId("borax"))
                 .dust(1)
                 .color(0xFAFAFA).iconSet(FINE)
                 .components(Sodium, 2, Boron, 4, Water, 10, Oxygen, 7)
                 .build();
 
-        SaltWater = new Material.Builder(2003, "salt_water")
+        SaltWater = new Material.Builder(2003, gregtechId("salt_water"))
                 .fluid()
                 .color(0x0000C8)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Salt, 1, Water, 1)
                 .build();
 
-        Olivine = new Material.Builder(2004, "olivine")
+        Olivine = new Material.Builder(2004, gregtechId("olivine"))
                 .gem().ore()
                 .color(0x96FF96).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING)
                 .components(Magnesium, 2, Iron, 1, SiliconDioxide, 2)
                 .build();
 
-        Opal = new Material.Builder(2005, "opal")
+        Opal = new Material.Builder(2005, gregtechId("opal"))
                 .gem().ore()
                 .color(0x0000FF).iconSet(OPAL)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
                 .build();
 
-        Amethyst = new Material.Builder(2006, "amethyst")
+        Amethyst = new Material.Builder(2006, gregtechId("amethyst"))
                 .gem(3).ore()
                 .color(0xD232D2).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 4, Iron, 1)
                 .build();
 
-        Lapis = new Material.Builder(2007, "lapis")
+        Lapis = new Material.Builder(2007, gregtechId("lapis"))
                 .gem(1).ore(5)
                 .color(0x4646DC).iconSet(LAPIS)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, NO_WORKING, DECOMPOSITION_BY_ELECTROLYZING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
@@ -171,7 +170,7 @@ public class SecondDegreeMaterials {
                 .components(Lazurite, 12, Sodalite, 2, Pyrite, 1, Calcite, 1)
                 .build();
 
-        Blaze = new Material.Builder(2008, "blaze")
+        Blaze = new Material.Builder(2008, gregtechId("blaze"))
                 .dust(1).fluid()
                 .color(0xFFC800, false).iconSet(FINE)
                 .flags(NO_SMELTING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING) //todo burning flag
@@ -183,7 +182,7 @@ public class SecondDegreeMaterials {
 		
 		// ID 2010 RESERVED: Apatite
 
-        BlackSteel = new Material.Builder(2011, "black_steel")
+        BlackSteel = new Material.Builder(2011, gregtechId("black_steel"))
                 .ingot().fluid()
                 .color(0x646464).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
@@ -192,7 +191,7 @@ public class SecondDegreeMaterials {
                 .blastTemp(1200, GasTier.LOW)
                 .build();
 
-        DamascusSteel = new Material.Builder(2012, "damascus_steel")
+        DamascusSteel = new Material.Builder(2012, gregtechId("damascus_steel"))
                 .ingot(3).fluid()
                 .color(0x6E6E6E).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_GEAR)
@@ -204,7 +203,7 @@ public class SecondDegreeMaterials {
                 .blastTemp(1500, GasTier.LOW)
                 .build();
 
-        TungstenSteel = new Material.Builder(2013, "tungsten_steel")
+        TungstenSteel = new Material.Builder(2013, gregtechId("tungsten_steel"))
                 .ingot(4).fluid()
                 .color(0x6464A0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME,
@@ -218,7 +217,7 @@ public class SecondDegreeMaterials {
                 .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1000)
                 .build();
 
-        CobaltBrass = new Material.Builder(2014, "cobalt_brass")
+        CobaltBrass = new Material.Builder(2014, gregtechId("cobalt_brass"))
                 .ingot().fluid()
                 .color(0xB4B4A0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
@@ -233,7 +232,7 @@ public class SecondDegreeMaterials {
         //ID 2015 RESERVED: Tricalcium Phosphate
 
 		// TODO REMOVE
-        GarnetRed = new Material.Builder(2016, "garnet_red")
+        GarnetRed = new Material.Builder(2016, gregtechId("garnet_red"))
                 .gem().ore()
                 .color(0xC85050).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
@@ -241,28 +240,28 @@ public class SecondDegreeMaterials {
                 .build();
 
         // TODO REMOVE
-        GarnetYellow = new Material.Builder(2017, "garnet_yellow")
+        GarnetYellow = new Material.Builder(2017, gregtechId("garnet_yellow"))
                 .gem().ore()
                 .color(0xC8C850).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Andradite, 5, Grossular, 8, Uvarovite, 3)
                 .build();
 
-        Marble = new Material.Builder(2018, "marble")
+        Marble = new Material.Builder(2018, gregtechId("marble"))
                 .dust()
                 .color(0xC8C8C8).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Magnesium, 1, Calcite, 7)
                 .build();
 
-        GraniteBlack = new Material.Builder(2019, "granite_black")
+        GraniteBlack = new Material.Builder(2019, gregtechId("granite_black"))
                 .dust()
                 .color(0x0A0A0A).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 4, Biotite, 1)
                 .build();
 
-        GraniteRed = new Material.Builder(2020, "granite_red")
+        GraniteRed = new Material.Builder(2020, gregtechId("granite_red"))
                 .dust()
                 .color(0xFF0080).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
@@ -272,21 +271,21 @@ public class SecondDegreeMaterials {
 
         // Free ID 2021
 
-        VanadiumMagnetite = new Material.Builder(2022, "vanadium_magnetite")
+        VanadiumMagnetite = new Material.Builder(2022, gregtechId("vanadium_magnetite"))
                 .dust().ore()
                 .color(0x23233C).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING, MAGNETIC_ORE)
                 .components(Magnetite, 1, Vanadium, 1)
                 .build();
 
-        QuartzSand = new Material.Builder(2023, "quartz_sand")
+        QuartzSand = new Material.Builder(2023, gregtechId("quartz_sand"))
                 .dust(1)
                 .color(0xC8C8C8).iconSet(SAND)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(CertusQuartz, 1, Quartzite, 1)
                 .build();
 
-        Pollucite = new Material.Builder(2024, "pollucite")
+        Pollucite = new Material.Builder(2024, gregtechId("pollucite"))
                 .dust().ore()
                 .color(0xF0D2D2)
                 .components(Alumina, 1, Caesium, 2, SiliconDioxide, 4, Water, 2, Oxygen, 1)
@@ -298,21 +297,21 @@ public class SecondDegreeMaterials {
 
         // ID 2027 RESERVED: FullersEarth
 
-        Pitchblende = new Material.Builder(2028, "pitchblende")
+        Pitchblende = new Material.Builder(2028, gregtechId("pitchblende"))
                 .dust(3).ore(true)
                 .color(0xC8D200)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Uraninite, 3, Thorianite, 1, Lead, 1)
                 .build();
 
-        Monazite = new Material.Builder(2029, "monazite")
+        Monazite = new Material.Builder(2029, gregtechId("monazite"))
                 .gem(1).ore(2, true)
                 .color(0x324632).iconSet(DIAMOND)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
                 .components(RareEarth, 1, Phosphorus, 1, Oxygen, 4)
                 .build();
 
-        Mirabilite = new Material.Builder(2030, "mirabilite")
+        Mirabilite = new Material.Builder(2030, gregtechId("mirabilite"))
                 .dust()
                 .color(0xF0FAD2)
                 .components(Sodium, 2, Sulfur, 1, Water, 10, Oxygen, 4)
@@ -320,20 +319,20 @@ public class SecondDegreeMaterials {
 
         // FREE ID 2031
 
-        Gypsum = new Material.Builder(2032, "gypsum")
+        Gypsum = new Material.Builder(2032, gregtechId("gypsum"))
                 .dust(1).ore()
                 .color(0xE6E6FA)
                 .components(Calcium, 1, Sulfur, 1, Oxygen, 4, Water, 2)
                 .build();
 
-        Zeolite = new Material.Builder(2033, "zeolite")
+        Zeolite = new Material.Builder(2033, gregtechId("zeolite"))
                 .dust().ore()
                 .color(0xF0E6E6)
                 .flags(PURIFY_BY_SIFTING)
                 .components(Alumina, 1, Sodium, 2, SiliconDioxide, 3, Water, 2, Oxygen, 1)
                 .build();
 
-        Concrete = new Material.Builder(2034, "concrete")
+        Concrete = new Material.Builder(2034, gregtechId("concrete"))
                 .dust().fluid()
                 .color(0x646464).iconSet(ROUGH)
                 .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
@@ -341,7 +340,7 @@ public class SecondDegreeMaterials {
                 .fluidTemp(286)
                 .build();
 
-        SteelMagnetic = new Material.Builder(2035, "steel_magnetic")
+        SteelMagnetic = new Material.Builder(2035, gregtechId("steel_magnetic"))
                 .ingot()
                 .color(0x808080).iconSet(MAGNETIC)
                 .flags(GENERATE_ROD, IS_MAGNETIC)
@@ -352,7 +351,7 @@ public class SecondDegreeMaterials {
                 .build();
         Steel.getProperty(PropertyKey.INGOT).setMagneticMaterial(SteelMagnetic);
 
-        VanadiumSteel = new Material.Builder(2036, "vanadium_steel")
+        VanadiumSteel = new Material.Builder(2036, gregtechId("vanadium_steel"))
                 .ingot(3).fluid()
                 .color(0xc0c0c0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
@@ -365,7 +364,7 @@ public class SecondDegreeMaterials {
                 .fluidTemp(2073)
                 .build();
 
-        Potin = new Material.Builder(2037, "potin")
+        Potin = new Material.Builder(2037, gregtechId("potin"))
                 .ingot().fluid()
                 .color(0xc99781).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
@@ -374,7 +373,7 @@ public class SecondDegreeMaterials {
                 .fluidTemp(1084)
                 .build();
 
-        BorosilicateGlass = new Material.Builder(2038, "borosilicate_glass")
+        BorosilicateGlass = new Material.Builder(2038, gregtechId("borosilicate_glass"))
                 .ingot(1).fluid()
                 .color(0xE6F3E6).iconSet(SHINY)
                 .flags(GENERATE_FINE_WIRE, GENERATE_PLATE)
@@ -382,7 +381,7 @@ public class SecondDegreeMaterials {
                 .fluidTemp(1921)
                 .build();
 
-        Andesite = new Material.Builder(2039, "andesite")
+        Andesite = new Material.Builder(2039, gregtechId("andesite"))
                 .dust()
                 .color(0xBEBEBE).iconSet(ROUGH)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
@@ -393,7 +392,7 @@ public class SecondDegreeMaterials {
 
         // FREE ID 2041
 
-        NaquadahAlloy = new Material.Builder(2042, "naquadah_alloy")
+        NaquadahAlloy = new Material.Builder(2042, gregtechId("naquadah_alloy"))
                 .ingot(5).fluid()
                 .color(0x282828).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_RING, GENERATE_ROTOR, GENERATE_SMALL_GEAR,
@@ -412,28 +411,28 @@ public class SecondDegreeMaterials {
 
         //FREE ID 2045
 
-        NitrationMixture = new Material.Builder(2046, "nitration_mixture")
+        NitrationMixture = new Material.Builder(2046, gregtechId("nitration_mixture"))
                 .fluid(FluidTypes.ACID)
                 .color(0xE6E2AB)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitricAcid, 1, SulfuricAcid, 1)
                 .build();
 
-        DilutedSulfuricAcid = new Material.Builder(2047, "diluted_sulfuric_acid")
+        DilutedSulfuricAcid = new Material.Builder(2047, gregtechId("diluted_sulfuric_acid"))
                 .fluid(FluidTypes.ACID)
                 .color(0xC07820)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(SulfuricAcid, 1, Water, 1)
                 .build();
 
-        DilutedHydrochloricAcid = new Material.Builder(2048, "diluted_hydrochloric_acid")
+        DilutedHydrochloricAcid = new Material.Builder(2048, gregtechId("diluted_hydrochloric_acid"))
                 .fluid(FluidTypes.ACID)
                 .color(0x99A7A3)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(HydrochloricAcid, 1, Water, 1)
                 .build();
 
-        Flint = new Material.Builder(2049, "flint")
+        Flint = new Material.Builder(2049, gregtechId("flint"))
                 .gem(1)
                 .color(0x002040).iconSet(FLINT)
                 .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
@@ -443,28 +442,28 @@ public class SecondDegreeMaterials {
                         .enchantment(Enchantments.FIRE_ASPECT, 2).build())
                 .build();
 
-        Air = new Material.Builder(2050, "air")
+        Air = new Material.Builder(2050, gregtechId("air"))
                 .fluid(FluidTypes.GAS)
                 .color(0xA9D0F5)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Nitrogen, 78, Oxygen, 21, Argon, 9)
                 .build();
 
-        LiquidAir = new Material.Builder(2051, "liquid_air")
+        LiquidAir = new Material.Builder(2051, gregtechId("liquid_air"))
                 .fluid()
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Nitrogen, 70, Oxygen, 22, CarbonDioxide, 5, Helium, 2, Argon, 1, Ice, 1)
                 .fluidTemp(79)
                 .build();
 
-        NetherAir = new Material.Builder(2052, "nether_air")
+        NetherAir = new Material.Builder(2052, gregtechId("nether_air"))
                 .fluid(FluidTypes.GAS)
                 .color(0x4C3434)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(CarbonMonoxide, 78, HydrogenSulfide, 21, Neon, 9)
                 .build();
 
-        LiquidNetherAir = new Material.Builder(2053, "liquid_nether_air")
+        LiquidNetherAir = new Material.Builder(2053, gregtechId("liquid_nether_air"))
                 .fluid()
                 .color(0x4C3434)
                 .flags(DISABLE_DECOMPOSITION)
@@ -472,14 +471,14 @@ public class SecondDegreeMaterials {
                 .fluidTemp(58)
                 .build();
 
-        EnderAir = new Material.Builder(2054, "ender_air")
+        EnderAir = new Material.Builder(2054, gregtechId("ender_air"))
                 .fluid(FluidTypes.GAS)
                 .color(0x283454)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitrogenDioxide, 78, Deuterium, 21, Xenon, 9)
                 .build();
 
-        LiquidEnderAir = new Material.Builder(2055, "liquid_ender_air")
+        LiquidEnderAir = new Material.Builder(2055, gregtechId("liquid_ender_air"))
                 .fluid()
                 .color(0x283454)
                 .flags(DISABLE_DECOMPOSITION)
@@ -487,49 +486,49 @@ public class SecondDegreeMaterials {
                 .fluidTemp(36)
                 .build();
 
-        AquaRegia = new Material.Builder(2056, "aqua_regia")
+        AquaRegia = new Material.Builder(2056, gregtechId("aqua_regia"))
                 .fluid(FluidTypes.ACID)
                 .color(0xFFB132)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitricAcid, 1, HydrochloricAcid, 2)
                 .build();
 
-        PlatinumSludgeResidue = new Material.Builder(2057, "platinum_sludge_residue")
+        PlatinumSludgeResidue = new Material.Builder(2057, gregtechId("platinum_sludge_residue"))
                 .dust()
                 .color(0x827951)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 2, Gold, 3)
                 .build();
 
-        PalladiumRaw = new Material.Builder(2058, "palladium_raw")
+        PalladiumRaw = new Material.Builder(2058, gregtechId("palladium_raw"))
                 .dust()
                 .color(Palladium.getMaterialRGB()).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Palladium, 1, Ammonia, 1)
                 .build();
 
-        RarestMetalMixture = new Material.Builder(2059, "rarest_metal_mixture")
+        RarestMetalMixture = new Material.Builder(2059, gregtechId("rarest_metal_mixture"))
                 .dust()
                 .color(0x832E11).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Iridium, 1, Osmium, 1, Oxygen, 4, Water, 1)
                 .build();
 
-        AmmoniumChloride = new Material.Builder(2060, "ammonium_chloride")
+        AmmoniumChloride = new Material.Builder(2060, gregtechId("ammonium_chloride"))
                 .dust()
                 .color(0x9711A6)
                 .components(Ammonia, 1, HydrochloricAcid, 1)
                 .build()
                 .setFormula("NH4Cl", true);
 
-        AcidicOsmiumSolution = new Material.Builder(2061, "acidic_osmium_solution")
+        AcidicOsmiumSolution = new Material.Builder(2061, gregtechId("acidic_osmium_solution"))
                 .fluid(FluidTypes.ACID)
                 .color(0xA3AA8A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Osmium, 1, Oxygen, 4, Water, 1, HydrochloricAcid, 1)
                 .build();
 
-        Rhodallium = new Material.Builder(2062, "rhodallium")
+        Rhodallium = new Material.Builder(2062, gregtechId("rhodallium"))
                 .ingot().fluid()
                 .color(0xDAC5C5).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR, GENERATE_DOUBLE_PLATE)
@@ -538,14 +537,14 @@ public class SecondDegreeMaterials {
                 .blastTemp(4500, GasTier.HIGH, VA[IV], 1200)
                 .build();
 
-        Clay = new Material.Builder(2063, "clay")
+        Clay = new Material.Builder(2063, gregtechId("clay"))
                 .dust(1)
                 .color(0xC8C8DC).iconSet(ROUGH)
                 .flags(MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Sodium, 2, Lithium, 1, Aluminium, 2, Silicon, 2, Water, 6)
                 .build();
 
-        Redstone = new Material.Builder(2064, "redstone")
+        Redstone = new Material.Builder(2064, gregtechId("redstone"))
                 .dust().ore(4, true).fluid()
                 .color(0xC80000).iconSet(ROUGH)
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
@@ -554,14 +553,14 @@ public class SecondDegreeMaterials {
                 .fluidTemp(500)
                 .build();
 
-        Bentonite = new Material.Builder(2026, "bentonite")
+        Bentonite = new Material.Builder(2026, gregtechId("bentonite"))
                 .dust().ore()
                 .color(0xF5D7D2).iconSet(ROUGH)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SodiumHydroxide, 1, Clay, 13)
                 .build();
 
-        FullersEarth = new Material.Builder(2027, "fullers_earth")
+        FullersEarth = new Material.Builder(2027, gregtechId("fullers_earth"))
                 .dust().ore()
                 .color(0xA0A078).iconSet(FINE)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)

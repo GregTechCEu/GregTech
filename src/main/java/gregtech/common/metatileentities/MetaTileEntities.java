@@ -51,8 +51,9 @@ public class MetaTileEntities {
 
     //HULLS
     public static final MetaTileEntityHull[] HULL = new MetaTileEntityHull[GTValues.V.length];
-    public static final MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; // no ULV, no MAX
-    public static final MetaTileEntityAdjustableTransformer[] ADJUSTABLE_TRANSFORMER = new MetaTileEntityAdjustableTransformer[GTValues.V.length - 1]; // no ULV, no MAX
+    public static final MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; // no MAX
+    public static final MetaTileEntityTransformer[] HI_AMP_TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; /// no MAX
+    public static final MetaTileEntityTransformer[] POWER_TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; // no MAX
     public static final MetaTileEntityDiode[] DIODES = new MetaTileEntityDiode[GTValues.V.length];
     public static final MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[3][GTValues.V.length];
     public static final MetaTileEntityCharger[] CHARGER = new MetaTileEntityCharger[GTValues.V.length];
@@ -116,6 +117,8 @@ public class MetaTileEntities {
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_4A = new MetaTileEntityEnergyHatch[6]; // EV, IV, LuV, ZPM, UV, UHV
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_16A = new MetaTileEntityEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
+    public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_INPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
+    public static final MetaTileEntitySubstationEnergyHatch[] SUBSTATION_ENERGY_OUTPUT_HATCH = new MetaTileEntitySubstationEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[6]; //HV, EV, IV, LuV, ZPM, UV
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV]; // LV-UV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
@@ -206,6 +209,7 @@ public class MetaTileEntities {
     public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
     public static MetaTileEntityFlotationCell FLOTATION_CELL;
     public static MetaTileEntityDataBank DATA_BANK;
+    public static MetaTileEntityPowerSubstation POWER_SUBSTATION;
 
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
@@ -530,6 +534,8 @@ public class MetaTileEntities {
 
         DATA_BANK = registerMetaTileEntity(1038, new MetaTileEntityDataBank(gregtechId("data_bank")));
 
+        POWER_SUBSTATION = registerMetaTileEntity(1041, new MetaTileEntityPowerSubstation(gregtechId("power_substation")));
+
         // MISC MTE's START: IDs 1150-2000
 
         // Import/Export Buses/Hatches, IDs 1150-1209
@@ -564,6 +570,8 @@ public class MetaTileEntities {
                 ENERGY_INPUT_HATCH_16A[i - GTValues.IV]  = registerMetaTileEntity(1245 + i - GTValues.IV, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_16a." + voltageName), i, 16, false));
                 ENERGY_OUTPUT_HATCH_4A[i + 1 - GTValues.IV]  = registerMetaTileEntity(1250 + i - GTValues.IV, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a." + voltageName), i, 4, true));
                 ENERGY_OUTPUT_HATCH_16A[i - GTValues.IV] = registerMetaTileEntity(1255 + i - GTValues.IV, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_16a." + voltageName), i, 16, true));
+                SUBSTATION_ENERGY_INPUT_HATCH[i - GTValues.IV] = registerMetaTileEntity(1260 + i - GTValues.IV, new MetaTileEntitySubstationEnergyHatch(gregtechId("substation_hatch.input_64a." + voltageName), i, 64, false));
+                SUBSTATION_ENERGY_OUTPUT_HATCH[i - GTValues.IV] = registerMetaTileEntity(1265 + i - GTValues.IV, new MetaTileEntitySubstationEnergyHatch(gregtechId("substation_hatch.output_64a." + voltageName), i, 64, true));
             }
         }
         ENERGY_INPUT_HATCH_4A[0] = registerMetaTileEntity(1399, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a.ev"), GTValues.EV, 4, false));
@@ -573,10 +581,15 @@ public class MetaTileEntities {
         // Transformer, IDs 1270-1299
         endPos = GregTechAPI.isHighTier() ? TRANSFORMER.length - 1 : Math.min(TRANSFORMER.length - 1, GTValues.UV);
         for (int i = 0; i <= endPos; i++) {
+            // 1A <-> 4A
             MetaTileEntityTransformer transformer = new MetaTileEntityTransformer(gregtechId("transformer." + GTValues.VN[i].toLowerCase()), i);
             TRANSFORMER[i] = registerMetaTileEntity(1270 + (i), transformer);
-            MetaTileEntityAdjustableTransformer adjustableTransformer = new MetaTileEntityAdjustableTransformer(gregtechId("transformer.adjustable." + GTValues.VN[i].toLowerCase()), i);
-            ADJUSTABLE_TRANSFORMER[i] = registerMetaTileEntity(1285 + (i), adjustableTransformer);
+            // 2A <-> 8A and 4A <-> 16A
+            MetaTileEntityTransformer adjustableTransformer = new MetaTileEntityTransformer(gregtechId("transformer.hi_amp." + GTValues.VN[i].toLowerCase()), i, 2, 4);
+            HI_AMP_TRANSFORMER[i] = registerMetaTileEntity(1730 + i, adjustableTransformer);
+            // 16A <-> 64A (can do other amperages because of legacy compat)
+            adjustableTransformer = new MetaTileEntityTransformer(gregtechId("transformer.adjustable." + GTValues.VN[i].toLowerCase()), i, 1, 2, 4, 16);
+            POWER_TRANSFORMER[i] = registerMetaTileEntity(1285 + (i), adjustableTransformer);
         }
 
         // Diode, IDs 1300-1314
@@ -622,7 +635,7 @@ public class MetaTileEntities {
         MACHINE_HATCH = registerMetaTileEntity(1398, new MetaTileEntityMachineHatch(gregtechId("machine_hatch"), 5));
 
         // 1399 and 1400 are taken by the EV 4A hatches, and are grouped near the other registration rather than here
-        // 1401 is taken by the Cleanroom Maintenance hatches, and is grouped with the maintenance hatch registrtation rather than here
+        // 1401 is taken by the Cleanroom Maintenance hatches, and is grouped with the maintenance hatch registration rather than here
 
         PASSTHROUGH_HATCH_ITEM = registerMetaTileEntity(1402, new MetaTileEntityPassthroughHatchItem(gregtechId("passthrough_hatch_item"), 3));
         PASSTHROUGH_HATCH_FLUID = registerMetaTileEntity(1403, new MetaTileEntityPassthroughHatchFluid(gregtechId("passthrough_hatch_fluid"), 3));
@@ -766,6 +779,8 @@ public class MetaTileEntities {
                 ENERGY_CONVERTER[j][i] = registerMetaTileEntity(1670 + j + i * 4, converter);
             }
         }
+
+        // IDs 1730-1744 are taken by 4A <-> 16A Transformers. They are grouped with other transformers for organization.
 
         /*
          * FOR ADDON DEVELOPERS:
