@@ -26,7 +26,7 @@ public class ArmorItems {
 
     public static ItemGTElectricArmor NIGHTVISION_GOGGLES;
 
-    public static ItemGTArmor SEMI_FLUID_JETPACK;
+    public static ItemGTArmor FUELED_JETPACK;
     public static ItemGTElectricArmor ELECTRIC_JETPACK;
     public static ItemGTElectricArmor ADVANCED_ELECTRIC_JETPACK;
 
@@ -51,6 +51,7 @@ public class ArmorItems {
     // TODO ArmorProperties values not set here (and their original code was already deleted):
     // Electric Jetpack: 0, 0, 0
     // Advanced Electric Jetpack: 0, 0, 0
+    // Fueled Jetpack: 0, 0, 0
 
     public static void init() {
         // todo get rid of this config... "stuff"
@@ -59,6 +60,9 @@ public class ArmorItems {
                 .electricCost(2)
                 .behaviors(NightvisionBehavior.INSTANCE));
 
+        FUELED_JETPACK = register(ItemGTArmor.Builder.of(GTValues.MODID, "fueled_jetpack", EntityEquipmentSlot.CHEST)
+                .behaviors(new FueledJetpackBehavior(JetpackStats.FUELED, 16000, RecipeMaps.COMBUSTION_GENERATOR_FUELS)));
+
         ELECTRIC_JETPACK = register(ItemGTElectricArmor.Builder.of(GTValues.MODID, "electric_jetpack", EntityEquipmentSlot.CHEST)
                 .electric(ConfigHolder.tools.voltageTierImpeller, 1_000_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.tools.voltageTierImpeller - 2)))
                 .behaviors(new ElectricJetpackBehavior(JetpackStats.ELECTRIC, 30))
@@ -66,7 +70,7 @@ public class ArmorItems {
 
         ADVANCED_ELECTRIC_JETPACK = register(ItemGTElectricArmor.Builder.of(GTValues.MODID, "advanced_electric_jetpack", EntityEquipmentSlot.CHEST)
                 .electric(ConfigHolder.tools.voltageTierAdvImpeller, 6_400_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.tools.voltageTierAdvImpeller - 4)))
-                .behaviors(new ElectricJetpackBehavior(JetpackStats.ADVANCED_ELECTRIC, 480))
+                .behaviors(new ElectricJetpackBehavior(JetpackStats.ADVANCED, 480))
                 .rarity(EnumRarity.RARE));
 
         int energyPerUse = 512;
@@ -149,7 +153,7 @@ public class ArmorItems {
                 // todo call setInvisible() on all of these
                 OLD_NIGHTVISION_GOGGLES = addItem(1, "nightvision_goggles").setArmorLogic(EntityEquipmentSlot.HEAD, "nightvision_goggles");
 
-                MetaItems.SEMIFLUID_JETPACK = addItem(2, "liquid_fuel_jetpack").setArmorLogic(new PowerlessJetpack());
+                OLD_SEMIFLUID_JETPACK = addItem(2, "liquid_fuel_jetpack").setArmorLogic(EntityEquipmentSlot.CHEST, "fueled_jetpack");
                 OLD_ELECTRIC_JETPACK = addItem(3, "electric_jetpack").setArmorLogic(EntityEquipmentSlot.CHEST, "electric_jetpack");
                 OLD_ELECTRIC_JETPACK_ADVANCED = addItem(4, "advanced_electric_jetpack").setArmorLogic(EntityEquipmentSlot.CHEST, "advanced_electric_jetpack");
 
@@ -185,7 +189,7 @@ public class ArmorItems {
         //addConversion(OLD_QUANTUM_CHESTPLATE, QUANTUM_CHESTPLATE.getStack());
         //addConversion(OLD_QUANTUM_LEGGINGS, QUANTUM_LEGGINGS.getStack());
         //addConversion(OLD_QUANTUM_BOOTS, QUANTUM_BOOTS.getStack());
-        //addConversion(OLD_SEMIFLUID_JETPACK, SEMI_FLUID_JETPACK.getStack());
+        addConversion(OLD_SEMIFLUID_JETPACK, FUELED_JETPACK.getStack());
         addConversion(OLD_ELECTRIC_JETPACK, ELECTRIC_JETPACK.getStack());
         //addConversion(OLD_ELECTRIC_JETPACK_ADVANCED, ADVANCED_ELECTRIC_JETPACK.getStack());
         //addConversion(OLD_NANO_CHESTPLATE_ADVANCED, ADVANCED_NANO_CHESTPLATE.getStack());

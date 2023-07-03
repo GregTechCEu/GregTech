@@ -22,6 +22,7 @@ public class ArmorHelper {
 
     /* Jetpack Keys */
     public static final String JETPACK_HOVER_KEY = "JetpackHover";
+    public static final String FUELED_JETPACK_BURN_TIMER = "FuelBurnTime";
 
 
     private static final EntityEquipmentSlot[] ARMOR_SLOTS = {FEET, LEGS, CHEST, HEAD};

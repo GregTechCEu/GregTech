@@ -536,8 +536,6 @@ public final class MetaItems {
     public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_BOOTS;
     public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_HELMET;
 
-    public static ArmorMetaItem<?>.ArmorMetaValueItem SEMIFLUID_JETPACK;
-
     public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_CHESTPLATE_ADVANCED;
     public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_CHESTPLATE_ADVANCED;
 
