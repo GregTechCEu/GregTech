@@ -7,17 +7,20 @@ import gregtech.api.items.armoritem.jetpack.IJetpackStats;
 import gregtech.api.items.armoritem.jetpack.JetpackBehavior;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -81,6 +84,24 @@ public class FueledJetpackBehavior extends JetpackBehavior {
 
     private Recipe getRecipe(@NotNull FluidStack fuel) {
         return fuelMap.find(Collections.emptyList(), Collections.singletonList(fuel), Objects::nonNull);
+    }
+
+    @Override
+    public void addHudInformation(@NotNull ItemStack stack, @NotNull List<String> hudText) {
+        IFluidHandlerItem fluidHandler = getFluidHandler(stack);
+        if (fluidHandler != null) {
+            IFluidTankProperties[] properties = fluidHandler.getTankProperties();
+            if (properties[0] != null) {
+                FluidStack fuel = properties[0].getContents();
+                int capacity = properties[0].getCapacity();
+                if (fuel != null && fuel.amount != 0) {
+                    String formatted = String.format("%.1f", fuel.amount * 100.0F / capacity);
+                    hudText.add(I18n.format("metaarmor.hud.fuel_lvl", formatted + "%"));
+                }
+            }
+        }
+        // call super last so that fuel HUD info is in the same spot that energy would be
+        super.addHudInformation(stack, hudText);
     }
 
     @Override

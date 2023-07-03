@@ -53,6 +53,11 @@ public class ArmorItems {
     // Advanced Electric Jetpack: 0, 0, 0
     // Fueled Jetpack: 0, 0, 0
 
+    // TODO Other information from deleted files:
+    // Fueled Jetpack:
+    // - Default subitem is filled with Diesel
+    // - Durability bar colors: GradientUtil.getGradient(0xB7AF08, 10)
+
     public static void init() {
         // todo get rid of this config... "stuff"
         NIGHTVISION_GOGGLES = register(ItemGTElectricArmor.Builder.of(GTValues.MODID, "nightvision_goggles", EntityEquipmentSlot.HEAD)

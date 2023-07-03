@@ -102,6 +102,9 @@ public abstract class JetpackBehavior implements IArmorBehavior {
                 spawnParticle(player.getEntityWorld(), player, jetpackStats.getParticle());
             }
         }
+        // TODO Reset player floating time?
+        // TODO Emergency hover?
+        // TODO Jetpack sfx?
     }
 
     /* Spawn particle behind player with speedY speed */

@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "gregtech:items/metaitems/nms.helmet"
+    "layer0": "gregtech:items/armors/nano_helmet_item"
   }
 }

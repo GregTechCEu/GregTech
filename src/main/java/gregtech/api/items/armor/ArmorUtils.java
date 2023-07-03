@@ -7,14 +7,10 @@ import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.util.*;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -32,7 +28,6 @@ import java.util.List;
 public class ArmorUtils {
 
     public static final Side SIDE = FMLCommonHandler.instance().getSide();
-    public static final SoundEvent JET_ENGINE = new SoundEvent(new ResourceLocation("gregtech:jet_engine"));
 
     /**
      * Check is possible to charge item
@@ -98,33 +93,6 @@ public class ArmorUtils {
         }
 
         return inventorySlotMap;
-    }
-
-    public static void playJetpackSound(@Nonnull EntityPlayer player) {
-        if (player.world.isRemote) {
-            float cons = (float) player.motionY + player.moveForward;
-            cons = MathHelper.clamp(cons, 0.6F, 1.0F);
-
-            if (player.motionY > 0.05F) {
-                cons += 0.1F;
-            }
-
-            if (player.motionY < -0.05F) {
-                cons -= 0.4F;
-            }
-
-            player.playSound(JET_ENGINE, 0.3F, cons);
-        }
-    }
-
-    /**
-     * Resets private field, amount of ticks player in the sky
-     */
-    public static void resetPlayerFloatingTime(EntityPlayer player) {
-        if (player instanceof EntityPlayerMP) {
-            ObfuscationReflectionHelper.setPrivateValue(NetHandlerPlayServer.class,
-                    ((EntityPlayerMP) player).connection, 0, "field_147365_f", "floatingTickCount");
-        }
     }
 
     /**
