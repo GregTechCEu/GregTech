@@ -220,7 +220,7 @@ public class ItemGTArmor extends ItemArmor implements IGTArmor, IKeyPressedListe
     public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, @NotNull ITooltipFlag flag) {
         // todo armor toughness tooltip
         for (IArmorBehavior behavior : getDefinition().getBehaviors()) {
-            behavior.addInformation(stack, world, tooltip, flag);
+            behavior.addInformation(stack, world, tooltip);
         }
     }
 

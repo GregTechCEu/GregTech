@@ -26,7 +26,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +50,29 @@ public enum KeyBind {
 
     public static final KeyBind[] VALUES = values();
 
+    @SideOnly(Side.CLIENT)
+    private KeyBinding keybinding;
+    @SideOnly(Side.CLIENT)
+    private boolean isKeyDown;
+
+    private final WeakHashMap<EntityPlayerMP, Boolean> mapping = new WeakHashMap<>();
+    private final WeakHashMap<EntityPlayerMP, Set<IKeyPressedListener>> listeners = new WeakHashMap<>();
+
+    // For Vanilla/Other Mod keybinds
+    // Double Supplier to keep client classes from loading
+    KeyBind(Supplier<Supplier<KeyBinding>> keybindingGetter) {
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            this.keybinding = keybindingGetter.get().get();
+        }
+    }
+
+    KeyBind(String langKey, IKeyConflictContext ctx, int button) {
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            this.keybinding = new KeyBinding(langKey, ctx, button, "GregTech");
+            ClientRegistry.registerKeyBinding(this.keybinding);
+        }
+    }
+
     public static void init() {
         GTLog.logger.info("Registering KeyBinds");
         if (FMLCommonHandler.instance().getSide().isClient()) {
@@ -69,7 +91,7 @@ public enum KeyBind {
             Int2BooleanMap updatingKeyDown = new Int2BooleanOpenHashMap();
             for (KeyBind keybind : VALUES) {
                 boolean previousKeyDown = keybind.isKeyDown;
-                keybind.isKeyDown = keybind.isKeyDown();
+                keybind.isKeyDown = keybind.keybinding.isKeyDown();
                 if (previousKeyDown != keybind.isKeyDown) {
                     updatingKeyDown.put(keybind.ordinal(), keybind.isKeyDown);
                 }
@@ -78,6 +100,17 @@ public enum KeyBind {
                 GregTechAPI.networkHandler.sendToServer(new PacketKeysDown(updatingKeyDown));
             }
         }
+    }
+
+    public void updateKeyDown(boolean keyDown, EntityPlayerMP player) {
+        this.mapping.put(player, keyDown);
+    }
+
+    public boolean isKeyDown(EntityPlayer player) {
+        if (player.world.isRemote) return keybinding.isKeyDown();
+        // potential NPE here on unboxing if it is returned directly
+        Boolean isKeyDown = mapping.get((EntityPlayerMP) player);
+        return isKeyDown != null ? isKeyDown : false;
     }
 
     /**
@@ -89,77 +122,13 @@ public enum KeyBind {
     public static void onInputEvent(InputEvent.KeyInputEvent event) {
         IntList updatingPressed = new IntArrayList();
         for (KeyBind keybind : VALUES) {
-            if (keybind.isPressed()) {
+            if (keybind.keybinding.isPressed()) {
                 updatingPressed.add(keybind.ordinal());
             }
         }
         if (!updatingPressed.isEmpty()) {
             GregTechAPI.networkHandler.sendToServer(new PacketKeyPressed(updatingPressed));
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static boolean scrollingUp() {
-        return Mouse.getEventDWheel() > 0;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static boolean notScrolling() {
-        return Mouse.getEventDWheel() == 0;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static boolean scrollingDown() {
-        return Mouse.getEventDWheel() < 0;
-    }
-
-    @SideOnly(Side.CLIENT)
-    private KeyBinding keybinding;
-    @SideOnly(Side.CLIENT)
-    private boolean isKeyDown;
-
-    private final WeakHashMap<EntityPlayerMP, Boolean> mapping = new WeakHashMap<>();
-    private final WeakHashMap<EntityPlayerMP, Set<IKeyPressedListener>> listeners = new WeakHashMap<>();
-
-    // For Vanilla/Other Mod keybinds
-    // Double Supplier to keep client classes from loading
-    KeyBind(Supplier<Supplier<KeyBinding>> keybindingGetter) {
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            this.keybinding = keybindingGetter.get().get();
-        }
-    }
-
-    KeyBind(String langKey, int button) {
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            this.keybinding = new KeyBinding(langKey, button, GTValues.MOD_NAME);
-            ClientRegistry.registerKeyBinding(this.keybinding);
-        }
-    }
-
-    KeyBind(String langKey, IKeyConflictContext ctx, int button) {
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            this.keybinding = new KeyBinding(langKey, ctx, button, GTValues.MOD_NAME);
-            ClientRegistry.registerKeyBinding(this.keybinding);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public KeyBinding toMinecraft() {
-        return this.keybinding;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public boolean isPressed() {
-        return this.keybinding.isPressed();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public boolean isKeyDown() {
-        return this.keybinding.isKeyDown();
-    }
-
-    public void updateKeyDown(boolean keyDown, EntityPlayerMP player) {
-        this.mapping.put(player, keyDown);
     }
 
     public void onKeyPressed(EntityPlayerMP player) {
@@ -169,11 +138,6 @@ public enum KeyBind {
                 listener.onKeyPressed(player, this);
             }
         }
-    }
-
-    public boolean isKeyDown(EntityPlayer player) {
-        if (player.world.isRemote) return isKeyDown();
-        return mapping.get((EntityPlayerMP) player);
     }
 
     public void registerListener(EntityPlayerMP player, IKeyPressedListener listener) {
