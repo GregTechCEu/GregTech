@@ -13,8 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -102,18 +100,7 @@ public class ArmorUtils {
         return inventorySlotMap;
     }
 
-    /**
-     * Spawn particle behind player with speedY speed
-     */
-    public static void spawnParticle(World world, EntityPlayer player, EnumParticleTypes type, double speedY) {
-        if (type != null && SIDE.isClient()) {
-            Vec3d forward = player.getForward();
-            world.spawnParticle(type, player.posX - forward.x, player.posY + 0.5D, player.posZ - forward.z, 0.0D,
-                    speedY, 0.0D);
-        }
-    }
-
-    public static void playJetpackSound(@NotNull EntityPlayer player) {
+    public static void playJetpackSound(@Nonnull EntityPlayer player) {
         if (player.world.isRemote) {
             float cons = (float) player.motionY + player.moveForward;
             cons = MathHelper.clamp(cons, 0.6F, 1.0F);

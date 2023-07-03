@@ -1,7 +1,7 @@
 package gregtech.api.items.armoritem;
 
 import gregtech.api.items.armoritem.armorset.IArmorSet;
-import gregtech.api.items.armoritem.jetpack.JetpackBuilder;
+import gregtech.api.items.armoritem.jetpack.IJetpackStats;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.util.DamageSource;
@@ -22,6 +22,7 @@ public abstract class ArmorBuilder<T extends IGTArmor, U extends ArmorBuilder<T,
     private final EntityEquipmentSlot slot;
     private final List<IArmorBehavior> behaviors = new ArrayList<>();
     private IArmorSet armorSet;
+    private IJetpackStats jetpackStats;
     private double damageAbsorption;
     private final List<DamageSource> handledUnblockableSources = new ArrayList<>();
     private boolean isEnchantable = true;
@@ -63,10 +64,6 @@ public abstract class ArmorBuilder<T extends IGTArmor, U extends ArmorBuilder<T,
     public U armorSet(IArmorSet armorSet) {
         this.armorSet = armorSet;
         return cast(this);
-    }
-
-    public <V extends JetpackBuilder<V>> U jetpack(JetpackBuilder<V> b) {
-        return behaviors(b.build());
     }
 
     public abstract Supplier<T> supply(IGTArmorDefinition definition);

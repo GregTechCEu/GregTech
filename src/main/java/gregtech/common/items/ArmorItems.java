@@ -48,12 +48,26 @@ public class ArmorItems {
         return ARMORS;
     }
 
+    // TODO ArmorProperties values not set here (and their original code was already deleted):
+    // Electric Jetpack: 0, 0, 0
+    // Advanced Electric Jetpack: 0, 0, 0
+
     public static void init() {
-        // todo clean up this config... "stuff"
+        // todo get rid of this config... "stuff"
         NIGHTVISION_GOGGLES = register(ItemGTElectricArmor.Builder.of(GTValues.MODID, "nightvision_goggles", EntityEquipmentSlot.HEAD)
                 .electric(ConfigHolder.tools.voltageTierNightVision, 80_000L * (long) Math.max(1, Math.pow(1, ConfigHolder.tools.voltageTierNightVision - 1)))
                 .electricCost(2)
                 .behaviors(NightvisionBehavior.INSTANCE));
+
+        ELECTRIC_JETPACK = register(ItemGTElectricArmor.Builder.of(GTValues.MODID, "electric_jetpack", EntityEquipmentSlot.CHEST)
+                .electric(ConfigHolder.tools.voltageTierImpeller, 1_000_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.tools.voltageTierImpeller - 2)))
+                .behaviors(new ElectricJetpackBehavior(JetpackStats.ELECTRIC, 30))
+                .rarity(EnumRarity.UNCOMMON));
+
+        ADVANCED_ELECTRIC_JETPACK = register(ItemGTElectricArmor.Builder.of(GTValues.MODID, "advanced_electric_jetpack", EntityEquipmentSlot.CHEST)
+                .electric(ConfigHolder.tools.voltageTierAdvImpeller, 6_400_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.tools.voltageTierAdvImpeller - 4)))
+                .behaviors(new ElectricJetpackBehavior(JetpackStats.ADVANCED_ELECTRIC, 480))
+                .rarity(EnumRarity.RARE));
 
         int energyPerUse = 512;
         int tier = ConfigHolder.tools.voltageTierNanoSuit;
@@ -124,6 +138,9 @@ public class ArmorItems {
     @Deprecated private static ArmorMetaItem<?>.ArmorMetaValueItem OLD_NANO_CHESTPLATE_ADVANCED;
     @Deprecated private static ArmorMetaItem<?>.ArmorMetaValueItem OLD_QUANTUM_CHESTPLATE_ADVANCED;
 
+    // TODO Remove all old armor texture files, change old models to point to new texture location until full removal.
+    // TODO Rename old armor lang keys (other than names), and move names to a separated section for easy removal.
+
     @Deprecated
     public static void initLegacyArmor() {
         ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem> legacyArmor = new ArmorMetaItem<>() {
@@ -133,8 +150,8 @@ public class ArmorItems {
                 OLD_NIGHTVISION_GOGGLES = addItem(1, "nightvision_goggles").setArmorLogic(EntityEquipmentSlot.HEAD, "nightvision_goggles");
 
                 MetaItems.SEMIFLUID_JETPACK = addItem(2, "liquid_fuel_jetpack").setArmorLogic(new PowerlessJetpack());
-                MetaItems.ELECTRIC_JETPACK = addItem(3, "electric_jetpack").setArmorLogic(new Jetpack(30, 1_000_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.tools.voltageTierImpeller - 2)), ConfigHolder.tools.voltageTierImpeller)).setModelAmount(8).setRarity(EnumRarity.UNCOMMON);
-                MetaItems.ELECTRIC_JETPACK_ADVANCED = addItem(4, "advanced_electric_jetpack").setArmorLogic(new AdvancedJetpack(512, 6_400_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.tools.voltageTierAdvImpeller - 4)), ConfigHolder.tools.voltageTierAdvImpeller)).setRarity(EnumRarity.RARE);
+                OLD_ELECTRIC_JETPACK = addItem(3, "electric_jetpack").setArmorLogic(EntityEquipmentSlot.CHEST, "electric_jetpack");
+                OLD_ELECTRIC_JETPACK_ADVANCED = addItem(4, "advanced_electric_jetpack").setArmorLogic(EntityEquipmentSlot.CHEST, "advanced_electric_jetpack");
 
                 OLD_NANO_HELMET = addItem(20, "nms.helmet").setArmorLogic(EntityEquipmentSlot.HEAD, "nano_helmet");
                 OLD_NANO_CHESTPLATE = addItem(21, "nms.chestplate").setArmorLogic(EntityEquipmentSlot.CHEST, "nano_chestplate");
@@ -169,7 +186,7 @@ public class ArmorItems {
         //addConversion(OLD_QUANTUM_LEGGINGS, QUANTUM_LEGGINGS.getStack());
         //addConversion(OLD_QUANTUM_BOOTS, QUANTUM_BOOTS.getStack());
         //addConversion(OLD_SEMIFLUID_JETPACK, SEMI_FLUID_JETPACK.getStack());
-        //addConversion(OLD_ELECTRIC_JETPACK, ELECTRIC_JETPACK.getStack());
+        addConversion(OLD_ELECTRIC_JETPACK, ELECTRIC_JETPACK.getStack());
         //addConversion(OLD_ELECTRIC_JETPACK_ADVANCED, ADVANCED_ELECTRIC_JETPACK.getStack());
         //addConversion(OLD_NANO_CHESTPLATE_ADVANCED, ADVANCED_NANO_CHESTPLATE.getStack());
         //addConversion(OLD_QUANTUM_CHESTPLATE_ADVANCED, ADVANCED_QUANTUM_CHESTPLATE.getStack());

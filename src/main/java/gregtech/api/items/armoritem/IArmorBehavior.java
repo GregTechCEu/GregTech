@@ -1,8 +1,6 @@
 package gregtech.api.items.armoritem;
 
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.KeyBind;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -10,6 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public interface IArmorBehavior {
     }
 
     /** Add to this behavior's armor item tooltip. */
-    default void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, @NotNull ITooltipFlag flag) {
+    default void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip) {
     }
 
     default Set<KeyBind> getListenedKeys() {
@@ -58,21 +58,14 @@ public interface IArmorBehavior {
         return null;
     }
 
+    // TODO implement HUD
+    /** Add to the Armor HUD text. */
+    @SideOnly(Side.CLIENT)
+    default void addHudInformation(@NotNull ItemStack stack, @NotNull List<String> hudText) {
+    }
+
     /** Get the equipment slot for this behavior's armor item. Provided since the method call is somewhat obscure. */
     default EntityEquipmentSlot getEquipmentSlot(@NotNull ItemStack stack) {
         return EntityLiving.getSlotForItemStack(stack);
-    }
-
-    // todo try to remove/refactor this
-    default NBTTagCompound getBehaviorTag(@NotNull ItemStack stack, @NotNull String key) {
-        NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(stack);
-        NBTTagCompound subTag;
-        if (tag.hasKey(key)) {
-            subTag = tag.getCompoundTag(key);
-        } else {
-            subTag = new NBTTagCompound();
-            tag.setTag(key, subTag);
-        }
-        return subTag;
     }
 }

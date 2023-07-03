@@ -5,7 +5,6 @@ import gregtech.api.items.armoritem.ArmorHelper;
 import gregtech.api.items.armoritem.IElectricArmorBehavior;
 import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
@@ -25,8 +24,6 @@ import java.util.Set;
 public class NightvisionBehavior implements IElectricArmorBehavior {
 
     public static final NightvisionBehavior INSTANCE = new NightvisionBehavior();
-
-    private static final String NBT_NIGHTVISION = "NightVision";
 
     protected NightvisionBehavior() {/**/}
 
@@ -54,9 +51,8 @@ public class NightvisionBehavior implements IElectricArmorBehavior {
     @Override
     public void onArmorTick(@NotNull World world, @NotNull EntityPlayer player, @NotNull ItemStack stack, @NotNull IElectricItem electricItem) {
         if (world.isRemote) return;
-        NBTTagCompound tag = getBehaviorTag(stack, NBT_NIGHTVISION);
-        boolean enabled = tag.getBoolean("Enabled");
-        if (enabled && electricItem.canUse(2)) {
+        NBTTagCompound tag = ArmorHelper.getBehaviorsTag(stack);
+        if (tag.getBoolean(ArmorHelper.NIGHT_VISION_KEY) && electricItem.canUse(2)) {
             electricItem.discharge(2, Integer.MAX_VALUE, true, false, false);
             player.removePotionEffect(MobEffects.BLINDNESS);
             player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 999999, 0, true, false));
@@ -74,9 +70,9 @@ public class NightvisionBehavior implements IElectricArmorBehavior {
     }
 
     @Override
-    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, @NotNull ITooltipFlag flag) {
-        NBTTagCompound tag = getBehaviorTag(stack, NBT_NIGHTVISION);
-        if (tag.getBoolean("Enabled")) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip) {
+        NBTTagCompound tag = ArmorHelper.getBehaviorsTag(stack);
+        if (tag.getBoolean(ArmorHelper.NIGHT_VISION_KEY)) {
             tooltip.add(I18n.format("metaarmor.message.nightvision.enabled"));
         } else {
             tooltip.add(I18n.format("metaarmor.message.nightvision.disabled"));

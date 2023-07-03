@@ -21,8 +21,7 @@ public class ArmorHelper {
     public static final String HEAT_REDUCTION_KEY = "HeatReduction";
 
     /* Jetpack Keys */
-    public static final String JETPACK_KEY = "Jetpack";
-    public static final String HOVER_KEY = "Hover";
+    public static final String JETPACK_HOVER_KEY = "JetpackHover";
 
 
     private static final EntityEquipmentSlot[] ARMOR_SLOTS = {FEET, LEGS, CHEST, HEAD};
