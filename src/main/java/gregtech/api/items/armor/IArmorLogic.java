@@ -12,9 +12,6 @@ import net.minecraft.world.World;
 @Deprecated
 public interface IArmorLogic {
 
-    default void addToolComponents(ArmorMetaValueItem metaValueItem) {
-    }
-
     EntityEquipmentSlot getEquipmentSlot(ItemStack itemStack);
 
     default void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {

@@ -1,7 +1,6 @@
 package gregtech.asm.hooks;
 
-import gregtech.api.items.armor.IArmorItem;
-
+import gregtech.api.items.armor.ArmorMetaItem;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
@@ -27,7 +26,7 @@ public class ArmorRenderHooks {
     }
 
     public static boolean isArmorItem(ItemStack itemStack, EntityEquipmentSlot slot) {
-        return (itemStack.getItem() instanceof IArmorItem && itemStack.getItem().getEquipmentSlot(itemStack) == slot);
+        return (itemStack.getItem() instanceof ArmorMetaItem<?> && itemStack.getItem().getEquipmentSlot(itemStack) == slot);
     }
 
     public static void renderArmorLayer(LayerArmorBase<ModelBase> layer, EntityLivingBase entity, float limbSwing,
