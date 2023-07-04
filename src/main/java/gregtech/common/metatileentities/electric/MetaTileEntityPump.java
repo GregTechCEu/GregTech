@@ -27,6 +27,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -45,6 +47,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.PUMP_HEAD_LEVEL;
 
@@ -167,10 +170,10 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         tankDisplay.addWidget(tankWidget);
         tankDisplay.addWidget(new LabelWidget(6, 6, getMetaFullName()));
         tankDisplay.addWidget(new LabelWidget(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF));
-        tankDisplay.addWidget(new DynamicLabelWidget(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF));
-        tankDisplay.addWidget(new DynamicLabelWidget(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF));
+        tankDisplay.addWidget(new AdvancedTextWidget(11, 30, getFluidAmountText(tankWidget), 0xFFFFFF));
+        tankDisplay.addWidget(new AdvancedTextWidget(11, 40, getFluidNameText(tankWidget), 0xFFFFFF));
 
-        return ModularUI.defaultBuilder(/*GuiTextures.BACKGROUND, 176 + 94, 166*/)
+        return ModularUI.defaultBuilder()
                 .widget(tankDisplay)
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
@@ -313,6 +316,44 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
             return;
         }
         this.lockedFluid = null;
+    }
+    private Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
+        return (list) -> {
+            String fluidName = "";
+            // If there is no fluid in the tank
+            if (tankWidget.getFluidLocalizedName().isEmpty()) {
+                // But there is a locked fluid
+                if (this.lockedFluid != null) {
+                    fluidName = this.lockedFluid.getLocalizedName();
+                }
+            } else {
+                fluidName = tankWidget.getFluidLocalizedName();
+            }
+
+            if (!fluidName.isEmpty()) {
+                list.add(new TextComponentString(fluidName));
+
+            }
+        };
+    }
+
+    private Consumer<List<ITextComponent>> getFluidAmountText(TankWidget tankWidget) {
+        return (list) -> {
+            String fluidAmount = "";
+
+            // Nothing in the tank
+            if (tankWidget.getFormattedFluidAmount().equals("0")) {
+                // Display Zero to show information about the locked fluid
+                if (this.lockedFluid != null) {
+                    fluidAmount = "0";
+                }
+            } else {
+                fluidAmount = tankWidget.getFormattedFluidAmount();
+            }
+            if (!fluidAmount.isEmpty()) {
+                list.add(new TextComponentString(fluidAmount));
+            }
+        };
     }
 
     @Override
