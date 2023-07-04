@@ -847,7 +847,7 @@ public class MetaTileEntities {
          * claimed ranges below this comment. Max value is 32767.
          *
          * - Gregicality / Shadows of Greg: 2000-3999
-         * - Gregification: 4000-4499
+         * - Reserved for Integration Modules in GTCEu: 4000-4499
          * - GregTech Food Option: 8500-8999
          * - HtmlTech: 9000-9499
          * - PCM's Ore Addon: 9500-9999
