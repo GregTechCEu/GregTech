@@ -62,13 +62,15 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
 
     private final Deque<BlockPos> fluidSourceBlocks = new ArrayDeque<>();
     private final Deque<BlockPos> blocksToCheck = new ArrayDeque<>();
-    private final FluidFilterContainer fluidFilter;
+//    private final FluidFilterContainer fluidFilter;
     private boolean initializedQueue = false;
     private int pumpHeadY;
+    @Nullable
+    private FluidStack lockedFluid;
 
     public MetaTileEntityPump(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
-        this.fluidFilter = new FluidFilterContainer(this::markDirty);
+//        this.fluidFilter = new FluidFilterContainer(this::markDirty);
     }
 
     @Override
@@ -144,19 +146,31 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         tankDisplay.addWidget(new SlotWidget(exportItems, 0, 90, 53, true, false)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY));
 
-        TankWidget tankWidget = new TankWidget(exportFluids.getTankAt(0), 69, 52, 18, 18)
-                .setHideTooltip(true).setAlwaysShowFull(true);
+        TankWidget tankWidget = new PhantomTankWidget(exportFluids.getTankAt(0), 69, 52, 18, 18,
+                () -> this.lockedFluid,
+                fs -> {
+                    if (this.exportFluids.getTankAt(0).getFluidAmount() != 0) {
+                        return;
+                    }
+                    if (fs == null) {
+                        this.lockedFluid = null;
+                    } else {
+                        this.lockedFluid = fs.copy();
+                        this.lockedFluid.amount = 1;
+                    }
+                }).setHideTooltip(true).setAlwaysShowFull(true);
+
         tankDisplay.addWidget(tankWidget);
         tankDisplay.addWidget(new LabelWidget(6, 6, getMetaFullName()));
         tankDisplay.addWidget(new LabelWidget(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF));
         tankDisplay.addWidget(new DynamicLabelWidget(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF));
         tankDisplay.addWidget(new DynamicLabelWidget(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF));
 
-        WidgetGroup filterWidget = new WidgetGroup(new Position(102, 6));
-        fluidFilter.initUI(0, filterWidget::addWidget);
+//        WidgetGroup filterWidget = new WidgetGroup(new Position(102, 6));
+//        fluidFilter.initUI(0, filterWidget::addWidget);
         return ModularUI.builder(GuiTextures.BACKGROUND, 176 + 94, 166)
                 .widget(tankDisplay)
-                .widget(filterWidget)
+//                .widget(filterWidget)
                 .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 47, 166 - 82)
                 .build(getHolder(), entityPlayer);
     }
@@ -232,8 +246,12 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                 return;
             }
             FluidStack drainStack = fluidHandler.drain(Integer.MAX_VALUE, false);
-            if (drainStack != null && fluidFilter.testFluidStack(drainStack) && drainStack.amount > 0) { // add filtering here
-                this.fluidSourceBlocks.add(checkPos);
+            if (drainStack != null /*&& fluidFilter.testFluidStack(drainStack)*/ && drainStack.amount > 0) { // add filtering here
+                if (lockedFluid != null && drainStack.isFluidEqual(lockedFluid)) {
+                    this.fluidSourceBlocks.add(checkPos);
+                } else if (lockedFluid == null) {
+                    this.fluidSourceBlocks.add(checkPos);
+                }
             }
             shouldCheckNeighbours = true;
         }
@@ -263,7 +281,9 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                 return;
             }
             FluidStack drainStack = fluidHandler.drain(Integer.MAX_VALUE, false);
-            if (drainStack != null && fluidFilter.testFluidStack(drainStack) && exportFluids.fill(drainStack, false) == drainStack.amount) { // add filtering here too
+            if (drainStack != null /*&& fluidFilter.testFluidStack(drainStack)*/&& exportFluids.fill(drainStack, false) == drainStack.amount) { // add filtering here too
+                if (lockedFluid != null && !lockedFluid.isFluidEqual(drainStack)) return;
+
                 exportFluids.fill(drainStack, true);
                 fluidHandler.drain(drainStack.amount, true);
                 this.fluidSourceBlocks.remove(fluidBlockPos);
@@ -299,7 +319,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setInteger("PumpHeadDepth", pumpHeadY);
-        data.setTag("Filter", fluidFilter.serializeNBT());
+//        data.setTag("Filter", fluidFilter.serializeNBT());
         return data;
     }
 
@@ -307,7 +327,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.pumpHeadY = data.getInteger("PumpHeadDepth");
-        this.fluidFilter.deserializeNBT(data.getCompoundTag("Filter"));
+//        this.fluidFilter.deserializeNBT(data.getCompoundTag("Filter"));
     }
 
     @Override
