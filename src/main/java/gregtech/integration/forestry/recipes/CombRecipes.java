@@ -41,14 +41,20 @@ public class CombRecipes {
                     .inputs(combStack.copy())
                     .duration(Voltage.ULV.getCentrifugeTime()).EUt(Voltage.ULV.getCentrifugeEnergy());
 
+            boolean hadSomeOutput = false;
             for (Map.Entry<ItemStack, Float> entry : recipe.getAllProducts().entrySet()) {
+                hadSomeOutput = true;
                 if (entry.getValue() >= 1.0f) {
                     builder.outputs(entry.getKey());
                 } else {
                     builder.chancedOutput(entry.getKey(), Math.max(1, Math.round(entry.getValue() * 10000)), 0);
                 }
             }
-            builder.buildAndRegister();
+            if (hadSomeOutput) {
+                // For some reason Forestry occasionally has recipes that have no outputs at all, which will
+                // cause us to error. Discard these if we come across them.
+                builder.buildAndRegister();
+            }
         }
     }
 

@@ -229,7 +229,7 @@ public class ElectrodeRecipes {
                 "SXS", "#X#", "XXX",
                 'S', new UnificationEntry(screw, Copper).toString(),
                 '#', new UnificationEntry(wireGtSingle, RedAlloy).toString(),
-                'X', new UnificationEntry(plate, Copper));
+                'X', new UnificationEntry(plate, Copper).toString());
 
         addFabricatorRecipe(EnumElectronTube.TIN,
                 "SXS", "#X#", "XXX",
