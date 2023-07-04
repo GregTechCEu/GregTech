@@ -13,6 +13,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
@@ -248,7 +249,7 @@ public class CombRecipes {
      * Currently used separately for STEEL, GOLD, MOLYBDENUM, PLUTONIUM
      **/
     private static void addChemicalProcess(GTCombType comb, Material inMaterial, Material outMaterial, Voltage volt) {
-        if (OreDictUnifier.get(OrePrefix.crushedPurified, outMaterial, 4).isEmpty() || OreDictUnifier.get(OrePrefix.crushed, inMaterial).isEmpty())
+        if (OreDictUnifier.get(OrePrefix.crushedPurified, outMaterial, 4).isEmpty() || OreDictUnifier.get(OrePrefix.crushed, inMaterial).isEmpty() || inMaterial.hasFlag(MaterialFlags.DISABLE_ORE_BLOCK))
             return;
 
         RecipeBuilder<?> builder = RecipeMaps.CHEMICAL_RECIPES.recipeBuilder()
@@ -284,7 +285,7 @@ public class CombRecipes {
         RecipeBuilder<?> builder = RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copy(9, ForestryUtil.getCombStack(comb)))
                 .circuitMeta(circuitNumber)
-                .fluidInputs(Materials.UUMatter.getFluid((int) Math.max(1, ((material.getMass() + volt.getUUAmount()) / 10))))
+                .fluidInputs(Materials.Mutagen.getFluid((int) Math.max(1, material.getMass() + volt.getMutagenAmount())))
                 .output(OrePrefix.crushedPurified, material, 4)
                 .duration((int) (material.getMass() * 128))
                 .EUt(volt.getAutoclaveEnergy());
@@ -430,15 +431,19 @@ public class CombRecipes {
                 return Materials.Water.getFluid((this.compareTo(Voltage.ULV) > 0) ? 1000 : 500);
             } else if (this.compareTo(Voltage.HV) < 0) {
                 return Materials.DistilledWater.getFluid(1000);
+            } else if (this.compareTo(Voltage.EV) < 0) {
+                return Materials.SulfuricAcid.getFluid(GTValues.L);
+            } else if (this.compareTo(Voltage.IV) < 0) {
+                return Materials.HydrochloricAcid.getFluid(GTValues.L);
             } else if (this.compareTo(Voltage.LUV) < 0) {
-                return Materials.Mercury.getFluid((int) (Math.pow(2, this.compareTo(Voltage.HV)) * GTValues.L));
-            } else if (this.compareTo(Voltage.UHV) < 0) {
-                return Materials.Mutagen.getFluid((int) (Math.pow(2, this.compareTo(Voltage.LUV)) * GTValues.L));
-            } else return null;
+                return Materials.HydrofluoricAcid.getFluid((int) (Math.pow(2, this.compareTo(Voltage.HV)) * GTValues.L));
+            } else {
+                return Materials.FluoroantimonicAcid.getFluid((int) (Math.pow(2, this.compareTo(Voltage.LUV)) * GTValues.L));
+            }
         }
 
-        public int getUUAmount() {
-            return 9 * ((this.compareTo(Voltage.MV) < 0) ? 1 : this.compareTo(Voltage.MV));
+        public int getMutagenAmount() {
+            return 9 * ((this.compareTo(Voltage.MV) < 0) ? 10 : 10 * this.compareTo(Voltage.MV));
         }
     }
 }

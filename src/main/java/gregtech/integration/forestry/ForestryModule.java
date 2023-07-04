@@ -8,10 +8,14 @@ import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ItemGTTool;
 import gregtech.api.modules.GregTechModule;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.info.MaterialFlags;
+import gregtech.api.unification.material.properties.OreProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.common.items.ToolItems;
+import gregtech.integration.IntegrationModule;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.forestry.bees.GTAlleleBeeSpecies;
 import gregtech.integration.forestry.bees.GTBeeDefinition;
@@ -241,8 +245,14 @@ public class ForestryModule extends IntegrationSubmodule {
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         if (ForestryUtil.apicultureEnabled()) {
+            // GT Frames
             if (ForestryConfig.enableGTFrames) {
                 FrameRecipes.init();
+            }
+
+            // GT Combs
+            if (ForestryConfig.enableGTBees) {
+                CombRecipes.initGTCombs();
             }
         }
 
@@ -255,11 +265,6 @@ public class ForestryModule extends IntegrationSubmodule {
         if (ForestryConfig.enableGTScoop) {
             ToolRecipes.registerHandlers();
         }
-
-        // GT Combs
-        if (ForestryConfig.enableGTBees) {
-            CombRecipes.initGTCombs();
-        }
     }
 
     @SubscribeEvent
@@ -271,6 +276,59 @@ public class ForestryModule extends IntegrationSubmodule {
                 Materials.Plutonium241.addFlags(MaterialFlags.GENERATE_LONG_ROD, MaterialFlags.GENERATE_FOIL);
                 Materials.BlueSteel.addFlags(MaterialFlags.GENERATE_LONG_ROD);
             }
+            if (ForestryConfig.enableGTElectronTubes) {
+                Materials.Copper.addFlags(MaterialFlags.GENERATE_BOLT_SCREW);
+                Materials.Emerald.addFlags(MaterialFlags.GENERATE_BOLT_SCREW);
+                Materials.Lapis.addFlags(MaterialFlags.GENERATE_BOLT_SCREW);
+            }
+            if (ForestryConfig.enableGTBees) {
+                // Blocks for Bee Breeding
+                Materials.Arsenic.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
+                Materials.Lithium.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
+                Materials.Electrotine.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
+                Materials.Lutetium.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
+
+                // Ores for Comb Processing, does not generate Ore Blocks
+                createOreProperty(Materials.Phosphate, Materials.Phosphorus);
+                createOreProperty(Materials.Chrome, Materials.Iron, Materials.Magnesium);
+                createOreProperty(Materials.Manganese, Materials.Chrome, Materials.Iron);
+                createOreProperty(Materials.Magnesium, Materials.Olivine);
+                createOreProperty(Materials.Silicon, Materials.SiliconDioxide);
+                createOreProperty(Materials.Zinc, Materials.Tin, Materials.Gallium);
+                createOreProperty(Materials.Antimony, Materials.Zinc, Materials.Iron);
+                createOreProperty(Materials.Tungsten, Materials.Manganese, Materials.Molybdenum);
+                createOreProperty(Materials.Titanium, Materials.Almandine);
+                createOreProperty(Materials.Osmium, Materials.Iridium);
+                createOreProperty(Materials.Iridium, Materials.Platinum, Materials.Osmium);
+                createOreProperty(Materials.Electrum, Materials.Gold, Materials.Silver);
+                createOreProperty(Materials.Uranium238, Materials.Lead, Materials.Uranium235, Materials.Thorium);
+                createOreProperty(Materials.NaquadahEnriched, Materials.Naquadah, Materials.Naquadria);
+                createOreProperty(Materials.Uranium235);
+                createOreProperty(Materials.Neutronium);
+                createOreProperty(Materials.Gallium);
+                createOreProperty(Materials.Niobium);
+                createOreProperty(Materials.Arsenic);
+                createOreProperty(Materials.Bismuth);
+                createOreProperty(Materials.Rutile);
+                createOreProperty(Materials.Naquadria);
+                createOreProperty(Materials.Lutetium);
+                createOreProperty(Materials.Americium);
+                createOreProperty(Materials.NetherStar);
+            }
         }
+    }
+
+    private static void createOreProperty(Material material, Material... byproducts) {
+        if (material.hasProperty(PropertyKey.ORE)) {
+            IntegrationModule.logger.debug("Material {} already has an ore property, skipping...", material);
+            return;
+        }
+
+        OreProperty property = new OreProperty();
+        if (byproducts != null && byproducts.length != 0) {
+            property.setOreByProducts(byproducts);
+        }
+        material.setProperty(PropertyKey.ORE, property);
+        material.addFlags(MaterialFlags.DISABLE_ORE_BLOCK);
     }
 }

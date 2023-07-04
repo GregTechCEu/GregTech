@@ -11,6 +11,7 @@ import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
@@ -76,7 +77,7 @@ public class CommonProxy {
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
             for (Material material : materialRegistry) {
-                if (material.hasProperty(PropertyKey.ORE)) {
+                if (material.hasProperty(PropertyKey.ORE) && !material.hasFlag(MaterialFlags.DISABLE_ORE_BLOCK)) {
                     createOreBlock(material);
                 }
 
