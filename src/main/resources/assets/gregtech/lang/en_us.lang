@@ -4630,6 +4630,7 @@ gregtech.multiblock.power_substation.description=
 
 gregtech.machine.active_transformer.name=Active Transformer
 gregtech.machine.active_transformer.tooltip.1=Transformers: Lasers in Disguise
+gregtech.machine.active_transformer.rate=Ratio: %1.4f EU in to 1 EU out
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power

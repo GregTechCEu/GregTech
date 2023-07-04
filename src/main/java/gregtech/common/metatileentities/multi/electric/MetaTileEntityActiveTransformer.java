@@ -14,11 +14,13 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -26,6 +28,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
@@ -58,8 +62,12 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
 
     @Override
     protected void updateFormedValid() {
-        long maxEnergyInput = energyInputContainer.getEnergyStored();
-        long maxLaserInput = laserInputContainer.getEnergyStored();
+        double maintenancePenalty = getMaintenancePenalty();
+        if (maintenancePenalty <= 0) {
+            return;
+        }
+        long maxEnergyInput = (long) (energyInputContainer.getEnergyStored() * maintenancePenalty);
+        long maxLaserInput = (long) (laserInputContainer.getEnergyStored() * maintenancePenalty);
 
         if (maxLaserInput == 0 && maxEnergyInput == 0) {
             setActive(false);
@@ -80,6 +88,15 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
             setActive(true);
             energyInputContainer.removeEnergy(energyUsed);
             laserInputContainer.removeEnergy(laserUsed);
+        }
+    }
+
+    private double getMaintenancePenalty() {
+        int maintenanceProblems = getNumMaintenanceProblems();
+        if (maintenanceProblems > 3) {
+            return 0;
+        } else {
+            return 1 - maintenanceProblems * 0.15;
         }
     }
 
@@ -108,14 +125,26 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
                 .aisle("XXX", "XXX", "XXX")
                 .aisle("XXX", "XCX", "XXX")
                 .aisle("XXX", "XSX", "XXX")
-                .where('X', states(getCasingState()).setMinGlobalLimited(12)
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(3, 1))
-                        .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setMaxGlobalLimited(3, 1))
-                        .or(abilities(MultiblockAbility.INPUT_LASER).setMaxGlobalLimited(3, 1))
-                        .or(abilities(MultiblockAbility.OUTPUT_LASER).setMaxGlobalLimited(3, 1)))
+                .where('X', states(getCasingState()).setMinGlobalLimited(12).or(getHatchPredicates()))
                 .where('S', selfPredicate())
                 .where('C', states(MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL)))
                 .build();
+    }
+
+    private TraceabilityPredicate getHatchPredicates() {
+        return abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(3, 1)
+                .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setMaxGlobalLimited(3, 1))
+                .or(abilities(MultiblockAbility.INPUT_LASER).setMaxGlobalLimited(3, 1))
+                .or(abilities(MultiblockAbility.OUTPUT_LASER).setMaxGlobalLimited(3, 1))
+                // Disallow the config maintenance hatch because that would probably break the conservation of energy
+                .or(metaTileEntities(MetaTileEntities.MAINTENANCE_HATCH,
+                        MetaTileEntities.AUTO_MAINTENANCE_HATCH, MetaTileEntities.CLEANING_MAINTENANCE_HATCH).setExactLimit(1));
+    }
+
+    @Override
+    protected void addDisplayText(List<ITextComponent> textList) {
+        super.addDisplayText(textList);
+        textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.rate", getMaintenancePenalty()));
     }
 
     @Override
