@@ -72,7 +72,6 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     public MetaTileEntityPump(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
         this.locked = false;
-//        this.fluidFilter = new FluidFilterContainer(this::markDirty);
     }
 
     @Override
@@ -101,12 +100,14 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeVarInt(pumpHeadY);
+        buf.writeBoolean(locked);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.pumpHeadY = buf.readVarInt();
+        this.locked = buf.readBoolean();
     }
 
     @Override
@@ -254,10 +255,8 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                 return;
             }
             FluidStack drainStack = fluidHandler.drain(Integer.MAX_VALUE, false);
-            if (drainStack != null /*&& fluidFilter.testFluidStack(drainStack)*/ && drainStack.amount > 0) { // add filtering here
-                if (lockedFluid != null && drainStack.isFluidEqual(lockedFluid)) {
-                    this.fluidSourceBlocks.add(checkPos);
-                } else if (lockedFluid == null) {
+            if (drainStack != null && drainStack.amount > 0) {
+                if (lockedFluid == null || drainStack.isFluidEqual(lockedFluid)) {
                     this.fluidSourceBlocks.add(checkPos);
                 }
             }
@@ -289,13 +288,13 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                 return;
             }
             FluidStack drainStack = fluidHandler.drain(Integer.MAX_VALUE, false);
-            if (drainStack != null /*&& fluidFilter.testFluidStack(drainStack)*/&& exportFluids.fill(drainStack, false) == drainStack.amount) { // add filtering here too
-                if (lockedFluid != null && !lockedFluid.isFluidEqual(drainStack)) return;
-
-                exportFluids.fill(drainStack, true);
-                fluidHandler.drain(drainStack.amount, true);
-                this.fluidSourceBlocks.remove(fluidBlockPos);
-                energyContainer.changeEnergy(-GTValues.V[getTier()] * 2);
+            if (drainStack != null && exportFluids.fill(drainStack, false) == drainStack.amount) {
+                if (lockedFluid == null || drainStack.isFluidEqual(lockedFluid)) {
+                    exportFluids.fill(drainStack, true);
+                    fluidHandler.drain(drainStack.amount, true);
+                    this.fluidSourceBlocks.remove(fluidBlockPos);
+                    energyContainer.changeEnergy(-GTValues.V[getTier()] * 2);
+                }
             }
         }
     }
@@ -346,7 +345,6 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setInteger("PumpHeadDepth", pumpHeadY);
-//        data.setTag("Filter", fluidFilter.serializeNBT());
         if (locked && lockedFluid != null) {
             data.setTag("LockedFluid", lockedFluid.writeToNBT(new NBTTagCompound()));
         }
@@ -359,7 +357,6 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         this.pumpHeadY = data.getInteger("PumpHeadDepth");
         this.locked = data.getBoolean("IsLocked");
         this.lockedFluid = this.locked ? FluidStack.loadFluidStackFromNBT(data.getCompoundTag("LockedFluid")) : null;
-//        this.fluidFilter.deserializeNBT(data.getCompoundTag("Filter"));
     }
 
     @Override
