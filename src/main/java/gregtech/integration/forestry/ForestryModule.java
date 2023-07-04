@@ -21,13 +21,10 @@ import gregtech.integration.forestry.bees.GTAlleleBeeSpecies;
 import gregtech.integration.forestry.bees.GTBeeDefinition;
 import gregtech.integration.forestry.bees.GTCombItem;
 import gregtech.integration.forestry.bees.GTDropItem;
-import gregtech.integration.forestry.recipes.CombRecipes;
-import gregtech.integration.forestry.recipes.ElectrodeRecipes;
-import gregtech.integration.forestry.recipes.FrameRecipes;
+import gregtech.integration.forestry.recipes.*;
 import gregtech.integration.forestry.frames.GTFrameType;
 import gregtech.integration.forestry.frames.GTItemFrame;
 import gregtech.integration.forestry.tools.ScoopBehavior;
-import gregtech.integration.forestry.recipes.ToolRecipes;
 import gregtech.modules.GregTechModules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
@@ -265,6 +262,9 @@ public class ForestryModule extends IntegrationSubmodule {
         if (ForestryConfig.enableGTScoop) {
             ToolRecipes.registerHandlers();
         }
+
+        // Random other recipes
+        MiscRecipes.init();
     }
 
     @SubscribeEvent
