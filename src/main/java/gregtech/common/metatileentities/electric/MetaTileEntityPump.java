@@ -9,17 +9,13 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.Position;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
-import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -49,7 +45,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.PUMP_HEAD_LEVEL;
 
