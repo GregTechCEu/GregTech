@@ -167,7 +167,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                         this.lockedFluid = fs.copy();
                         this.lockedFluid.amount = 1;
                     }
-                }).setHideTooltip(true).setAlwaysShowFull(true);
+                }).setDrawHoveringText(false).setAlwaysShowFull(true);
 
         tankDisplay.addWidget(tankWidget);
         tankDisplay.addWidget(new LabelWidget(6, 6, getMetaFullName()));
