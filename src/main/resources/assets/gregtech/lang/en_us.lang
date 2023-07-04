@@ -2281,6 +2281,8 @@ tile.brittle_charcoal.tooltip.2=Mine this to get Charcoal.
 
 tile.optical_pipe_normal.name=Optical Fiber Cable
 
+tile.laser_pipe_normal.name=Laser Transmitting Cable
+
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
 metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)
@@ -4626,6 +4628,9 @@ gregtech.machine.power_substation.tooltip4=Loses energy equal to §f1%%§7 of to
 gregtech.machine.power_substation.tooltip5=Capped at §f%,d EU/t§7 passive loss per Capacitor Block.
 gregtech.multiblock.power_substation.description=
 
+gregtech.machine.active_transformer.name=Active Transformer
+gregtech.machine.active_transformer.tooltip.1=Transformers: Lasers in Disguise
+
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
 gregtech.multiblock.central_monitor.height=Screen Height:
@@ -4910,6 +4915,9 @@ gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
 
 gregtech.machine.data_access_hatch.optical.receiver.name=Optical Data Reception Hatch
 gregtech.machine.data_access_hatch.optical.transmitter.name=Optical Data Transmission Hatch
+
+gregtech.machine.laser_hatch.source.name=Laser Source Hatch
+gregtech.machine.laser_hatch.target.name=Laser Target Hatch
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s

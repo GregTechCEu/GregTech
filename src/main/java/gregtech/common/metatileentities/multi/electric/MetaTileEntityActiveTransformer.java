@@ -20,6 +20,8 @@ import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -27,9 +29,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase implements IControllable {
     private boolean isWorkingEnabled = true;
@@ -213,5 +217,11 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
         return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, world, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.active_transformer.tooltip.1"));
     }
 }
