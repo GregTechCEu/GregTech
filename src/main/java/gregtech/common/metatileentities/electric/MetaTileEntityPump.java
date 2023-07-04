@@ -67,9 +67,11 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     private int pumpHeadY;
     @Nullable
     private FluidStack lockedFluid;
+    private boolean locked;
 
     public MetaTileEntityPump(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
+        this.locked = false;
 //        this.fluidFilter = new FluidFilterContainer(this::markDirty);
     }
 
@@ -145,6 +147,10 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         tankDisplay.addWidget(new ImageWidget(91, 36, 14, 14, GuiTextures.TANK_ICON));
         tankDisplay.addWidget(new SlotWidget(exportItems, 0, 90, 53, true, false)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY));
+        tankDisplay.addWidget(new ToggleButtonWidget(25, 64, 18, 18,
+                GuiTextures.BUTTON_LOCK, this::isLocked, this::setLocked)
+                .setTooltipText("gregtech.gui.fluid_lock.tooltip")
+                .shouldUseBaseBackground());
 
         TankWidget tankWidget = new PhantomTankWidget(exportFluids.getTankAt(0), 69, 52, 18, 18,
                 () -> this.lockedFluid,
@@ -153,8 +159,10 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                         return;
                     }
                     if (fs == null) {
+                        this.setLocked(false);
                         this.lockedFluid = null;
                     } else {
+                        this.setLocked(true);
                         this.lockedFluid = fs.copy();
                         this.lockedFluid.amount = 1;
                     }
@@ -292,6 +300,25 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         }
     }
 
+    private boolean isLocked() {
+        return this.locked;
+    }
+
+    private void setLocked(boolean locked) {
+        if (this.locked == locked) return;
+        this.locked = locked;
+        FluidStack fs = exportFluids.getTankAt(0).getFluid();
+        if (!getWorld().isRemote) {
+            markDirty();
+        }
+        if (locked && fs != null) {
+            this.lockedFluid = fs.copy();
+            this.lockedFluid.amount = 1;
+            return;
+        }
+        this.lockedFluid = null;
+    }
+
     @Override
     public void update() {
         super.update();
@@ -320,6 +347,9 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         super.writeToNBT(data);
         data.setInteger("PumpHeadDepth", pumpHeadY);
 //        data.setTag("Filter", fluidFilter.serializeNBT());
+        if (locked && lockedFluid != null) {
+            data.setTag("LockedFluid", lockedFluid.writeToNBT(new NBTTagCompound()));
+        }
         return data;
     }
 
@@ -327,6 +357,8 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.pumpHeadY = data.getInteger("PumpHeadDepth");
+        this.locked = data.getBoolean("IsLocked");
+        this.lockedFluid = this.locked ? FluidStack.loadFluidStackFromNBT(data.getCompoundTag("LockedFluid")) : null;
 //        this.fluidFilter.deserializeNBT(data.getCompoundTag("Filter"));
     }
 
