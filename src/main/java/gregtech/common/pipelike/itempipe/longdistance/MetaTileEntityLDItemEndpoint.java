@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.impl.ItemHandlerDelegate;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -20,6 +21,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -58,18 +60,22 @@ public class MetaTileEntityLDItemEndpoint extends MetaTileEntityLongDistanceEndp
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side == getFrontFacing()) {
-            if (getWorld().isRemote) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (getWorld().isRemote || side != getFrontFacing() || !isInput()) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(DEFAULT_INVENTORY);
             }
             ILDEndpoint endpoint = getLink();
             if (endpoint != null) {
                 EnumFacing outputFacing = endpoint.getOutputFacing();
                 TileEntity te = getWorld().getTileEntity(endpoint.getPos().offset(outputFacing));
-                return te != null ? te.getCapability(capability, outputFacing.getOpposite()) : null;
-            } else {
-                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(DEFAULT_INVENTORY);
+                if (te != null) {
+                    T t = te.getCapability(capability, outputFacing.getOpposite());
+                    if (t != null) {
+                        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new ItemHandlerWrapper((IItemHandler) t));
+                    }
+                }
             }
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(DEFAULT_INVENTORY);
         }
         return super.getCapability(capability, side);
     }
@@ -88,5 +94,18 @@ public class MetaTileEntityLDItemEndpoint extends MetaTileEntityLongDistanceEndp
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(Textures.VOLTAGE_CASINGS[GTValues.LV].getParticleSprite(), 0xFFFFFF);
+    }
+
+    public static class ItemHandlerWrapper extends ItemHandlerDelegate {
+
+        public ItemHandlerWrapper(IItemHandler delegate) {
+            super(delegate);
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return ItemStack.EMPTY;
+        }
     }
 }

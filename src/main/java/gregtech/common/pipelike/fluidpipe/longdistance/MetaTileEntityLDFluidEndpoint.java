@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.impl.FluidHandlerDelegate;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -21,6 +22,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -57,18 +59,22 @@ public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEnd
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && side == getFrontFacing()) {
-            if (getWorld().isRemote) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            if (getWorld().isRemote || side != getFrontFacing() || !isInput()) {
                 return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(DEFAULT_TANK);
             }
             ILDEndpoint endpoint = getLink();
             if (endpoint != null) {
                 EnumFacing outputFacing = endpoint.getOutputFacing();
                 TileEntity te = getWorld().getTileEntity(endpoint.getPos().offset(outputFacing));
-                return te != null ? te.getCapability(capability, outputFacing.getOpposite()) : null;
-            } else {
-                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(DEFAULT_TANK);
+                if (te != null) {
+                    T t = te.getCapability(capability, outputFacing.getOpposite());
+                    if (t != null) {
+                        return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(new FluidHandlerWrapper((IFluidHandler) t));
+                    }
+                }
             }
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(DEFAULT_TANK);
         }
         return super.getCapability(capability, side);
     }
@@ -87,5 +93,24 @@ public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEnd
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(Textures.VOLTAGE_CASINGS[GTValues.LV].getParticleSprite(), 0xFFFFFF);
+    }
+
+    private static class FluidHandlerWrapper extends FluidHandlerDelegate {
+
+        public FluidHandlerWrapper(IFluidHandler delegate) {
+            super(delegate);
+        }
+
+        @Nullable
+        @Override
+        public FluidStack drain(FluidStack resource, boolean doDrain) {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public FluidStack drain(int maxDrain, boolean doDrain) {
+            return null;
+        }
     }
 }
