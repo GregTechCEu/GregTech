@@ -6,11 +6,13 @@ import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagByteArray;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -41,23 +43,27 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
         if (this.updates.isEmpty()) {
             return null;
         }
-
         NBTTagCompound updateTag = new NBTTagCompound();
-        for (var entry : this.updates.int2ObjectEntrySet()) {
-            updateTag.setByteArray(String.valueOf(entry.getIntKey()), entry.getValue());
+        NBTTagList listTag = new NBTTagList();
+        for (Int2ObjectMap.Entry<byte[]> entry : updates.int2ObjectEntrySet()) {
+            NBTTagCompound entryTag = new NBTTagCompound();
+            entryTag.setByteArray(Integer.toString(entry.getIntKey()), entry.getValue());
+            listTag.appendTag(entryTag);
         }
-
+        updateTag.setTag("d", listTag);
         this.updates.clear();
         return new SPacketUpdateTileEntity(getPos(), 0, updateTag);
     }
 
     @Override
     public void onDataPacket(@Nonnull NetworkManager net, SPacketUpdateTileEntity pkt) {
-        for (var entry : pkt.getNbtCompound().tagMap.entrySet()) {
-            if (entry.getValue() instanceof NBTTagByteArray compound) {
-                String key = entry.getKey();
-                ByteBuf buf = Unpooled.wrappedBuffer(compound.getByteArray()).asReadOnly();
-                receiveCustomData(Integer.parseInt(key), new PacketBuffer(buf));
+        NBTTagCompound updateTag = pkt.getNbtCompound();
+        NBTTagList listTag = updateTag.getTagList("d", Constants.NBT.TAG_COMPOUND);
+        for (NBTBase entryBase : listTag) {
+            NBTTagCompound entryTag = (NBTTagCompound) entryBase;
+            for (String discriminatorKey : entryTag.getKeySet()) {
+                ByteBuf backedBuffer = Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey));
+                receiveCustomData(Integer.parseInt(discriminatorKey), new PacketBuffer(backedBuffer));
             }
         }
     }
@@ -77,7 +83,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
     public void handleUpdateTag(@Nonnull NBTTagCompound tag) {
         super.readFromNBT(tag); // deserializes Forge data and capabilities
         byte[] updateData = tag.getByteArray("d");
-        ByteBuf backedBuffer = Unpooled.wrappedBuffer(updateData).asReadOnly();
+        ByteBuf backedBuffer = Unpooled.copiedBuffer(updateData);
         receiveInitialSyncData(new PacketBuffer(backedBuffer));
     }
 
