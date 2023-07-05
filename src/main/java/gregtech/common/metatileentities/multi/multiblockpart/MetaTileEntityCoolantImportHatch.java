@@ -6,6 +6,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
+import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.LockableFluidTank;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -24,6 +25,7 @@ import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -41,12 +43,17 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
 
     private boolean workingEnabled;
     private boolean valid;
-    private final LockableFluidTank fluidTank;
+    private LockableFluidTank fluidTank;
 
     public MetaTileEntityCoolantImportHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, false);
-        this.fluidTank = new LockableFluidTank(16000, this, false);
         this.frontFacing = EnumFacing.UP;
+    }
+
+    @Override
+    protected FluidTankList createImportFluidHandler() {
+        this.fluidTank = new LockableFluidTank(16000, this, false);
+        return new FluidTankList(false, fluidTank);
     }
 
     @Override
@@ -153,13 +160,9 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
         }
     }
 
-    private LockableFluidTank getLockedImport() {
-        return (LockableFluidTank) importItems;
-    }
-
     @Override
     public void setLock(boolean isLocked) {
-        getLockedImport().setLock(isLocked);
+        fluidTank.setLock(isLocked);
         writeCustomData(LOCK_UPDATE, (packetBuffer -> packetBuffer.writeBoolean(isLocked)));
     }
 
@@ -168,13 +171,17 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == LOCK_UPDATE) {
-            getLockedImport().setLock(buf.readBoolean());
+            fluidTank.setLock(buf.readBoolean());
         }
     }
 
     @Override
     public boolean isLocked() {
-        return getLockedImport().isLocked();
+        return fluidTank.isLocked();
     }
 
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+    }
 }
