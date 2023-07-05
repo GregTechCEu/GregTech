@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.storage;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.longdist.ILDEndpoint;
@@ -7,9 +8,11 @@ import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.pipenet.longdist.LongDistancePipeType;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -53,6 +56,10 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             // two neighbour networks found, configuration invalid
             setType(Type.NONE);
         }
+    }
+
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+        return super.onWrenchClick(playerIn, hand, wrenchSide.getOpposite(), hitResult);
     }
 
     @Override
