@@ -5286,6 +5286,7 @@ gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
 gregtech.multiblock.energy_consumption=Energy Usage: %s EU/t
+gregtech.multiblock.max_energy_consumption=Max Energy Usage: %s EU/t
 gregtech.multiblock.computation.usage=Max Computation: %s CWU/t
 gregtech.multiblock.computation.non_bridging=Non-bridging connection found
 gregtech.multiblock.computation.non_bridging.detailed=A Reception Hatch is linked to a machine which cannot bridge
@@ -5304,6 +5305,13 @@ gregtech.multiblock.power_substation.time_days=%s Days
 gregtech.multiblock.power_substation.time_years=%s Years
 gregtech.multiblock.power_substation.time_forever=Forever
 gregtech.multiblock.power_substation.under_one_hour_left=Less than 1 hour until fully drained!
+
+gregtech.multiblock.hpca.temperature=Temperature:
+gregtech.multiblock.hpca.hint_root=Structure Hints: (hover)
+gregtech.multiblock.hpca.hint_damaged=- Damaged component in structure
+gregtech.multiblock.hpca.hint_multiple_bridges=- Multiple bridges in structure (provides no additional benefit)
+gregtech.multiblock.hpca.hint_no_computation=- No computation providers
+gregtech.multiblock.hpca.hint_low_cooling=- Not enough cooling
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>

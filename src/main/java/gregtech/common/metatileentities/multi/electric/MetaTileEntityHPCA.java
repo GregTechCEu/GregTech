@@ -16,6 +16,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -31,10 +32,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -45,7 +43,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOpticalComputationProvider, IControllable {
@@ -89,22 +86,22 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     }
 
     @Override
-    public int requestCWUt(int cwut, boolean simulate, @Nonnull Collection<IOpticalComputationProvider> seen) {
+    public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
         return isActive() ? hpcaHandler.allocateCWUt(cwut, simulate) : 0;
     }
 
     @Override
-    public int getMaxCWUt(@Nonnull Collection<IOpticalComputationProvider> seen) {
+    public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
-        return isStructureFormed() ? hpcaHandler.getMaxCWUt() : 0;
+        return isActive() ? hpcaHandler.getMaxCWUt() : 0;
     }
 
     @Override
-    public boolean canBridge(@Nonnull Collection<IOpticalComputationProvider> seen) {
+    public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
         // don't show a problem if the structure is not yet formed
-        return !isStructureFormed() || hpcaHandler.hasHPCABridge();
+        return !isStructureFormed() || (isActive() && hpcaHandler.hasHPCABridge());
     }
 
     @Override
@@ -322,28 +319,20 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         if (isStructureFormed()) {
-            textList.add(new TextComponentString(String.format("Maximum Computation: %d CWU/t", hpcaHandler.getMaxCWUt())));
-            textList.add(new TextComponentString(String.format("Maximum Power: %d EU/t", hpcaHandler.getMaxEUt())));
-            textList.add(new TextComponentString(String.format("Current Power Usage: %d EU/t", hpcaHandler.cachedEUt)));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.usage", hpcaHandler.getMaxCWUt()));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.energy_consumption", TextFormattingUtil.formatNumbers(hpcaHandler.cachedEUt)));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_consumption", TextFormattingUtil.formatNumbers(hpcaHandler.getMaxEUt())));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.temperature")
+                    .appendSibling(new TextComponentString(" " + TextFormattingUtil.formatNumbers(temperature / 10.0d)))
+                    .setStyle(new Style().setColor(temperature >= 500 ? temperature >= 750 ? TextFormatting.RED : TextFormatting.YELLOW : TextFormatting.GREEN)));
             textList.add(new TextComponentString(String.format("Maximum Cooling Demand: %d CU/t", hpcaHandler.getMaxCoolingDemand())));
             textList.add(new TextComponentString(String.format("Maximum Cooling Supply: %d CU/t", hpcaHandler.getMaxCoolingAmount())));
             textList.add(new TextComponentString(String.format("Maximum Coolant Demand: %d L/t", hpcaHandler.getMaxCoolantDemand())));
 
-            List<String> hints = hpcaHandler.getPossibleHints();
-            if (!hints.isEmpty()) {
-                ITextComponent hint0 = new TextComponentString(hints.get(0));
-                if (hints.size() > 1) {
-                    for (int i = 1; i < hints.size(); i++) {
-                        hint0.appendSibling(new TextComponentString(hints.get(i)));
-                    }
-                }
-
-                ITextComponent hintComponent = new TextComponentString("Potential structure improvements: (hover)").setStyle(new Style().setColor(TextFormatting.RED)
-                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hint0)));
-                textList.add(hintComponent);
+            ITextComponent hints = hpcaHandler.getHints();
+            if (hints != null) {
+                textList.add(hints);
             }
-
-            //textList.add(new TextComponentTranslation("gregtech.multiblock.energy_consumption", this.hpcaHandler.));
         }
     }
 
@@ -653,36 +642,52 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         }
 
         /**
-         * A list of hints for the controller to display.
+         * Hints for the controller to display.
          * Used to recommend potential better solutions when simple mistakes are made
          * (such as multiple HPCA Bridge blocks being present, which offers no additional benefit).
          *
-         * @return empty list if no hints.
+         * @return null if no hints
          */
-        @NotNull
-        public List<String> getPossibleHints() {
-            List<String> hints = new ArrayList<>();
+        @Nullable
+        public ITextComponent getHints() {
+            ITextComponent root = null;
 
             // Damaged component present
             if (components.stream().anyMatch(IHPCAComponentHatch::isDamaged)) {
-                hints.add("Damaged HPCA Component found in structure!");
+                root = applyHint(null, "gregtech.multiblock.hpca.hint_damaged");
             }
 
             // More than 1 bridge present
             if (numBridges > 1) {
-                hints.add("More HPCA Bridges than necessary, more than one provides no additional benefit!");
+                root = applyHint(root, "gregtech.multiblock.hpca.hint_multiple_bridges");
             }
 
             // No computation units present
             if (computationProviders.isEmpty()) {
-                hints.add("No HPCA Computation providers found! No computation can be done");
+                root = applyHint(root, "gregtech.multiblock.hpca.hint_no_computation");
             }
 
-            // todo
-            //if (getMaxCoolantDemand() > getMaxCoolantProduction()) {
-            //    hints.add("HPCA will overheat if run at maximum computation, not enough coolant potential!");
-            //}
-            return hints;
+            // Max cooling demand exceeds max cooling supplied
+            if (getMaxCoolingDemand() > getMaxCoolingAmount()) {
+                root = applyHint(root, "gregtech.multiblock.hpca.hint_low_cooling");
+            }
+
+            if (root != null) {
+                // "Potential structure improvements: (hover)"
+                root = new TextComponentTranslation("gregtech.multiblock.hpca.hint_root").setStyle(new Style()
+                        .setColor(TextFormatting.RED)
+                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, root)));
+            }
+            return root;
+        }
+
+        private ITextComponent applyHint(ITextComponent root, String translationKey) {
+            if (root != null) {
+                root.appendSibling(new TextComponentString("\n").appendSibling(new TextComponentTranslation(translationKey)));
+            } else {
+                root = new TextComponentTranslation(translationKey);
+            }
+            return root;
         }
     }
 }
