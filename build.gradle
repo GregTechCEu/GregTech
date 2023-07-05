@@ -1,4 +1,4 @@
-//version: 1687160402
+//version: 1688526754
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -339,6 +339,7 @@ repositories {
                 maven {
                     name = 'Curse Maven'
                     url = 'https://www.cursemaven.com'
+                    // url = 'https://beta.cursemaven.com'
                 }
             }
             filter {
@@ -401,10 +402,13 @@ configurations {
 dependencies {
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
         implementation 'zone.rong:mixinbooter:7.0'
-        api('org.spongepowered:mixin:0.8.3') {
+        String mixin = modUtils.enableMixins('org.spongepowered:mixin:0.8.3', "mixins.${modId}.refmap.json")
+
+        api (mixin) {
             transitive = false
         }
-        annotationProcessor('org.spongepowered:mixin:0.8.3') {
+
+        annotationProcessor(mixin) {
             transitive = false
         }
 
