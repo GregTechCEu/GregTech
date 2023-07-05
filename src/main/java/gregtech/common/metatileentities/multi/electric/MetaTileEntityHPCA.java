@@ -91,7 +91,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     @Override
     public int requestCWUt(int cwut, boolean simulate, @Nonnull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
-        return isStructureFormed() ? hpcaHandler.allocateCWUt(cwut, simulate) : 0;
+        return isActive() ? hpcaHandler.allocateCWUt(cwut, simulate) : 0;
     }
 
     @Override
