@@ -31,10 +31,12 @@ import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidTank;
@@ -72,7 +74,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         FactoryBlockPattern pattern = FactoryBlockPattern.start(FRONT, UP, RIGHT)
                 .aisle("FIF", "RTR", "SAG", " Y ")
                 .aisle("FIF", "RTR", "DAG", " Y ").setRepeatable(3, 15)
-                .aisle("FOF", "RTR", "GAG", " Y ")
+                .aisle("FOF", "RTR", "DAG", " Y ")
                 .where('S', selfPredicate())
                 .where('F', states(getCasingState())
                         .or(autoAbilities(false, true, false, false, false, false, false))
@@ -116,9 +118,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     protected static TraceabilityPredicate dataHatchPredicate() {
         // if research is enabled, require the data hatch, otherwise use a grate instead
         if (ConfigHolder.machines.enableResearch) {
-            return abilities(MultiblockAbility.DATA_ACCESS_HATCH)
-                    .setMinGlobalLimited(1)
-                    .setMaxGlobalLimited(2)
+            return abilities(MultiblockAbility.DATA_ACCESS_HATCH, MultiblockAbility.OPTICAL_DATA_RECEPTION)
+                    .setExactLimit(1)
                     .or(states(getGrateState()));
         }
         return states(getGrateState());
@@ -159,6 +160,11 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         } else {
             super.renderMetaTileEntity(renderState, translation, pipeline);
         }
+    }
+
+    @Override
+    public SoundEvent getBreakdownSound() {
+        return GTSoundEvents.BREAKDOWN_MECHANICAL;
     }
 
     @Override
@@ -283,6 +289,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     @Override
     public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+        if (consumeIfSuccess) return true; // don't check twice
         // check ordered items
         if (ConfigHolder.machines.orderedAssembly) {
             List<GTRecipeInput> inputs = recipe.getInputs();
@@ -317,8 +324,12 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             return super.checkRecipe(recipe, consumeIfSuccess);
         }
 
-        // check for research
-        for (IDataAccessHatch hatch : getAbilities(MultiblockAbility.DATA_ACCESS_HATCH)) {
+        return isRecipeAvailable(getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), recipe) ||
+                isRecipeAvailable(getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), recipe);
+    }
+
+    private static boolean isRecipeAvailable(@Nonnull Iterable<? extends IDataAccessHatch> hatches, @Nonnull Recipe recipe) {
+        for (IDataAccessHatch hatch : hatches) {
             // creative hatches do not need to check, they always have the recipe
             if (hatch.isCreative()) return true;
 

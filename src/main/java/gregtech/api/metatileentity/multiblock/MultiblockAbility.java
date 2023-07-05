@@ -26,6 +26,9 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<IEnergyContainer> INPUT_ENERGY = new MultiblockAbility<>("input_energy");
     public static final MultiblockAbility<IEnergyContainer> OUTPUT_ENERGY = new MultiblockAbility<>("output_energy");
 
+    public static final MultiblockAbility<IEnergyContainer> SUBSTATION_INPUT_ENERGY = new MultiblockAbility<>("substation_input_energy");
+    public static final MultiblockAbility<IEnergyContainer> SUBSTATION_OUTPUT_ENERGY = new MultiblockAbility<>("substation_output_energy");
+
     public static final MultiblockAbility<IRotorHolder> ROTOR_HOLDER = new MultiblockAbility<>("rotor_holder");
 
     public static final MultiblockAbility<IFluidTank> PUMP_FLUID_HATCH = new MultiblockAbility<>("pump_fluid_hatch");
@@ -44,6 +47,8 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<IPassthroughHatch> PASSTHROUGH_HATCH = new MultiblockAbility<>("passthrough_hatch");
 
     public static final MultiblockAbility<IDataAccessHatch> DATA_ACCESS_HATCH = new MultiblockAbility<>("data_access_hatch");
+    public static final MultiblockAbility<IOpticalDataAccessHatch> OPTICAL_DATA_RECEPTION = new MultiblockAbility<>("optical_data_reception");
+    public static final MultiblockAbility<IOpticalDataAccessHatch> OPTICAL_DATA_TRANSMISSION = new MultiblockAbility<>("optical_data_transmission");
 
     public static void registerMultiblockAbility(MultiblockAbility<?> ability, MetaTileEntity part) {
         if (!REGISTRY.containsKey(ability)) {

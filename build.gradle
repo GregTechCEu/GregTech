@@ -1,8 +1,9 @@
-//version: 1686205143
+//version: 1688526754
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
  * Please check https://github.com/GregTechCEu/Buildscripts/blob/master/build.gradle for updates.
+ * You can also run ./gradlew updateBuildScript to update your buildscript.
  */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
@@ -53,6 +54,7 @@ checkPropertyExists("containsMixinsAndOrCoreModOnly")
 
 // Optional properties: we can assume some default behavior if these are missing
 propertyDefaultIfUnset("modVersion", "")
+propertyDefaultIfUnset("includeMCVersionJar", false)
 propertyDefaultIfUnset("autoUpdateBuildScript", false)
 propertyDefaultIfUnset("modArchivesBaseName", project.modId)
 propertyDefaultIfUnsetWithEnvVar("developmentEnvironmentUserName", "Developer", "DEV_USERNAME")
@@ -263,7 +265,13 @@ if (!modVersion) {
     }
 }
 
-version = modVersion
+if (includeMCVersionJar.toBoolean()){
+    version = "${minecraftVersion}-${modVersion}"
+}
+else {
+    version = modVersion
+}
+
 group = modGroup
 archivesBaseName = modArchivesBaseName
 
@@ -331,6 +339,7 @@ repositories {
                 maven {
                     name = 'Curse Maven'
                     url = 'https://www.cursemaven.com'
+                    // url = 'https://beta.cursemaven.com'
                 }
             }
             filter {
@@ -393,10 +402,13 @@ configurations {
 dependencies {
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
         implementation 'zone.rong:mixinbooter:7.0'
-        api('org.spongepowered:mixin:0.8.3') {
+        String mixin = modUtils.enableMixins('org.spongepowered:mixin:0.8.3', "mixins.${modId}.refmap.json")
+
+        api (mixin) {
             transitive = false
         }
-        annotationProcessor('org.spongepowered:mixin:0.8.3') {
+
+        annotationProcessor(mixin) {
             transitive = false
         }
 
@@ -672,21 +684,31 @@ idea {
     project {
         settings {
             runConfigurations {
-                '1. Run Client'(Gradle) {
+                '1. Setup Workspace'(Gradle) {
+                    taskNames = ['setupDecompWorkspace']
+                }
+                '2. Run Client'(Gradle) {
                     taskNames = ['runClient']
                 }
-                '2. Run Server'(Gradle) {
+                '3. Run Server'(Gradle) {
                     taskNames = ['runServer']
                 }
-                '3. Run Obfuscated Client'(Gradle) {
+                '4. Run Obfuscated Client'(Gradle) {
                     taskNames = ['runObfClient']
                 }
-                '4. Run Obfuscated Server'(Gradle) {
+                '5. Run Obfuscated Server'(Gradle) {
                     taskNames = ['runObfServer']
                 }
                 if (enableSpotless.toBoolean()) {
-                    "5. Apply Spotless"(Gradle) {
+                    '6. Apply Spotless'(Gradle) {
                         taskNames = ["spotlessApply"]
+                    }
+                    '7. Build Jars'(Gradle) {
+                        taskNames = ['build']
+                    }
+                } else {
+                    '6. Build Jars'(Gradle) {
+                        taskNames = ['build']
                     }
                 }
                 'Update Buildscript'(Gradle) {

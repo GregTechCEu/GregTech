@@ -61,12 +61,14 @@ public class Textures {
     public static final SimpleOverlayRenderer CLEAN_STAINLESS_STEEL_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_clean_stainless_steel");
     public static final SimpleOverlayRenderer STABLE_TITANIUM_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_stable_titanium");
     public static final SimpleOverlayRenderer ROBUST_TUNGSTENSTEEL_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_robust_tungstensteel");
-    public static final SimpleOverlayRenderer ROBUST_HSSE_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_study_hsse");
+    public static final SimpleOverlayRenderer STURDY_HSSE_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_sturdy_hsse");
+    public static final SimpleOverlayRenderer PALLADIUM_SUBSTATION_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_palladium_substation");
     public static final SimpleOverlayRenderer INERT_PTFE_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_inert_ptfe");
     public static final SimpleOverlayRenderer PLASCRETE = new SimpleOverlayRenderer("casings/cleanroom/plascrete");
     public static final SimpleOverlayRenderer FUSION_TEXTURE = new SimpleOverlayRenderer("casings/fusion/machine_casing_fusion_hatch");
     public static final SimpleOverlayRenderer ACTIVE_FUSION_TEXTURE = new SimpleOverlayRenderer("casings/fusion/machine_casing_fusion_hatch_yellow");
     public static final SimpleOverlayRenderer GRATE_CASING = new SimpleOverlayRenderer("casings/pipe/machine_casing_grate");
+    public static final SimpleOverlayRenderer HIGH_POWER_CASING = new SimpleOverlayRenderer("casings/computer/high_power_casing");
 
     // Simple Sided Cube Renderers
     public static final SimpleSidedCubeRenderer STEAM_CASING_BRONZE = new SimpleSidedCubeRenderer("casings/steam/bronze");
@@ -118,6 +120,9 @@ public class Textures {
     public static final OrientedOverlayRenderer CLEANROOM_OVERLAY = new OrientedOverlayRenderer("multiblock/cleanroom");
     public static final OrientedOverlayRenderer MULTIBLOCK_TANK_OVERLAY = new OrientedOverlayRenderer("multiblock/multiblock_tank");
     public static final OrientedOverlayRenderer CHARCOAL_PILE_OVERLAY = new OrientedOverlayRenderer("multiblock/charcoal_pile_igniter");
+    public static final OrientedOverlayRenderer DATA_BANK_OVERLAY = new OrientedOverlayRenderer("multiblock/data_bank");
+    public static final OrientedOverlayRenderer POWER_SUBSTATION_OVERLAY = new OrientedOverlayRenderer("multiblock/power_substation");
+
     public static final OrientedOverlayRenderer ALLOY_SMELTER_OVERLAY = new OrientedOverlayRenderer("machines/alloy_smelter");
     public static final OrientedOverlayRenderer FURNACE_OVERLAY = new OrientedOverlayRenderer("machines/furnace");
     public static final OrientedOverlayRenderer ELECTRIC_FURNACE_OVERLAY = new OrientedOverlayRenderer("machines/electric_furnace");
@@ -207,6 +212,7 @@ public class Textures {
     public static final ICubeRenderer TITANIUM_FIREBOX_ACTIVE = new FireboxActiveRenderer("casings/firebox/overlay/titanium/active");
     public static final ICubeRenderer TUNGSTENSTEEL_FIREBOX = new SidedCubeRenderer("casings/firebox/overlay/tungstensteel");
     public static final ICubeRenderer TUNGSTENSTEEL_FIREBOX_ACTIVE = new FireboxActiveRenderer("casings/firebox/overlay/tungstensteel/active");
+    public static final ICubeRenderer COMPUTER_CASING = new SidedCubeRenderer("casings/computer/computer_casing");
 
     public static final AlignedOrientedOverlayRenderer LD_ITEM_PIPE = new AlignedOrientedOverlayRenderer("pipe/ld_item_pipe");
     public static final AlignedOrientedOverlayRenderer LD_FLUID_PIPE = new AlignedOrientedOverlayRenderer("pipe/ld_fluid_pipe");
@@ -228,6 +234,8 @@ public class Textures {
     public static final SimpleOverlayRenderer ENERGY_IN_HI = new SimpleOverlayRenderer("overlay/machine/overlay_energy_in_hi");
     public static final SimpleOverlayRenderer ENERGY_OUT_ULTRA = new SimpleOverlayRenderer("overlay/machine/overlay_energy_out_ultra");
     public static final SimpleOverlayRenderer ENERGY_IN_ULTRA = new SimpleOverlayRenderer("overlay/machine/overlay_energy_in_ultra");
+    public static final SimpleOverlayRenderer ENERGY_OUT_MAX = new SimpleOverlayRenderer("overlay/machine/overlay_energy_out_max");
+    public static final SimpleOverlayRenderer ENERGY_IN_MAX = new SimpleOverlayRenderer("overlay/machine/overlay_energy_in_max");
     public static final SimpleOverlayRenderer CONVEYOR_OVERLAY = new SimpleOverlayRenderer("cover/overlay_conveyor");
     public static final SimpleOverlayRenderer CONVEYOR_OVERLAY_INVERTED = new SimpleOverlayRenderer("cover/overlay_conveyor_inverted");
     public static final SimpleOverlayRenderer ARM_OVERLAY = new SimpleOverlayRenderer("cover/overlay_arm");
@@ -254,6 +262,7 @@ public class Textures {
     public static final SimpleOverlayRenderer BLANK_SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_blank_screen");
     public static final SimpleOverlayRenderer DATA_ACCESS_HATCH = new SimpleOverlayRenderer("overlay/machine/overlay_data_hatch");
     public static final SimpleOverlayRenderer CREATIVE_DATA_ACCESS_HATCH = new SimpleOverlayRenderer("overlay/machine/overlay_data_hatch_creative");
+    public static final SimpleOverlayRenderer OPTICAL_DATA_ACCESS_HATCH = new SimpleOverlayRenderer("overlay/machine/overlay_data_hatch_optical");
 
     public static final SimpleOverlayRenderer COVER_INTERFACE_FLUID = new SimpleOverlayRenderer("cover/cover_interface_fluid");
     public static final SimpleOverlayRenderer COVER_INTERFACE_FLUID_GLASS = new SimpleOverlayRenderer("cover/cover_interface_fluid_glass");
@@ -303,6 +312,15 @@ public class Textures {
     public static TextureAtlasSprite PIPE_SIDE_WOOD;
 
     @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite OPTICAL_PIPE_IN;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite OPTICAL_PIPE_SIDE;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite OPTICAL_PIPE_SIDE_OVERLAY;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE;
+
+    @SideOnly(Side.CLIENT)
     public static ThreadLocal<CubeRendererState> RENDER_STATE;
 
     static {
@@ -336,6 +354,11 @@ public class Textures {
         PIPE_NORMAL_WOOD = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in_wood"));
         PIPE_LARGE_WOOD = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in_wood"));
         PIPE_SIDE_WOOD = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side_wood"));
+
+        OPTICAL_PIPE_IN = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_in"));
+        OPTICAL_PIPE_SIDE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side"));
+        OPTICAL_PIPE_SIDE_OVERLAY = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side_overlay"));
+        OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side_overlay_active"));
 
         for (MaterialIconSet iconSet : MaterialIconSet.ICON_SETS.values()) {
             textureMap.registerSprite(MaterialIconType.frameGt.getBlockTexturePath(iconSet));

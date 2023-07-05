@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTank;
@@ -53,6 +54,9 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
             FluidTankList fluidTankList = getFluidHandlers();
             if (fluidTankList != null) {
                 for (IFluidTank fluidTank : fluidTankList) {
+                    if (fluidTank instanceof IMultipleTankHandler.MultiFluidTankEntry entry) {
+                        fluidTank = entry.getDelegate();
+                    }
                     if (fluidTank instanceof NotifiableFluidTank) {
                         handlerList.add((INotifiableHandler) fluidTank);
                     }

@@ -1,12 +1,19 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.capability.IRotorHolder;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.util.TextFormattingUtil;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
@@ -98,5 +105,27 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     public void invalidate() {
         super.invalidate();
         totalContinuousRunningTime = 0;
+    }
+
+    public String[] getRecipeFluidInputInfo() {
+        IRotorHolder rotorHolder = null;
+
+        if (metaTileEntity instanceof MultiblockWithDisplayBase multiblockWithDisplayBase) {
+            List<IRotorHolder> abilities = multiblockWithDisplayBase.getAbilities(MultiblockAbility.ROTOR_HOLDER);
+            rotorHolder = abilities.size() > 0 ? abilities.get(0) : null;
+        }
+
+        FluidStack requiredFluidInput = previousRecipe.getFluidInputs().get(0).getInputFluidStack();
+        String neededName = requiredFluidInput.getLocalizedName();
+
+        int ocAmount = (int) (getMaxVoltage() / -previousRecipe.getEUt());
+        int neededAmount = ocAmount * requiredFluidInput.amount;
+        if (rotorHolder != null && rotorHolder.hasRotor()) {
+            neededAmount /= (rotorHolder.getTotalEfficiency() / 100f);
+        }
+        return new String[] {
+                TextFormatting.RED + TextFormattingUtil.formatNumbers(neededAmount) + "L",
+                neededName
+        };
     }
 }
