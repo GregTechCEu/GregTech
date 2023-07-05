@@ -41,6 +41,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -102,6 +103,18 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
     @Override
     protected void updateFormedValid() {
+        // Take in coolant, take in fuel, update reactor, output steam
+        if (this.locked) {
+            List<ILockableHandler> coolantImports = this.getAbilities(MultiblockAbility.IMPORT_COOLANT);
+            for (ILockableHandler coolantImport : coolantImports) {
+
+            }
+
+            this.fissionReactor.updatePressure();
+            this.fissionReactor.updateTemperature();
+            this.fissionReactor.updateNeutronPoisoning();
+            this.fissionReactor.updatePower();
+        }
     }
 
     public boolean updateStructureDimensions() {
@@ -178,7 +191,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                 .where('A', states(getFuelChannelState(), getControlRodChannelState(), getCoolantChannelState()))              //A for interior components
                 .where('I', states(getVesselState()).or(abilities(MultiblockAbility.IMPORT_COOLANT, MultiblockAbility.IMPORT_FUEL_ROD, MultiblockAbility.CONTROL_ROD_PORT)))           //I for the inputs on the top
                 .where('O', states(getVesselState()).or(abilities(MultiblockAbility.EXPORT_COOLANT, MultiblockAbility.EXPORT_FUEL_ROD)))        //O for the outputs on the bottom
-                .where('B', states(getVesselState()).or(abilities(MultiblockAbility.MAINTENANCE_HATCH)))                   //B for the vessel blocks on the walls
+                .where('B', states(getVesselState()).or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1)))                   //B for the vessel blocks on the walls
                 .where(' ', any())
                 .build();
     }
@@ -324,10 +338,10 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         }
         fissionReactor = new FissionReactor(this.diameter - 2);
         int radius = this.diameter % 2 == 0 ? (int) Math.floor(this.diameter / 2.f) : Math.round((this.diameter - 1) / 2.f);
-        radius--; // Get rid of the outside ring
-        BlockPos reactorOrigin = this.getPos().offset(this.frontFacing.getOpposite()).offset(this.frontFacing.rotateY(), radius);
-        for (int i = 0; i < diameter - 2; i++) {
-            for (int j = 0; j < diameter - 2; j++) {
+        radius--;
+        BlockPos reactorOrigin = this.getPos().offset(this.frontFacing.getOpposite(), radius);
+        for (int i = -radius; i < radius; i++) {
+            for (int j = -radius; j < radius; j++) {
                 if (Math.pow(i, 2) + Math.pow(j, 2) > Math.pow(radius, 2))
                     continue;
                 BlockPos currentPos = reactorOrigin.offset(this.frontFacing.rotateYCCW(), i).offset(this.frontFacing.getOpposite(), j).offset(EnumFacing.UP, height - 2);
@@ -336,8 +350,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                     ReactorComponent component = null;
 
                     if (mte instanceof MetaTileEntityCoolantImportHatch coolantIn) {
-                        Material mat = GregTechAPI.MaterialRegistry.get(coolantIn.getImportFluids().getTankAt(0).getFluid().getFluid().getName());
-                        if (mat != null) component = new CoolantChannel(0, 0, mat);
+                        FluidStack containedFluid = coolantIn.getImportFluids().getTankAt(0).getFluid();
+                            if (containedFluid != null) {
+                                Material mat = GregTechAPI.MaterialRegistry.get(coolantIn.getImportFluids().getTankAt(0).getFluid().getFluid().getName());
+                                if (mat != null) component = new CoolantChannel(0, 0, mat);
+                            }
                     } else if (mte instanceof MetaTileEntityFuelRodImportHatch fuelIn) {
                         ItemStack lockedFuel = fuelIn.getImportItems().getStackInSlot(0);
                         if (lockedFuel != null && !lockedFuel.isEmpty()) {
