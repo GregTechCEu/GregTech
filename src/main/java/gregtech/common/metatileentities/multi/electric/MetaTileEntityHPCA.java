@@ -324,7 +324,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         if (isStructureFormed()) {
             textList.add(new TextComponentString(String.format("Maximum Computation: %d CWU/t", hpcaHandler.getMaxCWUt())));
             textList.add(new TextComponentString(String.format("Maximum Power: %d EU/t", hpcaHandler.getMaxEUt())));
-            textList.add(new TextComponentString(String.format("Current Power Usage: %d EU/t", hpcaHandler.getCurrentEUt())));
+            textList.add(new TextComponentString(String.format("Current Power Usage: %d EU/t", hpcaHandler.cachedEUt)));
             textList.add(new TextComponentString(String.format("Maximum Cooling Demand: %d CU/t", hpcaHandler.getMaxCoolingDemand())));
             textList.add(new TextComponentString(String.format("Maximum Cooling Supply: %d CU/t", hpcaHandler.getMaxCoolingAmount())));
             textList.add(new TextComponentString(String.format("Maximum Coolant Demand: %d L/t", hpcaHandler.getMaxCoolantDemand())));
@@ -429,6 +429,11 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         // transaction info
         private int allocatedCWUt;
 
+        // cached gui info
+        // holding these values past the computation clear because GUI is too "late" to read the state in time
+        private int cachedEUt;
+        private int cachedCWUt;
+
         public void onStructureForm(Collection<IHPCAComponentHatch> components) {
             reset();
             for (var component : components) {
@@ -462,6 +467,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         }
 
         public void tick() {
+            cachedCWUt = allocatedCWUt;
+            cachedEUt = getCurrentEUt();
             if (allocatedCWUt != 0) {
                 allocatedCWUt = 0;
             }
