@@ -93,6 +93,15 @@ gregtech.top.unit.fluid_buckets=kL
 
 gregtech.top.block_drops=Drops
 
+gregtech.top.ld_pipe_no_network=No Pipeline Found
+gregtech.top.ld_pipe_connected=Pipeline Connected
+gregtech.top.ld_pipe_incomplete=Incomplete Pipeline
+gregtech.top.ld_pipe_length=Length:
+gregtech.top.ld_pipe_input=Input
+gregtech.top.ld_pipe_output=Output
+gregtech.top.ld_pipe_input_endpoint=Input Endpoint:
+gregtech.top.ld_pipe_output_endpoint=Other Endpoint:
+
 gregtech.waila.energy_stored=Energy: %d EU / %d EU
 gregtech.waila.progress_idle=Idle
 gregtech.waila.progress_tick=Progress: %d t / %d t
@@ -2548,6 +2557,10 @@ tile.battery_block.lapotronic_uv.name=UV Lapotronic Capacitor
 tile.battery_block.ultimate_uhv.name=UHV Ultimate Capacitor
 tile.battery_block.tooltip_empty=For filling space in your Power Substation
 
+# Long Distance Pipeline Blocks
+tile.long_distance_item_pipeline.name=Long Distance Item Pipe
+tile.long_distance_fluid_pipeline.name=Long Distance Fluid Pipe
+
 # Creative tabs
 itemGroup.gregtech.main=GregTech
 itemGroup.gregtech.machines=Machines (GT)
@@ -4268,6 +4281,13 @@ gregtech.machine.muffle.off=Sound Muffling: Disabled
 gregtech.machine.perfect_oc=Does not lose energy efficiency when overclocked.
 gregtech.machine.parallel_limit=Can run up to §b%d§r§7 Recipes at once.
 
+gregtech.machine.ld_item_endpoint.name=Long Distance Item Pipeline Endpoint
+gregtech.machine.ld_fluid_endpoint.name=Long Distance Fluid Pipeline Endpoint
+gregtech.machine.endpoint.tooltip.min_length=§bMinimum Endpoint Distance: §f%d Blocks
+gregtech.machine.endpoint.tooltip.1=Connect with §fLong Distance Pipe§7 blocks to create a pipeline.
+gregtech.machine.endpoint.tooltip.2=Pipelines must have exactly §f1 Input§7 and §f1 Output§7 endpoint.
+gregtech.machine.endpoint.tooltip.3=Only pipeline endpoints need to be §fchunk-loaded§7.
+
 # Advancements
 gregtech.advancement.root_steam.name=Steam Age
 gregtech.advancement.root_steam.desc=Welcome to GregTech! Everything begins with your first copper ingots.
@@ -4931,6 +4951,8 @@ gregtech.universal.tooltip.base_production_fluid=§eBase Production: §f%,d L/t
 gregtech.universal.tooltip.produces_fluid=§eProduces: §f%,d L/t
 gregtech.universal.tooltip.terrain_resist=This Machine will not explode when exposed to the Elements
 gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
+
+gregtech.block.tooltip.no_mob_spawning=§bMobs cannot spawn on this block
 
 gregtech.recipe.total=Total: %,d EU
 gregtech.recipe.eu=Usage: %,d EU/t (%s§r)

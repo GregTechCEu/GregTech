@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
@@ -129,7 +128,7 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             // normal
 
             final String active = String.format("%s_active", overlayPath);
-            TextureAtlasSprite activeSprite = textureMap.registerSprite(new ResourceLocation(modID, active));
+            TextureAtlasSprite activeSprite = ICubeRenderer.getResource(textureMap, modID, active);
 
             final String paused = String.format("%s_paused", overlayPath);
             TextureAtlasSprite pausedSprite = ICubeRenderer.getResource(textureMap, modID, paused);
@@ -170,21 +169,9 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
                 Matrix4 renderTranslation = translation.copy();
 
                 // Rotate the top and bottom faces to match front facing
-                Rotation rotation = new Rotation(0, 0, 1, 0);
-                if (renderSide == EnumFacing.UP || renderSide == EnumFacing.DOWN) {
-                    if (frontFacing == EnumFacing.NORTH) {
-                        renderTranslation.translate(1, 0, 1);
-                        rotation = new Rotation(Math.PI, 0, 1, 0);
-                    } else if (frontFacing == EnumFacing.EAST) {
-                        renderTranslation.translate(0, 0, 1);
-                        rotation = new Rotation(Math.PI / 2, 0, 1, 0);
-                    } else if (frontFacing == EnumFacing.WEST) {
-                        renderTranslation.translate(1, 0, 0);
-                        rotation = new Rotation(-Math.PI / 2, 0, 1, 0);
-                    }
-                    renderTranslation = RenderUtil.adjustTrans(renderTranslation, renderSide, 1);
-                    renderTranslation.apply(rotation);
-                }
+                Rotation rotation = getRotation(renderTranslation, renderSide, frontFacing);
+                renderTranslation = RenderUtil.adjustTrans(renderTranslation, renderSide, 1);
+                renderTranslation.apply(rotation);
 
                 Textures.renderFace(renderState, renderTranslation, ArrayUtils.addAll(pipeline, rotation), renderSide, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
 
@@ -200,5 +187,22 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
                 }
             }
         }
+    }
+
+    public Rotation getRotation(Matrix4 transformation, EnumFacing renderSide, EnumFacing frontFacing) {
+        Rotation rotation = new Rotation(0, 0, 1, 0);
+        if (renderSide.getAxis() == EnumFacing.Axis.Y) {
+            if (frontFacing == EnumFacing.NORTH) {
+                transformation.translate(1, 0, 1);
+                rotation = new Rotation(Math.PI, 0, 1, 0);
+            } else if (frontFacing == EnumFacing.EAST) {
+                transformation.translate(0, 0, 1);
+                rotation = new Rotation(Math.PI / 2, 0, 1, 0);
+            } else if (frontFacing == EnumFacing.WEST) {
+                transformation.translate(1, 0, 0);
+                rotation = new Rotation(-Math.PI / 2, 0, 1, 0);
+            }
+        }
+        return rotation;
     }
 }
