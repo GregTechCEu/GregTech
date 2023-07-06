@@ -1,4 +1,4 @@
-//version: 1688526754
+//version: 1688620665
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -402,7 +402,10 @@ configurations {
 dependencies {
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
         implementation 'zone.rong:mixinbooter:7.0'
-        String mixin = modUtils.enableMixins('org.spongepowered:mixin:0.8.3', "mixins.${modId}.refmap.json")
+        String mixin = 'org.spongepowered:mixin:0.8.3'
+        if (usesMixins.toBoolean()) {
+            mixin = modUtils.enableMixins(mixin, "mixins.${modId}.refmap.json")
+        }
 
         api (mixin) {
             transitive = false
