@@ -282,6 +282,9 @@ public class ConfigHolder {
         @Config.Comment({"Whether to enable more verbose logging.", "Default: false"})
         public boolean debug = false;
 
+        @Config.Comment({"Whether to enable Special Event features (e.g. Christmas, etc).", "Default: true"})
+        public boolean specialEvents = true;
+
         @Config.Comment({"Setting this to true makes GTCEu ignore error and invalid recipes that would otherwise cause crash.", "Default: true"})
         public boolean ignoreErrorOrInvalidRecipes = true;
 
