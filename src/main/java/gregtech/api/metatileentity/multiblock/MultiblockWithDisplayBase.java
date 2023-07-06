@@ -380,7 +380,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 .setClickHandler(this::handleDisplayClick));
 
         // Power Button
-        // todo try to not need this, and have this class implement IControllable
+        // todo in the future, refactor so that this class is instanceof IControllable.
         IControllable controllable = getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
         if (controllable != null) {
             builder.widget(new ImageCycleButtonWidget(173, 187, 18, 18, GuiTextures.BUTTON_POWER,

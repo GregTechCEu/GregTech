@@ -35,7 +35,6 @@ import org.jetbrains.annotations.ApiStatus;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider, ICleanroomReceiver, IDistinctBusController {
@@ -268,20 +267,18 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     public boolean isDistinct() {
-        return isDistinct && inputInventory.getSlots() > 0;
+        return isDistinct;
     }
 
     @Override
     public void setDistinct(boolean isDistinct) {
-        if (this.isDistinct != isDistinct && inputInventory.getSlots() > 0) {
-            this.isDistinct = isDistinct;
-            recipeMapWorkable.onDistinctChanged();
-            //mark buses as changed on distinct toggle
-            if (this.isDistinct) {
-                this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
-            } else {
-                this.notifiedItemInputList.add(this.inputInventory);
-            }
+        this.isDistinct = isDistinct;
+        recipeMapWorkable.onDistinctChanged();
+        //mark buses as changed on distinct toggle
+        if (this.isDistinct) {
+            this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+        } else {
+            this.notifiedItemInputList.add(this.inputInventory);
         }
     }
 
