@@ -5,13 +5,13 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
+import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pattern.PatternMatchContext;
@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider, ICleanroomReceiver {
+public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider, ICleanroomReceiver, IDistinctBusController {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
@@ -187,12 +187,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     @Override
-    protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
-        super.handleDisplayClick(componentData, clickData);
-        toggleDistinct();
-    }
-
-    @Override
     public TraceabilityPredicate autoAbilities() {
         return autoAbilities(true, true, true, true, true, true, true);
     }
@@ -266,22 +260,27 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         isDistinct = buf.readBoolean();
     }
 
+    @Override
     public boolean canBeDistinct() {
         return false;
     }
 
+    @Override
     public boolean isDistinct() {
         return isDistinct && inputInventory.getSlots() > 0;
     }
 
-    protected void toggleDistinct() {
-        isDistinct = !isDistinct;
-        recipeMapWorkable.onDistinctChanged();
-        //mark buses as changed on distinct toggle
-        if (isDistinct) {
-            this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
-        } else {
-            this.notifiedItemInputList.add(this.inputInventory);
+    @Override
+    public void setDistinct(boolean isDistinct) {
+        if (this.isDistinct != isDistinct && inputInventory.getSlots() > 0) {
+            this.isDistinct = isDistinct;
+            recipeMapWorkable.onDistinctChanged();
+            //mark buses as changed on distinct toggle
+            if (this.isDistinct) {
+                this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+            } else {
+                this.notifiedItemInputList.add(this.inputInventory);
+            }
         }
     }
 

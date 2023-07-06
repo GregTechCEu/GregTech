@@ -10,6 +10,9 @@ public class GuiTextures {
     //GREGTECH
     public static final TextureArea GREGTECH_LOGO = TextureArea.fullImage("textures/gui/icon/gregtech_logo.png");
     public static final TextureArea GREGTECH_LOGO_XMAS = TextureArea.fullImage("textures/gui/icon/gregtech_logo_xmas.png");
+    public static final TextureArea GREGTECH_LOGO_DARK = TextureArea.fullImage("textures/gui/icon/gregtech_logo_dark.png");
+    public static final TextureArea GREGTECH_LOGO_BLINKING_YELLOW = TextureArea.fullImage("textures/gui/icon/gregtech_logo_blinking_yellow.png");
+    public static final TextureArea GREGTECH_LOGO_BLINKING_RED = TextureArea.fullImage("textures/gui/icon/gregtech_logo_blinking_red.png");
 
     //BASE TEXTURES
     public static final TextureArea BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/background.png", 176, 166, 3, 3);
@@ -20,8 +23,8 @@ public class GuiTextures {
     public static final TextureArea CLIPBOARD_PAPER_BACKGROUND = TextureArea.fullImage("textures/gui/base/clipboard_paper_background.png");
 
     public static final TextureArea BLANK = AdoptableTextureArea.fullImage("textures/gui/base/blank.png", 1, 1, 0, 0);
-    public static final TextureArea DISPLAY = TextureArea.fullImage("textures/gui/base/display.png");
-    public static final SteamTexture DISPLAY_STEAM = SteamTexture.fullImage("textures/gui/base/display_%s.png");
+    public static final TextureArea DISPLAY = AdoptableTextureArea.fullImage("textures/gui/base/display.png", 143, 75, 2, 2);
+    public static final SteamTexture DISPLAY_STEAM = SteamTexture.fullImage("textures/gui/base/display_%s.png", 143, 75, 2, 2);
     public static final TextureArea FLUID_SLOT = AdoptableTextureArea.fullImage("textures/gui/base/fluid_slot.png", 18, 18, 1, 1);
     public static final TextureArea FLUID_TANK_BACKGROUND = TextureArea.fullImage("textures/gui/base/fluid_tank_background.png");
     public static final TextureArea FLUID_TANK_OVERLAY = TextureArea.fullImage("textures/gui/base/fluid_tank_overlay.png");
@@ -43,7 +46,7 @@ public class GuiTextures {
     public static final TextureArea BUTTON_ITEM_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_item_output_overlay.png");
     public static final TextureArea BUTTON_LOCK = TextureArea.fullImage("textures/gui/widget/button_lock.png");
     public static final TextureArea BUTTON_VOID = TextureArea.fullImage("textures/gui/widget/button_void.png");
-    public static final TextureArea BUTTON_VOID_PARTIAL = TextureArea.fullImage("textures/gui/widget/button_void_partial.png");
+    public static final TextureArea BUTTON_VOID_NONE = TextureArea.fullImage("textures/gui/widget/button_void_none.png");
     public static final TextureArea BUTTON_VOID_MULTIBLOCK = TextureArea.fullImage("textures/gui/widget/button_void_multiblock.png");
     public static final TextureArea BUTTON_LEFT = TextureArea.fullImage("textures/gui/widget/left.png");
     public static final TextureArea BUTTON_OVERCLOCK = TextureArea.fullImage("textures/gui/widget/button_overclock.png");
@@ -62,6 +65,11 @@ public class GuiTextures {
     public static final TextureArea SWITCH = TextureArea.fullImage("textures/gui/widget/switch.png");
     public static final TextureArea SWITCH_HORIZONTAL = TextureArea.fullImage("textures/gui/widget/switch_horizontal.png");
     public static final SizedTextureArea VANILLA_BUTTON = SizedTextureArea.fullImage("textures/gui/widget/vanilla_button.png", 200, 40);
+    public static final TextureArea BUTTON_POWER = TextureArea.fullImage("textures/gui/widget/button_power.png");
+    public static final TextureArea BUTTON_POWER_DETAIL = TextureArea.fullImage("textures/gui/widget/button_power_detail.png");
+    public static final TextureArea BUTTON_DISTINCT_BUSES = TextureArea.fullImage("textures/gui/widget/button_distinct_buses.png");
+    public static final TextureArea BUTTON_NO_DISTINCT_BUSES = TextureArea.fullImage("textures/gui/widget/button_no_distinct_buses.png");
+    public static final TextureArea BUTTON_NO_FLEX = TextureArea.fullImage("textures/gui/widget/button_no_flex.png");
 
     //INDICATORS & ICONS
     public static final TextureArea INDICATOR_NO_ENERGY = TextureArea.fullImage("textures/gui/base/indicator_no_energy.png");

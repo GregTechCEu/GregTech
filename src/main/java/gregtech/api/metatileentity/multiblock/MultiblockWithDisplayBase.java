@@ -2,20 +2,19 @@ package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.VariantActiveBlock;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IMaintenanceHatch;
-import gregtech.api.capability.IMufflerHatch;
+import gregtech.api.capability.*;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.Widget.ClickData;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.gui.widgets.*;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.ConfigHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -34,6 +33,8 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -389,19 +390,96 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.extendedBuilder();
-        builder.image(7, 4, 162, 121, GuiTextures.DISPLAY);
-        builder.label(11, 9, getMetaFullName(), 0xFFFFFF);
-        builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(156)
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 198, 212);
+
+        // Display
+        builder.image(4, 4, 190, 121, GuiTextures.DISPLAY);
+        builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
+        builder.widget(new AdvancedTextWidget(9, 19, this::addDisplayText, 0xFFFFFF)
+                .setMaxWidthLimit(181)
                 .setClickHandler(this::handleDisplayClick));
+
+        // Power Button
+        // todo try to not need this, and have this class implement IControllable
+        IControllable controllable = getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+        if (controllable != null) {
+            builder.widget(new ImageCycleButtonWidget(173, 187, 18, 18, GuiTextures.BUTTON_POWER,
+                    controllable::isWorkingEnabled, controllable::setWorkingEnabled));
+            builder.widget(new ImageWidget(173, 205, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
+        }
+
+        // Voiding Mode Button
         if (shouldShowVoidingModeButton()) {
-            builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
+            builder.widget(new ImageCycleButtonWidget(173, 165, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
                     4, this::getVoidingMode, this::setVoidingMode)
                     .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
+        } else {
+            builder.widget(new ImageWidget(173, 165, 18, 18, GuiTextures.BUTTON_VOID_NONE)
+                    .setTooltip("gregtech.gui.multiblock_voiding_not_supported"));
         }
-        builder.bindPlayerInventory(entityPlayer.inventory, 134);
+
+        // Distinct Buses Button
+        if (this instanceof IDistinctBusController distinct && distinct.canBeDistinct()) {
+            builder.widget(new ImageCycleButtonWidget(173, 147, 18, 18, GuiTextures.BUTTON_DISTINCT_BUSES, distinct::isDistinct, distinct::setDistinct)
+                    .setTooltipHoverString(i -> "gregtech.multiblock.universal.distinct_" + (i == 0 ? "disabled" : "enabled")));
+        } else {
+            builder.widget(new ImageWidget(173, 147, 18, 18, GuiTextures.BUTTON_NO_DISTINCT_BUSES)
+                    .setTooltip("gregtech.multiblock.universal.distinct_not_supported"));
+        }
+
+        // Flex Button
+        builder.widget(getFlexButton(173, 129, 18, 18));
+
+        // Logo / Indicator Widget
+        builder.widget(new IndicatorImageWidget(174, 105, 17, 17, getLogo())
+                .setWarningStatus(getWarningLogo(), this::getWarningText)
+                .setErrorStatus(getErrorLogo(), this::getErrorText));
+
+        builder.bindPlayerInventory(entityPlayer.inventory, 129);
         return builder;
+    }
+
+    /**
+     * Add a custom third button to the Multiblock UI. By default, this is a placeholder
+     * stating that there is no additional functionality for this Multiblock.
+     * <br><br>
+     * Parameters should be passed directly to the created widget. Size will be 18x18.
+     */
+    @SuppressWarnings("SameParameterValue")
+    @NotNull
+    protected Widget getFlexButton(int x, int y, int width, int height) {
+        return new ImageWidget(x, y, width, height, GuiTextures.BUTTON_NO_FLEX)
+                .setTooltip("gregtech.multiblock.universal.no_flex_button");
+    }
+
+    protected @NotNull TextureArea getLogo() {
+        return GuiTextures.GREGTECH_LOGO_DARK;
+    }
+
+    protected @NotNull TextureArea getWarningLogo() {
+        return GuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
+    }
+
+    protected @NotNull TextureArea getErrorLogo() {
+        return GuiTextures.GREGTECH_LOGO_BLINKING_RED;
+    }
+
+    /**
+     * Returns a list of text indicating any current warnings in this Multiblock.
+     * Translate using {@link gregtech.api.util.LocalizationUtils}.
+     * Recommended to only display warnings if the structure is already formed.
+     */
+    protected @Nullable List<String> getWarningText() {
+        return null;
+    }
+
+    /**
+     * Returns a list of translation keys indicating any current errors in this Multiblock.
+     * Translate using {@link gregtech.api.util.LocalizationUtils}.
+     * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#getWarningText()}.
+     */
+    protected @Nullable List<String> getErrorText() {
+        return null;
     }
 
     protected boolean shouldShowVoidingModeButton() {
