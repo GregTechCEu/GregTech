@@ -38,7 +38,6 @@ public class GuiTextures {
     public static final TextureArea BUTTON = TextureArea.fullImage("textures/gui/widget/button.png");
     public static final TextureArea BUTTON_ALLOW_IMPORT_EXPORT = TextureArea.fullImage("textures/gui/widget/button_allow_import_export.png");
     public static final TextureArea BUTTON_BLACKLIST = TextureArea.fullImage("textures/gui/widget/button_blacklist.png");
-    public static final TextureArea BUTTON_CHUNK_MODE = TextureArea.fullImage("textures/gui/widget/button_chunk_mode.png");
     public static final TextureArea BUTTON_CLEAR_GRID = TextureArea.fullImage("textures/gui/widget/button_clear_grid.png");
     public static final TextureArea BUTTON_FILTER_DAMAGE = TextureArea.fullImage("textures/gui/widget/button_filter_damage.png");
     public static final TextureArea BUTTON_FILTER_NBT = TextureArea.fullImage("textures/gui/widget/button_filter_nbt.png");
@@ -52,7 +51,6 @@ public class GuiTextures {
     public static final TextureArea BUTTON_OVERCLOCK = TextureArea.fullImage("textures/gui/widget/button_overclock.png");
     public static final TextureArea BUTTON_PUBLIC_PRIVATE = TextureArea.fullImage("textures/gui/widget/button_public_private.png");
     public static final TextureArea BUTTON_RIGHT = TextureArea.fullImage("textures/gui/widget/right.png");
-    public static final TextureArea BUTTON_SILK_TOUCH_MODE = TextureArea.fullImage("textures/gui/widget/button_silk_touch_mode.png");
     public static final TextureArea BUTTON_SWITCH_VIEW = TextureArea.fullImage("textures/gui/widget/button_switch_view.png");
     public static final TextureArea BUTTON_WORKING_ENABLE = TextureArea.fullImage("textures/gui/widget/button_working_enable.png");
     public static final TextureArea BUTTON_INT_CIRCUIT_PLUS = TextureArea.fullImage("textures/gui/widget/button_circuit_plus.png");
@@ -71,6 +69,7 @@ public class GuiTextures {
     public static final TextureArea BUTTON_NO_DISTINCT_BUSES = TextureArea.fullImage("textures/gui/widget/button_no_distinct_buses.png");
     public static final TextureArea BUTTON_NO_FLEX = TextureArea.fullImage("textures/gui/widget/button_no_flex.png");
     public static final TextureArea BUTTON_MULTI_MAP = TextureArea.fullImage("textures/gui/widget/button_multi_map.png");
+    public static final TextureArea BUTTON_MINER_MODES = TextureArea.fullImage("textures/gui/widget/button_miner_modes.png");
 
     //INDICATORS & ICONS
     public static final TextureArea INDICATOR_NO_ENERGY = TextureArea.fullImage("textures/gui/base/indicator_no_energy.png");

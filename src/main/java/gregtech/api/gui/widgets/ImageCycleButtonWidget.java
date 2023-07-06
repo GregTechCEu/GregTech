@@ -123,7 +123,6 @@ public class ImageCycleButtonWidget extends Widget {
         super.readUpdateInfo(id, buffer);
         if (id == 1) {
             this.currentOption = buffer.readVarInt();
-            setOptionExecutor.accept(currentOption);
         }
     }
 
@@ -141,7 +140,6 @@ public class ImageCycleButtonWidget extends Widget {
             }
             setOptionExecutor.accept(currentOption);
             writeClientAction(1, buf -> buf.writeVarInt(currentOption));
-            //writeUpdateInfo(1, buf -> buf.writeVarInt(currentOption));
             playButtonClickSound();
             return true;
         }
@@ -157,5 +155,4 @@ public class ImageCycleButtonWidget extends Widget {
             setOptionExecutor.accept(currentOption);
         }
     }
-
 }

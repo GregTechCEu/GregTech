@@ -5032,10 +5032,6 @@ gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
 gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
 gregtech.gui.fluid_voiding.tooltip.enabled=Excess Fluid Voiding Enabled
 gregtech.gui.fluid_voiding.tooltip.disabled=Excess Fluid Voiding Disabled
-gregtech.gui.silktouch.enabled=Silk Touch Enabled: Click to Disable./n§7Switching requires an idle machine.
-gregtech.gui.silktouch.disabled=Silk Touch Disabled: Click to Enable./n§7Switching requires an idle machine.
-gregtech.gui.chunkmode.enabled=Chunk Mode Enabled: Click to Disable./n§7Switching requires an idle machine.
-gregtech.gui.chunkmode.disabled=Chunk Mode Disabled: Click to Enable./n§7Switching requires an idle machine.
 gregtech.gui.multiblock_item_voiding=Voiding Mode/n§7Voiding §6Items
 gregtech.gui.multiblock_fluid_voiding=Voiding Mode/n§7Voiding §9Fluids
 gregtech.gui.multiblock_item_fluid_voiding=Voiding Mode/n§7Voiding §6Items §7and §9Fluids
@@ -5201,6 +5197,11 @@ gregtech.machine.miner.needspower=Needs Power!
 gregtech.machine.steam_miner.vent=Venting Blocked!
 gregtech.machine.steam_miner.steam=Needs Steam!
 gregtech.machine.miner.errorradius=§cCannot change radius while working!
+
+gregtech.multiblock.miner.neither_mode=Chunk Mode: §cDisabled§r/nSilk Touch Mode: §cDisabled§r/n§7Switching requires an idle machine.
+gregtech.multiblock.miner.chunk_mode=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §cDisabled§r/n§7Switching requires an idle machine.
+gregtech.multiblock.miner.silk_touch_mode=Chunk Mode: §cDisabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
+gregtech.multiblock.miner.both_modes=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
 
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 

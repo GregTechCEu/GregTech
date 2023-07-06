@@ -13,8 +13,9 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.miner.MultiblockMinerLogic;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -51,6 +52,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -343,24 +345,62 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.extendedBuilder();
-        builder.image(7, 4, 162, 121, GuiTextures.DISPLAY);
-        builder.label(11, 9, this.getMetaFullName(), 0xFFFFFF);
-        builder.widget((new AdvancedTextWidget(11, 19, this::addDisplayText,
-                0xFFFFFF)).setMaxWidthLimit(139).setClickHandler(this::handleDisplayClick));
-        builder.widget((new AdvancedTextWidget(63, 30, this::addDisplayText2,
-                0xFFFFFF)).setMaxWidthLimit(68).setClickHandler(this::handleDisplayClick));
-        builder.bindPlayerInventory(entityPlayer.inventory, 134);
+    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
+        ModularUI.Builder builder = super.createUITemplate(entityPlayer);
+        builder.widget(new AdvancedTextWidget(63, 30, this::addDisplayText2, 0xFFFFFF)
+                .setMaxWidthLimit(68).setClickHandler(this::handleDisplayClick));
+        return builder;
+    }
 
-        builder.widget(new ToggleButtonWidget(133, 107, 18, 18,
-                this.minerLogic::isChunkMode, this.minerLogic::setChunkMode).setButtonTexture(GuiTextures.BUTTON_CHUNK_MODE)
-                .setTooltipText("gregtech.gui.chunkmode"));
-        builder.widget(new ToggleButtonWidget(151, 107, 18, 18,
-                this.minerLogic::isSilkTouchMode, this.minerLogic::setSilkTouchMode).setButtonTexture(GuiTextures.BUTTON_SILK_TOUCH_MODE)
-                .setTooltipText("gregtech.gui.silktouch"));
+    // used for UI
+    private int getCurrentMode() {
+        // 0 -> not chunk mode, not silk touch mode
+        if (!minerLogic.isChunkMode() && !minerLogic.isSilkTouchMode()) {
+            return 0;
+        }
+        // 1 -> is chunk mode, not silk touch mode
+        if (minerLogic.isChunkMode() && !minerLogic.isSilkTouchMode()) {
+            return 1;
+        }
+        // 2 -> not chunk mode, is silk touch mode
+        if (!minerLogic.isChunkMode() && minerLogic.isSilkTouchMode()) {
+            return 2;
+        }
+        // 3 -> is chunk mode, is silk touch mode
+        return 3;
+    }
 
-        return builder.build(getHolder(), entityPlayer);
+    // used for UI
+    private void setCurrentMode(int mode) {
+        switch (mode) {
+            case 0 -> {
+                minerLogic.setChunkMode(false);
+                minerLogic.setSilkTouchMode(false);
+            }
+            case 1 -> {
+                minerLogic.setChunkMode(true);
+                minerLogic.setSilkTouchMode(false);
+            }
+            case 2 -> {
+                minerLogic.setChunkMode(false);
+                minerLogic.setSilkTouchMode(true);
+            }
+            default -> {
+                minerLogic.setChunkMode(true);
+                minerLogic.setSilkTouchMode(true);
+            }
+        }
+    }
+
+    @Override
+    protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
+        return new ImageCycleButtonWidget(x, y, width, height, GuiTextures.BUTTON_MINER_MODES, 4, this::getCurrentMode, this::setCurrentMode)
+                .setTooltipHoverString(mode -> switch (mode) {
+                    case 0  -> "gregtech.multiblock.miner.neither_mode";
+                    case 1  -> "gregtech.multiblock.miner.chunk_mode";
+                    case 2  -> "gregtech.multiblock.miner.silk_touch_mode";
+                    default -> "gregtech.multiblock.miner.both_modes";
+                });
     }
 
     @Override
