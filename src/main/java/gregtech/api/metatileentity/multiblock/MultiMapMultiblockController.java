@@ -127,7 +127,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     @Override
     protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
         if (getAvailableRecipeMaps() != null && getAvailableRecipeMaps().length > 1) {
-            return new ImageCycleButtonWidget(x, y, width, height, GuiTextures.MULTIBLOCK_CATEGORY,
+            return new ImageCycleButtonWidget(x, y, width, height, GuiTextures.BUTTON_MULTI_MAP,
                     getAvailableRecipeMaps().length, this::getRecipeMapIndex, this::setRecipeMapIndex)
                     .shouldUseBaseBackground().singleTexture()
                     .setTooltipHoverString(i ->

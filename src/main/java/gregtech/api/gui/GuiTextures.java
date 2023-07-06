@@ -70,6 +70,7 @@ public class GuiTextures {
     public static final TextureArea BUTTON_DISTINCT_BUSES = TextureArea.fullImage("textures/gui/widget/button_distinct_buses.png");
     public static final TextureArea BUTTON_NO_DISTINCT_BUSES = TextureArea.fullImage("textures/gui/widget/button_no_distinct_buses.png");
     public static final TextureArea BUTTON_NO_FLEX = TextureArea.fullImage("textures/gui/widget/button_no_flex.png");
+    public static final TextureArea BUTTON_MULTI_MAP = TextureArea.fullImage("textures/gui/widget/button_multi_map.png");
 
     //INDICATORS & ICONS
     public static final TextureArea INDICATOR_NO_ENERGY = TextureArea.fullImage("textures/gui/base/indicator_no_energy.png");
