@@ -13,6 +13,8 @@ import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
 import static gregtech.api.unification.material.MarkerMaterials.Tier;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.common.blocks.MetaBlocks.LD_ITEM_PIPE;
+import static gregtech.common.blocks.MetaBlocks.LD_FLUID_PIPE;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
 
@@ -748,6 +750,41 @@ public class MetaTileEntityMachineRecipeLoader {
                 .circuitMeta(2)
                 .output(ADVANCED_FLUID_DRILLING_RIG)
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
+
+        // Long Distance Pipes
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(pipeLargeItem, Tin, 2)
+                .input(plate, Steel, 8)
+                .input(gear, Steel, 2)
+                .circuitMeta(1)
+                .fluidInputs(SolderingAlloy.getFluid(L / 2))
+                .output(LONG_DIST_ITEM_ENDPOINT, 2)
+                .duration(400).EUt(16).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(pipeLargeFluid, Bronze, 2)
+                .input(plate, Steel, 8)
+                .input(gear, Steel, 2)
+                .circuitMeta(1)
+                .fluidInputs(SolderingAlloy.getFluid(L / 2))
+                .output(LONG_DIST_FLUID_ENDPOINT, 2)
+                .duration(400).EUt(16).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(pipeLargeItem, Tin, 2)
+                .input(plate, Steel, 8)
+                .circuitMeta(2)
+                .fluidInputs(SolderingAlloy.getFluid(L / 2))
+                .output(LD_ITEM_PIPE, 64)
+                .duration(600).EUt(24).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(pipeLargeFluid, Bronze, 2)
+                .input(plate, Steel, 8)
+                .circuitMeta(2)
+                .fluidInputs(SolderingAlloy.getFluid(L / 2))
+                .output(LD_FLUID_PIPE, 64)
+                .duration(600).EUt(24).buildAndRegister();
     }
 
     private static void registerHatchBusRecipe(int tier, MetaTileEntity inputBus, MetaTileEntity outputBus, ItemStack extra) {

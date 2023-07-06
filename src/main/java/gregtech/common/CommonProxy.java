@@ -106,6 +106,8 @@ public class CommonProxy {
         }
         for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(pipe);
 
+        registry.register(LD_ITEM_PIPE);
+        registry.register(LD_FLUID_PIPE);
         registry.register(HERMETIC_CASING);
         registry.register(CLEANROOM_CASING);
         registry.register(COMPUTER_CASING);
@@ -213,6 +215,8 @@ public class CommonProxy {
         }
         for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemBlockOpticalPipe::new));
 
+        registry.register(createItemBlock(LD_ITEM_PIPE, ItemBlock::new));
+        registry.register(createItemBlock(LD_FLUID_PIPE, ItemBlock::new));
         registry.register(createItemBlock(HERMETIC_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(CLEANROOM_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(COMPUTER_CASING, VariantItemBlock::new));
