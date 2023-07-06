@@ -332,22 +332,12 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure")
                     .setStyle(new Style().setColor(TextFormatting.RED)
                             .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, tooltip))));
-        } else {
-            if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
-                addMaintenanceText(textList);
-            }
         }
     }
 
     protected void addMaintenanceText(List<ITextComponent> textList) {
-        if (!hasMaintenanceProblems()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.universal.no_problems")
-                    .setStyle(new Style().setColor(TextFormatting.GREEN))
-            );
-        } else {
-
-            ITextComponent hoverEventTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems_header")
-                    .setStyle(new Style().setColor(TextFormatting.GRAY));
+        if (hasMaintenanceProblems()) {
+            ITextComponent hoverEventTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems");
 
             if (((this.maintenance_problems) & 1) == 0)
                 hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.wrench", "\n"));
@@ -367,10 +357,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             if (((this.maintenance_problems >> 5) & 1) == 0)
                 hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.crowbar", "\n"));
 
-            TextComponentTranslation textTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems");
-
-            textList.add(textTranslation.setStyle(new Style().setColor(TextFormatting.RED)
-                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverEventTranslation))));
+            textList.add(hoverEventTranslation.setStyle(new Style().setColor(TextFormatting.RED)));
         }
     }
 
@@ -462,6 +449,11 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Recommended to only display warnings if the structure is already formed.
      */
     protected void addWarningText(List<ITextComponent> textList) {
+        if (isStructureFormed()) {
+            if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
+                addMaintenanceText(textList);
+            }
+        }
     }
 
     /**
@@ -469,7 +461,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#addWarningText}.
      */
     protected void addErrorText(List<ITextComponent> textList) {
-        if (isStructureFormed()) {
+        if (!isStructureFormed()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
+        } else {
             if (hasMufflerMechanics() && !isMufflerFaceFree()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed"));
             }

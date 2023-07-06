@@ -130,6 +130,19 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     }
 
     @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            IRotorHolder rotorHolder = getRotorHolder();
+            if (rotorHolder.getRotorEfficiency() > 0) {
+                if (rotorHolder.getRotorDurabilityPercent() <= MIN_DURABILITY_TO_WARN) {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_durability_low"));
+                }
+            }
+        }
+    }
+
+    @Override
     protected void addErrorText(List<ITextComponent> textList) {
         super.addErrorText(textList);
         if (isStructureFormed() && !isRotorFaceFree()) {

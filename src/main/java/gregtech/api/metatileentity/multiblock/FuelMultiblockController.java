@@ -4,15 +4,10 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -53,15 +48,10 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                         recipeInput[0], recipeInput[1], TextFormatting.AQUA + TextFormattingUtil.formatNumbers(recipeMapWorkable.getPreviousRecipeDuration())));
             }
 
-            if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics())
-                addMaintenanceText(textList);
-
             IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-                if (maxVoltage < -recipeMapWorkable.getRecipeEUt()) {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy_output"));
-                } else {
+                if (maxVoltage >= -recipeMapWorkable.getRecipeEUt()) {
                     String voltageName = GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
                     textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatNumbers(maxVoltage), voltageName));
                 }
@@ -78,21 +68,19 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             }
         }
     }
+
     @Override
-    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 176 + 90, 216);
-        builder.image(7, 4, 162 + 90, 121 + 6, GuiTextures.DISPLAY);
-        builder.label(13, 9, getMetaFullName(), 0xFFFFFF);
-        builder.widget(new AdvancedTextWidget(13, 19, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(156 + 90)
-                .setClickHandler(this::handleDisplayClick));
-        if (shouldShowVoidingModeButton()) {
-            builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
-                    4, this::getVoidingMode, this::setVoidingMode)
-                    .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
+            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
+                long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
+                if (maxVoltage < -recipeMapWorkable.getRecipeEUt()) {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy_output"));
+                }
+            }
         }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7 + 45, 134);
-        return builder;
     }
 
     @Nonnull
