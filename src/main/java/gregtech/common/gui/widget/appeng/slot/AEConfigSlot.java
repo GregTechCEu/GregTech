@@ -43,6 +43,7 @@ public class AEConfigSlot<T extends IAEStack<T>> extends Widget implements IGhos
             List<String> hoverStringList = new ArrayList<>();
             hoverStringList.add(I18n.format("gregtech.gui.config_slot"));
             hoverStringList.add(I18n.format("gregtech.gui.config_slot.set"));
+            hoverStringList.add(I18n.format("gregtech.gui.config_slot.scroll"));
             hoverStringList.add(I18n.format("gregtech.gui.config_slot.remove"));
             drawHoveringText(ItemStack.EMPTY, hoverStringList, -1, mouseX, mouseY);
         }

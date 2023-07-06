@@ -5023,6 +5023,7 @@ gregtech.gui.me_network.offline=Network Status: §4Offline§r
 gregtech.gui.waiting_list=Sending Queue:
 gregtech.gui.config_slot=§fConfig Slot§r
 gregtech.gui.config_slot.set=§7Click to §bset/select§7 config slot.§r
+gregtech.gui.config_slot.scroll=§7Scroll wheel to §achange§7 config amount.§r
 gregtech.gui.config_slot.remove=§7Right click to §4clear§7 config slot.§r
 
 ore.spawnlocation.name=Ore Spawn Information

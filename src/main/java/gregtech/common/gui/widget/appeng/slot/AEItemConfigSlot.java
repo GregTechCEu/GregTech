@@ -52,6 +52,8 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
             ItemStack stack = config.createItemStack();
             stack.setCount(1);
             drawItemStack(stack, stackX, stackY, null);
+            String amountStr = TextFormattingUtil.formatLongToCompactString(config.getStackSize(), 4);
+            drawStringFixedCorner(amountStr, stackX + 17, stackY + 17, 16777215, true, 0.5f);
         }
         if (stock != null) {
             ItemStack stack = stock.createItemStack();
@@ -184,11 +186,16 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         IConfigurableSlot<IAEItemStack> slot = this.parentWidget.getDisplay(this.index);
         Rectangle rectangle = toRectangleBox();
         rectangle.height /= 2;
-        if (!this.select || slot.getConfig() == null || wheelDelta == 0 || !rectangle.contains(mouseX, mouseY)) {
+        if (slot.getConfig() == null || wheelDelta == 0 || !rectangle.contains(mouseX, mouseY)) {
             return false;
         }
         ItemStack stack = slot.getConfig().createItemStack();
-        long amt = wheelDelta > 0 ? stack.getCount() + 1L : stack.getCount() - 1L;
+        long amt;
+        if (isCtrlDown()) {
+            amt = wheelDelta > 0 ? stack.getCount() * 2L : stack.getCount() / 2L;
+        } else {
+            amt = wheelDelta > 0 ? stack.getCount() + 1L : stack.getCount() - 1L;
+        }
         if (amt > 0 && amt < Integer.MAX_VALUE + 1L) {
             int finalAmt = (int) amt;
             writeClientAction(AMOUNT_CHANGE_ID, buf -> buf.writeInt(finalAmt));
