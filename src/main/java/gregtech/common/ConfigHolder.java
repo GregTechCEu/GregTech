@@ -249,6 +249,10 @@ public class ConfigHolder {
         @Config.Name("Energy Compat Options")
         public EnergyCompatOptions energy = new EnergyCompatOptions();
 
+        @Config.Comment("Config options regarding GTEU compatibility with AE2")
+        @Config.Name("Energy Compat Options")
+        public AE2CompatOptions ae2 = new AE2CompatOptions();
+
         @Config.Comment({"Whether to hide facades of all blocks in JEI and creative search menu.", "Default: true"})
         public boolean hideFacadesInJEI = true;
 
@@ -280,6 +284,16 @@ public class ConfigHolder {
             @Config.Comment({"GTEU to Forge Energy ratio for converting EU to FE.", "Affects native conversion and Converters.", "Default: 4 FE == 1 EU"})
             @Config.RangeInt(min = 1, max = 16)
             public int euToFeRatio = 4;
+        }
+
+        public static class AE2CompatOptions {
+            @Config.Comment({"The interval between ME Hatch/Bus interact ME network.", "It may cause lag if the interval is too small.", "Default: 2 sec"})
+            @Config.RangeInt(min = 1, max = 80)
+            public int updateIntervals = 40;
+
+            @Config.Comment({"The energy consumption of ME Hatch/Bus.", "Default: 1.0AE/t"})
+            @Config.RangeDouble(min = 0.0, max = 10.0)
+            public double meHatchEnergyUsage = 1.0;
         }
     }
 

@@ -31,6 +31,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Arrays;
@@ -1071,6 +1072,13 @@ public class MachineRecipeLoader {
                 ModHandler.addShapedRecipe("multi_fluid_hatch_input_to_output_" + MULTI_FLUID_EXPORT_HATCH[i].getTier(), MULTI_FLUID_EXPORT_HATCH[i].getStackForm(),
                         "d", "B", 'B', MULTI_FLUID_IMPORT_HATCH[i].getStackForm());
             }
+        }
+
+        if (Loader.isModLoaded(MODID_APPENG)) {
+            ModHandler.addShapedRecipe("me_fluid_hatch_output_to_input", FLUID_IMPORT_HATCH_ME.getStackForm(), "d", "B", 'B', FLUID_EXPORT_HATCH_ME.getStackForm());
+            ModHandler.addShapedRecipe("me_fluid_hatch_input_to_output", FLUID_EXPORT_HATCH_ME.getStackForm(), "d", "B", 'B', FLUID_IMPORT_HATCH_ME.getStackForm());
+            ModHandler.addShapedRecipe("me_item_bus_output_to_input", ITEM_IMPORT_BUS_ME.getStackForm(), "d", "B", 'B', ITEM_EXPORT_BUS_ME.getStackForm());
+            ModHandler.addShapedRecipe("me_item_bus_input_to_output", ITEM_EXPORT_BUS_ME.getStackForm(), "d", "B", 'B', ITEM_IMPORT_BUS_ME.getStackForm());
         }
 
         if (STEAM_EXPORT_BUS != null && STEAM_IMPORT_BUS != null) {

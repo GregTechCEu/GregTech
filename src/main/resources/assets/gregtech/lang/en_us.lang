@@ -4907,11 +4907,22 @@ gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
 gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Sticks
 gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
 gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
+
 gregtech.machine.data_access_hatch.optical.receiver.name=Optical Data Reception Hatch
 gregtech.machine.data_access_hatch.optical.transmitter.name=Optical Data Transmission Hatch
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
+
+gregtech.machine.me_export_fluid_hatch.name=ME Output Hatch
+gregtech.machine.me_export_item_bus.name=ME Output Bus
+gregtech.machine.me_import_fluid_hatch.name=ME Input Hatch
+gregtech.machine.me_import_item_bus.name=ME Input Bus
+gregtech.machine.me.fluid_export.tooltip=Stores fluid directly into ME network.
+gregtech.machine.me.item_export.tooltip=Stores item directly into ME network.
+gregtech.machine.me.fluid_import.tooltip=Fetch fluids from ME network automatically.
+gregtech.machine.me.item_import.tooltip=Fetch items from ME network automatically.
+gregtech.machine.me.export.tooltip=It has infinite capacity before connecting to ME network.
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
@@ -5029,6 +5040,13 @@ gregtech.gui.multiblock_item_voiding=Voiding Mode/n§7Voiding §6Items
 gregtech.gui.multiblock_fluid_voiding=Voiding Mode/n§7Voiding §9Fluids
 gregtech.gui.multiblock_item_fluid_voiding=Voiding Mode/n§7Voiding §6Items §7and §9Fluids
 gregtech.gui.multiblock_no_voiding=Voiding Mode/n§7Voiding Nothing
+gregtech.gui.me_network.online=Network Status: §2Online§r
+gregtech.gui.me_network.offline=Network Status: §4Offline§r
+gregtech.gui.waiting_list=Sending Queue:
+gregtech.gui.config_slot=§fConfig Slot§r
+gregtech.gui.config_slot.set=§7Click to §bset/select§7 config slot.§r
+gregtech.gui.config_slot.scroll=§7Scroll wheel to §achange§7 config amount.§r
+gregtech.gui.config_slot.remove=§7Right click to §4clear§7 config slot.§r
 
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.

@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.event.*;
         version = GTInternalTags.VERSION,
         dependencies = "required:forge@[14.23.5.2847,);"
                 + "required-after:codechickenlib@[3.2.3,);"
+                + "after:appliedenergistics2;"
                 + "after:forestry;"
                 + "after:jei@[4.15.0,);"
                 + "after:crafttweaker@[4.1.20,);"

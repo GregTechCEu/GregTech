@@ -27,6 +27,10 @@ import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEn
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.common.metatileentities.multi.multiblockpart.*;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputBus;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputBus;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
 import gregtech.common.metatileentities.primitive.MetaTileEntityCharcoalPileIgniter;
@@ -240,6 +244,10 @@ public class MetaTileEntities {
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
     public static MetaTileEntityMonitorScreen MONITOR_SCREEN;
     public static MetaTileEntityCentralMonitor CENTRAL_MONITOR;
+    public static MetaTileEntity FLUID_EXPORT_HATCH_ME;
+    public static MetaTileEntity ITEM_EXPORT_BUS_ME;
+    public static MetaTileEntity FLUID_IMPORT_HATCH_ME;
+    public static MetaTileEntity ITEM_IMPORT_BUS_ME;
     public static MetaTileEntityLDItemEndpoint LONG_DIST_ITEM_ENDPOINT;
     public static MetaTileEntityLDFluidEndpoint LONG_DIST_FLUID_ENDPOINT;
 
@@ -779,11 +787,18 @@ public class MetaTileEntities {
                 ENERGY_CONVERTER[j][i] = registerMetaTileEntity(1670 + j + i * 4, converter);
             }
         }
-
         // IDs 1730-1744 are taken by 4A <-> 16A Transformers. They are grouped with other transformers for organization.
 
-        LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(1745, new MetaTileEntityLDItemEndpoint(gregtechId("ld_item_endpoint")));
-        LONG_DIST_FLUID_ENDPOINT = registerMetaTileEntity(1746, new MetaTileEntityLDFluidEndpoint(gregtechId("ld_fluid_endpoint")));
+        // ME Hatches, IDs 1745-1748
+        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            FLUID_EXPORT_HATCH_ME = registerMetaTileEntity(1745, new MetaTileEntityMEOutputHatch(gregtechId("me_export_fluid_hatch")));
+            ITEM_EXPORT_BUS_ME = registerMetaTileEntity(1746, new MetaTileEntityMEOutputBus(gregtechId("me_export_item_bus")));
+            FLUID_IMPORT_HATCH_ME = registerMetaTileEntity(1747, new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch")));
+            ITEM_IMPORT_BUS_ME = registerMetaTileEntity(1748, new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus")));
+        }
+      
+        LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(1749, new MetaTileEntityLDItemEndpoint(gregtechId("ld_item_endpoint")));
+        LONG_DIST_FLUID_ENDPOINT = registerMetaTileEntity(1750, new MetaTileEntityLDFluidEndpoint(gregtechId("ld_fluid_endpoint")));
 
         /*
          * FOR ADDON DEVELOPERS:

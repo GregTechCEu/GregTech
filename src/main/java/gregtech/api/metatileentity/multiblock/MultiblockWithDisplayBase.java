@@ -49,6 +49,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private boolean voidingItems = false;
     private boolean voidingFluids = false;
     private VoidingMode voidingMode;
+    private boolean fluidInfSink = false;
+    private boolean itemInfSink = false;
 
     /**
      * Items to recover in a muffler hatch
@@ -282,6 +284,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
         this.lastActive = false;
         this.replaceVariantBlocksActive(false);
+        this.fluidInfSink = false;
+        this.itemInfSink = false;
         super.invalidateStructure();
     }
 
@@ -535,11 +539,19 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     @Override
     public boolean canVoidRecipeFluidOutputs() {
-        return voidingFluids;
+        return voidingFluids || fluidInfSink;
     }
 
     @Override
     public boolean canVoidRecipeItemOutputs() {
-        return voidingItems;
+        return voidingItems || itemInfSink;
+    }
+
+    public void enableFluidInfSink() {
+        this.fluidInfSink = true;
+    }
+
+    public void enableItemInfSink() {
+        this.itemInfSink = true;
     }
 }

@@ -24,6 +24,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
@@ -349,6 +351,13 @@ public class MetaTileEntityLoader {
         registerMachineRecipe(MetaTileEntities.BATTERY_BUFFER[2], "WTW", "WMW", 'M', HULL, 'W', WIRE_HEX, 'T', OreDictNames.chestWood);
 
         registerMachineRecipe(MetaTileEntities.CHARGER, "WTW", "WMW", "BCB", 'M', HULL, 'W', WIRE_QUAD, 'T', OreDictNames.chestWood, 'B', CABLE, 'C', CIRCUIT);
+
+        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            ModHandler.addShapedRecipe(false, "me_export_hatch", MetaTileEntities.FLUID_EXPORT_HATCH_ME.getStackForm(), "H", "X", 'X', GameRegistry.makeItemStack(GTValues.MODID_APPENG + ":fluid_interface", 0, 1, null), 'H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.EV].getStackForm());
+            ModHandler.addShapedRecipe(false, "me_import_hatch", MetaTileEntities.FLUID_IMPORT_HATCH_ME.getStackForm(), "X", "H", 'X', GameRegistry.makeItemStack(GTValues.MODID_APPENG + ":fluid_interface", 0, 1, null), 'H', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.EV].getStackForm());
+            ModHandler.addShapedRecipe(false, "me_export_bus", MetaTileEntities.ITEM_EXPORT_BUS_ME.getStackForm(), "H", "X", 'X', GameRegistry.makeItemStack(GTValues.MODID_APPENG + ":interface", 0, 1, null), 'H', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.EV].getStackForm());
+            ModHandler.addShapedRecipe(false, "me_import_bus", MetaTileEntities.ITEM_IMPORT_BUS_ME.getStackForm(), "X", "H", 'X', GameRegistry.makeItemStack(GTValues.MODID_APPENG + ":interface", 0, 1, null), 'H', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.EV].getStackForm());
+        }
 
         ModHandler.addShapedRecipe(true, "wooden_crate", MetaTileEntities.WOODEN_CRATE.getStackForm(), "RPR", "PsP", "RPR", 'P', "plankWood", 'R', new UnificationEntry(OrePrefix.screw, Materials.Iron));
         ModHandler.addShapedRecipe(true, "bronze_crate", MetaTileEntities.BRONZE_CRATE.getStackForm(), "RPR", "PhP", "RPR", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'R', new UnificationEntry(OrePrefix.stickLong, Materials.Bronze));
