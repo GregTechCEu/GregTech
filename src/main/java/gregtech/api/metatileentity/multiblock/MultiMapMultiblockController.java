@@ -131,7 +131,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
                     getAvailableRecipeMaps().length, this::getRecipeMapIndex, this::setRecipeMapIndex)
                     .shouldUseBaseBackground().singleTexture()
                     .setTooltipHoverString(i ->
-                            LocalizationUtils.format("gregtech.multiblock.multiple_recipemaps.header")
+                            LocalizationUtils.format("gregtech.multiblock.multiple_recipemaps.header") + " "
                             + LocalizationUtils.format("recipemap." + getAvailableRecipeMaps()[i].getUnlocalizedName() + ".name"));
         }
         return super.getFlexButton(x, y, width, height);
