@@ -138,6 +138,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
                 if (rotorHolder.getRotorDurabilityPercent() <= MIN_DURABILITY_TO_WARN) {
                     textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_durability_low"));
                 }
+            } else {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.no_rotor"));
             }
         }
     }

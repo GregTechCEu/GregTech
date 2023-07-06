@@ -5162,6 +5162,7 @@ gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
 gregtech.multiblock.multi_furnace.heating_coil_discount=Heating Coil EU Boost: %sx
 gregtech.multiblock.distillation_tower.distilling_fluid=Distilling %s
 
+gregtech.multiblock.large_combustion_engine.no_lubricant=No Lubricant.
 gregtech.multiblock.large_combustion_engine.lubricant_amount=Lubricant Amount: %sL
 gregtech.multiblock.large_combustion_engine.oxygen_amount=Oxygen Amount: %sL
 gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount=Liquid Oxygen Amount: %sL
@@ -5177,6 +5178,7 @@ gregtech.multiblock.turbine.fuel_needed=Needs %s %s per %s ticks!
 gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=Rotor Durability: %s%%
 gregtech.multiblock.turbine.rotor_durability_low=Rotor durability low!
+gregtech.multiblock.turbine.no_rotor=No Rotor in Rotor Holder.
 gregtech.multiblock.turbine.efficiency=Turbine Efficiency: %s%%
 gregtech.multiblock.turbine.energy_per_tick=Energy Output: %s/%s EU/t (%s)
 gregtech.multiblock.turbine.energy_per_tick_maxed=Energy Output: %s EU/t (%s)
