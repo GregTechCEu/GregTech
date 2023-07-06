@@ -4,35 +4,27 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
-import gregtech.api.capability.impl.LaserContainerHandler;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
-import net.minecraft.client.resources.I18n;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityActiveTransformer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<ILaserContainer>, IDataInfoProvider {
+public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<ILaserContainer> {
     private final boolean isOutput;
-    private final ILaserContainer laserContainer;
     public MetaTileEntityLaserHatch(ResourceLocation metaTileEntityId, boolean isOutput) {
         super(metaTileEntityId, GTValues.ZPM);
         this.isOutput = isOutput;
-        this.laserContainer = new LaserContainerHandler(this, GTValues.V[GTValues.UV] * 4, isOutput);
     }
 
     @Override
@@ -51,13 +43,34 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
     }
 
     @Override
+    public boolean canPartShare() {
+        return false;
+    }
+
+    @Override
     public MultiblockAbility<ILaserContainer> getAbility() {
         return isOutput ? MultiblockAbility.OUTPUT_LASER : MultiblockAbility.INPUT_LASER;
     }
 
     @Override
     public void registerAbilities(List<ILaserContainer> abilityList) {
-        abilityList.add(laserContainer);
+        if (isOutput && getController() instanceof MetaTileEntityActiveTransformer activeTransformer) {
+            ILaserContainer buffer = activeTransformer.getBuffer();
+            if (buffer != null) {
+                // TODO: Handle null values by propagating up the net
+                abilityList.add(buffer);
+            }
+        } else if (!isOutput) {
+            EnumFacing side = getFrontFacing();
+            TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(side));
+            EnumFacing oppositeSide = side.getOpposite();
+            if (tileEntity != null && tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide)) {
+                ILaserContainer laserContainer = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide);
+                if (laserContainer != null && !laserContainer.inputsEnergy(oppositeSide)) {
+                    abilityList.add(laserContainer);
+                }
+            }
+        }
     }
 
     @Override
@@ -73,16 +86,4 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
     }
 
     // TODO: add tooltips
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", laserContainer.getEnergyCapacity()));
-    }
-
-    @NotNull
-    @Override
-    public List<ITextComponent> getDataInfo() {
-        List<ITextComponent> info = new ArrayList<>();
-        info.add(new TextComponentTranslation("behavior.tricorder.energy_container_storage", laserContainer.getEnergyStored(), laserContainer.getEnergyCapacity()));
-        return info;
-    }
 }

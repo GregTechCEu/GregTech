@@ -4,8 +4,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.*;
+import gregtech.api.capability.impl.ActiveTransformerBuffer;
 import gregtech.api.capability.impl.EnergyContainerList;
-import gregtech.api.capability.impl.LaserContainerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -15,6 +15,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockComputerCasing;
@@ -43,16 +44,16 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     private boolean isWorkingEnabled = true;
     private IEnergyContainer energyInputContainer;
     private IEnergyContainer energyOutputContainer;
-    private ILaserContainer laserInputContainer;
-    private ILaserContainer laserOutputContainer;
+    private ActiveTransformerBuffer buffer;
+    private ILaserContainer laserInContainer;
     private boolean isActive = true;
 
     public MetaTileEntityActiveTransformer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.energyInputContainer = new EnergyContainerList(new ArrayList<>());
         this.energyOutputContainer = new EnergyContainerList(new ArrayList<>());
-        this.laserInputContainer = new LaserContainerList(new ArrayList<>());
-        this.laserOutputContainer = new LaserContainerList(new ArrayList<>());
+        this.buffer = null;
+        this.laserInContainer = null;
     }
 
     @Override
@@ -64,31 +65,25 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     protected void updateFormedValid() {
         double maintenancePenalty = getMaintenancePenalty();
         if (maintenancePenalty <= 0) {
+            setActive(false);
             return;
         }
+        if (buffer == null) {
+            return;
+        }
+
         long maxEnergyInput = (long) (energyInputContainer.getEnergyStored() * maintenancePenalty);
-        long maxLaserInput = (long) (laserInputContainer.getEnergyStored() * maintenancePenalty);
-
-        if (maxLaserInput == 0 && maxEnergyInput == 0) {
-            setActive(false);
-            return;
+        long maxLaserInput = 0;
+        if (laserInContainer != null) {
+            maxLaserInput = (long) (laserInContainer.getEnergyStored() * maintenancePenalty);
         }
 
-        long energyUsed = 0;
-        long laserUsed = 0;
-
-        energyUsed += energyOutputContainer.addEnergy(maxEnergyInput - energyUsed);
-        laserUsed += energyOutputContainer.addEnergy(maxLaserInput - laserUsed);
-        energyUsed += laserOutputContainer.addEnergy(maxEnergyInput - energyUsed);
-        laserUsed += laserOutputContainer.addEnergy(maxLaserInput - laserUsed);
-
-        if (energyUsed == 0 && laserUsed == 0) {
-            setActive(false);
-        } else {
-            setActive(true);
-            energyInputContainer.removeEnergy(energyUsed);
-            laserInputContainer.removeEnergy(laserUsed);
+        energyInputContainer.removeEnergy(buffer.changeEnergy(maxEnergyInput));
+        if (laserInContainer != null) {
+            laserInContainer.removeEnergy(buffer.changeEnergy(maxLaserInput));
         }
+
+        buffer.removeEnergy(energyOutputContainer.removeEnergy(buffer.getEnergyStored()));
     }
 
     private double getMaintenancePenalty() {
@@ -105,8 +100,14 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         super.formStructure(context);
         this.energyInputContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
         this.energyOutputContainer = new EnergyContainerList(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
-        this.laserInputContainer = new LaserContainerList(getAbilities(MultiblockAbility.INPUT_LASER));
-        this.laserOutputContainer = new LaserContainerList(getAbilities(MultiblockAbility.OUTPUT_LASER));
+        if (this.energyInputContainer.getEnergyCapacity() > 0) {
+            this.buffer = new ActiveTransformerBuffer(this.energyInputContainer.getEnergyCapacity());
+        } else if (this.energyOutputContainer.getEnergyCapacity() > 0) {
+            this.buffer = new ActiveTransformerBuffer(this.energyOutputContainer.getEnergyCapacity());
+        }
+        if (getAbilities(MultiblockAbility.INPUT_LASER).size() > 0) {
+            this.laserInContainer = getAbilities(MultiblockAbility.INPUT_LASER).get(0);
+        }
     }
 
     @Override
@@ -114,8 +115,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         super.invalidateStructure();
         this.energyInputContainer = new EnergyContainerList(new ArrayList<>());
         this.energyOutputContainer = new EnergyContainerList(new ArrayList<>());
-        this.laserInputContainer = new LaserContainerList(new ArrayList<>());
-        this.laserOutputContainer = new LaserContainerList(new ArrayList<>());
+        this.buffer = null;
+        this.laserInContainer = null;
     }
 
     @NotNull
@@ -134,8 +135,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     private TraceabilityPredicate getHatchPredicates() {
         return abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(3, 1)
                 .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setMaxGlobalLimited(3, 1))
-                .or(abilities(MultiblockAbility.INPUT_LASER).setMaxGlobalLimited(3, 1))
-                .or(abilities(MultiblockAbility.OUTPUT_LASER).setMaxGlobalLimited(3, 1))
+                .or(abilities(MultiblockAbility.INPUT_LASER).setMaxGlobalLimited(1))
+                .or(abilities(MultiblockAbility.OUTPUT_LASER).setMaxGlobalLimited(1))
                 // Disallow the config maintenance hatch because that would probably break the conservation of energy
                 .or(metaTileEntities(MetaTileEntities.MAINTENANCE_HATCH,
                         MetaTileEntities.AUTO_MAINTENANCE_HATCH, MetaTileEntities.CLEANING_MAINTENANCE_HATCH).setExactLimit(1));
@@ -144,7 +145,15 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.rate", getMaintenancePenalty()));
+        double maintenancePenalty = getMaintenancePenalty();
+        if (maintenancePenalty < 1.0) {
+            textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.rate", maintenancePenalty));
+        }
+        if (isStructureFormed() && buffer != null) {
+            textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.buffer_size", TextFormattingUtil.formatNumbers(buffer.getEnergyCapacity())));
+            textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.buffer_full",
+                    (buffer.getEnergyStored() / buffer.getEnergyCapacity()) * 100.0, TextFormattingUtil.formatNumbers(buffer.getEnergyStored())));
+        }
     }
 
     @Override
@@ -204,6 +213,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         super.writeToNBT(data);
         data.setBoolean("isActive", this.isActive);
         data.setBoolean("isWorkingEnabled", this.isWorkingEnabled);
+        data.setLong("bufferEnergyStored", this.buffer != null ? this.buffer.getEnergyStored() : 0L);
         return data;
     }
 
@@ -212,6 +222,9 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         super.readFromNBT(data);
         this.isActive = data.getBoolean("isActive");
         this.isWorkingEnabled = data.getBoolean("isWorkingEnabled");
+        if (data.getLong("bufferEnergyStored") != 0 && buffer != null) {
+            this.buffer.changeEnergy(data.getLong("bufferEnergyStored"));
+        }
     }
 
     @Override
@@ -252,5 +265,14 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.active_transformer.tooltip.1"));
+    }
+
+    public ILaserContainer getBuffer() {
+        if (buffer != null) {
+            return buffer;
+        } else if (isStructureFormed() && getAbilities(MultiblockAbility.INPUT_LASER).size() == 1) {
+            return getAbilities(MultiblockAbility.INPUT_LASER).get(1);
+        }
+        return null;
     }
 }
