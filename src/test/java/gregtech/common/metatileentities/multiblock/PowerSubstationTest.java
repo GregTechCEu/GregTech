@@ -408,7 +408,7 @@ public class PowerSubstationTest {
         // not used in this test
         @NotNull
         @Override
-        public String getName() {
+        public String getBatteryName() {
             return "";
         }
     }
