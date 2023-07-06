@@ -119,7 +119,13 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
             } else {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
             }
+        }
+    }
 
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
             if (recipeMapWorkable.isHasNotEnoughEnergy()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.steam.low_steam").setStyle(new Style().setColor(TextFormatting.RED)));
             }

@@ -18,11 +18,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -126,20 +122,6 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
             }
         }
         return predicate;
-    }
-
-    @Override
-    protected void addExtraDisplayInfo(List<ITextComponent> textList) {
-        super.addExtraDisplayInfo(textList);
-        if (recipeMaps.length == 1) return;
-        textList.add(new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.header")
-                .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.tooltip")))));
-
-        textList.add(new TextComponentTranslation("recipemap." + getAvailableRecipeMaps()[this.recipeMapIndex].getUnlocalizedName() + ".name")
-                .setStyle(new Style().setColor(TextFormatting.AQUA)
-                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.tooltip")))));
     }
 
     @Override

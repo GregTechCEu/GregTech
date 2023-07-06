@@ -14,7 +14,6 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.LocalizationUtils;
 import gregtech.common.ConfigHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -34,7 +33,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -338,11 +336,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
                 addMaintenanceText(textList);
             }
-            if (hasMufflerMechanics() && !isMufflerFaceFree())
-                textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed")
-                        .setStyle(new Style().setColor(TextFormatting.RED)
-                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                        new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed.tooltip")))));
         }
     }
 
@@ -432,8 +425,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
         // Logo / Indicator Widget
         builder.widget(new IndicatorImageWidget(174, 105, 17, 17, getLogo())
-                .setWarningStatus(getWarningLogo(), this::getWarningText)
-                .setErrorStatus(getErrorLogo(), this::getErrorText));
+                .setWarningStatus(getWarningLogo(), this::addWarningText)
+                .setErrorStatus(getErrorLogo(), this::addErrorText));
 
         builder.bindPlayerInventory(entityPlayer.inventory, 129);
         return builder;
@@ -466,20 +459,21 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     /**
      * Returns a list of text indicating any current warnings in this Multiblock.
-     * Translate using {@link gregtech.api.util.LocalizationUtils}.
      * Recommended to only display warnings if the structure is already formed.
      */
-    protected @Nullable List<String> getWarningText() {
-        return null;
+    protected void addWarningText(List<ITextComponent> textList) {
     }
 
     /**
      * Returns a list of translation keys indicating any current errors in this Multiblock.
-     * Translate using {@link gregtech.api.util.LocalizationUtils}.
-     * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#getWarningText()}.
+     * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#addWarningText}.
      */
-    protected @Nullable List<String> getErrorText() {
-        return null;
+    protected void addErrorText(List<ITextComponent> textList) {
+        if (isStructureFormed()) {
+            if (hasMufflerMechanics() && !isMufflerFaceFree()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed"));
+            }
+        }
     }
 
     protected boolean shouldShowVoidingModeButton() {

@@ -30,9 +30,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -88,14 +86,18 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                             textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost"));
                         }
                     }
-                }
-                else {
+                } else {
                     textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.boost_disallowed"));
                 }
             }
+        }
+    }
 
-            if (checkIntakesObstructed())
-                textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.obstructed").setStyle(new Style().setColor(TextFormatting.RED)));
+    @Override
+    protected void addErrorText(List<ITextComponent> textList) {
+        super.addErrorText(textList);
+        if (isStructureFormed() && checkIntakesObstructed()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.obstructed"));
         }
     }
 

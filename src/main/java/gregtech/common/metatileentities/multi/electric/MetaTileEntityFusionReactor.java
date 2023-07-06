@@ -274,8 +274,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.energy", this.energyContainer.getEnergyStored(), this.energyContainer.getEnergyCapacity()));
-        textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
+        if (isStructureFormed()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.energy", this.energyContainer.getEnergyStored(), this.energyContainer.getEnergyCapacity()));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
+        }
     }
 
     @Override

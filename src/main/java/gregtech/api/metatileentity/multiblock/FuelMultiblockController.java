@@ -56,12 +56,6 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics())
                 addMaintenanceText(textList);
 
-            if (hasMufflerMechanics() && !isMufflerFaceFree())
-                textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed")
-                        .setStyle(new Style().setColor(TextFormatting.RED)
-                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                        new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed.tooltip")))));
-
             IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
