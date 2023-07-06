@@ -2,6 +2,7 @@ package gregtech.api;
 
 import gregtech.GregTechVersion;
 import gregtech.api.util.XSTR;
+import gregtech.common.ConfigHolder;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.oredict.OreDictionary;
@@ -167,11 +168,11 @@ public class GTValues {
 
     public static Supplier<Boolean> FOOLS = () -> {
         String[] yearMonthDay = LocalDate.now().toString().split("-");
-        return yearMonthDay[1].equals("04") && yearMonthDay[2].equals("01");
+        return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("04") && yearMonthDay[2].equals("01");
     };
 
     public static Supplier<Boolean> XMAS = () -> {
         String[] yearMonthDay = LocalDate.now().toString().split("-");
-        return yearMonthDay[1].equals("12") && (yearMonthDay[2].equals("24") || yearMonthDay[2].equals("25"));
+        return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("12") && (yearMonthDay[2].equals("24") || yearMonthDay[2].equals("25"));
     };
 }
