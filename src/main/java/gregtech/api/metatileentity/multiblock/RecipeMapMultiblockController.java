@@ -5,14 +5,13 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
+import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
@@ -31,13 +30,14 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider, ICleanroomReceiver {
+public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider, ICleanroomReceiver, IDistinctBusController {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
@@ -146,17 +146,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatNumbers(maxVoltage), voltageName));
             }
 
-            if (canBeDistinct() && inputInventory.getSlots() > 0) {
-                ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.universal.distinct");
-                buttonText.appendText(" ");
-                ITextComponent button = AdvancedTextWidget.withButton(isDistinct() ?
-                        new TextComponentTranslation("gregtech.multiblock.universal.distinct.yes").setStyle(new Style().setColor(TextFormatting.GREEN)) :
-                        new TextComponentTranslation("gregtech.multiblock.universal.distinct.no").setStyle(new Style().setColor(TextFormatting.RED)), "distinct");
-                AdvancedTextWidget.withHoverTextTranslate(button, "gregtech.multiblock.universal.distinct.info");
-                buttonText.appendSibling(button);
-                textList.add(buttonText);
-            }
-
             addExtraDisplayInfo(textList);
 
             if (!recipeMapWorkable.isWorkingEnabled()) {
@@ -179,17 +168,22 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         }
     }
 
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed() && recipeMapWorkable.isHasNotEnoughEnergy()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy"));
+        }
+    }
+
     /**
      * Used for when you want a Multiblock to have extra info in the text, but not put that info after
      * the working status, progress percent, etc.
+     * @deprecated Deemed no longer necessary, simply override {@link MultiblockWithDisplayBase#addDisplayText}. Will be removed in 2.8.
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.8")
     protected void addExtraDisplayInfo(List<ITextComponent> textList) {
-    }
-
-    @Override
-    protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
-        super.handleDisplayClick(componentData, clickData);
-        toggleDistinct();
     }
 
     @Override
@@ -266,19 +260,22 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         isDistinct = buf.readBoolean();
     }
 
+    @Override
     public boolean canBeDistinct() {
         return false;
     }
 
+    @Override
     public boolean isDistinct() {
-        return isDistinct && inputInventory.getSlots() > 0;
+        return isDistinct;
     }
 
-    protected void toggleDistinct() {
-        isDistinct = !isDistinct;
+    @Override
+    public void setDistinct(boolean isDistinct) {
+        this.isDistinct = isDistinct;
         recipeMapWorkable.onDistinctChanged();
         //mark buses as changed on distinct toggle
-        if (isDistinct) {
+        if (this.isDistinct) {
             this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
         } else {
             this.notifiedItemInputList.add(this.inputInventory);
