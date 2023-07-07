@@ -7,7 +7,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.client.renderer.ICubeRenderer;
@@ -27,7 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus {
 
     private static final boolean IS_STEEL = ConfigHolder.machines.steelSteamMultiblocks;
 
@@ -96,5 +95,10 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements
         builder.shouldColor(false);
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(IS_STEEL), 7, 83);
         return builder.build(getHolder(), entityPlayer);
+    }
+
+    @Override
+    public boolean hasGhostCircuitInventory() {
+        return false;
     }
 }

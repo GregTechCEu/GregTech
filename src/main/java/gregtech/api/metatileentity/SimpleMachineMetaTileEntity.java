@@ -7,6 +7,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
+import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
@@ -51,7 +52,7 @@ import java.util.function.Function;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide {
+public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide, IGhostSlotConfigurable {
 
     private final boolean hasFrontFacing;
 
@@ -376,14 +377,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         }
     }
 
-    /**
-     * Set ghost circuit config to given value. If the provided config value is outside of valid config range
-     * (0~32), then the circuit is set to empty.
-     * <p>
-     * If the machine does not have circuit inventory, this method does nothing.
-     *
-     * @param config New config value
-     */
+    @Override
     public void setGhostCircuitConfig(int config) {
         if (this.circuitInventory == null || this.circuitInventory.getCircuitValue() == config) {
             return;
@@ -501,7 +495,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         return builder;
     }
 
-    protected boolean hasGhostCircuitInventory() {
+    @Override
+    public boolean hasGhostCircuitInventory() {
         return true;
     }
 
