@@ -370,12 +370,12 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 198, 212);
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 198, 208);
 
         // Display
-        builder.image(4, 4, 190, 121, GuiTextures.DISPLAY);
+        builder.image(4, 4, 190, 117, GuiTextures.DISPLAY);
         builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
-        builder.widget(new AdvancedTextWidget(9, 19, this::addDisplayText, 0xFFFFFF)
+        builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(181)
                 .setClickHandler(this::handleDisplayClick));
 
@@ -383,39 +383,39 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         // todo in the future, refactor so that this class is instanceof IControllable.
         IControllable controllable = getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
         if (controllable != null) {
-            builder.widget(new ImageCycleButtonWidget(173, 187, 18, 18, GuiTextures.BUTTON_POWER,
+            builder.widget(new ImageCycleButtonWidget(173, 183, 18, 18, GuiTextures.BUTTON_POWER,
                     controllable::isWorkingEnabled, controllable::setWorkingEnabled));
-            builder.widget(new ImageWidget(173, 205, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
+            builder.widget(new ImageWidget(173, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
         }
 
         // Voiding Mode Button
         if (shouldShowVoidingModeButton()) {
-            builder.widget(new ImageCycleButtonWidget(173, 165, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
+            builder.widget(new ImageCycleButtonWidget(173, 161, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
                     4, this::getVoidingMode, this::setVoidingMode)
                     .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
         } else {
-            builder.widget(new ImageWidget(173, 165, 18, 18, GuiTextures.BUTTON_VOID_NONE)
+            builder.widget(new ImageWidget(173, 161, 18, 18, GuiTextures.BUTTON_VOID_NONE)
                     .setTooltip("gregtech.gui.multiblock_voiding_not_supported"));
         }
 
         // Distinct Buses Button
         if (this instanceof IDistinctBusController distinct && distinct.canBeDistinct()) {
-            builder.widget(new ImageCycleButtonWidget(173, 147, 18, 18, GuiTextures.BUTTON_DISTINCT_BUSES, distinct::isDistinct, distinct::setDistinct)
+            builder.widget(new ImageCycleButtonWidget(173, 143, 18, 18, GuiTextures.BUTTON_DISTINCT_BUSES, distinct::isDistinct, distinct::setDistinct)
                     .setTooltipHoverString(i -> "gregtech.multiblock.universal.distinct_" + (i == 0 ? "disabled" : "enabled")));
         } else {
-            builder.widget(new ImageWidget(173, 147, 18, 18, GuiTextures.BUTTON_NO_DISTINCT_BUSES)
+            builder.widget(new ImageWidget(173, 143, 18, 18, GuiTextures.BUTTON_NO_DISTINCT_BUSES)
                     .setTooltip("gregtech.multiblock.universal.distinct_not_supported"));
         }
 
         // Flex Button
-        builder.widget(getFlexButton(173, 129, 18, 18));
+        builder.widget(getFlexButton(173, 124, 18, 18));
 
         // Logo / Indicator Widget
-        builder.widget(new IndicatorImageWidget(174, 105, 17, 17, getLogo())
+        builder.widget(new IndicatorImageWidget(174, 101, 17, 17, getLogo())
                 .setWarningStatus(getWarningLogo(), this::addWarningText)
                 .setErrorStatus(getErrorLogo(), this::addErrorText));
 
-        builder.bindPlayerInventory(entityPlayer.inventory, 129);
+        builder.bindPlayerInventory(entityPlayer.inventory, 125);
         return builder;
     }
 

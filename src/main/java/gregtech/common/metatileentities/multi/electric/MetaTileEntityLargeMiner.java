@@ -347,7 +347,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = super.createUITemplate(entityPlayer);
-        builder.widget(new AdvancedTextWidget(63, 30, this::addDisplayText2, 0xFFFFFF)
+        builder.widget(new AdvancedTextWidget(63, 31, this::addDisplayText2, 0xFFFFFF)
                 .setMaxWidthLimit(68).setClickHandler(this::handleDisplayClick));
         return builder;
     }
