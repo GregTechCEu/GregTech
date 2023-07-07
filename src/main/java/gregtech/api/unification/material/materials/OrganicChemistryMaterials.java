@@ -17,9 +17,10 @@ public class OrganicChemistryMaterials {
                 .polymer()
                 .color(0xDCDCDC)
                 .flags(GENERATE_GEAR, GENERATE_RING, GENERATE_FOIL)
-                .components(Carbon, 2, Hydrogen, 6, Oxygen, 1, Silicon, 1)
+                .components(Carbon, 6, Hydrogen, 18, Oxygen, 1, Silicon, 2)
                 .fluidTemp(900)
-                .build();
+                .build()
+                .setFormula("Si2(CH3)6O", true);
 
         Nitrobenzene = new Material.Builder(1001, gregtechId("nitrobenzene"))
                 .fluid(FluidTypes.GAS)
@@ -299,7 +300,8 @@ public class OrganicChemistryMaterials {
                 .color(0x441650)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 6, Chlorine, 2, Silicon, 1)
-                .build();
+                .build()
+                .setFormula("Si(CH3)2Cl2", true);
 
         Styrene = new Material.Builder(1041, gregtechId("styrene"))
                 .fluid()
