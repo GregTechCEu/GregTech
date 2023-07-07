@@ -4,8 +4,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.*;
-import gregtech.api.capability.impl.ActiveTransformerBuffer;
 import gregtech.api.capability.impl.EnergyContainerList;
+import gregtech.api.capability.impl.LaserBuffer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -44,7 +44,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     private boolean isWorkingEnabled = true;
     private IEnergyContainer energyInputContainer;
     private IEnergyContainer energyOutputContainer;
-    private ActiveTransformerBuffer buffer;
+    private LaserBuffer buffer;
     private ILaserContainer laserInContainer;
     private boolean isActive = true;
 
@@ -83,7 +83,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
             laserInContainer.removeEnergy(buffer.changeEnergy(maxLaserInput));
         }
 
-        buffer.removeEnergy(energyOutputContainer.removeEnergy(buffer.getEnergyStored()));
+        buffer.removeEnergy(energyOutputContainer.addEnergy(buffer.getEnergyStored()));
     }
 
     private double getMaintenancePenalty() {
@@ -101,11 +101,11 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         this.energyInputContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
         this.energyOutputContainer = new EnergyContainerList(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
         if (this.energyInputContainer.getEnergyCapacity() > 0) {
-            this.buffer = new ActiveTransformerBuffer(this.energyInputContainer.getEnergyCapacity());
+            this.buffer = new LaserBuffer(this.energyInputContainer.getEnergyCapacity());
         } else if (this.energyOutputContainer.getEnergyCapacity() > 0) {
-            this.buffer = new ActiveTransformerBuffer(this.energyOutputContainer.getEnergyCapacity());
+            this.buffer = new LaserBuffer(this.energyOutputContainer.getEnergyCapacity());
         }
-        if (getAbilities(MultiblockAbility.INPUT_LASER).size() > 0) {
+        if (getAbilities(MultiblockAbility.INPUT_LASER).size() == 1) {
             this.laserInContainer = getAbilities(MultiblockAbility.INPUT_LASER).get(0);
         }
     }

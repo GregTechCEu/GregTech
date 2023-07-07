@@ -6,25 +6,66 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
+import gregtech.api.capability.impl.LaserBufferWrapper;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityActiveTransformer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<ILaserContainer> {
+public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<ILaserContainer>, IDataInfoProvider {
     private final boolean isOutput;
+    private ILaserContainer laserContainer;
     public MetaTileEntityLaserHatch(ResourceLocation metaTileEntityId, boolean isOutput) {
         super(metaTileEntityId, GTValues.ZPM);
         this.isOutput = isOutput;
+        this.laserContainer = new LaserBufferWrapper(this, null, isOutput);
+    }
+
+    @Override
+    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+        super.addToMultiBlock(controllerBase);
+        calculateLaserContainer(controllerBase);
+    }
+
+    @Override
+    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+        super.removeFromMultiBlock(controllerBase);
+        this.laserContainer = new LaserBufferWrapper(this, null, isOutput);
+    }
+
+    private void calculateLaserContainer(MultiblockControllerBase controllerBase) {
+        if (isOutput && (controllerBase instanceof MetaTileEntityActiveTransformer || controllerBase == null)) {
+            // TODO: Handle null values by propagating up the net
+            if (this.laserContainer instanceof LaserBufferWrapper bufferWrapper) {
+                bufferWrapper.setController((MetaTileEntityActiveTransformer) controllerBase);
+            }
+        } else if (!isOutput) {
+            EnumFacing side = getFrontFacing();
+            TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(side));
+            EnumFacing oppositeSide = side.getOpposite();
+            if (tileEntity != null && tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide)) {
+                ILaserContainer laserContainer = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide);
+                if (laserContainer != null && !laserContainer.inputsEnergy(oppositeSide)) {
+                    this.laserContainer = laserContainer;
+                }
+            }
+        }
     }
 
     @Override
@@ -54,23 +95,8 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
 
     @Override
     public void registerAbilities(List<ILaserContainer> abilityList) {
-        if (isOutput && getController() instanceof MetaTileEntityActiveTransformer activeTransformer) {
-            ILaserContainer buffer = activeTransformer.getBuffer();
-            if (buffer != null) {
-                // TODO: Handle null values by propagating up the net
-                abilityList.add(buffer);
-            }
-        } else if (!isOutput) {
-            EnumFacing side = getFrontFacing();
-            TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(side));
-            EnumFacing oppositeSide = side.getOpposite();
-            if (tileEntity != null && tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide)) {
-                ILaserContainer laserContainer = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide);
-                if (laserContainer != null && !laserContainer.inputsEnergy(oppositeSide)) {
-                    abilityList.add(laserContainer);
-                }
-            }
-        }
+        calculateLaserContainer(null);
+        abilityList.add(this.laserContainer);
     }
 
     @Override
@@ -83,6 +109,18 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
                 Textures.LASER_TARGET.renderSided(getFrontFacing(), renderState, translation, pipeline);
             }
         }
+    }
+
+    @NotNull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> textList = new ArrayList<>();
+        textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.buffer_size", TextFormattingUtil.formatNumbers(laserContainer.getEnergyCapacity())));
+        if (laserContainer.getEnergyCapacity() != 0) {
+            textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.buffer_full",
+                    (laserContainer.getEnergyStored() / laserContainer.getEnergyCapacity()) * 100.0, TextFormattingUtil.formatNumbers(laserContainer.getEnergyStored())));
+        }
+        return textList;
     }
 
     // TODO: add tooltips

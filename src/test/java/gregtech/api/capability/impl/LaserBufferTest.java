@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 
-class ActiveTransformerBufferTest {
+class LaserBufferTest {
 
     @Test
     void changeEnergy() {
-        ActiveTransformerBuffer buffer = new ActiveTransformerBuffer(1024L);
+        LaserBuffer buffer = new LaserBuffer(1024L);
         MatcherAssert.assertThat(buffer.getEnergyCapacity(), is(1024L));
 
         MatcherAssert.assertThat(buffer.changeEnergy(128), is(128L));

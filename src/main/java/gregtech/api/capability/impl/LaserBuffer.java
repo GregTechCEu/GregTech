@@ -3,11 +3,11 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.ILaserContainer;
 import net.minecraft.util.EnumFacing;
 
-public class ActiveTransformerBuffer implements ILaserContainer {
+public class LaserBuffer implements ILaserContainer {
     private final long capacity;
     private long stored = 0L;
 
-    public ActiveTransformerBuffer(long capacity) {
+    public LaserBuffer(long capacity) {
         this.capacity = capacity;
     }
 
@@ -29,7 +29,7 @@ public class ActiveTransformerBuffer implements ILaserContainer {
 
     @Override
     public boolean inputsEnergy(EnumFacing side) {
-        return true;
+        return capacity > stored;
     }
 
     @Override
