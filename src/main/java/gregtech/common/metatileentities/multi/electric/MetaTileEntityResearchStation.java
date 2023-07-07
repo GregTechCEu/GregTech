@@ -30,10 +30,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
@@ -214,10 +211,20 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         super.addDisplayText(textList);
         if (isStructureFormed() && isActive()) {
             var recipeLogic = getRecipeMapWorkable();
-            textList.add(new TextComponentString(String.format("Using: %,d CWU/t", recipeLogic.getRecipeCWUt())));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.usage", recipeLogic.getRecipeCWUt()));
             if (recipeLogic.isHasNotEnoughComputation()) {
-                textList.add(new TextComponentString("WARNING: Not enough computation").setStyle(new Style().setColor(TextFormatting.RED)));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.computation.not_enough_computation")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
             }
+        }
+    }
+
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed() && isActive() && getRecipeMapWorkable().isHasNotEnoughComputation()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.not_enough_computation")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
         }
     }
 

@@ -74,10 +74,12 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
                 if (++progressTime > maxProgressTime) {
                     completeRecipe();
                 }
-            } else if (type == ComputationType.STEADY) {
-                // only decrement progress for low CWU/t if we need a steady supply
+            } else {
                 this.hasNotEnoughComputation = true;
-                decreaseProgress();
+                // only decrement progress for low CWU/t if we need a steady supply
+                if (type == ComputationType.STEADY) {
+                    decreaseProgress();
+                }
             }
             if (this.hasNotEnoughEnergy && getEnergyInputPerSecond() > 19L * recipeEUt) {
                 this.hasNotEnoughEnergy = false;

@@ -5286,10 +5286,11 @@ gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
 gregtech.multiblock.energy_consumption=Energy Usage: %s EU/t
-gregtech.multiblock.max_energy_consumption=Max Energy Usage: %s EU/t
-gregtech.multiblock.computation.usage=Max Computation: %s CWU/t
+gregtech.multiblock.computation.max=Max Computation: %s CWU/t
+gregtech.multiblock.computation.usage=Using: %s CWU/t
 gregtech.multiblock.computation.non_bridging=Non-bridging connection found
 gregtech.multiblock.computation.non_bridging.detailed=A Reception Hatch is linked to a machine which cannot bridge
+gregtech.multiblock.computation.not_enough_computation=§cWARNING:§f Machine needs more computation.
 
 gregtech.multiblock.power_substation.stored=Stored: %s EU
 gregtech.multiblock.power_substation.capacity=Capacity: %s EU
@@ -5306,12 +5307,17 @@ gregtech.multiblock.power_substation.time_years=%s Years
 gregtech.multiblock.power_substation.time_forever=Forever
 gregtech.multiblock.power_substation.under_one_hour_left=Less than 1 hour until fully drained!
 
-gregtech.multiblock.hpca.temperature=Temperature:
-gregtech.multiblock.hpca.hint_root=Structure Hints: (hover)
-gregtech.multiblock.hpca.hint_damaged=- Damaged component in structure
-gregtech.multiblock.hpca.hint_multiple_bridges=- Multiple bridges in structure (provides no additional benefit)
-gregtech.multiblock.hpca.hint_no_computation=- No computation providers
-gregtech.multiblock.hpca.hint_low_cooling=- Not enough cooling
+gregtech.multiblock.hpca.computation=Providing: %s / %s CWU/t
+gregtech.multiblock.hpca.energy=Using: %s / %s EU/t (%s)
+gregtech.multiblock.hpca.temperature=Temperature: %s°C
+gregtech.multiblock.hpca.coolant=Needs up to: %s L/t %s
+gregtech.multiblock.hpca.error_damaged=Damaged component in structure
+gregtech.multiblock.hpca.error_temperature=Temperature above 100C, components may be damaged!
+gregtech.multiblock.hpca.warning_temperature=Temperature above 50C, components may be damaged at 100C!
+gregtech.multiblock.hpca.warning_temperature_active_cool=Temperature above 50C, components may be damaged at 100C!/nFully utilizing active coolers
+gregtech.multiblock.hpca.warning_multiple_bridges=Multiple bridges in structure (provides no additional benefit)
+gregtech.multiblock.hpca.warning_no_computation=No computation providers
+gregtech.multiblock.hpca.warning_low_cooling=Not enough cooling
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>

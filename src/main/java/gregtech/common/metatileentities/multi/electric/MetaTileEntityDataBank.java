@@ -29,7 +29,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -244,6 +246,19 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
         super.addDisplayText(textList);
         if (isStructureFormed()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.energy_consumption", getEnergyUsage()));
+            if (hasNotEnoughEnergy) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
+            }
+        }
+    }
+
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed() && hasNotEnoughEnergy) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
         }
     }
 

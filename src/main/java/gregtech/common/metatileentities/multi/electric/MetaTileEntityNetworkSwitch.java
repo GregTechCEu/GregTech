@@ -142,13 +142,21 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         if (isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.usage", computationHandler.getMaxCWUt()));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.max", computationHandler.getMaxCWUt()));
             if (computationHandler.hasNonBridgingConnections()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.computation.non_bridging")
                         .setStyle(new Style().setColor(TextFormatting.RED)
                                 .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                         new TextComponentTranslation("gregtech.multiblock.computation.non_bridging.detailed")))));
             }
+        }
+    }
+
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        if (isStructureFormed() && computationHandler.hasNonBridgingConnections()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.non_bridging.detailed")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
         }
     }
 

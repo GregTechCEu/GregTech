@@ -16,6 +16,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -33,7 +34,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -101,7 +101,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
         // don't show a problem if the structure is not yet formed
-        return !isStructureFormed() || (isActive() && hpcaHandler.hasHPCABridge());
+        return !isStructureFormed() || hpcaHandler.hasHPCABridge();
     }
 
     @Override
@@ -319,20 +319,72 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         if (isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.usage", hpcaHandler.getMaxCWUt()));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.energy_consumption", TextFormattingUtil.formatNumbers(hpcaHandler.cachedEUt)));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_consumption", TextFormattingUtil.formatNumbers(hpcaHandler.getMaxEUt())));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.temperature")
-                    .appendSibling(new TextComponentString(" " + TextFormattingUtil.formatNumbers(temperature / 10.0d)))
-                    .setStyle(new Style().setColor(temperature >= 500 ? temperature >= 750 ? TextFormatting.RED : TextFormatting.YELLOW : TextFormatting.GREEN)));
-            textList.add(new TextComponentString(String.format("Maximum Cooling Demand: %d CU/t", hpcaHandler.getMaxCoolingDemand())));
-            textList.add(new TextComponentString(String.format("Maximum Cooling Supply: %d CU/t", hpcaHandler.getMaxCoolingAmount())));
-            textList.add(new TextComponentString(String.format("Maximum Coolant Demand: %d L/t", hpcaHandler.getMaxCoolantDemand())));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.computation",
+                    hpcaHandler.cachedCWUt, hpcaHandler.getMaxCWUt()));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.energy",
+                    TextFormattingUtil.formatNumbers(hpcaHandler.cachedEUt),
+                    TextFormattingUtil.formatNumbers(hpcaHandler.getMaxEUt()),
+                    GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())]));
 
-            ITextComponent hints = hpcaHandler.getHints();
-            if (hints != null) {
-                textList.add(hints);
+            int coolantDemand = hpcaHandler.getMaxCoolantDemand();
+            if (coolantDemand > 0) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.coolant", coolantDemand, "Water idk"));
             }
+
+            textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.temperature",
+                    TextFormattingUtil.formatNumbers(temperature / 10.0d)).setStyle(new Style().setColor(getDisplayTemperatureColor())));
+
+            if (!isWorkingEnabled()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
+            } else if (isActive() && hpcaHandler.cachedCWUt > 0) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
+            } else {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
+            }
+
+            if (hasNotEnoughEnergy) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
+            }
+        }
+    }
+
+    private TextFormatting getDisplayTemperatureColor() {
+        if (temperature < 500) {
+            return TextFormatting.GREEN;
+        } else if (temperature < 750) {
+            return TextFormatting.YELLOW;
+        }
+        return TextFormatting.RED;
+    }
+
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            if (temperature > 500) {
+                if (hpcaHandler.hasActiveCoolers()) {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_temperature_active_cool"));
+                } else {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_temperature"));
+                }
+            }
+            if (hasNotEnoughEnergy) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
+            }
+            hpcaHandler.addWarnings(textList);
+        }
+    }
+
+    @Override
+    protected void addErrorText(List<ITextComponent> textList) {
+        super.addErrorText(textList);
+        if (isStructureFormed()) {
+            if (temperature > 1000) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.error_temperature"));
+            }
+            hpcaHandler.addErrors(textList);
         }
     }
 
@@ -614,6 +666,14 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
             return numBridges > 0;
         }
 
+        /** Whether this HPCA has any cooling providers which are actively cooled. */
+        public boolean hasActiveCoolers() {
+            for (var coolantProvider : coolantProviders) {
+                if (coolantProvider.isActiveCooler()) return true;
+            }
+            return false;
+        }
+
         /** How much cooling this HPCA can provide. NOT related to coolant fluid consumption. */
         public int getMaxCoolingAmount() {
             int maxCooling = 0;
@@ -641,53 +701,22 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
             return maxCoolant;
         }
 
-        /**
-         * Hints for the controller to display.
-         * Used to recommend potential better solutions when simple mistakes are made
-         * (such as multiple HPCA Bridge blocks being present, which offers no additional benefit).
-         *
-         * @return null if no hints
-         */
-        @Nullable
-        public ITextComponent getHints() {
-            ITextComponent root = null;
-
-            // Damaged component present
-            if (components.stream().anyMatch(IHPCAComponentHatch::isDamaged)) {
-                root = applyHint(null, "gregtech.multiblock.hpca.hint_damaged");
-            }
-
-            // More than 1 bridge present
+        public void addWarnings(List<ITextComponent> textList) {
             if (numBridges > 1) {
-                root = applyHint(root, "gregtech.multiblock.hpca.hint_multiple_bridges");
+                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_multiple_bridges"));
             }
-
-            // No computation units present
             if (computationProviders.isEmpty()) {
-                root = applyHint(root, "gregtech.multiblock.hpca.hint_no_computation");
+                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_no_computation"));
             }
-
-            // Max cooling demand exceeds max cooling supplied
-            if (getMaxCoolingDemand() > getMaxCoolingAmount()) {
-                root = applyHint(root, "gregtech.multiblock.hpca.hint_low_cooling");
+            if (getMaxCoolantDemand() > getMaxCoolingAmount()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_low_cooling"));
             }
-
-            if (root != null) {
-                // "Potential structure improvements: (hover)"
-                root = new TextComponentTranslation("gregtech.multiblock.hpca.hint_root").setStyle(new Style()
-                        .setColor(TextFormatting.RED)
-                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, root)));
-            }
-            return root;
         }
 
-        private ITextComponent applyHint(ITextComponent root, String translationKey) {
-            if (root != null) {
-                root.appendSibling(new TextComponentString("\n").appendSibling(new TextComponentTranslation(translationKey)));
-            } else {
-                root = new TextComponentTranslation(translationKey);
+        public void addErrors(List<ITextComponent> textList) {
+            if (components.stream().anyMatch(IHPCAComponentHatch::isDamaged)) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.error_damaged"));
             }
-            return root;
         }
     }
 }
