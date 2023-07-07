@@ -5222,6 +5222,7 @@ gregtech.multiblock.power_substation.time_hours=%s Hours
 gregtech.multiblock.power_substation.time_days=%s Days
 gregtech.multiblock.power_substation.time_years=%s Years
 gregtech.multiblock.power_substation.time_forever=Forever
+gregtech.multiblock.power_substation.under_one_hour_left=Less than 1 hour until fully drained!
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>

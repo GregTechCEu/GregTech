@@ -330,6 +330,19 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
         }
     }
 
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            if (averageIOLastSec < 0) { // decreasing
+                BigInteger timeToDrainSeconds = energyBank.getStored().divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20));
+                if (timeToDrainSeconds.compareTo(BigInteger.valueOf(60 * 60)) < 0) { // less than 1 hour left
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.under_one_hour_left"));
+                }
+            }
+        }
+    }
+
     private static ITextComponent getTimeToFillDrainText(BigInteger timeToFillSeconds) {
         if (timeToFillSeconds.compareTo(BIG_INTEGER_MAX_LONG) > 0) {
             // too large to represent in a java Duration
