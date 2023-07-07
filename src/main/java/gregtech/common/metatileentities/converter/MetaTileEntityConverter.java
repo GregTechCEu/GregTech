@@ -78,6 +78,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
                     FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), FeCompat.ratio(true)),
                     converterTrait.getBaseAmps(), converterTrait.getVoltage()));
         }
+        notifyBlockUpdate();
         return true;
     }
 
@@ -166,7 +167,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
-            return converterTrait.isFeToEu() == (side == frontFacing) ?
+            return side != (!converterTrait.isFeToEu() ? frontFacing : null) ?
                     GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(converterTrait.getEnergyEUContainer()) : null;
         }
         if (capability == CapabilityEnergy.ENERGY) {
