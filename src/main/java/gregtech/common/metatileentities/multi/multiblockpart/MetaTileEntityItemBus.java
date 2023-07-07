@@ -22,8 +22,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTHashMaps;
-import gregtech.api.util.InventoryUtils;
-import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -90,8 +88,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         super.addToMultiBlock(controllerBase);
         if (hasGhostCircuitInventory() && this.actualImportItems instanceof ItemHandlerList) {
             for (IItemHandler handler : ((ItemHandlerList) this.actualImportItems).getBackingHandlers()) {
-                if (handler instanceof INotifiableHandler) {
-                    INotifiableHandler notifiable = (INotifiableHandler) handler;
+                if (handler instanceof INotifiableHandler notifiable) {
                     notifiable.addNotifiableMetaTileEntity(controllerBase);
                     notifiable.addToNotifiedList(this, handler, isExportHatch);
                 }
@@ -104,8 +101,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         super.removeFromMultiBlock(controllerBase);
         if (hasGhostCircuitInventory() && this.actualImportItems instanceof ItemHandlerList) {
             for (IItemHandler handler : ((ItemHandlerList) this.actualImportItems).getBackingHandlers()) {
-                if (handler instanceof INotifiableHandler) {
-                    INotifiableHandler notifiable = (INotifiableHandler) handler;
+                if (handler instanceof INotifiableHandler notifiable) {
                     notifiable.removeNotifiableMetaTileEntity(controllerBase);
                 }
             }
