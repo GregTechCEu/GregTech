@@ -78,7 +78,6 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
                     FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), FeCompat.ratio(true)),
                     converterTrait.getBaseAmps(), converterTrait.getVoltage()));
         }
-        notifyBlockUpdate();
         return true;
     }
 
