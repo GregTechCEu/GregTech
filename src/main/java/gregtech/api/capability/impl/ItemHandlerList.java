@@ -75,6 +75,6 @@ public class ItemHandlerList implements IItemHandlerModifiable {
 
     @Nonnull
     public Collection<IItemHandler> getBackingHandlers() {
-        return Collections.unmodifiableCollection(handlerBySlotIndex.valueCollection());
+        return Collections.unmodifiableCollection(handlerBySlotIndex.values());
     }
 }
