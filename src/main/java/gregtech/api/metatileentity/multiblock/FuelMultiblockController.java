@@ -14,6 +14,7 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.HoverEvent;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -42,19 +43,23 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                     .setStyle(new Style().setColor(TextFormatting.RED)
                             .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
         } else {
-            if (recipeMapWorkable.getPreviousRecipe() != null) {
-                String[] recipeInput = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getRecipeFluidInputInfo();
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed",
-                        recipeInput[0], recipeInput[1], TextFormatting.AQUA + TextFormattingUtil.formatNumbers(recipeMapWorkable.getPreviousRecipeDuration())));
+
+            FluidStack fuelStack = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getInputFluidStack();
+            if (fuelStack != null && fuelStack.amount > 0) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", TextFormattingUtil.formatNumbers(fuelStack.amount), fuelStack.getLocalizedName()));
             }
 
-            IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
-            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-                long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-                if (maxVoltage >= -recipeMapWorkable.getRecipeEUt()) {
-                    String voltageName = GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatNumbers(maxVoltage), voltageName));
-                }
+            String fluidName = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getRecipeFluidInputInfo();
+            if (fluidName != null && isActive()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed",
+                        fluidName, TextFormatting.AQUA + TextFormattingUtil.formatNumbers(recipeMapWorkable.getPreviousRecipeDuration())));
+            }
+
+
+            long maxVoltage = getMaxVoltage();
+            if (maxVoltage != 0 && maxVoltage >= -recipeMapWorkable.getRecipeEUt()) {
+                String voltageName = GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
+                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatNumbers(maxVoltage), voltageName));
             }
 
             if (!recipeMapWorkable.isWorkingEnabled()) {
@@ -66,6 +71,15 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             } else {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
             }
+        }
+    }
+
+    protected long getMaxVoltage() {
+        IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
+        if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
+            return Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
+        } else {
+            return 0L;
         }
     }
 

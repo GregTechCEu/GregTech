@@ -5169,15 +5169,14 @@ gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost=Supply Oxygen
 gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=Supply Liquid Oxygen to boost.
 gregtech.multiblock.large_combustion_engine.obstructed=Engine Intakes Obstructed.
 
-gregtech.multiblock.turbine.fuel_amount=Fuel Amount: %sL (%s)
-gregtech.multiblock.turbine.fuel_needed=Needs %s %s per %s ticks!
+gregtech.multiblock.turbine.fuel_amount=Fuel: %sL %s
+gregtech.multiblock.turbine.fuel_needed=Consumes %s per %s ticks
 gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=Rotor Durability: %s%%
 gregtech.multiblock.turbine.rotor_durability_low=Rotor durability low!
 gregtech.multiblock.turbine.no_rotor=No Rotor in Rotor Holder.
 gregtech.multiblock.turbine.efficiency=Turbine Efficiency: %s%%
-gregtech.multiblock.turbine.energy_per_tick=Energy Output: %s/%s EU/t (%s)
-gregtech.multiblock.turbine.energy_per_tick_maxed=Energy Output: %s EU/t (%s)
+gregtech.multiblock.turbine.energy_per_tick=Output EU/t: %s (%s)
 gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed
 gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 adds §f10%% efficiency§7.
 
