@@ -11,8 +11,6 @@ import gregtech.api.capability.IHPCACoolantProvider;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTTagType;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -25,17 +23,12 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IHPCAComponentHatch>, IHPCAComponentHatch {
-
-    private static final String NBT_DAMAGED = "Damaged";
-    private static final NBTCondition NBT_DAMAGED_CONDITION = NBTCondition.create(NBTTagType.BOOLEAN, NBT_DAMAGED, true);
 
     private boolean damaged;
 
@@ -189,7 +182,7 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         if (canBeDamaged()) {
-            data.setBoolean(NBT_DAMAGED, damaged);
+            data.setBoolean("Damaged", damaged);
         }
         return data;
     }
@@ -198,7 +191,7 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         if (canBeDamaged()) {
-            this.damaged = data.getBoolean(NBT_DAMAGED);
+            this.damaged = data.getBoolean("Damaged");
         }
     }
 
@@ -228,50 +221,15 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     }
 
     @Override
-    public void initFromItemStackData(NBTTagCompound compound) {
-        super.initFromItemStackData(compound);
-        if (canBeDamaged()) {
-            if (compound.hasKey(NBT_DAMAGED)) {
-                setDamaged(compound.getBoolean(NBT_DAMAGED));
-            }
-        }
+    public boolean shouldDropWhenDestroyed() {
+        return !(canBeDamaged() && isDamaged());
     }
 
-    @Override
-    public void writeItemStackData(NBTTagCompound compound) {
-        super.writeItemStackData(compound);
-        if (canBeDamaged() && damaged) {
-            compound.setBoolean(NBT_DAMAGED, true);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void setRenderContextStack(ItemStack stack) {
-        super.setRenderContextStack(stack);
-        if (canBeDamaged() && stack != null && stack.hasTagCompound()) {
-            NBTTagCompound compound = stack.getTagCompound();
-            if (compound != null && compound.hasKey(NBT_DAMAGED)) {
-                this.damaged = compound.getBoolean(NBT_DAMAGED);
-            }
-        }
-    }
-
-    // todo this doesn't work quite right
     @Override
     public String getMetaName() {
         if (canBeDamaged() && isDamaged()) {
             return super.getMetaName() + ".damaged";
         }
         return super.getMetaName();
-    }
-
-    /**
-     * Used for recipes which input a damaged HPCA component, such as Arc Furnace recycling.
-     * Use with {@link gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher#EQUAL_TO} for matching a damaged component,
-     * and {@link gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher#NOT_PRESENT_OR_DEFAULT} for undamaged.
-     */
-    public static NBTCondition getDamagedCondition() {
-        return NBT_DAMAGED_CONDITION;
     }
 }
