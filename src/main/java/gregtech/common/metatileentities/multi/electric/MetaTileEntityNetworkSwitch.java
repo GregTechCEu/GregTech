@@ -169,7 +169,7 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
             reset();
             this.providers.addAll(providers);
             this.transmitters.addAll(transmitters);
-            this.EUt = providers.size() + transmitters.size() * GTValues.VA[GTValues.IV];
+            this.EUt = (providers.size() + transmitters.size()) * GTValues.VA[GTValues.IV];
         }
 
         private void reset() {

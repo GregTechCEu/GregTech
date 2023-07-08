@@ -326,12 +326,16 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
 
             int coolantDemand = hpcaHandler.getMaxCoolantDemand();
             if (coolantDemand > 0 && hpcaHandler.getCoolant() != null) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.coolant",
-                        coolantDemand, LocalizationUtils.format(hpcaHandler.getCoolant().getUnlocalizedName())));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.coolant", coolantDemand));
             }
 
-            textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.temperature",
-                    Math.round(temperature / 10.0D)).setStyle(new Style().setColor(getDisplayTemperatureColor())));
+            int coolingDemand = hpcaHandler.getMaxCoolingDemand();
+            int coolingProvided = hpcaHandler.getMaxCoolingAmount();
+            textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.cooling")
+                    .appendText(getDisplayCoolingColor(coolingProvided, coolingDemand) + " " + coolingProvided + " / " + coolingDemand));
+
+            textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.temperature")
+                    .appendText(getDisplayTemperatureColor() + " " + Math.round(temperature / 10.0D) + "°C"));
 
             if (!isWorkingEnabled()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
@@ -352,6 +356,15 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         if (temperature < 500) {
             return TextFormatting.GREEN;
         } else if (temperature < 750) {
+            return TextFormatting.YELLOW;
+        }
+        return TextFormatting.RED;
+    }
+
+    private TextFormatting getDisplayCoolingColor(int provided, int demand) {
+        if (provided >= demand) {
+            return TextFormatting.GREEN;
+        } else if (demand - provided >= 2) {
             return TextFormatting.YELLOW;
         }
         return TextFormatting.RED;
@@ -593,8 +606,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         }
 
         private Fluid getCoolant() {
-            // todo make this a real coolant
-            return Materials.Water.getFluid();
+            return Materials.PCBCoolant.getFluid();
         }
 
         /**

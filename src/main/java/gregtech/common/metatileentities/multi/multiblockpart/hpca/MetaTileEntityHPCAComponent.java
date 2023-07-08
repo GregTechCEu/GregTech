@@ -11,9 +11,11 @@ import gregtech.api.capability.IHPCACoolantProvider;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.unification.material.Materials;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
@@ -110,6 +112,10 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+        if (isBridge()) {
+            tooltip.add(I18n.format("gregtech.machine.hpca.component_type.bridge"));
+        }
+
         final int upkeepEUt = getUpkeepEUt();
         final int maxEUt = getMaxEUt();
         if (upkeepEUt != 0 && upkeepEUt != maxEUt) {
@@ -119,39 +125,28 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
             tooltip.add(I18n.format("gregtech.machine.hpca.component_general.max_eut", maxEUt));
         }
 
-        if (canBeDamaged() && isDamaged()) {
-            tooltip.add(I18n.format("gregtech.machine.hpca.component_type.damaged"));
-        } else {
-            if (this instanceof IHPCACoolantProvider provider) {
-                if (provider.isActiveCooler()) {
-                    tooltip.add(I18n.format("gregtech.machine.hpca.component_type.cooler_active"));
-                    tooltip.add(I18n.format("gregtech.machine.hpca.component_type.cooler_active_coolant",
-                            provider.getMaxCoolantPerTick(), "Water")); // todo coolant
-                } else {
+        if (this instanceof IHPCACoolantProvider provider) {
+            if (provider.isActiveCooler()) {
+                tooltip.add(I18n.format("gregtech.machine.hpca.component_type.cooler_active"));
+                tooltip.add(I18n.format("gregtech.machine.hpca.component_type.cooler_active_coolant",
+                        provider.getMaxCoolantPerTick(), I18n.format(Materials.PCBCoolant.getUnlocalizedName())));
+            } else {
                     tooltip.add(I18n.format("gregtech.machine.hpca.component_type.cooler_passive"));
-                }
             }
-
-            if (this instanceof IHPCAComputationProvider provider) {
-                tooltip.add(I18n.format("gregtech.machine.hpca.component_type.computation_cwut", provider.getCWUPerTick()));
-                tooltip.add(I18n.format("gregtech.machine.hpca.component_type.computation_cooling", provider.getCoolingPerTick()));
-            }
-
-            if (isBridge()) {
-                tooltip.add(I18n.format("gregtech.machine.hpca.component_type.bridge"));
-            }
+            tooltip.add(I18n.format("gregtech.machine.hpca.component_type.cooler_cooling", provider.getCoolingAmount()));
         }
 
-        // todo hide under shift?
-        //if (TooltipHelper.isShiftDown()) {
-        //
-        //} else {
-        //    tooltip.add(I18n.format(""));
-        //}
+        if (this instanceof IHPCAComputationProvider provider) {
+            tooltip.add(I18n.format("gregtech.machine.hpca.component_type.computation_cwut", provider.getCWUPerTick()));
+            tooltip.add(I18n.format("gregtech.machine.hpca.component_type.computation_cooling", provider.getCoolingPerTick()));
+        }
+
+        if (canBeDamaged()) {
+            tooltip.add(TooltipHelper.BLINKING_ORANGE + I18n.format("gregtech.machine.hpca.component_type.damaged"));
+        }
     }
 
-    // Since it is only wrench, we disable this to use the SHIFT tooltip for something else
-    // todo keep this?
+    // Unnecessary to show this since it is just Wrench rotation
     @Override
     public boolean showToolUsages() {
         return false;

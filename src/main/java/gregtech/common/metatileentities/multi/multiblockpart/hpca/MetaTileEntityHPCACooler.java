@@ -59,6 +59,6 @@ public class MetaTileEntityHPCACooler extends MetaTileEntityHPCAComponent implem
 
     @Override
     public int getMaxCoolantPerTick() {
-        return advanced ? 64 : 0;
+        return advanced ? 8 : 0;
     }
 }

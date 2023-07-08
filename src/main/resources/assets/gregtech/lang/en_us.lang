@@ -4313,8 +4313,8 @@ gregtech.machine.hpca.component_type.cooler_cooling=§aProvides: §f%,d Cooling
 gregtech.machine.hpca.component_type.cooler_active_coolant=§cRequires up to: §f%,d L/t %s
 gregtech.machine.hpca.component_type.computation_cwut=§9Computation: §f%,d CWU/t
 gregtech.machine.hpca.component_type.computation_cooling=§cRequires up to: §f%,d Cooling
-gregtech.machine.hpca.component_type.bridge=Allows HPCA to connect to Network Switches
-gregtech.machine.hpca.component_type.damaged=Damaged, cannot provide anything but EU/t cost
+gregtech.machine.hpca.component_type.bridge=Allows §fHPCA§7 to connect to §fNetwork Switches§7
+gregtech.machine.hpca.component_type.damaged=Can be damaged by HPCA overheating!
 
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
@@ -4688,8 +4688,8 @@ gregtech.machine.network_switch.tooltip.3=Can combine any number of Computation 
 
 gregtech.machine.high_performance_computing_array.name=High Performance Computing Array
 gregtech.machine.high_performance_computing_array.tooltip.1=Just your average Supercomputer
-gregtech.machine.high_performance_computing_array.tooltip.2=Used to generate Computation (and heat)
-gregtech.machine.high_performance_computing_array.tooltip.3=Requires HPCA components to generate CWU/t (Compute Work Units)
+gregtech.machine.high_performance_computing_array.tooltip.2=Used to generate §fComputation§7 (and heat)
+gregtech.machine.high_performance_computing_array.tooltip.3=Requires HPCA components to generate §fCWU/t§7 (Compute Work Units)
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
@@ -5312,8 +5312,9 @@ gregtech.multiblock.power_substation.under_one_hour_left=Less than 1 hour until 
 
 gregtech.multiblock.hpca.computation=Providing: %s / %s CWU/t
 gregtech.multiblock.hpca.energy=Using: %s / %s EU/t (%s)
-gregtech.multiblock.hpca.temperature=Temperature: %s°C
-gregtech.multiblock.hpca.coolant=Needs up to: %s L/t %s
+gregtech.multiblock.hpca.coolant=Needs up to: %s L/t PCB Coolant
+gregtech.multiblock.hpca.cooling=Cooling:
+gregtech.multiblock.hpca.temperature=Temperature:
 gregtech.multiblock.hpca.error_damaged=Damaged component in structure
 gregtech.multiblock.hpca.error_temperature=Temperature above 100C, components may be damaged!
 gregtech.multiblock.hpca.warning_temperature=Temperature above 50C, components may be damaged at 100C!
