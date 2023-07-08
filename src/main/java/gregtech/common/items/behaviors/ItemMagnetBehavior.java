@@ -77,6 +77,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
     @Override
     public void onUpdate(ItemStack stack, Entity entity) {
         // Adapted logic from Draconic Evolution
+        // https://github.com/Draconic-Inc/Draconic-Evolution/blob/1.12.2/src/main/java/com/brandon3055/draconicevolution/items/tools/Magnet.java
         if (!entity.isSneaking() && entity.ticksExisted % 10 == 0 && isActive(stack) && entity instanceof EntityPlayer player) {
             World world = entity.getEntityWorld();
             if (!drainEnergy(true, stack, energyDraw)) {
@@ -115,7 +116,9 @@ public class ItemMagnetBehavior implements IItemBehaviour {
                 }
             }
 
-            world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.1F, 0.5F * ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 2F));
+            if (didMoveEntity) {
+                world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.1F, 0.5F * ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 2F));
+            }
 
             List<EntityXPOrb> xp = world.getEntitiesWithinAABB(EntityXPOrb.class, new AxisAlignedBB(entity.posX, entity.posY, entity.posZ, entity.posX, entity.posY, entity.posZ).grow(4, 4, 4));
 
