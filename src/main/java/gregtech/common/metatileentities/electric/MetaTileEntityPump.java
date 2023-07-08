@@ -140,18 +140,18 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         WidgetGroup tankDisplay = new WidgetGroup();
-        tankDisplay.addWidget(new ImageWidget(7, 16, 81, 55, GuiTextures.DISPLAY));
+        tankDisplay.addWidget(new ImageWidget(7, 16, 81, 46, GuiTextures.DISPLAY));
         tankDisplay.addWidget(new FluidContainerSlotWidget(importItems, 0, 90, 16, false)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY));
-        tankDisplay.addWidget(new ImageWidget(91, 36, 14, 14, GuiTextures.TANK_ICON));
-        tankDisplay.addWidget(new SlotWidget(exportItems, 0, 90, 53, true, false)
+        // tankDisplay.addWidget(new ImageWidget(91, 36, 14, 14, GuiTextures.TANK_ICON));
+        tankDisplay.addWidget(new SlotWidget(exportItems, 0, 90, 44, true, false)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY));
-        tankDisplay.addWidget(new ToggleButtonWidget(11, 50, 18, 18,
+        tankDisplay.addWidget(new ToggleButtonWidget(7, 64, 18, 18,
                 GuiTextures.BUTTON_LOCK, this::isLocked, this::setLocked)
                 .setTooltipText("gregtech.gui.fluid_lock.tooltip")
                 .shouldUseBaseBackground());
 
-        TankWidget tankWidget = new PhantomTankWidget(exportFluids.getTankAt(0), 67, 50, 18, 18,
+        TankWidget tankWidget = new PhantomTankWidget(exportFluids.getTankAt(0), 67, 41, 18, 18,
                 () -> this.lockedFluid,
                 fs -> {
                     if (this.exportFluids.getTankAt(0).getFluidAmount() != 0) {
