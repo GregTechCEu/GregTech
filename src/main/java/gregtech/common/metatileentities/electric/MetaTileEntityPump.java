@@ -60,7 +60,6 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
 
     private final Deque<BlockPos> fluidSourceBlocks = new ArrayDeque<>();
     private final Deque<BlockPos> blocksToCheck = new ArrayDeque<>();
-//    private final FluidFilterContainer fluidFilter;
     private boolean initializedQueue = false;
     private int pumpHeadY;
     @Nullable
