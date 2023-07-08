@@ -16,7 +16,9 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -36,6 +38,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -47,7 +50,7 @@ import java.util.*;
 
 public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOpticalComputationProvider, IControllable {
 
-    private static final double IDLE_TEMPERATURE = 0;
+    private static final double IDLE_TEMPERATURE = 200;
     private static final double DAMAGE_TEMPERATURE = 1000;
 
     private IEnergyContainer energyContainer;
@@ -58,7 +61,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     private boolean isWorkingEnabled = true;
     private boolean hasNotEnoughEnergy;
 
-    private double temperature;
+    private double temperature = IDLE_TEMPERATURE; // start at idle temperature
 
     public MetaTileEntityHPCA(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -88,7 +91,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     @Override
     public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
-        return isActive() ? hpcaHandler.allocateCWUt(cwut, simulate) : 0;
+        return isActive() && !hasNotEnoughEnergy ? hpcaHandler.allocateCWUt(cwut, simulate) : 0;
     }
 
     @Override
@@ -110,7 +113,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         if (isActive()) {
             // forcibly use active coolers at full rate if temperature is half-way to damaging temperature
             double midpoint = (DAMAGE_TEMPERATURE - IDLE_TEMPERATURE) / 2;
-            double temperatureChange = hpcaHandler.calculateTemperatureChange(coolantHandler, temperature >= midpoint);
+            double temperatureChange = hpcaHandler.calculateTemperatureChange(coolantHandler, temperature >= midpoint) / 2.0;
             if (temperature + temperatureChange <= IDLE_TEMPERATURE) {
                 temperature = IDLE_TEMPERATURE;
             } else {
@@ -123,7 +126,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         } else {
             hpcaHandler.clearComputationCache();
             // passively cool (slowly) if not active
-            temperature = Math.max(IDLE_TEMPERATURE, temperature - 0.5);
+            temperature = Math.max(IDLE_TEMPERATURE, temperature - 0.25);
         }
     }
 
@@ -158,9 +161,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         }
     }
 
-    @NotNull
     @Override
-    protected BlockPattern createStructurePattern() {
+    protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("AA", "CC", "CC", "CC", "AA")
                 .aisle("VA", "XV", "XV", "XV", "VA")
@@ -179,18 +181,15 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
                 .build();
     }
 
-    @NotNull
-    private static IBlockState getCasingState() {
+    private static @NotNull IBlockState getCasingState() {
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.COMPUTER_CASING);
     }
 
-    @NotNull
-    private static IBlockState getAdvancedState() {
+    private static @NotNull IBlockState getAdvancedState() {
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.ADVANCED_COMPUTER_CASING);
     }
 
-    @NotNull
-    private static IBlockState getVentState() {
+    private static @NotNull IBlockState getVentState() {
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.COMPUTER_HEAT_VENT);
     }
 
@@ -272,9 +271,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         return Textures.COMPUTER_CASING; // multiblock parts
     }
 
-    @NotNull
     @Override
-    protected ICubeRenderer getFrontOverlay() {
+    protected @NotNull ICubeRenderer getFrontOverlay() {
         return Textures.HPCA_OVERLAY;
     }
 
@@ -327,12 +325,13 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
                     GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())]));
 
             int coolantDemand = hpcaHandler.getMaxCoolantDemand();
-            if (coolantDemand > 0) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.coolant", coolantDemand, "Water idk"));
+            if (coolantDemand > 0 && hpcaHandler.getCoolant() != null) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.coolant",
+                        coolantDemand, LocalizationUtils.format(hpcaHandler.getCoolant().getUnlocalizedName())));
             }
 
             textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.temperature",
-                    TextFormattingUtil.formatNumbers(temperature / 10.0d)).setStyle(new Style().setColor(getDisplayTemperatureColor())));
+                    Math.round(temperature / 10.0D)).setStyle(new Style().setColor(getDisplayTemperatureColor())));
 
             if (!isWorkingEnabled()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
@@ -546,7 +545,6 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
                 }
             }
 
-            // todo somewhere, the actual fluid type needs to be enforced
             double temperatureChange = temperatureIncrease - maxPassiveCooling;
             // quick exit if no active cooling/coolant drain is present
             if (maxActiveCooling == 0 && maxCoolantDrain == 0) {
@@ -554,9 +552,9 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
             }
             if (forceCoolWithActive || maxActiveCooling <= temperatureChange) {
                 // try to fully utilize active coolers
-                FluidStack fs = coolantTank.drain(maxCoolantDrain, true);
-                if (fs != null) {
-                    int coolantDrained = fs.amount;
+                FluidStack coolantStack = coolantTank.drain(getCoolantStack(maxCoolantDrain), true);
+                if (coolantStack != null) {
+                    int coolantDrained = coolantStack.amount;
                     if (coolantDrained == maxCoolantDrain) {
                         // coolant requirement was fully met
                         temperatureChange -= maxActiveCooling;
@@ -570,9 +568,9 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
                 // try to partially utilize active coolers to stabilize to zero
                 double temperatureToDecrease = Math.min(temperatureChange, maxActiveCooling);
                 int coolantToDrain = Math.max(1, (int) (maxCoolantDrain * (temperatureToDecrease / maxActiveCooling)));
-                FluidStack fs = coolantTank.drain(coolantToDrain, true);
-                if (fs != null) {
-                    int coolantDrained = fs.amount;
+                FluidStack coolantStack = coolantTank.drain(getCoolantStack(coolantToDrain), true);
+                if (coolantStack != null) {
+                    int coolantDrained = coolantStack.amount;
                     if (coolantDrained == coolantToDrain) {
                         // successfully stabilized to zero
                         return 0;
@@ -586,10 +584,26 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
             return temperatureChange;
         }
 
-        /** Roll a 1% chance to damage a HPCA component marked as damageable. Randomly selects the component. */
+        /**
+         * Get the coolant stack for this HPCA. Eventually this could be made more diverse with different
+         * coolants from different Active Cooler components, but currently it is just a fixed Fluid.
+         */
+        public FluidStack getCoolantStack(int amount) {
+            return new FluidStack(getCoolant(), amount);
+        }
+
+        private Fluid getCoolant() {
+            // todo make this a real coolant
+            return Materials.Water.getFluid();
+        }
+
+        /**
+         * Roll a 1/200 chance to damage a HPCA component marked as damageable. Randomly selects the component.
+         * If called every tick, this succeeds on average once every 10 seconds.
+         */
         public void attemptDamageHPCA() {
             // 1% chance each tick to damage a component if running too hot
-            if (GTValues.RNG.nextFloat() <= 0.01) {
+            if (GTValues.RNG.nextInt(200) == 0) {
                 // randomize which component is actually damaged
                 List<IHPCAComponentHatch> candidates = new ArrayList<>();
                 for (var component : components) {

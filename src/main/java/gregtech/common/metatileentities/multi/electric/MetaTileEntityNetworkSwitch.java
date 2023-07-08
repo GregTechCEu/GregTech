@@ -27,7 +27,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implements IOpticalComputationProvider {
@@ -70,27 +69,26 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     }
 
     @Override
-    public int requestCWUt(int cwut, boolean simulate, @Nonnull Collection<IOpticalComputationProvider> seen) {
+    public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
-        return isActive() ? computationHandler.requestCWUt(cwut, simulate) : 0;
+        return isActive() && !hasNotEnoughEnergy ? computationHandler.requestCWUt(cwut, simulate) : 0;
     }
 
     @Override
-    public int getMaxCWUt(@Nonnull Collection<IOpticalComputationProvider> seen) {
+    public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
         return isStructureFormed() ? computationHandler.getMaxCWUt() : 0;
     }
 
     // allows chaining Network Switches together
     @Override
-    public boolean canBridge(@Nonnull Collection<IOpticalComputationProvider> seen) {
+    public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
         return true;
     }
 
-    @NotNull
     @Override
-    protected BlockPattern createStructurePattern() {
+    protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XXX", "XXX")
                 .aisle("XXX", "XAX", "XXX")
@@ -105,13 +103,11 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
                 .build();
     }
 
-    @NotNull
-    private static IBlockState getCasingState() {
+    private static @NotNull IBlockState getCasingState() {
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.COMPUTER_CASING);
     }
 
-    @NotNull
-    private static IBlockState getAdvancedState() {
+    private static @NotNull IBlockState getAdvancedState() {
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.ADVANCED_COMPUTER_CASING);
     }
 
@@ -120,9 +116,8 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
         return Textures.COMPUTER_CASING;
     }
 
-    @NotNull
     @Override
-    protected ICubeRenderer getFrontOverlay() {
+    protected @NotNull ICubeRenderer getFrontOverlay() {
         return Textures.NETWORK_SWITCH_OVERLAY;
     }
 
@@ -168,15 +163,19 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
         // transmitters in the NS give computation to other multis
         private final Set<IOpticalComputationHatch> transmitters = new HashSet<>();
 
+        private int EUt;
+
         private void onStructureForm(Collection<IOpticalComputationHatch> providers, Collection<IOpticalComputationHatch> transmitters) {
             reset();
             this.providers.addAll(providers);
             this.transmitters.addAll(transmitters);
+            this.EUt = providers.size() + transmitters.size() * GTValues.VA[GTValues.IV];
         }
 
         private void reset() {
             providers.clear();
             transmitters.clear();
+            EUt = 0;
         }
 
         private int requestCWUt(int cwut, boolean simulate) {
@@ -203,15 +202,8 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
         }
 
         /** The EU/t cost of this Network Switch given the attached providers and transmitters. */
-        // todo this could be a structure constant, once we are sure how this value is determined
-        // todo (it could be variable depending on computation potential, or routed computation, or just fixed)
         private int getEUt() {
-            int eut = 0;
-            // Providers are 1A IV each
-            eut += providers.size() * GTValues.VA[GTValues.IV];
-            // Transmitters are 1A IV each
-            eut += transmitters.size() * GTValues.VA[GTValues.IV];
-            return eut;
+            return EUt;
         }
 
         /** Test if any of the provider hatches do not allow bridging */
