@@ -144,7 +144,8 @@ public class GTValues {
             MODID_JOURNEYMAP = "journeymap",
             MODID_VOXELMAP = "voxelmap",
             MODID_XAERO_MINIMAP = "xaerominimap",
-            MODID_HWYLA = "hwyla";
+            MODID_HWYLA = "hwyla",
+            MODID_BAUBLES = "baubles";
 
     private static Boolean isClient;
 
