@@ -6,7 +6,6 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
-import gregtech.api.capability.IMultipleTankHandler.MultiFluidTankEntry;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.gui.GuiTextures;
@@ -183,9 +182,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
-        for (IFluidTank fluidTank : fluidTankList.getFluidTanks()) {
-            abilityList.add(new MultiFluidTankEntry(this.fluidTankList, fluidTank));
-        }
+        abilityList.addAll(fluidTankList.getFluidTanks());
     }
 
     @Override
