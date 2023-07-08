@@ -283,7 +283,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
             }
             FluidStack drainStack = fluidHandler.drain(Integer.MAX_VALUE, false);
             if (drainStack != null && exportFluids.fill(drainStack, false) == drainStack.amount) {
-                if (locked) {
+                if (locked && lockedFluid == null) {
                     lockedFluid = drainStack.copy();
                     lockedFluid.amount = 1;
                 }
