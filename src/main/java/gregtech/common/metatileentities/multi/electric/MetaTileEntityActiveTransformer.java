@@ -271,7 +271,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         if (buffer != null) {
             return buffer;
         } else if (isStructureFormed() && getAbilities(MultiblockAbility.INPUT_LASER).size() == 1) {
-            return getAbilities(MultiblockAbility.INPUT_LASER).get(1);
+            return getAbilities(MultiblockAbility.INPUT_LASER).get(0);
         }
         return null;
     }
