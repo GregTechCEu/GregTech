@@ -14,6 +14,8 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.common.blocks.BlockComputerCasing;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -223,6 +226,17 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     @Override
     public boolean shouldDropWhenDestroyed() {
         return !(canBeDamaged() && isDamaged());
+    }
+
+    @Override
+    public void getDrops(NonNullList<ItemStack> dropsList, @Nullable EntityPlayer harvester) {
+        if (canBeDamaged() && isDamaged()) {
+            if (isAdvanced()) {
+                dropsList.add(MetaBlocks.COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.ADVANCED_COMPUTER_CASING));
+            } else {
+                dropsList.add(MetaBlocks.COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_CASING));
+            }
+        }
     }
 
     @Override
