@@ -98,15 +98,15 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        this.energyInputContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        this.energyOutputContainer = new EnergyContainerList(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
-        if (this.energyInputContainer.getEnergyCapacity() > 0) {
-            this.buffer = new LaserBuffer(this.energyInputContainer.getEnergyCapacity());
-        } else if (this.energyOutputContainer.getEnergyCapacity() > 0) {
-            this.buffer = new LaserBuffer(this.energyOutputContainer.getEnergyCapacity());
+        energyInputContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
+        energyOutputContainer = new EnergyContainerList(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
+        if (energyInputContainer.getEnergyCapacity() > 0 && (buffer == null || buffer.getEnergyCapacity() != energyInputContainer.getEnergyCapacity())) {
+            buffer = new LaserBuffer(energyInputContainer.getEnergyCapacity());
+        } else if (energyOutputContainer.getEnergyCapacity() > 0 && (buffer == null || buffer.getEnergyCapacity() != energyOutputContainer.getEnergyCapacity())) {
+            buffer = new LaserBuffer(energyOutputContainer.getEnergyCapacity());
         }
         if (getAbilities(MultiblockAbility.INPUT_LASER).size() == 1) {
-            this.laserInContainer = getAbilities(MultiblockAbility.INPUT_LASER).get(0);
+            laserInContainer = getAbilities(MultiblockAbility.INPUT_LASER).get(0);
         }
     }
 
@@ -152,7 +152,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         if (isStructureFormed() && buffer != null) {
             textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.buffer_size", TextFormattingUtil.formatNumbers(buffer.getEnergyCapacity())));
             textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.buffer_full",
-                    (buffer.getEnergyStored() / buffer.getEnergyCapacity()) * 100.0, TextFormattingUtil.formatNumbers(buffer.getEnergyStored())));
+                    (buffer.getEnergyStored() * 100.0) / buffer.getEnergyCapacity(), TextFormattingUtil.formatNumbers(buffer.getEnergyStored())));
         }
     }
 
@@ -214,6 +214,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         data.setBoolean("isActive", this.isActive);
         data.setBoolean("isWorkingEnabled", this.isWorkingEnabled);
         data.setLong("bufferEnergyStored", this.buffer != null ? this.buffer.getEnergyStored() : 0L);
+        data.setLong("bufferEnergyCapacity", this.buffer != null ? this.buffer.getEnergyCapacity() : 0L);
         return data;
     }
 
@@ -222,7 +223,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         super.readFromNBT(data);
         this.isActive = data.getBoolean("isActive");
         this.isWorkingEnabled = data.getBoolean("isWorkingEnabled");
-        if (data.getLong("bufferEnergyStored") != 0 && buffer != null) {
+        if (data.getLong("bufferEnergyStored") != 0 && data.getLong("bufferEnergyCapacity") != 0) {
+            this.buffer = new LaserBuffer(data.getLong("bufferEnergyCapacity"));
             this.buffer.changeEnergy(data.getLong("bufferEnergyStored"));
         }
     }

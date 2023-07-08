@@ -34,6 +34,7 @@ import java.util.function.Supplier;
 public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<ILaserContainer>, IDataInfoProvider {
     private final boolean isOutput;
     private LaserBufferWrapper innerContainer;
+
     public MetaTileEntityLaserHatch(ResourceLocation metaTileEntityId, boolean isOutput) {
         super(metaTileEntityId, GTValues.ZPM);
         this.isOutput = isOutput;
@@ -126,7 +127,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
         textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.buffer_size", TextFormattingUtil.formatNumbers(innerContainer.getEnergyCapacity())));
         if (innerContainer.getEnergyCapacity() != 0) {
             textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.buffer_full",
-                    (innerContainer.getEnergyStored() / innerContainer.getEnergyCapacity()) * 100.0, TextFormattingUtil.formatNumbers(innerContainer.getEnergyStored())));
+                    (innerContainer.getEnergyStored() * 100.0) / innerContainer.getEnergyCapacity(), TextFormattingUtil.formatNumbers(innerContainer.getEnergyStored())));
         }
         return textList;
     }
