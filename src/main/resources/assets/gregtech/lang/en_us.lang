@@ -1807,6 +1807,9 @@ gregtech.material.caprolactam=Caprolactam
 gregtech.material.nitrosyl_chloride=Nitrosyl Chloride
 gregtech.material.butyraldehyde=Butyraldehyde
 gregtech.material.polyvinyl_butyral=Polyvinyl Butyral
+gregtech.material.biphenyl=Biphenyl
+gregtech.material.polychlorinated_biphenyl=Polychlorinated Biphenyl (PCB)
+gregtech.material.pcb_coolant=Dielectric PCB Coolant
 
 
 # Unknown Composition Materials
