@@ -7,38 +7,33 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityActiveTransformer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<ILaserContainer>, IDataInfoProvider {
+public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<ILaserContainer> {
     private final boolean isOutput;
-    private LaserBufferWrapper innerContainer;
+    private LaserHatchWrapper wrapper;
 
     public MetaTileEntityLaserHatch(ResourceLocation metaTileEntityId, boolean isOutput) {
         super(metaTileEntityId, GTValues.ZPM);
         this.isOutput = isOutput;
-        this.innerContainer = new LaserBufferWrapper(this, null, isOutput);
+        this.wrapper = new LaserHatchWrapper(this, null, isOutput);
     }
 
     @Override
@@ -50,17 +45,17 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
     @Override
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
-        this.innerContainer = new LaserBufferWrapper(this, null, isOutput);
+        this.wrapper = new LaserHatchWrapper(this, null, isOutput);
     }
 
     private void calculateLaserContainer(MultiblockControllerBase controllerBase) {
         if (isOutput) {
             // TODO: Handle null values by propagating up the net
             if (controllerBase instanceof MetaTileEntityActiveTransformer activeTransformer) {
-                innerContainer.setBufferSupplier(activeTransformer::getBuffer);
+                wrapper.setBufferSupplier(activeTransformer::getWrapper);
             }
         } else {
-            innerContainer.setBufferSupplier(this::inputContainerSupplier);
+            wrapper.setBufferSupplier(this::inputContainerSupplier);
         }
     }
 
@@ -105,7 +100,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
     @Override
     public void registerAbilities(List<ILaserContainer> abilityList) {
         calculateLaserContainer(null);
-        abilityList.add(this.innerContainer);
+        abilityList.add(this.wrapper);
     }
 
     @Override
@@ -120,21 +115,9 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
         }
     }
 
-    @NotNull
-    @Override
-    public List<ITextComponent> getDataInfo() {
-        List<ITextComponent> textList = new ArrayList<>();
-        textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.buffer_size", TextFormattingUtil.formatNumbers(innerContainer.getEnergyCapacity())));
-        if (innerContainer.getEnergyCapacity() != 0) {
-            textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.buffer_full",
-                    (innerContainer.getEnergyStored() * 100.0) / innerContainer.getEnergyCapacity(), TextFormattingUtil.formatNumbers(innerContainer.getEnergyStored())));
-        }
-        return textList;
-    }
-
     // TODO: add tooltips
 
-    private static class LaserBufferWrapper extends MTETrait implements ILaserContainer {
+    private static class LaserHatchWrapper extends MTETrait implements ILaserContainer {
 
         @Nullable
         private Supplier<ILaserContainer> bufferSupplier;
@@ -145,7 +128,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
          *
          * @param metaTileEntity the MTE to reference, and add the trait to
          */
-        public LaserBufferWrapper(@NotNull MetaTileEntity metaTileEntity, @Nullable Supplier<ILaserContainer> bufferSupplier, boolean isOutput) {
+        public LaserHatchWrapper(@NotNull MetaTileEntity metaTileEntity, @Nullable Supplier<ILaserContainer> bufferSupplier, boolean isOutput) {
             super(metaTileEntity);
             this.bufferSupplier = bufferSupplier;
             this.isOutput = isOutput;
