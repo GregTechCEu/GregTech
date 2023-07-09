@@ -4663,6 +4663,7 @@ gregtech.machine.data_bank.tooltip.1=Your Personal NAS
 gregtech.machine.data_bank.tooltip.2=Bulk Data Storage. Transfer with Optical Cables.
 gregtech.machine.data_bank.tooltip.3=Data Banks can be chained together.
 gregtech.machine.data_bank.tooltip.4=Uses %sEU/t per Data Hatch and %sEU/t when chained.
+gregtech.multiblock.data_bank.description=The Data Bank is a multiblock structure used for sharing Assembly Line Research Data between multiple Assembly Lines. Additionally, it enables Assembly Lines to read more complex research data on Data Modules.
 
 gregtech.machine.power_substation.name=Power Substation
 gregtech.machine.power_substation.tooltip1=The heart of a centralized power grid
@@ -4670,7 +4671,7 @@ gregtech.machine.power_substation.tooltip2=§fCapacitors§7 do not need to be al
 gregtech.machine.power_substation.tooltip3=Allows up to §f%d Capacitor Layers§7.
 gregtech.machine.power_substation.tooltip4=Loses energy equal to §f1%%§7 of total capacity every §f24 hours§7.
 gregtech.machine.power_substation.tooltip5=Capped at §f%,d EU/t§7 passive loss per Capacitor Block.
-gregtech.multiblock.power_substation.description=
+gregtech.multiblock.power_substation.description=The Power Substation is a multiblock structure used for storing immense amounts of Energy. Capable of holding up to 18 layers of Batteries. Can also use Empty Capacitors to fill space, as layers must be fully filled.
 
 gregtech.machine.active_transformer.name=Active Transformer
 gregtech.machine.active_transformer.tooltip1=Transformers: Lasers in Disguise
@@ -4683,16 +4684,19 @@ gregtech.machine.research_station.name=Research Station
 gregtech.machine.research_station.tooltip.1=More than just a Multiblock Scanner
 gregtech.machine.research_station.tooltip.2=Used to scan onto §fData Orbs§7 or §fData Modules§7.
 gregtech.machine.research_station.tooltip.3=Requires §fComputation§7 to work.
+gregtech.multiblock.research_station.description=The Research Station is a multiblock structure used for researching much more complex Assembly Line Research Data. Any Research requiring a Data Orb or Data Module must be scanned in the Research Station. Requires Compute Work Units (CWU/t) to research recipes, which is supplied by High Performance Computing Arrays (HPCAs).
 
 gregtech.machine.network_switch.name=Network Switch
 gregtech.machine.network_switch.tooltip.1=Ethernet Hub
 gregtech.machine.network_switch.tooltip.2=Used to route and distribute §fComputation§7.
 gregtech.machine.network_switch.tooltip.3=Can combine any number of Computation §fReceivers§7 into any number of Computation §fTransmitters§7.
+gregtech.multiblock.network_switch.description=The Network Switch is a multiblock structure used for distributing Computation from many sources to many destinations. It can accept any number of Computation Data Reception or Transmission Hatches. It is necessary for Research Data which requires much higher Computation, as the Research Station can only accept one Computation Data Reception Hatch. HPCAs must have a Bridge Component for the Network Switch to be able to access their Computation.
 
 gregtech.machine.high_performance_computing_array.name=High Performance Computing Array
 gregtech.machine.high_performance_computing_array.tooltip.1=Just your average Supercomputer
 gregtech.machine.high_performance_computing_array.tooltip.2=Used to generate §fComputation§7 (and heat).
 gregtech.machine.high_performance_computing_array.tooltip.3=Requires HPCA components to generate §fCWU/t§7 (Compute Work Units).
+gregtech.multiblock.high_performance_computing_array.description=The High Performance Computing Array (HPCA) is a multiblock structure used for creating Compute Work Units (CWU/t) for more complex Assembly Line Research Data. The structure has a flexible 3x3 area which can be filled in any way with HPCA components. Different components can provide different amounts of Computation, Cooling, as well as Energy Cost, Coolant Cost, and Heat Production. When used with a Bridge Component, the HPCA can connect to Network Switches for combining and routing Computation from multiple sources to one or more destinations.
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power

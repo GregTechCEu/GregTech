@@ -163,16 +163,16 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
                 .where('S', selfPredicate())
                 .where('X', states(getOuterState()))
                 .where('D', states(getInnerState()).setMinGlobalLimited(3)
-                        .or(abilities(MultiblockAbility.DATA_ACCESS_HATCH))
+                        .or(abilities(MultiblockAbility.DATA_ACCESS_HATCH).setPreviewCount(3))
                         .or(abilities(MultiblockAbility.OPTICAL_DATA_TRANSMISSION)
-                                .setMinGlobalLimited(1))
-                        .or(abilities(MultiblockAbility.OPTICAL_DATA_RECEPTION)))
+                                .setMinGlobalLimited(1, 1))
+                        .or(abilities(MultiblockAbility.OPTICAL_DATA_RECEPTION).setPreviewCount(1)))
                 .where('A', states(getInnerState()))
                 .where('C', states(getFrontState())
                         .setMinGlobalLimited(4)
                         .or(autoAbilities())
                         .or(abilities(MultiblockAbility.INPUT_ENERGY)
-                                .setMinGlobalLimited(1).setMaxGlobalLimited(2)))
+                                .setMinGlobalLimited(1).setMaxGlobalLimited(2).setPreviewCount(1)))
                 .build();
     }
 
