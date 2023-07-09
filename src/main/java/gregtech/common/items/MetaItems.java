@@ -276,6 +276,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem TOOL_DATA_STICK;
     public static MetaItem<?>.MetaValueItem TOOL_DATA_ORB;
+    public static MetaItem<?>.MetaValueItem TOOL_DATA_MODULE;
 
     public static final Map<MarkerMaterial, MetaValueItem> GLASS_LENSES = new HashMap<>();
 

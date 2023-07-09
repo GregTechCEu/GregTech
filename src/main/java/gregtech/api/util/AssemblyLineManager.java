@@ -58,16 +58,17 @@ public final class AssemblyLineManager {
     }
 
     /**
-     * @param stack the stack to check
+     * @param stack      the stack to check
+     * @param isDataBank if the caller is a Data Bank. Pass "true" here if your use-case does not matter for this check.
      * @return if the stack is a data item
      */
-    public static boolean isStackDataItem(@Nonnull ItemStack stack) {
+    public static boolean isStackDataItem(@Nonnull ItemStack stack, boolean isDataBank) {
         if (stack.getItem() instanceof MetaItem<?> metaItem) {
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(stack);
             if (valueItem == null) return false;
             for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
-                if (behaviour instanceof IDataItem) {
-                    return true;
+                if (behaviour instanceof IDataItem dataItem) {
+                    return !dataItem.requireDataBank() || isDataBank;
                 }
             }
         }
