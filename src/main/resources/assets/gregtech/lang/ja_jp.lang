@@ -4891,11 +4891,22 @@ gregtech.machine.data_access_hatch.tooltip.1=マルチブロックのための�
 gregtech.machine.data_access_hatch.tooltip.2=データスティック用の§a%s§7スロットを追加する
 gregtech.machine.data_access_hatch.advanced.name=発展型データアクセスハッチ
 gregtech.machine.data_access_hatch.creative.name=クリエイティブデータアクセスハッチ
+
 gregtech.machine.data_access_hatch.optical.receiver.name=光学データ受付ハッチ
 gregtech.machine.data_access_hatch.optical.transmitter.name=光学データ伝送ハッチ
 
 gregtech.machine.fluid_tank.max_multiblock=最大サイズ: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=内容物: %s L の %s
+
+gregtech.machine.me_export_fluid_hatch.name=ME 搬出ハッチ
+gregtech.machine.me_export_item_bus.name=ME 搬出バス
+gregtech.machine.me_import_fluid_hatch.name=ME 搬入ハッチ
+gregtech.machine.me_import_item_bus.name=ME 搬入バス
+gregtech.machine.me.fluid_export.tooltip=MEネットワークに液体を自動搬出
+gregtech.machine.me.item_export.tooltip=MEネットワークにアイテムを自動搬出
+gregtech.machine.me.fluid_import.tooltip=MEネットワークから液体を自動搬入
+gregtech.machine.me.item_import.tooltip=MEネットワークからアイテムを自動搬入
+gregtech.machine.me.export.tooltip=MEネットワーク接続前は無限の容量を持つ。
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§a入力電圧: §f%,d EU/t (%s§f)
@@ -5011,6 +5022,13 @@ gregtech.gui.multiblock_item_voiding=消去モード/n§6アイテム§7を消�
 gregtech.gui.multiblock_fluid_voiding=消去モード/n§6液体§7を消去
 gregtech.gui.multiblock_item_fluid_voiding=消去モード/n§6アイテム§7と§6液体§7を消去
 gregtech.gui.multiblock_no_voiding=消去モード/n§7何も消去しない
+gregtech.gui.me_network.online=ネットワーク状態: §2オンライン§r
+gregtech.gui.me_network.offline=ネットワーク状態: §4オフライン§r
+gregtech.gui.waiting_list=Sending Queue:
+gregtech.gui.config_slot=§f設定スロット§r
+gregtech.gui.config_slot.set=§7クリックで設定スロットを§b設定/選択§7。§r
+gregtech.gui.config_slot.scroll=§7スクロールで設定量を§a変更§7。§r
+gregtech.gui.config_slot.remove=§7右クリックで設定スロットを§4初期化§7。§r
 
 ore.spawnlocation.name=鉱脈情報
 gregtech.jei.ore.surface_rock_1=地表にある小石は鉱脈の生成位置を示します。
