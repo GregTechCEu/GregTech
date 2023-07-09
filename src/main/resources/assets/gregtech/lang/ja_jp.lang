@@ -5505,5 +5505,45 @@ gregtech.key.armor_hover=装備のホバーモードの切替
 gregtech.key.armor_charging=装備のインベントリ充電機能の切替
 gregtech.key.tool_aoe_change=採掘範囲の切替
 
+gregtech.subtitle.tick.forge_hammer=ハンマーでたたく
+gregtech.subtitle.tick.macerator=アイテムが砕かれる
+gregtech.subtitle.tick.chemical_reactor=化学反応
+gregtech.subtitle.tick.assembler=アイテムが組み合わせられる
+gregtech.subtitle.tick.centrifuge=アイテムが分離される
+gregtech.subtitle.tick.compressor=アイテムが圧縮される
+gregtech.subtitle.tick.electrolyzer=アイテムが電気分解される
+gregtech.subtitle.tick.mixer=粉が混合される
+gregtech.subtitle.tick.replicator=アイテムが複製される
+gregtech.subtitle.tick.arc=アイテムがアーク製錬される
+gregtech.subtitle.tick.boiler=液体が沸騰する
+gregtech.subtitle.tick.furnace=かまどで製錬する
+gregtech.subtitle.tick.cooling=インゴットが冷却される
+gregtech.subtitle.tick.fire=燃える
+gregtech.subtitle.tick.bath=アイテムが浸される
+gregtech.subtitle.tick.motor=モーターが開店する
+gregtech.subtitle.tick.cut=ブロックが切断される
+gregtech.subtitle.tick.turbine=タービンが回転する
+gregtech.subtitle.tick.combustion=燃料が燃焼される
+gregtech.subtitle.tick.miner=採掘機が採掘する
+gregtech.subtitle.tick.computation=コンピュータ処理
+gregtech.subtitle.use.wrench=レンチを使う
+gregtech.subtitle.use.soft_hammer=ブロックが優しくたたかれる
+gregtech.subtitle.use.drill=ブロックがドリルで採掘される
+gregtech.subtitle.use.plunger=液体が除去される
+gregtech.subtitle.use.file=インゴットが削られる
+gregtech.subtitle.use.saw=のこぎりで切断される
+gregtech.subtitle.use.screwdriver=ネジを締める
+gregtech.subtitle.use.chainsaw=チェーンソーが唸る
+gregtech.subtitle.use.wirecutter=ワイヤーが切断される
+gregtech.subtitle.use.spray_can=スプレーをする
+gregtech.subtitle.use.tricorder=音楽を聴く
+gregtech.subtitle.use.mortar=粉々にする
+gregtech.subtitle.record.sus=Sus
+gregtech.subtitle.entity.portal_opening=ポータルが開く
+gregtech.subtitle.entity.portal_closing=ポータルが閉じる
+gregtech.subtitle.maintenance.electrical=電気的故障
+gregtech.subtitle.maintenance.mechanical=技術的故障
+
+
 # Debug messaging
 gregtech.debug.f3_h.enabled=GregTechがデバッグ情報を修正しました! 開発者向け: GregTech.cfgのmisc:debug設定オプションを有効にすることでより多くの情報を見ることができます。
