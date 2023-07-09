@@ -174,13 +174,19 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         } else {
             textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
         }
+    }
 
-        if (!drainEnergy(true)) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            if (!drainEnergy(true)) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
+            }
+            if (minerLogic.isInventoryFull()) {
+                textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
+            }
         }
-
-        if (minerLogic.isInventoryFull())
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
     @Override

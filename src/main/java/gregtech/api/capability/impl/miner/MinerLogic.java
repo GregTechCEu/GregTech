@@ -339,6 +339,7 @@ public class MinerLogic {
         this.isDone = false;
         blocksToMine.clear();
         checkBlocksToMine();
+        resetPipeLength();
     }
 
     /**
@@ -452,6 +453,15 @@ public class MinerLogic {
      */
     private void incrementPipeLength() {
         this.pipeLength++;
+        this.metaTileEntity.writeCustomData(GregtechDataCodes.PUMP_HEAD_LEVEL, b -> b.writeInt(pipeLength));
+        this.metaTileEntity.markDirty();
+    }
+
+    /**
+     * Resets the pipe length to zero
+     */
+    private void resetPipeLength() {
+        this.pipeLength = 0;
         this.metaTileEntity.writeCustomData(GregtechDataCodes.PUMP_HEAD_LEVEL, b -> b.writeInt(pipeLength));
         this.metaTileEntity.markDirty();
     }
@@ -679,6 +689,8 @@ public class MinerLogic {
             this.isWorkingEnabled = isWorkingEnabled;
             metaTileEntity.markDirty();
             if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
+                if (!isWorkingEnabled && checkCanMine()) resetArea();
+
                 this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(isWorkingEnabled));
             }
         }

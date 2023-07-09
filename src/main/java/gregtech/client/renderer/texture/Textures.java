@@ -169,6 +169,7 @@ public class Textures {
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator");
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_TE_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator_te");
 
+
     // Simple Overlay Renderers
     public static final SimpleOverlayRenderer SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_screen");
     public static final SimpleOverlayRenderer DISPLAY = new SimpleOverlayRenderer("cover/overlay_display");
@@ -212,6 +213,9 @@ public class Textures {
     public static final ICubeRenderer TUNGSTENSTEEL_FIREBOX = new SidedCubeRenderer("casings/firebox/overlay/tungstensteel");
     public static final ICubeRenderer TUNGSTENSTEEL_FIREBOX_ACTIVE = new FireboxActiveRenderer("casings/firebox/overlay/tungstensteel/active");
     public static final ICubeRenderer COMPUTER_CASING = new SidedCubeRenderer("casings/computer/computer_casing");
+
+    public static final AlignedOrientedOverlayRenderer LD_ITEM_PIPE = new AlignedOrientedOverlayRenderer("pipe/ld_item_pipe");
+    public static final AlignedOrientedOverlayRenderer LD_FLUID_PIPE = new AlignedOrientedOverlayRenderer("pipe/ld_fluid_pipe");
 
     public static final SimpleOverlayRenderer ROTOR_HOLDER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_rotor_holder");
     public static final SimpleOverlayRenderer ADV_PUMP_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_adv_pump");
@@ -272,6 +276,11 @@ public class Textures {
     public static final SimpleOverlayRenderer CONVERTER_FE_OUT = new SimpleOverlayRenderer("overlay/converter/converter_fe_out");
     public static final SimpleOverlayRenderer CONVERTER_FE_IN = new SimpleOverlayRenderer("overlay/converter/converter_fe_in");
 
+    public static final SimpleOverlayRenderer ME_OUTPUT_HATCH = new SimpleOverlayRenderer("overlay/appeng/me_output_hatch");
+    public static final SimpleOverlayRenderer ME_INPUT_HATCH = new SimpleOverlayRenderer("overlay/appeng/me_input_hatch");
+    public static final SimpleOverlayRenderer ME_OUTPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_output_bus");
+    public static final SimpleOverlayRenderer ME_INPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_input_bus");
+  
     public static final ResourceLocation GREGTECH_CAPE_TEXTURE = gregtechId("textures/capes/gregtechcape.png");
     public static final ResourceLocation RED_CAPE_TEXTURE = gregtechId("textures/capes/redcape.png");
     public static final ResourceLocation YELLOW_CAPE_TEXTURE = gregtechId("textures/capes/yellowcape.png");

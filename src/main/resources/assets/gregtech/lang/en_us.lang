@@ -93,6 +93,15 @@ gregtech.top.unit.fluid_buckets=kL
 
 gregtech.top.block_drops=Drops
 
+gregtech.top.ld_pipe_no_network=No Pipeline Found
+gregtech.top.ld_pipe_connected=Pipeline Connected
+gregtech.top.ld_pipe_incomplete=Incomplete Pipeline
+gregtech.top.ld_pipe_length=Length:
+gregtech.top.ld_pipe_input=Input
+gregtech.top.ld_pipe_output=Output
+gregtech.top.ld_pipe_input_endpoint=Input Endpoint:
+gregtech.top.ld_pipe_output_endpoint=Other Endpoint:
+
 gregtech.waila.energy_stored=Energy: %d EU / %d EU
 gregtech.waila.progress_idle=Idle
 gregtech.waila.progress_tick=Progress: %d t / %d t
@@ -2548,6 +2557,10 @@ tile.battery_block.lapotronic_uv.name=UV Lapotronic Capacitor
 tile.battery_block.ultimate_uhv.name=UHV Ultimate Capacitor
 tile.battery_block.tooltip_empty=For filling space in your Power Substation
 
+# Long Distance Pipeline Blocks
+tile.long_distance_item_pipeline.name=Long Distance Item Pipe
+tile.long_distance_fluid_pipeline.name=Long Distance Fluid Pipe
+
 # Creative tabs
 itemGroup.gregtech.main=GregTech
 itemGroup.gregtech.machines=Machines (GT)
@@ -4268,6 +4281,13 @@ gregtech.machine.muffle.off=Sound Muffling: Disabled
 gregtech.machine.perfect_oc=Does not lose energy efficiency when overclocked.
 gregtech.machine.parallel_limit=Can run up to §b%d§r§7 Recipes at once.
 
+gregtech.machine.ld_item_endpoint.name=Long Distance Item Pipeline Endpoint
+gregtech.machine.ld_fluid_endpoint.name=Long Distance Fluid Pipeline Endpoint
+gregtech.machine.endpoint.tooltip.min_length=§bMinimum Endpoint Distance: §f%d Blocks
+gregtech.machine.endpoint.tooltip.1=Connect with §fLong Distance Pipe§7 blocks to create a pipeline.
+gregtech.machine.endpoint.tooltip.2=Pipelines must have exactly §f1 Input§7 and §f1 Output§7 endpoint.
+gregtech.machine.endpoint.tooltip.3=Only pipeline endpoints need to be §fchunk-loaded§7.
+
 # Advancements
 gregtech.advancement.root_steam.name=Steam Age
 gregtech.advancement.root_steam.desc=Welcome to GregTech! Everything begins with your first copper ingots.
@@ -4887,11 +4907,22 @@ gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
 gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Sticks
 gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
 gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
+
 gregtech.machine.data_access_hatch.optical.receiver.name=Optical Data Reception Hatch
 gregtech.machine.data_access_hatch.optical.transmitter.name=Optical Data Transmission Hatch
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
+
+gregtech.machine.me_export_fluid_hatch.name=ME Output Hatch
+gregtech.machine.me_export_item_bus.name=ME Output Bus
+gregtech.machine.me_import_fluid_hatch.name=ME Input Hatch
+gregtech.machine.me_import_item_bus.name=ME Input Bus
+gregtech.machine.me.fluid_export.tooltip=Stores fluid directly into ME network.
+gregtech.machine.me.item_export.tooltip=Stores item directly into ME network.
+gregtech.machine.me.fluid_import.tooltip=Fetch fluids from ME network automatically.
+gregtech.machine.me.item_import.tooltip=Fetch items from ME network automatically.
+gregtech.machine.me.export.tooltip=It has infinite capacity before connecting to ME network.
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
@@ -4932,10 +4963,12 @@ gregtech.universal.tooltip.produces_fluid=§eProduces: §f%,d L/t
 gregtech.universal.tooltip.terrain_resist=This Machine will not explode when exposed to the Elements
 gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
 
+gregtech.block.tooltip.no_mob_spawning=§bMobs cannot spawn on this block
+
 gregtech.recipe.total=Total: %,d EU
 gregtech.recipe.eu=Usage: %,d EU/t (%s§r)
 gregtech.recipe.eu_inverted=Generation: %,d EU/t
-gregtech.recipe.duration=Duration: %,.2f secs
+gregtech.recipe.duration=Duration: %s secs
 gregtech.recipe.amperage=Amperage: %,d
 gregtech.recipe.not_consumed=Does not get consumed in the process
 gregtech.recipe.chance=Chance: %s%% +%s%%/tier
@@ -4999,14 +5032,18 @@ gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
 gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
 gregtech.gui.fluid_voiding.tooltip.enabled=Excess Fluid Voiding Enabled
 gregtech.gui.fluid_voiding.tooltip.disabled=Excess Fluid Voiding Disabled
-gregtech.gui.silktouch.enabled=Silk Touch Enabled: Click to Disable./n§7Switching requires an idle machine.
-gregtech.gui.silktouch.disabled=Silk Touch Disabled: Click to Enable./n§7Switching requires an idle machine.
-gregtech.gui.chunkmode.enabled=Chunk Mode Enabled: Click to Disable./n§7Switching requires an idle machine.
-gregtech.gui.chunkmode.disabled=Chunk Mode Disabled: Click to Enable./n§7Switching requires an idle machine.
 gregtech.gui.multiblock_item_voiding=Voiding Mode/n§7Voiding §6Items
 gregtech.gui.multiblock_fluid_voiding=Voiding Mode/n§7Voiding §9Fluids
 gregtech.gui.multiblock_item_fluid_voiding=Voiding Mode/n§7Voiding §6Items §7and §9Fluids
 gregtech.gui.multiblock_no_voiding=Voiding Mode/n§7Voiding Nothing
+gregtech.gui.multiblock_voiding_not_supported=This Multiblock does not support Voiding Mode
+gregtech.gui.me_network.online=Network Status: §2Online§r
+gregtech.gui.me_network.offline=Network Status: §4Offline§r
+gregtech.gui.waiting_list=Sending Queue:
+gregtech.gui.config_slot=§fConfig Slot§r
+gregtech.gui.config_slot.set=§7Click to §bset/select§7 config slot.§r
+gregtech.gui.config_slot.scroll=§7Scroll wheel to §achange§7 config amount.§r
+gregtech.gui.config_slot.remove=§7Right click to §4clear§7 config slot.§r
 
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
@@ -5082,12 +5119,11 @@ gregtech.multiblock.universal.problem.soft_mallet=%s§7Something is stuck. (§aS
 gregtech.multiblock.universal.problem.hard_hammer=%s§7Plating is dented. (§aHard Hammer§7)
 gregtech.multiblock.universal.problem.wire_cutter=%s§7Wires burned out. (§aWire Cutter§7)
 gregtech.multiblock.universal.problem.crowbar=%s§7That doesn't belong there. (§aCrowbar§7)
-gregtech.multiblock.universal.muffler_obstructed=Muffler Hatch is Obstructed!
-gregtech.multiblock.universal.muffler_obstructed.tooltip=Muffler Hatch must have a block of airspace in front of it.
-gregtech.multiblock.universal.distinct=Distinct Buses:
-gregtech.multiblock.universal.distinct.no=No
-gregtech.multiblock.universal.distinct.yes=Yes
-gregtech.multiblock.universal.distinct.info=If enabled, each Item Input Bus will be treated as fully distinct from each other for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
+gregtech.multiblock.universal.muffler_obstructed=§cMuffler Hatch is Obstructed!§r/nMuffler Hatch must have a block of airspace in front of it.
+gregtech.multiblock.universal.distinct_enabled=Distinct Buses: §aEnabled§r/nEach Item Input Bus will be treated separately for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
+gregtech.multiblock.universal.distinct_disabled=Distinct Buses: §cDisabled§r/nEach Item Input Bus will be treated as a combined input for recipe lookup.
+gregtech.multiblock.universal.distinct_not_supported=This Multiblock does not support Distinct Buses
+gregtech.multiblock.universal.no_flex_button=This Multiblock has no additional functionality with this Button.
 gregtech.multiblock.parallel=Performing up to %d Recipes in Parallel
 gregtech.multiblock.multiple_recipemaps.header=Machine Mode:
 gregtech.multiblock.multiple_recipemaps.tooltip=Screwdriver the controller to change which machine mode to use.
@@ -5122,6 +5158,7 @@ gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
 gregtech.multiblock.multi_furnace.heating_coil_discount=Heating Coil EU Boost: %sx
 gregtech.multiblock.distillation_tower.distilling_fluid=Distilling %s
 
+gregtech.multiblock.large_combustion_engine.no_lubricant=No Lubricant.
 gregtech.multiblock.large_combustion_engine.lubricant_amount=Lubricant Amount: %sL
 gregtech.multiblock.large_combustion_engine.oxygen_amount=Oxygen Amount: %sL
 gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount=Liquid Oxygen Amount: %sL
@@ -5132,13 +5169,14 @@ gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost=Supply Oxygen
 gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=Supply Liquid Oxygen to boost.
 gregtech.multiblock.large_combustion_engine.obstructed=Engine Intakes Obstructed.
 
-gregtech.multiblock.turbine.fuel_amount=Fuel Amount: %sL (%s)
-gregtech.multiblock.turbine.fuel_needed=Needs %s %s per %s ticks!
+gregtech.multiblock.turbine.fuel_amount=Fuel: %sL %s
+gregtech.multiblock.turbine.fuel_needed=Consumes %s per %s ticks
 gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=Rotor Durability: %s%%
+gregtech.multiblock.turbine.rotor_durability_low=Rotor durability low!
+gregtech.multiblock.turbine.no_rotor=No Rotor in Rotor Holder.
 gregtech.multiblock.turbine.efficiency=Turbine Efficiency: %s%%
-gregtech.multiblock.turbine.energy_per_tick=Energy Output: %s/%s EU/t (%s)
-gregtech.multiblock.turbine.energy_per_tick_maxed=Energy Output: %s EU/t (%s)
+gregtech.multiblock.turbine.energy_per_tick=Output EU/t: %s (%s)
 gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed
 gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 adds §f10%% efficiency§7.
 
@@ -5146,7 +5184,8 @@ gregtech.multiblock.large_boiler.efficiency=Efficiency: %s
 gregtech.multiblock.large_boiler.steam_output=Steam Output: %s L/t
 gregtech.multiblock.large_boiler.throttle=Throttle: %d
 gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
-gregtech.multiblock.large_boiler.throttle_modify=Modify Throttle:
+gregtech.multiblock.large_boiler.throttle_increment=Increase throttle by §a+5%%§r/n§7Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
+gregtech.multiblock.large_boiler.throttle_decrement=Decrease throttle by §c-5%%§r/n§7Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
 gregtech.multiblock.large_boiler.rate_tooltip=§7Produces §f%d L §7of Steam with §f1 Coal
 gregtech.multiblock.large_boiler.heat_time_tooltip=§7Takes §f%,d seconds §7to heat up
 gregtech.multiblock.large_boiler.explosion_tooltip=Will explode if provided Fuel with no Water
@@ -5158,6 +5197,11 @@ gregtech.machine.miner.needspower=Needs Power!
 gregtech.machine.steam_miner.vent=Venting Blocked!
 gregtech.machine.steam_miner.steam=Needs Steam!
 gregtech.machine.miner.errorradius=§cCannot change radius while working!
+
+gregtech.multiblock.miner.neither_mode=Chunk Mode: §cDisabled§r/nSilk Touch Mode: §cDisabled§r/n§7Switching requires an idle machine.
+gregtech.multiblock.miner.chunk_mode=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §cDisabled§r/n§7Switching requires an idle machine.
+gregtech.multiblock.miner.silk_touch_mode=Chunk Mode: §cDisabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
+gregtech.multiblock.miner.both_modes=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
 
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
@@ -5178,6 +5222,7 @@ gregtech.multiblock.power_substation.time_hours=%s Hours
 gregtech.multiblock.power_substation.time_days=%s Days
 gregtech.multiblock.power_substation.time_years=%s Years
 gregtech.multiblock.power_substation.time_forever=Forever
+gregtech.multiblock.power_substation.under_one_hour_left=Less than 1 hour until fully drained!
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
@@ -5472,6 +5517,45 @@ gregtech.key.armor_mode_switch=Armor Mode Switch
 gregtech.key.armor_hover=Armor Hover Toggle
 gregtech.key.armor_charging=Armor Charging to Inventory Toggle
 gregtech.key.tool_aoe_change=Tool AoE Mode Switch
+
+gregtech.subtitle.tick.forge_hammer=Hammer smashes
+gregtech.subtitle.tick.macerator=Items macerating
+gregtech.subtitle.tick.chemical_reactor=Chemicals reacting
+gregtech.subtitle.tick.assembler=Items assembling
+gregtech.subtitle.tick.centrifuge=Items separating
+gregtech.subtitle.tick.compressor=Items compressing
+gregtech.subtitle.tick.electrolyzer=Elements electrolyzing
+gregtech.subtitle.tick.mixer=Dusts mixing
+gregtech.subtitle.tick.replicator=Items replicating
+gregtech.subtitle.tick.arc=Electricity arcing
+gregtech.subtitle.tick.boiler=Liquid boiling
+gregtech.subtitle.tick.furnace=Furnace smelting
+gregtech.subtitle.tick.cooling=Ingot cooling
+gregtech.subtitle.tick.fire=Fire burning
+gregtech.subtitle.tick.bath=Items bathing
+gregtech.subtitle.tick.motor=Motor turning
+gregtech.subtitle.tick.cut=Blocks cutting
+gregtech.subtitle.tick.turbine=Turbine spinning
+gregtech.subtitle.tick.combustion=Fuel combusting
+gregtech.subtitle.tick.miner=Miner drilling
+gregtech.subtitle.tick.computation=Computers processing
+gregtech.subtitle.use.wrench=Wrench turns
+gregtech.subtitle.use.soft_hammer=Block smacked
+gregtech.subtitle.use.drill=Blocks drilled
+gregtech.subtitle.use.plunger=Fluid evacuated
+gregtech.subtitle.use.file=Ingot filed
+gregtech.subtitle.use.saw=Wood sawing
+gregtech.subtitle.use.screwdriver=Screws turning
+gregtech.subtitle.use.chainsaw=Chainsaw growls
+gregtech.subtitle.use.wirecutter=Wires snip
+gregtech.subtitle.use.spray_can=Paint sprays
+gregtech.subtitle.use.tricorder=Beep beep
+gregtech.subtitle.use.mortar=Grinding
+gregtech.subtitle.record.sus=Sus
+gregtech.subtitle.entity.portal_opening=Portal opens
+gregtech.subtitle.entity.portal_closing=Portal closes
+gregtech.subtitle.maintenance.electrical=Electrical breakdown
+gregtech.subtitle.maintenance.mechanical=Mechanical breakdown
 
 # Debug messaging
 gregtech.debug.f3_h.enabled=GregTech has modified the debug info! For Developers: enable the misc:debug config option in the GregTech config file to see more

@@ -5,6 +5,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.TextFormattingUtil;
@@ -107,7 +108,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         totalContinuousRunningTime = 0;
     }
 
-    public String[] getRecipeFluidInputInfo() {
+    public String getRecipeFluidInputInfo() {
         IRotorHolder rotorHolder = null;
 
         if (metaTileEntity instanceof MultiblockWithDisplayBase multiblockWithDisplayBase) {
@@ -115,17 +116,34 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
             rotorHolder = abilities.size() > 0 ? abilities.get(0) : null;
         }
 
-        FluidStack requiredFluidInput = previousRecipe.getFluidInputs().get(0).getInputFluidStack();
-        String neededName = requiredFluidInput.getLocalizedName();
+        // Previous Recipe is always null on first world load, so try to acquire a new recipe
+        Recipe recipe;
+        if (previousRecipe == null) {
+            recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
+            if (recipe == null) return null;
+        } else {
+            recipe = previousRecipe;
+        }
+        FluidStack requiredFluidInput = recipe.getFluidInputs().get(0).getInputFluidStack();
 
-        int ocAmount = (int) (getMaxVoltage() / -previousRecipe.getEUt());
+        int ocAmount = (int) (getMaxVoltage() / -recipe.getEUt());
         int neededAmount = ocAmount * requiredFluidInput.amount;
         if (rotorHolder != null && rotorHolder.hasRotor()) {
             neededAmount /= (rotorHolder.getTotalEfficiency() / 100f);
+        } else if (rotorHolder != null && !rotorHolder.hasRotor()) {
+            return null;
         }
-        return new String[] {
-                TextFormatting.RED + TextFormattingUtil.formatNumbers(neededAmount) + "L",
-                neededName
-        };
+        return TextFormatting.RED + TextFormattingUtil.formatNumbers(neededAmount) + "L";
+    }
+
+    public FluidStack getInputFluidStack() {
+        // Previous Recipe is always null on first world load, so try to acquire a new recipe
+        if (previousRecipe == null) {
+            Recipe recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
+
+            return recipe == null ? null : getInputTank().drain(new FluidStack(recipe.getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE), false);
+        }
+        FluidStack fuelStack = previousRecipe.getFluidInputs().get(0).getInputFluidStack();
+        return getInputTank().drain(new FluidStack(fuelStack.getFluid(), Integer.MAX_VALUE), false);
     }
 }

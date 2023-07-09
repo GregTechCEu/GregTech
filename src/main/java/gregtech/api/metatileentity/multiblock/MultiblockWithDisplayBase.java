@@ -2,15 +2,13 @@ package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.VariantActiveBlock;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IMaintenanceHatch;
-import gregtech.api.capability.IMufflerHatch;
+import gregtech.api.capability.*;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.Widget.ClickData;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.gui.widgets.*;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
@@ -34,6 +32,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -49,6 +48,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private boolean voidingItems = false;
     private boolean voidingFluids = false;
     private VoidingMode voidingMode;
+    private boolean fluidInfSink = false;
+    private boolean itemInfSink = false;
 
     /**
      * Items to recover in a muffler hatch
@@ -282,6 +283,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
         this.lastActive = false;
         this.replaceVariantBlocksActive(false);
+        this.fluidInfSink = false;
+        this.itemInfSink = false;
         super.invalidateStructure();
     }
 
@@ -329,27 +332,12 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure")
                     .setStyle(new Style().setColor(TextFormatting.RED)
                             .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, tooltip))));
-        } else {
-            if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
-                addMaintenanceText(textList);
-            }
-            if (hasMufflerMechanics() && !isMufflerFaceFree())
-                textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed")
-                        .setStyle(new Style().setColor(TextFormatting.RED)
-                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                        new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed.tooltip")))));
         }
     }
 
     protected void addMaintenanceText(List<ITextComponent> textList) {
-        if (!hasMaintenanceProblems()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.universal.no_problems")
-                    .setStyle(new Style().setColor(TextFormatting.GREEN))
-            );
-        } else {
-
-            ITextComponent hoverEventTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems_header")
-                    .setStyle(new Style().setColor(TextFormatting.GRAY));
+        if (hasMaintenanceProblems()) {
+            ITextComponent hoverEventTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems");
 
             if (((this.maintenance_problems) & 1) == 0)
                 hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.wrench", "\n"));
@@ -369,10 +357,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             if (((this.maintenance_problems >> 5) & 1) == 0)
                 hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.crowbar", "\n"));
 
-            TextComponentTranslation textTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems");
-
-            textList.add(textTranslation.setStyle(new Style().setColor(TextFormatting.RED)
-                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverEventTranslation))));
+            textList.add(hoverEventTranslation.setStyle(new Style().setColor(TextFormatting.RED)));
         }
     }
 
@@ -385,19 +370,105 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.extendedBuilder();
-        builder.image(7, 4, 162, 121, GuiTextures.DISPLAY);
-        builder.label(11, 9, getMetaFullName(), 0xFFFFFF);
-        builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(156)
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 198, 208);
+
+        // Display
+        builder.image(4, 4, 190, 117, GuiTextures.DISPLAY);
+        builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
+        builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
+                .setMaxWidthLimit(181)
                 .setClickHandler(this::handleDisplayClick));
+
+        // Power Button
+        // todo in the future, refactor so that this class is instanceof IControllable.
+        IControllable controllable = getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+        if (controllable != null) {
+            builder.widget(new ImageCycleButtonWidget(173, 183, 18, 18, GuiTextures.BUTTON_POWER,
+                    controllable::isWorkingEnabled, controllable::setWorkingEnabled));
+            builder.widget(new ImageWidget(173, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
+        }
+
+        // Voiding Mode Button
         if (shouldShowVoidingModeButton()) {
-            builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
+            builder.widget(new ImageCycleButtonWidget(173, 161, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
                     4, this::getVoidingMode, this::setVoidingMode)
                     .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
+        } else {
+            builder.widget(new ImageWidget(173, 161, 18, 18, GuiTextures.BUTTON_VOID_NONE)
+                    .setTooltip("gregtech.gui.multiblock_voiding_not_supported"));
         }
-        builder.bindPlayerInventory(entityPlayer.inventory, 134);
+
+        // Distinct Buses Button
+        if (this instanceof IDistinctBusController distinct && distinct.canBeDistinct()) {
+            builder.widget(new ImageCycleButtonWidget(173, 143, 18, 18, GuiTextures.BUTTON_DISTINCT_BUSES, distinct::isDistinct, distinct::setDistinct)
+                    .setTooltipHoverString(i -> "gregtech.multiblock.universal.distinct_" + (i == 0 ? "disabled" : "enabled")));
+        } else {
+            builder.widget(new ImageWidget(173, 143, 18, 18, GuiTextures.BUTTON_NO_DISTINCT_BUSES)
+                    .setTooltip("gregtech.multiblock.universal.distinct_not_supported"));
+        }
+
+        // Flex Button
+        builder.widget(getFlexButton(173, 124, 18, 18));
+
+        // Logo / Indicator Widget
+        builder.widget(new IndicatorImageWidget(174, 101, 17, 17, getLogo())
+                .setWarningStatus(getWarningLogo(), this::addWarningText)
+                .setErrorStatus(getErrorLogo(), this::addErrorText));
+
+        builder.bindPlayerInventory(entityPlayer.inventory, 125);
         return builder;
+    }
+
+    /**
+     * Add a custom third button to the Multiblock UI. By default, this is a placeholder
+     * stating that there is no additional functionality for this Multiblock.
+     * <br><br>
+     * Parameters should be passed directly to the created widget. Size will be 18x18.
+     */
+    @SuppressWarnings("SameParameterValue")
+    @NotNull
+    protected Widget getFlexButton(int x, int y, int width, int height) {
+        return new ImageWidget(x, y, width, height, GuiTextures.BUTTON_NO_FLEX)
+                .setTooltip("gregtech.multiblock.universal.no_flex_button");
+    }
+
+    protected @NotNull TextureArea getLogo() {
+        return GuiTextures.GREGTECH_LOGO_DARK;
+    }
+
+    protected @NotNull TextureArea getWarningLogo() {
+        return GuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
+    }
+
+    protected @NotNull TextureArea getErrorLogo() {
+        return GuiTextures.GREGTECH_LOGO_BLINKING_RED;
+    }
+
+    /**
+     * Returns a list of text indicating any current warnings in this Multiblock.
+     * Recommended to only display warnings if the structure is already formed.
+     */
+    protected void addWarningText(List<ITextComponent> textList) {
+        if (isStructureFormed()) {
+            if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
+                addMaintenanceText(textList);
+            }
+        }
+    }
+
+    /**
+     * Returns a list of translation keys indicating any current errors in this Multiblock.
+     * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#addWarningText}.
+     */
+    protected void addErrorText(List<ITextComponent> textList) {
+        if (!isStructureFormed()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
+        } else {
+            if (hasMufflerMechanics() && !isMufflerFaceFree()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed"));
+            }
+        }
     }
 
     protected boolean shouldShowVoidingModeButton() {
@@ -535,11 +606,19 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     @Override
     public boolean canVoidRecipeFluidOutputs() {
-        return voidingFluids;
+        return voidingFluids || fluidInfSink;
     }
 
     @Override
     public boolean canVoidRecipeItemOutputs() {
-        return voidingItems;
+        return voidingItems || itemInfSink;
+    }
+
+    public void enableFluidInfSink() {
+        this.fluidInfSink = true;
+    }
+
+    public void enableItemInfSink() {
+        this.itemInfSink = true;
     }
 }

@@ -457,13 +457,22 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
             }
 
-            if (!drainEnergy(true)) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-
             if (isClean()) textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_state"));
             else textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.dirty_state"));
             textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_amount", this.cleanAmount));
+        }
+    }
+
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            if (!drainEnergy(true)) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
+            }
+            if (!isClean()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.dirty_state"));
+            }
         }
     }
 
