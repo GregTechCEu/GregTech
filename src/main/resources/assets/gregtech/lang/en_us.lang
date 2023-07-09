@@ -840,6 +840,8 @@ metaitem.cover.item.voiding.advanced.name=Advanced Item Voiding Cover
 metaitem.cover.item.voiding.advanced.tooltip=Voids §fItems§7 with amount control as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
 metaitem.cover.storage.name=Storage Cover
 metaitem.cover.storage.tooltip=Small storage space for odds and ends
+metaitem.cover.maintenance.detector.name=Needs Maintenance Cover
+metaitem.cover.maintenance.detector.tooltip=Gives out §fMaintenance Problems§7 as Redstone as §fCover§7.
 
 metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative Outfit §fCover§7.

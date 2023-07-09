@@ -540,6 +540,15 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
+                .input(EMITTER_LV)
+                .input(plate, Steel)
+                .circuitMeta(1)
+                .fluidInputs(solder)
+                .outputs(COVER_MAINTENANCE_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Glass)
                 .input(foil, Aluminium, 4)
                 .input(circuit, MarkerMaterials.Tier.LV)

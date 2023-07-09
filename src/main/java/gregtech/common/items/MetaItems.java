@@ -430,6 +430,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_ITEM_DETECTOR_ADVANCED;
     public static MetaItem<?>.MetaValueItem COVER_ENERGY_DETECTOR;
     public static MetaItem<?>.MetaValueItem COVER_ENERGY_DETECTOR_ADVANCED;
+    public static MetaItem<?>.MetaValueItem COVER_MAINTENANCE_DETECTOR;
 
     public static MetaItem<?>.MetaValueItem COVER_SCREEN;
     public static MetaItem<?>.MetaValueItem COVER_CRAFTING;
