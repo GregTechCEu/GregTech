@@ -98,6 +98,15 @@ gregtech.top.unit.fluid_buckets=kL
 
 gregtech.top.block_drops=ドロップ
 
+gregtech.top.ld_pipe_no_network=パイプラインが見つからない
+gregtech.top.ld_pipe_connected=パイプラインが接続済
+gregtech.top.ld_pipe_incomplete=パイプラインの構造に不備あり
+gregtech.top.ld_pipe_length=長さ:
+gregtech.top.ld_pipe_input=搬入
+gregtech.top.ld_pipe_output=搬出
+gregtech.top.ld_pipe_input_endpoint=搬入末端:
+gregtech.top.ld_pipe_output_endpoint=搬出末端:
+
 gregtech.waila.energy_stored=エネルギー: %d EU / %d EU
 gregtech.waila.progress_idle=停止中
 gregtech.waila.progress_tick=進捗: %d t / %d t
@@ -2554,6 +2563,10 @@ tile.battery_block.lapotronic_uv.name=ラポトロニック蓄電ブロック (U
 tile.battery_block.ultimate_uhv.name=アルティメット蓄電ブロック (UHV)
 tile.battery_block.tooltip_empty=変電所の空間を埋めるために
 
+# Long Distance Pipeline Blocks
+tile.long_distance_item_pipeline.name=長距離アイテムパイプ
+tile.long_distance_fluid_pipeline.name=長距離液体パイプ
+
 # Creative tabs
 itemGroup.gregtech.main=GregTech
 itemGroup.gregtech.machines=GregTech - 機械
@@ -4272,6 +4285,13 @@ gregtech.machine.muffle.off=消音: 無効
 gregtech.machine.perfect_oc=オーバークロック時のエネルギーロスがない。
 gregtech.machine.parallel_limit=一度に§b%d§r§7レシピまで実行できる。
 
+gregtech.machine.ld_item_endpoint.name=長距離アイテムパイプ末端
+gregtech.machine.ld_fluid_endpoint.name=長距離液体パイプ末端
+gregtech.machine.endpoint.tooltip.min_length=§b最小末端間距離: §f%d ブロック
+gregtech.machine.endpoint.tooltip.1=§f長距離パイプ§7で接続すると長距離パイプラインを構築できる。
+gregtech.machine.endpoint.tooltip.2=パイプラインは必ず§f1つの搬入末端§7と§f1つの搬出末端§7が必要。
+gregtech.machine.endpoint.tooltip.3=パイプライン末端のみ§fチャンクロード§7が必要。
+
 # Advancements
 gregtech.advancement.root_steam.name=蒸気時代
 gregtech.advancement.root_steam.desc=GregTechへようこそ! 全ては最初の銅インゴットから始まります。
@@ -4946,6 +4966,8 @@ gregtech.universal.tooltip.base_production_fluid=§e基礎生産量: §f%,d L/t
 gregtech.universal.tooltip.produces_fluid=§e生産量: §f%,d L/t
 gregtech.universal.tooltip.terrain_resist=この機械は環境の影響で爆発しません
 gregtech.universal.tooltip.requires_redstone=§4赤石信号が必要
+
+gregtech.block.tooltip.no_mob_spawning=§bモブはこのブロックにスポーンできない
 
 gregtech.recipe.total=合計: %,d EU
 gregtech.recipe.eu=消費: %,d EU/t (%s§r)
