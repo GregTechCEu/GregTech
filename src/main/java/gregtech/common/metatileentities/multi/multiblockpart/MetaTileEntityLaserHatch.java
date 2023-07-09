@@ -50,7 +50,6 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
 
     private void calculateLaserContainer(MultiblockControllerBase controllerBase) {
         if (isOutput) {
-            // TODO: Handle null values by propagating up the net
             if (controllerBase instanceof MetaTileEntityActiveTransformer activeTransformer) {
                 wrapper.setBufferSupplier(activeTransformer::getWrapper);
             }
