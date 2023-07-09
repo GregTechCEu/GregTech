@@ -98,15 +98,26 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        energyInputContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        energyOutputContainer = new EnergyContainerList(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
+        List<IEnergyContainer> inputEnergy = getAbilities(MultiblockAbility.INPUT_ENERGY);
+        List<IEnergyContainer> outputEnergy = getAbilities(MultiblockAbility.OUTPUT_ENERGY);
+        List<ILaserContainer> inputLaser = getAbilities(MultiblockAbility.INPUT_LASER);
+        List<ILaserContainer> outputLaser = getAbilities(MultiblockAbility.OUTPUT_LASER);
+
+        // Invalidate the structure if there is not at least one output and one input
+        if (inputEnergy.size() + inputLaser.size() == 0 || outputEnergy.size() + outputLaser.size() == 0) {
+            this.invalidateStructure();
+            return;
+        }
+
+        energyInputContainer = new EnergyContainerList(inputEnergy);
+        energyOutputContainer = new EnergyContainerList(outputEnergy);
         if (energyInputContainer.getEnergyCapacity() > 0 && (buffer == null || buffer.getEnergyCapacity() != energyInputContainer.getEnergyCapacity())) {
             buffer = new LaserBuffer(energyInputContainer.getEnergyCapacity());
         } else if (energyOutputContainer.getEnergyCapacity() > 0 && (buffer == null || buffer.getEnergyCapacity() != energyOutputContainer.getEnergyCapacity())) {
             buffer = new LaserBuffer(energyOutputContainer.getEnergyCapacity());
         }
-        if (getAbilities(MultiblockAbility.INPUT_LASER).size() == 1) {
-            laserInContainer = getAbilities(MultiblockAbility.INPUT_LASER).get(0);
+        if (inputLaser.size() == 1) {
+            laserInContainer = inputLaser.get(0);
         }
     }
 
