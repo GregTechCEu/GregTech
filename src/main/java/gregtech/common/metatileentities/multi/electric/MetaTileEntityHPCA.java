@@ -18,7 +18,6 @@ import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -375,10 +374,11 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         super.addWarningText(textList);
         if (isStructureFormed()) {
             if (temperature > 500) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_temperature")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
                 if (hpcaHandler.hasActiveCoolers()) {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_temperature_active_cool"));
-                } else {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_temperature"));
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_temperature_active_cool")
+                            .setStyle(new Style().setColor(TextFormatting.GRAY)));
                 }
             }
             if (hasNotEnoughEnergy) {
@@ -734,7 +734,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
             if (computationProviders.isEmpty()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_no_computation"));
             }
-            if (getMaxCoolantDemand() > getMaxCoolingAmount()) {
+            if (getMaxCoolingDemand() > getMaxCoolingAmount()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_low_cooling"));
             }
         }

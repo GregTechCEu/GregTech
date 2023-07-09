@@ -2241,6 +2241,7 @@ recipemap.gas_collector.name=Gas Collector
 recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
+recipemap.research_station.name=Research Station
 
 gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling
@@ -5318,7 +5319,7 @@ gregtech.multiblock.hpca.temperature=Temperature:
 gregtech.multiblock.hpca.error_damaged=Damaged component in structure
 gregtech.multiblock.hpca.error_temperature=Temperature above 100C, components may be damaged!
 gregtech.multiblock.hpca.warning_temperature=Temperature above 50C, components may be damaged at 100C!
-gregtech.multiblock.hpca.warning_temperature_active_cool=Temperature above 50C, components may be damaged at 100C!/nFully utilizing active coolers
+gregtech.multiblock.hpca.warning_temperature_active_cool=Fully utilizing active coolers
 gregtech.multiblock.hpca.warning_multiple_bridges=Multiple bridges in structure (provides no additional benefit)
 gregtech.multiblock.hpca.warning_no_computation=No computation providers
 gregtech.multiblock.hpca.warning_low_cooling=Not enough cooling
