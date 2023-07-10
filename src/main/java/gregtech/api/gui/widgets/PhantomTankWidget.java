@@ -190,4 +190,13 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
         FluidStack fluid = phantomFluidGetter.get();
         return fluid == null ? "" : fluid.getLocalizedName();
     }
+
+    @Override
+    public String getFluidUnlocalizedName() {
+        if (lastFluidInTank != null) {
+            return lastFluidInTank.getUnlocalizedName();
+        }
+        FluidStack fluid = phantomFluidGetter.get();
+        return fluid == null ? "" : fluid.getUnlocalizedName();
+    }
 }

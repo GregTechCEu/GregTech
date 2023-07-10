@@ -27,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -255,17 +256,17 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         return (list) -> {
             String fluidName = "";
             // If there is no fluid in the tank
-            if (tankWidget.getFluidLocalizedName().isEmpty()) {
+            if (tankWidget.getFluidUnlocalizedName().isEmpty()) {
                 // But there is a locked fluid
                 if (this.lockedFluid != null) {
-                    fluidName = this.lockedFluid.getLocalizedName();
+                    fluidName = this.lockedFluid.getUnlocalizedName();
                 }
             } else {
-                fluidName = tankWidget.getFluidLocalizedName();
+                fluidName = tankWidget.getFluidUnlocalizedName();
             }
 
             if (!fluidName.isEmpty()) {
-                list.add(new TextComponentString(fluidName));
+                list.add(new TextComponentTranslation(fluidName));
             }
         };
     }
