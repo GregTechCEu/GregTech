@@ -229,15 +229,23 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
         // only allow data items in the second slot
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            if (slot == 0 || stack.isEmpty()) {
-                return super.isItemValid(slot, stack);
+            if (stack.isEmpty()) {
+                return true;
             }
+
+            boolean isDataItem = false;
             if (stack.getItem() instanceof MetaItem<?> metaItem) {
-                for (IItemBehaviour behavior : metaItem.getBehaviours(stack)) {
-                    if (behavior instanceof IDataItem) return true;
+                for (IItemBehaviour behaviour : metaItem.getBehaviours(stack)) {
+                    if (behaviour instanceof IDataItem) {
+                        isDataItem = true;
+                        break;
+                    }
                 }
             }
-            return false;
+
+            if (slot == 0 && !isDataItem) {
+                return true;
+            } else return slot == 1 && isDataItem;
         }
     }
 }
