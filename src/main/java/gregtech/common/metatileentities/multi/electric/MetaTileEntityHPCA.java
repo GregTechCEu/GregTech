@@ -728,14 +728,19 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         }
 
         public void addWarnings(List<ITextComponent> textList) {
+            List<ITextComponent> warnings = new ArrayList<>();
             if (numBridges > 1) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_multiple_bridges"));
+                warnings.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_multiple_bridges"));
             }
             if (computationProviders.isEmpty()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_no_computation"));
+                warnings.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_no_computation"));
             }
             if (getMaxCoolingDemand() > getMaxCoolingAmount()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_low_cooling"));
+                warnings.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_low_cooling"));
+            }
+            if (!warnings.isEmpty()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_structure_header"));
+                textList.addAll(warnings);
             }
         }
 

@@ -5326,9 +5326,10 @@ gregtech.multiblock.hpca.error_damaged=Damaged component in structure
 gregtech.multiblock.hpca.error_temperature=Temperature above 100C, components may be damaged!
 gregtech.multiblock.hpca.warning_temperature=Temperature above 50C, components may be damaged at 100C!
 gregtech.multiblock.hpca.warning_temperature_active_cool=Fully utilizing active coolers
-gregtech.multiblock.hpca.warning_multiple_bridges=Multiple bridges in structure (provides no additional benefit)
-gregtech.multiblock.hpca.warning_no_computation=No computation providers
-gregtech.multiblock.hpca.warning_low_cooling=Not enough cooling
+gregtech.multiblock.hpca.warning_structure_header=Structure Hints:
+gregtech.multiblock.hpca.warning_multiple_bridges=- Multiple bridges in structure (provides no additional benefit)
+gregtech.multiblock.hpca.warning_no_computation=- No computation providers
+gregtech.multiblock.hpca.warning_low_cooling=- Not enough cooling
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
