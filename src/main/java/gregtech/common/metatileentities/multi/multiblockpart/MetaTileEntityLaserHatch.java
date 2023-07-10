@@ -15,10 +15,13 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityActiveTransformer;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +30,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<ILaserContainer> {
+
     private final boolean isOutput;
     private LaserHatchWrapper wrapper;
 
@@ -114,7 +118,17 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
         }
     }
 
-    // TODO: add tooltips
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+        if (isOutput) {
+            tooltip.add(I18n.format("gregtech.machine.laser_hatch.source.tooltip1"));
+            tooltip.add(I18n.format("gregtech.machine.laser_hatch.source.tooltip2"));
+        } else {
+            tooltip.add(I18n.format("gregtech.machine.laser_hatch.target.tooltip1"));
+            tooltip.add(I18n.format("gregtech.machine.laser_hatch.target.tooltip2"));
+        }
+        tooltip.add(I18n.format("gregtech.universal.disabled"));
+    }
 
     private static class LaserHatchWrapper extends MTETrait implements ILaserContainer {
 

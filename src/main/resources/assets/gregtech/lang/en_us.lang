@@ -2282,6 +2282,7 @@ tile.brittle_charcoal.tooltip.2=Mine this to get Charcoal.
 tile.optical_pipe_normal.name=Optical Fiber Cable
 
 tile.laser_pipe_normal.name=Laser Transmitting Cable
+tile.laser_pipe_normal.tooltip1=Transmitting power with no loss in straight lines
 
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
@@ -4629,7 +4630,11 @@ gregtech.machine.power_substation.tooltip5=Capped at §f%,d EU/t§7 passive loss
 gregtech.multiblock.power_substation.description=
 
 gregtech.machine.active_transformer.name=Active Transformer
-gregtech.machine.active_transformer.tooltip.1=Transformers: Lasers in Disguise
+gregtech.machine.active_transformer.tooltip1=Transformers: Lasers in Disguise
+gregtech.machine.active_transformer.tooltip2=Can combine any number of Energy §fInputs§7 into any number of Energy §fOutputs§7.
+gregtech.machine.active_transformer.tooltip3=Can transmit power at incredible distance with
+gregtech.machine.active_transformer.tooltip3.5= Lasers§7.
+gregtech.multiblock.active_transformer.description=The Active Transformer is a multiblock structure that can accept any number or tier of Energy Hatches, and transform them into any number or tier of Dynamo Hatches. They can be chained with Laser Source and Target Hatches, allowing long distance power transportation without any losses. Lasers must be in a straight line, otherwise they will not send energy.
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
@@ -4917,7 +4922,11 @@ gregtech.machine.data_access_hatch.optical.receiver.name=Optical Data Reception 
 gregtech.machine.data_access_hatch.optical.transmitter.name=Optical Data Transmission Hatch
 
 gregtech.machine.laser_hatch.source.name=Laser Source Hatch
+gregtech.machine.laser_hatch.source.tooltip1=Receiving power from distance
+gregtech.machine.laser_hatch.source.tooltip2=§cLaser Cables must be in a straight line!§7
 gregtech.machine.laser_hatch.target.name=Laser Target Hatch
+gregtech.machine.laser_hatch.target.tooltip1=Transmitting power at distance
+gregtech.machine.laser_hatch.target.tooltip2=§cLaser Cables must be in a straight line!§7
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s

@@ -6,6 +6,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.ActiveTransformerWrapper;
 import gregtech.api.capability.impl.EnergyContainerList;
+import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -17,12 +18,14 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -33,11 +36,11 @@ import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase implements IControllable {
+
     private boolean isWorkingEnabled = true;
     private IEnergyContainer energyOutputContainer;
     private ActiveTransformerWrapper wrapper;
@@ -62,7 +65,9 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
             return;
         }
 
-        wrapper.removeEnergy(energyOutputContainer.addEnergy(wrapper.getEnergyStored()));
+        if (isWorkingEnabled()) {
+            wrapper.removeEnergy(energyOutputContainer.addEnergy(wrapper.getEnergyStored()));
+        }
     }
 
     @Override
@@ -89,7 +94,6 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         }
 
         wrapper = new ActiveTransformerWrapper(new EnergyContainerList(inputEnergy), laserInContainer);
-
     }
 
     @Override
@@ -100,9 +104,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         this.laserInContainer = null;
     }
 
-    @NotNull
     @Override
-    protected BlockPattern createStructurePattern() {
+    protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XXX", "XXX")
                 .aisle("XXX", "XCX", "XXX")
@@ -132,9 +135,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.HIGH_POWER_CASING);
     }
 
-    @Nonnull
     @Override
-    protected ICubeRenderer getFrontOverlay() {
+    protected @NotNull ICubeRenderer getFrontOverlay() {
         return Textures.DATA_BANK_OVERLAY;
     }
 
@@ -142,6 +144,16 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(), this.isWorkingEnabled());
+    }
+
+    @Override
+    protected boolean openGUIOnRightClick() {
+        return false;
+    }
+
+    @Override
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return null;
     }
 
     @Override
@@ -205,7 +217,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     }
 
     @Override
-    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();
@@ -226,8 +238,10 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, world, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.active_transformer.tooltip.1"));
+        tooltip.add(I18n.format("gregtech.machine.active_transformer.tooltip1"));
+        tooltip.add(I18n.format("gregtech.machine.active_transformer.tooltip2"));
+        tooltip.add(I18n.format("gregtech.machine.active_transformer.tooltip3")
+                + TooltipHelper.RAINBOW_SLOW + I18n.format("gregtech.machine.active_transformer.tooltip3.5"));
     }
 
     public ILaserContainer getWrapper() {
