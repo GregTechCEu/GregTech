@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class LaserNetWalker extends PipeNetWalker {
 
-    @javax.annotation.Nullable
+    @Nullable
     public static LaserPipeNet.LaserData createNetData(World world, BlockPos sourcePipe, EnumFacing faceToSourceHandler) {
         LaserNetWalker walker = new LaserNetWalker(world, sourcePipe, 1, null, null);
         walker.sourcePipe = sourcePipe;

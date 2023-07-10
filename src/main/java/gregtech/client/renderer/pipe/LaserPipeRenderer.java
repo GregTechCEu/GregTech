@@ -40,21 +40,24 @@ public class LaserPipeRenderer extends PipeRenderer {
     public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe, @Nullable IPipeTile<?, ?> pipeTile, IPipeType<?> pipeType, @Nullable Material material) {
         if (pipeType instanceof LaserPipeType) {
             renderContext.addOpenFaceRender(new IconTransformation(pipeTextures.get(pipeType)))
-                    .addSideRender(false, new IconTransformation(Textures.LASER_PIPE_SIDE))
-                    .addSideRender(new IconTransformation(Textures.LASER_PIPE_OVERLAY));
+                    .addSideRender(false, new IconTransformation(Textures.LASER_PIPE_SIDE));
+            if (pipeTile != null && pipeTile.isPainted()) {
+                renderContext.addSideRender(new IconTransformation(Textures.LASER_PIPE_OVERLAY));
+            }
+
             active = !ConfigHolder.client.preventAnimatedCables && pipeTile instanceof TileEntityLaserPipe laserPipe && laserPipe.isActive();
         }
     }
 
     @Override
     protected void renderOtherLayers(BlockRenderLayer layer, CCRenderState renderState, PipeRenderContext renderContext) {
-        if (active && layer == BloomEffectUtil.getRealBloomLayer() && (renderContext.getConnections() & 63) != 0) {
+        if (active && layer == BloomEffectUtil.getRealBloomLayer() && (renderContext.getConnections() & 0b111111) != 0) {
             Cuboid6 innerCuboid = BlockPipe.getSideBox(null, renderContext.getPipeThickness());
-            if ((renderContext.getConnections() & 63) != 0) {
+            if ((renderContext.getConnections() & 0b111111) != 0) {
                 for (EnumFacing side : EnumFacing.VALUES) {
-                    if ((renderContext.getConnections() & 1 << side.getIndex()) == 0) {
+                    if ((renderContext.getConnections() & (1 << side.getIndex())) == 0) {
                         int oppositeIndex = side.getOpposite().getIndex();
-                        if ((renderContext.getConnections() & 1 << oppositeIndex) <= 0 || (renderContext.getConnections() & 63 & ~(1 << oppositeIndex)) != 0) {
+                        if ((renderContext.getConnections() & (1 << oppositeIndex)) <= 0 || (renderContext.getConnections() & 0b111111 & ~(1 << oppositeIndex)) != 0) {
                             // render pipe side
                             IVertexOperation[] ops = renderContext.getBaseVertexOperation();
                             ops = ArrayUtils.addAll(ops, new IconTransformation(Textures.LASER_PIPE_OVERLAY_EMISSIVE));

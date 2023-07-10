@@ -116,11 +116,6 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         }
     }
 
-    @Override
-    public int getDefaultPaintingColor() {
-        return 0x6dcecff; // The lightest blue colour in the laser pipe texture
-    }
-
     public boolean isActive() {
         return this.isActive;
     }
@@ -152,9 +147,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         }
 
         if (stateChanged) {
-            writeCustomData(GregtechDataCodes.PIPE_LASER_ACTIVE, buf -> {
-                buf.writeBoolean(this.isActive);
-            });
+            writeCustomData(GregtechDataCodes.PIPE_LASER_ACTIVE, buf -> buf.writeBoolean(this.isActive));
             notifyBlockUpdate();
             markDirty();
         }

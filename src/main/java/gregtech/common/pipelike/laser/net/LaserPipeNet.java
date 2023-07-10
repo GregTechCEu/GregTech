@@ -5,7 +5,6 @@ import gregtech.api.capability.ILaserContainer;
 import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
-import gregtech.api.util.FacingPos;
 import gregtech.common.pipelike.laser.LaserPipeProperties;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,7 +19,7 @@ import java.util.Map;
 
 public class LaserPipeNet extends PipeNet<LaserPipeProperties> {
 
-    private final Map<BlockPos, LaserData> NET_DATA = new Object2ObjectOpenHashMap<>();
+    private final Map<BlockPos, LaserData> netData = new Object2ObjectOpenHashMap<>();
 
     public LaserPipeNet(WorldPipeNet<LaserPipeProperties, ? extends PipeNet<LaserPipeProperties>> world) {
         super(world);
@@ -28,7 +27,7 @@ public class LaserPipeNet extends PipeNet<LaserPipeProperties> {
 
     @Nullable
     public LaserData getNetData(BlockPos pipePos, EnumFacing facing) {
-        LaserData data = NET_DATA.get(pipePos);
+        LaserData data = netData.get(pipePos);
         if (data == null) {
             data = LaserNetWalker.createNetData(getWorldData(), pipePos, facing);
             if (data == null) {
@@ -36,26 +35,26 @@ public class LaserPipeNet extends PipeNet<LaserPipeProperties> {
                 return null;
             }
 
-            NET_DATA.put(pipePos, data);
+            netData.put(pipePos, data);
         }
         return data;
     }
 
     @Override
     public void onNeighbourUpdate(BlockPos fromPos) {
-        NET_DATA.clear();
+        netData.clear();
     }
 
     @Override
     public void onPipeConnectionsUpdate() {
-        NET_DATA.clear();
+        netData.clear();
     }
 
     @Override
     protected void transferNodeData(Map<BlockPos, Node<LaserPipeProperties>> transferredNodes, PipeNet<LaserPipeProperties> parentNet) {
         super.transferNodeData(transferredNodes, parentNet);
-        NET_DATA.clear();
-        ((LaserPipeNet) parentNet).NET_DATA.clear();
+        netData.clear();
+        ((LaserPipeNet) parentNet).netData.clear();
     }
 
     @Override
@@ -83,26 +82,55 @@ public class LaserPipeNet extends PipeNet<LaserPipeProperties> {
             this.properties = properties;
         }
 
+        /**
+         * Gets the current position of the pipe
+         * @return The position of the pipe
+         */
+        @Nonnull
         public BlockPos getPipePos() {
             return pipePos;
         }
 
+        /**
+         * Gets the current face to handler
+         * @return The face to handler
+         */
+        @Nonnull
         public EnumFacing getFaceToHandler() {
             return faceToHandler;
         }
 
+
+        /**
+         * Gets the manhattan distance traveled during walking
+         * @return The distance in blocks
+         */
         public int getDistance() {
             return distance;
         }
 
+        /**
+         * Gets the laser pipe properties of the current pipe
+         * @return The properties of the pipe.
+         */
+        @Nonnull
         public LaserPipeProperties getProperties() {
             return properties;
         }
 
+        /**
+         * @return The position of where the handler would be
+         */
+        @Nonnull
         public BlockPos getHandlerPos() {
             return pipePos.offset(faceToHandler);
         }
 
+        /**
+         * Gets the handler if it exists
+         * @param world the world to get the handler from
+         * @return the handler
+         */
         @Nullable
         public ILaserContainer getHandler(@Nonnull World world) {
             TileEntity tile = world.getTileEntity(getHandlerPos());
@@ -110,11 +138,6 @@ public class LaserPipeNet extends PipeNet<LaserPipeProperties> {
                 return tile.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, faceToHandler.getOpposite());
             }
             return null;
-        }
-
-        @Nonnull
-        public FacingPos toFacingPos() {
-            return new FacingPos(pipePos, faceToHandler);
         }
     }
 }

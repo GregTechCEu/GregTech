@@ -280,11 +280,20 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     public void renderBrightness(IBlockState state, float brightness) {
     }
 
-    // To be overridden in subclasses to render in other layers, e.g. emissive stuff
+    /**
+     * Override to render in other layers, e.g. emissive stuff
+     * {@link #canRenderInLayer} also need to be overridden
+     */
     protected void renderOtherLayers(BlockRenderLayer layer, CCRenderState renderState, PipeRenderContext renderContext) {
 
     }
 
+    /**
+     * What layers can be rendered in.
+     * See also {@link #renderOtherLayers}
+     * @param layer the current layer being rendered too
+     * @return true if this should render in {@code layer}
+     */
     protected boolean canRenderInLayer(BlockRenderLayer layer) {
         return layer == BlockRenderLayer.CUTOUT;
     }
