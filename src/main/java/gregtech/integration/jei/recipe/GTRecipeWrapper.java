@@ -8,7 +8,6 @@ import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
@@ -26,7 +25,6 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -60,13 +58,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             for (GTRecipeInput recipeInput : recipe.getInputs()) {
                 matchingInputs.add(Arrays.stream(recipeInput.getInputStacks())
                         .map(ItemStack::copy)
-                        .peek(is -> {
-                            // set a tag if we can easily infer what it should be
-                            if (recipeInput.getNBTMatcher() == NBTMatcher.EQUAL_TO) {
-                                NBTTagCompound tag = recipeInput.getNBTMatchingCondition().sampleTag(null);
-                                if (tag != null) is.setTagCompound(tag);
-                            }
-                        })
                         .collect(Collectors.toList()));
             }
             ingredients.setInputLists(VanillaTypes.ITEM, matchingInputs);

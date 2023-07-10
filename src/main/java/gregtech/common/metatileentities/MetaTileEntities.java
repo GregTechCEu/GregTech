@@ -692,7 +692,6 @@ public class MetaTileEntities {
         LASER_OUTPUT_HATCH = registerMetaTileEntity(1421, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target"), false));
         // Free Range: 1422-1509
 
-
         // Buffers, IDs 1510-1512
         BUFFER[0] = registerMetaTileEntity(1510, new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));
         BUFFER[1] = registerMetaTileEntity(1511, new MetaTileEntityBuffer(gregtechId("buffer.mv"), 2));
