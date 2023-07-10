@@ -27,6 +27,8 @@ import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
+import gregtech.common.pipelike.laser.BlockLaserPipe;
+import gregtech.common.pipelike.laser.ItemBlockLaserPipe;
 import gregtech.common.pipelike.optical.BlockOpticalPipe;
 import gregtech.common.pipelike.optical.ItemBlockOpticalPipe;
 import gregtech.loaders.MaterialInfoLoader;
@@ -105,6 +107,7 @@ public class CommonProxy {
             for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid())) registry.register(pipe);
         }
         for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(pipe);
+        for (BlockLaserPipe pipe : LASER_PIPES) registry.register(pipe);
 
         registry.register(LD_ITEM_PIPE);
         registry.register(LD_FLUID_PIPE);
@@ -214,6 +217,7 @@ public class CommonProxy {
             for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid())) registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
         }
         for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemBlockOpticalPipe::new));
+        for (BlockLaserPipe pipe : LASER_PIPES) registry.register(createItemBlock(pipe, ItemBlockLaserPipe::new));
 
         registry.register(createItemBlock(LD_ITEM_PIPE, ItemBlock::new));
         registry.register(createItemBlock(LD_FLUID_PIPE, ItemBlock::new));

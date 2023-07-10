@@ -32,4 +32,6 @@ public class GregtechTileCapabilities {
     @CapabilityInject(IDataAccessHatch.class)
     public static Capability<IDataAccessHatch> CAPABILITY_DATA_ACCESS = null;
 
+    @CapabilityInject(ILaserContainer.class)
+    public static Capability<ILaserContainer> CAPABILITY_LASER = null;
 }

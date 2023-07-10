@@ -144,6 +144,8 @@ public class MetaTileEntities {
     public static MetaTileEntityDataAccessHatch CREATIVE_DATA_HATCH;
     public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_RECEIVER;
     public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_TRANSMITTER;
+    public static MetaTileEntityLaserHatch LASER_INPUT_HATCH;
+    public static MetaTileEntityLaserHatch LASER_OUTPUT_HATCH;
     // Used for addons if they wish to disable certain tiers of machines
     private static final Map<String, Boolean> MID_TIER = new HashMap<>();
     private static final Map<String, Boolean> HIGH_TIER = new HashMap<>();
@@ -215,6 +217,7 @@ public class MetaTileEntities {
     public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
     public static MetaTileEntityDataBank DATA_BANK;
     public static MetaTileEntityPowerSubstation POWER_SUBSTATION;
+    public static MetaTileEntityActiveTransformer ACTIVE_TRANSFORMER;
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -543,6 +546,7 @@ public class MetaTileEntities {
         DATA_BANK = registerMetaTileEntity(1037, new MetaTileEntityDataBank(gregtechId("data_bank")));
 
         POWER_SUBSTATION = registerMetaTileEntity(1041, new MetaTileEntityPowerSubstation(gregtechId("power_substation")));
+        ACTIVE_TRANSFORMER = registerMetaTileEntity(1042, new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
 
         // MISC MTE's START: IDs 1150-2000
 
@@ -653,7 +657,10 @@ public class MetaTileEntities {
         CREATIVE_DATA_HATCH = registerMetaTileEntity(1406, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.creative"), GTValues.MAX, true));
         OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1407, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.receiver"), false));
         OPTICAL_DATA_HATCH_TRANSMITTER = registerMetaTileEntity(1408, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.transmitter"), true));
-        // Free Range: 1408-1509
+
+        LASER_INPUT_HATCH = registerMetaTileEntity(1420, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source"), true));
+        LASER_OUTPUT_HATCH = registerMetaTileEntity(1421, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target"), false));
+        // Free Range: 1422-1509
 
         // Buffers, IDs 1510-1512
         BUFFER[0] = registerMetaTileEntity(1510, new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));

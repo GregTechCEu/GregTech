@@ -79,6 +79,15 @@ public abstract class PipeNetWalker {
     protected abstract boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour);
 
     /**
+     * The directions that this net can traverse from this pipe
+     *
+     * @return the array of valid EnumFacings
+     */
+    protected EnumFacing[] getSurroundingPipeSides() {
+        return EnumFacing.VALUES;
+    }
+
+    /**
      * Called when a sub walker is done walking
      *
      * @param subWalker the finished sub walker
@@ -158,15 +167,14 @@ public abstract class PipeNetWalker {
 
         BlockPos.PooledMutableBlockPos pos = BlockPos.PooledMutableBlockPos.retain();
         // check for surrounding pipes and item handlers
-        for (EnumFacing accessSide : EnumFacing.VALUES) {
+        for (EnumFacing accessSide : getSurroundingPipeSides()) {
             //skip sides reported as blocked by pipe network
             if (!pipeTile.isConnected(accessSide))
                 continue;
 
             pos.setPos(currentPos).move(accessSide);
             TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof IPipeTile) {
-                IPipeTile<?, ?> otherPipe = (IPipeTile<?, ?>) tile;
+            if (tile instanceof IPipeTile<?, ?> otherPipe) {
                 if (!otherPipe.isConnected(accessSide.getOpposite()) || otherPipe.isFaceBlocked(accessSide.getOpposite()) || isWalked(otherPipe))
                     continue;
                 if (isValidPipe(pipeTile, otherPipe, currentPos, accessSide)) {

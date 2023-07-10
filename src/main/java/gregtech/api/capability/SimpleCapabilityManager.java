@@ -47,6 +47,7 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(IDataAccessHatch.class);
         registerCapabilityWithNoDefault(HardwareProvider.class);
         registerCapabilityWithNoDefault(ConverterTrait.class);
+        registerCapabilityWithNoDefault(ILaserContainer.class);
 
         //internal capabilities
         CapabilityManager.INSTANCE.register(GTWorldGenCapability.class, GTWorldGenCapability.STORAGE, GTWorldGenCapability.FACTORY);

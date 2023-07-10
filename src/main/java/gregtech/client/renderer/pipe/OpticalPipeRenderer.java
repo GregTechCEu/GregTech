@@ -36,7 +36,7 @@ public final class OpticalPipeRenderer extends PipeRenderer {
             renderContext.addOpenFaceRender(new IconTransformation(pipeTextures.get(pipeType)))
                     .addSideRender(false, new IconTransformation(Textures.OPTICAL_PIPE_SIDE));
 
-            if (ConfigHolder.client.preventAnimatedOpticalCables) {
+            if (ConfigHolder.client.preventAnimatedCables) {
                 renderContext.addSideRender(new IconTransformation(Textures.OPTICAL_PIPE_SIDE_OVERLAY));
             } else if (pipeTile instanceof TileEntityOpticalPipe opticalPipe && opticalPipe.isActive()) {
                 renderContext.addSideRender(new IconTransformation(Textures.OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE));
