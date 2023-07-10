@@ -2288,6 +2288,7 @@ tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.
 tile.brittle_charcoal.tooltip.2=Mine this to get Charcoal.
 
 tile.optical_pipe_normal.name=Optical Fiber Cable
+tile.optical_pipe_normal.tooltip1=Transmitting §fComputation§7 or §fResearch Data§7
 
 tile.laser_pipe_normal.name=Laser Transmitting Cable
 tile.laser_pipe_normal.tooltip1=Transmitting power with no loss in straight lines
