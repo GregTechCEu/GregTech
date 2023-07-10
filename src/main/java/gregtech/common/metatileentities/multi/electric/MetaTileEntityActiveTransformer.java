@@ -61,6 +61,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
 
     @Override
     protected void updateFormedValid() {
+        setActive(true);
         if (wrapper == null || this.energyOutputContainer.getEnergyCapacity() == 0) {
             return;
         }
@@ -102,6 +103,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         this.energyOutputContainer = new EnergyContainerList(new ArrayList<>());
         this.wrapper = null;
         this.laserInContainer = null;
+        setActive(false);
     }
 
     @Override
