@@ -88,7 +88,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public void postBreakBlock() {
+    public void onRemoval() {
         if (!getWorld().isRemote && isConnected()) {
             IQuantumController controller = getController();
             if (controller != null) controller.rebuildNetwork();
