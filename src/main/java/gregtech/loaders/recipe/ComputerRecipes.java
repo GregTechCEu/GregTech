@@ -228,7 +228,7 @@ public class ComputerRecipes {
                 .input(FIELD_GENERATOR_ZPM)
                 .output(HPCA_ADVANCED_COMPUTATION_COMPONENT)
                 .fluidInputs(PCBCoolant.getFluid(1000))
-                .cleanroom(CleanroomType.STERILE_CLEANROOM)
+                .cleanroom(CleanroomType.CLEANROOM)
                 .duration(200).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
