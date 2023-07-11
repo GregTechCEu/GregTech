@@ -78,6 +78,7 @@ public class CoverBehaviors {
         registerBehavior(gregtechId("item_detector_advanced"), MetaItems.COVER_ITEM_DETECTOR_ADVANCED, CoverDetectorItemAdvanced::new);
         registerBehavior(gregtechId("activity_detector"), MetaItems.COVER_ACTIVITY_DETECTOR, CoverDetectorActivity::new);
         registerBehavior(gregtechId("activity_detector_advanced"), MetaItems.COVER_ACTIVITY_DETECTOR_ADVANCED, CoverDetectorActivityAdvanced::new);
+        registerBehavior(gregtechId("maintenance_detector"), MetaItems.COVER_MAINTENANCE_DETECTOR, CoverDetectorMaintenance::new);
         registerBehavior(gregtechId("crafting_table"), MetaItems.COVER_CRAFTING, CoverCraftingTable::new);
         registerBehavior(gregtechId("infinite_water"), MetaItems.COVER_INFINITE_WATER, CoverInfiniteWater::new);
         registerBehavior(gregtechId("ender_fluid_link"), MetaItems.COVER_ENDER_FLUID_LINK, CoverEnderFluidLink::new);

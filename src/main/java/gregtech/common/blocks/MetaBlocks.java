@@ -20,10 +20,7 @@ import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.model.modelfactories.BakedModelHandler;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityTESR;
-import gregtech.client.renderer.pipe.CableRenderer;
-import gregtech.client.renderer.pipe.FluidPipeRenderer;
-import gregtech.client.renderer.pipe.ItemPipeRenderer;
-import gregtech.client.renderer.pipe.OpticalPipeRenderer;
+import gregtech.client.renderer.pipe.*;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
@@ -41,6 +38,9 @@ import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
+import gregtech.common.pipelike.laser.BlockLaserPipe;
+import gregtech.common.pipelike.laser.LaserPipeType;
+import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 import gregtech.common.pipelike.optical.BlockOpticalPipe;
 import gregtech.common.pipelike.optical.OpticalPipeType;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
@@ -89,6 +89,7 @@ public class MetaBlocks {
     public static final Map<String, BlockFluidPipe[]> FLUID_PIPES = new Object2ObjectOpenHashMap<>();
     public static final Map<String, BlockItemPipe[]> ITEM_PIPES = new Object2ObjectOpenHashMap<>();
     public static final BlockOpticalPipe[] OPTICAL_PIPES = new BlockOpticalPipe[OpticalPipeType.values().length];
+    public static final BlockLaserPipe[] LASER_PIPES = new BlockLaserPipe[OpticalPipeType.values().length];
     public static BlockLongDistancePipe LD_ITEM_PIPE;
     public static BlockLongDistancePipe LD_FLUID_PIPE;
 
@@ -180,6 +181,11 @@ public class MetaBlocks {
             OPTICAL_PIPES[type.ordinal()] = new BlockOpticalPipe(type);
             OPTICAL_PIPES[type.ordinal()].setRegistryName(String.format("optical_pipe_%s", type.getName()));
             OPTICAL_PIPES[type.ordinal()].setTranslationKey(String.format("optical_pipe_%s", type.getName()));
+        }
+        for (LaserPipeType type : LaserPipeType.values()) {
+            LASER_PIPES[type.ordinal()] = new BlockLaserPipe(type);
+            LASER_PIPES[type.ordinal()].setRegistryName(String.format("laser_pipe_%s", type.getName()));
+            LASER_PIPES[type.ordinal()].setTranslationKey(String.format("laser_pipe_%s", type.getName()));
         }
 
         LD_ITEM_PIPE = new BlockLongDistancePipe(LDItemPipeType.INSTANCE);
@@ -371,6 +377,7 @@ public class MetaBlocks {
         GameRegistry.registerTileEntity(TileEntityFluidPipe.class, gregtechId("fluid_pipe"));
         GameRegistry.registerTileEntity(TileEntityItemPipe.class, gregtechId("item_pipe"));
         GameRegistry.registerTileEntity(TileEntityOpticalPipe.class, gregtechId("optical_pipe"));
+        GameRegistry.registerTileEntity(TileEntityLaserPipe.class, gregtechId("laser_pipe"));
         GameRegistry.registerTileEntity(TileEntityFluidPipeTickable.class, gregtechId("fluid_pipe_active"));
         GameRegistry.registerTileEntity(TileEntityItemPipeTickable.class, gregtechId("item_pipe_active"));
     }
@@ -385,6 +392,8 @@ public class MetaBlocks {
         }
         for (BlockOpticalPipe pipe : OPTICAL_PIPES)
             ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> OpticalPipeRenderer.INSTANCE.getModelLocation());
+        for (BlockLaserPipe pipe : LASER_PIPES)
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> LaserPipeRenderer.INSTANCE.getModelLocation());
 
         registerItemModel(BOILER_CASING);
         registerItemModel(METAL_CASING);
@@ -482,6 +491,10 @@ public class MetaBlocks {
         }
         normalStateMapper = new SimpleStateMapper(OpticalPipeRenderer.INSTANCE.getModelLocation());
         for (BlockOpticalPipe pipe : OPTICAL_PIPES) {
+            ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
+        }
+        normalStateMapper = new SimpleStateMapper(LaserPipeRenderer.INSTANCE.getModelLocation());
+        for (BlockLaserPipe pipe : LASER_PIPES) {
             ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
         }
 

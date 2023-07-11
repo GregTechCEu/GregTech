@@ -135,6 +135,7 @@ public class EnergyContainerList implements IEnergyContainer {
     public long changeEnergy(long energyToAdd) {
         long energyAdded = 0L;
         List<IEnergyContainer> energyContainerList = this.energyContainerList;
+
         for (IEnergyContainer iEnergyContainer : energyContainerList) {
             energyAdded += iEnergyContainer.changeEnergy(energyToAdd - energyAdded);
             if (energyAdded == energyToAdd) {

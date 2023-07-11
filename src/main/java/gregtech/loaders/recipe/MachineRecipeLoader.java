@@ -540,6 +540,15 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
+                .input(EMITTER_LV)
+                .input(plate, Steel)
+                .circuitMeta(1)
+                .fluidInputs(solder)
+                .outputs(COVER_MAINTENANCE_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Glass)
                 .input(foil, Aluminium, 4)
                 .input(circuit, MarkerMaterials.Tier.LV)
@@ -1038,6 +1047,7 @@ public class MachineRecipeLoader {
         // Data Items
         ModHandler.addShapelessNBTClearingRecipe("data_stick_nbt", TOOL_DATA_STICK.getStackForm(), TOOL_DATA_STICK.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("data_orb_nbt", TOOL_DATA_ORB.getStackForm(), TOOL_DATA_ORB.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("data_module_nbt", TOOL_DATA_MODULE.getStackForm(), TOOL_DATA_MODULE.getStackForm());
 
         //Jetpacks
         ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(), SEMIFLUID_JETPACK.getStackForm());

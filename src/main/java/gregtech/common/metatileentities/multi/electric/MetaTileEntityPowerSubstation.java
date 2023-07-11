@@ -167,8 +167,9 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
 
     public long getPassiveDrain() {
         if (ConfigHolder.machines.enableMaintenance) {
-            // +1 so that there is still passive drain when there are no maintenance problems
-            return passiveDrain * (getNumMaintenanceProblems() + 1);
+            int multiplier = 1 + getNumMaintenanceProblems();
+            double modifier = getMaintenanceDurationMultiplier();
+            return (long) (passiveDrain * multiplier * modifier);
         }
         return passiveDrain;
     }

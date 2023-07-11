@@ -309,8 +309,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() || !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
         double durationMultiplier = 1.0D;
         if (displayBase != null && displayBase.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
-            IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-            durationMultiplier = hatch.getDurationMultiplier();
+            durationMultiplier = displayBase.getMaintenanceDurationMultiplier();
         }
         return new Tuple<>(numMaintenanceProblems, durationMultiplier);
     }
@@ -327,24 +326,20 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected void completeRecipe() {
-        performMaintenanceMufflerOperations();
+        performMufflerOperations();
         super.completeRecipe();
     }
 
-    protected void performMaintenanceMufflerOperations() {
-        if (metaTileEntity instanceof MultiblockWithDisplayBase) {
-            MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-
+    protected void performMufflerOperations() {
+        if (metaTileEntity instanceof MultiblockWithDisplayBase controller) {
             // output muffler items
             if (controller.hasMufflerMechanics()) {
-                if (parallelRecipesPerformed > 1)
+                if (parallelRecipesPerformed > 1) {
                     controller.outputRecoveryItems(parallelRecipesPerformed);
-                else controller.outputRecoveryItems();
+                } else {
+                    controller.outputRecoveryItems();
+                }
             }
-
-            // increase total on time
-            if (controller.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance)
-                controller.calculateMaintenance(this.progressTime);
         }
     }
 

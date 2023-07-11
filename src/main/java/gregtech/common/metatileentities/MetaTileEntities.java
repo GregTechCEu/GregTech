@@ -31,6 +31,10 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEnti
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCABridge;
+import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCAComputation;
+import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCACooler;
+import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCAEmpty;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
 import gregtech.common.metatileentities.primitive.MetaTileEntityCharcoalPileIgniter;
@@ -49,6 +53,7 @@ import net.minecraftforge.fml.common.Loader;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static gregtech.api.util.GTUtility.gregtechId;
@@ -144,6 +149,18 @@ public class MetaTileEntities {
     public static MetaTileEntityDataAccessHatch CREATIVE_DATA_HATCH;
     public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_RECEIVER;
     public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_TRANSMITTER;
+    public static MetaTileEntityLaserHatch LASER_INPUT_HATCH;
+    public static MetaTileEntityLaserHatch LASER_OUTPUT_HATCH;
+    public static MetaTileEntityComputationHatch COMPUTATION_HATCH_RECEIVER;
+    public static MetaTileEntityComputationHatch COMPUTATION_HATCH_TRANSMITTER;
+    public static MetaTileEntityObjectHolder OBJECT_HOLDER;
+    public static MetaTileEntityHPCAEmpty HPCA_EMPTY_COMPONENT;
+    public static MetaTileEntityHPCAComputation HPCA_COMPUTATION_COMPONENT;
+    public static MetaTileEntityHPCAComputation HPCA_ADVANCED_COMPUTATION_COMPONENT;
+    public static MetaTileEntityHPCACooler HPCA_HEAT_SINK_COMPONENT;
+    public static MetaTileEntityHPCACooler HPCA_ACTIVE_COOLER_COMPONENT;
+    public static MetaTileEntityHPCABridge HPCA_BRIDGE_COMPONENT;
+
     // Used for addons if they wish to disable certain tiers of machines
     private static final Map<String, Boolean> MID_TIER = new HashMap<>();
     private static final Map<String, Boolean> HIGH_TIER = new HashMap<>();
@@ -214,7 +231,12 @@ public class MetaTileEntities {
     public static MetaTileEntityCleanroom CLEANROOM;
     public static MetaTileEntityCharcoalPileIgniter CHARCOAL_PILE_IGNITER;
     public static MetaTileEntityDataBank DATA_BANK;
+    public static MetaTileEntityResearchStation RESEARCH_STATION;
+    public static MetaTileEntityHPCA HIGH_PERFORMANCE_COMPUTING_ARRAY;
+    public static MetaTileEntityNetworkSwitch NETWORK_SWITCH;
     public static MetaTileEntityPowerSubstation POWER_SUBSTATION;
+    public static MetaTileEntityActiveTransformer ACTIVE_TRANSFORMER;
+
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -292,23 +314,17 @@ public class MetaTileEntities {
         registerSimpleMetaTileEntity(ELECTRIC_FURNACE, 50, "electric_furnace", RecipeMaps.FURNACE_RECIPES, Textures.ELECTRIC_FURNACE_OVERLAY, true);
 
         // Macerator, IDs 65-79
-        MACERATOR[1] = registerMetaTileEntity(65, new MetaTileEntityMacerator(gregtechId("macerator.lv"), RecipeMaps.MACERATOR_RECIPES, 1, Textures.MACERATOR_OVERLAY, 1));
-        MACERATOR[2] = registerMetaTileEntity(66, new MetaTileEntityMacerator(gregtechId("macerator.mv"), RecipeMaps.MACERATOR_RECIPES, 1, Textures.MACERATOR_OVERLAY, 2));
-        MACERATOR[3] = registerMetaTileEntity(67, new MetaTileEntityMacerator(gregtechId("macerator.hv"), RecipeMaps.MACERATOR_RECIPES, 3, Textures.PULVERIZER_OVERLAY, 3));
-        MACERATOR[4] = registerMetaTileEntity(68, new MetaTileEntityMacerator(gregtechId("macerator.ev"), RecipeMaps.MACERATOR_RECIPES, 4, Textures.PULVERIZER_OVERLAY, 4));
-        MACERATOR[5] = registerMetaTileEntity(69, new MetaTileEntityMacerator(gregtechId("macerator.iv"), RecipeMaps.MACERATOR_RECIPES, 4, Textures.PULVERIZER_OVERLAY, 5));
-        if (getMidTier("macerator")) {
-            MACERATOR[6] = registerMetaTileEntity(70, new MetaTileEntityMacerator(gregtechId("macerator.luv"), RecipeMaps.MACERATOR_RECIPES, 4, Textures.PULVERIZER_OVERLAY, 6));
-            MACERATOR[7] = registerMetaTileEntity(71, new MetaTileEntityMacerator(gregtechId("macerator.zpm"), RecipeMaps.MACERATOR_RECIPES, 4, Textures.PULVERIZER_OVERLAY, 7));
-            MACERATOR[8] = registerMetaTileEntity(72, new MetaTileEntityMacerator(gregtechId("macerator.uv"), RecipeMaps.MACERATOR_RECIPES, 4, Textures.PULVERIZER_OVERLAY, 8));
-        }
-        if (getHighTier("macerator")) {
-            MACERATOR[9] = registerMetaTileEntity(73, new MetaTileEntityMacerator(gregtechId("macerator.uhv"), RecipeMaps.MACERATOR_RECIPES, 4, Textures.PULVERIZER_OVERLAY, 9));
-            MACERATOR[10] = registerMetaTileEntity(74, new MetaTileEntityMacerator(gregtechId("macerator.uev"), RecipeMaps.MACERATOR_RECIPES, 4, Textures.PULVERIZER_OVERLAY, 10));
-            MACERATOR[11] = registerMetaTileEntity(75, new MetaTileEntityMacerator(gregtechId("macerator.uiv"), RecipeMaps.MACERATOR_RECIPES, 4, Textures.PULVERIZER_OVERLAY, 11));
-            MACERATOR[12] = registerMetaTileEntity(76, new MetaTileEntityMacerator(gregtechId("macerator.uxv"), RecipeMaps.MACERATOR_RECIPES, 4, Textures.PULVERIZER_OVERLAY, 12));
-            MACERATOR[13] = registerMetaTileEntity(77, new MetaTileEntityMacerator(gregtechId("macerator.opv"), RecipeMaps.MACERATOR_RECIPES, 4, Textures.PULVERIZER_OVERLAY, 13));
-        }
+        registerMetaTileEntities(MACERATOR, 65, "macerator", (tier, voltageName) ->
+                new MetaTileEntityMacerator(
+                        gregtechId(String.format("%s.%s", "macerator", voltageName)),
+                        RecipeMaps.MACERATOR_RECIPES,
+                        switch (tier) {
+                            case 1, 2 -> 1;
+                            case 3 -> 3;
+                            default -> 4;
+                        },
+                        Textures.MACERATOR_OVERLAY,
+                        tier));
 
         // Alloy Smelter, IDs 80-94
         registerSimpleMetaTileEntity(ALLOY_SMELTER, 80, "alloy_smelter", RecipeMaps.ALLOY_SMELTER_RECIPES, Textures.ALLOY_SMELTER_OVERLAY, true);
@@ -402,14 +418,7 @@ public class MetaTileEntities {
         // FREE, IDs 515-529
 
         // Gas Collectors, IDs 530-544
-        for (int i = 0; i < GAS_COLLECTOR.length - 1; i++) {
-            if (i > 4 && !getMidTier("gas_collector")) continue;
-            if (i > 7 && !getHighTier("gas_collector")) break;
-
-            String voltageName = GTValues.VN[i + 1].toLowerCase();
-            GAS_COLLECTOR[i] = registerMetaTileEntity(530 + i,
-                    new MetaTileEntityGasCollector(gregtechId(String.format("%s.%s", "gas_collector", voltageName)), RecipeMaps.GAS_COLLECTOR_RECIPES, Textures.GAS_COLLECTOR_OVERLAY, i + 1, false, GTUtility.largeTankSizeFunction));
-        }
+        registerMetaTileEntities(GAS_COLLECTOR, 530, "gas_collector", (tier, voltageName) -> new MetaTileEntityGasCollector(gregtechId(String.format("%s.%s", "gas_collector", voltageName)), RecipeMaps.GAS_COLLECTOR_RECIPES, Textures.GAS_COLLECTOR_OVERLAY, tier, false, GTUtility.largeTankSizeFunction));
         // Polarizer, IDs 545-559
         registerSimpleMetaTileEntity(POLARIZER, 545, "polarizer", RecipeMaps.POLARIZER_RECIPES, Textures.POLARIZER_OVERLAY, true);
 
@@ -431,23 +440,7 @@ public class MetaTileEntities {
         registerSimpleMetaTileEntity(CIRCUIT_ASSEMBLER, 635, "circuit_assembler", RecipeMaps.CIRCUIT_ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
         // Rock Breaker, IDs 665-679
-        ROCK_BREAKER[0] = registerMetaTileEntity(665, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.lv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 1));
-        ROCK_BREAKER[1] = registerMetaTileEntity(666, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.mv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 2));
-        ROCK_BREAKER[2] = registerMetaTileEntity(667, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.hv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 3));
-        ROCK_BREAKER[3] = registerMetaTileEntity(668, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.ev"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 4));
-        ROCK_BREAKER[4] = registerMetaTileEntity(669, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.iv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 5));
-        if (getMidTier("rock_breaker")) {
-            ROCK_BREAKER[5] = registerMetaTileEntity(670, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.luv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 6));
-            ROCK_BREAKER[6] = registerMetaTileEntity(671, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.zpm"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 7));
-            ROCK_BREAKER[7] = registerMetaTileEntity(672, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.uv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 8));
-        }
-        if (getHighTier("rock_breaker")) {
-            ROCK_BREAKER[8] = registerMetaTileEntity(673, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.uhv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 9));
-            ROCK_BREAKER[9] = registerMetaTileEntity(674, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.uev"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 10));
-            ROCK_BREAKER[10] = registerMetaTileEntity(675, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.uiv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 11));
-            ROCK_BREAKER[11] = registerMetaTileEntity(676, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.uxv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 12));
-            ROCK_BREAKER[12] = registerMetaTileEntity(677, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.opv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 13));
-        }
+        registerMetaTileEntities(ROCK_BREAKER, 665, "rock_breaker", (tier, voltageName) -> new MetaTileEntityRockBreaker(gregtechId(String.format("%s.%s", "rock_breaker", voltageName)), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, tier));
 
         // Some space here for more SimpleMachines
 
@@ -541,8 +534,12 @@ public class MetaTileEntities {
         CHARCOAL_PILE_IGNITER = registerMetaTileEntity(1036, new MetaTileEntityCharcoalPileIgniter(gregtechId("charcoal_pile")));
 
         DATA_BANK = registerMetaTileEntity(1037, new MetaTileEntityDataBank(gregtechId("data_bank")));
+        RESEARCH_STATION = registerMetaTileEntity(1038, new MetaTileEntityResearchStation(gregtechId("research_station")));
+        HIGH_PERFORMANCE_COMPUTING_ARRAY = registerMetaTileEntity(1039, new MetaTileEntityHPCA(gregtechId("high_performance_computing_array")));
+        NETWORK_SWITCH = registerMetaTileEntity(1040, new MetaTileEntityNetworkSwitch(gregtechId("network_switch")));
 
         POWER_SUBSTATION = registerMetaTileEntity(1041, new MetaTileEntityPowerSubstation(gregtechId("power_substation")));
+        ACTIVE_TRANSFORMER = registerMetaTileEntity(1042, new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
 
         // MISC MTE's START: IDs 1150-2000
 
@@ -653,7 +650,19 @@ public class MetaTileEntities {
         CREATIVE_DATA_HATCH = registerMetaTileEntity(1406, new MetaTileEntityDataAccessHatch(gregtechId("data_access_hatch.creative"), GTValues.MAX, true));
         OPTICAL_DATA_HATCH_RECEIVER = registerMetaTileEntity(1407, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.receiver"), false));
         OPTICAL_DATA_HATCH_TRANSMITTER = registerMetaTileEntity(1408, new MetaTileEntityOpticalDataHatch(gregtechId("data_access_hatch.optical.transmitter"), true));
-        // Free Range: 1408-1509
+        COMPUTATION_HATCH_RECEIVER = registerMetaTileEntity(1409, new MetaTileEntityComputationHatch(gregtechId("computation_hatch.receiver"), false));
+        COMPUTATION_HATCH_TRANSMITTER = registerMetaTileEntity(1410, new MetaTileEntityComputationHatch(gregtechId("computation_hatch.transmitter"), true));
+        OBJECT_HOLDER = registerMetaTileEntity(1411, new MetaTileEntityObjectHolder(gregtechId("research_station.object_holder")));
+        HPCA_EMPTY_COMPONENT = registerMetaTileEntity(1412, new MetaTileEntityHPCAEmpty(gregtechId("hpca.empty_component")));
+        HPCA_COMPUTATION_COMPONENT = registerMetaTileEntity(1413, new MetaTileEntityHPCAComputation(gregtechId("hpca.computation_component"), false));
+        HPCA_ADVANCED_COMPUTATION_COMPONENT = registerMetaTileEntity(1414, new MetaTileEntityHPCAComputation(gregtechId("hpca.advanced_computation_component"), true));
+        HPCA_HEAT_SINK_COMPONENT = registerMetaTileEntity(1415, new MetaTileEntityHPCACooler(gregtechId("hpca.heat_sink_component"), false));
+        HPCA_ACTIVE_COOLER_COMPONENT = registerMetaTileEntity(1416, new MetaTileEntityHPCACooler(gregtechId("hpca.active_cooler_component"), true));
+        HPCA_BRIDGE_COMPONENT = registerMetaTileEntity(1417, new MetaTileEntityHPCABridge(gregtechId("hpca.bridge_component")));
+        // Free IDs 1418, 1419
+        LASER_INPUT_HATCH = registerMetaTileEntity(1420, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source"), true));
+        LASER_OUTPUT_HATCH = registerMetaTileEntity(1421, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target"), false));
+        // Free Range: 1422-1509
 
         // Buffers, IDs 1510-1512
         BUFFER[0] = registerMetaTileEntity(1510, new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));
@@ -850,13 +859,23 @@ public class MetaTileEntities {
                                                     boolean hasFrontFacing,
                                                     Function<String, ResourceLocation> resourceId,
                                                     Function<Integer, Integer> tankScalingFunction) {
+        registerMetaTileEntities(machines, startId, name, (tier, voltageName) -> new SimpleMachineMetaTileEntity(resourceId.apply(String.format("%s.%s", name, voltageName)), map, texture, tier, hasFrontFacing, tankScalingFunction));
+    }
+
+    /**
+     * @param mteCreator Takes tier and voltage name for the machine, and outputs MTE to register
+     */
+    public static void registerMetaTileEntities(
+            MetaTileEntity[] machines,
+            int startId,
+            String name,
+            BiFunction<Integer, String, MetaTileEntity> mteCreator) {
         for (int i = 0; i < machines.length - 1; i++) {
             if (i > 4 && !getMidTier(name)) continue;
             if (i > 7 && !getHighTier(name)) break;
 
             String voltageName = GTValues.VN[i + 1].toLowerCase();
-            machines[i + 1] = registerMetaTileEntity(startId + i,
-                    new SimpleMachineMetaTileEntity(resourceId.apply(String.format("%s.%s", name, voltageName)), map, texture, i + 1, hasFrontFacing, tankScalingFunction));
+            machines[i + 1] = registerMetaTileEntity(startId + i, mteCreator.apply(i + 1, voltageName));
         }
     }
 

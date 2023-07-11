@@ -29,6 +29,18 @@
         "textures": {
           "all": "gregtech:blocks/casings/computer/high_power_casing"
         }
+      },
+      "advanced_computer_casing": {
+        "model": "minecraft:cube",
+        "textures": {
+          "particle": "gregtech:blocks/casings/computer/advanced_computer_casing/front",
+          "down": "gregtech:blocks/casings/computer/advanced_computer_casing/bottom",
+          "up": "gregtech:blocks/casings/computer/advanced_computer_casing/top",
+          "north": "gregtech:blocks/casings/computer/advanced_computer_casing/side",
+          "east": "gregtech:blocks/casings/computer/advanced_computer_casing/side",
+          "south": "gregtech:blocks/casings/computer/advanced_computer_casing/side",
+          "west": "gregtech:blocks/casings/computer/advanced_computer_casing/side"
+        }
       }
     }
   }

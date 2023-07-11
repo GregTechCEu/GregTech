@@ -66,6 +66,18 @@ public final class GTStringUtils {
     }
 
     /**
+     * Better implementation of {@link ItemStack#toString()} which respects the stack-aware
+     * {@link net.minecraft.item.Item#getTranslationKey(ItemStack)} method.
+     *
+     * @param stack the stack to convert
+     * @return the string form of the stack
+     */
+    @Nonnull
+    public static String itemStackToString(@Nonnull ItemStack stack) {
+        return stack.getCount() + "x" + stack.getItem().getTranslationKey(stack) + "@" + stack.getItemDamage();
+    }
+
+    /**
      * Copied and pasted from {@link net.minecraft.util.StringUtils#ticksToElapsedTime(int)} in order to be accessible
      * Server-Side
      *
