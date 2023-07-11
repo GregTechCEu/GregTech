@@ -6,7 +6,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.BlockableSlotWidget;
 import gregtech.api.metatileentity.IMachineHatchMultiblock;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -64,8 +64,8 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
                         18 + 18 + 94)
                 .label(10, 5, getMetaFullName());
 
-        builder.widget(new SlotWidget(machineHandler, 0,
-                81, 18, true, true)
+        builder.widget(new BlockableSlotWidget(machineHandler, 0, 81, 18, true, true)
+                .setIsBlocked(this::isSlotBlocked)
                 .setBackgroundTexture(GuiTextures.SLOT));
 
         return builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 + 12).build(getHolder(), entityPlayer);
@@ -100,6 +100,13 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    private boolean isSlotBlocked() {
+        if (getController() instanceof RecipeMapMultiblockController controller) {
+            return controller.isActive();
+        }
+        return false;
     }
 
     private class LimitedImportHandler extends NotifiableItemStackHandler {
@@ -180,16 +187,9 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
         @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-
-            if (getController() instanceof RecipeMapMultiblockController) {
-
-                RecipeMapMultiblockController controller = (RecipeMapMultiblockController) getController();
-
-                if (controller != null && controller.isActive()) {
-                    return ItemStack.EMPTY;
-                }
+            if (isSlotBlocked()) {
+                return ItemStack.EMPTY;
             }
-
             return super.extractItem(slot, amount, simulate);
         }
 
