@@ -1,5 +1,9 @@
 package gregtech.common.metatileentities.storage;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
@@ -9,6 +13,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
@@ -25,6 +31,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -111,7 +118,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     @Override
-    public void onBlockPlaced() {
+    public void onPlacement() {
         rebuildNetwork();
     }
 
@@ -136,11 +143,11 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (!isInRange(pos)) continue;
             if (!getWorld().isBlockLoaded(pos, false)) continue;
 
-            TileEntity te = getWorld().getTileEntity(pos);
-            if (!(te instanceof IGregTechTileEntity) || te.isInvalid()) continue;
-            MetaTileEntity mte = ((IGregTechTileEntity) te).getMetaTileEntity();
-            if (!(mte instanceof IQuantumStorage)) continue;
-            IQuantumStorage<?> storage = (IQuantumStorage<?>) mte;
+//            TileEntity te = getWorld().getTileEntity(pos);
+//            if (!(te instanceof IGregTechTileEntity) || te.isInvalid()) continue;
+//            MetaTileEntity mte = ((IGregTechTileEntity) te).getMetaTileEntity();
+            MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
+            if (!(mte instanceof IQuantumStorage<?> storage)) continue;
 
             // connected to some other network already, ignore
             if (storage.isConnected() && !storage.getControllerPos().equals(getPos())) continue;
@@ -160,32 +167,19 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             }
         }
 
-        if (!oldPositions.isEmpty()) {
-            for (BlockPos pos : oldPositions) {
-                IQuantumStorage<?> storage = null;
-                if (oldInstances.containsKey(pos)) {
-                    storage = oldInstances.get(pos).get();
-                } else {
-                    MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
-                    if (mte instanceof IQuantumStorage) {
-                        storage = (IQuantumStorage<?>) mte;
-                    }
+        for (BlockPos pos : oldPositions) {
+            IQuantumStorage<?> storage = null;
+            if (oldInstances.containsKey(pos)) {
+                storage = oldInstances.get(pos).get();
+            } else {
+                MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
+                if (mte instanceof IQuantumStorage) {
+                    storage = (IQuantumStorage<?>) mte;
                 }
-                if (storage != null) storage.setDisconnected();
             }
+            if (storage != null) storage.setDisconnected();
         }
         handler.rebuildCache();
-
-
-
-        GTLog.logger.info("Connections =============================");
-        GTLog.logger.info("Controller: {}", getPos());
-        GTLog.logger.info("=========================================");
-        GTLog.logger.info("Storage Instances:");
-        for (BlockPos pos : storagePositions) {
-            GTLog.logger.info("{}", pos);
-        }
-        GTLog.logger.info("=========================================");
     }
 
     @Override
@@ -227,12 +221,12 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         // IItemHandler saved values
         private List<IItemHandler> itemHandlers = null;
 
-        protected void invalidate() {
+        private void invalidate() {
             fluidTanks = null;
             itemHandlers = null;
         }
 
-        protected void rebuildCache() {
+        private void rebuildCache() {
             List<IItemHandler> itemHandlerList = new ArrayList<>();
             List<IFluidTank> fluidTankList = new ArrayList<>();
             for (BlockPos pos : storagePositions) {

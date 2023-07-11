@@ -98,7 +98,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     // todo might not be good time to do this
     // todo need to make sure it is AFTER nbt has been read
     @Override
-    public void onBlockPlaced() {
+    public void onPlacement() {
         // add to the network if an adjacent block is part of a network
         // use whatever we find first, merging networks is not supported
         if (!getWorld().isRemote) {
@@ -110,8 +110,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         for (EnumFacing facing : EnumFacing.VALUES) {
             MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), getPos().offset(facing));
             IQuantumController candidate = null;
-            if (mte instanceof IQuantumStorage) {
-                IQuantumStorage storage = (IQuantumStorage) mte;
+            if (mte instanceof IQuantumStorage<?> storage) {
                 if (storage.isConnected()) {
                     IQuantumController controller = storage.getController();
                     if (controller != null && controller.canConnect(this)) {
