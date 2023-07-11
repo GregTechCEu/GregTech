@@ -1,4 +1,4 @@
-//version: 1688620665
+//version: 1688969024
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -69,6 +69,7 @@ propertyDefaultIfUnset("forceEnableMixins", false)
 propertyDefaultIfUnset("usesShadowedDependencies", false)
 propertyDefaultIfUnset("minimizeShadowedDependencies", true)
 propertyDefaultIfUnset("relocateShadowedDependencies", true)
+propertyDefaultIfUnset("separateRunDirectories", false)
 propertyDefaultIfUnsetWithEnvVar("modrinthProjectId", "", "MODRINTH_PROJECT_ID")
 propertyDefaultIfUnset("modrinthRelations", "")
 propertyDefaultIfUnsetWithEnvVar("curseForgeProjectId", "", "CURSEFORGE_PROJECT_ID")
@@ -368,10 +369,6 @@ repositories {
         }
     }
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
-        maven {
-            name 'Sponge Maven'
-            url 'https://repo.spongepowered.org/maven'
-        }
         // need to add this here even if we did not above
         if (!includeWellKnownRepositories.toBoolean()) {
             maven {
@@ -401,8 +398,8 @@ configurations {
 
 dependencies {
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
-        implementation 'zone.rong:mixinbooter:7.0'
-        String mixin = 'org.spongepowered:mixin:0.8.3'
+        implementation 'zone.rong:mixinbooter:8.3'
+        String mixin = 'zone.rong:mixinbooter:8.3'
         if (usesMixins.toBoolean()) {
             mixin = modUtils.enableMixins(mixin, "mixins.${modId}.refmap.json")
         }
@@ -593,6 +590,17 @@ jar {
         configurations.embed.collect {
             it.isDirectory() ? it : zipTree(it)
         }
+    }
+}
+
+// Configure default run tasks
+if (separateRunDirectories.toBoolean()) {
+    runClient {
+        workingDir = file('run/client')
+    }
+
+    runServer {
+        workingDir = file('run/server')
     }
 }
 
