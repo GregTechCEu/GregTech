@@ -845,6 +845,8 @@ metaitem.cover.item.voiding.advanced.name=発展型アイテム消去カバー
 metaitem.cover.item.voiding.advanced.tooltip=§fアイテム§7を消去する量を制御できる§fカバー§7。/n設置後に§fソフトマレット§7で有効化する必要がある。
 metaitem.cover.storage.name=収納カバー
 metaitem.cover.storage.tooltip=小物用の収納スペースを持つカバー
+metaitem.cover.maintenance.detector.name=メンテナンス告知カバー
+metaitem.cover.maintenance.detector.tooltip=§f修理の有無§7を赤石信号として検出する§fカバー§7。
 
 metaitem.cover.facade.name=%sの外装
 metaitem.cover.facade.tooltip=ケーブルを装飾する§fカバー§7
@@ -4874,7 +4876,12 @@ gregtech.maintenance.configurable_duration.changed_description=オーバーク�
 
 gregtech.maintenance.configurable_time=故障率: %fx
 gregtech.maintenance.configurable_time.unchanged_description=故障は通常の頻度で発生します。設定を変更するとアップデートされます。
-gregtech.maintenance.configurable_time.changed_description=故障は通常の%f倍の頻度で発生します。
+gregtech.maintenance.configurable_time.changed_description=故障は通常の%f倍の頻度で発生します
+
+gregtech.maintenance.configurable.tooltip_basic=故障頻度に応じて機械の動作速度が変化する。
+gregtech.maintenance.configurable.tooltip_more_info=SHIFTで特殊な場合を表示
+gregtech.maintenance.configurable.tooltip_pss_header=§8:変電所
+gregtech.maintenance.configurable.tooltip_pss_info=  §f損失量が増減
 
 gregtech.machine.muffler_hatch.tooltip1=機械からの煤を回収
 gregtech.machine.muffler_hatch.tooltip2=搬出口を塞ぐな!
