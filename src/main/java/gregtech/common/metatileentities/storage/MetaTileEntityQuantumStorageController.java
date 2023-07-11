@@ -62,6 +62,12 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        Textures.SOLID_STEEL_CASING.render(renderState, translation, pipeline);
+        Textures.QUANTUM_CHEST_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+    }
+
+    @Override
     protected boolean openGUIOnRightClick() {
         return false;
     }
