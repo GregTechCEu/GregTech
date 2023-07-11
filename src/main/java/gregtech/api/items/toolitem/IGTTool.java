@@ -741,17 +741,19 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 Material material = getToolMaterial(stack);
 
                 Collection<String> repairItems = new ArrayList<>();
-                if (ModHandler.isMaterialWood(material)) {
-                    repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
-                } else {
+                if (!ModHandler.isMaterialWood(material)) {
                     if (material.hasProperty(PropertyKey.INGOT)) {
-                        repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                        repairItems.add(OrePrefix.ingot.getLocalNameForItem(material));
                     } else if (material.hasProperty(PropertyKey.GEM)) {
-                        repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                        repairItems.add(OrePrefix.gem.getLocalNameForItem(material));
                     }
+                }
+                if (!OreDictUnifier.get(OrePrefix.plate, material).isEmpty()) {
                     repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
                 }
-                tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", String.join(", ", repairItems)));
+                if (!repairItems.isEmpty()) {
+                    tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", String.join(", ", repairItems)));
+                }
             } else {
                 tooltip.add(I18n.format("item.gt.tool.tooltip.repair_info"));
             }
