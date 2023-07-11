@@ -35,7 +35,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
     private LaserHatchWrapper wrapper;
 
     public MetaTileEntityLaserHatch(ResourceLocation metaTileEntityId, boolean isOutput) {
-        super(metaTileEntityId, GTValues.ZPM);
+        super(metaTileEntityId, GTValues.LuV);
         this.isOutput = isOutput;
         this.wrapper = new LaserHatchWrapper(this, null, isOutput);
     }

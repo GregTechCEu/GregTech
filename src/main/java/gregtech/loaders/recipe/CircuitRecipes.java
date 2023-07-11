@@ -1364,6 +1364,9 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_DIODE, 8)
                 .fluidInputs(SolderingAlloy.getFluid(L * 10))
                 .output(CRYSTAL_MAINFRAME_UV)
+                .research(b -> b
+                        .researchStack(CRYSTAL_COMPUTER_ZPM.getStackForm())
+                        .CWUt(16))
                 .buildAndRegister();
 
         // T7: Wetware =================================================================================================
@@ -1428,6 +1431,9 @@ public class CircuitRecipes {
                 .input(plate, Europium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(1152))
                 .output(WETWARE_SUPER_COMPUTER_UV)
+                .research(b -> b
+                        .researchStack(WETWARE_PROCESSOR_ASSEMBLY_ZPM.getStackForm())
+                        .CWUt(16))
                 .buildAndRegister();
 
         // UHV
@@ -1446,34 +1452,51 @@ public class CircuitRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 20))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 8))
                 .output(WETWARE_MAINFRAME_UHV)
+                .research(b -> b
+                        .researchStack(WETWARE_SUPER_COMPUTER_UV.getStackForm())
+                        .CWUt(96)
+                        .EUt(VA[UV]))
                 .EUt(300000).duration(2000).buildAndRegister();
 
         // Misc ========================================================================================================
 
         // Data Stick
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
-                .input(PLASTIC_CIRCUIT_BOARD)
-                .input(CENTRAL_PROCESSING_UNIT, 2)
-                .input(NAND_MEMORY_CHIP, 32)
-                .input(RANDOM_ACCESS_MEMORY, 4)
-                .input(wireFine, RedAlloy, 16)
-                .input(plate, Polyethylene, 4)
-                .output(TOOL_DATA_STICK)
-                .solderMultiplier(2)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .duration(400).EUt(90).buildAndRegister();
-
-        // Data Orb
-        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ADVANCED_CIRCUIT_BOARD)
                 .input(circuit, Tier.HV, 2)
                 .input(RANDOM_ACCESS_MEMORY, 4)
-                .input(NOR_MEMORY_CHIP, 32)
-                .input(NAND_MEMORY_CHIP, 64)
+                .input(NOR_MEMORY_CHIP, 16)
+                .input(NAND_MEMORY_CHIP, 32)
                 .input(wireFine, Platinum, 32)
-                .output(TOOL_DATA_ORB)
+                .output(TOOL_DATA_STICK)
                 .solderMultiplier(2)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(400).EUt(1200).buildAndRegister();
+
+        // Data Orb
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
+                .input(EXTREME_CIRCUIT_BOARD)
+                .input(circuit, Tier.IV, 2)
+                .input(RANDOM_ACCESS_MEMORY, 8)
+                .input(NOR_MEMORY_CHIP, 32)
+                .input(NAND_MEMORY_CHIP, 48)
+                .input(wireFine, NiobiumTitanium, 32)
+                .output(TOOL_DATA_ORB)
+                .solderMultiplier(2)
+                .cleanroom(CleanroomType.CLEANROOM)
+                .duration(400).EUt(9600).buildAndRegister();
+
+        // Data Module
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
+                .input(WETWARE_CIRCUIT_BOARD)
+                .input(circuit, Tier.ZPM, 2)
+                .input(RANDOM_ACCESS_MEMORY, 32)
+                .input(NOR_MEMORY_CHIP, 64)
+                .input(NAND_MEMORY_CHIP, 64)
+                .input(wireFine, YttriumBariumCuprate, 32)
+                .output(TOOL_DATA_MODULE)
+                .solderMultiplier(2)
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
+                .duration(400).EUt(38400).buildAndRegister();
     }
 }
