@@ -2289,6 +2289,9 @@ tile.brittle_charcoal.tooltip.2=採掘すると木炭を得られる。
 
 tile.optical_pipe_normal.name=光ファイバーケーブル
 
+tile.laser_pipe_normal.name=レーザー伝達ケーブル
+tile.laser_pipe_normal.tooltip1=エネルギーを損失無しで直線的に伝達する
+
 metaitem.prospector.lv.name=LV電動探知機
 metaitem.prospector.hv.name=HV電動探知機
 metaitem.prospector.luv.name=LuV電動探知機
@@ -4636,6 +4639,13 @@ gregtech.machine.power_substation.tooltip4=§f24時間毎に§7最大蓄電量�
 gregtech.machine.power_substation.tooltip5=蓄電ブロック当たり§f%,d EU/t§7の受動損失。
 gregtech.multiblock.power_substation.description=
 
+gregtech.machine.active_transformer.name=大型変圧器
+gregtech.machine.active_transformer.tooltip1=変圧器: レーザーが代理
+gregtech.machine.active_transformer.tooltip2=任意の数の§fエナジーハッチ§7と§fダイナモハッチ§7を組み合わせられる。
+gregtech.machine.active_transformer.tooltip3=
+gregtech.machine.active_transformer.tooltip3.5=レーザー§7を用いることで驚異の超距離電力輸送が可能。
+gregtech.multiblock.active_transformer.description=大型変圧器は任意の電圧及び任意の数のエナジーハッチとダイナモハッチを組み込むことができるマルチブロックです。レーザー照射ハッチとレーザー照準ハッチによって大型変圧器同士を連携させると、長距離の無損失電力輸送ができます。 レーザーは直線でなければならず、そうでなければ電力は輸送されません。
+
 gregtech.machine.central_monitor.name=セントラルモニター
 gregtech.multiblock.central_monitor.low_power=電力不足
 gregtech.multiblock.central_monitor.height=スクリーンの高さ:
@@ -4925,6 +4935,13 @@ gregtech.machine.data_access_hatch.creative.name=クリエイティブデータ�
 
 gregtech.machine.data_access_hatch.optical.receiver.name=光学データ受付ハッチ
 gregtech.machine.data_access_hatch.optical.transmitter.name=光学データ伝送ハッチ
+
+gregtech.machine.laser_hatch.source.name=レーザー照射ハッチ
+gregtech.machine.laser_hatch.source.tooltip1=遠くからエネルギーを受信する
+gregtech.machine.laser_hatch.source.tooltip2=§cレーザーケーブルは直線でなければなりません!§7
+gregtech.machine.laser_hatch.target.name=レーザー照準ハッチ
+gregtech.machine.laser_hatch.target.tooltip1=遠くにエネルギーを送信する
+gregtech.machine.laser_hatch.target.tooltip2=§cレーザーケーブルは直線でなければなりません!§7
 
 gregtech.machine.fluid_tank.max_multiblock=最大サイズ: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=内容物: %s L の %s
