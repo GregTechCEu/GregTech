@@ -692,6 +692,7 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Benzene.getFluid(2000))
                 .fluidInputs(Oxygen.getFluid(1000))
+                .circuitMeta(1)
                 .output(dust, Biphenyl, 2)
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(400).EUt(VA[HV]).buildAndRegister();

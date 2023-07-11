@@ -24,8 +24,10 @@ import java.util.function.UnaryOperator;
 
 public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeBuilder> {
 
-    public static final int DEFAULT_DURATION = 144000;
-    public static final int DEFAULT_EUT = GTValues.VA[GTValues.LV];
+    public static final int DEFAULT_SCANNER_DURATION = 1200; // 60 secs
+    public static final int DEFAULT_SCANNER_EUT = GTValues.VA[GTValues.HV];
+    public static final int DEFAULT_STATION_DURATION = 4000; // 200 secs
+    public static final int DEFAULT_STATION_EUT = GTValues.VA[GTValues.LuV];
 
     private final Collection<ResearchRecipeEntry> recipeEntries = new ArrayList<>();
 
@@ -250,7 +252,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
 
             if (dataStack == null) {
                 dataStack = cwut > 0
-                        ? AssemblyLineManager.getDefaultResearchStationItem()
+                        ? AssemblyLineManager.getDefaultResearchStationItem(cwut)
                         : AssemblyLineManager.getDefaultScannerItem();
             }
 
@@ -270,11 +272,15 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
             }
 
             if (duration <= 0) {
-                duration = DEFAULT_DURATION;
+                duration = cwut > 0
+                        ? DEFAULT_STATION_DURATION
+                        : DEFAULT_SCANNER_DURATION;
             }
 
             if (eut <= 0) {
-                eut = DEFAULT_EUT;
+                eut = cwut > 0
+                        ? DEFAULT_STATION_EUT
+                        : DEFAULT_SCANNER_EUT;
             }
             return new ResearchRecipeEntry(researchId, researchStack, dataStack, duration, eut, cwut);
         }
