@@ -169,7 +169,7 @@ public class ElementMaterials {
         Cobalt = new Material.Builder(23, gregtechId("cobalt"))
                 .ingot().fluid().ore() // leave for TiCon ore processing
                 .color(0x5050FA).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_DOUBLE_PLATE)
+                .flags(EXT_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FINE_WIRE)
                 .element(Elements.Co)
                 .cableProperties(GTValues.V[1], 2, 2)
                 .itemPipeProperties(2560, 2.0f)
