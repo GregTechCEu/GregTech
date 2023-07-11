@@ -27,6 +27,7 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
         }
     }
 
+    @NotNull
     public IOpticalComputationProvider getComputationProvider() {
         IOpticalComputationReceiver controller = (IOpticalComputationReceiver) metaTileEntity;
         return controller.getComputationProvider();
@@ -41,10 +42,6 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
             return true;
         }
         IOpticalComputationProvider provider = getComputationProvider();
-        if (provider == null) {
-            return false;
-        }
-
         int recipeCWUt = recipe.getProperty(ComputationProperty.getInstance(), 0);
         return provider.requestCWUt(recipeCWUt, true) >= recipeCWUt;
     }

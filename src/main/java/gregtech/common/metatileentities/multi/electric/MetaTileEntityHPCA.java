@@ -26,6 +26,7 @@ import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.core.sound.GTSoundEvents;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -474,9 +475,9 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     public static class HPCAGridHandler {
 
         // structure info
-        private final Set<IHPCAComponentHatch> components = new HashSet<>();
-        private final Set<IHPCACoolantProvider> coolantProviders = new HashSet<>();
-        private final Set<IHPCAComputationProvider> computationProviders = new HashSet<>();
+        private final Set<IHPCAComponentHatch> components = new ObjectOpenHashSet<>();
+        private final Set<IHPCACoolantProvider> coolantProviders = new ObjectOpenHashSet<>();
+        private final Set<IHPCAComputationProvider> computationProviders = new ObjectOpenHashSet<>();
         private int numBridges;
 
         // transaction info

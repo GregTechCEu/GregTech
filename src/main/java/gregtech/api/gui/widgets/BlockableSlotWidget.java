@@ -8,14 +8,14 @@ import net.minecraft.inventory.IInventory;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
 
 /** Basically just your normal SlotWidget, but can render the slot as "grayed-out" with a Supplier value. */
 public class BlockableSlotWidget extends SlotWidget {
 
     private static final int OVERLAY_COLOR = 0x80404040;
 
-    private Supplier<Boolean> isBlocked = () -> false;
+    private BooleanSupplier isBlocked = () -> false;
 
     public BlockableSlotWidget(IInventory inventory, int slotIndex, int xPosition, int yPosition, boolean canTakeItems, boolean canPutItems) {
         super(inventory, slotIndex, xPosition, yPosition, canTakeItems, canPutItems);
@@ -37,7 +37,7 @@ public class BlockableSlotWidget extends SlotWidget {
         super(inventory, slotIndex, xPosition, yPosition);
     }
 
-    public BlockableSlotWidget setIsBlocked(Supplier<Boolean> isBlocked) {
+    public BlockableSlotWidget setIsBlocked(BooleanSupplier isBlocked) {
         this.isBlocked = isBlocked;
         return this;
     }
@@ -45,7 +45,7 @@ public class BlockableSlotWidget extends SlotWidget {
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
-        if (isBlocked.get()) {
+        if (isBlocked.getAsBoolean()) {
             Position pos = getPosition();
             Size size = getSize();
             GlStateManager.disableDepth();
@@ -60,6 +60,6 @@ public class BlockableSlotWidget extends SlotWidget {
     @Override
     public boolean isMouseOverElement(int mouseX, int mouseY) {
         // prevent slot removal and hover highlighting when slot is blocked
-        return super.isMouseOverElement(mouseX, mouseY) && !isBlocked.get();
+        return super.isMouseOverElement(mouseX, mouseY) && !isBlocked.getAsBoolean();
     }
 }

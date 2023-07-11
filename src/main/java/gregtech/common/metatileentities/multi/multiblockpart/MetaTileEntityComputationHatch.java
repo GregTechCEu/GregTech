@@ -55,7 +55,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
             if (controller instanceof IOpticalComputationProvider provider) {
                 return provider.requestCWUt(cwut, simulate, seen);
             } else {
-                GTLog.logger.error("Computation Transmission Hatch could request CWU/t from its controller!");
+                GTLog.logger.error("Computation Transmission Hatch could not request CWU/t from its controller!");
                 return 0;
             }
         } else {

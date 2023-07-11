@@ -17,6 +17,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -159,9 +160,9 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     private static class MultipleComputationHandler {
 
         // providers in the NS provide distributable computation to the NS
-        private final Set<IOpticalComputationHatch> providers = new HashSet<>();
+        private final Set<IOpticalComputationHatch> providers = new ObjectOpenHashSet<>();
         // transmitters in the NS give computation to other multis
-        private final Set<IOpticalComputationHatch> transmitters = new HashSet<>();
+        private final Set<IOpticalComputationHatch> transmitters = new ObjectOpenHashSet<>();
 
         private int EUt;
 
