@@ -139,19 +139,20 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         storageInstances = new HashMap<>();
         storagePositions = new HashSet<>();
 
-        BlockPos u = getPos().up(), d = getPos().down(), n = getPos().north(), s = getPos().south(), e = getPos().east(), w = getPos().west();
-        Queue<BlockPos> searchQueue = new LinkedList<>(ImmutableList.of(u, d, n, s, e, w));
-        Set<BlockPos> discovered = new HashSet<>(ImmutableList.of(u, d, n, s, e, w));
+        // BlockPos u = getPos().up(), d = getPos().down(), n = getPos().north(), s = getPos().south(), e = getPos().east(), w = getPos().west();
+        Queue<BlockPos> searchQueue = new LinkedList<>();
+        Set<BlockPos> discovered = new HashSet<>();
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            searchQueue.add(getPos().offset(facing));
+        }
 
         while (!searchQueue.isEmpty()) {
             BlockPos pos = searchQueue.remove();
+            discovered.add(pos);
 
             if (!isInRange(pos)) continue;
             if (!getWorld().isBlockLoaded(pos, false)) continue;
 
-//            TileEntity te = getWorld().getTileEntity(pos);
-//            if (!(te instanceof IGregTechTileEntity) || te.isInvalid()) continue;
-//            MetaTileEntity mte = ((IGregTechTileEntity) te).getMetaTileEntity();
             MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
             if (!(mte instanceof IQuantumStorage<?> storage)) continue;
 
