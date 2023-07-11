@@ -99,6 +99,8 @@ public interface NBTMatcher {
                 return tag.getLong(condition.nbtKey) == (long) condition.value;
             }
             switch (condition.tagType) {
+                case BOOLEAN:
+                    return tag.getBoolean(condition.nbtKey) == (boolean) condition.value;
                 case BYTE_ARRAY:
                     return tag.getByteArray(condition.nbtKey).equals(condition.value);
                 case STRING:
@@ -135,6 +137,8 @@ public interface NBTMatcher {
                     return Objects.equals(tag.getLong(condition.nbtKey), ((Number) condition.value).longValue());
                 }
                 switch (condition.tagType) {
+                    case BOOLEAN:
+                        return tag.getBoolean(condition.nbtKey) == (boolean) condition.value;
                     case BYTE_ARRAY:
                         return tag.getByteArray(condition.nbtKey).equals(condition.value);
                     case STRING:
@@ -172,6 +176,8 @@ public interface NBTMatcher {
             return tag.getLong(condition.nbtKey) == 0;
         }
         switch (condition.tagType) {
+            case BOOLEAN:
+                return !tag.getBoolean(condition.nbtKey);
             case BYTE_ARRAY:
                 return tag.getByteArray(condition.nbtKey).length == 0;
             case STRING:
