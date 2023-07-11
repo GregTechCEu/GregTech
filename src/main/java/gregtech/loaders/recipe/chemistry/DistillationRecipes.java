@@ -164,7 +164,7 @@ public class DistillationRecipes {
                 .fluidOutputs(Krypton.getFluid(1000))
                 .fluidOutputs(Xenon.getFluid(1000))
                 .fluidOutputs(Radon.getFluid(1000))
-                .chancedOutput(dustTiny, EnderPearl, 9000, 0)
+                .chancedOutput(dust, EnderPearl, 1000, 0)
                 .disableDistilleryRecipes()
                 .duration(2000).EUt(VA[IV]).buildAndRegister();
     }

@@ -129,14 +129,14 @@ public class SeparationRecipes {
                 .inputs(new ItemStack(Blocks.DIRT, 1, GTValues.W))
                 .chancedOutput(PLANT_BALL, 1250, 700)
                 .chancedOutput(new ItemStack(Blocks.SAND), 5000, 1200)
-                .chancedOutput(dustTiny, Clay, 4000, 900)
+                .chancedOutput(dustSmall, Clay, 1777, 400)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(250).EUt(VA[LV])
                 .inputs(new ItemStack(Blocks.GRASS))
                 .chancedOutput(MetaItems.PLANT_BALL.getStackForm(), 3000, 1200)
                 .chancedOutput(new ItemStack(Blocks.SAND), 5000, 1200)
-                .chancedOutput(dustTiny, Clay, 5000, 900)
+                .chancedOutput(dustSmall, Clay, 2222, 400)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(650).EUt(VA[LV])
@@ -144,7 +144,7 @@ public class SeparationRecipes {
                 .chancedOutput(new ItemStack(Blocks.RED_MUSHROOM), 2500, 900)
                 .chancedOutput(new ItemStack(Blocks.BROWN_MUSHROOM), 2500, 900)
                 .chancedOutput(new ItemStack(Blocks.SAND), 5000, 1200)
-                .chancedOutput(dustTiny, Clay, 5000, 900)
+                .chancedOutput(dustSmall, Clay, 2222, 400)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(240).EUt(VA[LV])
@@ -152,9 +152,9 @@ public class SeparationRecipes {
                 .chancedOutput(dustSmall, Quicklime, 2, 9900, 0)
                 .chancedOutput(dustSmall, Potash, 6400, 0)
                 .chancedOutput(dustSmall, Magnesia, 6000, 0)
-                .chancedOutput(dustTiny, PhosphorusPentoxide, 500, 0)
-                .chancedOutput(dustTiny, SodaAsh, 5000, 0)
-                .chancedOutput(dustTiny, BandedIron, 2500, 0)
+                .chancedOutput(dustSmall, PhosphorusPentoxide, 222, 0)
+                .chancedOutput(dustSmall, SodaAsh, 2222, 0)
+                .chancedOutput(dustSmall, BandedIron, 1111, 0)
                 .buildAndRegister();
 
 
@@ -177,13 +177,13 @@ public class SeparationRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(320)
                 .input(dust, Uranium238)
-                .chancedOutput(dustTiny, Plutonium239, 200, 80)
-                .chancedOutput(dustTiny, Uranium235, 2000, 350)
+                .chancedOutput(dustSmall, Plutonium239, 88, 15)
+                .chancedOutput(dustSmall, Uranium235, 888, 68)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(320)
                 .input(dust, Plutonium239)
-                .chancedOutput(dustTiny, Uranium238, 3000, 450)
+                .chancedOutput(dustSmall, Uranium238, 1333, 88)
                 .chancedOutput(dust, Plutonium241, 2000, 300)
                 .buildAndRegister();
 
@@ -191,23 +191,23 @@ public class SeparationRecipes {
                 .input(dust, Endstone)
                 .chancedOutput(new ItemStack(Blocks.SAND), 9000, 300)
                 .chancedOutput(dustSmall, Tungstate, 1250, 450)
-                .chancedOutput(dustTiny, Platinum, 625, 150)
+                .chancedOutput(dustSmall, Platinum, 277, 29)
                 .fluidOutputs(Helium.getFluid(120))
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(160).EUt(20)
                 .input(dust, Netherrack)
-                .chancedOutput(dustTiny, Redstone, 5625, 850)
-                .chancedOutput(dustTiny, Gold, 625, 120)
+                .chancedOutput(dustSmall, Redstone, 2500, 377)
+                .chancedOutput(dustSmall, Gold, 277, 53)
                 .chancedOutput(dustSmall, Sulfur, 9900, 100)
-                .chancedOutput(dustTiny, Coal, 5625, 850)
+                .chancedOutput(dustSmall, Coal, 2500, 377)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(80)
                 .inputs(new ItemStack(Blocks.SOUL_SAND))
                 .chancedOutput(new ItemStack(Blocks.SAND), 9000, 130)
                 .chancedOutput(dustSmall, Saltpeter, 8000, 480)
-                .chancedOutput(dustTiny, Coal, 2000, 340)
+                .chancedOutput(dustSmall, Coal, 888, 151)
                 .fluidOutputs(Oil.getFluid(80))
                 .buildAndRegister();
 
@@ -234,7 +234,7 @@ public class SeparationRecipes {
         CENTRIFUGE_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .inputs(new ItemStack(Blocks.SAND, 1, 1))
                 .chancedOutput(dust, Iron, 5000, 500)
-                .chancedOutput(dustTiny, Diamond, 100, 100)
+                .chancedOutput(dust, Diamond, 11, 11)
                 .chancedOutput(new ItemStack(Blocks.SAND, 1, 0), 5000, 5000)
                 .buildAndRegister();
 
@@ -276,20 +276,20 @@ public class SeparationRecipes {
                 .input(dust, Stone)
                 .output(dustSmall, Quartzite)
                 .output(dustSmall, PotassiumFeldspar)
-                .output(dustTiny, Marble, 2)
-                .output(dustTiny, Biotite)
-                .chancedOutput(dustTiny, MetalMixture, 7500, 750)
-                .chancedOutput(dustTiny, Sodalite, 5000, 500)
+                .output(dustSmall, Marble)
+                .chancedOutput(dustSmall, Biotite, 4444, 0)
+                .chancedOutput(dustSmall, MetalMixture, 3333, 333)
+                .chancedOutput(dustSmall, Sodalite, 2222, 222)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(1000).EUt(900)
                 .input(dust, MetalMixture)
                 .output(dustSmall, BandedIron)
                 .output(dustSmall, Bauxite)
-                .output(dustTiny, Pyrolusite, 2)
-                .output(dustTiny, Barite)
-                .chancedOutput(dustTiny, Chromite, 7500, 750)
-                .chancedOutput(dustTiny, Ilmenite, 5000, 500)
+                .output(dustSmall, Pyrolusite)
+                .chancedOutput(dustSmall, Barite, 4444, 0)
+                .chancedOutput(dustSmall, Chromite, 3333, 750)
+                .chancedOutput(dustSmall, Ilmenite, 2222, 500)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(60).EUt(VA[LV])

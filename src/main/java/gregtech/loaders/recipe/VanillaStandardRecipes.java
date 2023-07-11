@@ -123,9 +123,10 @@ public class VanillaStandardRecipes {
                 .output(OrePrefix.dust, Materials.QuartzSand)
                 .duration(30).buildAndRegister();
 
-        ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass),
+        ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass, 2),
                 new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
-                new UnificationEntry(OrePrefix.dustTiny, Materials.Flint));
+                new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
+                new UnificationEntry(OrePrefix.dustSmall, Materials.Flint));
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(160).EUt(VA[ULV])
                 .input(dustSmall, Materials.Flint)
@@ -365,7 +366,7 @@ public class VanillaStandardRecipes {
         LATHE_RECIPES.recipeBuilder()
                 .input("treeSapling")
                 .outputs(new ItemStack(Items.STICK))
-                .output(dustTiny, Wood)
+                .chancedOutput(dustSmall, Wood, 5000, 0)
                 .duration(16).EUt(VA[ULV])
                 .buildAndRegister();
 

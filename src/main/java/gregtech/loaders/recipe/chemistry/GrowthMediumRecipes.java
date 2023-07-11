@@ -8,8 +8,7 @@ import net.minecraft.item.ItemStack;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.dust;
-import static gregtech.api.unification.ore.OrePrefix.dustTiny;
+import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.*;
 
 public class GrowthMediumRecipes {
@@ -54,17 +53,17 @@ public class GrowthMediumRecipes {
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
-        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
-                .input(dustTiny, Uranium235)
-                .fluidInputs(BacterialSludge.getFluid(1000))
-                .fluidOutputs(EnrichedBacterialSludge.getFluid(1000))
+        BREWING_RECIPES.recipeBuilder().EUt(4).duration(228)
+                .input(dustSmall, Uranium235)
+                .fluidInputs(BacterialSludge.getFluid(2250))
+                .fluidOutputs(EnrichedBacterialSludge.getFluid(2250))
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
-        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
-                .input(dustTiny, Naquadria)
-                .fluidInputs(BacterialSludge.getFluid(1000))
-                .fluidOutputs(EnrichedBacterialSludge.getFluid(2000))
+        BREWING_RECIPES.recipeBuilder().EUt(4).duration(228)
+                .input(dustSmall, Naquadria)
+                .fluidInputs(BacterialSludge.getFluid(2250))
+                .fluidOutputs(EnrichedBacterialSludge.getFluid(2250))
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
