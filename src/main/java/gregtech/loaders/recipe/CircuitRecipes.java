@@ -31,6 +31,7 @@ public class CircuitRecipes {
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, Silicon, 32)
                 .input(dustSmall, GalliumArsenide)
+                .circuitMeta(2)
                 .output(SILICON_BOULE)
                 .blastFurnaceTemp(1784)
                 .duration(9000).EUt(VA[MV]).buildAndRegister();
