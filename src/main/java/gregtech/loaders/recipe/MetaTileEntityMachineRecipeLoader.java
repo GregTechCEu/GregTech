@@ -6,6 +6,8 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
@@ -813,6 +815,43 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(L / 2))
                 .output(LD_FLUID_PIPE, 64)
                 .duration(600).EUt(24).buildAndRegister();
+
+        // ME Parts
+
+        if (Loader.isModLoaded(MODID_APPENG)) {
+
+            ItemStack fluidInterface = GameRegistry.makeItemStack(MODID_APPENG + ":fluid_interface", 0, 1, null);
+            ItemStack normalInterface = GameRegistry.makeItemStack(MODID_APPENG + ":interface", 0, 1, null);
+            ItemStack accelerationCard = GameRegistry.makeItemStack(MODID_APPENG + ":material", 30, 2, null);
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(FLUID_EXPORT_HATCH[EV])
+                    .inputs(fluidInterface.copy())
+                    .inputs(accelerationCard.copy())
+                    .output(FLUID_EXPORT_HATCH_ME)
+                    .duration(300).EUt(VA[HV]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(FLUID_IMPORT_HATCH[EV])
+                    .inputs(fluidInterface.copy())
+                    .inputs(accelerationCard.copy())
+                    .output(FLUID_IMPORT_HATCH_ME)
+                    .duration(300).EUt(VA[HV]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(ITEM_EXPORT_BUS[EV])
+                    .inputs(normalInterface.copy())
+                    .inputs(accelerationCard.copy())
+                    .output(ITEM_EXPORT_BUS_ME)
+                    .duration(300).EUt(VA[HV]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(ITEM_IMPORT_BUS[EV])
+                    .inputs(normalInterface.copy())
+                    .inputs(accelerationCard.copy())
+                    .output(ITEM_IMPORT_BUS_ME)
+                    .duration(300).EUt(VA[HV]).buildAndRegister();
+        }
     }
 
     private static void registerHatchBusRecipe(int tier, MetaTileEntity inputBus, MetaTileEntity outputBus, ItemStack extra) {
