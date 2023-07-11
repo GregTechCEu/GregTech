@@ -61,7 +61,8 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IItemHandler> implements ITieredMetaTileEntity, IActiveOutputSide {
+public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IItemHandler> implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity{
+
 
 
     private final int tier;
