@@ -2494,7 +2494,7 @@ tile.metal_casing.titanium_stable.name=堅牢なチタン製マシン外装
 tile.metal_casing.tungstensteel_robust.name=強化タングステンスチール製マシン外装
 tile.metal_casing.ptfe_inert.name=PTFE製耐薬品マシン外装
 tile.metal_casing.hsse_sturdy.name=頑丈なHSS-E製マシン外装
-tile.metal_casing.palladium_substation.name=パラジウム製変電所用外装
+tile.metal_casing.palladium_substation.name=パラジウム製大型蓄電器用外装
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULVマシン外装
@@ -2566,7 +2566,7 @@ tile.battery_block.lapotronic_zpm.name=ラポトロニック蓄電ブロック (
 tile.battery_block.empty_tier_iii.name=蓄電ブロック Tier III (空)
 tile.battery_block.lapotronic_uv.name=ラポトロニック蓄電ブロック (UV)
 tile.battery_block.ultimate_uhv.name=アルティメット蓄電ブロック (UHV)
-tile.battery_block.tooltip_empty=変電所の空間を埋めるために
+tile.battery_block.tooltip_empty=大型蓄電器の空間を埋めるために
 
 # Long Distance Pipeline Blocks
 tile.long_distance_item_pipeline.name=長距離アイテムパイプ
@@ -4631,7 +4631,7 @@ gregtech.machine.data_bank.tooltip.2=大容量データストレージ。光フ�
 gregtech.machine.data_bank.tooltip.3=データバンクは連結可能
 gregtech.machine.data_bank.tooltip.4=データハッチ1つにつき%sEU/t、連結時%sEU/t消費する。
 
-gregtech.machine.power_substation.name=変電所
+gregtech.machine.power_substation.name=大型蓄電器
 gregtech.machine.power_substation.tooltip1=中央集権型送電網の心臓部
 gregtech.machine.power_substation.tooltip2=§f蓄電ブロック§7のTierを揃える必要はない。
 gregtech.machine.power_substation.tooltip3=§f蓄電ブロック§7は§%d層§7まで増築できる。
@@ -4809,13 +4809,13 @@ gregtech.machine.energy_hatch.input_16a.zpm.name=ZPM 16Aエネルギーハッチ
 gregtech.machine.energy_hatch.input_16a.uv.name=UV 16Aエネルギーハッチ
 gregtech.machine.energy_hatch.input_16a.uhv.name=UHV 16Aエネルギーハッチ
 
-gregtech.machine.substation_hatch.input.tooltip=変電所へのエネルギー入力
+gregtech.machine.substation_hatch.input.tooltip=大型蓄電器へのエネルギー入力
 
-gregtech.machine.substation_hatch.input_64a.iv.name=IV 64A変電所用ハッチ
-gregtech.machine.substation_hatch.input_64a.luv.name=LuV 64A変電所用ハッチ
-gregtech.machine.substation_hatch.input_64a.zpm.name=ZPM 64A変電所用ハッチ
-gregtech.machine.substation_hatch.input_64a.uv.name=UV 64A変電所用ハッチ
-gregtech.machine.substation_hatch.input_64a.uhv.name=UHV 64A変電所用ハッチ
+gregtech.machine.substation_hatch.input_64a.iv.name=大型蓄電器用IV 64Aエナジーハッチ
+gregtech.machine.substation_hatch.input_64a.luv.name=大型蓄電器用LuV 64Aエナジーハッチ
+gregtech.machine.substation_hatch.input_64a.zpm.name=大型蓄電器用ZPM 64Aエナジーハッチ
+gregtech.machine.substation_hatch.input_64a.uv.name=大型蓄電器用UV 64Aエナジーハッチ
+gregtech.machine.substation_hatch.input_64a.uhv.name=大型蓄電器用UHV 64Aエナジーハッチ
 
 gregtech.machine.energy_hatch.output.tooltip=マルチブロックからのエネルギー出力
 
@@ -4850,13 +4850,13 @@ gregtech.machine.energy_hatch.output_16a.zpm.name=ZPM 16A ダイナモハッチ
 gregtech.machine.energy_hatch.output_16a.uv.name=UV 16A ダイナモハッチ
 gregtech.machine.energy_hatch.output_16a.uhv.name=UHV 16A ダイナモハッチ
 
-gregtech.machine.substation_hatch.output.tooltip=変電所からのエネルギー出力
+gregtech.machine.substation_hatch.output.tooltip=大型蓄電器からのエネルギー出力
 
-gregtech.machine.substation_hatch.output_64a.iv.name=IV 64A変電所用ダイナモハッチ
-gregtech.machine.substation_hatch.output_64a.luv.name=LuV 64A変電所用ダイナモハッチ
-gregtech.machine.substation_hatch.output_64a.zpm.name=ZPM 64A変電所用ダイナモハッチ
-gregtech.machine.substation_hatch.output_64a.uv.name=UV 64A変電所用ダイナモハッチ
-gregtech.machine.substation_hatch.output_64a.uhv.name=UHV 64A変電所用ダイナモハッチ
+gregtech.machine.substation_hatch.output_64a.iv.name=大型蓄電器用IV 64Aダイナモハッチ
+gregtech.machine.substation_hatch.output_64a.luv.name=大型蓄電器用LuV 64Aダイナモハッチ
+gregtech.machine.substation_hatch.output_64a.zpm.name=大型蓄電器用ZPM 64Aダイナモハッチ
+gregtech.machine.substation_hatch.output_64a.uv.name=大型蓄電器用UV 64Aダイナモハッチ
+gregtech.machine.substation_hatch.output_64a.uhv.name=大型蓄電器用UHV 64Aダイナモハッチ
 
 gregtech.machine.rotor_holder.tooltip1=マルチブロックのローターホルダー
 gregtech.machine.rotor_holder.tooltip2=ローターが飛び散らないように所定の位置に固定する
@@ -4890,7 +4890,7 @@ gregtech.maintenance.configurable_time.changed_description=故障は通常の%f�
 
 gregtech.maintenance.configurable.tooltip_basic=故障頻度に応じて機械の動作速度が変化する。
 gregtech.maintenance.configurable.tooltip_more_info=SHIFTで特殊な場合を表示
-gregtech.maintenance.configurable.tooltip_pss_header=§8:変電所
+gregtech.maintenance.configurable.tooltip_pss_header=§8:大型蓄電器
 gregtech.maintenance.configurable.tooltip_pss_info=  §f損失量が増減
 
 gregtech.machine.muffler_hatch.tooltip1=機械からの煤を回収
@@ -5247,7 +5247,7 @@ gregtech.multiblock.power_substation.stored=蓄電量: %s EU
 gregtech.multiblock.power_substation.capacity=最大蓄電量: %s EU
 gregtech.multiblock.power_substation.passive_drain=損失量: %s EU/t
 gregtech.multiblock.power_substation.average_io=平均入出力: %s EU/t
-gregtech.multiblock.power_substation.average_io_hover=変電所の平均エネルギー変化量
+gregtech.multiblock.power_substation.average_io_hover=大型蓄電器の平均エネルギー変化量
 gregtech.multiblock.power_substation.time_to_fill=満タンまで: %s
 gregtech.multiblock.power_substation.time_to_drain=枯渇まで: %s
 gregtech.multiblock.power_substation.time_seconds=%s 秒
