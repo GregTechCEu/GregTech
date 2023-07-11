@@ -491,5 +491,7 @@ public class UnknownCompositionMaterials {
                 .build();
 
         UUMatter = new Material.Builder(1649, gregtechId("uu_matter")).fluid().fluidTemp(300).build();
+
+        PCBCoolant = new Material.Builder(1650, gregtechId("pcb_coolant")).fluid().color(0xD5D69C).build();
     }
 }

@@ -29,7 +29,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -64,17 +66,17 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        calculateEnergyUsage();
+        this.energyUsage = calculateEnergyUsage();
     }
 
-    private void calculateEnergyUsage() {
+    protected int calculateEnergyUsage() {
         int receivers = getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION).size();
         int transmitters = getAbilities(MultiblockAbility.OPTICAL_DATA_TRANSMISSION).size();
         int regulars = getAbilities(MultiblockAbility.DATA_ACCESS_HATCH).size();
 
         int dataHatches = receivers + transmitters + regulars;
         int tier = receivers > 0 ? GTValues.LuV : GTValues.EV;
-        this.energyUsage = GTValues.VA[tier] * dataHatches;
+        return GTValues.VA[tier] * dataHatches;
     }
 
     @Override
@@ -86,11 +88,11 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     @Override
     protected void updateFormedValid() {
-        int energyToConsume = this.energyUsage;
+        int energyToConsume = this.getEnergyUsage();
         boolean hasMaintenance = ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics();
         if (hasMaintenance) {
             // 10% more energy per maintenance problem
-            energyToConsume += getNumMaintenanceProblems() * this.energyUsage / 10;
+            energyToConsume += getNumMaintenanceProblems() * energyToConsume / 10;
         }
 
         if (this.hasNotEnoughEnergy && energyContainer.getInputPerSec() > 19L * energyToConsume) {
@@ -114,6 +116,10 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
             this.hasNotEnoughEnergy = true;
             setActive(false);
         }
+    }
+
+    protected int getEnergyUsage() {
+        return energyUsage;
     }
 
     @Override
@@ -157,16 +163,16 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
                 .where('S', selfPredicate())
                 .where('X', states(getOuterState()))
                 .where('D', states(getInnerState()).setMinGlobalLimited(3)
-                        .or(abilities(MultiblockAbility.DATA_ACCESS_HATCH))
+                        .or(abilities(MultiblockAbility.DATA_ACCESS_HATCH).setPreviewCount(3))
                         .or(abilities(MultiblockAbility.OPTICAL_DATA_TRANSMISSION)
-                                .setMinGlobalLimited(1))
-                        .or(abilities(MultiblockAbility.OPTICAL_DATA_RECEPTION)))
+                                .setMinGlobalLimited(1, 1))
+                        .or(abilities(MultiblockAbility.OPTICAL_DATA_RECEPTION).setPreviewCount(1)))
                 .where('A', states(getInnerState()))
                 .where('C', states(getFrontState())
                         .setMinGlobalLimited(4)
                         .or(autoAbilities())
                         .or(abilities(MultiblockAbility.INPUT_ENERGY)
-                                .setMinGlobalLimited(1).setMaxGlobalLimited(2)))
+                                .setMinGlobalLimited(1).setMaxGlobalLimited(2).setPreviewCount(1)))
                 .build();
     }
 
@@ -195,6 +201,10 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
+        renderTextures(renderState, translation, pipeline);
+    }
+
+    protected void renderTextures(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         if (isStructureFormed()) {
             Textures.HIGH_POWER_CASING.render(renderState, translation, pipeline);
         } else {
@@ -209,6 +219,11 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.DATA_BANK_OVERLAY;
+    }
+
+    @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
     }
 
     @SideOnly(Side.CLIENT)
@@ -229,7 +244,22 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        textList.add(new TextComponentTranslation("gregtech.multiblock.energy_consumption", this.energyUsage));
+        if (isStructureFormed()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.energy_consumption", getEnergyUsage()));
+            if (hasNotEnoughEnergy) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
+            }
+        }
+    }
+
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed() && hasNotEnoughEnergy) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
+        }
     }
 
     @Override

@@ -173,6 +173,7 @@ public class GuiTextures {
     public static final TextureArea DATA_ORB_OVERLAY = TextureArea.fullImage("textures/gui/overlay/data_orb_overlay.png");
     public static final TextureArea SCANNER_OVERLAY = TextureArea.fullImage("textures/gui/overlay/scanner_overlay.png");
     public static final TextureArea DUCT_TAPE_OVERLAY = TextureArea.fullImage("textures/gui/overlay/duct_tape_overlay.png");
+    public static final TextureArea RESEARCH_STATION_OVERLAY = TextureArea.fullImage("textures/gui/overlay/research_station_overlay.png");
 
     //PROGRESS BARS
     public static final TextureArea PROGRESS_BAR_ARC_FURNACE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_arc_furnace.png");
@@ -221,6 +222,9 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_UNLOCK = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_unlock.png");
     public static final TextureArea PROGRESS_BAR_UNPACKER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_unpacker.png");
     public static final TextureArea PROGRESS_BAR_WIREMILL = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_wiremill.png");
+    public static final TextureArea PROGRESS_BAR_RESEARCH_STATION_1 = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_research_station_1.png");
+    public static final TextureArea PROGRESS_BAR_RESEARCH_STATION_2 = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_research_station_2.png");
+    public static final TextureArea PROGRESS_BAR_RESEARCH_STATION_BASE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_research_station_base.png");
 
     //JEI
     public static final TextureArea INFO_ICON = TextureArea.fullImage("textures/gui/widget/information.png");

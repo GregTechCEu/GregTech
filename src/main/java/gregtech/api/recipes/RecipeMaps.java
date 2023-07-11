@@ -1030,6 +1030,13 @@ public class RecipeMaps {
             .setSound(GTSoundEvents.REPLICATOR);
 
     @ZenProperty
+    public static final RecipeMap<ComputationRecipeBuilder> RESEARCH_STATION_RECIPES = new RecipeMapResearchStation<>("research_station", 2, 1, 0, 0, new ComputationRecipeBuilder(), false)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
+            .setSlotOverlay(false, false, GuiTextures.SCANNER_OVERLAY)
+            .setSlotOverlay(true, false, GuiTextures.RESEARCH_STATION_OVERLAY)
+            .setSound(GTValues.FOOLS.get() ? GTSoundEvents.SCIENCE : GTSoundEvents.COMPUTATION);
+
+    @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ROCK_BREAKER_RECIPES = new RecipeMap<>("rock_breaker", 1, 4, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.DUST_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.CRUSHED_ORE_OVERLAY)

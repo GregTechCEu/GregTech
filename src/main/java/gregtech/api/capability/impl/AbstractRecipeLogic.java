@@ -310,13 +310,20 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             //only set hasNotEnoughEnergy if this recipe is consuming recipe
             //generators always have enough energy
             this.hasNotEnoughEnergy = true;
-            //if current progress value is greater than 2, decrement it by 2
-            if (progressTime >= 2) {
-                if (ConfigHolder.machines.recipeProgressLowEnergy) {
-                    this.progressTime = 1;
-                } else {
-                    this.progressTime = Math.max(1, progressTime - 2);
-                }
+            decreaseProgress();
+        }
+    }
+
+    /**
+     * Decrease the recipe progress time in the case that some state was not right, like available EU to drain.
+     */
+    protected void decreaseProgress() {
+        //if current progress value is greater than 2, decrement it by 2
+        if (progressTime >= 2) {
+            if (ConfigHolder.machines.recipeProgressLowEnergy) {
+                this.progressTime = 1;
+            } else {
+                this.progressTime = Math.max(1, progressTime - 2);
             }
         }
     }
@@ -762,8 +769,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * completes the recipe which was being run, and performs actions done upon recipe completion
      */
     protected void completeRecipe() {
-        GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, itemOutputs);
-        GTTransferUtils.addFluidsToFluidHandler(getOutputTank(), false, fluidOutputs);
+        outputRecipeOutputs();
         this.progressTime = 0;
         setMaxProgress(0);
         this.recipeEUt = 0;
@@ -773,6 +779,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.wasActiveAndNeedsUpdate = true;
         this.parallelRecipesPerformed = 0;
         this.overclockResults = new int[]{0, 0};
+    }
+
+    /**
+     * outputs the items created by the recipe
+     */
+    protected void outputRecipeOutputs() {
+        GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, itemOutputs);
+        GTTransferUtils.addFluidsToFluidHandler(getOutputTank(), false, fluidOutputs);
     }
 
     /**

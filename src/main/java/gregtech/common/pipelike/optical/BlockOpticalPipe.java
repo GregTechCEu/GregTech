@@ -118,7 +118,9 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
 
     @Override
     public boolean canPipeConnectToBlock(IPipeTile<OpticalPipeType, OpticalPipeProperties> selfTile, EnumFacing side, @Nullable TileEntity tile) {
-        return tile != null && tile.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, side.getOpposite()) != null;
+        if (tile == null) return false;
+        if (tile.hasCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, side.getOpposite())) return true;
+        return tile.hasCapability(GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER, side.getOpposite());
     }
 
     @Override

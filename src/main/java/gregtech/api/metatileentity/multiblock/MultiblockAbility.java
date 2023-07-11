@@ -52,6 +52,12 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<ILaserContainer> INPUT_LASER = new MultiblockAbility<>("input_laser");
     public static final MultiblockAbility<ILaserContainer> OUTPUT_LASER = new MultiblockAbility<>("output_laser");
 
+    public static final MultiblockAbility<IOpticalComputationHatch> COMPUTATION_DATA_RECEPTION = new MultiblockAbility<>("computation_data_reception");
+    public static final MultiblockAbility<IOpticalComputationHatch> COMPUTATION_DATA_TRANSMISSION = new MultiblockAbility<>("computation_data_transmission");
+
+    public static final MultiblockAbility<IHPCAComponentHatch> HPCA_COMPONENT = new MultiblockAbility<>("hpca_component");
+    public static final MultiblockAbility<IObjectHolder> OBJECT_HOLDER = new MultiblockAbility<>("object_holder");
+
     public static void registerMultiblockAbility(MultiblockAbility<?> ability, MetaTileEntity part) {
         if (!REGISTRY.containsKey(ability)) {
             REGISTRY.put(ability, new ArrayList<>());

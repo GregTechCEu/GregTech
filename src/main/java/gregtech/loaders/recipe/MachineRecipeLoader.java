@@ -1047,6 +1047,7 @@ public class MachineRecipeLoader {
         // Data Items
         ModHandler.addShapelessNBTClearingRecipe("data_stick_nbt", TOOL_DATA_STICK.getStackForm(), TOOL_DATA_STICK.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("data_orb_nbt", TOOL_DATA_ORB.getStackForm(), TOOL_DATA_ORB.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("data_module_nbt", TOOL_DATA_MODULE.getStackForm(), TOOL_DATA_MODULE.getStackForm());
 
         //Jetpacks
         ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(), SEMIFLUID_JETPACK.getStackForm());

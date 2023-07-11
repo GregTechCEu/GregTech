@@ -34,4 +34,7 @@ public class GregtechTileCapabilities {
 
     @CapabilityInject(ILaserContainer.class)
     public static Capability<ILaserContainer> CAPABILITY_LASER = null;
+
+    @CapabilityInject(IOpticalComputationProvider.class)
+    public static Capability<IOpticalComputationProvider> CABABILITY_COMPUTATION_PROVIDER = null;
 }

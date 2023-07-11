@@ -525,6 +525,8 @@ metaitem.tool.datastick.name=Data Stick
 metaitem.tool.datastick.tooltip=Storage for Simple Data
 metaitem.tool.dataorb.name=Data Orb
 metaitem.tool.dataorb.tooltip=Storage for Complex Data
+metaitem.tool.datamodule.name=Data Module
+metaitem.tool.datamodule.tooltip=Storage for Incredibly Complex Data/n§cCan only be read by a Data Bank
 metaitem.circuit.integrated.name=Programmed Circuit
 metaitem.circuit.integrated.tooltip=Use to open configuration GUI/n/nShift-Right-Click on a machine/nwith a circuit slot to set it to/nthis circuit's value./n
 metaitem.circuit.integrated.gui=Programmed Circuit Configuration
@@ -1807,6 +1809,9 @@ gregtech.material.caprolactam=Caprolactam
 gregtech.material.nitrosyl_chloride=Nitrosyl Chloride
 gregtech.material.butyraldehyde=Butyraldehyde
 gregtech.material.polyvinyl_butyral=Polyvinyl Butyral
+gregtech.material.biphenyl=Biphenyl
+gregtech.material.polychlorinated_biphenyl=Polychlorinated Biphenyl (PCB)
+gregtech.material.pcb_coolant=Dielectric PCB Coolant
 
 
 # Unknown Composition Materials
@@ -2238,6 +2243,7 @@ recipemap.gas_collector.name=Gas Collector
 recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
+recipemap.research_station.name=Research Station
 
 gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling
@@ -2282,6 +2288,7 @@ tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.
 tile.brittle_charcoal.tooltip.2=Mine this to get Charcoal.
 
 tile.optical_pipe_normal.name=Optical Fiber Cable
+tile.optical_pipe_normal.tooltip1=Transmitting §fComputation§7 or §fResearch Data§7
 
 tile.laser_pipe_normal.name=Laser Transmitting Cable
 tile.laser_pipe_normal.tooltip1=Transmitting power with no loss in straight lines
@@ -2636,8 +2643,13 @@ tile.cleanroom_casing.filter_sterile.tooltip=Creates a §aSterilized§7 environm
 
 # Computer Casings
 tile.computer_casing.computer_casing.name=Computer Casing
+tile.computer_casing.computer_casing.tooltip=Nice and clean casing
 tile.computer_casing.computer_heat_vent.name=Computer Heat Vent
+tile.computer_casing.computer_heat_vent.tooltip=Air vent with a filter
 tile.computer_casing.high_power_casing.name=High Power Casing
+tile.computer_casing.high_power_casing.tooltip=The power levels are rising!
+tile.computer_casing.advanced_computer_casing.name=Advanced Computer Casing
+tile.computer_casing.advanced_computer_casing.tooltip=Couple thousand qubits wide
 
 # Asphalt
 tile.asphalt.asphalt.name=Asphalt
@@ -4278,6 +4290,36 @@ gregtech.machine.world_accelerator.working_area_random=  Random Tick Mode:§f %d
 gregtech.machine.world_accelerator.mode_tile=Tile Entity Mode
 gregtech.machine.world_accelerator.mode_entity=Random Tick Mode
 
+# HPCA Components
+gregtech.machine.hpca.empty_component.name=Empty HPCA Component
+gregtech.machine.hpca.empty_component.tooltip=Just for filling space
+gregtech.machine.hpca.heat_sink_component.name=HPCA Heat Sink Component
+gregtech.machine.hpca.heat_sink_component.tooltip=Free cooling! Is anything free?
+gregtech.machine.hpca.active_cooler_component.name=HPCA Active Cooling Component
+gregtech.machine.hpca.active_cooler_component.tooltip=Less free, more effective cooling
+gregtech.machine.hpca.computation_component.name=HPCA Computation Component
+gregtech.machine.hpca.computation_component.tooltip=Baby's first computation
+gregtech.machine.hpca.advanced_computation_component.name=HPCA Advanced Computation Component
+gregtech.machine.hpca.advanced_computation_component.tooltip=Computation big leagues
+gregtech.machine.hpca.bridge_component.name=HPCA Bridge Component
+gregtech.machine.hpca.bridge_component.tooltip=So that's where the "Array" in HPCA comes from
+
+gregtech.machine.hpca.computation_component.damaged.name=Damaged HPCA Computation Component
+gregtech.machine.hpca.computation_component.damaged.tooltip=Free recyclable materials
+gregtech.machine.hpca.advanced_computation_component.damaged.name=Damaged HPCA Advanced Computation Component
+gregtech.machine.hpca.advanced_computation_component.damaged.tooltip=It only cost an arm and a leg
+
+gregtech.machine.hpca.component_general.upkeep_eut=§eUpkeep Energy: §f%,d EU/t
+gregtech.machine.hpca.component_general.max_eut=§6Max Energy: §f%,d EU/t
+gregtech.machine.hpca.component_type.cooler_passive=§bCooler Type: §fPassive
+gregtech.machine.hpca.component_type.cooler_active=§bCooler Type: §fActive
+gregtech.machine.hpca.component_type.cooler_cooling=§aProvides: §f%,d Cooling
+gregtech.machine.hpca.component_type.cooler_active_coolant=§cRequires up to: §f%,d L/t %s
+gregtech.machine.hpca.component_type.computation_cwut=§9Computation: §f%,d CWU/t
+gregtech.machine.hpca.component_type.computation_cooling=§cRequires up to: §f%,d Cooling
+gregtech.machine.hpca.component_type.bridge=Allows §fHPCA§7 to connect to §fNetwork Switches§7
+gregtech.machine.hpca.component_type.damaged=Can be damaged by HPCA overheating!
+
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
@@ -4622,6 +4664,7 @@ gregtech.machine.data_bank.tooltip.1=Your Personal NAS
 gregtech.machine.data_bank.tooltip.2=Bulk Data Storage. Transfer with Optical Cables.
 gregtech.machine.data_bank.tooltip.3=Data Banks can be chained together.
 gregtech.machine.data_bank.tooltip.4=Uses %sEU/t per Data Hatch and %sEU/t when chained.
+gregtech.multiblock.data_bank.description=The Data Bank is a multiblock structure used for sharing Assembly Line Research Data between multiple Assembly Lines. Additionally, it enables Assembly Lines to read more complex research data on Data Modules.
 
 gregtech.machine.power_substation.name=Power Substation
 gregtech.machine.power_substation.tooltip1=The heart of a centralized power grid
@@ -4629,7 +4672,7 @@ gregtech.machine.power_substation.tooltip2=§fCapacitors§7 do not need to be al
 gregtech.machine.power_substation.tooltip3=Allows up to §f%d Capacitor Layers§7.
 gregtech.machine.power_substation.tooltip4=Loses energy equal to §f1%%§7 of total capacity every §f24 hours§7.
 gregtech.machine.power_substation.tooltip5=Capped at §f%,d EU/t§7 passive loss per Capacitor Block.
-gregtech.multiblock.power_substation.description=
+gregtech.multiblock.power_substation.description=The Power Substation is a multiblock structure used for storing immense amounts of Energy. Capable of holding up to 18 layers of Batteries. Can also use Empty Capacitors to fill space, as layers must be fully filled.
 
 gregtech.machine.active_transformer.name=Active Transformer
 gregtech.machine.active_transformer.tooltip1=Transformers: Lasers in Disguise
@@ -4637,6 +4680,24 @@ gregtech.machine.active_transformer.tooltip2=Can combine any number of Energy §
 gregtech.machine.active_transformer.tooltip3=Can transmit power at incredible distance with
 gregtech.machine.active_transformer.tooltip3.5= Lasers§7.
 gregtech.multiblock.active_transformer.description=The Active Transformer is a multiblock structure that can accept any number or tier of Energy Hatches, and transform them into any number or tier of Dynamo Hatches. They can be chained with Laser Source and Target Hatches, allowing long distance power transportation without any losses. Lasers must be in a straight line, otherwise they will not send energy.
+
+gregtech.machine.research_station.name=Research Station
+gregtech.machine.research_station.tooltip.1=More than just a Multiblock Scanner
+gregtech.machine.research_station.tooltip.2=Used to scan onto §fData Orbs§7 or §fData Modules§7.
+gregtech.machine.research_station.tooltip.3=Requires §fComputation§7 to work.
+gregtech.multiblock.research_station.description=The Research Station is a multiblock structure used for researching much more complex Assembly Line Research Data. Any Research requiring a Data Orb or Data Module must be scanned in the Research Station. Requires Compute Work Units (CWU/t) to research recipes, which is supplied by High Performance Computing Arrays (HPCAs).
+
+gregtech.machine.network_switch.name=Network Switch
+gregtech.machine.network_switch.tooltip.1=Ethernet Hub
+gregtech.machine.network_switch.tooltip.2=Used to route and distribute §fComputation§7.
+gregtech.machine.network_switch.tooltip.3=Can combine any number of Computation §fReceivers§7 into any number of Computation §fTransmitters§7.
+gregtech.multiblock.network_switch.description=The Network Switch is a multiblock structure used for distributing Computation from many sources to many destinations. It can accept any number of Computation Data Reception or Transmission Hatches. It is necessary for Research Data which requires much higher Computation, as the Research Station can only accept one Computation Data Reception Hatch. HPCAs must have a Bridge Component for the Network Switch to be able to access their Computation.
+
+gregtech.machine.high_performance_computing_array.name=High Performance Computing Array
+gregtech.machine.high_performance_computing_array.tooltip.1=Just your average Supercomputer
+gregtech.machine.high_performance_computing_array.tooltip.2=Used to generate §fComputation§7 (and heat).
+gregtech.machine.high_performance_computing_array.tooltip.3=Requires HPCA components to generate §fCWU/t§7 (Compute Work Units).
+gregtech.multiblock.high_performance_computing_array.description=The High Performance Computing Array (HPCA) is a multiblock structure used for creating Compute Work Units (CWU/t) for more complex Assembly Line Research Data. The structure has a flexible 3x3 area which can be filled in any way with HPCA components. Different components can provide different amounts of Computation, Cooling, as well as Energy Cost, Coolant Cost, and Heat Production. When used with a Bridge Component, the HPCA can connect to Network Switches for combining and routing Computation from multiple sources to one or more destinations.
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
@@ -4921,7 +4982,15 @@ gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
 gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
 
 gregtech.machine.data_access_hatch.optical.receiver.name=Optical Data Reception Hatch
+gregtech.machine.data_access_hatch.optical.receiver.tooltip=Research Data Input for Multiblocks
 gregtech.machine.data_access_hatch.optical.transmitter.name=Optical Data Transmission Hatch
+gregtech.machine.data_access_hatch.optical.transmitter.tooltip=Research Data Output for Multiblocks
+gregtech.machine.computation_hatch.transmitter.name=Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.tooltip=Computation Data Output for Multiblocks
+gregtech.machine.computation_hatch.receiver.name=Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.tooltip=Computation Data Input for Multiblocks
+gregtech.machine.research_station.object_holder.name=Object Holder
+gregtech.machine.research_station.object_holder.tooltip=Advanced Holding Mechanism for Research Station
 
 gregtech.machine.laser_hatch.source.name=Laser Source Hatch
 gregtech.machine.laser_hatch.source.tooltip1=Receiving power from distance
@@ -4999,6 +5068,7 @@ gregtech.recipe.cleanroom=Requires %s
 gregtech.recipe.cleanroom.display_name=Cleanroom
 gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
 gregtech.recipe.research=Requires Research
+gregtech.recipe.computation_per_tick=Computation: %,d CWU/t
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
@@ -5227,6 +5297,11 @@ gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
 gregtech.multiblock.energy_consumption=Energy Usage: %s EU/t
+gregtech.multiblock.computation.max=Max Computation: %s CWU/t
+gregtech.multiblock.computation.usage=Using: %s CWU/t
+gregtech.multiblock.computation.non_bridging=Non-bridging connection found
+gregtech.multiblock.computation.non_bridging.detailed=A Reception Hatch is linked to a machine which cannot bridge
+gregtech.multiblock.computation.not_enough_computation=§cWARNING:§f Machine needs more computation.
 
 gregtech.multiblock.power_substation.stored=Stored: %s EU
 gregtech.multiblock.power_substation.capacity=Capacity: %s EU
@@ -5242,6 +5317,20 @@ gregtech.multiblock.power_substation.time_days=%s Days
 gregtech.multiblock.power_substation.time_years=%s Years
 gregtech.multiblock.power_substation.time_forever=Forever
 gregtech.multiblock.power_substation.under_one_hour_left=Less than 1 hour until fully drained!
+
+gregtech.multiblock.hpca.computation=Providing: %s / %s CWU/t
+gregtech.multiblock.hpca.energy=Using: %s / %s EU/t (%s)
+gregtech.multiblock.hpca.coolant=Needs up to: %s L/t PCB Coolant
+gregtech.multiblock.hpca.cooling=Cooling:
+gregtech.multiblock.hpca.temperature=Temperature:
+gregtech.multiblock.hpca.error_damaged=Damaged component in structure
+gregtech.multiblock.hpca.error_temperature=Temperature above 100C, components may be damaged!
+gregtech.multiblock.hpca.warning_temperature=Temperature above 50C, components may be damaged at 100C!
+gregtech.multiblock.hpca.warning_temperature_active_cool=Fully utilizing active coolers
+gregtech.multiblock.hpca.warning_structure_header=Structure Hints:
+gregtech.multiblock.hpca.warning_multiple_bridges=- Multiple bridges in structure (provides no additional benefit)
+gregtech.multiblock.hpca.warning_no_computation=- No computation providers
+gregtech.multiblock.hpca.warning_low_cooling=- Not enough cooling
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
