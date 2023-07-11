@@ -530,6 +530,8 @@ metaitem.tool.datastick.name=データスティック
 metaitem.tool.datastick.tooltip=単純なデータの保管に
 metaitem.tool.dataorb.name=データオーブ
 metaitem.tool.dataorb.tooltip=複雑なデータの保管に
+metaitem.tool.datamodule.name=データModule
+metaitem.tool.datamodule.tooltip=とても複雑なデータの保管に/n§cデータバンクで飲み読み取り可能
 metaitem.circuit.integrated.name=プログラム回路
 metaitem.circuit.integrated.tooltip=使うと設定画面を開く/n/nプログラム回路スロットを持つ機械に/nシフト右クリックをすると/nこの回路の番号に設定される/n
 metaitem.circuit.integrated.gui=プログラム回路設定
@@ -1813,6 +1815,9 @@ gregtech.material.caprolactam=カプロラクタム
 gregtech.material.nitrosyl_chloride=塩化ニトロシル
 gregtech.material.butyraldehyde=ブチルアルデヒド
 gregtech.material.polyvinyl_butyral=ポリビニルブチラール
+gregtech.material.biphenyl=ビフェニル
+gregtech.material.polychlorinated_biphenyl=ポリ塩化ビフェニル (PCB)
+gregtech.material.pcb_coolant=誘電PCBクーラント
 
 
 # Unknown Composition Materials
@@ -2244,6 +2249,7 @@ recipemap.gas_collector.name=ガス収集機
 recipemap.rock_breaker.name=破砕機
 recipemap.primitive_blast_furnace.name=初歩的な溶鉱炉
 recipemap.coke_oven.name=コークス炉
+recipemap.research_station.name=研究設備
 
 gregtech.recipe.category.arc_furnace_recycling=リサイクル (アーク炉)
 gregtech.recipe.category.macerator_recycling=リサイクル (粉砕機)
@@ -2288,6 +2294,7 @@ tile.brittle_charcoal.tooltip.1=炭窯で製造される。
 tile.brittle_charcoal.tooltip.2=採掘すると木炭を得られる。
 
 tile.optical_pipe_normal.name=光ファイバーケーブル
+tile.optical_pipe_normal.tooltip1=§f計算情報§7や§f研究データ§7を転送
 
 tile.laser_pipe_normal.name=レーザー伝達ケーブル
 tile.laser_pipe_normal.tooltip1=エネルギーを損失無しで直線的に伝達する
@@ -2641,8 +2648,13 @@ tile.cleanroom_casing.filter_sterile.tooltip=§a滅菌§7環境を構築する
 
 # Computer Casings
 tile.computer_casing.computer_casing.name=コンピュータ外装
+tile.computer_casing.computer_casing.tooltip=ナイスで綺麗な外装
 tile.computer_casing.computer_heat_vent.name=コンピュータ排熱口
+tile.computer_casing.computer_heat_vent.tooltip=フィルタ付きの排気口
 tile.computer_casing.high_power_casing.name=高出力外装
+tile.computer_casing.high_power_casing.tooltip=出力が上昇中!
+tile.computer_casing.advanced_computer_casing.name=発展型コンピュータ外装
+tile.computer_casing.advanced_computer_casing.tooltip=数千の量子ビット幅
 
 # Asphalt
 tile.asphalt.asphalt.name=アスファルト
@@ -4282,6 +4294,36 @@ gregtech.machine.world_accelerator.working_area_random=  Random Tickモード:§
 gregtech.machine.world_accelerator.mode_tile=Tile Entityモード
 gregtech.machine.world_accelerator.mode_entity=Random Tickモード
 
+# HPCA Components
+gregtech.machine.hpca.empty_component.name=空のHPCAコンポーネント
+gregtech.machine.hpca.empty_component.tooltip=空きスペースを埋めるために
+gregtech.machine.hpca.heat_sink_component.name=HPCAヒートシンクコンポーネント
+gregtech.machine.hpca.heat_sink_component.tooltip=冷却無料! 何でもタダなの?
+gregtech.machine.hpca.active_cooler_component.name=HPCAアクティブ冷却コンポーネント
+gregtech.machine.hpca.active_cooler_component.tooltip=無料じゃないけどより効率的な冷却
+gregtech.machine.hpca.computation_component.name=HPCA計算コンポーネント
+gregtech.machine.hpca.computation_component.tooltip=赤ちゃんの初めてのコンピュータ
+gregtech.machine.hpca.advanced_computation_component.name=発展型HPCA計算コンポーネント
+gregtech.machine.hpca.advanced_computation_component.tooltip=メジャーリーグで計算
+gregtech.machine.hpca.bridge_component.name=HPCAブリッジコンポーネント
+gregtech.machine.hpca.bridge_component.tooltip=HPCAの "アレイ"はここから来ているんだ
+
+gregtech.machine.hpca.computation_component.damaged.name=壊れたHPCA計算コンポーネント
+gregtech.machine.hpca.computation_component.damaged.tooltip=無料のリサイクル可能な素材
+gregtech.machine.hpca.advanced_computation_component.damaged.name=壊れた発展型HPCA計算コンポーネント
+gregtech.machine.hpca.advanced_computation_component.damaged.tooltip=手も足も出なかった
+
+gregtech.machine.hpca.component_general.upkeep_eut=§e維持エネルギー: §f%,d EU/t
+gregtech.machine.hpca.component_general.max_eut=§6最大エネルギー: §f%,d EU/t
+gregtech.machine.hpca.component_type.cooler_passive=§b冷却タイプ: §fパッシブ
+gregtech.machine.hpca.component_type.cooler_active=§b冷却タイプ: §fアクティブ
+gregtech.machine.hpca.component_type.cooler_cooling=§a供給: §f%,d 冷却P
+gregtech.machine.hpca.component_type.cooler_active_coolant=§c要求: §f%,d L/t %s
+gregtech.machine.hpca.component_type.computation_cwut=§9計算能力: §f%,d CWU/t
+gregtech.machine.hpca.component_type.computation_cooling=§c要求: §f%,d 冷却P
+gregtech.machine.hpca.component_type.bridge=§fHPCA§7が§fNetwork Switches§7に接続できるようになる
+gregtech.machine.hpca.component_type.damaged=HPCAはオーバーヒートで壊れてしまう!
+
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=搬出口からの搬入を許可
 gregtech.machine.basic.input_from_output_side.disallow=搬出口からの搬入を禁止
@@ -4630,6 +4672,7 @@ gregtech.machine.data_bank.tooltip.1=個人用NAS (ネットワークHDD)
 gregtech.machine.data_bank.tooltip.2=大容量データストレージ。光ファイバーで輸送。
 gregtech.machine.data_bank.tooltip.3=データバンクは連結可能
 gregtech.machine.data_bank.tooltip.4=データハッチ1つにつき%sEU/t、連結時%sEU/t消費する。
+gregtech.multiblock.data_bank.description=データバンクはアセンブリライン用研究データを複数のアセンブリラインで共有できるようにするマルチブロックです。さらに、アセンブリラインがより複雑なデータを読み取れるようにします。
 
 gregtech.machine.power_substation.name=大型蓄電器
 gregtech.machine.power_substation.tooltip1=中央集権型送電網の心臓部
@@ -4637,7 +4680,7 @@ gregtech.machine.power_substation.tooltip2=§f蓄電ブロック§7のTierを揃
 gregtech.machine.power_substation.tooltip3=§f蓄電ブロック§7は§%d層§7まで増築できる。
 gregtech.machine.power_substation.tooltip4=§f24時間毎に§7最大蓄電量の§f1%%§7を損失する。
 gregtech.machine.power_substation.tooltip5=蓄電ブロック当たり§f%,d EU/t§7の受動損失。
-gregtech.multiblock.power_substation.description=
+gregtech.multiblock.power_substation.description=大型蓄電器は大量の電力を蓄えることができるマルチブロックです。蓄電ブロックの層は18層まで拡張できます。蓄電ブロック層は埋め尽くさないといけないので、空いた空間は空の蓄電ブロックを設置しましょう。
 
 gregtech.machine.active_transformer.name=大型変圧器
 gregtech.machine.active_transformer.tooltip1=変圧器: レーザーが代理
@@ -4645,6 +4688,24 @@ gregtech.machine.active_transformer.tooltip2=任意の数の§fエナジーハ�
 gregtech.machine.active_transformer.tooltip3=
 gregtech.machine.active_transformer.tooltip3.5=レーザー§7を用いることで驚異の超距離電力輸送が可能。
 gregtech.multiblock.active_transformer.description=大型変圧器は任意の電圧及び任意の数のエナジーハッチとダイナモハッチを組み込むことができるマルチブロックです。レーザー照射ハッチとレーザー照準ハッチによって大型変圧器同士を連携させると、長距離の無損失電力輸送ができます。 レーザーは直線でなければならず、そうでなければ電力は輸送されません。
+
+gregtech.machine.research_station.name=研究設備
+gregtech.machine.research_station.tooltip.1=単なるマルチブロックスキャナーではない
+gregtech.machine.research_station.tooltip.2=§fデータオーブ§7または§fデータモジュール§7へのスキャンに用いる。
+gregtech.machine.research_station.tooltip.3=動作には§f計算力§7が必要です。
+gregtech.multiblock.research_station.description=研究設備はアセンブリライン用のより複雑な研究を行うマルチブロックです。研究にはデータオーブまたはデータモジュールが必要です。また、動作には高機能計算アレイ (HPCAs) から供給されるComputer Work Units (CWU/t)が必要です。
+
+gregtech.machine.network_switch.name=ネットワークスイッチ
+gregtech.machine.network_switch.tooltip.1=Ethernet Hub
+gregtech.machine.network_switch.tooltip.2=Used to route and distribute §fComputation§7.
+gregtech.machine.network_switch.tooltip.3=Can combine any number of Computation §fReceivers§7 into any number of Computation §fTransmitters§7.
+gregtech.multiblock.network_switch.description=The Network Switch is a multiblock structure used for distributing Computation from many sources to many destinations. It can accept any number of Computation Data Reception or Transmission Hatches. It is necessary for Research Data which requires much higher Computation, as the Research Station can only accept one Computation Data Reception Hatch. HPCAs must have a Bridge Component for the Network Switch to be able to access their Computation.
+
+gregtech.machine.high_performance_computing_array.name=高機能計算アレイ　(HPCA)
+gregtech.machine.high_performance_computing_array.tooltip.1=Just your average Supercomputer
+gregtech.machine.high_performance_computing_array.tooltip.2=Used to generate §fComputation§7 (and heat).
+gregtech.machine.high_performance_computing_array.tooltip.3=Requires HPCA components to generate §fCWU/t§7 (Compute Work Units).
+gregtech.multiblock.high_performance_computing_array.description=The High Performance Computing Array (HPCA) is a multiblock structure used for creating Compute Work Units (CWU/t) for more complex Assembly Line Research Data. The structure has a flexible 3x3 area which can be filled in any way with HPCA components. Different components can provide different amounts of Computation, Cooling, as well as Energy Cost, Coolant Cost, and Heat Production. When used with a Bridge Component, the HPCA can connect to Network Switches for combining and routing Computation from multiple sources to one or more destinations.
 
 gregtech.machine.central_monitor.name=セントラルモニター
 gregtech.multiblock.central_monitor.low_power=電力不足
