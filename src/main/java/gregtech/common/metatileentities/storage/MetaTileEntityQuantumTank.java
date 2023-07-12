@@ -350,8 +350,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                 })
                         .setAlwaysShowFull(true).setDrawHoveringText(false);
 
-        return ModularUI.defaultBuilder()
-                .widget(new ImageWidget(7, 16, 81, 46, GuiTextures.DISPLAY))
+        ModularUI.Builder builder = ModularUI.defaultBuilder();
+        builder.widget(new ImageWidget(7, 16, 81, 46, GuiTextures.DISPLAY))
                 .widget(new LabelWidget(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF))
                 .widget(tankWidget)
                 .widget(new AdvancedTextWidget(11, 30, getFluidAmountText(tankWidget), 0xFFFFFF))
@@ -371,9 +371,13 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                                 .shouldUseBaseBackground())
                 .widget(new ToggleButtonWidget(43, 64, 18, 18,
                         GuiTextures.BUTTON_FLUID_VOID, this::isVoiding, this::setVoiding)
-                                .setTooltipText("gregtech.gui.fluid_voiding.tooltip")
-                                .shouldUseBaseBackground())
-                .bindPlayerInventory(entityPlayer.inventory)
+                        .setTooltipText("gregtech.gui.fluid_voiding.tooltip")
+                        .shouldUseBaseBackground());
+        if (isConnected()) {
+            // todo testing purposes
+            builder.image(116, 32, 20, 20, GuiTextures.INFO_ICON);
+        }
+                return builder.bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
     }
 

@@ -355,7 +355,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 .bindPlayerInventory(entityPlayer.inventory);
         if (isConnected()) {
             // todo testing purposes
-            builder.image(100, 100, 20, 20, GuiTextures.INFO_ICON);
+            builder.image(116, 32, 20, 20, GuiTextures.INFO_ICON);
         }
 
         return builder.build(getHolder(), entityPlayer);
