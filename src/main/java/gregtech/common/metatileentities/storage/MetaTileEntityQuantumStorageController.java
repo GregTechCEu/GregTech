@@ -1,10 +1,8 @@
 package gregtech.common.metatileentities.storage;
 
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.google.common.collect.ImmutableList;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.capability.impl.FluidTankList;
@@ -14,11 +12,12 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +30,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -141,47 +139,62 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         // BlockPos u = getPos().up(), d = getPos().down(), n = getPos().north(), s = getPos().south(), e = getPos().east(), w = getPos().west();
         Queue<BlockPos> searchQueue = new LinkedList<>();
-        Set<BlockPos> discovered = new HashSet<>();
+        Set<BlockPos> checked = new HashSet<>();
+
+        // check the posses around the controller
         for (EnumFacing facing : EnumFacing.VALUES) {
             searchQueue.add(getPos().offset(facing));
         }
 
+        // while there are blocks to search
         while (!searchQueue.isEmpty()) {
             BlockPos pos = searchQueue.remove();
-            discovered.add(pos);
+            checked.add(pos);
 
-            if (!isInRange(pos)) continue;
-            if (!getWorld().isBlockLoaded(pos, false)) continue;
+            if (!isInRange(pos) || !getWorld().isBlockLoaded(pos, false)) continue;
 
+            if (getWorld().getBlockState(pos).getBlock() == Blocks.AIR) continue;
             MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
             if (!(mte instanceof IQuantumStorage<?> storage)) continue;
 
             // connected to some other network already, ignore
             if (storage.isConnected() && !storage.getControllerPos().equals(getPos())) continue;
+
+            // valid chest/tank located, add it
             storageInstances.put(pos, new WeakReference<>(storage));
             storagePositions.add(pos);
             storage.setConnected(this);
             oldInstances.remove(pos);
             oldPositions.remove(pos);
+            GTLog.logger.warn("Added storage " + pos + "to controller");
 
-
+            // check against already check posses so we don't recheck a checked pos
             for (EnumFacing facing : EnumFacing.VALUES) {
                 BlockPos offsetPos = pos.offset(facing);
-                if (!discovered.contains(offsetPos)) {
+                if (!checked.contains(offsetPos) && !getPos().equals(offsetPos)) {
+
+                    // add a new pos to search
                     searchQueue.add(offsetPos);
-                    discovered.add(offsetPos);
                 }
             }
         }
 
+        // check old posses to disconnect the storages
         for (BlockPos pos : oldPositions) {
+
+            // if we already checked this pos before, don't check it again
+            if (checked.contains(pos)) continue;
+
+            // if the pos is air, there's nothing to check
+            if (getWorld().getBlockState(pos).getBlock() == Blocks.AIR) continue;
+
             IQuantumStorage<?> storage = null;
             if (oldInstances.containsKey(pos)) {
                 storage = oldInstances.get(pos).get();
             } else {
                 MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
-                if (mte instanceof IQuantumStorage) {
-                    storage = (IQuantumStorage<?>) mte;
+                if (mte instanceof IQuantumStorage<?> quantumStorage) {
+                    storage = quantumStorage;
                 }
             }
             if (storage != null) storage.setDisconnected();
@@ -234,23 +247,22 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         }
 
         private void rebuildCache() {
+            this.invalidate();
+
             List<IItemHandler> itemHandlerList = new ArrayList<>();
             List<IFluidTank> fluidTankList = new ArrayList<>();
             for (BlockPos pos : storagePositions) {
                 IQuantumStorage<?> storage = getStorage(pos, false);
                 if (storage == null) continue;
                 switch (storage.getType()) {
-                    case ITEM:
-                        itemHandlerList.add((IItemHandler) storage.getTypeValue());
-                        break;
-                    case FLUID:
-                        fluidTankList.add((IFluidTank) storage.getTypeValue());
-                        break;
+                    case ITEM -> itemHandlerList.add((IItemHandler) storage.getTypeValue());
+                    case FLUID -> fluidTankList.add((IFluidTank) storage.getTypeValue());
                 }
             }
+
             // todo allow this "allowSameFluidFill" to be configured in this controller?
-            fluidTanks = new FluidTankList(false, fluidTankList);
-            itemHandlers = itemHandlerList;
+            this.fluidTanks = new FluidTankList(false, fluidTankList);
+            this.itemHandlers = itemHandlerList;
         }
 
         // IFluidHandler
