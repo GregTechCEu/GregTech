@@ -113,17 +113,17 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                 new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
         ));
 
-        if (recipeMapWorkable.getRecipeEUt() < 0) {
+        if (!recipeMapWorkable.consumesEnergy()) {
             list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getRecipeEUt() * -1)).setStyle(new Style().setColor(TextFormatting.RED)),
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(Math.abs(recipeMapWorkable.getInfoProviderEUt()))).setStyle(new Style().setColor(TextFormatting.RED)),
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getInfoProviderEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+            ));
+
+            list.add(new TextComponentTranslation("behavior.tricorder.multiblock_energy_output",
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getOutputVoltage())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                    new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getOutputVoltage())]).setStyle(new Style().setColor(TextFormatting.YELLOW))
             ));
         }
-
-        list.add(new TextComponentTranslation("behavior.tricorder.multiblock_energy_output",
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getOutputVoltage())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
-                new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getOutputVoltage())]).setStyle(new Style().setColor(TextFormatting.YELLOW))
-        ));
 
         if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
             list.add(new TextComponentTranslation("behavior.tricorder.multiblock_maintenance",

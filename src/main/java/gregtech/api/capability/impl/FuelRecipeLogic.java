@@ -22,6 +22,11 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     }
 
     @Override
+    public boolean consumesEnergy() {
+        return false;
+    }
+
+    @Override
     protected boolean hasEnoughPower(@Nonnull int[] resultOverclock) {
         // generators always have enough power to run recipes
         return true;

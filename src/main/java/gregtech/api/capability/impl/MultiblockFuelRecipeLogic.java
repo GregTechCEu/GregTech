@@ -76,6 +76,13 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         return Integer.MAX_VALUE;
     }
 
+    /**
+     * Boost the energy production.
+     * Should not change the state of the workable logic. Only read current values.
+     *
+     * @param production the energy amount to boost
+     * @return the boosted energy amount
+     */
     protected long boostProduction(long production) {
         return production;
     }
@@ -88,6 +95,16 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
             if (!simulate) getEnergyContainer().changeEnergy(-euToDraw);
             return true;
         } else return false;
+    }
+
+    @Override
+    public int getInfoProviderEUt() {
+        return (int) boostProduction(super.getInfoProviderEUt());
+    }
+
+    @Override
+    public boolean consumesEnergy() {
+        return false;
     }
 
     @Override

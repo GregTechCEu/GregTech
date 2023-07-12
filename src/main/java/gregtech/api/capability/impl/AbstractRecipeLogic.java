@@ -148,6 +148,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return metaTileEntity.getExportFluids();
     }
 
+    /**
+     * @return true if energy is consumed by this Recipe Logic, otherwise false
+     */
+    public boolean consumesEnergy() {
+        return true;
+    }
+
     @Nonnull
     @Override
     public final String getName() {
@@ -803,6 +810,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     public int getRecipeEUt() {
         return recipeEUt;
+    }
+
+    /**
+     * @return the current recipe's EU/t for TOP/Waila/Tricorder
+     */
+    public int getInfoProviderEUt() {
+        return getRecipeEUt();
     }
 
     /**
