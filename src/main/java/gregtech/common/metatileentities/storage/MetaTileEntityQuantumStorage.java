@@ -5,6 +5,7 @@ import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -107,6 +108,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
     private boolean tryFindNewNetwork() {
         for (EnumFacing facing : EnumFacing.VALUES) {
+            if (getWorld().getBlockState(getPos().offset(facing)).getBlock() == Blocks.AIR) continue;
             MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), getPos().offset(facing));
             IQuantumController candidate = null;
             if (mte instanceof IQuantumStorage<?> storage) {
