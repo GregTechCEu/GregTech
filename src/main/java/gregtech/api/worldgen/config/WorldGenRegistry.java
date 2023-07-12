@@ -29,7 +29,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -249,8 +248,8 @@ public class WorldGenRegistry {
                 break;
             }
 
-            // Finds the file name to create the Definition with
-            String depositName = veinPath.relativize(worldgenDefinition).toString().replace(File.separatorChar, '/');
+            // Finds the file name to create the Definition with, using a consistent separator character
+            String depositName = FileUtility.nativeSepToSlash(veinPath.relativize(worldgenDefinition).toString());
 
             try {
                 // Creates the deposit definition and initializes various components based on the json entries in the file
@@ -280,8 +279,8 @@ public class WorldGenRegistry {
                 break;
             }
 
-            // Finds the file name to create the Definition with
-            String depositName = bedrockVeinPath.relativize(worldgenDefinition).toString().replace(File.separatorChar, '/');
+            // Finds the file name to create the Definition with, using a consistent separator character
+            String depositName = FileUtility.nativeSepToSlash(bedrockVeinPath.relativize(worldgenDefinition).toString());
 
             try {
                 // Creates the deposit definition and initializes various components based on the json entries in the file
@@ -424,7 +423,7 @@ public class WorldGenRegistry {
 
     private static void removeExistingFiles(Path root, @Nonnull List<? extends IWorldgenDefinition> definitions) {
         for (IWorldgenDefinition definition : definitions) {
-            Path filePath = root.resolve(Paths.get(definition.getDepositName().replace('/', File.separatorChar)));
+            Path filePath = root.resolve(Paths.get(FileUtility.slashToNativeSep(definition.getDepositName())));
 
             try {
                 if (Files.exists(filePath)) {
@@ -442,7 +441,7 @@ public class WorldGenRegistry {
         while (it.hasNext()) {
             T definition = it.next();
 
-            JsonObject element = FileUtility.tryExtractFromFile(root.resolve(definition.getDepositName().replace('/', File.separatorChar)));
+            JsonObject element = FileUtility.tryExtractFromFile(root.resolve(FileUtility.slashToNativeSep(definition.getDepositName())));
 
             if (element == null) {
                 GTLog.logger.error("Addon mod tried to register bad ore definition at {}", definition.getDepositName());

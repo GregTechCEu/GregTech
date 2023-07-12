@@ -77,7 +77,10 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
         return true;
     }
 
-    //This is the file name
+    /**
+     * Must be converted using {@link gregtech.api.util.FileUtility#slashToNativeSep(String)}
+     * before it can be used as a file path
+     */
     @Override
     public String getDepositName() {
         return depositName;
