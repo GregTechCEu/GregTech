@@ -357,7 +357,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
         if (isConnected()) {
             // todo testing purposes
             builder.widget(new ImageWidget(116, 32, 20, 20, GuiTextures.INFO_ICON)
-                    .setTooltip("Connected to Quantum Controller")
+                    .setTooltip("Connected to Quantum Controller: " + getControllerPos())
             );
         }
 
