@@ -375,7 +375,9 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                         .shouldUseBaseBackground());
         if (isConnected()) {
             // todo testing purposes
-            builder.image(116, 32, 20, 20, GuiTextures.INFO_ICON);
+            builder.widget(new ImageWidget(116, 32, 20, 20, GuiTextures.INFO_ICON)
+                    .setTooltip("Connected to Quantum Controller")
+            );
         }
                 return builder.bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
