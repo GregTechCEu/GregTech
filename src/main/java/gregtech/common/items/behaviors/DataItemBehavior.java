@@ -16,6 +16,21 @@ import java.util.List;
 
 public class DataItemBehavior implements IItemBehaviour, IDataItem {
 
+    private final boolean requireDataBank;
+
+    public DataItemBehavior() {
+        this.requireDataBank = false;
+    }
+
+    public DataItemBehavior(boolean requireDataBank) {
+        this.requireDataBank = requireDataBank;
+    }
+
+    @Override
+    public boolean requireDataBank() {
+        return requireDataBank;
+    }
+
     @Override
     public void addInformation(@Nonnull ItemStack itemStack, List<String> lines) {
         String researchId = AssemblyLineManager.readResearchId(itemStack);

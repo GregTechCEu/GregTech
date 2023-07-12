@@ -47,13 +47,14 @@ public class MetaItemBracketHandler implements IBracketHandler {
     public static void rebuildComponentRegistry() {
         metaItemNames.clear();
         for (MetaItem<?> item : MetaItem.getMetaItems()) {
-            Map<String, ItemStack> map = new Object2ObjectOpenHashMap<>();
+            String namespace = Objects.requireNonNull(item.getRegistryName()).getNamespace();
+            Map<String, ItemStack> map = metaItemNames.computeIfAbsent(namespace, k -> new Object2ObjectOpenHashMap<>());
+
             for (MetaValueItem entry : item.getAllItems()) {
                 if (!"meta_item".equals(entry.unlocalizedName)) {
                     map.put(entry.unlocalizedName, entry.getStackForm());
                 }
             }
-            metaItemNames.put(Objects.requireNonNull(item.getRegistryName()).getNamespace(), map);
         }
 
         for (Map.Entry<Material, BlockCompressed> entry : MetaBlocks.COMPRESSED.entrySet()) {
@@ -61,53 +62,65 @@ public class MetaItemBracketHandler implements IBracketHandler {
             Map<String, ItemStack> map = metaBlockNames.computeIfAbsent(modid, (k) -> new Object2ObjectOpenHashMap<>());
             String name = "block" + entry.getKey().toCamelCaseString();
             ItemStack stack = entry.getValue().getItem(entry.getKey());
-            map.put(modid + ':' + name, stack);
+            map.put(name, stack);
         }
         for (Map.Entry<Material, BlockFrame> entry : MetaBlocks.FRAMES.entrySet()) {
             String modid = entry.getKey().getModid();
             Map<String, ItemStack> map = metaBlockNames.computeIfAbsent(modid, (k) -> new Object2ObjectOpenHashMap<>());
             String name = "frame" + entry.getKey().toCamelCaseString();
             ItemStack stack = entry.getValue().getItem(entry.getKey());
-            map.put(modid + ':' + name, stack);
+            map.put(name, stack);
         }
 
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             String modid = registry.getModid();
-            Map<String, ItemStack> map = new Object2ObjectOpenHashMap<>();
+            Map<String, ItemStack> map = metaBlockNames.computeIfAbsent(modid, (k) -> new Object2ObjectOpenHashMap<>());
             for (BlockCable cable : MetaBlocks.CABLES.get(modid)) {
                 for (Material material : cable.getEnabledMaterials()) {
-                    map.put(modid + ':' + cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
+                    map.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
                 }
             }
             for (BlockItemPipe cable : MetaBlocks.ITEM_PIPES.get(modid)) {
                 for (Material material : cable.getEnabledMaterials()) {
-                    map.put(modid + ':' + cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
+                    map.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
                 }
             }
             for (BlockFluidPipe cable : MetaBlocks.FLUID_PIPES.get(modid)) {
                 for (Material material : cable.getEnabledMaterials()) {
-                    map.put(modid + ':' + cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
+                    map.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
                 }
             }
             metaBlockNames.put(modid, map);
         }
     }
 
+    public static void clearComponentRegistry() {
+        metaItemNames.clear();
+        metaBlockNames.clear();
+    }
+
     public static ItemStack getMetaItem(String name) {
-        String[] resultName = MetaTileEntityBracketHandler.splitObjectName(name);
-        Map<String, ItemStack> itemMap = metaItemNames.get(resultName[0] + ':' + resultName[1]);
-        Map<String, ItemStack> blockMap = metaBlockNames.get(resultName[0] + ':' + resultName[1]);
+        String[] split = MetaTileEntityBracketHandler.splitObjectName(name);
+        String modid = split[0];
+        String itemName = split[1];
+
+        Map<String, ItemStack> itemMap = metaItemNames.get(modid);
+        Map<String, ItemStack> blockMap = metaBlockNames.get(modid);
 
         ItemStack item;
-        if ((item = itemMap.get(name)) != null) {
-            return item.copy();
+        if (itemMap != null) {
+            item = itemMap.get(itemName);
+            if (item != null) return item.copy();
         }
-        if ((item = blockMap.get(name)) != null) {
-            return item.copy();
+
+        if (blockMap != null) {
+            item = blockMap.get(itemName);
+            if (item != null) return item.copy();
         }
-        if ((item = MetaTileEntityBracketHandler.getMetaTileEntityItem(resultName)) != null) {
-            return item.copy();
-        }
+
+        item = MetaTileEntityBracketHandler.getMetaTileEntityItem(split);
+        if (item != null) return item.copy();
+
         if (GroovyScriptModule.isCurrentlyRunning()) {
             GroovyLog.get().error("Could not resolve metaitem('{}')", name);
         }

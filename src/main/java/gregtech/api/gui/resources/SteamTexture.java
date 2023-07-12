@@ -24,6 +24,13 @@ public class SteamTexture {
         );
     }
 
+    public static SteamTexture fullImage(String path, int imageWidth, int imageHeight, int cornerWidth, int cornerHeight) {
+        return new SteamTexture(
+                AdoptableTextureArea.fullImage(String.format(path, BRONZE), imageWidth, imageHeight, cornerWidth, cornerHeight),
+                AdoptableTextureArea.fullImage(String.format(path, STEEL), imageWidth, imageHeight, cornerWidth, cornerHeight)
+        );
+    }
+
     public TextureArea get(boolean isHighPressure) {
         return isHighPressure ?  steelTexture : bronzeTexture;
     }

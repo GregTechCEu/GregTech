@@ -44,6 +44,8 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -797,6 +799,25 @@ public class GTUtility {
         Set<ItemStack> set = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingItemDamageCount());
         set.addAll(subItems);
         return set;
+    }
+
+    /**
+     * Get fluidstack from a container.
+     *
+     * @param ingredient the fluidstack or fluid container item
+     * @return the fluidstack in container
+     */
+    @Nullable
+    public static FluidStack getFluidFromContainer(Object ingredient) {
+        if (ingredient instanceof FluidStack) {
+            return (FluidStack) ingredient;
+        } else if (ingredient instanceof ItemStack) {
+            ItemStack itemStack = (ItemStack) ingredient;
+            IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            if (fluidHandler != null)
+                return fluidHandler.drain(Integer.MAX_VALUE, false);
+        }
+        return null;
     }
 
     /**

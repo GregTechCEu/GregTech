@@ -539,5 +539,10 @@ public class UnknownCompositionMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .build()
                 .setFormula("?(ZnSO4)", true);
+
+        PCBCoolant = new Material.Builder(1659, gregtechId("pcb_coolant"))
+				.fluid()
+				.color(0xD5D69C)
+				.build();
     }
 }

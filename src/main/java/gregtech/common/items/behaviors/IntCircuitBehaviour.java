@@ -1,5 +1,6 @@
 package gregtech.common.items.behaviors;
 
+import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
@@ -9,7 +10,6 @@ import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
@@ -35,10 +35,10 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
         MetaTileEntity mte = GTUtility.getMetaTileEntity(world, pos);
         ItemStack stack = player.getHeldItem(hand);
 
-        if (!(mte instanceof SimpleMachineMetaTileEntity)) {
+        if (!(mte instanceof IGhostSlotConfigurable)) {
             return ActionResult.newResult(EnumActionResult.FAIL, stack);
         } else if (!world.isRemote) {
-            ((SimpleMachineMetaTileEntity) mte).setGhostCircuitConfig(IntCircuitIngredient.getCircuitConfiguration(stack));
+            ((IGhostSlotConfigurable) mte).setGhostCircuitConfig(IntCircuitIngredient.getCircuitConfiguration(stack));
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
     }

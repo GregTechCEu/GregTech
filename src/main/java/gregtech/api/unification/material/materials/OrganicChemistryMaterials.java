@@ -526,5 +526,21 @@ public class OrganicChemistryMaterials {
                 .flags(GENERATE_PLATE, DISABLE_DECOMPOSITION, NO_SMASHING)
                 .components(Butyraldehyde, 1, PolyvinylAcetate, 1)
                 .build();
+
+        Biphenyl = new Material.Builder(1075, gregtechId("biphenyl"))
+                .dust()
+                .color(0x8B8C4F).iconSet(FINE)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Carbon, 12, Hydrogen, 10)
+                .build()
+                .setFormula("(C6H5)2", true);
+
+        PolychlorinatedBiphenyl = new Material.Builder(1076, gregtechId("polychlorinated_biphenyl"))
+                .fluid()
+                .color(0xCACC0E)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Carbon, 12, Hydrogen, 8, Chlorine, 2)
+                .build()
+                .setFormula("(C6H4Cl)2", true);
     }
 }

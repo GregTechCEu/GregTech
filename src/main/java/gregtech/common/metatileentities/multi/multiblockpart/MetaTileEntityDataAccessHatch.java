@@ -15,6 +15,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
@@ -26,6 +27,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityAssemblyLine;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityDataBank;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.resources.I18n;
@@ -76,7 +78,9 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
             @Nonnull
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                if (AssemblyLineManager.isStackDataItem(stack) && AssemblyLineManager.hasResearchTag(stack)) {
+                var controller = MetaTileEntityDataAccessHatch.this.getController();
+                boolean isDataBank = controller instanceof MetaTileEntityDataBank;
+                if (AssemblyLineManager.isStackDataItem(stack, isDataBank) && AssemblyLineManager.hasResearchTag(stack)) {
                     return super.insertItem(slot, stack, simulate);
                 }
                 return stack;
@@ -140,10 +144,12 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     private void rebuildData() {
         if (isCreative) return;
         recipes.clear();
+        boolean isDataBank = getController() instanceof MetaTileEntityDataBank;
         for (int i = 0; i < this.importItems.getSlots(); i++) {
             ItemStack stack = this.importItems.getStackInSlot(i);
             String researchId = AssemblyLineManager.readResearchId(stack);
-            if (researchId != null) {
+            boolean isValid = AssemblyLineManager.isStackDataItem(stack, isDataBank);
+            if (researchId != null && isValid) {
                 Collection<Recipe> collection = ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId);
                 if (collection != null) {
                     recipes.addAll(collection);
@@ -215,5 +221,13 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     @Override
     public void registerAbilities(List<IDataAccessHatch> abilityList) {
         abilityList.add(this);
+    }
+
+    @Override
+    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+        super.addToMultiBlock(controllerBase);
+        if (!(controllerBase instanceof MetaTileEntityDataBank)) {
+            rebuildData();
+        }
     }
 }

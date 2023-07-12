@@ -62,7 +62,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -327,7 +326,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return null;
     }
 
-    public final String getMetaName() {
+    public String getMetaName() {
         return String.format("%s.machine.%s", metaTileEntityId.getNamespace(), metaTileEntityId.getPath());
     }
 
@@ -340,9 +339,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (!notifiedItemInputList.contains(input)) {
                 this.notifiedItemInputList.add((IItemHandlerModifiable) input);
             }
-        } else if (input instanceof FluidTank) {
+        } else if (input instanceof IFluidHandler) {
             if (!notifiedFluidInputList.contains(input)) {
-                this.notifiedFluidInputList.add((FluidTank) input);
+                this.notifiedFluidInputList.add((IFluidHandler) input);
             }
         }
     }

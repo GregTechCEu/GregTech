@@ -66,7 +66,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     public final ModelResourceLocation modelLocation;
     private final String name;
     private EnumBlockRenderType blockRenderType;
-    private static final ThreadLocal<BlockRenderer.BlockFace> blockFaces = ThreadLocal.withInitial(BlockRenderer.BlockFace::new);
+    protected static final ThreadLocal<BlockRenderer.BlockFace> blockFaces = ThreadLocal.withInitial(BlockRenderer.BlockFace::new);
     private static final Cuboid6 FRAME_RENDER_CUBOID = new Cuboid6(0.001, 0.001, 0.001, 0.999, 0.999, 0.999);
 
     public PipeRenderer(String name, ModelResourceLocation modelLocation) {
@@ -153,13 +153,17 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
                 sideMask[side.getIndex()] = state.shouldSideBeRendered(world, pos, side);
             }
             Textures.RENDER_STATE.set(new CubeRendererState(renderLayer, sideMask, world));
-            if (renderLayer == BlockRenderLayer.CUTOUT) {
+            if (canRenderInLayer(renderLayer)) {
                 renderState.lightMatrix.locate(world, pos);
                 PipeRenderContext renderContext = new PipeRenderContext(pos, renderState.lightMatrix, connectedSidesMap, blockedConnections, pipeType.getThickness());
                 renderContext.color = GTUtility.convertRGBtoOpaqueRGBA_CL(getPipeColor(pipeMaterial, paintingColor));
                 buildRenderer(renderContext, blockPipe, pipeTile, pipeType, pipeMaterial);
-                renderPipeBlock(renderState, renderContext);
-                renderFrame(pipeTile, pos, renderState, connectedSidesMap);
+                if (renderLayer == BlockRenderLayer.CUTOUT) {
+                    renderPipeBlock(renderState, renderContext);
+                    renderFrame(pipeTile, pos, renderState, connectedSidesMap);
+                } else {
+                    renderOtherLayers(renderLayer, renderState, renderContext);
+                }
             }
 
             ICoverable coverable = pipeTile.getCoverableImplementation();
@@ -227,7 +231,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         }
     }
 
-    private void renderPipeCube(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side) {
+    protected void renderPipeCube(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side) {
         Cuboid6 cuboid = BlockPipe.getSideBox(side, renderContext.pipeThickness);
         boolean doRenderBlockedOverlay = (renderContext.blockedConnections & (1 << side.getIndex())) > 0;
         // render connection cuboid
@@ -253,19 +257,19 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         }
     }
 
-    private static void renderOpenFace(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
+    protected static void renderOpenFace(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
         for (IVertexOperation[] vertexOperations : renderContext.openFaceRenderer) {
             renderFace(renderState, vertexOperations, side, cuboid6);
         }
     }
 
-    private static void renderPipeSide(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
+    protected static void renderPipeSide(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
         for (IVertexOperation[] vertexOperations : renderContext.pipeSideRenderer) {
             renderFace(renderState, vertexOperations, side, cuboid6);
         }
     }
 
-    private static void renderFace(CCRenderState renderState, IVertexOperation[] pipeline, EnumFacing side, Cuboid6 cuboid6) {
+    protected static void renderFace(CCRenderState renderState, IVertexOperation[] pipeline, EnumFacing side, Cuboid6 cuboid6) {
         BlockRenderer.BlockFace blockFace = blockFaces.get();
         blockFace.loadCuboidFace(cuboid6, side.getIndex());
         renderState.setPipeline(blockFace, 0, blockFace.verts.length, pipeline);
@@ -274,6 +278,24 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
     @Override
     public void renderBrightness(IBlockState state, float brightness) {
+    }
+
+    /**
+     * Override to render in other layers, e.g. emissive stuff
+     * {@link #canRenderInLayer} also need to be overridden
+     */
+    protected void renderOtherLayers(BlockRenderLayer layer, CCRenderState renderState, PipeRenderContext renderContext) {
+
+    }
+
+    /**
+     * What layers can be rendered in.
+     * See also {@link #renderOtherLayers}
+     * @param layer the current layer being rendered too
+     * @return true if this should render in {@code layer}
+     */
+    protected boolean canRenderInLayer(BlockRenderLayer layer) {
+        return layer == BlockRenderLayer.CUTOUT;
     }
 
     @Override
@@ -409,7 +431,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
             return new ColourMultiplier(color);
         }
 
-        private IVertexOperation[] getBaseVertexOperation() {
+        protected IVertexOperation[] getBaseVertexOperation() {
             if (pos == null) {
                 return lightMatrix == null ? new IVertexOperation[0] : new IVertexOperation[]{lightMatrix};
             }
@@ -423,5 +445,18 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         public int getBlockedConnections() {
             return blockedConnections;
         }
+
+        public List<IVertexOperation[]> getPipeSideRenderer() {
+            return pipeSideRenderer;
+        }
+
+        public List<IVertexOperation[]> getOpenFaceRenderer() {
+            return openFaceRenderer;
+        }
+
+        public float getPipeThickness() {
+            return pipeThickness;
+        }
+
     }
 }

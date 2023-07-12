@@ -40,9 +40,9 @@ public class RecipeMapScanner extends RecipeMap<SimpleRecipeBuilder> implements 
         NBTTagCompound compound = second.getTagCompound();
         if (compound == null) return null;
 
-        boolean isFirstDataItem = AssemblyLineManager.isStackDataItem(first);
+        boolean isFirstDataItem = AssemblyLineManager.isStackDataItem(first, true);
         if (!isFirstDataItem) return null;
-        boolean isSecondDataItem = AssemblyLineManager.isStackDataItem(second);
+        boolean isSecondDataItem = AssemblyLineManager.isStackDataItem(second, true);
         if (isSecondDataItem) {
             ItemStack output = first.copy();
             output.setTagCompound(compound.copy());

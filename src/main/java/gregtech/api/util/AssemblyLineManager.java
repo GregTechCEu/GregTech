@@ -22,8 +22,16 @@ public final class AssemblyLineManager {
     public static final String RESEARCH_ID_NBT_TAG = "researchId";
 
     @Nonnull
-    public static ItemStack getDefaultDataItem() {
+    public static ItemStack getDefaultScannerItem() {
         return MetaItems.TOOL_DATA_STICK.getStackForm();
+    }
+
+    @Nonnull
+    public static ItemStack getDefaultResearchStationItem(int cwut) {
+        if (cwut > 32) {
+            return MetaItems.TOOL_DATA_MODULE.getStackForm();
+        }
+        return MetaItems.TOOL_DATA_ORB.getStackForm();
     }
 
     private AssemblyLineManager() {}
@@ -53,16 +61,17 @@ public final class AssemblyLineManager {
     }
 
     /**
-     * @param stack the stack to check
+     * @param stack      the stack to check
+     * @param isDataBank if the caller is a Data Bank. Pass "true" here if your use-case does not matter for this check.
      * @return if the stack is a data item
      */
-    public static boolean isStackDataItem(@Nonnull ItemStack stack) {
+    public static boolean isStackDataItem(@Nonnull ItemStack stack, boolean isDataBank) {
         if (stack.getItem() instanceof MetaItem<?> metaItem) {
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(stack);
             if (valueItem == null) return false;
             for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
-                if (behaviour instanceof IDataItem) {
-                    return true;
+                if (behaviour instanceof IDataItem dataItem) {
+                    return !dataItem.requireDataBank() || isDataBank;
                 }
             }
         }
@@ -95,22 +104,33 @@ public final class AssemblyLineManager {
         if (!ConfigHolder.machines.enableResearch) return;
 
         for (AssemblyLineRecipeBuilder.ResearchRecipeEntry entry : builder.getRecipeEntries()) {
-            createDefaultResearchRecipe(entry.getResearchId(), entry.getResearchStack(), entry.getDataStack(), entry.getDuration(), entry.getEUt());
+            createDefaultResearchRecipe(entry.getResearchId(), entry.getResearchStack(), entry.getDataStack(), entry.getDuration(), entry.getEUt(), entry.getCWUt());
         }
     }
 
-    public static void createDefaultResearchRecipe(@Nonnull String researchId, @Nonnull ItemStack researchItem, @Nonnull ItemStack dataItem, int duration, int EUt) {
+    public static void createDefaultResearchRecipe(@Nonnull String researchId, @Nonnull ItemStack researchItem, @Nonnull ItemStack dataItem, int duration, int EUt, int CWUt) {
         if (!ConfigHolder.machines.enableResearch) return;
 
         NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(dataItem);
         writeResearchToNBT(compound, researchId);
 
-        RecipeMaps.SCANNER_RECIPES.recipeBuilder()
-                .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
-                .inputs(researchItem)
-                .outputs(dataItem)
-                .duration(duration)
-                .EUt(EUt)
-                .buildAndRegister();
+        if (CWUt > 0) {
+            RecipeMaps.RESEARCH_STATION_RECIPES.recipeBuilder()
+                    .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
+                    .inputs(researchItem)
+                    .outputs(dataItem)
+                    .duration(duration)
+                    .EUt(EUt)
+                    .CWUt(CWUt)
+                    .buildAndRegister();
+        } else {
+            RecipeMaps.SCANNER_RECIPES.recipeBuilder()
+                    .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
+                    .inputs(researchItem)
+                    .outputs(dataItem)
+                    .duration(duration)
+                    .EUt(EUt)
+                    .buildAndRegister();
+        }
     }
 }

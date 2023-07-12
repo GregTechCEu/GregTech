@@ -3,10 +3,10 @@ package gregtech.common.pipelike.optical.tile;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataAccessHatch;
+import gregtech.api.capability.IOpticalComputationProvider;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.util.FacingPos;
 import gregtech.api.util.TaskScheduler;
 import gregtech.common.pipelike.optical.OpticalPipeProperties;
 import gregtech.common.pipelike.optical.OpticalPipeType;
@@ -27,7 +27,8 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
 
     private final EnumMap<EnumFacing, OpticalNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     // the OpticalNetHandler can only be created on the server, so we have an empty placeholder for the client
-    private final IDataAccessHatch clientCapability = new DefaultDataHandler();
+    private final IDataAccessHatch clientDataHandler = new DefaultDataHandler();
+    private final IOpticalComputationProvider clientComputationHandler = new DefaultComputationHandler();
     private WeakReference<OpticalPipeNet> currentPipeNet = new WeakReference<>(null);
     private OpticalNetHandler defaultHandler;
 
@@ -57,15 +58,25 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == GregtechTileCapabilities.CAPABILITY_DATA_ACCESS) {
-
             if (world.isRemote) {
-                return GregtechTileCapabilities.CAPABILITY_DATA_ACCESS.cast(clientCapability);
+                return GregtechTileCapabilities.CAPABILITY_DATA_ACCESS.cast(clientDataHandler);
             }
 
             if (handlers.isEmpty()) initHandlers();
 
             checkNetwork();
             return GregtechTileCapabilities.CAPABILITY_DATA_ACCESS.cast(handlers.getOrDefault(facing, defaultHandler));
+        }
+
+        if (capability == GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER) {
+            if (world.isRemote) {
+                return GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER.cast(clientComputationHandler);
+            }
+
+            if (handlers.isEmpty()) initHandlers();
+
+            checkNetwork();
+            return GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER.cast(handlers.getOrDefault(facing, defaultHandler));
         }
         return super.getCapabilityInternal(capability, facing);
     }
@@ -167,6 +178,24 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
 
         @Override
         public boolean isCreative() {
+            return false;
+        }
+    }
+
+    private static class DefaultComputationHandler implements IOpticalComputationProvider {
+
+        @Override
+        public int requestCWUt(int cwut, boolean simulate, @Nonnull Collection<IOpticalComputationProvider> seen) {
+            return 0;
+        }
+
+        @Override
+        public int getMaxCWUt(@Nonnull Collection<IOpticalComputationProvider> seen) {
+            return 0;
+        }
+
+        @Override
+        public boolean canBridge(@Nonnull Collection<IOpticalComputationProvider> seen) {
             return false;
         }
     }

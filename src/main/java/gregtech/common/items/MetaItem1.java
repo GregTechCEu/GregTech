@@ -474,6 +474,7 @@ public class MetaItem1 extends StandardMetaItem {
         // Data Items: ID 261-265
         TOOL_DATA_STICK = addItem(261, "tool.datastick").addComponents(new DataItemBehavior());
         TOOL_DATA_ORB = addItem(262, "tool.dataorb").addComponents(new DataItemBehavior());
+        TOOL_DATA_MODULE = addItem(263, "tool.datamodule").addComponents(new DataItemBehavior(true));
 
         // Special Machine Components: ID 266-280
         COMPONENT_GRINDER_DIAMOND = addItem(266, "component.grinder.diamond")
@@ -521,6 +522,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_ITEM_VOIDING = addItem(316, "cover.item.voiding");
         COVER_ITEM_VOIDING_ADVANCED = addItem(317, "cover.item.voiding.advanced");
         COVER_STORAGE = addItem(321, "cover.storage");
+        COVER_MAINTENANCE_DETECTOR = addItem(322, "cover.maintenance.detector");
 
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 
@@ -689,11 +691,11 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(1)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
         ITEM_MAGNET_LV = addItem(471, "item_magnet.lv")
-                .addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV), new ItemMagnetBehavior(6, 0.04F))
+                .addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV), new ItemMagnetBehavior(8))
                 .setMaxStackSize(1)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
         ITEM_MAGNET_HV = addItem(472, "item_magnet.hv")
-                .addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV), new ItemMagnetBehavior(16, 0.065F))
+                .addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV), new ItemMagnetBehavior(32))
                 .setMaxStackSize(1)
                 .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
 

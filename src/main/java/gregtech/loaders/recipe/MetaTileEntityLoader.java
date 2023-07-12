@@ -111,7 +111,7 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe(true, "casing_tungstensteel_gearbox", MetaBlocks.TURBINE_CASING.getItemVariant(TUNGSTENSTEEL_GEARBOX, 2), "PhP", "GFG", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel), 'F', new UnificationEntry(OrePrefix.frameGt, Materials.TungstenSteel), 'G', new UnificationEntry(OrePrefix.gear, Materials.TungstenSteel));
 
         ModHandler.addShapedRecipe(true, "casing_grate_casing", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(GRATE_CASING, 2), "PVP", "PFP", "PMP", 'P', new ItemStack(Blocks.IRON_BARS, 1), 'F', new UnificationEntry(OrePrefix.frameGt, Materials.Steel), 'M', MetaItems.ELECTRIC_MOTOR_MV, 'V', new UnificationEntry(OrePrefix.rotor, Materials.Steel));
-        ModHandler.addShapedRecipe(true, "casing_assembly_control", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(ASSEMBLY_CONTROL, 2), "CPC", "SFE", "CMC", 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.EV), 'P', MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT, 'S', MetaItems.SENSOR_IV.getStackForm(), 'F', new UnificationEntry(OrePrefix.frameGt, Materials.TungstenSteel), 'E', MetaItems.EMITTER_IV.getStackForm(), 'M', MetaItems.ELECTRIC_MOTOR_IV);
+        ModHandler.addShapedRecipe(true, "casing_assembly_control", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(ASSEMBLY_CONTROL, 2), "CPC", "SFE", "CMC", 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.LuV), 'P', MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT, 'S', MetaItems.SENSOR_IV.getStackForm(), 'F', new UnificationEntry(OrePrefix.frameGt, Materials.TungstenSteel), 'E', MetaItems.EMITTER_IV.getStackForm(), 'M', MetaItems.ELECTRIC_MOTOR_IV);
         ModHandler.addShapedRecipe(true, "casing_assembly_line", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(ASSEMBLY_LINE_CASING, 2), "PGP", "AFA", "PGP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'G', new UnificationEntry(OrePrefix.gear, Materials.Ruridit), 'A', MetaItems.ROBOT_ARM_IV.getStackForm(), 'F', OreDictUnifier.get(OrePrefix.frameGt, Materials.TungstenSteel));
 
         ModHandler.addShapedRecipe(true, "warning_sign_yellow_stripes", MetaBlocks.WARNING_SIGN.getItemVariant(YELLOW_STRIPES), "Y  ", " M ", "  B", 'M', MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID), 'Y', "dyeYellow", 'B', "dyeBlack");
@@ -232,7 +232,7 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe(true, "large_titanium_boiler", MetaTileEntities.LARGE_TITANIUM_BOILER.getStackForm(), "PSP", "SAS", "PSP", 'P', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold), 'S', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.EV), 'A', MetaBlocks.BOILER_FIREBOX_CASING.getItemVariant(TITANIUM_FIREBOX));
         ModHandler.addShapedRecipe(true, "large_tungstensteel_boiler", MetaTileEntities.LARGE_TUNGSTENSTEEL_BOILER.getStackForm(), "PSP", "SAS", "PSP", 'P', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium), 'S', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.IV), 'A', MetaBlocks.BOILER_FIREBOX_CASING.getItemVariant(TUNGSTENSTEEL_FIREBOX));
 
-        ModHandler.addShapedRecipe(true, "assembly_line", MetaTileEntities.ASSEMBLY_LINE.getStackForm(), "CRC", "SAS", "CRC", 'A', MetaTileEntities.HULL[GTValues.IV].getStackForm(), 'R', MetaItems.ROBOT_ARM_IV, 'C', MetaBlocks.MULTIBLOCK_CASING.getItemVariant(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_CONTROL), 'S', new UnificationEntry(OrePrefix.circuit, Tier.IV));
+        ModHandler.addShapedRecipe(true, "assembly_line", MetaTileEntities.ASSEMBLY_LINE.getStackForm(), "CRC", "SAS", "CRC", 'A', MetaTileEntities.HULL[GTValues.IV].getStackForm(), 'R', MetaItems.ROBOT_ARM_IV, 'C', MetaBlocks.MULTIBLOCK_CASING.getItemVariant(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_CONTROL), 'S', new UnificationEntry(OrePrefix.circuit, Tier.ZPM));
 
         ModHandler.addShapedRecipe(true, "large_chemical_reactor", MetaTileEntities.LARGE_CHEMICAL_REACTOR.getStackForm(), "CRC", "PMP", "CHC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.HV), 'R', OreDictUnifier.get(OrePrefix.rotor, Materials.StainlessSteel), 'P', OreDictUnifier.get(OrePrefix.pipeLargeFluid, Materials.Polytetrafluoroethylene), 'M', MetaItems.ELECTRIC_MOTOR_HV.getStackForm(), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm());
 
@@ -254,7 +254,7 @@ public class MetaTileEntityLoader {
             ModHandler.addShapedRecipe(true, "steam_output_bus", MetaTileEntities.STEAM_EXPORT_BUS.getStackForm(), "H", "C", 'H', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), 'C', OreDictNames.chestWood);
         }
 
-        ModHandler.addShapedRecipe(true, "processing_array", MetaTileEntities.PROCESSING_ARRAY.getStackForm(), "COC", "RHR", "CPC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.IV), 'O', MetaItems.TOOL_DATA_ORB.getStackForm(), 'R', MetaItems.ROBOT_ARM_EV.getStackForm(), 'P', OreDictUnifier.get(OrePrefix.pipeLargeFluid, Materials.StainlessSteel), 'H', MetaTileEntities.HULL[GTValues.EV].getStackForm());
+        ModHandler.addShapedRecipe(true, "processing_array", MetaTileEntities.PROCESSING_ARRAY.getStackForm(), "COC", "RHR", "CPC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.IV), 'O', MetaItems.TOOL_DATA_STICK.getStackForm(), 'R', MetaItems.ROBOT_ARM_EV.getStackForm(), 'P', OreDictUnifier.get(OrePrefix.pipeLargeFluid, Materials.StainlessSteel), 'H', MetaTileEntities.HULL[GTValues.EV].getStackForm());
         ModHandler.addShapedRecipe(true, "advanced_processing_array", MetaTileEntities.ADVANCED_PROCESSING_ARRAY.getStackForm(), "RCR", "SPE", "HNH", 'R', MetaItems.ROBOT_ARM_LuV, 'C', new UnificationEntry(OrePrefix.circuit, Tier.ZPM), 'S', MetaItems.SENSOR_LuV, 'P', MetaTileEntities.PROCESSING_ARRAY.getStackForm(), 'E', MetaItems.EMITTER_LuV, 'H', new UnificationEntry(OrePrefix.plate, Materials.HSSE), 'N', new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Naquadah));
 
         // GENERATORS
@@ -322,8 +322,7 @@ public class MetaTileEntityLoader {
         // TODO Replication system
         //registerMachineRecipe(MetaTileEntities.MASS_FABRICATOR, "CFC", "QMQ", "CFC", 'M', HULL, 'Q', CABLE_QUAD, 'C', BETTER_CIRCUIT, 'F', FIELD_GENERATOR);
         //registerMachineRecipe(MetaTileEntities.REPLICATOR, "EFE", "CMC", "EQE", 'M', HULL, 'Q', CABLE_QUAD, 'C', BETTER_CIRCUIT, 'F', FIELD_GENERATOR, 'E', EMITTER);
-        // TODO Assembly Line Research System
-        //registerMachineRecipe(MetaTileEntities.SCANNER, "CEC", "WHW", "CSC", 'C', BETTER_CIRCUIT, 'E', EMITTER, 'W', CABLE, 'H', HULL, 'S', SENSOR);
+        registerMachineRecipe(MetaTileEntities.SCANNER, "CEC", "WHW", "CSC", 'C', BETTER_CIRCUIT, 'E', EMITTER, 'W', CABLE, 'H', HULL, 'S', SENSOR);
         registerMachineRecipe(MetaTileEntities.GAS_COLLECTOR, "WFW", "PHP", "WCW", 'W', Blocks.IRON_BARS, 'F', MetaItems.FLUID_FILTER, 'P', PUMP, 'H', HULL, 'C', CIRCUIT);
         registerMachineRecipe(MetaTileEntities.ROCK_BREAKER, "PMW", "CHC", "GGG", 'P', PISTON, 'M', MOTOR, 'W', GRINDER, 'C', CABLE, 'H', HULL, 'G', GLASS);
 

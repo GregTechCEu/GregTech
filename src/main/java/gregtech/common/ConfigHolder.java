@@ -70,6 +70,12 @@ public class ConfigHolder {
                 "unless placed directly onto another pipe or cable.", "Default: true"})
         public boolean gt6StylePipesCables = true;
 
+        @Config.Comment({"Minimum distance between Long Distance Item Pipe Endpoints", "Default: 50"})
+        public int ldItemPipeMinDistance = 50;
+        
+        @Config.Comment({"Minimum distance betweeb Long Distance Fluid Pipe Endpoints", "Default: 50"})
+        public int ldFluidPipeMinDistance = 50;
+
         @Config.Comment({"Divisor for Recipe Duration per Overclock.", "Default: 2.0"})
         @Config.RangeDouble(min = 2.0, max = 3.0)
         @Config.SlidingOption
@@ -252,6 +258,10 @@ public class ConfigHolder {
         @Config.Name("Energy Compat Options")
         public EnergyCompatOptions energy = new EnergyCompatOptions();
 
+        @Config.Comment("Config options regarding GTEU compatibility with AE2")
+        @Config.Name("Energy Compat Options")
+        public AE2CompatOptions ae2 = new AE2CompatOptions();
+
         @Config.Comment({"Whether to hide facades of all blocks in JEI and creative search menu.", "Default: true"})
         public boolean hideFacadesInJEI = true;
 
@@ -284,12 +294,25 @@ public class ConfigHolder {
             @Config.RangeInt(min = 1, max = 16)
             public int euToFeRatio = 4;
         }
+
+        public static class AE2CompatOptions {
+            @Config.Comment({"The interval between ME Hatch/Bus interact ME network.", "It may cause lag if the interval is too small.", "Default: 2 sec"})
+            @Config.RangeInt(min = 1, max = 80)
+            public int updateIntervals = 40;
+
+            @Config.Comment({"The energy consumption of ME Hatch/Bus.", "Default: 1.0AE/t"})
+            @Config.RangeDouble(min = 0.0, max = 10.0)
+            public double meHatchEnergyUsage = 1.0;
+        }
     }
 
     public static class MiscOptions {
 
         @Config.Comment({"Whether to enable more verbose logging.", "Default: false"})
         public boolean debug = false;
+
+        @Config.Comment({"Whether to enable Special Event features (e.g. Christmas, etc).", "Default: true"})
+        public boolean specialEvents = true;
 
         @Config.Comment({"Setting this to true makes GTCEu ignore error and invalid recipes that would otherwise cause crash.", "Default: true"})
         public boolean ignoreErrorOrInvalidRecipes = true;
@@ -378,8 +401,8 @@ public class ConfigHolder {
         @Config.Comment("Prevent tooltips from blinking for better visibility")
         public boolean preventBlinkingTooltips = false;
 
-        @Config.Comment({"Prevent optical cables from animating when active.", "Default: false"})
-        public boolean preventAnimatedOpticalCables = false;
+        @Config.Comment({"Prevent optical and laser cables from animating when active.", "Default: false"})
+        public boolean preventAnimatedCables = false;
 
         public static class GuiConfig {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})

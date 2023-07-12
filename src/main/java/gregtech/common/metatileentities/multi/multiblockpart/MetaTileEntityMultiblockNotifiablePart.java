@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import net.minecraft.util.ResourceLocation;
@@ -57,7 +56,7 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
                     if (fluidTank instanceof IMultipleTankHandler.MultiFluidTankEntry entry) {
                         fluidTank = entry.getDelegate();
                     }
-                    if (fluidTank instanceof NotifiableFluidTank) {
+                    if (fluidTank instanceof INotifiableHandler) {
                         handlerList.add((INotifiableHandler) fluidTank);
                     }
                 }

@@ -11,6 +11,7 @@ import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.util.Tuple;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -110,7 +111,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (controller instanceof RecipeMapMultiblockController) {
             RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
 
-            if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
+            if (distinctController.canBeDistinct() && distinctController.isDistinct() && getInputInventory().getSlots() > 0) {
                 boolean canWork = false;
                 if (invalidatedInputList.isEmpty()) {
                     return true;
@@ -121,16 +122,37 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     metaTileEntity.getNotifiedFluidInputList().clear();
                     metaTileEntity.getNotifiedItemInputList().clear();
                 } else {
-                    Iterator<IItemHandlerModifiable> iterator = metaTileEntity.getNotifiedItemInputList().iterator();
-                    while (iterator.hasNext()) {
-                        IItemHandlerModifiable bus = iterator.next();
-                        if (invalidatedInputList.remove(bus)) {
-                            canWork = true;
+                    Iterator<IItemHandlerModifiable> notifiedIter = metaTileEntity.getNotifiedItemInputList().iterator();
+                    while (notifiedIter.hasNext()) {
+                        IItemHandlerModifiable bus = notifiedIter.next();
+                        Iterator<IItemHandlerModifiable> invalidatedIter = invalidatedInputList.iterator();
+                        while (invalidatedIter.hasNext()) {
+                            IItemHandler invalidatedHandler = invalidatedIter.next();
+                            if (invalidatedHandler instanceof ItemHandlerList) {
+                                for (IItemHandler ih : ((ItemHandlerList) invalidatedHandler).getBackingHandlers()) {
+                                    if (ih == bus) {
+                                        canWork = true;
+                                        invalidatedIter.remove();
+                                        break;
+                                    }
+                                }
+                            } else if (invalidatedHandler == bus) {
+                                canWork = true;
+                                invalidatedIter.remove();
+                            }
                         }
-                        iterator.remove();
+                        notifiedIter.remove();
                     }
                 }
-                if (!invalidatedInputList.containsAll(getInputBuses())) {
+                ArrayList<IItemHandler> flattenedHandlers = new ArrayList<>();
+                for (IItemHandler ih : getInputBuses()) {
+                    if (ih instanceof ItemHandlerList) {
+                        flattenedHandlers.addAll(((ItemHandlerList) ih).getBackingHandlers());
+                    }
+                    flattenedHandlers.add(ih);
+                }
+
+                if (!invalidatedInputList.containsAll(flattenedHandlers)) {
                     canWork = true;
                 }
                 return canWork;
@@ -152,7 +174,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (controller instanceof RecipeMapMultiblockController) {
             RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
 
-            if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
+            if (distinctController.canBeDistinct() && distinctController.isDistinct() && getInputInventory().getSlots() > 0) {
                 trySearchNewRecipeDistinct();
                 return;
             }
@@ -217,7 +239,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     public void invalidateInputs() {
         MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
         RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
-        if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
+        if (distinctController.canBeDistinct() && distinctController.isDistinct() && getInputInventory().getSlots() > 0) {
             invalidatedInputList.add(currentDistinctInputBus);
         } else {
             super.invalidateInputs();
@@ -287,8 +309,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() || !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
         double durationMultiplier = 1.0D;
         if (displayBase != null && displayBase.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
-            IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-            durationMultiplier = hatch.getDurationMultiplier();
+            durationMultiplier = displayBase.getMaintenanceDurationMultiplier();
         }
         return new Tuple<>(numMaintenanceProblems, durationMultiplier);
     }
@@ -305,24 +326,20 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected void completeRecipe() {
-        performMaintenanceMufflerOperations();
+        performMufflerOperations();
         super.completeRecipe();
     }
 
-    protected void performMaintenanceMufflerOperations() {
-        if (metaTileEntity instanceof MultiblockWithDisplayBase) {
-            MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-
+    protected void performMufflerOperations() {
+        if (metaTileEntity instanceof MultiblockWithDisplayBase controller) {
             // output muffler items
             if (controller.hasMufflerMechanics()) {
-                if (parallelRecipesPerformed > 1)
+                if (parallelRecipesPerformed > 1) {
                     controller.outputRecoveryItems(parallelRecipesPerformed);
-                else controller.outputRecoveryItems();
+                } else {
+                    controller.outputRecoveryItems();
+                }
             }
-
-            // increase total on time
-            if (controller.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance)
-                controller.calculateMaintenance(this.progressTime);
         }
     }
 
@@ -384,7 +401,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     public RecipeMap<?> getRecipeMap() {
         // if the multiblock has more than one RecipeMap, return the currently selected one
         if (metaTileEntity instanceof IMultipleRecipeMaps)
-                return ((IMultipleRecipeMaps) metaTileEntity).getCurrentRecipeMap();
+            return ((IMultipleRecipeMaps) metaTileEntity).getCurrentRecipeMap();
         return super.getRecipeMap();
     }
 }

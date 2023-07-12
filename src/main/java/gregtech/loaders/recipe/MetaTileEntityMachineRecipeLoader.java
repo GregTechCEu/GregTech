@@ -6,6 +6,8 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
@@ -13,6 +15,8 @@ import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
 import static gregtech.api.unification.material.MarkerMaterials.Tier;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.common.blocks.MetaBlocks.LD_ITEM_PIPE;
+import static gregtech.common.blocks.MetaBlocks.LD_FLUID_PIPE;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
 
@@ -123,6 +127,9 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(6000))
                 .fluidInputs(SolderingAlloy.getFluid(720))
                 .output(ENERGY_OUTPUT_HATCH[LuV])
+                .research(b -> b
+                        .researchStack(ENERGY_OUTPUT_HATCH[IV].getStackForm())
+                        .EUt(VA[EV]))
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -134,6 +141,9 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(8000))
                 .fluidInputs(SolderingAlloy.getFluid(1440))
                 .output(ENERGY_OUTPUT_HATCH[ZPM])
+                .research(b -> b
+                        .researchStack(ENERGY_OUTPUT_HATCH[LuV].getStackForm())
+                        .CWUt(8))
                 .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -145,6 +155,10 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(10000))
                 .fluidInputs(SolderingAlloy.getFluid(2880))
                 .output(ENERGY_OUTPUT_HATCH[UV])
+                .research(b -> b
+                        .researchStack(ENERGY_OUTPUT_HATCH[ZPM].getStackForm())
+                        .CWUt(64)
+                        .EUt(VA[ZPM]))
                 .duration(800).EUt(VA[UV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -156,6 +170,10 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(12000))
                 .fluidInputs(SolderingAlloy.getFluid(5760))
                 .output(ENERGY_OUTPUT_HATCH[UHV])
+                .research(b -> b
+                        .researchStack(ENERGY_OUTPUT_HATCH[UV].getStackForm())
+                        .CWUt(128)
+                        .EUt(VA[UV]))
                 .duration(1000).EUt(VA[UHV]).buildAndRegister();
 
         // Energy Input Hatches
@@ -237,6 +255,9 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(6000))
                 .fluidInputs(SolderingAlloy.getFluid(720))
                 .output(ENERGY_INPUT_HATCH[LuV])
+                .research(b -> b
+                        .researchStack(ENERGY_INPUT_HATCH[IV].getStackForm())
+                        .EUt(VA[EV]))
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -248,6 +269,9 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(8000))
                 .fluidInputs(SolderingAlloy.getFluid(1440))
                 .output(ENERGY_INPUT_HATCH[ZPM])
+                .research(b -> b
+                        .researchStack(ENERGY_INPUT_HATCH[LuV].getStackForm())
+                        .CWUt(8))
                 .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -259,6 +283,10 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(10000))
                 .fluidInputs(SolderingAlloy.getFluid(2880))
                 .output(ENERGY_INPUT_HATCH[UV])
+                .research(b -> b
+                        .researchStack(ENERGY_INPUT_HATCH[ZPM].getStackForm())
+                        .CWUt(64)
+                        .EUt(VA[ZPM]))
                 .duration(800).EUt(VA[UV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -270,6 +298,10 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(12000))
                 .fluidInputs(SolderingAlloy.getFluid(5760))
                 .output(ENERGY_INPUT_HATCH[UHV])
+                .research(b -> b
+                        .researchStack(ENERGY_INPUT_HATCH[UV].getStackForm())
+                        .CWUt(128)
+                        .EUt(VA[UV]))
                 .duration(1000).EUt(VA[UHV]).buildAndRegister();
 
 
@@ -748,6 +780,78 @@ public class MetaTileEntityMachineRecipeLoader {
                 .circuitMeta(2)
                 .output(ADVANCED_FLUID_DRILLING_RIG)
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
+
+        // Long Distance Pipes
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(pipeLargeItem, Tin, 2)
+                .input(plate, Steel, 8)
+                .input(gear, Steel, 2)
+                .circuitMeta(1)
+                .fluidInputs(SolderingAlloy.getFluid(L / 2))
+                .output(LONG_DIST_ITEM_ENDPOINT, 2)
+                .duration(400).EUt(16).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(pipeLargeFluid, Bronze, 2)
+                .input(plate, Steel, 8)
+                .input(gear, Steel, 2)
+                .circuitMeta(1)
+                .fluidInputs(SolderingAlloy.getFluid(L / 2))
+                .output(LONG_DIST_FLUID_ENDPOINT, 2)
+                .duration(400).EUt(16).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(pipeLargeItem, Tin, 2)
+                .input(plate, Steel, 8)
+                .circuitMeta(2)
+                .fluidInputs(SolderingAlloy.getFluid(L / 2))
+                .output(LD_ITEM_PIPE, 64)
+                .duration(600).EUt(24).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(pipeLargeFluid, Bronze, 2)
+                .input(plate, Steel, 8)
+                .circuitMeta(2)
+                .fluidInputs(SolderingAlloy.getFluid(L / 2))
+                .output(LD_FLUID_PIPE, 64)
+                .duration(600).EUt(24).buildAndRegister();
+
+        // ME Parts
+
+        if (Loader.isModLoaded(MODID_APPENG)) {
+
+            ItemStack fluidInterface = GameRegistry.makeItemStack(MODID_APPENG + ":fluid_interface", 0, 1, null);
+            ItemStack normalInterface = GameRegistry.makeItemStack(MODID_APPENG + ":interface", 0, 1, null);
+            ItemStack accelerationCard = GameRegistry.makeItemStack(MODID_APPENG + ":material", 30, 2, null);
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(FLUID_EXPORT_HATCH[EV])
+                    .inputs(fluidInterface.copy())
+                    .inputs(accelerationCard.copy())
+                    .output(FLUID_EXPORT_HATCH_ME)
+                    .duration(300).EUt(VA[HV]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(FLUID_IMPORT_HATCH[EV])
+                    .inputs(fluidInterface.copy())
+                    .inputs(accelerationCard.copy())
+                    .output(FLUID_IMPORT_HATCH_ME)
+                    .duration(300).EUt(VA[HV]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(ITEM_EXPORT_BUS[EV])
+                    .inputs(normalInterface.copy())
+                    .inputs(accelerationCard.copy())
+                    .output(ITEM_EXPORT_BUS_ME)
+                    .duration(300).EUt(VA[HV]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(ITEM_IMPORT_BUS[EV])
+                    .inputs(normalInterface.copy())
+                    .inputs(accelerationCard.copy())
+                    .output(ITEM_IMPORT_BUS_ME)
+                    .duration(300).EUt(VA[HV]).buildAndRegister();
+        }
     }
 
     private static void registerHatchBusRecipe(int tier, MetaTileEntity inputBus, MetaTileEntity outputBus, ItemStack extra) {

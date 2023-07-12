@@ -12,6 +12,7 @@ import gregtech.integration.crafttweaker.terminal.CTTerminalRegistry;
 import gregtech.modules.GregTechModules;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -47,6 +48,11 @@ public class CraftTweakerModule extends IntegrationSubmodule {
     @Override
     public void postInit(FMLPostInitializationEvent event) {
         CTTerminalRegistry.register();
+    }
+
+    @Override
+    public void loadComplete(FMLLoadCompleteEvent event) {
+        MetaItemBracketHandler.clearComponentRegistry();
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

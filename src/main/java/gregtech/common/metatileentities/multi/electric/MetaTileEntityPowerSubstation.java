@@ -167,8 +167,9 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
 
     public long getPassiveDrain() {
         if (ConfigHolder.machines.enableMaintenance) {
-            // +1 so that there is still passive drain when there are no maintenance problems
-            return passiveDrain * (getNumMaintenanceProblems() + 1);
+            int multiplier = 1 + getNumMaintenanceProblems();
+            double modifier = getMaintenanceDurationMultiplier();
+            return (long) (passiveDrain * multiplier * modifier);
         }
         return passiveDrain;
     }
@@ -325,6 +326,19 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 } else if (averageIOLastSec < 0) {
                     BigInteger timeToDrainSeconds = energyStored.divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20));
                     textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.time_to_drain", getTimeToFillDrainText(timeToDrainSeconds)));
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            if (averageIOLastSec < 0) { // decreasing
+                BigInteger timeToDrainSeconds = energyBank.getStored().divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20));
+                if (timeToDrainSeconds.compareTo(BigInteger.valueOf(60 * 60)) < 0) { // less than 1 hour left
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.under_one_hour_left"));
                 }
             }
         }

@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.zero_point_module.80_hpca.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.zero_point_module.80_hpca.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1039
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1039
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:zero_point_module/root_zpm"
+}

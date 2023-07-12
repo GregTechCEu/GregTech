@@ -114,6 +114,10 @@ public class TankWidget extends Widget implements IIngredientSlot {
         return lastFluidInTank == null ? "" : lastFluidInTank.getLocalizedName();
     }
 
+    public String getFluidUnlocalizedName() {
+        return lastFluidInTank == null ? "" : lastFluidInTank.getUnlocalizedName();
+    }
+
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         Position pos = getPosition();

@@ -40,3 +40,12 @@ jobs:
           title: Update build script version to ${{ steps.update-buildscript.outputs.NEW_VERSION }}
           body: This pull request is created by the buildscript-update workflow
           labels: ignore changelog
+
+      - name: Enable pull request auto-merge
+        id: pull-request-auto-merge
+        if: steps.create-pull-request.outputs.pull-request-operation == 'created'
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
+          pull-request-number: ${{ steps.create-pull-request.outputs.pull-request-number }}
+          merge-method: squash

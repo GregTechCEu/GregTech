@@ -93,6 +93,15 @@ gregtech.top.unit.fluid_buckets=kL
 
 gregtech.top.block_drops=Drops
 
+gregtech.top.ld_pipe_no_network=No Pipeline Found
+gregtech.top.ld_pipe_connected=Pipeline Connected
+gregtech.top.ld_pipe_incomplete=Incomplete Pipeline
+gregtech.top.ld_pipe_length=Length:
+gregtech.top.ld_pipe_input=Input
+gregtech.top.ld_pipe_output=Output
+gregtech.top.ld_pipe_input_endpoint=Input Endpoint:
+gregtech.top.ld_pipe_output_endpoint=Other Endpoint:
+
 gregtech.waila.energy_stored=Energy: %d EU / %d EU
 gregtech.waila.progress_idle=Idle
 gregtech.waila.progress_tick=Progress: %d t / %d t
@@ -516,6 +525,8 @@ metaitem.tool.datastick.name=Data Stick
 metaitem.tool.datastick.tooltip=Storage for Simple Data
 metaitem.tool.dataorb.name=Data Orb
 metaitem.tool.dataorb.tooltip=Storage for Complex Data
+metaitem.tool.datamodule.name=Data Module
+metaitem.tool.datamodule.tooltip=Storage for Incredibly Complex Data/n§cCan only be read by a Data Bank
 metaitem.circuit.integrated.name=Programmed Circuit
 metaitem.circuit.integrated.tooltip=Use to open configuration GUI/n/nShift-Right-Click on a machine/nwith a circuit slot to set it to/nthis circuit's value./n
 metaitem.circuit.integrated.gui=Programmed Circuit Configuration
@@ -831,6 +842,8 @@ metaitem.cover.item.voiding.advanced.name=Advanced Item Voiding Cover
 metaitem.cover.item.voiding.advanced.tooltip=Voids §fItems§7 with amount control as §fCover§7./nActivate with §fSoft Mallet§7 after placement.
 metaitem.cover.storage.name=Storage Cover
 metaitem.cover.storage.tooltip=Small storage space for odds and ends
+metaitem.cover.maintenance.detector.name=Needs Maintenance Cover
+metaitem.cover.maintenance.detector.tooltip=Gives out §fMaintenance Problems§7 as Redstone as §fCover§7.
 
 metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative Outfit §fCover§7.
@@ -1810,6 +1823,9 @@ gregtech.material.caprolactam=Caprolactam
 gregtech.material.nitrosyl_chloride=Nitrosyl Chloride
 gregtech.material.butyraldehyde=Butyraldehyde
 gregtech.material.polyvinyl_butyral=Polyvinyl Butyral
+gregtech.material.biphenyl=Biphenyl
+gregtech.material.polychlorinated_biphenyl=Polychlorinated Biphenyl (PCB)
+gregtech.material.pcb_coolant=Dielectric PCB Coolant
 
 # Unknown Composition Materials
 gregtech.material.wood_gas=Wood Gas
@@ -2261,6 +2277,7 @@ recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 recipemap.flotation_cell.name=Froth Flotation
+recipemap.research_station.name=Research Station
 
 gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling
@@ -2305,6 +2322,10 @@ tile.brittle_charcoal.tooltip.1=Produced by the Charcoal Pile Igniter.
 tile.brittle_charcoal.tooltip.2=Mine this to get Charcoal.
 
 tile.optical_pipe_normal.name=Optical Fiber Cable
+tile.optical_pipe_normal.tooltip1=Transmitting §fComputation§7 or §fResearch Data§7
+
+tile.laser_pipe_normal.name=Laser Transmitting Cable
+tile.laser_pipe_normal.tooltip1=Transmitting power with no loss in straight lines
 
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
@@ -2575,6 +2596,10 @@ tile.battery_block.lapotronic_uv.name=UV Lapotronic Capacitor
 tile.battery_block.ultimate_uhv.name=UHV Ultimate Capacitor
 tile.battery_block.tooltip_empty=For filling space in your Power Substation
 
+# Long Distance Pipeline Blocks
+tile.long_distance_item_pipeline.name=Long Distance Item Pipe
+tile.long_distance_fluid_pipeline.name=Long Distance Fluid Pipe
+
 # Creative tabs
 itemGroup.gregtech.main=GT Main
 itemGroup.gregtech.machines=GT Machines
@@ -2645,8 +2670,13 @@ tile.cleanroom_casing.filter_sterile.tooltip=Creates a §aSterilized§7 environm
 
 # Computer Casings
 tile.computer_casing.computer_casing.name=Computer Casing
+tile.computer_casing.computer_casing.tooltip=Nice and clean casing
 tile.computer_casing.computer_heat_vent.name=Computer Heat Vent
+tile.computer_casing.computer_heat_vent.tooltip=Air vent with a filter
 tile.computer_casing.high_power_casing.name=High Power Casing
+tile.computer_casing.high_power_casing.tooltip=The power levels are rising!
+tile.computer_casing.advanced_computer_casing.name=Advanced Computer Casing
+tile.computer_casing.advanced_computer_casing.tooltip=Couple thousand qubits wide
 
 # Asphalt
 tile.asphalt.asphalt.name=Asphalt
@@ -4287,6 +4317,36 @@ gregtech.machine.world_accelerator.working_area_random=  Random Tick Mode:§f %d
 gregtech.machine.world_accelerator.mode_tile=Tile Entity Mode
 gregtech.machine.world_accelerator.mode_entity=Random Tick Mode
 
+# HPCA Components
+gregtech.machine.hpca.empty_component.name=Empty HPCA Component
+gregtech.machine.hpca.empty_component.tooltip=Just for filling space
+gregtech.machine.hpca.heat_sink_component.name=HPCA Heat Sink Component
+gregtech.machine.hpca.heat_sink_component.tooltip=Free cooling! Is anything free?
+gregtech.machine.hpca.active_cooler_component.name=HPCA Active Cooling Component
+gregtech.machine.hpca.active_cooler_component.tooltip=Less free, more effective cooling
+gregtech.machine.hpca.computation_component.name=HPCA Computation Component
+gregtech.machine.hpca.computation_component.tooltip=Baby's first computation
+gregtech.machine.hpca.advanced_computation_component.name=HPCA Advanced Computation Component
+gregtech.machine.hpca.advanced_computation_component.tooltip=Computation big leagues
+gregtech.machine.hpca.bridge_component.name=HPCA Bridge Component
+gregtech.machine.hpca.bridge_component.tooltip=So that's where the "Array" in HPCA comes from
+
+gregtech.machine.hpca.computation_component.damaged.name=Damaged HPCA Computation Component
+gregtech.machine.hpca.computation_component.damaged.tooltip=Free recyclable materials
+gregtech.machine.hpca.advanced_computation_component.damaged.name=Damaged HPCA Advanced Computation Component
+gregtech.machine.hpca.advanced_computation_component.damaged.tooltip=It only cost an arm and a leg
+
+gregtech.machine.hpca.component_general.upkeep_eut=§eUpkeep Energy: §f%,d EU/t
+gregtech.machine.hpca.component_general.max_eut=§6Max Energy: §f%,d EU/t
+gregtech.machine.hpca.component_type.cooler_passive=§bCooler Type: §fPassive
+gregtech.machine.hpca.component_type.cooler_active=§bCooler Type: §fActive
+gregtech.machine.hpca.component_type.cooler_cooling=§aProvides: §f%,d Cooling
+gregtech.machine.hpca.component_type.cooler_active_coolant=§cRequires up to: §f%,d L/t %s
+gregtech.machine.hpca.component_type.computation_cwut=§9Computation: §f%,d CWU/t
+gregtech.machine.hpca.component_type.computation_cooling=§cRequires up to: §f%,d Cooling
+gregtech.machine.hpca.component_type.bridge=Allows §fHPCA§7 to connect to §fNetwork Switches§7
+gregtech.machine.hpca.component_type.damaged=Can be damaged by HPCA overheating!
+
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
@@ -4294,6 +4354,13 @@ gregtech.machine.muffle.on=Sound Muffling: Enabled
 gregtech.machine.muffle.off=Sound Muffling: Disabled
 gregtech.machine.perfect_oc=Does not lose energy efficiency when overclocked.
 gregtech.machine.parallel_limit=Can run up to §b%d§r§7 Recipes at once.
+
+gregtech.machine.ld_item_endpoint.name=Long Distance Item Pipeline Endpoint
+gregtech.machine.ld_fluid_endpoint.name=Long Distance Fluid Pipeline Endpoint
+gregtech.machine.endpoint.tooltip.min_length=§bMinimum Endpoint Distance: §f%d Blocks
+gregtech.machine.endpoint.tooltip.1=Connect with §fLong Distance Pipe§7 blocks to create a pipeline.
+gregtech.machine.endpoint.tooltip.2=Pipelines must have exactly §f1 Input§7 and §f1 Output§7 endpoint.
+gregtech.machine.endpoint.tooltip.3=Only pipeline endpoints need to be §fchunk-loaded§7.
 
 # Advancements
 gregtech.advancement.root_steam.name=Steam Age
@@ -4400,8 +4467,8 @@ gregtech.advancement.high_voltage.40_workstation.name=Workstations
 gregtech.advancement.high_voltage.40_workstation.desc=Get Workstations.
 gregtech.advancement.high_voltage.41_vacuum_freezer.name=Vacuum Freezer
 gregtech.advancement.high_voltage.41_vacuum_freezer.desc=Set up a Vacuum Freezer.
-gregtech.advancement.high_voltage.42_kanthal_coil.name=Upgrade your Coils to Level II
-gregtech.advancement.high_voltage.42_kanthal_coil.desc=Craft a Kanthal Heating Coil.
+gregtech.advancement.medium_voltage.42_kanthal_coil.name=Upgrade your Coils to Level II
+gregtech.advancement.medium_voltage.42_kanthal_coil.desc=Craft a Kanthal Heating Coil.
 gregtech.advancement.high_voltage.43_multi_smelter.name=High Power Smelter
 gregtech.advancement.high_voltage.43_multi_smelter.desc=Set up a Multi Smelter.
 gregtech.advancement.high_voltage.44_distillation_tower.name=Oil Plant
@@ -4478,6 +4545,10 @@ gregtech.advancement.zero_point_module.72_wetware_processor.name=Wetware Process
 gregtech.advancement.zero_point_module.72_wetware_processor.desc=Get Wetware Processors.
 gregtech.advancement.zero_point_module.73_trinium_coil.name=Over 9000!
 gregtech.advancement.zero_point_module.73_trinium_coil.desc=Craft a Trinium Heating Coil.
+gregtech.advancement.zero_point_module.80_hpca.name=All your Computation Needs
+gregtech.advancement.zero_point_module.80_hpca.desc=Craft a High Performance Computing Array.
+gregtech.advancement.zero_point_module.81_research_station.name=More Advanced Research
+gregtech.advancement.zero_point_module.81_research_station.desc=Craft a Research Station.
 gregtech.advancement.root_uv.name=Ultimate Voltage
 gregtech.advancement.root_uv.desc=Produce Tritanium.
 gregtech.advancement.ultimate_voltage.74_wetware_mainframe.name=Wetware Mainframe
@@ -4623,7 +4694,8 @@ gregtech.machine.data_bank.name=Data Bank
 gregtech.machine.data_bank.tooltip.1=Your Personal NAS
 gregtech.machine.data_bank.tooltip.2=Bulk Data Storage. Transfer with Optical Cables.
 gregtech.machine.data_bank.tooltip.3=Data Banks can be chained together.
-gregtech.machine.data_bank.tooltip.4=Uses %sEU/t per Data Hatch and %sEU/t when chained.
+gregtech.machine.data_bank.tooltip.4=Uses §f%s EU/t§7 per Data Hatch and §f%s EU/t§7 when chained.
+gregtech.multiblock.data_bank.description=The Data Bank is a multiblock structure used for sharing Assembly Line Research Data between multiple Assembly Lines. Additionally, it enables Assembly Lines to read more complex research data on Data Modules.
 
 gregtech.machine.power_substation.name=Power Substation
 gregtech.machine.power_substation.tooltip1=The heart of a centralized power grid
@@ -4631,7 +4703,32 @@ gregtech.machine.power_substation.tooltip2=§fCapacitors§7 do not need to be al
 gregtech.machine.power_substation.tooltip3=Allows up to §f%d Capacitor Layers§7.
 gregtech.machine.power_substation.tooltip4=Loses energy equal to §f1%%§7 of total capacity every §f24 hours§7.
 gregtech.machine.power_substation.tooltip5=Capped at §f%,d EU/t§7 passive loss per Capacitor Block.
-gregtech.multiblock.power_substation.description=
+gregtech.multiblock.power_substation.description=The Power Substation is a multiblock structure used for storing immense amounts of Energy. Capable of holding up to 18 layers of Batteries. Can also use Empty Capacitors to fill space, as layers must be fully filled.
+
+gregtech.machine.active_transformer.name=Active Transformer
+gregtech.machine.active_transformer.tooltip1=Transformers: Lasers in Disguise
+gregtech.machine.active_transformer.tooltip2=Can combine any number of Energy §fInputs§7 into any number of Energy §fOutputs§7.
+gregtech.machine.active_transformer.tooltip3=Can transmit power at incredible distance with
+gregtech.machine.active_transformer.tooltip3.5= Lasers§7.
+gregtech.multiblock.active_transformer.description=The Active Transformer is a multiblock structure that can accept any number or tier of Energy Hatches, and transform them into any number or tier of Dynamo Hatches. They can be chained with Laser Source and Target Hatches, allowing long distance power transportation without any losses. Lasers must be in a straight line, otherwise they will not send energy.
+
+gregtech.machine.research_station.name=Research Station
+gregtech.machine.research_station.tooltip.1=More than just a Multiblock Scanner
+gregtech.machine.research_station.tooltip.2=Used to scan onto §fData Orbs§7 or §fData Modules§7.
+gregtech.machine.research_station.tooltip.3=Requires §fComputation§7 to work.
+gregtech.multiblock.research_station.description=The Research Station is a multiblock structure used for researching much more complex Assembly Line Research Data. Any Research requiring a Data Orb or Data Module must be scanned in the Research Station. Requires Compute Work Units (CWU/t) to research recipes, which is supplied by High Performance Computing Arrays (HPCAs).
+
+gregtech.machine.network_switch.name=Network Switch
+gregtech.machine.network_switch.tooltip.1=Ethernet Hub
+gregtech.machine.network_switch.tooltip.2=Used to route and distribute §fComputation§7.
+gregtech.machine.network_switch.tooltip.3=Can combine any number of Computation §fReceivers§7 into any number of Computation §fTransmitters§7.
+gregtech.multiblock.network_switch.description=The Network Switch is a multiblock structure used for distributing Computation from many sources to many destinations. It can accept any number of Computation Data Reception or Transmission Hatches. It is necessary for Research Data which requires much higher Computation, as the Research Station can only accept one Computation Data Reception Hatch. HPCAs must have a Bridge Component for the Network Switch to be able to access their Computation.
+
+gregtech.machine.high_performance_computing_array.name=High Performance Computing Array
+gregtech.machine.high_performance_computing_array.tooltip.1=Just your average Supercomputer
+gregtech.machine.high_performance_computing_array.tooltip.2=Used to generate §fComputation§7 (and heat).
+gregtech.machine.high_performance_computing_array.tooltip.3=Requires HPCA components to generate §fCWU/t§7 (Compute Work Units).
+gregtech.multiblock.high_performance_computing_array.description=The High Performance Computing Array (HPCA) is a multiblock structure used for creating Compute Work Units (CWU/t) for more complex Assembly Line Research Data. The structure has a flexible 3x3 area which can be filled in any way with HPCA components. Different components can provide different amounts of Computation, Cooling, as well as Energy Cost, Coolant Cost, and Heat Production. When used with a Bridge Component, the HPCA can connect to Network Switches for combining and routing Computation from multiple sources to one or more destinations.
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
@@ -4878,6 +4975,11 @@ gregtech.maintenance.configurable_time=Time: %fx
 gregtech.maintenance.configurable_time.unchanged_description=Maintenance problems will occur at normal rate. Change configuration to update.
 gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur at %fx the normal rate.
 
+gregtech.maintenance.configurable.tooltip_basic=Speeds up machine processing time at the cost of more frequent maintenance problems
+gregtech.maintenance.configurable.tooltip_more_info=Hold SHIFT for special interactions
+gregtech.maintenance.configurable.tooltip_pss_header=§8Power Substation:
+gregtech.maintenance.configurable.tooltip_pss_info=  §fReduces passive EU drain
+
 gregtech.machine.muffler_hatch.tooltip1=Recovers waste from machines
 gregtech.machine.muffler_hatch.tooltip2=DO NOT OBSTRUCT THE OUTPUT!
 
@@ -4917,11 +5019,37 @@ gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
 gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Sticks
 gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
 gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
+
 gregtech.machine.data_access_hatch.optical.receiver.name=Optical Data Reception Hatch
+gregtech.machine.data_access_hatch.optical.receiver.tooltip=Research Data Input for Multiblocks
 gregtech.machine.data_access_hatch.optical.transmitter.name=Optical Data Transmission Hatch
+gregtech.machine.data_access_hatch.optical.transmitter.tooltip=Research Data Output for Multiblocks
+gregtech.machine.computation_hatch.transmitter.name=Computation Data Transmission Hatch
+gregtech.machine.computation_hatch.transmitter.tooltip=Computation Data Output for Multiblocks
+gregtech.machine.computation_hatch.receiver.name=Computation Data Reception Hatch
+gregtech.machine.computation_hatch.receiver.tooltip=Computation Data Input for Multiblocks
+gregtech.machine.research_station.object_holder.name=Object Holder
+gregtech.machine.research_station.object_holder.tooltip=Advanced Holding Mechanism for Research Station
+
+gregtech.machine.laser_hatch.source.name=Laser Source Hatch
+gregtech.machine.laser_hatch.source.tooltip1=Receiving power from distance
+gregtech.machine.laser_hatch.source.tooltip2=§cLaser Cables must be in a straight line!§7
+gregtech.machine.laser_hatch.target.name=Laser Target Hatch
+gregtech.machine.laser_hatch.target.tooltip1=Transmitting power at distance
+gregtech.machine.laser_hatch.target.tooltip2=§cLaser Cables must be in a straight line!§7
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
+
+gregtech.machine.me_export_fluid_hatch.name=ME Output Hatch
+gregtech.machine.me_export_item_bus.name=ME Output Bus
+gregtech.machine.me_import_fluid_hatch.name=ME Stocking Input Hatch
+gregtech.machine.me_import_item_bus.name=ME Stocking Input Bus
+gregtech.machine.me.fluid_export.tooltip=Stores fluid directly into ME network.
+gregtech.machine.me.item_export.tooltip=Stores item directly into ME network.
+gregtech.machine.me.fluid_import.tooltip=Fetch fluids from ME network automatically.
+gregtech.machine.me.item_import.tooltip=Fetch items from ME network automatically.
+gregtech.machine.me.export.tooltip=It has infinite capacity before connecting to ME network.
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
@@ -4962,10 +5090,12 @@ gregtech.universal.tooltip.produces_fluid=§eProduces: §f%,d L/t
 gregtech.universal.tooltip.terrain_resist=This Machine will not explode when exposed to the Elements
 gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
 
+gregtech.block.tooltip.no_mob_spawning=§bMobs cannot spawn on this block
+
 gregtech.recipe.total=Total: %,d EU
 gregtech.recipe.eu=Usage: %,d EU/t (%s§r)
 gregtech.recipe.eu_inverted=Generation: %,d EU/t
-gregtech.recipe.duration=Duration: %,.2f secs
+gregtech.recipe.duration=Duration: %s secs
 gregtech.recipe.amperage=Amperage: %,d
 gregtech.recipe.not_consumed=Does not get consumed in the process
 gregtech.recipe.chance=Chance: %s%% +%s%%/tier
@@ -4977,6 +5107,7 @@ gregtech.recipe.cleanroom=Requires %s
 gregtech.recipe.cleanroom.display_name=Cleanroom
 gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
 gregtech.recipe.research=Requires Research
+gregtech.recipe.computation_per_tick=Computation: %,d CWU/t
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
@@ -5029,14 +5160,18 @@ gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
 gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
 gregtech.gui.fluid_voiding.tooltip.enabled=Excess Fluid Voiding Enabled
 gregtech.gui.fluid_voiding.tooltip.disabled=Excess Fluid Voiding Disabled
-gregtech.gui.silktouch.enabled=Silk Touch Enabled: Click to Disable./n§7Switching requires an idle machine.
-gregtech.gui.silktouch.disabled=Silk Touch Disabled: Click to Enable./n§7Switching requires an idle machine.
-gregtech.gui.chunkmode.enabled=Chunk Mode Enabled: Click to Disable./n§7Switching requires an idle machine.
-gregtech.gui.chunkmode.disabled=Chunk Mode Disabled: Click to Enable./n§7Switching requires an idle machine.
 gregtech.gui.multiblock_item_voiding=Voiding Mode/n§7Voiding §6Items
 gregtech.gui.multiblock_fluid_voiding=Voiding Mode/n§7Voiding §9Fluids
 gregtech.gui.multiblock_item_fluid_voiding=Voiding Mode/n§7Voiding §6Items §7and §9Fluids
 gregtech.gui.multiblock_no_voiding=Voiding Mode/n§7Voiding Nothing
+gregtech.gui.multiblock_voiding_not_supported=This Multiblock does not support Voiding Mode
+gregtech.gui.me_network.online=Network Status: §2Online§r
+gregtech.gui.me_network.offline=Network Status: §4Offline§r
+gregtech.gui.waiting_list=Sending Queue:
+gregtech.gui.config_slot=§fConfig Slot§r
+gregtech.gui.config_slot.set=§7Click to §bset/select§7 config slot.§r
+gregtech.gui.config_slot.scroll=§7Scroll wheel to §achange§7 config amount.§r
+gregtech.gui.config_slot.remove=§7Right click to §4clear§7 config slot.§r
 
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
@@ -5112,12 +5247,11 @@ gregtech.multiblock.universal.problem.soft_mallet=%s§7Something is stuck. (§aS
 gregtech.multiblock.universal.problem.hard_hammer=%s§7Plating is dented. (§aHard Hammer§7)
 gregtech.multiblock.universal.problem.wire_cutter=%s§7Wires burned out. (§aWire Cutter§7)
 gregtech.multiblock.universal.problem.crowbar=%s§7That doesn't belong there. (§aCrowbar§7)
-gregtech.multiblock.universal.muffler_obstructed=Muffler Hatch is Obstructed!
-gregtech.multiblock.universal.muffler_obstructed.tooltip=Muffler Hatch must have a block of airspace in front of it.
-gregtech.multiblock.universal.distinct=Distinct Buses:
-gregtech.multiblock.universal.distinct.no=No
-gregtech.multiblock.universal.distinct.yes=Yes
-gregtech.multiblock.universal.distinct.info=If enabled, each Item Input Bus will be treated as fully distinct from each other for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
+gregtech.multiblock.universal.muffler_obstructed=§cMuffler Hatch is Obstructed!§r/nMuffler Hatch must have a block of airspace in front of it.
+gregtech.multiblock.universal.distinct_enabled=Distinct Buses: §aEnabled§r/nEach Item Input Bus will be treated separately for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
+gregtech.multiblock.universal.distinct_disabled=Distinct Buses: §cDisabled§r/nEach Item Input Bus will be treated as a combined input for recipe lookup.
+gregtech.multiblock.universal.distinct_not_supported=This Multiblock does not support Distinct Buses
+gregtech.multiblock.universal.no_flex_button=This Multiblock has no additional functionality with this Button.
 gregtech.multiblock.parallel=Performing up to %d Recipes in Parallel
 gregtech.multiblock.multiple_recipemaps.header=Machine Mode:
 gregtech.multiblock.multiple_recipemaps.tooltip=Screwdriver the controller to change which machine mode to use.
@@ -5152,6 +5286,7 @@ gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
 gregtech.multiblock.multi_furnace.heating_coil_discount=Heating Coil EU Boost: %sx
 gregtech.multiblock.distillation_tower.distilling_fluid=Distilling %s
 
+gregtech.multiblock.large_combustion_engine.no_lubricant=No Lubricant.
 gregtech.multiblock.large_combustion_engine.lubricant_amount=Lubricant Amount: %sL
 gregtech.multiblock.large_combustion_engine.oxygen_amount=Oxygen Amount: %sL
 gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount=Liquid Oxygen Amount: %sL
@@ -5162,13 +5297,14 @@ gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost=Supply Oxygen
 gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=Supply Liquid Oxygen to boost.
 gregtech.multiblock.large_combustion_engine.obstructed=Engine Intakes Obstructed.
 
-gregtech.multiblock.turbine.fuel_amount=Fuel Amount: %sL (%s)
-gregtech.multiblock.turbine.fuel_needed=Needs %s %s per %s ticks!
+gregtech.multiblock.turbine.fuel_amount=Fuel: %sL %s
+gregtech.multiblock.turbine.fuel_needed=Consumes %s per %s ticks
 gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=Rotor Durability: %s%%
+gregtech.multiblock.turbine.rotor_durability_low=Rotor durability low!
+gregtech.multiblock.turbine.no_rotor=No Rotor in Rotor Holder.
 gregtech.multiblock.turbine.efficiency=Turbine Efficiency: %s%%
-gregtech.multiblock.turbine.energy_per_tick=Energy Output: %s/%s EU/t (%s)
-gregtech.multiblock.turbine.energy_per_tick_maxed=Energy Output: %s EU/t (%s)
+gregtech.multiblock.turbine.energy_per_tick=Output EU/t: %s (%s)
 gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed
 gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 adds §f10%% efficiency§7.
 
@@ -5176,7 +5312,8 @@ gregtech.multiblock.large_boiler.efficiency=Efficiency: %s
 gregtech.multiblock.large_boiler.steam_output=Steam Output: %s L/t
 gregtech.multiblock.large_boiler.throttle=Throttle: %d
 gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
-gregtech.multiblock.large_boiler.throttle_modify=Modify Throttle:
+gregtech.multiblock.large_boiler.throttle_increment=Increase throttle by §a+5%%§r/n§7Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
+gregtech.multiblock.large_boiler.throttle_decrement=Decrease throttle by §c-5%%§r/n§7Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
 gregtech.multiblock.large_boiler.rate_tooltip=§7Produces §f%d L §7of Steam with §f1 Coal
 gregtech.multiblock.large_boiler.heat_time_tooltip=§7Takes §f%,d seconds §7to heat up
 gregtech.multiblock.large_boiler.explosion_tooltip=Will explode if provided Fuel with no Water
@@ -5189,11 +5326,21 @@ gregtech.machine.steam_miner.vent=Venting Blocked!
 gregtech.machine.steam_miner.steam=Needs Steam!
 gregtech.machine.miner.errorradius=§cCannot change radius while working!
 
+gregtech.multiblock.miner.neither_mode=Chunk Mode: §cDisabled§r/nSilk Touch Mode: §cDisabled§r/n§7Switching requires an idle machine.
+gregtech.multiblock.miner.chunk_mode=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §cDisabled§r/n§7Switching requires an idle machine.
+gregtech.multiblock.miner.silk_touch_mode=Chunk Mode: §cDisabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
+gregtech.multiblock.miner.both_modes=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
+
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
 gregtech.multiblock.energy_consumption=Energy Usage: %s EU/t
+gregtech.multiblock.computation.max=Max Computation: %s CWU/t
+gregtech.multiblock.computation.usage=Using: %s CWU/t
+gregtech.multiblock.computation.non_bridging=Non-bridging connection found
+gregtech.multiblock.computation.non_bridging.detailed=A Reception Hatch is linked to a machine which cannot bridge
+gregtech.multiblock.computation.not_enough_computation=§cWARNING:§f Machine needs more computation.
 
 gregtech.multiblock.power_substation.stored=Stored: %s EU
 gregtech.multiblock.power_substation.capacity=Capacity: %s EU
@@ -5208,6 +5355,21 @@ gregtech.multiblock.power_substation.time_hours=%s Hours
 gregtech.multiblock.power_substation.time_days=%s Days
 gregtech.multiblock.power_substation.time_years=%s Years
 gregtech.multiblock.power_substation.time_forever=Forever
+gregtech.multiblock.power_substation.under_one_hour_left=Less than 1 hour until fully drained!
+
+gregtech.multiblock.hpca.computation=Providing: %s / %s CWU/t
+gregtech.multiblock.hpca.energy=Using: %s / %s EU/t (%s)
+gregtech.multiblock.hpca.coolant=Needs up to: %s L/t PCB Coolant
+gregtech.multiblock.hpca.cooling=Cooling:
+gregtech.multiblock.hpca.temperature=Temperature:
+gregtech.multiblock.hpca.error_damaged=Damaged component in structure
+gregtech.multiblock.hpca.error_temperature=Temperature above 100C, components may be damaged!
+gregtech.multiblock.hpca.warning_temperature=Temperature above 50C, components may be damaged at 100C!
+gregtech.multiblock.hpca.warning_temperature_active_cool=Fully utilizing active coolers
+gregtech.multiblock.hpca.warning_structure_header=Structure Hints:
+gregtech.multiblock.hpca.warning_multiple_bridges=- Multiple bridges in structure (provides no additional benefit)
+gregtech.multiblock.hpca.warning_no_computation=- No computation providers
+gregtech.multiblock.hpca.warning_low_cooling=- Not enough cooling
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
@@ -5502,6 +5664,45 @@ gregtech.key.armor_mode_switch=Armor Mode Switch
 gregtech.key.armor_hover=Armor Hover Toggle
 gregtech.key.armor_charging=Armor Charging to Inventory Toggle
 gregtech.key.tool_aoe_change=Tool AoE Mode Switch
+
+gregtech.subtitle.tick.forge_hammer=Hammer smashes
+gregtech.subtitle.tick.macerator=Items macerating
+gregtech.subtitle.tick.chemical_reactor=Chemicals reacting
+gregtech.subtitle.tick.assembler=Items assembling
+gregtech.subtitle.tick.centrifuge=Items separating
+gregtech.subtitle.tick.compressor=Items compressing
+gregtech.subtitle.tick.electrolyzer=Elements electrolyzing
+gregtech.subtitle.tick.mixer=Dusts mixing
+gregtech.subtitle.tick.replicator=Items replicating
+gregtech.subtitle.tick.arc=Electricity arcing
+gregtech.subtitle.tick.boiler=Liquid boiling
+gregtech.subtitle.tick.furnace=Furnace smelting
+gregtech.subtitle.tick.cooling=Ingot cooling
+gregtech.subtitle.tick.fire=Fire burning
+gregtech.subtitle.tick.bath=Items bathing
+gregtech.subtitle.tick.motor=Motor turning
+gregtech.subtitle.tick.cut=Blocks cutting
+gregtech.subtitle.tick.turbine=Turbine spinning
+gregtech.subtitle.tick.combustion=Fuel combusting
+gregtech.subtitle.tick.miner=Miner drilling
+gregtech.subtitle.tick.computation=Computers processing
+gregtech.subtitle.use.wrench=Wrench turns
+gregtech.subtitle.use.soft_hammer=Block smacked
+gregtech.subtitle.use.drill=Blocks drilled
+gregtech.subtitle.use.plunger=Fluid evacuated
+gregtech.subtitle.use.file=Ingot filed
+gregtech.subtitle.use.saw=Wood sawing
+gregtech.subtitle.use.screwdriver=Screws turning
+gregtech.subtitle.use.chainsaw=Chainsaw growls
+gregtech.subtitle.use.wirecutter=Wires snip
+gregtech.subtitle.use.spray_can=Paint sprays
+gregtech.subtitle.use.tricorder=Beep beep
+gregtech.subtitle.use.mortar=Grinding
+gregtech.subtitle.record.sus=Sus
+gregtech.subtitle.entity.portal_opening=Portal opens
+gregtech.subtitle.entity.portal_closing=Portal closes
+gregtech.subtitle.maintenance.electrical=Electrical breakdown
+gregtech.subtitle.maintenance.mechanical=Mechanical breakdown
 
 # Debug messaging
 gregtech.debug.f3_h.enabled=GregTech has modified the debug info! For Developers: enable the misc:debug config option in the GregTech config file to see more

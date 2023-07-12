@@ -31,6 +31,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Arrays;
@@ -63,6 +64,7 @@ public class MachineRecipeLoader {
         MiscRecipeLoader.init();
         BatteryRecipes.init();
         CircuitRecipes.init();
+        ComputerRecipes.init();
         WoodRecipeLoader.registerRecipes();
 
         registerDecompositionRecipes();
@@ -532,6 +534,15 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
+                .input(EMITTER_LV)
+                .input(plate, Steel)
+                .circuitMeta(1)
+                .fluidInputs(solder)
+                .outputs(COVER_MAINTENANCE_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Glass)
                 .input(foil, Aluminium, 4)
                 .input(circuit, MarkerMaterials.Tier.LV)
@@ -972,6 +983,7 @@ public class MachineRecipeLoader {
         // Data Items
         ModHandler.addShapelessNBTClearingRecipe("data_stick_nbt", TOOL_DATA_STICK.getStackForm(), TOOL_DATA_STICK.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("data_orb_nbt", TOOL_DATA_ORB.getStackForm(), TOOL_DATA_ORB.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("data_module_nbt", TOOL_DATA_MODULE.getStackForm(), TOOL_DATA_MODULE.getStackForm());
 
         //Jetpacks
         ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(), SEMIFLUID_JETPACK.getStackForm());
@@ -1006,6 +1018,13 @@ public class MachineRecipeLoader {
                 ModHandler.addShapedRecipe("multi_fluid_hatch_input_to_output_" + MULTI_FLUID_EXPORT_HATCH[i].getTier(), MULTI_FLUID_EXPORT_HATCH[i].getStackForm(),
                         "d", "B", 'B', MULTI_FLUID_IMPORT_HATCH[i].getStackForm());
             }
+        }
+
+        if (Loader.isModLoaded(MODID_APPENG)) {
+            ModHandler.addShapedRecipe("me_fluid_hatch_output_to_input", FLUID_IMPORT_HATCH_ME.getStackForm(), "d", "B", 'B', FLUID_EXPORT_HATCH_ME.getStackForm());
+            ModHandler.addShapedRecipe("me_fluid_hatch_input_to_output", FLUID_EXPORT_HATCH_ME.getStackForm(), "d", "B", 'B', FLUID_IMPORT_HATCH_ME.getStackForm());
+            ModHandler.addShapedRecipe("me_item_bus_output_to_input", ITEM_IMPORT_BUS_ME.getStackForm(), "d", "B", 'B', ITEM_EXPORT_BUS_ME.getStackForm());
+            ModHandler.addShapedRecipe("me_item_bus_input_to_output", ITEM_EXPORT_BUS_ME.getStackForm(), "d", "B", 'B', ITEM_IMPORT_BUS_ME.getStackForm());
         }
 
         if (STEAM_EXPORT_BUS != null && STEAM_IMPORT_BUS != null) {

@@ -110,7 +110,13 @@ public class MixerRecipes {
                 .output(dust, EnderPearl, 10)
                 .buildAndRegister();
 
-       // Alloys
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[HV])
+                .fluidInputs(PolychlorinatedBiphenyl.getFluid(750))
+                .fluidInputs(DistilledWater.getFluid(250))
+                .fluidOutputs(PCBCoolant.getFluid(1000))
+                .buildAndRegister();
+
+        // Alloys
         ModHandler.addShapelessRecipe("dust_brass", OreDictUnifier.get(dust, Brass, 3),
                 new UnificationEntry(dust, Copper),
                 new UnificationEntry(dust, Copper),
