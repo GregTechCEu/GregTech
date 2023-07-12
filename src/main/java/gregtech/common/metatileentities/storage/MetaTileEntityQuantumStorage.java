@@ -47,10 +47,9 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             GTLog.logger.info("Controller removed from storage {}", getPos());
             controller = null;
             controllerPos = null;
-            if (!getWorld().isRemote) {
-                writeCustomData(REMOVE_CONTROLLER, buf -> {});
-                markDirty();
-            }
+
+            writeCustomData(REMOVE_CONTROLLER, buf -> {});
+            markDirty();
         }
     }
 
