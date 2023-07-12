@@ -9,6 +9,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
@@ -355,7 +356,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 .bindPlayerInventory(entityPlayer.inventory);
         if (isConnected()) {
             // todo testing purposes
-            builder.image(116, 32, 20, 20, GuiTextures.INFO_ICON);
+            builder.widget(new ImageWidget(116, 32, 20, 20, GuiTextures.INFO_ICON)
+                    .setTooltip("Connected to Quantum Controller")
+            );
         }
 
         return builder.build(getHolder(), entityPlayer);
