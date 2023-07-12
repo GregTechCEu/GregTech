@@ -99,7 +99,7 @@ gregtech.top.unit.fluid_buckets=kL
 gregtech.top.block_drops=ドロップ
 
 gregtech.top.ld_pipe_no_network=パイプラインが見つからない
-gregtech.top.ld_pipe_connected=パイプラインが接続済
+gregtech.top.ld_pipe_connected=パイプラインに接続済
 gregtech.top.ld_pipe_incomplete=パイプラインの構造に不備あり
 gregtech.top.ld_pipe_length=長さ:
 gregtech.top.ld_pipe_input=搬入
@@ -530,7 +530,7 @@ metaitem.tool.datastick.name=データスティック
 metaitem.tool.datastick.tooltip=単純なデータの保管に
 metaitem.tool.dataorb.name=データオーブ
 metaitem.tool.dataorb.tooltip=複雑なデータの保管に
-metaitem.tool.datamodule.name=データModule
+metaitem.tool.datamodule.name=データモジュール
 metaitem.tool.datamodule.tooltip=とても複雑なデータの保管に/n§cデータバンクで飲み読み取り可能
 metaitem.circuit.integrated.name=プログラム回路
 metaitem.circuit.integrated.tooltip=使うと設定画面を開く/n/nプログラム回路スロットを持つ機械に/nシフト右クリックをすると/nこの回路の番号に設定される/n
@@ -1099,8 +1099,8 @@ metaitem.power_thruster_advanced.name=発展型パワースラスター
 metaitem.gravitation_engine.name=重力エンジンユニット
 
 metaitem.tool.multiblock_builder.name=マルチブロックビルダー
-metaitem.tool.multiblock_builder.tooltip=マルチブロックの自動設置とデバッグに!
-metaitem.tool.multiblock_builder.tooltip2=マルチブロックのコントローラーをスニーク右クリックで自動設置
+metaitem.tool.multiblock_builder.tooltip=マルチブロックの自動建造とデバッグに!
+metaitem.tool.multiblock_builder.tooltip2=マルチブロックのコントローラーをスニーク右クリックで自動建造
 
 metaarmor.nms.nightvision.enabled=NanoMuscle™ Suite: 暗視を有効化
 metaarmor.nms.nightvision.disabled=NanoMuscle™ Suite: 暗視を無効化
@@ -1816,7 +1816,7 @@ gregtech.material.nitrosyl_chloride=塩化ニトロシル
 gregtech.material.butyraldehyde=ブチルアルデヒド
 gregtech.material.polyvinyl_butyral=ポリビニルブチラール
 gregtech.material.biphenyl=ビフェニル
-gregtech.material.polychlorinated_biphenyl=ポリ塩化ビフェニル (PCB)
+gregtech.material.polychlorinated_biphenyl=ポリ塩素化ビフェニル (PCB)
 gregtech.material.pcb_coolant=誘電PCBクーラント
 
 
@@ -3988,7 +3988,7 @@ gregtech.machine.transformer.tooltip_transform_down=§a降圧: §f%dA %dEU (%s§
 gregtech.machine.transformer.message_transform_down=降圧: In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer.tooltip_transform_up=§c昇圧: §f%dA %dEU §f(%s§f) -> %dA %dEU (%s§f)
 gregtech.machine.transformer.message_transform_up=昇圧: In: %dEU %dA, Out: %dEU %dA
-gregtech.machine.transformer_adjustable.tooltip_tool_usage=スクリュードライバーで電流値を変更。最初は§f%dアンペア§7です。
+gregtech.machine.transformer_adjustable.tooltip_tool_usage=スクリュードライバーで電流値を変更。最初は§f%dA§7です。
 gregtech.machine.transformer_adjustable.message_adjust=%dEU %dAを%dEU %dAに変圧
 
 gregtech.machine.transformer.ulv.name=ULV変圧器
@@ -4006,38 +4006,38 @@ gregtech.machine.transformer.uiv.name=UIV変圧器
 gregtech.machine.transformer.uxv.name=UXV変圧器
 gregtech.machine.transformer.opv.name=OpV変圧器
 
-gregtech.machine.transformer.hi_amp.ulv.name=4アンペア対応ULV変圧器
-gregtech.machine.transformer.hi_amp.lv.name=4アンペア対応LV変圧器
-gregtech.machine.transformer.hi_amp.mv.name=4アンペア対応MV変圧器
-gregtech.machine.transformer.hi_amp.hv.name=4アンペア対応HV変圧器
-gregtech.machine.transformer.hi_amp.ev.name=4アンペア対応EV変圧器
-gregtech.machine.transformer.hi_amp.iv.name=4アンペア対応IV変圧器
-gregtech.machine.transformer.hi_amp.luv.name=4アンペア対応LuV変圧器
-gregtech.machine.transformer.hi_amp.zpm.name=4アンペア対応ZPM変圧器
-gregtech.machine.transformer.hi_amp.uv.name=4アンペア対応UV変圧器
-gregtech.machine.transformer.hi_amp.uhv.name=4アンペア対応UHV4変圧器
-gregtech.machine.transformer.hi_amp.uev.name=4アンペア対応UEV変圧器
-gregtech.machine.transformer.hi_amp.uiv.name=4アンペア対応UIV変圧器
-gregtech.machine.transformer.hi_amp.uxv.name=4アンペア対応UXV変圧器
-gregtech.machine.transformer.hi_amp.opv.name=4アンペア対応OpV変圧器
+gregtech.machine.transformer.hi_amp.ulv.name=4A対応ULV変圧器
+gregtech.machine.transformer.hi_amp.lv.name=4A対応LV変圧器
+gregtech.machine.transformer.hi_amp.mv.name=4A対応MV変圧器
+gregtech.machine.transformer.hi_amp.hv.name=4A対応HV変圧器
+gregtech.machine.transformer.hi_amp.ev.name=4A対応EV変圧器
+gregtech.machine.transformer.hi_amp.iv.name=4A対応IV変圧器
+gregtech.machine.transformer.hi_amp.luv.name=4A対応LuV変圧器
+gregtech.machine.transformer.hi_amp.zpm.name=4A対応ZPM変圧器
+gregtech.machine.transformer.hi_amp.uv.name=4A対応UV変圧器
+gregtech.machine.transformer.hi_amp.uhv.name=4A対応UHV4変圧器
+gregtech.machine.transformer.hi_amp.uev.name=4A対応UEV変圧器
+gregtech.machine.transformer.hi_amp.uiv.name=4A対応UIV変圧器
+gregtech.machine.transformer.hi_amp.uxv.name=4A対応UXV変圧器
+gregtech.machine.transformer.hi_amp.opv.name=4A対応OpV変圧器
 
-gregtech.machine.transformer.adjustable.ulv.name=16アンペア対応UVV変圧器
-gregtech.machine.transformer.adjustable.lv.name=16アンペア対応LV変圧器
-gregtech.machine.transformer.adjustable.mv.name=16アンペア対応MV変圧器
-gregtech.machine.transformer.adjustable.hv.name=16アンペア対応HV変圧器
-gregtech.machine.transformer.adjustable.ev.name=16アンペア対応EV変圧器
-gregtech.machine.transformer.adjustable.iv.name=16アンペア対応IV変圧器
-gregtech.machine.transformer.adjustable.luv.name=16アンペア対応LuV変圧器
-gregtech.machine.transformer.adjustable.zpm.name=16アンペア対応ZPM変圧器
-gregtech.machine.transformer.adjustable.uv.name=16アンペア対応UV変圧器
-gregtech.machine.transformer.adjustable.uhv.name=16アンペア対応UHV変圧器
-gregtech.machine.transformer.adjustable.uev.name=16アンペア対応UEV変圧器
-gregtech.machine.transformer.adjustable.uiv.name=16アンペア対応UIV変圧器
-gregtech.machine.transformer.adjustable.uxv.name=16アンペア対応UXV変圧器
-gregtech.machine.transformer.adjustable.opv.name=16アンペア対応OpV変圧器
+gregtech.machine.transformer.adjustable.ulv.name=16A対応ULV変圧器
+gregtech.machine.transformer.adjustable.lv.name=16A対応LV変圧器
+gregtech.machine.transformer.adjustable.mv.name=16A対応MV変圧器
+gregtech.machine.transformer.adjustable.hv.name=16A対応HV変圧器
+gregtech.machine.transformer.adjustable.ev.name=16A対応EV変圧器
+gregtech.machine.transformer.adjustable.iv.name=16A対応IV変圧器
+gregtech.machine.transformer.adjustable.luv.name=16A対応LuV変圧器
+gregtech.machine.transformer.adjustable.zpm.name=16A対応ZPM変圧器
+gregtech.machine.transformer.adjustable.uv.name=16A対応UV変圧器
+gregtech.machine.transformer.adjustable.uhv.name=16A対応UHV変圧器
+gregtech.machine.transformer.adjustable.uev.name=16A対応UEV変圧器
+gregtech.machine.transformer.adjustable.uiv.name=16A対応UIV変圧器
+gregtech.machine.transformer.adjustable.uxv.name=16A対応UXV変圧器
+gregtech.machine.transformer.adjustable.opv.name=16A対応OpV変圧器
 
 # Diodes
-gregtech.machine.diode.message=通す最大アンペア数: %s
+gregtech.machine.diode.message=通す最大A数: %s
 gregtech.machine.diode.tooltip_tool_usage=ソフトマレットで叩いて通すアンペア数を切り替えます。
 gregtech.machine.diode.tooltip_general=エネルギーを一方通行にし、通すA数を制限できる。
 gregtech.machine.diode.tooltip_starts_at=ソフトマレットでA数を変更。最初は§f1A§7です。
@@ -5278,7 +5278,7 @@ gregtech.multiblock.turbine.fuel_needed=%sを%s tick毎に消費します!
 gregtech.multiblock.turbine.rotor_speed=ローター速度: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=ローター耐久値: %s%%
 gregtech.multiblock.turbine.rotor_durability_low=ローターの耐久値が残り少ないです!
-gregtech.multiblock.turbine.no_rotor=ローターホルダーにローターがありません.
+gregtech.multiblock.turbine.no_rotor=ローターホルダーにローターがありません。
 gregtech.multiblock.turbine.efficiency=タービン効率: %s%%
 gregtech.multiblock.turbine.energy_per_tick=エネルギー出力 EU/t: %s (%s)
 gregtech.multiblock.turbine.obstructed=タービン正面が塞がれている。
@@ -5303,7 +5303,7 @@ gregtech.machine.steam_miner.steam=蒸気不足!
 gregtech.machine.miner.errorradius=§c動作中は変更できない!
 
 gregtech.multiblock.miner.neither_mode=チャンクモード §c無効§r/nシルクタッチ: §c無効§r/n§7切替には機械を一時停止させる必要がある。
-gregtech.multiblock.miner.chunk_mode=チャンクモード: §a有効§r/nシルクタッチ: §c無効§r/n§7切替には機械を一時停止させる必要がある。.
+gregtech.multiblock.miner.chunk_mode=チャンクモード: §a有効§r/nシルクタッチ: §c無効§r/n§7切替には機械を一時停止させる必要がある。
 gregtech.multiblock.miner.silk_touch_mode=チャンクモード: §c無効§r/nシルクタッチ: §a有効§r/n§7切替には機械を一時停止させる必要がある。
 gregtech.multiblock.miner.both_modes=チャンクモード: §a有効§r/nシルクタッチ: §a有効§r/n§7切替には機械を一時停止させる必要がある。
 
@@ -5682,7 +5682,6 @@ gregtech.subtitle.entity.portal_opening=ポータルが開く
 gregtech.subtitle.entity.portal_closing=ポータルが閉じる
 gregtech.subtitle.maintenance.electrical=電気的故障
 gregtech.subtitle.maintenance.mechanical=技術的故障
-
 
 # Debug messaging
 gregtech.debug.f3_h.enabled=GregTechがデバッグ情報を修正しました! 開発者向け: GregTech.cfgのmisc:debug設定オプションを有効にすることでより多くの情報を見ることができます。
