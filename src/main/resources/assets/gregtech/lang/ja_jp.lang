@@ -4671,7 +4671,7 @@ gregtech.machine.data_bank.name=データバンク
 gregtech.machine.data_bank.tooltip.1=個人用NAS (ネットワークHDD)
 gregtech.machine.data_bank.tooltip.2=大容量データストレージ。光ファイバーで輸送。
 gregtech.machine.data_bank.tooltip.3=データバンクは連結可能
-gregtech.machine.data_bank.tooltip.4=データハッチ1つにつき%sEU/t、連結時%sEU/t消費する。
+gregtech.machine.data_bank.tooltip.4=データハッチ1つにつき§f%s EU/t§7、連結時§f%s EU/t§7消費する。
 gregtech.multiblock.data_bank.description=データバンクはアセンブリライン用研究データを複数のアセンブリラインで共有できるようにするマルチブロックです。さらに、アセンブリラインがより複雑なデータを読み取れるようにします。
 
 gregtech.machine.power_substation.name=大型蓄電器
@@ -5017,8 +5017,8 @@ gregtech.machine.fluid_tank.fluid=内容物: %s L の %s
 
 gregtech.machine.me_export_fluid_hatch.name=ME 搬出ハッチ
 gregtech.machine.me_export_item_bus.name=ME 搬出バス
-gregtech.machine.me_import_fluid_hatch.name=ME 搬入ハッチ
-gregtech.machine.me_import_item_bus.name=ME 搬入バス
+gregtech.machine.me_import_fluid_hatch.name=MEネットワーク仕入れ搬入ハッチ
+gregtech.machine.me_import_item_bus.name=MEネットワーク仕入れ搬入バス
 gregtech.machine.me.fluid_export.tooltip=MEネットワークに液体を自動搬出
 gregtech.machine.me.item_export.tooltip=MEネットワークにアイテムを自動搬出
 gregtech.machine.me.fluid_import.tooltip=MEネットワークから液体を自動搬入
