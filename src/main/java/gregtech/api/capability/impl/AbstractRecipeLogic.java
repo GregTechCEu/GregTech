@@ -619,16 +619,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     @Nonnull
     protected int[] calculateOverclock(@Nonnull Recipe recipe) {
-        // invert EU for overclocking calculations (so it increases in the positive direction)
-        boolean negativeEU = recipe.getEUt() < 0;
-
         // perform the actual overclocking
-        int[] overclockResult = performOverclocking(recipe);
-
-        // make the EU negative after it has been made further away from 0
-        if (negativeEU) overclockResult[0] *= -1;
-
-        return overclockResult;
+        return performOverclocking(recipe);
     }
 
     /**
