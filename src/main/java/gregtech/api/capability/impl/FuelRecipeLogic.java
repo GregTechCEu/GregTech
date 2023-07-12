@@ -3,7 +3,6 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
-import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 
@@ -14,14 +13,6 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
 
     public FuelRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
         super(tileEntity, recipeMap, energyContainer);
-    }
-
-    @Nonnull
-    @Override
-    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
-        // no overclocking happens other than parallelization,
-        // so return the recipe's values, with EUt made positive for it to be made negative later
-        return new int[]{-recipeEUt, recipeDuration};
     }
 
     @Nonnull
@@ -37,9 +28,10 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     }
 
     @Override
-    public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
-        // the builder automatically multiplies by -1, so nothing extra is needed here
-        builder.EUt(builder.getEUt());
+    protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {
+        super.modifyOverclockPost(overclockResults, storage);
+        // make EUt negative so it is consumed
+        overclockResults[0] = -overclockResults[0];
     }
 
     @Override

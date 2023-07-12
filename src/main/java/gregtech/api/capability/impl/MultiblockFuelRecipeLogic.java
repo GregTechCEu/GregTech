@@ -6,7 +6,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.TextFormattingUtil;
 import net.minecraft.util.Tuple;
@@ -22,14 +21,6 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
     public MultiblockFuelRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity);
-    }
-
-    @Nonnull
-    @Override
-    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
-        // no overclocking happens other than parallelization,
-        // so return the recipe's values, with EUt made positive for it to be made negative later
-        return new int[]{-recipeEUt, recipeDuration};
     }
 
     @Override
@@ -52,6 +43,9 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         if (maintenanceValues.getFirst() > 0) {
             overclockResults[1] = (int) (overclockResults[1] * (1 - 0.1 * maintenanceValues.getFirst()));
         }
+
+        // make EUt negative so it is consumed
+        overclockResults[0] = -overclockResults[0];
     }
 
     @Nonnull
@@ -64,12 +58,6 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     protected boolean hasEnoughPower(@Nonnull int[] resultOverclock) {
         // generators always have enough power to run recipes
         return true;
-    }
-
-    @Override
-    public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
-        // the builder automatically multiplies by -1, so nothing extra is needed here
-        builder.EUt(builder.getEUt());
     }
 
     @Override
