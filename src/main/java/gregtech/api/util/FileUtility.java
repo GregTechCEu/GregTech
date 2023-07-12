@@ -146,11 +146,9 @@ public class FileUtility {
      * @return A String of the File name at the end of the file path
      */
     public static String trimFileName(String name) {
-        FileSystem fs = FileSystems.getDefault();
-        String separator = fs.getSeparator();
 
         //Remove the leading "folderName\"
-        String[] tempName = name.split(Matcher.quoteReplacement(separator));
+        String[] tempName = name.split(Matcher.quoteReplacement("/"));
         //Take the last entry in case of nested folders
         String newName = tempName[tempName.length - 1];
         //Remove the ".json"

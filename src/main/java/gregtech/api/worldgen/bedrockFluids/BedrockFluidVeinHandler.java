@@ -17,6 +17,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -286,7 +287,7 @@ public class BedrockFluidVeinHandler {
             if (tag.hasKey("vein")) {
                 String s = tag.getString("vein");
                 for (BedrockFluidDepositDefinition definition : veinList.keySet()) {
-                    if (s.equalsIgnoreCase(definition.getDepositName()))
+                    if (s.replace(File.separatorChar, '/').equalsIgnoreCase(definition.getDepositName()))
                         info.vein = definition;
                 }
             }
