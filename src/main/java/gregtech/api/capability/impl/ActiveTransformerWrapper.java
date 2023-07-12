@@ -2,8 +2,10 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.ILaserContainer;
-import net.minecraft.util.EnumFacing;
 import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
 
 public class ActiveTransformerWrapper implements ILaserContainer {
 
@@ -18,52 +20,40 @@ public class ActiveTransformerWrapper implements ILaserContainer {
     }
 
     @Override
-    public long acceptEnergy(EnumFacing side, long amount) {
-        return changeEnergy(amount);
-    }
-
-    @Override
-    public long changeEnergy(long amount) {
+    public long changeEnergy(long amount, @Nonnull Collection<ILaserContainer> seen) {
+        seen.add(this);
         long used = 0;
         if (energyInputs != null) {
             used = energyInputs.changeEnergy(amount);
         }
-        if (Math.abs(used) < Math.abs(amount) && laserUpstream != null) {
+        if (Math.abs(used) < Math.abs(amount) && laserUpstream != null && !seen.contains(laserUpstream)) {
             used += laserUpstream.changeEnergy(amount - used);
         }
         return used;
     }
 
     @Override
-    public boolean inputsEnergy(EnumFacing side) {
-        return true;
-}
-
-    @Override
-    public boolean outputsEnergy(EnumFacing side) {
-        return true;
-    }
-
-    @Override
-    public long getEnergyStored() {
+    public long getEnergyStored(@Nonnull Collection<ILaserContainer> seen) {
+        seen.add(this);
         long stored = 0;
         if (energyInputs != null) {
             stored = energyInputs.getEnergyStored();
         }
-        if (laserUpstream != null) {
-            stored += laserUpstream.getEnergyStored();
+        if (laserUpstream != null && !seen.contains(laserUpstream)) {
+            stored += laserUpstream.getEnergyStored(seen);
         }
         return stored;
     }
 
     @Override
-    public long getEnergyCapacity() {
+    public long getEnergyCapacity(@Nonnull Collection<ILaserContainer> seen) {
+        seen.add(this);
         long capacity = 0;
         if (energyInputs != null) {
             capacity = energyInputs.getEnergyCapacity();
         }
-        if (laserUpstream != null) {
-            capacity += laserUpstream.getEnergyCapacity();
+        if (laserUpstream != null && !seen.contains(laserUpstream)) {
+            capacity += laserUpstream.getEnergyCapacity(seen);
         }
         return capacity;
     }

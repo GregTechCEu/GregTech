@@ -3,11 +3,11 @@ package gregtech.common.pipelike.laser.net;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 public class LaserNetHandler implements ILaserContainer {
     private LaserPipeNet net;
@@ -21,48 +21,27 @@ public class LaserNetHandler implements ILaserContainer {
         this.facing = facing;
         this.world = pipe.getWorld();
     }
+
     public void updateNetwork(LaserPipeNet net) {
         this.net = net;
     }
 
     @Override
-    public long acceptEnergy(EnumFacing side, long amount) {
-        ILaserContainer handler = getInnerContainer();
+    public long changeEnergy(long amount, @Nonnull Collection<ILaserContainer> seen) {
+        ILaserContainer handler = getInnerContainer(seen);
         if (handler == null) return 0;
-        long energyUsed = handler.acceptEnergy(side, amount);
-        if (energyUsed > 0) {
-            for (BlockPos pos : net.getAllNodes().keySet()) {
-                if (world.getTileEntity(pos) instanceof TileEntityLaserPipe laserPipe) {
-                    laserPipe.setActive(true, 20);
-                }
-            }
-        }
-        return energyUsed;
+        return handler.changeEnergy(amount, seen);
     }
 
     @Override
-    public long changeEnergy(long amount) {
-        ILaserContainer handler = getInnerContainer();
+    public long getEnergyStored(@Nonnull Collection<ILaserContainer> seen) {
+        ILaserContainer handler = getInnerContainer(seen);
         if (handler == null) return 0;
-        return handler.changeEnergy(amount);
-    }
-
-    @Override
-    public boolean inputsEnergy(EnumFacing side) {
-        ILaserContainer handler = getInnerContainer();
-        if (handler == null) return false;
-        return handler.inputsEnergy(side);
-    }
-
-    @Override
-    public long getEnergyStored() {
-        ILaserContainer handler = getInnerContainer();
-        if (handler == null) return 0;
-        return handler.getEnergyStored();
+        return handler.getEnergyStored(seen);
     }
 
     @Nullable
-    private ILaserContainer getInnerContainer() {
+    private ILaserContainer getInnerContainer(@Nonnull Collection<ILaserContainer> seen) {
         if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
             return null;
         }
@@ -72,14 +51,18 @@ public class LaserNetHandler implements ILaserContainer {
             return null;
         }
 
-        return data.getHandler(world);
+        ILaserContainer handler = data.getHandler(world);
+        if (seen.contains(handler)) {
+            return null;
+        }
+        return handler;
     }
 
     @Override
-    public long getEnergyCapacity() {
-        ILaserContainer handler = getInnerContainer();
+    public long getEnergyCapacity(@Nonnull Collection<ILaserContainer> seen) {
+        ILaserContainer handler = getInnerContainer(seen);
         if (handler == null) return 0;
-        return handler.getEnergyCapacity();
+        return handler.getEnergyCapacity(seen);
     }
 
     public LaserPipeNet getNet() {
