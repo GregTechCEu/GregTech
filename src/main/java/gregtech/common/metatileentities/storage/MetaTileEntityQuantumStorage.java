@@ -114,14 +114,14 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             if (mte instanceof IQuantumStorage<?> storage) {
                 if (storage.isConnected()) {
                     IQuantumController controller = storage.getController();
-                    if (controller != null && controller.canConnect(this)) {
+                    if (controller == null || controller.getPos().equals(controllerPos)) continue;
+                    if (controller.canConnect(this)) {
                         candidate = controller;
                     }
                 }
-            } else if (mte instanceof IQuantumController) {
-                IQuantumController controller = (IQuantumController) mte;
-                if (controller.canConnect(this)) {
-                    candidate = controller;
+            } else if (mte instanceof IQuantumController quantumController) {
+                if (quantumController.canConnect(this)) {
+                    candidate = quantumController;
                 }
             }
             if (candidate != null) {
