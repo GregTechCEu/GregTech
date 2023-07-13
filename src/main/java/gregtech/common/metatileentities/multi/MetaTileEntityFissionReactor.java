@@ -375,4 +375,12 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         }
         fissionReactor.computeGeometry();
     }
+
+    private void updateReactorState() {
+        this.fissionReactor.updateTemperature();
+        this.fissionReactor.updatePressure();
+        this.fissionReactor.updateNeutronPoisoning();
+        this.fissionReactor.updatePower();
+    }
+
 }
