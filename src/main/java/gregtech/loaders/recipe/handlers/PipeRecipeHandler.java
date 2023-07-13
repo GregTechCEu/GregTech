@@ -99,7 +99,7 @@ public class PipeRecipeHandler {
                 ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                         .input(plate, material)
                         .circuitMeta(18)
-                        .fluidInputs(Glue.getFluid(50))
+                        .fluidInputs(Glue.getFluid(10))
                         .output(pipePrefix, material, 2)
                         .buildAndRegister();
             }
@@ -141,7 +141,7 @@ public class PipeRecipeHandler {
                 ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                         .input(plate, material)
                         .circuitMeta(12)
-                        .fluidInputs(Glue.getFluid(50))
+                        .fluidInputs(Glue.getFluid(10))
                         .output(pipePrefix, material)
                         .buildAndRegister();
 
@@ -225,7 +225,7 @@ public class PipeRecipeHandler {
                 ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
                         .input(plate, material, 6)
                         .circuitMeta(2)
-                        .fluidInputs(Glue.getFluid(10))
+                        .fluidInputs(Glue.getFluid(50))
                         .output(pipePrefix, material)
                         .buildAndRegister();
             }
@@ -267,7 +267,7 @@ public class PipeRecipeHandler {
                 ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
                         .input(plateDouble, material, 6)
                         .circuitMeta(24)
-                        .fluidInputs(Glue.getFluid(10))
+                        .fluidInputs(Glue.getFluid(100))
                         .output(pipePrefix, material)
                         .buildAndRegister();
             }
