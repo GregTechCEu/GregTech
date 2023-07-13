@@ -17,7 +17,11 @@ import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.*;
+import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
+import static gregtech.api.unification.material.Materials.Glue;
 import static gregtech.api.unification.material.info.MaterialFlags.NO_SMASHING;
+import static gregtech.api.unification.ore.OrePrefix.plate;
+import static gregtech.api.unification.ore.OrePrefix.plateDouble;
 
 public class PipeRecipeHandler {
 
@@ -91,6 +95,13 @@ public class PipeRecipeHandler {
                 ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material),
                         GTUtility.copy(2, pipeStack), " s ", "rXw",
                         'X', new UnificationEntry(OrePrefix.plate, material));
+
+                ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                        .input(plate, material)
+                        .circuitMeta(18)
+                        .fluidInputs(Glue.getFluid(50))
+                        .output(pipePrefix, material)
+                        .buildAndRegister();
             }
             else {
                 ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material),
@@ -127,6 +138,13 @@ public class PipeRecipeHandler {
                         pipeStack, "wXr",
                         'X', new UnificationEntry(OrePrefix.plate, material));
 
+                ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                        .input(plate, material)
+                        .circuitMeta(12)
+                        .fluidInputs(Glue.getFluid(50))
+                        .output(pipePrefix, material)
+                        .buildAndRegister();
+
             } else {
                 ModHandler.addShapedRecipe(String.format("small_%s_pipe", material),
                         pipeStack, "wXh",
@@ -161,6 +179,14 @@ public class PipeRecipeHandler {
                 ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material),
                         pipeStack, "XXX", "w r",
                         'X', new UnificationEntry(OrePrefix.plate, material));
+
+                ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                        .input(plate, material, 3)
+                        .circuitMeta(6)
+                        .fluidInputs(Glue.getFluid(20))
+                        .output(pipePrefix, material)
+                        .buildAndRegister();
+
             } else {
                 ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material),
                         pipeStack, "XXX", "w h",
@@ -195,6 +221,13 @@ public class PipeRecipeHandler {
                 ModHandler.addShapedRecipe(String.format("large_%s_pipe", material),
                         pipeStack, "XXX", "w r", "XXX",
                         'X', new UnificationEntry(OrePrefix.plate, material));
+
+                ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
+                        .input(plate, material, 6)
+                        .circuitMeta(2)
+                        .fluidInputs(Glue.getFluid(10))
+                        .output(pipePrefix, material)
+                        .buildAndRegister();
             }
             else {
                 ModHandler.addShapedRecipe(String.format("large_%s_pipe", material),
@@ -230,6 +263,13 @@ public class PipeRecipeHandler {
                 ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material),
                         pipeStack, "XXX", "w r", "XXX",
                         'X', new UnificationEntry(OrePrefix.plateDouble, material));
+
+                ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
+                        .input(plateDouble, material, 6)
+                        .circuitMeta(24)
+                        .fluidInputs(Glue.getFluid(10))
+                        .output(pipePrefix, material)
+                        .buildAndRegister();
             }
             else {
                 ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material),
