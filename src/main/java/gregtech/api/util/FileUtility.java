@@ -146,11 +146,11 @@ public class FileUtility {
      * @return A String of the File name at the end of the file path
      */
     public static String trimFileName(String name) {
-        FileSystem fs = FileSystems.getDefault();
-        String separator = fs.getSeparator();
+        // this method is passed deposit names, which need to be converted first
+        name = slashToNativeSep(name);
 
         //Remove the leading "folderName\"
-        String[] tempName = name.split(Matcher.quoteReplacement(separator));
+        String[] tempName = name.split(Matcher.quoteReplacement(File.separator));
         //Take the last entry in case of nested folders
         String newName = tempName[tempName.length - 1];
         //Remove the ".json"
@@ -163,5 +163,23 @@ public class FileUtility {
         newName = newName.substring(0, 1).toUpperCase() + newName.substring(1);
 
         return newName;
+    }
+
+    /**
+     * Converts a path string from using the filesystem's native path separator to /
+     * <br>
+     * Useful for converting paths to consistent strings across operating systems
+     */
+    public static String nativeSepToSlash(String path) {
+        return path.replace(File.separatorChar, '/');
+    }
+
+    /**
+     * Converts a path string from using / to the filesystem's native path separator
+     * <br>
+     * Useful for allowing paths converted with {@link FileUtility#nativeSepToSlash(String)} to be used for file i/o
+     */
+    public static String slashToNativeSep(String path) {
+        return path.replace('/', File.separatorChar);
     }
 }
