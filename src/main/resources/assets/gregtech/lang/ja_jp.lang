@@ -4605,7 +4605,7 @@ gregtech.machine.large_boiler.tungstensteel.name=タングステンスチール�
 
 gregtech.machine.assembly_line.name=アセンブリライン
 gregtech.machine.assembly_line.tooltip_ordered_items=§fアイテム§7がレシピ通りの順番で並んでいないと動作しません。
-gregtech.machine.assembly_line.tooltip_ordered_fluids=§液体が§7がレシピ通りの順番で並んでいないと動作しません。
+gregtech.machine.assembly_line.tooltip_ordered_fluids=§f液体が§7がレシピ通りの順番で並んでいないと動作しません。
 gregtech.machine.assembly_line.tooltip_ordered_both=§fアイテム§7と§f液体§7がレシピ通りの順番で並んでいないと動作しません。
 gregtech.machine.fusion_reactor.luv.name=核融合炉 Mark 1
 gregtech.machine.fusion_reactor.zpm.name=核融合炉 Mark 2
