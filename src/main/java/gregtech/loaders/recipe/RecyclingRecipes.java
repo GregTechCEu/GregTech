@@ -196,12 +196,39 @@ public class RecyclingRecipes {
         } else if (prefix == OrePrefix.block) {
             if (ms != null && !ms.material.hasProperty(PropertyKey.GEM)) {
                 Material arcSmeltInto = ms.material.getProperty(PropertyKey.INGOT).getArcSmeltInto();
-                ItemStack output = OreDictUnifier.get(OrePrefix.ingot, arcSmeltInto, 9);
-                RecipeBuilder<?> builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
-                        .inputs(input.copy())
-                        .outputs(output)
-                        .duration(calculateDuration(Collections.singletonList(output)))
-                        .EUt(GTValues.VA[GTValues.LV]);
+
+                // Check results to see if the material does not arc smelt into itself
+                MaterialStack materialOutput = getArcSmeltingResult(ms);
+
+                if (materialOutput == null) {
+                    return;
+                }
+
+                RecipeBuilder<?> builder;
+
+                // short circuit. Assuming ingot if material is the same
+                if (materialOutput.material == ms.material) {
+                    ItemStack output = OreDictUnifier.get(OrePrefix.ingot, arcSmeltInto, 9);
+                    builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+                            .inputs(input.copy())
+                            .outputs(output)
+                            .duration(calculateDuration(Collections.singletonList(output)))
+                            .EUt(GTValues.VA[GTValues.LV]);
+                }
+                else {
+                    // Finalize the output List
+                    List<ItemStack> outputs = finalizeOutputs(
+                            Collections.singletonList(materialOutput),
+                            RecipeMaps.ARC_FURNACE_RECIPES.getMaxOutputs(),
+                            RecyclingRecipes::getArcIngotOrDust
+                    );
+
+                    builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+                            .inputs(input.copy())
+                            .outputs(outputs)
+                            .duration(calculateDuration(outputs))
+                            .EUt(GTValues.VA[GTValues.LV]);
+                }
 
                 // separate special arc smelting recipes into the regular category
                 // i.e. Iron -> Wrought Iron, Copper -> Annealed Copper
