@@ -100,7 +100,7 @@ public class PipeRecipeHandler {
                         .input(plate, material)
                         .circuitMeta(18)
                         .fluidInputs(Glue.getFluid(50))
-                        .output(pipePrefix, material)
+                        .output(pipePrefix, material, 2)
                         .buildAndRegister();
             }
             else {
