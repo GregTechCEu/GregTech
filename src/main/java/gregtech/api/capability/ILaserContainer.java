@@ -1,28 +1,29 @@
 package gregtech.api.capability;
 
-import net.minecraft.util.EnumFacing;
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public interface ILaserContainer {
 
     /**
-     * This method accepts energy from a side, and stores it in the container
-     *
-     * @param side   side the energy is coming from
-     * @param amount amount of energy to add to the container
-     * @return amount of energy actually accepted
-     */
-    long acceptEnergy(EnumFacing side, long amount);
-
-    /**
      * This method accepts energy, and stores it in the container
+     * If passed a {@code seen} context, you must use {@link #changeEnergy(long, Collection)} to prevent
+     * infinite recursion
      *
      * @param amount amount of energy to add/remove to the container
      * @return amount of energy actually accepted
      */
-    long changeEnergy(long amount);
+    default long changeEnergy(long amount) {
+        Collection<ILaserContainer> list = new ArrayList<>();
+        list.add(this);
+        return changeEnergy(amount, list);
+    }
 
     /**
      * Removes specified amount of energy from this container
+     * If passed a {@code seen} context, you must use {@link #removeEnergy(long, Collection)} to prevent
+     * infinite recursion
      *
      * @param amount amount of energy to remove
      * @return amount of energy removed
@@ -32,35 +33,59 @@ public interface ILaserContainer {
     }
 
     /**
-     * Adds specified amount of energy from this container
+     * Removes specified amount of energy from this container
      *
-     * @param amount amount of energy to add
-     * @return amount of energy added
+     * @param amount amount of energy to remove
+     * @param seen   the containers already checked
+     * @return amount of energy removed
      */
-    default long addEnergy(long amount) {
-        return changeEnergy(amount);
-    }
-
-
-    /**
-     * @return if this container accepts energy from the given side
-     */
-    boolean inputsEnergy(EnumFacing side);
-
-    /**
-     * @return if this container can output energy to the given side
-     */
-    default boolean outputsEnergy(EnumFacing side) {
-        return false;
+    default long removeEnergy(long amount, @Nonnull Collection<ILaserContainer> seen) {
+        return changeEnergy(-amount, seen);
     }
 
     /**
+     * This method accepts energy, and stores it in the container
+     *
+     * @param amount amount of energy to add/remove to the container
+     * @param seen   the containers already checked
+     * @return amount of energy actually accepted
+     */
+    long changeEnergy(long amount, @Nonnull Collection<ILaserContainer> seen);
+
+
+    /**
+     * If passed a {@code seen} context, you must use {@link #getEnergyStored(Collection)} to prevent
+     * infinite recursion
+     *
      * @return amount of currently stored energy
      */
-    long getEnergyStored();
+    default long getEnergyStored() {
+        Collection<ILaserContainer> list = new ArrayList<>();
+        list.add(this);
+        return getEnergyStored(list);
+    }
 
     /**
+     * If passed a {@code seen} context, you must use {@link #getEnergyCapacity(Collection)} to prevent;
+     * infinite recursion
+     *
      * @return maximum amount of energy that can be stored
      */
-    long getEnergyCapacity();
+    default long getEnergyCapacity() {
+        Collection<ILaserContainer> list = new ArrayList<>();
+        list.add(this);
+        return getEnergyCapacity(list);
+    }
+
+    /**
+     * @param seen the containers already checked
+     * @return amount of currently stored energy
+     */
+    long getEnergyStored(@Nonnull Collection<ILaserContainer> seen);
+
+    /**
+     * @param seen the containers already checked
+     * @return maximum amount of energy that can be stored
+     */
+    long getEnergyCapacity(@Nonnull Collection<ILaserContainer> seen);
 }
