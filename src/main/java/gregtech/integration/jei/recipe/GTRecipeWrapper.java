@@ -166,6 +166,20 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
     }
 
+    @Nonnull
+    @Override
+    public List<String> getTooltipStrings(int mouseX, int mouseY) {
+        List<String> tooltips = new ArrayList<>();
+        for (var entry : recipe.getPropertyValues()) {
+            if (!entry.getKey().isHidden()) {
+                RecipeProperty<?> property = entry.getKey();
+                Object value = entry.getValue();
+                property.getTooltipStrings(tooltips, mouseX, mouseY, value);
+            }
+        }
+        return tooltips;
+    }
+
     @Override
     public void initExtras() {
         // do not add the X button if no tweaker mod is present
