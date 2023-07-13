@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.MetaFluids;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.MetaItems;
 import gregtech.core.unification.material.internal.MaterialRegistryManager;
@@ -62,6 +63,7 @@ public final class Bootstrap {
 
         MaterialRegistryManager managerInternal = MaterialRegistryManager.getInstance();
         GregTechAPI.materialManager = managerInternal;
+        GregTechAPI.markerMaterialRegistry = MarkerMaterialRegistry.getInstance();
         managerInternal.unfreezeRegistries();
         Materials.register();
         managerInternal.closeRegistries();

@@ -10,9 +10,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-public class MarkerMaterialRegistry {
+public final class MarkerMaterialRegistry {
+
+    private static MarkerMaterialRegistry INSTANCE;
 
     private final Map<String, MarkerMaterial> map = new Object2ObjectOpenHashMap<>();
+
+    private MarkerMaterialRegistry() {}
+
+    public static MarkerMaterialRegistry getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new MarkerMaterialRegistry();
+        }
+        return INSTANCE;
+    }
 
     /**
      * @param markerMaterial the MarkerMaterial to register
