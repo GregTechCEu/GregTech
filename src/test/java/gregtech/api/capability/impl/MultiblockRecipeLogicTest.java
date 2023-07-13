@@ -12,7 +12,6 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
-import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
@@ -51,7 +50,7 @@ public class MultiblockRecipeLogicTest {
         World world = DummyWorld.INSTANCE;
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("test_recipemap",
                 3,
                 3,
                 1,
@@ -284,7 +283,7 @@ public class MultiblockRecipeLogicTest {
         World world = DummyWorld.INSTANCE;
 
         // Create a recipe Map to be used for testing
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("test_recipemap_2",
                 3,
                 3,
                 1,
