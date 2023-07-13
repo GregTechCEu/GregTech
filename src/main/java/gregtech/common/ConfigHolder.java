@@ -129,11 +129,13 @@ public class ConfigHolder {
         public boolean enableResearch = true;
 
         @Config.Comment({"Whether the Assembly Line should require the item inputs to be in order.", "Default: true"})
+        @Config.RequiresMcRestart
         public boolean orderedAssembly = true;
 
         @Config.Comment({"Whether the Assembly Line should require the fluid inputs to be in order.",
                 "This does nothing if B:orderedAssembly is false.",
                 "Default: false"})
+        @Config.RequiresMcRestart
         public boolean orderedFluidAssembly = false;
 
         /**

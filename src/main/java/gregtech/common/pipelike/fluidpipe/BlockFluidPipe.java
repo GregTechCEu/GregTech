@@ -76,6 +76,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         return fluidPipeType.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     public PipeRenderer getPipeRenderer() {

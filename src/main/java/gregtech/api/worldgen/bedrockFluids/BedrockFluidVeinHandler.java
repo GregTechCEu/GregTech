@@ -2,10 +2,11 @@ package gregtech.api.worldgen.bedrockFluids;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.core.network.packets.PacketFluidVeinList;
+import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.XSTR;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
+import gregtech.core.network.packets.PacketFluidVeinList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -286,7 +287,8 @@ public class BedrockFluidVeinHandler {
             if (tag.hasKey("vein")) {
                 String s = tag.getString("vein");
                 for (BedrockFluidDepositDefinition definition : veinList.keySet()) {
-                    if (s.equalsIgnoreCase(definition.getDepositName()))
+                    // old save data can have deposit names with native separators, get rid of those
+                    if (FileUtility.nativeSepToSlash(s).equalsIgnoreCase(definition.getDepositName()))
                         info.vein = definition;
                 }
             }

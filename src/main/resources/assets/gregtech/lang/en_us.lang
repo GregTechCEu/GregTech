@@ -4600,6 +4600,9 @@ gregtech.machine.large_boiler.titanium.name=Large Titanium Boiler
 gregtech.machine.large_boiler.tungstensteel.name=Large Tungstensteel Boiler
 
 gregtech.machine.assembly_line.name=Assembly Line
+gregtech.machine.assembly_line.tooltip_ordered_items=§fItems§7 must be in the correct order to run.
+gregtech.machine.assembly_line.tooltip_ordered_fluids=§Fluids§7 must be in the correct order to run.
+gregtech.machine.assembly_line.tooltip_ordered_both=§fItems§7 and §Fluids§7 must be in the correct order to run.
 gregtech.machine.fusion_reactor.luv.name=Fusion Reactor Computer Mark 1
 gregtech.machine.fusion_reactor.zpm.name=Fusion Reactor Computer Mark 2
 gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3
@@ -4667,7 +4670,8 @@ gregtech.machine.data_bank.name=Data Bank
 gregtech.machine.data_bank.tooltip.1=Your Personal NAS
 gregtech.machine.data_bank.tooltip.2=Bulk Data Storage. Transfer with Optical Cables.
 gregtech.machine.data_bank.tooltip.3=Data Banks can be chained together.
-gregtech.machine.data_bank.tooltip.4=Uses §f%s EU/t§7 per Data Hatch and §f%s EU/t§7 when chained.
+gregtech.machine.data_bank.tooltip.4=Uses §f%s EU/t§7 per Data Hatch normally.
+gregtech.machine.data_bank.tooltip.5=Uses §f%s EU/t§7 per Data Hatch when chained.
 gregtech.multiblock.data_bank.description=The Data Bank is a multiblock structure used for sharing Assembly Line Research Data between multiple Assembly Lines. Additionally, it enables Assembly Lines to read more complex research data on Data Modules.
 
 gregtech.machine.power_substation.name=Power Substation
@@ -4986,7 +4990,7 @@ gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to t
 
 gregtech.machine.data_access_hatch.name=Data Access Hatch
 gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
-gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Sticks
+gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Items
 gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
 gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
 
@@ -5002,10 +5006,10 @@ gregtech.machine.research_station.object_holder.name=Object Holder
 gregtech.machine.research_station.object_holder.tooltip=Advanced Holding Mechanism for Research Station
 
 gregtech.machine.laser_hatch.source.name=Laser Source Hatch
-gregtech.machine.laser_hatch.source.tooltip1=Receiving power from distance
+gregtech.machine.laser_hatch.source.tooltip1=Transmitting power at distance
 gregtech.machine.laser_hatch.source.tooltip2=§cLaser Cables must be in a straight line!§7
 gregtech.machine.laser_hatch.target.name=Laser Target Hatch
-gregtech.machine.laser_hatch.target.tooltip1=Transmitting power at distance
+gregtech.machine.laser_hatch.target.tooltip1=Receiving power from distance
 gregtech.machine.laser_hatch.target.tooltip2=§cLaser Cables must be in a straight line!§7
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
