@@ -4604,6 +4604,9 @@ gregtech.machine.large_boiler.titanium.name=チタン製大型ボイラー
 gregtech.machine.large_boiler.tungstensteel.name=タングステンスチール製大型ボイラー
 
 gregtech.machine.assembly_line.name=アセンブリライン
+gregtech.machine.assembly_line.tooltip_ordered_items=§fアイテム§7がレシピ通りの順番で並んでいないと動作しません。
+gregtech.machine.assembly_line.tooltip_ordered_fluids=§液体が§7がレシピ通りの順番で並んでいないと動作しません。
+gregtech.machine.assembly_line.tooltip_ordered_both=§fアイテム§7と§f液体§7がレシピ通りの順番で並んでいないと動作しません。
 gregtech.machine.fusion_reactor.luv.name=核融合炉 Mark 1
 gregtech.machine.fusion_reactor.zpm.name=核融合炉 Mark 2
 gregtech.machine.fusion_reactor.uv.name=核融合炉 Mark 3
@@ -4672,6 +4675,8 @@ gregtech.machine.data_bank.tooltip.1=個人用NAS (ネットワークHDD)
 gregtech.machine.data_bank.tooltip.2=大容量データストレージ。光ファイバーで輸送。
 gregtech.machine.data_bank.tooltip.3=データバンクは連結可能
 gregtech.machine.data_bank.tooltip.4=データハッチ1つにつき§f%s EU/t§7、連結時§f%s EU/t§7消費する。
+gregtech.machine.data_bank.tooltip.4=通常時、データハッチ1つにつき§f%s EU/t§7消費する。
+gregtech.machine.data_bank.tooltip.5=連結時、データハッチ1つにつき§f%s EU/t§7消費する。
 gregtech.multiblock.data_bank.description=データバンクはアセンブリライン用研究データを複数のアセンブリラインで共有できるようにするマルチブロックです。さらに、アセンブリラインがより複雑なデータを読み取れるようにします。
 
 gregtech.machine.power_substation.name=大型蓄電器
@@ -4990,7 +4995,7 @@ gregtech.machine.passthrough_hatch_fluid.tooltip=一方通行で液体を送る
 
 gregtech.machine.data_access_hatch.name=データアクセスハッチ
 gregtech.machine.data_access_hatch.tooltip.1=マルチブロックのためのデータアクセス
-gregtech.machine.data_access_hatch.tooltip.2=データスティック用の§a%s§7スロットを追加する
+gregtech.machine.data_access_hatch.tooltip.2=データ格納アイテム用の§a%s§7スロットを追加する
 gregtech.machine.data_access_hatch.advanced.name=発展型データアクセスハッチ
 gregtech.machine.data_access_hatch.creative.name=クリエイティブデータアクセスハッチ
 
@@ -5006,10 +5011,10 @@ gregtech.machine.research_station.object_holder.name=オブジェクトホルダ
 gregtech.machine.research_station.object_holder.tooltip=研究設備のための高度な保持機構
 
 gregtech.machine.laser_hatch.source.name=レーザー照射ハッチ
-gregtech.machine.laser_hatch.source.tooltip1=遠くからエネルギーを受信する
+gregtech.machine.laser_hatch.source.tooltip1=遠くにエネルギーを送信する
 gregtech.machine.laser_hatch.source.tooltip2=§cレーザーケーブルは直線でなければなりません!§7
 gregtech.machine.laser_hatch.target.name=レーザー照準ハッチ
-gregtech.machine.laser_hatch.target.tooltip1=遠くにエネルギーを送信する
+gregtech.machine.laser_hatch.target.tooltip1=遠くからエネルギーを受信する
 gregtech.machine.laser_hatch.target.tooltip2=§cレーザーケーブルは直線でなければなりません!§7
 
 gregtech.machine.fluid_tank.max_multiblock=最大サイズ: %,dx%,dx%,d
