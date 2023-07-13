@@ -119,8 +119,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     }
 
     private TraceabilityPredicate getHatchPredicates() {
-        return abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(3, 1)
-                .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setMaxGlobalLimited(3, 1))
+        return abilities(MultiblockAbility.INPUT_ENERGY).setPreviewCount(2)
+                .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setPreviewCount(2))
                 .or(abilities(MultiblockAbility.INPUT_LASER).setMaxGlobalLimited(1))
                 .or(abilities(MultiblockAbility.OUTPUT_LASER).setMaxGlobalLimited(1))
                 // Disallow the config maintenance hatch because that would probably break the conservation of energy
