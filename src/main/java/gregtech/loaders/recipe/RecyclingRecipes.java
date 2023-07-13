@@ -20,6 +20,7 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 
@@ -37,6 +38,7 @@ import static gregtech.api.unification.material.info.MaterialFlags.*;
 public class RecyclingRecipes {
 
     private static final NBTCondition RENAMED_NBT = NBTCondition.create(NBTTagType.COMPOUND, "display", "");
+    private static final NBTCondition REPAIRCOST_NBT = NBTCondition.create(NBTTagType.INT, "RepairCost", "");
 
     // TODO - Fix recipe order with some things (noticed Hermetic Casings)
     // TODO - Figure out solution to LuV+ components
@@ -545,6 +547,15 @@ public class RecyclingRecipes {
             builder.clearInputs();
             // Don't use ANY to avoid issues with Drums, Super Chests, and other MTEs that hold an inventory
             builder.inputNBT(mte, NBTMatcher.NOT_PRESENT_OR_HAS_KEY, RENAMED_NBT);
+        }
+
+        Item inputItem = input.getItem();
+        // Check to see if we can recycle tools. Only allow Tools at full durability
+        if (inputItem.isDamageable()) {
+            if (inputItem.getDamage(input) == 0) {
+                builder.clearInputs();
+                builder.inputNBT(inputItem, NBTMatcher.NOT_PRESENT_OR_HAS_KEY, REPAIRCOST_NBT);
+            }
         }
     }
 }
