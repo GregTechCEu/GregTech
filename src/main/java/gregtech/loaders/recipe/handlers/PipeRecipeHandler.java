@@ -66,13 +66,17 @@ public class PipeRecipeHandler {
 
     private static void processPipeTiny(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, material, 1)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
-                .outputs(GTUtility.copy(2, pipeStack))
-                .duration((int) (material.getMass()))
-                .EUt(6 * getVoltageMultiplier(material))
-                .buildAndRegister();
+
+        // Some pipes like wood do not have an ingot
+        if (!OrePrefix.ingot.isIgnored(material)) {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.ingot, material, 1)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
+                    .outputs(GTUtility.copy(2, pipeStack))
+                    .duration((int) (material.getMass()))
+                    .EUt(6 * getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
 
         if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
@@ -83,21 +87,31 @@ public class PipeRecipeHandler {
                     .EUt(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
-            ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material),
-                    GTUtility.copy(2, pipeStack), " s ", "hXw",
-                    'X', new UnificationEntry(OrePrefix.plate, material));
+            if (ModHandler.isMaterialWood(material)) {
+                ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material),
+                        GTUtility.copy(2, pipeStack), " s ", "rXw",
+                        'X', new UnificationEntry(OrePrefix.plate, material));
+            }
+            else {
+                ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material),
+                        GTUtility.copy(2, pipeStack), " s ", "hXw",
+                        'X', new UnificationEntry(OrePrefix.plate, material));
+            }
         }
     }
 
     private static void processPipeSmall(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, material, 1)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_SMALL)
-                .outputs(pipeStack)
-                .duration((int) (material.getMass()))
-                .EUt(6 * getVoltageMultiplier(material))
-                .buildAndRegister();
+
+        if (!OrePrefix.ingot.isIgnored(material)) {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.ingot, material, 1)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_SMALL)
+                    .outputs(pipeStack)
+                    .duration((int) (material.getMass()))
+                    .EUt(6 * getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
 
         if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
@@ -108,21 +122,31 @@ public class PipeRecipeHandler {
                     .EUt(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
-            ModHandler.addShapedRecipe(String.format("small_%s_pipe", material),
-                    pipeStack, "wXh",
-                    'X', new UnificationEntry(OrePrefix.plate, material));
+            if (ModHandler.isMaterialWood(material)) {
+                ModHandler.addShapedRecipe(String.format("small_%s_pipe", material),
+                        pipeStack, "wXr",
+                        'X', new UnificationEntry(OrePrefix.plate, material));
+
+            } else {
+                ModHandler.addShapedRecipe(String.format("small_%s_pipe", material),
+                        pipeStack, "wXh",
+                        'X', new UnificationEntry(OrePrefix.plate, material));
+            }
         }
     }
 
     private static void processPipeNormal(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, material, 3)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
-                .outputs(pipeStack)
-                .duration((int) material.getMass() * 3)
-                .EUt(6 * getVoltageMultiplier(material))
-                .buildAndRegister();
+
+        if (!OrePrefix.ingot.isIgnored(material)) {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.ingot, material, 3)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
+                    .outputs(pipeStack)
+                    .duration((int) material.getMass() * 3)
+                    .EUt(6 * getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
 
         if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
@@ -133,21 +157,30 @@ public class PipeRecipeHandler {
                     .EUt(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
-            ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material),
-                    pipeStack, "XXX", "w h",
-                    'X', new UnificationEntry(OrePrefix.plate, material));
+            if (ModHandler.isMaterialWood(material)) {
+                ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material),
+                        pipeStack, "XXX", "w r",
+                        'X', new UnificationEntry(OrePrefix.plate, material));
+            } else {
+                ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material),
+                        pipeStack, "XXX", "w h",
+                        'X', new UnificationEntry(OrePrefix.plate, material));
+            }
         }
     }
 
     private static void processPipeLarge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, material, 6)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_LARGE)
-                .outputs(pipeStack)
-                .duration((int) material.getMass() * 6)
-                .EUt(6 * getVoltageMultiplier(material))
-                .buildAndRegister();
+
+        if (!OrePrefix.ingot.isIgnored(material)) {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.ingot, material, 6)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_LARGE)
+                    .outputs(pipeStack)
+                    .duration((int) material.getMass() * 6)
+                    .EUt(6 * getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
 
         if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
@@ -158,21 +191,31 @@ public class PipeRecipeHandler {
                     .EUt(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
-            ModHandler.addShapedRecipe(String.format("large_%s_pipe", material),
-                    pipeStack, "XXX", "w h", "XXX",
-                    'X', new UnificationEntry(OrePrefix.plate, material));
+            if (ModHandler.isMaterialWood(material)) {
+                ModHandler.addShapedRecipe(String.format("large_%s_pipe", material),
+                        pipeStack, "XXX", "w r", "XXX",
+                        'X', new UnificationEntry(OrePrefix.plate, material));
+            }
+            else {
+                ModHandler.addShapedRecipe(String.format("large_%s_pipe", material),
+                        pipeStack, "XXX", "w h", "XXX",
+                        'X', new UnificationEntry(OrePrefix.plate, material));
+            }
         }
     }
 
     private static void processPipeHuge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, material, 12)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_HUGE)
-                .outputs(pipeStack)
-                .duration((int) material.getMass() * 24)
-                .EUt(6 * getVoltageMultiplier(material))
-                .buildAndRegister();
+
+        if (!OrePrefix.ingot.isIgnored(material)) {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.ingot, material, 12)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_HUGE)
+                    .outputs(pipeStack)
+                    .duration((int) material.getMass() * 24)
+                    .EUt(6 * getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
 
         if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
@@ -183,9 +226,16 @@ public class PipeRecipeHandler {
                     .EUt(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else if (OrePrefix.plateDouble.doGenerateItem(material)) {
-            ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material),
-                    pipeStack, "XXX", "w h", "XXX",
-                    'X', new UnificationEntry(OrePrefix.plateDouble, material));
+            if (ModHandler.isMaterialWood(material)) {
+                ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material),
+                        pipeStack, "XXX", "w r", "XXX",
+                        'X', new UnificationEntry(OrePrefix.plateDouble, material));
+            }
+            else {
+                ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material),
+                        pipeStack, "XXX", "w h", "XXX",
+                        'X', new UnificationEntry(OrePrefix.plateDouble, material));
+            }
         }
     }
 
