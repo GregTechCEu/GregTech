@@ -110,10 +110,18 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
 
             }
 
-            this.fissionReactor.updatePressure();
-            this.fissionReactor.updateTemperature();
-            this.fissionReactor.updateNeutronPoisoning();
-            this.fissionReactor.updatePower();
+            this.updateReactorState();
+
+            if (this.fissionReactor.checkForMeltdown()) {
+                //TODO Meltdown consequences
+            }
+
+            if (this.fissionReactor.checkForExplosion()) {
+                //TODO Explosion consequences
+                if (this.fissionReactor.checkForSecondaryExplosion()) {
+                    //TODO Secondary explosion consequences
+                }
+            }
         }
     }
 
