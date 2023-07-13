@@ -13,6 +13,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
@@ -112,6 +113,32 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         return true;
     }
 
+    /**
+     * @param parallel the amount of parallel recipes
+     * @param discount the energy discount
+     * @return the un-overclocked EUt for an amount of parallel recipes
+     */
+    public static int getEUtForParallel(int parallel, int discount) {
+        return RecipeMapFurnace.RECIPE_EUT * Math.max(1, (parallel / 8) / discount);
+    }
+
+    /**
+     * @param heatingCoilLevel the level to get the parallel for
+     * @return the max parallel for the heating coil level
+     */
+    public static int getMaxParallel(int heatingCoilLevel) {
+        return 32 * heatingCoilLevel;
+    }
+
+    /**
+     * @param parallel the amount of parallel recipes
+     * @param parallelLimit the maximum limit on parallel recipes
+     * @return the un-overclocked duration for an amount of parallel recipes
+     */
+    public static int getDurationForParallel(int parallel, int parallelLimit) {
+        return (int) Math.max(1.0, RecipeMapFurnace.RECIPE_DURATION * 2 * parallel / Math.max(1, parallelLimit * 1.0));
+    }
+
     protected class MultiSmelterWorkable extends MultiblockRecipeLogic {
 
         public MultiSmelterWorkable(RecipeMapMultiblockController tileEntity) {
@@ -126,13 +153,13 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
         @Override
         public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
-            builder.EUt(builder.getParallel() * Math.max(1, 16 / heatingCoilDiscount))
-                    .duration((int) Math.max(1.0, 256 * builder.getParallel() / (getParallelLimit() * 1.0)));
+            builder.EUt(getEUtForParallel(builder.getParallel(), heatingCoilDiscount))
+                    .duration(getDurationForParallel(builder.getParallel(), getParallelLimit()));
         }
 
         @Override
         public int getParallelLimit() {
-            return 32 * heatingCoilLevel;
+            return getMaxParallel(heatingCoilLevel);
         }
     }
 }
