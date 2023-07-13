@@ -235,7 +235,8 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.3"));
-        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.4", GTValues.VA[GTValues.EV], GTValues.VA[GTValues.LuV]));
+        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.4", GTValues.VA[GTValues.EV]));
+        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.5", GTValues.VA[GTValues.LuV]));
     }
 
     @Override
