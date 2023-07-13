@@ -3,7 +3,6 @@ package gregtech.api.recipes;
 import crafttweaker.mc1120.actions.ActionAddFurnaceRecipe;
 import crafttweaker.mc1120.furnace.MCFurnaceManager;
 import gregtech.api.GTValues;
-import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -40,7 +39,6 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -67,38 +65,6 @@ public final class ModHandler {
         if (ERROR_ON_INVALID_RECIPE && hasInvalidRecipe) {
             throw new IllegalStateException("Invalid Recipes Found. See earlier log entries for details.");
         }
-    }
-
-    // Fluids
-
-    /**
-     * @param stack the fluid to check
-     * @return if the fluid is a valid water fluid
-     * @deprecated use {@link CommonFluidFilters#BOILER_FLUID}
-     */
-    @Deprecated
-    public static boolean isWater(@Nullable FluidStack stack) {
-        return stack != null && CommonFluidFilters.BOILER_FLUID.test(stack);
-    }
-
-    /**
-     * @param stack the fluid to check
-     * @return if the fluid is a valid steam fluid
-     * @deprecated use {@link CommonFluidFilters#STEAM}
-     */
-    @Deprecated
-    public static boolean isSteam(FluidStack stack) {
-        return CommonFluidFilters.STEAM.test(stack);
-    }
-
-    /**
-     * @param amount amount of steam in mb
-     * @return a Liquid Stack with given amount of Steam.
-     * @deprecated make it yourself
-     */
-    @Deprecated
-    public static FluidStack getSteam(int amount) {
-        return Materials.Steam.getFluid(amount);
     }
 
     /**
