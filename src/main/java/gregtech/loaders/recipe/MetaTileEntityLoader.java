@@ -1001,6 +1001,16 @@ public class MetaTileEntityLoader {
                 "PPP", "PFP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Neutronium), 'F',
                 new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Duranium));
 
+        // Quantum Storage Controller
+        ModHandler.addShapedRecipe(true, "quantum_storage_controller", MetaTileEntities.QUANTUM_STORAGE_CONTROLLER.getStackForm(),
+                "PCP", "EHS", "CFC",
+                'C', new UnificationEntry(OrePrefix.circuit, Tier.MV),
+                'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium),
+                'F', MetaItems.FIELD_GENERATOR_MV.getStackForm(),
+                'E', MetaItems.EMITTER_MV,
+                'S', MetaItems.SENSOR_MV
+        );
+
         // Super / Quantum Chests
         ModHandler.addShapedRecipe(true, "super_chest_lv", MetaTileEntities.QUANTUM_CHEST[0].getStackForm(), "CPC",
                 "PFP", "CPC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.LV), 'P',
