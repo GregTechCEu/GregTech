@@ -4355,6 +4355,7 @@ gregtech.machine.alarm.tooltip=Plays a Sound when given a Redstone signal
 
 #Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Better than Storage Drawers
+gregtech.machine.super_chest.ulv.name=Primitive Chest I
 gregtech.machine.super_chest.lv.name=Super Chest I
 gregtech.machine.super_chest.mv.name=Super Chest II
 gregtech.machine.super_chest.hv.name=Super Chest III
