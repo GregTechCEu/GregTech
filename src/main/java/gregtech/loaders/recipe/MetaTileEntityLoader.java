@@ -1005,7 +1005,7 @@ public class MetaTileEntityLoader {
                 "PCP", "EHS", "CFC",
                 'C', new UnificationEntry(OrePrefix.circuit, Tier.MV),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium),
-                'H', MetaTileEntities.HULL[GTValues.MV],
+                'H', MetaTileEntities.HULL[GTValues.MV].getStackForm(),
                 'F', MetaItems.FIELD_GENERATOR_MV.getStackForm(),
                 'E', MetaItems.EMITTER_MV,
                 'S', MetaItems.SENSOR_MV
