@@ -9,7 +9,6 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
@@ -363,7 +362,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         @Override
         public int getSlotLimit(int slot) {
-            if (slot >= getItemHandlers().size()) return 0;
             return getItemHandlers().get(slot).getSlotLimit(0);
         }
     }
