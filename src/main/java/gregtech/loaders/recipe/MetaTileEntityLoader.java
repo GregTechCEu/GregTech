@@ -1008,8 +1008,8 @@ public class MetaTileEntityLoader {
                 'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium),
                 'H', MetaTileEntities.HULL[GTValues.MV].getStackForm(),
                 'F', MetaItems.FIELD_GENERATOR_MV.getStackForm(),
-                'E', MetaItems.EMITTER_MV,
-                'S', MetaItems.SENSOR_MV
+                'E', MetaItems.EMITTER_MV.getStackForm(),
+                'S', MetaItems.SENSOR_MV.getStackForm()
         );
 
         // Super / Quantum Chests
