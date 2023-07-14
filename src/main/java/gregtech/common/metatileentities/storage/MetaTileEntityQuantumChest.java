@@ -566,23 +566,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
 
     @Override
     public IItemHandler getTypeValue() {
-        return new ItemHandlerProxy(this.itemInventory, this.combinedInventory){
-            @NotNull
-            @Override
-            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-                return getItemInventory().insertItem(slot, stack, simulate);
-            }
-
-            @NotNull
-            @Override
-            public ItemStack extractItem(int slot, int amount, boolean simulate) {
-                ItemStack extractedStack = getItemInventory().extractItem(0, amount, simulate);
-                if (extractedStack.isEmpty()) {
-                    extractedStack = getExportItems().extractItem(0, amount, simulate);
-                }
-                return extractedStack;
-            }
-        };
+        return this.itemInventory;
     }
 
     @Override
