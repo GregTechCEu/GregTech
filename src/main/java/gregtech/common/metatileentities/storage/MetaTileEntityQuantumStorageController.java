@@ -137,7 +137,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         storageInstances = new HashMap<>();
         storagePositions = new HashSet<>();
 
-        // BlockPos u = getPos().up(), d = getPos().down(), n = getPos().north(), s = getPos().south(), e = getPos().east(), w = getPos().west();
         Queue<BlockPos> searchQueue = new LinkedList<>();
         Set<BlockPos> checked = new HashSet<>();
 
@@ -166,7 +165,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             storage.setConnected(this);
             oldInstances.remove(pos);
             oldPositions.remove(pos);
-            GTLog.logger.warn("Added storage " + pos + " to controller");
 
             // check against already check posses so we don't recheck a checked pos
             for (EnumFacing facing : EnumFacing.VALUES) {
