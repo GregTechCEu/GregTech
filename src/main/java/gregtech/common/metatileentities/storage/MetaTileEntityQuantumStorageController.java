@@ -112,7 +112,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     @Override
-    public void postBreakBlock() {
+    public void onRemoval() {
         if (getWorld().isRemote) return;
         isDead = true;
         for (BlockPos pos : storagePositions) {
@@ -223,9 +223,9 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (T) handler;
-        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ||
+            capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY
+        ) {
             return (T) handler;
         }
         return super.getCapability(capability, side);
