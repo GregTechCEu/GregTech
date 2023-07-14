@@ -100,7 +100,7 @@ gregtech.top.ld_pipe_length=Length:
 gregtech.top.ld_pipe_input=Input
 gregtech.top.ld_pipe_output=Output
 gregtech.top.ld_pipe_input_endpoint=Input Endpoint:
-gregtech.top.ld_pipe_output_endpoint=Other Endpoint:
+gregtech.top.ld_pipe_output_endpoint=Output Endpoint:
 
 gregtech.waila.energy_stored=Energy: %d EU / %d EU
 gregtech.waila.progress_idle=Idle
@@ -4602,7 +4602,7 @@ gregtech.machine.large_boiler.tungstensteel.name=Large Tungstensteel Boiler
 gregtech.machine.assembly_line.name=Assembly Line
 gregtech.machine.assembly_line.tooltip_ordered_items=§fItems§7 must be in the correct order to run.
 gregtech.machine.assembly_line.tooltip_ordered_fluids=§Fluids§7 must be in the correct order to run.
-gregtech.machine.assembly_line.tooltip_ordered_both=§fItems§7 and §Fluids§7 must be in the correct order to run.
+gregtech.machine.assembly_line.tooltip_ordered_both=§fItems§7 and §fFluids§7 must be in the correct order to run.
 gregtech.machine.fusion_reactor.luv.name=Fusion Reactor Computer Mark 1
 gregtech.machine.fusion_reactor.zpm.name=Fusion Reactor Computer Mark 2
 gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3

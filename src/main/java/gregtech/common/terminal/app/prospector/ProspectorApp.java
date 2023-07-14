@@ -114,7 +114,7 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
                 for (int j = playerChunkZ - chunkRadius; j <= playerChunkZ + chunkRadius; j++) {
                     NBTTagCompound nbt = null;
                     try {
-                        nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d/%d_%d.nbt", getRegistryName(), mode, i, j)));
+                        nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d/%d_%d.nbt", getRegistryName(), mode.ordinal(), i, j)));
                     } catch (IOException e) {
                         GTLog.logger.error("error while loading local nbt for {}", getRegistryName(), e);
                     }
@@ -135,7 +135,7 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
     @SideOnly(Side.CLIENT)
     protected void savePacketLocalConfig() {
         new Thread(() -> { // thread for better QoL
-            File folder = new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d", getRegistryName(), mode));
+            File folder = new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d", getRegistryName(), mode.ordinal()));
             if (!folder.exists()) {
                 if (!folder.mkdirs()) return;
             }
