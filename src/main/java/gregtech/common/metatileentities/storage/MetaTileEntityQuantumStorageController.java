@@ -323,10 +323,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (getItemHandlers().isEmpty()) return stack;
             ItemStack remainder = stack;
 
-            for (int i = 0; i < getItemHandlers().size(); i++) {
-                remainder = getItemHandlers().get(i).insertItem(0, remainder, simulate);
-                if (remainder.isEmpty()) break;
-            }
+            remainder = getItemHandlers().get(slot).insertItem(0, remainder, simulate);
 
             return remainder;
         }
