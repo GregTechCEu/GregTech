@@ -4381,6 +4381,9 @@ gregtech.machine.quantum_tank.zpm.name=Quantum Tank III
 gregtech.machine.quantum_tank.uv.name=Quantum Tank IV
 gregtech.machine.quantum_tank.uhv.name=Quantum Tank V
 
+#Quantum Storage Controller
+gregtech.machine.quantum_storage_controller.name=Quantum Storage Controller
+
 #Buffers
 gregtech.machine.buffer.tooltip=A Small Buffer to store Items and Fluids
 gregtech.machine.buffer.lv.name=Basic Buffer
