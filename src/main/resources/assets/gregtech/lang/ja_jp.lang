@@ -2597,6 +2597,7 @@ gregtech.machine.drum.aluminium.name=アルミニウム製ドラム
 gregtech.machine.drum.stainless_steel.name=ステンレススチール製ドラム
 gregtech.machine.drum.titanium.name=チタン製ドラム
 gregtech.machine.drum.tungstensteel.name=タングステンスチール製ドラム
+gregtech.machine.drum.gold.name=金製ドラム
 
 gregtech.machine.drum.enable_output=下方向に隣接するタンクに液体を排出
 gregtech.machine.drum.disable_output=液体を排出しない
