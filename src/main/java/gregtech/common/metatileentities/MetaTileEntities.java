@@ -992,7 +992,7 @@ public class MetaTileEntities {
 
         for (int i = 6; i < QUANTUM_CHEST.length; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
-            long capacity = i == GTValues.UHV ? Integer.MAX_VALUE : 4000000L * (int) Math.pow(2, i);
+            long capacity = i - 1 == GTValues.UHV ? Integer.MAX_VALUE : 4000000L * (int) Math.pow(2, i - 1);
             QUANTUM_CHEST[i] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest." + voltageName), i, capacity);
             registerMetaTileEntity(1565 + i, QUANTUM_CHEST[i]);
         }
@@ -1008,11 +1008,11 @@ public class MetaTileEntities {
             registerMetaTileEntity(1575 + i, QUANTUM_TANK[i]);
         }
 
-        for (int i = 6; i < QUANTUM_TANK.length - 1; i++) {
+        for (int i = 6; i < QUANTUM_TANK.length; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
-            int capacity = i == GTValues.UHV ? Integer.MAX_VALUE : 4000000 * (int) Math.pow(2, i);
+            int capacity = i - 1 == GTValues.UHV ? Integer.MAX_VALUE : 4000000 * (int) Math.pow(2, i - 1);
             QUANTUM_TANK[i] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank." + voltageName), i, capacity);
-            registerMetaTileEntity(1580 + i, QUANTUM_TANK[i]);
+            registerMetaTileEntity(1579 + i, QUANTUM_TANK[i]);
         }
 
         // Block Breakers, IDs 1590-1594
