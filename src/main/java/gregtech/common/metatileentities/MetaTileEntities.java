@@ -980,6 +980,7 @@ public class MetaTileEntities {
 
         // Super / Quantum Chests, IDs 1559-1574, 1751
         QUANTUM_STORAGE_CONTROLLER = registerMetaTileEntity(1559, new MetaTileEntityQuantumStorageController(gregtechId("quantum_storage_controller")));
+
         QUANTUM_CHEST[0] = new MetaTileEntityQuantumChest(gregtechId("super_chest." + GTValues.VN[GTValues.ULV].toLowerCase()), 0, 1000000L);
         registerMetaTileEntity(1751, QUANTUM_CHEST[0]);
         for (int i = 0; i < 5; i++) {
