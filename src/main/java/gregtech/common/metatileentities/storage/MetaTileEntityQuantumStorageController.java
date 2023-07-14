@@ -322,15 +322,12 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
             if (getItemHandlers().isEmpty()) return stack;
             ItemStack remainder = stack;
-            int lastSlot = slot;
-            do {
-                IItemHandler handler = getItemHandlers().get(slot);
-                remainder = handler.insertItem(0, remainder, simulate);
-                if (remainder == ItemStack.EMPTY) break;
 
-                slot++;
-                if (slot >= getItemHandlers().size()) slot = 0;
-            } while (slot != lastSlot);
+            for (int i = 0; i < getItemHandlers().size(); i++) {
+                remainder = getItemHandlers().get(i).insertItem(0, remainder, simulate);
+                if (remainder.isEmpty()) break;
+            }
+
             return remainder;
         }
 
@@ -338,7 +335,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (slot >= getItemHandlers().size()) return ItemStack.EMPTY;
-            return getItemHandlers().get(slot).extractItem(slot, amount, simulate);
+            return getItemHandlers().get(slot).extractItem(1, amount, simulate);
         }
 
         @Override
