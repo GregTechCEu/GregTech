@@ -2,11 +2,15 @@ package gregtech.api.gui.widgets;
 
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -23,6 +27,15 @@ public class GhostCircuitSlotWidget extends SlotWidget {
     public GhostCircuitSlotWidget(GhostCircuitItemStackHandler circuitInventory, int slotIndex, int xPosition, int yPosition) {
         super(circuitInventory, slotIndex, xPosition, yPosition, false, false, false);
         this.circuitInventory = circuitInventory;
+    }
+
+    @Override
+    public void drawInForeground(int mouseX, int mouseY) {
+        if (isMouseOverElement(mouseX, mouseY)) {
+            if (tooltipText == null && consumer != null) consumer.accept(this);
+            List<String> hoverList = Arrays.asList(LocalizationUtils.formatLines(tooltipText, tooltipArgs));
+            drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
+        }
     }
 
     @Override
@@ -47,6 +60,7 @@ public class GhostCircuitSlotWidget extends SlotWidget {
                 this.circuitInventory.setCircuitValue(newValue);
                 writeClientAction(SET_TO_N, buf -> buf.writeVarInt(newValue));
             }
+            if (consumer != null) consumer.accept(this);
             return true;
         }
         return false;
@@ -84,6 +98,7 @@ public class GhostCircuitSlotWidget extends SlotWidget {
             int newValue = getNextValue(wheelDelta >= 0);
             this.circuitInventory.setCircuitValue(newValue);
             writeClientAction(SET_TO_N, buf -> buf.writeVarInt(newValue));
+            if (consumer != null) consumer.accept(this);
             return true;
         }
         return false;
@@ -100,6 +115,7 @@ public class GhostCircuitSlotWidget extends SlotWidget {
 
         if (IntCircuitIngredient.isIntegratedCircuit(stackHeld)) {
             this.circuitInventory.setCircuitValueFromStack(stackHeld);
+            if (consumer != null) consumer.accept(this);
             return this.circuitInventory.getStackInSlot(0).copy();
         }
 
