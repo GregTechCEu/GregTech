@@ -290,8 +290,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
         MetaTileEntity metaTileEntity = tileEntities.get() == null ? getMetaTileEntity(world, pos) : tileEntities.get();
         if (metaTileEntity == null) return;
-        if (!metaTileEntity.shouldDropWhenDestroyed())
-            return;
+        if (metaTileEntity.wasExploded()) return;
+        if (!metaTileEntity.shouldDropWhenDestroyed()) return;
         ItemStack itemStack = metaTileEntity.getStackForm();
         NBTTagCompound tagCompound = new NBTTagCompound();
         metaTileEntity.writeItemStackData(tagCompound);

@@ -118,6 +118,8 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     private int cachedLightValue;
     protected boolean isFragile = false;
 
+    private boolean wasExploded = false;
+
     private final CoverBehavior[] coverBehaviors = new CoverBehavior[6];
     protected List<IItemHandlerModifiable> notifiedItemOutputList = new ArrayList<>();
     protected List<IItemHandlerModifiable> notifiedItemInputList = new ArrayList<>();
@@ -1447,9 +1449,24 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void doExplosion(float explosionPower) {
+        setExploded();
         getWorld().setBlockToAir(getPos());
         getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
                 explosionPower, ConfigHolder.machines.doesExplosionDamagesTerrain);
+    }
+
+    /**
+     * Mark the MTE as having been blown up by an explosion
+     */
+    protected void setExploded() {
+        this.wasExploded = true;
+    }
+
+    /**
+     * @return if the MTE was blown up by an explosion
+     */
+    public boolean wasExploded() {
+        return this.wasExploded;
     }
 
     public void setOnFire(double additionalFireChance) {
