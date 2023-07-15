@@ -478,7 +478,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             if (this.circuitInventory != null) {
                 SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62 + yOffset)
                         .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
-                builder.widget(getCircuitSlotTooltip(circuitSlot)).widget(logo);
+                builder.widget(circuitSlot.setConsumer(this::getCircuitSlotTooltip)).widget(logo);
             }
         }
         return builder;
@@ -495,8 +495,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     }
 
     // Method provided to override
-    protected SlotWidget getCircuitSlotTooltip(SlotWidget widget) {
-        return widget.setTooltipText("gregtech.gui.configurator_slot.tooltip");
+    protected void getCircuitSlotTooltip(SlotWidget widget) {
+        widget.setTooltipText("gregtech.gui.configurator_slot.tooltip", circuitInventory.getCircuitValue() == -1 ? "None" : circuitInventory.getCircuitValue());
     }
 
     @Override
