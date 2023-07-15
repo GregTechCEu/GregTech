@@ -1354,7 +1354,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public boolean shouldDropWhenDestroyed() {
-        return !isFragile();
+        return !wasExploded() || !isFragile();
     }
 
     public float getBlockHardness() {
@@ -1465,7 +1465,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     /**
      * @return if the MTE was blown up by an explosion
      */
-    public boolean wasExploded() {
+    protected final boolean wasExploded() {
         return this.wasExploded;
     }
 
