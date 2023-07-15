@@ -40,8 +40,10 @@ public class SlotWidget extends Widget implements INativeWidget {
     protected IGuiTexture[] backgroundTexture;
     protected Runnable changeListener;
 
-    private String tooltipText;
-    private Object[] tooltipArgs;
+    protected String tooltipText;
+    protected Object[] tooltipArgs;
+
+    protected Consumer<SlotWidget> consumer;
 
     public SlotWidget(IInventory inventory, int slotIndex, int xPosition, int yPosition, boolean canTakeItems, boolean canPutItems) {
         super(new Position(xPosition, yPosition), new Size(18, 18));
