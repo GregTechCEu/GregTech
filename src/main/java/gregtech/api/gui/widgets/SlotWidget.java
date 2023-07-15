@@ -29,6 +29,7 @@ import net.minecraftforge.items.SlotItemHandler;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SlotWidget extends Widget implements INativeWidget {
 
@@ -196,6 +197,11 @@ public class SlotWidget extends Widget implements INativeWidget {
             this.slotReference.xPos = position.x + 1 - sizes.getGuiLeft();
             this.slotReference.yPos = position.y + 1 - sizes.getGuiTop();
         }
+    }
+
+    public SlotWidget setConsumer(Consumer<SlotWidget> consumer) {
+        this.consumer = consumer;
+        return this;
     }
 
     public SlotWidget setChangeListener(Runnable changeListener) {
