@@ -152,12 +152,12 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
 
         if (isTransformUp) {
             //storage = 1 amp high; input = tier / 4; amperage = 4; output = tier; amperage = 1
-            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L, tierVoltage, lowAmperage, tierVoltage * 4, highAmperage);
+            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L * lowAmperage, tierVoltage, lowAmperage, tierVoltage * 4, highAmperage);
             ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s != getFrontFacing());
             ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing());
         } else {
             //storage = 1 amp high; input = tier; amperage = 1; output = tier / 4; amperage = 4
-            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L, tierVoltage * 4, highAmperage, tierVoltage, lowAmperage);
+            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L * lowAmperage, tierVoltage * 4, highAmperage, tierVoltage, lowAmperage);
             ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s == getFrontFacing());
             ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s != getFrontFacing());
         }

@@ -206,6 +206,10 @@ public class LongDistanceNetwork {
             // there is an active input and output endpoint
             ILDEndpoint in = this.endpoints.get(this.activeInputIndex);
             ILDEndpoint out = this.endpoints.get(this.activeOutputIndex);
+            if (!this.pipeType.satisfiesMinLength(in, out)) {
+                invalidateEndpoints();
+                return getOtherEndpoint(endpoint);
+            }
             if (in == endpoint) {
                 if (!endpoint.isInput()) throw new IllegalStateException("Other endpoint from input was itself");
                 // given endpoint is the current input, and therefore we return the output
@@ -245,7 +249,7 @@ public class LongDistanceNetwork {
             if (endpoint != other &&
                     (other.isOutput() || other.isInput()) &&
                     other.isInput() != endpoint.isInput() &&
-                    endpoint.getPos().getDistance(other.getPos().getX(), other.getPos().getY(), other.getPos().getZ()) > this.pipeType.getMinLength()) {
+                    this.pipeType.satisfiesMinLength(endpoint, other)) {
                 // found valid endpoint with minimum distance
                 return i;
             }
