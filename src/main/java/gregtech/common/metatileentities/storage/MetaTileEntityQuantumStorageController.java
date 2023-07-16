@@ -222,9 +222,9 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ||
-            capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY
-        ) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && handler.hasItemHandlers()) {
+            return (T) handler;
+        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && handler.hasFluidTanks()) {
             return (T) handler;
         }
         return super.getCapability(capability, side);
