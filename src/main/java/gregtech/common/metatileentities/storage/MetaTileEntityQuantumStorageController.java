@@ -238,7 +238,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         // IItemHandler saved values
         private List<IItemHandler> itemHandlers = null;
 
-        int lastSlot = -1;
+        private int insertIndex = -1;
+        private int extractIndex = -1;
 
         private void invalidate() {
             fluidTanks = null;
@@ -314,21 +315,15 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         @Override
         public int getSlots() {
-            if (this.lastSlot != -1) {
-                return 1;
-            } else {
-                return getItemHandlers().size();
-            }
+            // gotta lie to GTTransferUtils
+            return 1;
         }
 
         @Nonnull
         @Override
         public ItemStack getStackInSlot(int slot) {
-            if (this.lastSlot != -1) {
-                return getItemHandlers().get(this.lastSlot).getStackInSlot(0);
-            } else {
-                return getItemHandlers().get(slot).getStackInSlot(0);
-            }
+            // make GTTransferUtils always think it can insert items
+            return ItemStack.EMPTY;
         }
 
         @Nonnull
@@ -337,15 +332,27 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (getItemHandlers().isEmpty()) return stack;
             ItemStack remainder = stack;
 
-            if (this.lastSlot != -1) {
-                remainder = getItemHandlers().get(this.lastSlot).insertItem(0, remainder, simulate);
-                if (!remainder.isEmpty() && remainder.getCount() == stack.getCount()) this.lastSlot = -1;
-            } else {
-                for (IItemHandler handler : getItemHandlers()) {
-                    remainder = handler.insertItem(0, remainder, simulate);
-                    this.lastSlot++;
-                    if (remainder.isEmpty()) return remainder;
+            // check item handlers if the stack to insert matches a stack already in the item handler
+            if (simulate) {
+                ItemStack checkStack;
+                boolean canInsert = false;
+                for (int i = 0; i < getItemHandlers().size(); i++) {
+                    IItemHandler handler = getItemHandlers().get(i);
+                    // try to get a stack in virtual inventory or output slot
+                    checkStack = handler.getStackInSlot(1);
+                    if (checkStack.isEmpty()) checkStack = handler.getStackInSlot(2);
+
+                    // if the check stack is empty, or equal to the incoming stack
+                    if (checkStack.isItemEqual(stack) || checkStack.isEmpty()) {
+                        canInsert = true;
+                        this.insertIndex = i;
+                        remainder = handler.insertItem(1, remainder, true);
+                        if (remainder.isEmpty() || remainder.getCount() < stack.getCount()) break;
+                    }
                 }
+                if (!canInsert) this.insertIndex = -1;
+            } else if (this.insertIndex != -1) {
+                remainder = getItemHandlers().get(this.insertIndex).insertItem(1, remainder, false);
             }
 
             return remainder;
@@ -355,16 +362,23 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             ItemStack extracted = ItemStack.EMPTY;
-            if (this.lastSlot != -1) {
-                extracted = getItemHandlers().get(this.lastSlot).extractItem(1, amount, simulate);
-                if (extracted.isEmpty()) this.lastSlot = -1;
-            } else {
-                for (IItemHandler handler : getItemHandlers()) {
-                    extracted = handler.extractItem(0, amount, simulate);
-                    this.lastSlot++;
-                    if (!extracted.isEmpty()) return extracted;
+
+            if (simulate){
+                boolean canExtract = false;
+                for (int i = 0; i < getItemHandlers().size(); i++) {
+                    IItemHandler handler = getItemHandlers().get(i);
+                    extracted = handler.extractItem(0, amount, true);
+                    if (!extracted.isEmpty()){
+                        canExtract = true;
+                        this.extractIndex = i;
+                        break;
+                    }
                 }
+                if (!canExtract) this.extractIndex = -1;
+            } else if (this.extractIndex != -1) {
+                extracted = getItemHandlers().get(this.extractIndex).extractItem(0, amount, false);
             }
+
             return extracted;
         }
 
