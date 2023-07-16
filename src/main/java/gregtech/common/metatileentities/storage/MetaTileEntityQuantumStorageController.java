@@ -264,6 +264,14 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             this.itemHandlers = itemHandlerList;
         }
 
+        public boolean hasFluidTanks() {
+            return getFluidTanks().getTanks() > 0;
+        }
+
+        public boolean hasItemHandlers() {
+            return !getItemHandlers().isEmpty();
+        }
+
         // IFluidHandler
 
         private FluidTankList getFluidTanks() {
