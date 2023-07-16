@@ -26,7 +26,7 @@ public class MaterialFluid extends Fluid {
     }
 
     public void registerFluidTooltip() {
-        FluidTooltipUtil.registerTooltip(this, FluidTooltipUtil.getMaterialTooltip(material, getTemperature(), fluidType.equals(FluidTypes.PLASMA)));
+        FluidTooltipUtil.registerTooltip(this, material, fluidType);
     }
 
     @Nonnull
