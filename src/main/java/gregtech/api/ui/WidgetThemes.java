@@ -13,6 +13,8 @@ import static gregtech.api.ui.UITextures.GT_DISPLAY;
 
 public final class WidgetThemes {
 
+    //TODO Wooden theme
+    //TODO Primitive theme
     public static final String GREGTECH_THEME = "gregtech_theme";
 
     public static void init() {

@@ -138,7 +138,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
         super.buildSyncHandler(guiSyncHandler, player);
         final int factor = inventorySize / 9 > 8 ? 18 : 9;
         for (int i = 0; i < inventorySize; i++) {
-            guiSyncHandler.syncValue("crate_inv", i, SyncHandlers.itemSlot(inventory, i)
+            guiSyncHandler.syncValue(INV_SYNC_ID, i, SyncHandlers.itemSlot(inventory, i)
                     .slotGroup(INV_SYNC_ID)
             );
         }
@@ -151,7 +151,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     protected ModularPanel createClientGui(@Nonnull GuiContext context) {
         final int factor = inventorySize / 9 > 8 ? 18 : 9;
 
-        ModularPanel panel = new ModularPanel(context).name("crate");
+        ModularPanel panel = new ModularPanel(context).name(getGuiName());
         panel.flex()
                 .size(176 + (factor == 18 ? 176 : 0), 8 + inventorySize / factor * 18 + 104)
                 .align(Alignment.Center);
@@ -178,7 +178,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     @Nonnull
     @Override
     public String getGuiName() {
-        return "crate";
+        return "crate"; // shared between all crate instances
     }
 
     @Override

@@ -148,4 +148,12 @@ public class GregtechDataCodes {
     public static final String FUSION_REACTOR_ENERGY_CONTAINER_TRAIT = "EnergyContainerInternal";
     public static final String BATTERY_BUFFER_ENERGY_CONTAINER_TRAIT = "BatteryEnergyContainer";
 
+    // UI Sync Names
+    public static final String IMPORT_ITEMS_SYNC = "importItems";
+    public static final String EXPORT_ITEMS_SYNC = "exportItems";
+    public static final String IMPORT_FLUIDS_SYNC = "importFluids";
+    public static final String EXPORT_FLUIDS_SYNC = "exportFluids";
+
+    public static final int PROGRESS_BAR_UI_SYNC = 10;
+
 }
