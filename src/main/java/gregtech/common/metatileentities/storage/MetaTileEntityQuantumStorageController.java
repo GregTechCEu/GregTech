@@ -196,7 +196,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             }
             if (storage != null) storage.setDisconnected();
         }
-        handler.rebuildCache();
+        handler.invalidate();
     }
 
     @Override
@@ -247,8 +247,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         }
 
         private void rebuildCache() {
-            this.invalidate();
-
             List<IItemHandler> itemHandlerList = new ArrayList<>();
             List<IFluidTank> fluidTankList = new ArrayList<>();
             for (BlockPos pos : storagePositions) {
