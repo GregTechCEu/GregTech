@@ -571,8 +571,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
             @NotNull
             @Override
             public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-                if (slot == 0) return getItemInventory().insertItem(slot, stack, simulate);
-                return stack;
+                return getItemInventory().insertItem(slot, stack, simulate);
             }
 
             @NotNull
