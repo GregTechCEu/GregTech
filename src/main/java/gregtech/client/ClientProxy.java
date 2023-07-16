@@ -6,6 +6,8 @@ import gregtech.api.fluids.MetaFluids;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.terminal.TerminalRegistry;
+import gregtech.api.ui.UITextures;
+import gregtech.api.ui.WidgetThemes;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
@@ -84,6 +86,9 @@ public class ClientProxy extends CommonProxy {
         MetaEntities.initRenderers();
         MetaFluids.initIconFluidSprites();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
+
+        UITextures.init();
+        WidgetThemes.init();
     }
 
     @Override

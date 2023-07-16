@@ -11,6 +11,11 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.sync.GuiSyncHandler;
 import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
@@ -29,6 +34,8 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.ui.GuiTypes;
+import gregtech.api.ui.WidgetThemes;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -86,7 +93,7 @@ import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class MetaTileEntity implements ICoverable, IVoidable {
+public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolder {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
@@ -408,6 +415,66 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      */
     protected abstract ModularUI createUI(EntityPlayer entityPlayer);
 
+    @Override
+    public void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer player) {}
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public final ModularScreen createClientGui(EntityPlayer player) {
+        return ModularScreen.simple(getGuiModid(), getGuiName(), this::createClientGuiPre);
+    }
+
+    /**
+     * @return the modid of the gui
+     */
+    @SideOnly(Side.CLIENT)
+    @Nonnull
+    public String getGuiModid() {
+        return GTValues.MODID;
+    }
+
+    /**
+     * @return the name of the gui
+     */
+    @SideOnly(Side.CLIENT)
+    @Nonnull
+    public String getGuiName() {
+        return getMetaName() + "_gui";
+    }
+
+    /**
+     * @return the theme of the gui
+     */
+    @SideOnly(Side.CLIENT)
+    @Nonnull
+    public String getGuiTheme() {
+        return WidgetThemes.GREGTECH_THEME;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Nullable
+    private final ModularPanel createClientGuiPre(@Nonnull GuiContext context) {
+        context.useTheme(WidgetThemes.GREGTECH_THEME);
+        return createClientGui(context);
+    }
+
+    /**
+     * @param context the context for the UI
+     * @return the Client GUI
+     */
+    @SideOnly(Side.CLIENT)
+    @Nullable
+    protected ModularPanel createClientGui(@Nonnull GuiContext context) {
+        return null;
+    }
+
+    /**
+     * @return if the tile entity uses ModularUI 2.0
+     */
+    public boolean hasNewUi() {
+        return false;
+    }
+
     public ModularUI getModularUI(EntityPlayer entityPlayer) {
         return createUI(entityPlayer);
     }
@@ -428,7 +495,11 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         ItemStack heldStack = playerIn.getHeldItem(hand);
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
-                MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                if (hasNewUi()) {
+                    GuiTypes.TILE.open(playerIn, getWorld(), getPos());
+                } else {
+                    MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                }
             }
             return true;
         } else {

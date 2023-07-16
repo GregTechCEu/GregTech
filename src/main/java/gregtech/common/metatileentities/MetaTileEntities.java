@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities;
 
+import com.cleanroommc.modularui.theme.ThemeAPI;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -889,6 +890,9 @@ public class MetaTileEntities {
             }
         }
         GregTechAPI.MTE_REGISTRY.register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);
+        if (sampleMetaTileEntity.hasNewUi()) {
+            ThemeAPI.INSTANCE.registerThemeForScreen(sampleMetaTileEntity.getGuiModid() + ':' + sampleMetaTileEntity.getGuiName(), sampleMetaTileEntity.getGuiTheme());
+        }
         return sampleMetaTileEntity;
     }
 

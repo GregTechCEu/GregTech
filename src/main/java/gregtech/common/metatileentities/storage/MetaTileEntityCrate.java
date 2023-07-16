@@ -4,6 +4,14 @@ import codechicken.lib.colour.ColourRGBA;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.sync.GuiSyncHandler;
+import com.cleanroommc.modularui.sync.SyncHandlers;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.widgets.TextWidget;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -11,6 +19,7 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.ui.SlotUtils;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -28,10 +37,13 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class MetaTileEntityCrate extends MetaTileEntity {
+
+    private static final String INV_SYNC_ID = "crate_inv";
 
     private final Material material;
     private final int inventorySize;
@@ -119,6 +131,54 @@ public class MetaTileEntityCrate extends MetaTileEntity {
         }
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7 + (factor == 18 ? 88 : 0), 18 + inventorySize / factor * 18 + 11);
         return builder.build(getHolder(), entityPlayer);
+    }
+
+    @Override
+    public void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer player) {
+        super.buildSyncHandler(guiSyncHandler, player);
+        final int factor = inventorySize / 9 > 8 ? 18 : 9;
+        for (int i = 0; i < inventorySize; i++) {
+            guiSyncHandler.syncValue("crate_inv", i, SyncHandlers.itemSlot(inventory, i)
+                    .slotGroup(INV_SYNC_ID)
+            );
+        }
+        guiSyncHandler.registerSlotGroup(INV_SYNC_ID, factor);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Nullable
+    @Override
+    protected ModularPanel createClientGui(@Nonnull GuiContext context) {
+        final int factor = inventorySize / 9 > 8 ? 18 : 9;
+
+        ModularPanel panel = new ModularPanel(context).name("crate");
+        panel.flex()
+                .size(176 + (factor == 18 ? 176 : 0), 8 + inventorySize / factor * 18 + 104)
+                .align(Alignment.Center);
+
+        panel.bindPlayerInventory() // inventory - must come first
+                .child(new Row() // label
+                        .child(new TextWidget(IKey.lang(getMetaFullName()))
+                                .padding(7, 3))
+                )
+                .child(new Row() // storage slots
+                        .child(SlotUtils.itemGroup(inventorySize, factor)
+                                .synced(INV_SYNC_ID).build())
+                        .padding(7 * (factor == 18 ? 2 : 1 ), 18)
+                );
+
+        return panel;
+    }
+
+    @Override
+    public boolean hasNewUi() {
+        return true;
+    }
+
+    @Nonnull
+    @Override
+    public String getGuiName() {
+        return "crate";
     }
 
     @Override
