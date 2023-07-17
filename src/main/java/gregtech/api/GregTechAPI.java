@@ -78,7 +78,7 @@ public class GregTechAPI {
     public static final BaseCreativeTab TAB_GREGTECH_PIPES =
             new BaseCreativeTab(GTValues.MODID + ".pipes", () -> OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_TOOLS =
-            new BaseCreativeTab(GTValues.MODID + ".tools", () -> ToolItems.HARD_HAMMER.get(Materials.Aluminium), false);
+            new BaseCreativeTab(GTValues.MODID + ".tools", () -> ToolItems.HARD_HAMMER.get(Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_MATERIALS =
             new BaseCreativeTab(GTValues.MODID + ".materials", () -> OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_ORES =
