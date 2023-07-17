@@ -343,9 +343,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
                 boolean canInsert = false;
                 for (int i = 0; i < getItemHandlers().size(); i++) {
                     IItemHandler handler = getItemHandlers().get(i);
-                    // try to get a stack in virtual inventory or output slot
-                    checkStack = handler.getStackInSlot(1);
-                    if (checkStack.isEmpty()) checkStack = handler.getStackInSlot(2);
+                    // try to get a stack in output slot
+                    checkStack = handler.getStackInSlot(2);
 
                     // if the check stack is empty, or equal to the incoming stack
                     if (checkStack.isItemEqual(stack) || checkStack.isEmpty()) {
