@@ -109,19 +109,6 @@ public class GhostCircuitSlotWidget extends SlotWidget {
         return false;
     }
 
-//    @Override
-//    public ItemStack slotClick(int dragType, ClickType clickTypeIn, EntityPlayer player) {
-//        ItemStack stackHeld = player.inventory.getItemStack();
-//
-//        if (IntCircuitIngredient.isIntegratedCircuit(stackHeld)) {
-//            this.circuitInventory.setCircuitValueFromStack(stackHeld);
-//            if (consumer != null) consumer.accept(this);
-//            return this.circuitInventory.getStackInSlot(0).copy();
-//        }
-//
-//        return ItemStack.EMPTY;
-//    }
-
     @Override
     public boolean canMergeSlot(ItemStack stack) {
         return false;
