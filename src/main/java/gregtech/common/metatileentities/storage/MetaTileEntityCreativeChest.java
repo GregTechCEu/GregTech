@@ -207,13 +207,14 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
             ItemStack stack = super.getStackInSlot(slot);
             stack.setCount(itemsPerCycle);
 
-            // there's gotta be a better way to find out what handler i'm inserting into
+
             IItemHandler otherHandler = null;
             for (EnumFacing side : EnumFacing.VALUES) {
                 TileEntity tile = getWorld().getTileEntity(getControllerPos().offset(side));
                 if (tile == null) continue;
-                MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), tile.getPos());
-                if (mte instanceof IQuantumStorage<?>) continue;
+                if (tile instanceof IGregTechTileEntity gte && gte.getMetaTileEntity() instanceof IQuantumStorage<?>)
+                    continue;
+
                 otherHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
                 if (otherHandler != null && otherHandler.getSlots() > 0) break;
             }
@@ -242,6 +243,12 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
             stack.setCount(1);
             this.stacks.set(slot, stack);
             this.onContentsChanged(slot);
+        }
+
+        @NotNull
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            return super.getStackInSlot(0);
         }
     }
 }
