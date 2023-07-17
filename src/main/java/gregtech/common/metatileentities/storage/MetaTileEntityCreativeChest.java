@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.storage;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
@@ -42,26 +43,13 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     private int itemsPerCycle = 1;
     private int ticksPerCycle = 1;
 
-    private final GTItemStackHandler handler = new GTItemStackHandler(this, 1) {
-
-        @Override
-        protected int getStackLimit(int slot, ItemStack stack) {
-            return 1;
-        }
-
-        @Override
-        public void setStackInSlot(int slot, ItemStack stack) {
-            this.validateSlotIndex(slot);
-            stack.setCount(1);
-            this.stacks.set(slot, stack);
-            this.onContentsChanged(slot);
-        }
-    };
+    private final GTItemStackHandler handler;
 
     private boolean active;
 
     public MetaTileEntityCreativeChest(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.MAX, 0);
+        this.handler = new CreativeItemStackHandler(1);
     }
 
     @Override
@@ -122,7 +110,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         this.virtualItemStack = stack; // For rendering purposes
         super.update();
         if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0) return;
-        if (getWorld().isRemote || !active || stack.isEmpty()) return;
+        if (getWorld().isRemote || !active || stack.isEmpty() || isConnected()) return;
 
         TileEntity tile = getNeighbor(getOutputFacing());
         if (tile != null) {
@@ -192,5 +180,66 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.handler.setStackInSlot(0, this.virtualItemStack);
+    }
+
+    @Override
+    public IItemHandler getTypeValue() {
+        return this.handler;
+    }
+
+    protected class CreativeItemStackHandler extends GTItemStackHandler {
+
+        CreativeItemStackHandler(int size) {
+            super(MetaTileEntityCreativeChest.this, size);
+        }
+
+        @NotNull
+        @Override
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+            return stack;
+        }
+
+        @NotNull
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            ItemStack stack = super.getStackInSlot(slot);
+            stack.setCount(itemsPerCycle);
+
+            // there's gotta be a better way to find out what handler i'm inserting into
+            IItemHandler otherHandler = null;
+            for (EnumFacing side : EnumFacing.VALUES) {
+                TileEntity tile = getWorld().getTileEntity(getControllerPos().offset(side));
+                if (tile == null) continue;
+                MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), tile.getPos());
+                if (mte instanceof IQuantumStorage<?>) continue;
+                otherHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
+                if (otherHandler != null && otherHandler.getSlots() > 0) break;
+            }
+
+            if (otherHandler != null && active) {
+                ItemStack remainder = GTTransferUtils.insertItem(otherHandler, stack, true);
+
+                int amountToInsert = stack.getCount() - remainder.getCount();
+
+                if (amountToInsert > 0) {
+                    GTTransferUtils.insertItem(otherHandler, stack, false);
+                }
+                return remainder;
+            }
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        protected int getStackLimit(int slot, ItemStack stack) {
+            return 1;
+        }
+
+        @Override
+        public void setStackInSlot(int slot, ItemStack stack) {
+            this.validateSlotIndex(slot);
+            stack.setCount(1);
+            this.stacks.set(slot, stack);
+            this.onContentsChanged(slot);
+        }
     }
 }

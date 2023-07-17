@@ -25,7 +25,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.FluidTankPropertiesWrapper;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
@@ -44,7 +46,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     public MetaTileEntityCreativeTank(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.MAX, -1);
-        this.fluidTank = new FluidTank(1);
+        this.fluidTank = new CreativeFluidTank(1);
     }
 
     @Override
@@ -56,7 +58,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (this.getOutputFacing() != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
-            if (isAutoOutputFluids()) {
+            if (!isConnected() && active) {
                 Textures.FLUID_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
             }
         }
@@ -110,7 +112,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     public void update() {
         super.update();
         if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0 || fluidTank.getFluid() == null ||
-                getWorld().isRemote || !active)
+                getWorld().isRemote || !active || isConnected())
             return;
 
         TileEntity tile = getNeighbor(getOutputFacing());
@@ -164,5 +166,38 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
                 I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
         // do not append the normal tooltips
+    }
+
+    private class CreativeFluidTank extends FluidTank {
+
+        public CreativeFluidTank(int capacity) {
+            super(capacity);
+        }
+
+        @Override
+        public IFluidTankProperties[] getTankProperties() {
+            if (this.tankProperties == null) {
+                this.tankProperties = new IFluidTankProperties[]{new FluidTankPropertiesWrapper(fluidTank)};
+            }
+            return this.tankProperties;
+        }
+
+        @Override
+        public FluidStack drain(FluidStack resource, boolean doDrain) {
+            if (active) {
+                return super.drain(mBPerCycle, false) == null ? null : super.drain(mBPerCycle, false);
+            }
+            return null;
+        }
+
+        @Override
+        public FluidStack drain(int maxDrain, boolean doDrain) {
+            return drain(null, doDrain);
+        }
+
+        @Override
+        public int fill(FluidStack resource, boolean doFill) {
+            return 0;
+        }
     }
 }
