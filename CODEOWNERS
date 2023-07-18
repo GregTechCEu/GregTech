@@ -1,9 +1,6 @@
 # All other changes require the primary team
 * @GregTechCEu/gregtech-1-12-devs
 
-# GitHub Actions changes require admin approval
-/.github/** @GregTechCEu/admin
-
 # Specific files requiring admin approval
 CHANGELOG.md @GregTechCEu/admin
 CHANGELOG-GTCEU.md @GregTechCEu/admin
@@ -13,5 +10,11 @@ LICENSE @GregTechCEu/admin
 README.md @GregTechCEu/admin
 permission*.png @GregTechCEu/admin
 
-# Gradle changes require specific reviewers
-**gradle** @TechLord22 @ALongStringOfNumbers @DStrand1
+# Build changes
+**gradle** @GregTechCEu/gregtech-build-team
+/.github/** @GregTechCEu/gregtech-build-team
+.editorconfig @GregTechCEu/gregtech-build-team
+spotless.eclipseformat.xml @GregTechCEu/gregtech-build-team
+spotless.importorder @GregTechCEu/gregtech-build-team
+.gitignore @GregTechCEu/gregtech-build-team
+/libs/** @GregTechCEu/gregtech-build-team

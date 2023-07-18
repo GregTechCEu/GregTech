@@ -1,14 +1,16 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.fluids.MaterialFluid;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
@@ -111,15 +113,16 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         FluidStack maxFluid = fluid.copy();
         double availableCapacity = 0;
 
-        for (byte side, i = 0, j = (byte) GTValues.RNG.nextInt(6); i < 6; i++) {
+        for (byte i = 0, j = (byte) GTValues.RNG.nextInt(6); i < 6; i++) {
             // Get a list of tanks accepting fluids, and what side they're on
-            side = (byte) ((i + j) % 6);
+            byte side = (byte) ((i + j) % 6);
             EnumFacing facing = EnumFacing.VALUES[side];
-            if (!isConnected(facing) || (lastReceivedFrom & (1 << side)) != 0)
-                continue;
-            EnumFacing oppositeSide = facing.getOpposite();
 
-            IFluidHandler fluidHandler = getFluidHandlerAt(facing, oppositeSide);
+            if (!isConnected(facing) || (lastReceivedFrom & (1 << side)) != 0) {
+                continue;
+            }
+
+            IFluidHandler fluidHandler = getFluidHandlerAt(facing, facing.getOpposite());
             if (fluidHandler == null)
                 continue;
 
@@ -127,30 +130,24 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             CoverBehavior cover = getCoverableImplementation().getCoverAtSide(facing);
 
             // pipeTank should only be determined by the cover attached to the actual pipe
-            if (cover != null){
-                IFluidHandler capability = cover.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, pipeTank);
+            if (cover != null) {
+                pipeTank = cover.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, pipeTank);
                 // Shutter covers return null capability when active, so check here to prevent NPE
-                if (capability == null) {
-                    continue;
-                }
-                pipeTank = capability;
+                if (pipeTank == null) continue;
             } else {
-                cover = getOtherCoverAt(facing, oppositeSide);
+                MetaTileEntity tile = GTUtility.getMetaTileEntity(world, pos.offset(facing));
+                if (tile != null) cover = tile.getCoverAtSide(facing.getOpposite());
             }
 
-            if (cover instanceof CoverPump) {
-
+            if (cover instanceof CoverPump coverPump) {
                 int pipeThroughput = getNodeData().getThroughput() * 20;
-                if (((CoverPump) cover).getTransferRate() > pipeThroughput) {
-                    ((CoverPump) cover).setTransferRate(pipeThroughput);
+                if (coverPump.getTransferRate() > pipeThroughput) {
+                    coverPump.setTransferRate(pipeThroughput);
                 }
-
-                ManualImportExportMode mode = ((CoverPump) cover).getManualImportExportMode();
-                if (mode == ManualImportExportMode.DISABLED) {
+                if (coverPump.getManualImportExportMode() == ManualImportExportMode.DISABLED) {
                     continue;
                 }
             }
-
 
             FluidStack drainable = pipeTank.drain(maxFluid, false);
             if (drainable == null || drainable.amount <= 0) {
@@ -178,7 +175,8 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 triple.setRight((int) Math.floor(triple.getRight() * maxAmount / availableCapacity)); // Distribute fluids based on percentage available space at destination
             }
             if (triple.getRight() == 0) {
-                if (tank.getFluidAmount() <= 0) break; // If there is no more stored fluid, stop transferring to prevent dupes
+                if (tank.getFluidAmount() <= 0)
+                    break; // If there is no more stored fluid, stop transferring to prevent dupes
                 triple.setRight(1); // If the percent is not enough to give at least 1L, try to give 1L
             } else if (triple.getRight() < 0) {
                 continue;
@@ -196,18 +194,20 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
     public void checkAndDestroy(@Nonnull FluidStack stack) {
         Fluid fluid = stack.getFluid();
-        boolean burning = getNodeData().getMaxFluidTemperature() < fluid.getTemperature(stack);
-        boolean leaking = !getNodeData().isGasProof() && fluid.isGaseous(stack);
-        boolean shattering = !getNodeData().isCryoProof() && fluid.getTemperature() < 120; // fluids less than 120K are cryogenic
+        FluidPipeProperties prop = getNodeData();
+
+        boolean burning = prop.getMaxFluidTemperature() < fluid.getTemperature(stack);
+        boolean leaking = !prop.isGasProof() && fluid.isGaseous(stack);
+        boolean shattering = !prop.isCryoProof() && fluid.getTemperature() < IPropertyFluidFilter.CRYOGENIC_TEMPERATURE_THRESHOLD;
         boolean corroding = false;
         boolean melting = false;
-        if (fluid instanceof MaterialFluid) {
-            MaterialFluid materialFluid = (MaterialFluid) fluid;
-            corroding = !getNodeData().isAcidProof() && materialFluid.getFluidType().equals(FluidTypes.ACID);
-            melting = !getNodeData().isPlasmaProof() && materialFluid.getFluidType().equals(FluidTypes.PLASMA);
+
+        if (fluid instanceof MaterialFluid materialFluid) {
+            corroding = !prop.isAcidProof() && materialFluid.getFluidType().equals(FluidTypes.ACID);
+            melting = !prop.isPlasmaProof() && materialFluid.getFluidType().equals(FluidTypes.PLASMA);
 
             // carrying plasmas which are too hot when plasma proof does not burn pipes
-            if (burning && getNodeData().isPlasmaProof() && materialFluid.getFluidType().equals(FluidTypes.PLASMA))
+            if (burning && prop.isPlasmaProof() && materialFluid.getFluidType().equals(FluidTypes.PLASMA))
                 burning = false;
         }
 
@@ -319,14 +319,6 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, oppositeSide);
     }
 
-    private CoverBehavior getOtherCoverAt(EnumFacing facing, EnumFacing oppositeSide) {
-        MetaTileEntity tile = GTUtility.getMetaTileEntity(world, pos.offset(facing));
-        if (tile == null) {
-            return null;
-        }
-        return tile.getCoverAtSide(oppositeSide);
-    }
-
     public void receivedFrom(EnumFacing facing) {
         if (facing != null) {
             lastReceivedFrom |= (1 << facing.getIndex());
@@ -424,8 +416,8 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
                     allTanksEmpty = false;
                     list.add(new TextComponentTranslation("behavior.tricorder.tank", i,
-                            new TextComponentTranslation(GTUtility.formatNumbers(fluids[i].amount)).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                            new TextComponentTranslation(GTUtility.formatNumbers(this.getCapacityPerTank())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(fluids[i].amount)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getCapacityPerTank())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
                             new TextComponentTranslation(fluids[i].getFluid().getLocalizedName(fluids[i])).setStyle(new Style().setColor(TextFormatting.GOLD))
                     ));
                 }

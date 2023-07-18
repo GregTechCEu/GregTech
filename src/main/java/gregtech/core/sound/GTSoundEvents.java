@@ -28,6 +28,7 @@ public class GTSoundEvents {
     public static SoundEvent CUT;
     public static SoundEvent COOLING;
     public static SoundEvent MINER;
+    public static SoundEvent COMPUTATION;
 
     // Tool Sounds
     public static SoundEvent DRILL_TOOL;
@@ -49,6 +50,10 @@ public class GTSoundEvents {
     // Entity Sounds
     public static SoundEvent PORTAL_OPENING;
     public static SoundEvent PORTAL_CLOSING;
+
+    // Maintenance Sounds
+    public static SoundEvent BREAKDOWN_ELECTRICAL;
+    public static SoundEvent BREAKDOWN_MECHANICAL;
 
     public static void register() {
         FORGE_HAMMER = soundManager.registerSound("tick.forge_hammer");
@@ -72,6 +77,8 @@ public class GTSoundEvents {
         COMBUSTION = soundManager.registerSound("tick.combustion");
         MINER = soundManager.registerSound("tick.miner");
         SCIENCE = soundManager.registerSound("tick.science");
+        COMPUTATION = soundManager.registerSound("tick.computation");
+
         WRENCH_TOOL = soundManager.registerSound("use.wrench");
         SOFT_MALLET_TOOL = soundManager.registerSound("use.soft_hammer");
         DRILL_TOOL = soundManager.registerSound("use.drill");
@@ -87,5 +94,8 @@ public class GTSoundEvents {
         SUS_RECORD = soundManager.registerSound("record.sus");
         PORTAL_OPENING = soundManager.registerSound("entity.portal_opening");
         PORTAL_CLOSING = soundManager.registerSound("entity.portal_closing");
+
+        BREAKDOWN_ELECTRICAL = soundManager.registerSound("maintenance.electrical");
+        BREAKDOWN_MECHANICAL = soundManager.registerSound("maintenance.mechanical");
     }
 }

@@ -34,14 +34,6 @@ public class SidedCubeRenderer implements ICubeRenderer {
     @SideOnly(Side.CLIENT)
     protected Map<OverlayFace, TextureAtlasSprite> spritesEmissive;
 
-    /**
-     * @deprecated Use {@link SidedCubeRenderer#basePath}. OverlayFace directions are determined automatically.
-     */
-    @Deprecated
-    public SidedCubeRenderer(String basePath, OverlayFace... ignored) {
-        this.basePath = basePath;
-    }
-
     public SidedCubeRenderer(String basePath) {
         this.basePath = basePath;
         Textures.CUBE_RENDERER_REGISTRY.put(basePath, this);

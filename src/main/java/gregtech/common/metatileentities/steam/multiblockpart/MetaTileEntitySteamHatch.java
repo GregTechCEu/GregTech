@@ -17,7 +17,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.recipes.ModHandler;
+import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -94,7 +94,8 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
 
     @Override
     protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, new FilteredFluidHandler(INVENTORY_SIZE).setFillPredicate(ModHandler::isSteam));
+        return new FluidTankList(false, new FilteredFluidHandler(INVENTORY_SIZE)
+                .setFilter(CommonFluidFilters.STEAM));
     }
 
     @Override

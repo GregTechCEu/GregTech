@@ -4,9 +4,9 @@ import gregtech.Bootstrap;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -217,7 +217,7 @@ public class ConverterTraitTest {
         private static int resourceId = 0;
 
         public ConverterTestWrapper(int tier, int amps) {
-            super(new ResourceLocation(GTValues.MODID, "converter_" + resourceId++), tier, amps);
+            super(GTUtility.gregtechId("converter_" + resourceId++), tier, amps);
         }
 
         @Override

@@ -1,6 +1,6 @@
 package gregtech.integration;
 
-import gregtech.api.GTValues;
+import gregtech.api.util.GTUtility;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
 import net.minecraft.util.ResourceLocation;
@@ -17,7 +17,7 @@ import java.util.Set;
 public abstract class IntegrationSubmodule extends BaseGregTechModule {
 
     private static final Set<ResourceLocation> DEPENDENCY_UID = Collections.singleton(
-            new ResourceLocation(GTValues.MODID, GregTechModules.MODULE_INTEGRATION));
+            GTUtility.gregtechId(GregTechModules.MODULE_INTEGRATION));
 
     @Nonnull
     @Override

@@ -165,14 +165,18 @@ public class ToolEventHandlers {
     }
 
     /**
-     * Prevents anvil repairing if tools do not have the same material
+     * Prevents anvil repairing if tools do not have the same material, or if either are electric.
+     * Electric tools can still be repaired with ingots in the anvil, but electric tools cannot
+     * be combined with other GT tools, electric or otherwise.
      */
     @SubscribeEvent
     public static void onAnvilUpdateEvent(AnvilUpdateEvent event) {
         ItemStack left = event.getLeft(), right = event.getRight();
-        if (left.getItem() instanceof IGTTool && right.getItem() instanceof IGTTool) {
-            IGTTool leftTool = (IGTTool) left.getItem(), rightTool = (IGTTool) right.getItem();
+        if (left.getItem() instanceof IGTTool leftTool && right.getItem() instanceof IGTTool rightTool) {
             if (leftTool.getToolMaterial(left) != rightTool.getToolMaterial(right)) {
+                event.setCanceled(true);
+            }
+            if (leftTool.isElectric() || rightTool.isElectric()) {
                 event.setCanceled(true);
             }
         }

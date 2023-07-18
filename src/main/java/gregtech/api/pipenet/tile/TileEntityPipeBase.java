@@ -58,8 +58,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.pipeType = tileEntity.getPipeType();
         this.paintingColor = tileEntity.getPaintingColor();
         this.connections = tileEntity.getConnections();
-        if (tileEntity instanceof TileEntityPipeBase) {
-            this.updates.putAll(((TileEntityPipeBase<?, ?>) tileEntity).updates);
+        if (tileEntity instanceof TileEntityPipeBase pipeBase) {
+            this.updates.putAll(pipeBase.updates);
         }
         tileEntity.getCoverableImplementation().transferDataTo(coverableImplementation);
         setFrameMaterial(tileEntity.getFrameMaterial());
@@ -76,7 +76,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void setFrameMaterial(@Nullable Material frameMaterial) {
         this.frameMaterial = frameMaterial;
         if (world != null && world.isRemote) {
-            writeCustomData(UPDATE_FRAME_MATERIAL, buf -> buf.writeVarInt(frameMaterial == null ? -1 : GregTechAPI.MATERIAL_REGISTRY.getIDForObject(frameMaterial)));
+            writeCustomData(UPDATE_FRAME_MATERIAL, buf -> {
+                buf.writeVarInt(frameMaterial == null ? -1 : frameMaterial.getRegistry().getNetworkId());
+                buf.writeVarInt(frameMaterial == null ? -1 : frameMaterial.getId());
+            });
         }
     }
 
@@ -111,9 +114,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             return this;
         }
         //create new tickable tile entity, transfer data, and replace it
-        IPipeTile<PipeType, NodeDataType> newTile = getPipeBlock().createNewTileEntity(true);
+        TileEntityPipeBase<PipeType, NodeDataType> newTile = getPipeBlock().createNewTileEntity(true);
         newTile.transferDataFrom(this);
-        getWorld().setTileEntity(getPos(), (TileEntity) newTile);
+        getWorld().setTileEntity(getPos(), newTile);
         return newTile;
     }
 
@@ -122,7 +125,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (pipeBlock == null) {
             Block block = getBlockState().getBlock();
             //noinspection unchecked
-            this.pipeBlock = block instanceof BlockPipe ? (BlockPipe<PipeType, NodeDataType, ?>) block : null;
+            this.pipeBlock = block instanceof BlockPipe blockPipe ? blockPipe : null;
         }
         return pipeBlock;
     }
@@ -176,7 +179,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             }
             TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
             // block connections if Pipe Types do not match
-            if (connected && tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getPipeType().getClass() != this.getPipeType().getClass()) {
+            if (connected &&
+                    tile instanceof IPipeTile pipeTile &&
+                    pipeTile.getPipeType().getClass() != this.getPipeType().getClass()) {
                 return;
             }
             connections = withSideConnection(connections, side, connected);
@@ -187,8 +192,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             });
             markDirty();
 
-            if (!fromNeighbor && tile instanceof IPipeTile) {
-                syncPipeConnections(side, (IPipeTile<?, ?>) tile);
+            if (!fromNeighbor && tile instanceof IPipeTile pipeTile) {
+                syncPipeConnections(side, pipeTile);
             }
         }
     }
@@ -266,12 +271,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         float selfThickness = getPipeType().getThickness();
         for (EnumFacing facing : EnumFacing.values()) {
             if (isConnected(facing)) {
-                TileEntity neighbourTile = world.getTileEntity(pos.offset(facing));
-                if (neighbourTile instanceof IPipeTile) {
-                    IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) neighbourTile;
-                    if (pipeTile.isConnected(facing.getOpposite()) && pipeTile.getPipeType().getThickness() < selfThickness) {
-                        connections |= 1 << (facing.getIndex() + 6);
-                    }
+                if (world.getTileEntity(pos.offset(facing)) instanceof IPipeTile<?, ?> pipeTile &&
+                        pipeTile.isConnected(facing.getOpposite()) &&
+                        pipeTile.getPipeType().getThickness() < selfThickness) {
+                    connections |= 1 << (facing.getIndex() + 6);
                 }
                 if (getCoverableImplementation().getCoverAtSide(facing) != null) {
                     connections |= 1 << (facing.getIndex() + 12);
@@ -331,7 +334,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (isPainted()) {
             compound.setInteger("InsulationColor", paintingColor);
         }
-        compound.setString("FrameMaterial", frameMaterial == null ? "" : frameMaterial.toString());
+        compound.setString("FrameMaterial", frameMaterial == null ? "" : frameMaterial.getRegistryName());
         this.coverableImplementation.writeToNBT(compound);
         return compound;
     }
@@ -342,7 +345,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (compound.hasKey("PipeBlock", NBT.TAG_STRING)) {
             Block block = Block.REGISTRY.getObject(new ResourceLocation(compound.getString("PipeBlock")));
             //noinspection unchecked
-            this.pipeBlock = block instanceof BlockPipe ? (BlockPipe<PipeType, NodeDataType, ?>) block : null;
+            this.pipeBlock = block instanceof BlockPipe blockPipe ? blockPipe : null;
         }
         this.pipeType = getPipeTypeClass().getEnumConstants()[compound.getInteger("PipeType")];
 
@@ -363,8 +366,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         }
         String frameMaterialName = compound.getString("FrameMaterial");
         if (!frameMaterialName.isEmpty()) {
-            this.frameMaterial = GregTechAPI.MATERIAL_REGISTRY.getObject(frameMaterialName);
+            this.frameMaterial = GregTechAPI.materialManager.getMaterial(frameMaterialName);
         }
+
         this.coverableImplementation.readFromNBT(compound);
     }
 
@@ -388,7 +392,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         buf.writeVarInt(connections);
         buf.writeVarInt(blockedConnections);
         buf.writeInt(paintingColor);
-        buf.writeVarInt(frameMaterial == null ? -1 : GregTechAPI.MATERIAL_REGISTRY.getIDForObject(frameMaterial));
+        buf.writeVarInt(frameMaterial == null ? -1 : frameMaterial.getRegistry().getNetworkId());
+        buf.writeVarInt(frameMaterial == null ? -1 : frameMaterial.getId());
         this.coverableImplementation.writeInitialSyncData(buf);
     }
 
@@ -398,8 +403,13 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.connections = buf.readVarInt();
         this.blockedConnections = buf.readVarInt();
         this.paintingColor = buf.readInt();
+        int registryId = buf.readVarInt();
         int frameMaterialId = buf.readVarInt();
-        this.frameMaterial = frameMaterialId < 0 ? null : GregTechAPI.MATERIAL_REGISTRY.getObjectById(frameMaterialId);
+        if (registryId >= 0 && frameMaterialId >= 0) {
+            this.frameMaterial = GregTechAPI.materialManager.getRegistry(registryId).getObjectById(frameMaterialId);
+        } else {
+            this.frameMaterial = null;
+        }
         this.coverableImplementation.readInitialSyncData(buf);
     }
 
@@ -420,8 +430,13 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             this.blockedConnections = buf.readVarInt();
             scheduleChunkForRenderUpdate();
         } else if (discriminator == UPDATE_FRAME_MATERIAL) {
+            int registryId = buf.readVarInt();
             int frameMaterialId = buf.readVarInt();
-            this.frameMaterial = frameMaterialId < 0 ? null : GregTechAPI.MATERIAL_REGISTRY.getObjectById(frameMaterialId);
+            if (registryId >= 0 && frameMaterialId >= 0) {
+                this.frameMaterial = GregTechAPI.materialManager.getRegistry(registryId).getObjectById(frameMaterialId);
+            } else {
+                this.frameMaterial = null;
+            }
             scheduleChunkForRenderUpdate();
         }
     }

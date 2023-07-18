@@ -66,7 +66,9 @@ public class ClientEventHandler {
         GTParticleManager.clientTick(event);
         TerminalARRenderer.onClientTick(event);
         TooltipHelper.onClientTick(event);
-        CLIENT_TIME++;
+        if (event.phase == TickEvent.Phase.END) {
+            CLIENT_TIME++;
+        }
     }
 
     @SubscribeEvent

@@ -18,8 +18,10 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
@@ -70,6 +72,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         this.heatingCoilDiscount = 0;
     }
 
+    @Nonnull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -91,6 +94,11 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.HEAT_PROOF_CASING;
+    }
+
+    @Override
+    public SoundEvent getBreakdownSound() {
+        return GTSoundEvents.BREAKDOWN_ELECTRICAL;
     }
 
     @Nonnull
@@ -118,7 +126,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
         @Override
         public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
-            builder.EUt(Math.max(1, 16 / heatingCoilDiscount))
+            builder.EUt(builder.getParallel() * Math.max(1, 16 / heatingCoilDiscount))
                     .duration((int) Math.max(1.0, 256 * builder.getParallel() / (getParallelLimit() * 1.0)));
         }
 

@@ -13,11 +13,16 @@ import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
+import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.pipenet.longdist.LongDistancePipeType;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.event.MaterialEvent;
+import gregtech.api.unification.material.event.MaterialRegistryEvent;
+import gregtech.api.unification.material.event.PostMaterialEvent;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
@@ -27,6 +32,7 @@ import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
+import gregtech.common.blocks.BlockBatteryPart;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.command.CommandHand;
@@ -46,13 +52,16 @@ import gregtech.core.network.internal.NetworkHandler;
 import gregtech.core.network.packets.*;
 import gregtech.core.sound.GTSoundEvents;
 import gregtech.core.sound.internal.SoundManager;
+import gregtech.core.unification.material.internal.MaterialRegistryManager;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.LoaderException;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
@@ -79,6 +88,9 @@ public class CoreModule implements IGregTechModule {
 
     public CoreModule() {
         GregTechAPI.networkHandler = NetworkHandler.getInstance();
+        // must be set here because of GroovyScript compat
+        // trying to read this before the pre-init stage
+        GregTechAPI.materialManager = MaterialRegistryManager.getInstance();
     }
 
     @Nonnull
@@ -111,22 +123,32 @@ public class CoreModule implements IGregTechModule {
 
         /* Start Material Registration */
 
+        // First, register other mods' Registries
+        MaterialRegistryManager managerInternal = (MaterialRegistryManager) GregTechAPI.materialManager;
+
+        logger.info("Registering material registries");
+        MinecraftForge.EVENT_BUS.post(new MaterialRegistryEvent());
+
         // First, register CEu Materials
-        MATERIAL_REGISTRY.unfreeze();
+        managerInternal.unfreezeRegistries();
+        MaterialEvent materialEvent = new MaterialEvent();
         logger.info("Registering GTCEu Materials");
         Materials.register();
+        MaterialRegistryManager.getInstance()
+                .getRegistry(GTValues.MODID)
+                .setFallbackMaterial(Materials.Aluminium);
 
         // Then, register addon Materials
         logger.info("Registering addon Materials");
-        MinecraftForge.EVENT_BUS.post(new GregTechAPI.MaterialEvent());
+        MinecraftForge.EVENT_BUS.post(materialEvent);
 
         // Fire Post-Material event, intended for when Materials need to be iterated over in-full before freezing
         // Block entirely new Materials from being added in the Post event
-        MATERIAL_REGISTRY.closeRegistry();
-        MinecraftForge.EVENT_BUS.post(new GregTechAPI.PostMaterialEvent());
+        managerInternal.closeRegistries();
+        MinecraftForge.EVENT_BUS.post(new PostMaterialEvent());
 
         // Freeze Material Registry before processing Items, Blocks, and Fluids
-        MATERIAL_REGISTRY.freeze();
+        managerInternal.freezeRegistries();
         /* End Material Registration */
 
         OreDictUnifier.init();
@@ -135,7 +157,6 @@ public class CoreModule implements IGregTechModule {
         MetaItems.init();
         ToolItems.init();
         MetaFluids.init();
-        ModHandler.init();
 
         /* Start MetaTileEntity Registration */
         MTE_REGISTRY.unfreeze();
@@ -146,14 +167,19 @@ public class CoreModule implements IGregTechModule {
 
         MetaEntities.init();
 
-        /* Start Heating Coil Registration */
+        /* Start API Block Registration */
         for (BlockWireCoil.CoilType type : BlockWireCoil.CoilType.values()) {
             HEATING_COILS.put(MetaBlocks.WIRE_COIL.getState(type), type);
         }
-        /* End Heating Coil Registration */
+        for (BlockBatteryPart.BatteryPartType type : BlockBatteryPart.BatteryPartType.values()) {
+            PSS_BATTERIES.put(MetaBlocks.BATTERY_BLOCK.getState(type), type);
+        }
+        /* End API Block Registration */
 
         proxy.onPreLoad();
         KeyBind.init();
+
+        LongDistancePipeType.init();
     }
 
     @Override

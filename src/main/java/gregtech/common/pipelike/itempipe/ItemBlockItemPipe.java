@@ -33,7 +33,8 @@ public class ItemBlockItemPipe extends ItemBlockMaterialPipe<ItemPipeType, ItemP
         tooltip.add(I18n.format("gregtech.item_pipe.priority", pipeProperties.getPriority()));
 
         if (ConfigHolder.misc.debug) {
-            tooltip.add("MetaItem Id: " + ((BlockMaterialPipe<?, ?, ?>) blockPipe).getPrefix().name + BlockMaterialPipe.getItemMaterial(stack).toCamelCaseString());
+            BlockMaterialPipe<?, ?, ?> blockMaterialPipe = (BlockMaterialPipe<?, ?, ?>) blockPipe;
+            tooltip.add("MetaItem Id: " + blockMaterialPipe.getPrefix().name + blockMaterialPipe.getItemMaterial(stack).toCamelCaseString());
         }
     }
 }

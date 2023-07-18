@@ -60,7 +60,8 @@ public class GregtechDataCodes {
     public static final int UPDATE_COVER_DATA_PIPE = 0;
     public static final int COVER_ATTACHED_PIPE = 1;
     public static final int COVER_REMOVED_PIPE = 2;
-    public static final int CABLE_UPDATE_TEMP = 3;
+    public static final int PIPE_OPTICAL_ACTIVE = 3;
+    public static final int PIPE_LASER_ACTIVE = 4;
 
     // Multiblock implementation update codes
     public static final int SYNC_CONTROLLER = 100;
@@ -132,6 +133,10 @@ public class GregtechDataCodes {
 
     // Fission Hatches
     public static final int LOCK_UPDATE = 17;
+
+    // HPCA / Research Station
+    public static final int DAMAGE_STATE = 222;
+    public static final int LOCK_OBJECT_HOLDER = 223;
 
     // NBT Keys
 

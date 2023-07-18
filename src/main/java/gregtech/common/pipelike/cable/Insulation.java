@@ -20,6 +20,8 @@ public enum Insulation implements IMaterialPipeType<WireProperties> {
     CABLE_OCTAL("cable_octal", 0.75f, 8, 1, OrePrefix.cableGtOctal, 3),
     CABLE_HEX("cable_hex", 1.0f, 16, 1, OrePrefix.cableGtHex, 4);
 
+    public static final Insulation[] VALUES = values();
+
     public final String name;
     public final float thickness;
     public final int amperage;

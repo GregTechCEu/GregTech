@@ -310,13 +310,20 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             //only set hasNotEnoughEnergy if this recipe is consuming recipe
             //generators always have enough energy
             this.hasNotEnoughEnergy = true;
-            //if current progress value is greater than 2, decrement it by 2
-            if (progressTime >= 2) {
-                if (ConfigHolder.machines.recipeProgressLowEnergy) {
-                    this.progressTime = 1;
-                } else {
-                    this.progressTime = Math.max(1, progressTime - 2);
-                }
+            decreaseProgress();
+        }
+    }
+
+    /**
+     * Decrease the recipe progress time in the case that some state was not right, like available EU to drain.
+     */
+    protected void decreaseProgress() {
+        //if current progress value is greater than 2, decrement it by 2
+        if (progressTime >= 2) {
+            if (ConfigHolder.machines.recipeProgressLowEnergy) {
+                this.progressTime = 1;
+            } else {
+                this.progressTime = Math.max(1, progressTime - 2);
             }
         }
     }
@@ -325,22 +332,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if the recipe can progress, otherwise false
      */
     protected boolean canProgressRecipe() {
-        if (previousRecipe == null)
-            return true;
-
-        CleanroomType requiredType = null;
-        if (previousRecipe.hasProperty(CleanroomProperty.getInstance())) {
-            requiredType = previousRecipe.getProperty(CleanroomProperty.getInstance(), null);
-        }
-
-        if (requiredType == null) return true;
-
-        if (getMetaTileEntity() instanceof IMultiblockController && ConfigHolder.machines.cleanMultiblocks) return true;
-
-        ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
-        if (cleanroomProvider == null) return false;
-
-        return cleanroomProvider.isClean() && cleanroomProvider.getTypes().contains(requiredType);
+        if (previousRecipe == null) return true;
+        return checkCleanroomRequirement(previousRecipe);
     }
 
     /**
@@ -396,19 +389,28 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if the recipe is allowed to be used, else false
      */
     public boolean checkRecipe(@Nonnull Recipe recipe) {
-        CleanroomType requiredType = null;
-        if (recipe.hasProperty(CleanroomProperty.getInstance())) {
-            requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
-        }
+        return checkCleanroomRequirement(recipe);
+    }
 
+    /**
+     * @param recipe the recipe to check
+     * @return if the cleanroom requirement is met
+     */
+    protected boolean checkCleanroomRequirement(@Nonnull Recipe recipe) {
+        CleanroomType requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
         if (requiredType == null) return true;
 
-        if (getMetaTileEntity() instanceof IMultiblockController && ConfigHolder.machines.cleanMultiblocks) return true;
+        MetaTileEntity mte = getMetaTileEntity();
+        if (mte instanceof ICleanroomReceiver receiver) {
+            if (ConfigHolder.machines.cleanMultiblocks && mte instanceof IMultiblockController) return true;
 
-        ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
-        if (cleanroomProvider == null) return false;
+            ICleanroomProvider cleanroomProvider = receiver.getCleanroom();
+            if (cleanroomProvider == null) return false;
 
-        return cleanroomProvider.isClean() && cleanroomProvider.getTypes().contains(requiredType);
+            return cleanroomProvider.isClean() && cleanroomProvider.checkCleanroomType(requiredType);
+        }
+
+        return false;
     }
 
     /**
@@ -767,8 +769,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * completes the recipe which was being run, and performs actions done upon recipe completion
      */
     protected void completeRecipe() {
-        GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, itemOutputs);
-        GTTransferUtils.addFluidsToFluidHandler(getOutputTank(), false, fluidOutputs);
+        outputRecipeOutputs();
         this.progressTime = 0;
         setMaxProgress(0);
         this.recipeEUt = 0;
@@ -778,6 +779,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.wasActiveAndNeedsUpdate = true;
         this.parallelRecipesPerformed = 0;
         this.overclockResults = new int[]{0, 0};
+    }
+
+    /**
+     * outputs the items created by the recipe
+     */
+    protected void outputRecipeOutputs() {
+        GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, itemOutputs);
+        GTTransferUtils.addFluidsToFluidHandler(getOutputTank(), false, fluidOutputs);
     }
 
     /**
@@ -802,6 +811,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     public int getRecipeEUt() {
         return recipeEUt;
+    }
+
+    /**
+     * @return the previous recipe's duration
+     */
+    public int getPreviousRecipeDuration() {
+        return getPreviousRecipe() == null ? 0 : getPreviousRecipe().getDuration();
     }
 
     /**

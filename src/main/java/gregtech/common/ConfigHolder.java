@@ -1,6 +1,7 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import net.minecraftforge.common.config.Config;
 
 @Config(modid = GTValues.MODID)
@@ -69,6 +70,12 @@ public class ConfigHolder {
                 "unless placed directly onto another pipe or cable.", "Default: true"})
         public boolean gt6StylePipesCables = true;
 
+        @Config.Comment({"Minimum distance between Long Distance Item Pipe Endpoints", "Default: 50"})
+        public int ldItemPipeMinDistance = 50;
+        
+        @Config.Comment({"Minimum distance betweeb Long Distance Fluid Pipe Endpoints", "Default: 50"})
+        public int ldFluidPipeMinDistance = 50;
+
         @Config.Comment({"Divisor for Recipe Duration per Overclock.", "Default: 2.0"})
         @Config.RangeDouble(min = 2.0, max = 3.0)
         @Config.SlidingOption
@@ -117,9 +124,21 @@ public class ConfigHolder {
         @Config.Comment({"Block to replace mined ores with in the miner and multiblock miner.", "Default: minecraft:cobblestone"})
         public String replaceMinedBlocksWith = "minecraft:cobblestone";
 
+        @Config.Comment({"Whether to enable Assembly Line research for recipes.", "Default: true"})
+        @Config.RequiresMcRestart
+        public boolean enableResearch = true;
+
+        @Config.Comment({"Whether the Assembly Line should require the item inputs to be in order.", "Default: true"})
+        public boolean orderedAssembly = true;
+
+        @Config.Comment({"Whether the Assembly Line should require the fluid inputs to be in order.",
+                "This does nothing if B:orderedAssembly is false.",
+                "Default: false"})
+        public boolean orderedFluidAssembly = false;
+
         /**
          * <strong>Addons mods should not reference this config directly.</strong>
-         * Use {@link gregtech.api.GregTechAPI#highTier} instead.
+         * Use {@link GregTechAPI#isHighTier()} instead.
          */
         @Config.Comment({"If High Tier (>UV-tier) GT content should be registered.",
                 "Items and Machines enabled with this config will have missing recipes by default.",
@@ -230,6 +249,10 @@ public class ConfigHolder {
         @Config.Name("Energy Compat Options")
         public EnergyCompatOptions energy = new EnergyCompatOptions();
 
+        @Config.Comment("Config options regarding GTEU compatibility with AE2")
+        @Config.Name("Energy Compat Options")
+        public AE2CompatOptions ae2 = new AE2CompatOptions();
+
         @Config.Comment({"Whether to hide facades of all blocks in JEI and creative search menu.", "Default: true"})
         public boolean hideFacadesInJEI = true;
 
@@ -262,12 +285,25 @@ public class ConfigHolder {
             @Config.RangeInt(min = 1, max = 16)
             public int euToFeRatio = 4;
         }
+
+        public static class AE2CompatOptions {
+            @Config.Comment({"The interval between ME Hatch/Bus interact ME network.", "It may cause lag if the interval is too small.", "Default: 2 sec"})
+            @Config.RangeInt(min = 1, max = 80)
+            public int updateIntervals = 40;
+
+            @Config.Comment({"The energy consumption of ME Hatch/Bus.", "Default: 1.0AE/t"})
+            @Config.RangeDouble(min = 0.0, max = 10.0)
+            public double meHatchEnergyUsage = 1.0;
+        }
     }
 
     public static class MiscOptions {
 
         @Config.Comment({"Whether to enable more verbose logging.", "Default: false"})
         public boolean debug = false;
+
+        @Config.Comment({"Whether to enable Special Event features (e.g. Christmas, etc).", "Default: true"})
+        public boolean specialEvents = true;
 
         @Config.Comment({"Setting this to true makes GTCEu ignore error and invalid recipes that would otherwise cause crash.", "Default: true"})
         public boolean ignoreErrorOrInvalidRecipes = true;
@@ -356,10 +392,18 @@ public class ConfigHolder {
         @Config.Comment("Prevent tooltips from blinking for better visibility")
         public boolean preventBlinkingTooltips = false;
 
+        @Config.Comment({"Prevent optical and laser cables from animating when active.", "Default: false"})
+        public boolean preventAnimatedCables = false;
+
         public static class GuiConfig {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})
             @Config.RangeInt(min = 1)
             public int scrollSpeed = 13;
+
+            @Config.Comment({"If progress bars should move smoothly.",
+                    "False is incremental like the Minecraft furnace.",
+                    "Default: true"})
+            public boolean smoothProgressBars = true;
         }
 
         public static class ArmorHud {

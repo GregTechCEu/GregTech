@@ -5,7 +5,6 @@ import appeng.core.features.AEFeature;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.google.common.collect.Sets;
 import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.CleanroomLogic;
@@ -30,6 +29,7 @@ import gregtech.common.metatileentities.multi.MetaTileEntityCokeOven;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveBlastFurnace;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveWaterPump;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
@@ -43,6 +43,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -418,6 +419,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         });
     }
 
+    @Override
+    public SoundEvent getBreakdownSound() {
+        return GTSoundEvents.BREAKDOWN_MECHANICAL;
+    }
+
     protected boolean isMachineBanned(MetaTileEntity metaTileEntity) {
         // blacklisted machines: mufflers and all generators, miners/drills, primitives
         if (metaTileEntity instanceof IMufflerHatch) return true;
@@ -451,13 +457,22 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
             }
 
-            if (!drainEnergy(true)) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-
             if (isClean()) textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_state"));
             else textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.dirty_state"));
             textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_amount", this.cleanAmount));
+        }
+    }
+
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            if (!drainEnergy(true)) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
+            }
+            if (!isClean()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.dirty_state"));
+            }
         }
     }
 
@@ -497,8 +512,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     @Override
-    public Set<CleanroomType> getTypes() {
-        return Sets.newHashSet(this.cleanroomType);
+    public boolean checkCleanroomType(@Nonnull CleanroomType type) {
+        return type == this.cleanroomType;
     }
 
     @Override

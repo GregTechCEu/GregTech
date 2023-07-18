@@ -17,6 +17,8 @@ import java.util.function.Function;
  * violates the contract of {@link Map} class.
  * <p>
  * Any usage of this class should be replaced by plain maps.
+ *
+ * </p> This class was deprecated in 2.6 and will be removed in 2.8
  */
 @Deprecated
 public class WildcardAwareHashMap<V> extends Object2ObjectOpenHashMap<ItemAndMetadata, V> {

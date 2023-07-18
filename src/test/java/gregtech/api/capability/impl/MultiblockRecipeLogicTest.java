@@ -2,7 +2,6 @@ package gregtech.api.capability.impl;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.Bootstrap;
-import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -24,6 +23,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
@@ -34,6 +34,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gregtech.api.util.GTUtility.gregtechId;
 import static org.hamcrest.CoreMatchers.*;
 
 public class MultiblockRecipeLogicTest {
@@ -41,10 +42,6 @@ public class MultiblockRecipeLogicTest {
     @BeforeAll
     public static void bootstrap() {
         Bootstrap.perform();
-    }
-
-    private static ResourceLocation gregtechId(String name) {
-        return new ResourceLocation(GTValues.MODID, name);
     }
 
     @Test
@@ -76,7 +73,7 @@ public class MultiblockRecipeLogicTest {
                 MetaTileEntities.registerMetaTileEntity(509,
                         new MetaTileEntityElectricBlastFurnace(
                                 // super function calls the world, which equal null in test
-                                new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
+                                gregtechId("electric_blast_furnace")) {
                             @Override
                             public boolean canBeDistinct() {
                                 return false;
@@ -313,7 +310,7 @@ public class MultiblockRecipeLogicTest {
                 MetaTileEntities.registerMetaTileEntity(510,
                         new MetaTileEntityElectricBlastFurnace(
                                 // super function calls the world, which equal null in test
-                                new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
+                                gregtechId("electric_blast_furnace")) {
 
                             @Override
                             public boolean hasMufflerMechanics() {
@@ -505,9 +502,17 @@ public class MultiblockRecipeLogicTest {
         IItemHandlerModifiable firstBus = mbl.getInputBuses().get(0);
         firstBus.insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
+        // extract the specific notified item handler, as it's not the entire bus
+        IItemHandlerModifiable notified = null;
+        for (IItemHandler h : ((ItemHandlerList) firstBus).getBackingHandlers()) {
+            if (h.getSlots() == 4 && h instanceof IItemHandlerModifiable) {
+                notified = (IItemHandlerModifiable) h;
+            }
+        }
+
         // Inputs change. did we detect it ?
         MatcherAssert.assertThat(mbl.hasNotifiedInputs(), is(true));
-        MatcherAssert.assertThat(mbl.getMetaTileEntity().getNotifiedItemInputList(), hasItem(firstBus));
+        MatcherAssert.assertThat(mbl.getMetaTileEntity().getNotifiedItemInputList(), hasItem(notified));
         MatcherAssert.assertThat(mbl.canWorkWithInputs(), is(true));
         mbl.trySearchNewRecipe();
         MatcherAssert.assertThat(mbl.invalidatedInputList, not(hasItem(firstBus)));
@@ -557,7 +562,7 @@ public class MultiblockRecipeLogicTest {
         RecipeMapMultiblockController mbt = MetaTileEntities.registerMetaTileEntity(508,
                 new MetaTileEntityElectricBlastFurnace(
                         // super function calls the world, which equal null in test
-                        new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
+                        gregtechId("electric_blast_furnace")) {
                     @Override
                     public boolean canBeDistinct() {
                         return false;

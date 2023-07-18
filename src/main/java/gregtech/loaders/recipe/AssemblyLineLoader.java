@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 
 import static gregtech.api.GTValues.*;
@@ -41,6 +42,9 @@ public class AssemblyLineLoader {
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
                 .fluidInputs(VanadiumGallium.getFluid(L * 8))
                 .outputs(FUSION_REACTOR[1].getStackForm())
+                .research(b -> b.researchStack(FUSION_REACTOR[0].getStackForm())
+                        .CWUt(4)
+                        .duration(100).EUt(VA[UV])) // todo testing
                 .duration(1000).EUt(61440).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()

@@ -70,6 +70,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         return tier == 0 ? 16 : 64;
     }
 
+    @Nonnull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -78,7 +79,10 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 .aisle("XXX", "XSX", "XXX")
                 .where('L', states(getCasingState()))
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(tier == 0 ? 11 : 4).or(autoAbilities())
+                .where('X', states(getCasingState())
+                        .setMinGlobalLimited(tier == 0 ? 11 : 4)
+                        .or(autoAbilities(false, true, true, true, true, true, true))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)) // no energy hatch maximum
                         .or(abilities(MultiblockAbility.MACHINE_HATCH).setExactLimit(1)))
                 .where('#', air())
                 .build();
@@ -94,7 +98,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return tier == 0
                 ? Textures.ROBUST_TUNGSTENSTEEL_CASING
-                : Textures.ROBUST_HSSE_CASING;
+                : Textures.STURDY_HSSE_CASING;
     }
 
     @Override
@@ -126,6 +130,11 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @Override
     public String[] getBlacklist() {
         return ConfigHolder.machines.processingArrayBlacklist;
+    }
+
+    @Override
+    public SoundEvent getBreakdownSound() {
+        return GTSoundEvents.BREAKDOWN_MECHANICAL;
     }
 
     @Override
@@ -165,6 +174,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
     @SuppressWarnings("InnerClassMayBeStatic")
     protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
+
+        private static final ICleanroomProvider DUMMY_CLEANROOM = DummyCleanroom.createForAllTypes();
 
         ItemStack currentMachineStack = ItemStack.EMPTY;
         MetaTileEntity mte = null;
@@ -257,12 +268,15 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 holder.setWorld(this.metaTileEntity.getWorld());
 
                 // Set the cleanroom of the MTEs to the PA's cleanroom reference
-                ICleanroomProvider cleanroom = controller.getCleanroom();
-                if (cleanroom != null && mte instanceof ICleanroomReceiver) {
-                    ((ICleanroomReceiver) mte).setCleanroom(cleanroom);
+                if (mte instanceof ICleanroomReceiver receiver) {
+                    if (ConfigHolder.machines.cleanMultiblocks) {
+                        receiver.setCleanroom(DUMMY_CLEANROOM);
+                    } else {
+                        ICleanroomProvider provider = controller.getCleanroom();
+                        if (provider != null) receiver.setCleanroom(provider);
+                    }
                 }
             }
-
 
             //Find the voltage tier of the machine.
             this.machineTier = mte instanceof ITieredMetaTileEntity ? ((ITieredMetaTileEntity) mte).getTier() : 0;

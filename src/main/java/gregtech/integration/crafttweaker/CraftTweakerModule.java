@@ -2,9 +2,9 @@ package gregtech.integration.crafttweaker;
 
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.modules.GregTechModule;
+import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.crafttweaker.recipe.MetaItemBracketHandler;
@@ -12,6 +12,7 @@ import gregtech.integration.crafttweaker.terminal.CTTerminalRegistry;
 import gregtech.modules.GregTechModules;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -49,8 +50,13 @@ public class CraftTweakerModule extends IntegrationSubmodule {
         CTTerminalRegistry.register();
     }
 
+    @Override
+    public void loadComplete(FMLLoadCompleteEvent event) {
+        MetaItemBracketHandler.clearComponentRegistry();
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onMaterialEvent(GregTechAPI.MaterialEvent event) {
+    public static void onMaterialEvent(MaterialEvent event) {
         IntegrationModule.logger.info("Running early CraftTweaker initialization scripts...");
         CraftTweakerAPI.tweaker.loadScript(false, "gregtech");
     }

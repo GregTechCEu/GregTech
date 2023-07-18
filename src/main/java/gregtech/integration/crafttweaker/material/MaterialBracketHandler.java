@@ -27,7 +27,7 @@ public class MaterialBracketHandler implements IBracketHandler {
     }
 
     public static Material getMaterial(String name) {
-        Material material = name == null ? null : GregTechAPI.MaterialRegistry.get(name);
+        Material material = name == null ? null : GregTechAPI.materialManager.getMaterial(name);
         if (material == null) {
             CraftTweakerAPI.logError("Could not find material with name " + name);
         }

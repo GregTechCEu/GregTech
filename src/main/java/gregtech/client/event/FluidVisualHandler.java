@@ -3,6 +3,7 @@ package gregtech.client.event;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.MaterialFluidBlock;
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.GTUtility;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -41,7 +42,7 @@ import javax.annotation.Nonnull;
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = GTValues.MODID)
 public class FluidVisualHandler {
 
-    private static final ResourceLocation SUBMERGED_FLUID_OVERLAY = new ResourceLocation(GTValues.MODID, "textures/blocks/fluids/submerged_fluid_overlay.png");
+    private static final ResourceLocation SUBMERGED_FLUID_OVERLAY = GTUtility.gregtechId("textures/blocks/fluids/submerged_fluid_overlay.png");
 
     @SubscribeEvent
     public static void onFOVModifier(@Nonnull EntityViewRenderEvent.FOVModifier event) {

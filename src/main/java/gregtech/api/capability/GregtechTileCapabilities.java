@@ -29,4 +29,12 @@ public class GregtechTileCapabilities {
     @CapabilityInject(IMaintenance.class)
     public static Capability<IMaintenance> CAPABILITY_MAINTENANCE = null;
 
+    @CapabilityInject(IDataAccessHatch.class)
+    public static Capability<IDataAccessHatch> CAPABILITY_DATA_ACCESS = null;
+
+    @CapabilityInject(ILaserContainer.class)
+    public static Capability<ILaserContainer> CAPABILITY_LASER = null;
+
+    @CapabilityInject(IOpticalComputationProvider.class)
+    public static Capability<IOpticalComputationProvider> CABABILITY_COMPUTATION_PROVIDER = null;
 }

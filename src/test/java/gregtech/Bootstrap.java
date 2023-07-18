@@ -3,10 +3,10 @@ package gregtech;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.MetaFluids;
-import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.MetaItems;
+import gregtech.core.unification.material.internal.MaterialRegistryManager;
 import gregtech.modules.ModuleManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.Locale;
@@ -60,14 +60,16 @@ public final class Bootstrap {
         Loader.instance().setupTestHarness(new DummyModContainer(meta));
         GregTechAPI.moduleManager = ModuleManager.getInstance();
 
-        GregTechAPI.MATERIAL_REGISTRY.unfreeze();
+        MaterialRegistryManager managerInternal = MaterialRegistryManager.getInstance();
+        GregTechAPI.materialManager = managerInternal;
+        managerInternal.unfreezeRegistries();
         Materials.register();
-        GregTechAPI.MATERIAL_REGISTRY.freeze();
+        managerInternal.closeRegistries();
+        managerInternal.freezeRegistries();
 
         OrePrefix.runMaterialHandlers();
         MetaFluids.init();
         MetaItems.init();
-        ModHandler.init();
         bootstrapped = true;
     }
 

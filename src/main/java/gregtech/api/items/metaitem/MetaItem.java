@@ -8,7 +8,8 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.capability.IThermalFluidHandlerItemStack;
+import gregtech.api.capability.IFilteredFluidContainer;
+import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.capability.impl.CombinedCapabilityProvider;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.gui.ModularUI;
@@ -21,6 +22,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
@@ -154,7 +156,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     public ResourceLocation createItemModelPath(T metaValueItem, String postfix) {
-        return new ResourceLocation(GTValues.MODID, formatModelPath(metaValueItem) + postfix);
+        return GTUtility.gregtechId(formatModelPath(metaValueItem) + postfix);
     }
 
     protected String formatModelPath(T metaValueItem) {
@@ -257,8 +259,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
         ArrayList<ICapabilityProvider> providers = new ArrayList<>();
         for (IItemComponent itemComponent : metaValueItem.getAllStats()) {
-            if (itemComponent instanceof IItemCapabilityProvider) {
-                IItemCapabilityProvider provider = (IItemCapabilityProvider) itemComponent;
+            if (itemComponent instanceof IItemCapabilityProvider provider) {
                 providers.add(provider.createProvider(stack));
             }
         }
@@ -569,15 +570,15 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     fluidTankProperties.getCapacity(),
                     fluid == null ? "" : fluid.getLocalizedName()));
 
-            if (fluidHandler instanceof IThermalFluidHandlerItemStack) {
-                IThermalFluidHandlerItemStack thermalFluidHandler = (IThermalFluidHandlerItemStack) fluidHandler;
+            if (fluidHandler instanceof IFilteredFluidContainer filtered &&
+                    filtered.getFilter() instanceof IPropertyFluidFilter propertyFilter) {
                 if (TooltipHelper.isShiftDown()) {
-                    lines.add(I18n.format("gregtech.fluid_pipe.max_temperature", thermalFluidHandler.getMaxFluidTemperature()));
-                    if (thermalFluidHandler.isGasProof()) lines.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
-                    if (thermalFluidHandler.isAcidProof()) lines.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
-                    if (thermalFluidHandler.isCryoProof()) lines.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
-                    if (thermalFluidHandler.isPlasmaProof()) lines.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
-                } else if (thermalFluidHandler.isGasProof() || thermalFluidHandler.isAcidProof() || thermalFluidHandler.isCryoProof() || thermalFluidHandler.isPlasmaProof()) {
+                    lines.add(I18n.format("gregtech.fluid_pipe.max_temperature", propertyFilter.getMaxFluidTemperature()));
+                    if (propertyFilter.isGasProof()) lines.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
+                    if (propertyFilter.isAcidProof()) lines.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
+                    if (propertyFilter.isCryoProof()) lines.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
+                    if (propertyFilter.isPlasmaProof()) lines.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
+                } else if (propertyFilter.isGasProof() || propertyFilter.isAcidProof() || propertyFilter.isCryoProof() || propertyFilter.isPlasmaProof()) {
                     lines.add(I18n.format("gregtech.tooltip.fluid_pipe_hold_shift"));
                 }
             }
@@ -770,14 +771,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             this.creativeTabsOverride = tabs;
             MetaItem.this.addAdditionalCreativeTabs(tabs);
             return this;
-        }
-
-        /**
-         * @deprecated Use {@link MetaValueItem#setInvisibleIf(boolean)} instead
-         */
-        @Deprecated
-        public MetaValueItem setInvisible(boolean isVisible) {
-            return setInvisibleIf(!isVisible);
         }
 
         public MetaValueItem setInvisibleIf(boolean hide) {

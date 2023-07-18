@@ -6,6 +6,7 @@ import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -13,6 +14,7 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.HoverEvent;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -41,20 +43,23 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                     .setStyle(new Style().setColor(TextFormatting.RED)
                             .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
         } else {
-            if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics())
-                addMaintenanceText(textList);
 
-            if (hasMufflerMechanics() && !isMufflerFaceFree())
-                textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed")
-                        .setStyle(new Style().setColor(TextFormatting.RED)
-                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                        new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed.tooltip")))));
+            FluidStack fuelStack = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getInputFluidStack();
+            if (fuelStack != null && fuelStack.amount > 0) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", TextFormattingUtil.formatNumbers(fuelStack.amount), fuelStack.getLocalizedName()));
+            }
 
-            IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
-            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-                long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-                String voltageName = GTValues.VN[GTUtility.getFloorTierByVoltage(maxVoltage)];
-                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
+            String fluidName = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getRecipeFluidInputInfo();
+            if (fluidName != null && isActive()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed",
+                        fluidName, TextFormatting.AQUA + TextFormattingUtil.formatNumbers(recipeMapWorkable.getPreviousRecipeDuration())));
+            }
+
+
+            long maxVoltage = getMaxVoltage();
+            if (maxVoltage != 0 && maxVoltage >= -recipeMapWorkable.getRecipeEUt()) {
+                String voltageName = GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
+                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatNumbers(maxVoltage), voltageName));
             }
 
             if (!recipeMapWorkable.isWorkingEnabled()) {
@@ -69,37 +74,60 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         }
     }
 
+    protected long getMaxVoltage() {
+        IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
+        if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
+            return Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
+        } else {
+            return 0L;
+        }
+    }
+
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
+            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
+                long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
+                if (maxVoltage < -recipeMapWorkable.getRecipeEUt()) {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy_output"));
+                }
+            }
+        }
+    }
+
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
         if (recipeMapWorkable.getMaxProgress() > 0) {
             list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
-                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
             ));
         }
 
         list.add(new TextComponentTranslation("behavior.tricorder.energy_container_storage",
-                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
         ));
 
         if (recipeMapWorkable.getRecipeEUt() < 0) {
             list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
-                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() * -1)).setStyle(new Style().setColor(TextFormatting.RED)),
-                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getRecipeEUt() * -1)).setStyle(new Style().setColor(TextFormatting.RED)),
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
             ));
         }
 
         list.add(new TextComponentTranslation("behavior.tricorder.multiblock_energy_output",
-                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getOutputVoltage())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getOutputVoltage())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
                 new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getOutputVoltage())]).setStyle(new Style().setColor(TextFormatting.YELLOW))
         ));
 
         if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
             list.add(new TextComponentTranslation("behavior.tricorder.multiblock_maintenance",
-                    new TextComponentTranslation(GTUtility.formatNumbers(getNumMaintenanceProblems())).setStyle(new Style().setColor(TextFormatting.RED))
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(getNumMaintenanceProblems())).setStyle(new Style().setColor(TextFormatting.RED))
             ));
         }
 

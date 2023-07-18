@@ -8,10 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.CleanroomType;
-import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
-import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -32,13 +29,14 @@ import java.util.Set;
 
 public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMaintenanceHatch {
 
-    private static final CleaningMaintenanceHatchDummyCleanroom DUMMY_CLEANROOM = new CleaningMaintenanceHatchDummyCleanroom();
-
     protected static final Set<CleanroomType> CLEANED_TYPES = new ObjectOpenHashSet<>();
 
     static {
         CLEANED_TYPES.add(CleanroomType.CLEANROOM);
     }
+
+    // must come after the static block
+    private static final ICleanroomProvider DUMMY_CLEANROOM = DummyCleanroom.createForTypes(CLEANED_TYPES);
 
     public MetaTileEntityCleaningMaintenanceHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -116,44 +114,5 @@ public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMa
     @SuppressWarnings("unused")
     public static ImmutableSet<CleanroomType> getCleanroomTypes() {
         return ImmutableSet.copyOf(CLEANED_TYPES);
-    }
-
-    protected static class CleaningMaintenanceHatchDummyCleanroom implements ICleanroomProvider {
-
-        public CleaningMaintenanceHatchDummyCleanroom() {/**/}
-
-        @Override
-        public boolean isClean() {
-            return true;
-        }
-
-        @Override
-        public boolean drainEnergy(boolean simulate) {
-            return true;
-        }
-
-        @Override
-        public long getEnergyInputPerSecond() {
-            return 0;
-        }
-
-        @Override
-        public int getEnergyTier() {
-            return 0;
-        }
-
-        @Nonnull
-        @Override
-        public Set<CleanroomType> getTypes() {
-            return getCleanroomTypes();
-        }
-
-        @Override
-        public void setCleanAmount(int amount) {
-        }
-
-        @Override
-        public void adjustCleanAmount(int amount) {
-        }
     }
 }

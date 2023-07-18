@@ -6,11 +6,16 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.machines.IResearchRecipeMap;
+import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
+import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.integration.RecipeCompatUtil;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
@@ -74,12 +79,37 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             List<ItemStack> recipeOutputs = recipe.getOutputs()
                     .stream().map(ItemStack::copy).collect(Collectors.toList());
 
+            List<ItemStack> scannerPossibilities = null;
+            if (this.recipeMap instanceof IScannerRecipeMap) {
+                scannerPossibilities = new ArrayList<>();
+                // Scanner Output replacing, used for cycling research outputs
+                String researchId = null;
+                for (ItemStack stack : recipe.getOutputs()) {
+                    researchId = AssemblyLineManager.readResearchId(stack);
+                    if (researchId != null) break;
+                }
+                if (researchId != null) {
+                    Collection<Recipe> possibleRecipes = ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId);
+                    if (possibleRecipes != null) {
+                        for (Recipe r : possibleRecipes) {
+                            scannerPossibilities.add(r.getOutputs().get(0));
+                        }
+                    }
+                    scannerPossibilities.add(recipeOutputs.get(0));
+                }
+            }
+
             List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
             chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
             for (ChanceEntry chancedEntry : chancedOutputs) {
                 recipeOutputs.add(chancedEntry.getItemStackRaw());
             }
-            ingredients.setOutputs(VanillaTypes.ITEM, recipeOutputs);
+
+            if (scannerPossibilities == null || scannerPossibilities.isEmpty()) {
+                ingredients.setOutputs(VanillaTypes.ITEM, recipeOutputs);
+            } else {
+                ingredients.setOutputLists(VanillaTypes.ITEM, Collections.singletonList(scannerPossibilities));
+            }
         }
 
         // Fluid Outputs
@@ -126,7 +156,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, 0x111111);
             minecraft.fontRenderer.drawString(I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]), 0, yPosition += LINE_HEIGHT, 0x111111);
         } else yPosition -= LINE_HEIGHT * 2;
-        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", recipe.getDuration() / 20f), 0, yPosition += LINE_HEIGHT, 0x111111);
+        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", TextFormattingUtil.formatNumbers(recipe.getDuration() / 20d)), 0, yPosition += LINE_HEIGHT, 0x111111);
         for (Map.Entry<RecipeProperty<?>, Object> propertyEntry : recipe.getPropertyValues()) {
             if (!propertyEntry.getKey().isHidden()) {
                 RecipeProperty<?> property = propertyEntry.getKey();

@@ -283,4 +283,17 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     public interface IEnergyChangeListener {
         void onEnergyChanged(IEnergyContainer container, boolean isInitialChange);
     }
+
+    @Override
+    public String toString() {
+        return "EnergyContainerHandler{" +
+                "maxCapacity=" + maxCapacity +
+                ", energyStored=" + energyStored +
+                ", maxInputVoltage=" + maxInputVoltage +
+                ", maxInputAmperage=" + maxInputAmperage +
+                ", maxOutputVoltage=" + maxOutputVoltage +
+                ", maxOutputAmperage=" + maxOutputAmperage +
+                ", amps=" + amps +
+                '}';
+    }
 }
