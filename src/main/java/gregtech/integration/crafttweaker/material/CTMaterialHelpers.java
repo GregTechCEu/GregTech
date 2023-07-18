@@ -46,7 +46,7 @@ public class CTMaterialHelpers {
     }
 
     protected static boolean checkFrozen(String description) {
-        if (GregTechAPI.materialManager.canModifyMaterials()) {
+        if (!GregTechAPI.materialManager.canModifyMaterials()) {
             CraftTweakerAPI.logError("Cannot " + description + " now, must be done in a file labeled with \"#loader gregtech\"");
             return true;
         } return false;

@@ -220,7 +220,7 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
 
     @Override
     public boolean shouldDropWhenDestroyed() {
-        return !(canBeDamaged() && isDamaged());
+        return super.shouldDropWhenDestroyed() && !(canBeDamaged() && isDamaged());
     }
 
     @Override
