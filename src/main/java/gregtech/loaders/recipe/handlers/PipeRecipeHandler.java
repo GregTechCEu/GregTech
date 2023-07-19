@@ -94,7 +94,7 @@ public class PipeRecipeHandler {
             if (ModHandler.isMaterialWood(material)) {
                 ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material),
                         GTUtility.copy(2, pipeStack), " s ", "rXw",
-                        'X', new UnificationEntry(OrePrefix.plate, material));
+                        'X', new UnificationEntry(OrePrefix.plank, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                         .input(plate, material)
@@ -136,7 +136,7 @@ public class PipeRecipeHandler {
             if (ModHandler.isMaterialWood(material)) {
                 ModHandler.addShapedRecipe(String.format("small_%s_pipe", material),
                         pipeStack, "wXr",
-                        'X', new UnificationEntry(OrePrefix.plate, material));
+                        'X', new UnificationEntry(OrePrefix.plank, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                         .input(plate, material)
@@ -178,7 +178,7 @@ public class PipeRecipeHandler {
             if (ModHandler.isMaterialWood(material)) {
                 ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material),
                         pipeStack, "XXX", "w r",
-                        'X', new UnificationEntry(OrePrefix.plate, material));
+                        'X', new UnificationEntry(OrePrefix.plank, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                         .input(plate, material, 3)
@@ -220,7 +220,7 @@ public class PipeRecipeHandler {
             if (ModHandler.isMaterialWood(material)) {
                 ModHandler.addShapedRecipe(String.format("large_%s_pipe", material),
                         pipeStack, "XXX", "w r", "XXX",
-                        'X', new UnificationEntry(OrePrefix.plate, material));
+                        'X', new UnificationEntry(OrePrefix.plank, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
                         .input(plate, material, 6)
