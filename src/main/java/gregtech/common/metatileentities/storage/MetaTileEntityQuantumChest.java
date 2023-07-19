@@ -350,7 +350,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 .widget(new ToggleButtonWidget(7, 64, 18, 18,
                         GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems).shouldUseBaseBackground()
                         .setTooltipText("gregtech.gui.item_auto_output.tooltip"))
-                .widget(new ToggleButtonWidget(43, 64, 18, 18,
+                .widget(new ToggleButtonWidget(25, 64, 18, 18,
                         GuiTextures.BUTTON_VOID, this::isVoiding, this::setVoiding)
                         .setTooltipText("gregtech.gui.item_voiding.tooltip")
                         .shouldUseBaseBackground())
