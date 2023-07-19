@@ -34,6 +34,8 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -94,6 +96,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSE_STURDY);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return tier == 0
@@ -109,6 +112,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {

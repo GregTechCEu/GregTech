@@ -33,6 +33,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
@@ -170,6 +172,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
         this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive(), recipeLogic.isWorkingEnabled());
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {
@@ -180,6 +183,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
         return isStructureFormed() && (((MetaTileEntity) sourcePart).getPos().getY() < getPos().getY());
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (sourcePart != null && isFireboxPart(sourcePart)) {

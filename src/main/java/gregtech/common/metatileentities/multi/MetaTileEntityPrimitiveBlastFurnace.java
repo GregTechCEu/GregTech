@@ -37,6 +37,8 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
@@ -67,6 +69,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
                 .build();
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.PRIMITIVE_BRICKS;
@@ -109,6 +112,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {
