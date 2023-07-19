@@ -44,7 +44,8 @@ public class GuiTextures {
     public static final TextureArea BUTTON_FLUID_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_fluid_output_overlay.png");
     public static final TextureArea BUTTON_ITEM_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_item_output_overlay.png");
     public static final TextureArea BUTTON_LOCK = TextureArea.fullImage("textures/gui/widget/button_lock.png");
-    public static final TextureArea BUTTON_VOID = TextureArea.fullImage("textures/gui/widget/button_void.png");
+    public static final TextureArea BUTTON_FLUID_VOID = TextureArea.fullImage("textures/gui/widget/button_fluid_void.png");
+    public static final TextureArea BUTTON_ITEM_VOID = TextureArea.fullImage("textures/gui/widget/button_item_void.png");
     public static final TextureArea BUTTON_VOID_NONE = TextureArea.fullImage("textures/gui/widget/button_void_none.png");
     public static final TextureArea BUTTON_VOID_MULTIBLOCK = TextureArea.fullImage("textures/gui/widget/button_void_multiblock.png");
     public static final TextureArea BUTTON_LEFT = TextureArea.fullImage("textures/gui/widget/left.png");
