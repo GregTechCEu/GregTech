@@ -31,7 +31,7 @@ public class BaublesWrappedInventory implements IInventory {
         if (index < handler.getSlots()) {
             return handler.getStackInSlot(index);
         }
-        return player.inventory.getStackInSlot(index);
+        return player.inventory.getStackInSlot(index - handler.getSlots());
     }
 
     @Override
@@ -39,7 +39,7 @@ public class BaublesWrappedInventory implements IInventory {
         if (index < handler.getSlots()) {
             return handler.extractItem(index, count, false);
         }
-        return player.inventory.decrStackSize(index, count);
+        return player.inventory.decrStackSize(index - handler.getSlots(), count);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class BaublesWrappedInventory implements IInventory {
             handler.setStackInSlot(index, ItemStack.EMPTY);
             return out;
         }
-        return player.inventory.removeStackFromSlot(index);
+        return player.inventory.removeStackFromSlot(index - handler.getSlots());
     }
 
     @Override
@@ -57,7 +57,7 @@ public class BaublesWrappedInventory implements IInventory {
         if (index < handler.getSlots()) {
             handler.setStackInSlot(index, stack);
         } else {
-            player.inventory.setInventorySlotContents(index, stack);
+            player.inventory.setInventorySlotContents(index - handler.getSlots(), stack);
         }
     }
 
@@ -66,7 +66,7 @@ public class BaublesWrappedInventory implements IInventory {
         if (index < handler.getSlots()) {
             return handler.isItemValidForSlot(index, stack, player);
         }
-        return player.inventory.isItemValidForSlot(index, stack);
+        return player.inventory.isItemValidForSlot(index - handler.getSlots(), stack);
     }
 
     // less important overrides
