@@ -31,6 +31,14 @@ public class BedrockFluidVeinSaveData extends WorldSavedData {
                 BedrockFluidVeinHandler.veinCache.put(coords, info);
             }
         }
+
+        if (nbt.hasKey("version")) {
+            BedrockFluidVeinHandler.saveDataVersion = nbt.getInteger("version");
+        }
+        else {
+            // version number was added to the save data with version 2
+            BedrockFluidVeinHandler.saveDataVersion = 1;
+        }
     }
 
     @Override
@@ -45,6 +53,7 @@ public class BedrockFluidVeinSaveData extends WorldSavedData {
             }
         }
         nbt.setTag("veinInfo", oilList);
+        nbt.setInteger("version", BedrockFluidVeinHandler.saveDataVersion);
 
         return nbt;
     }
