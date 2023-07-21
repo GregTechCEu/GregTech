@@ -34,8 +34,7 @@ public class BedrockFluidVeinSaveData extends WorldSavedData {
 
         if (nbt.hasKey("version")) {
             BedrockFluidVeinHandler.saveDataVersion = nbt.getInteger("version");
-        }
-        else {
+        } else {
             // version number was added to the save data with version 2
             BedrockFluidVeinHandler.saveDataVersion = 1;
         }
