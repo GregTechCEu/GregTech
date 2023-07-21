@@ -28,14 +28,15 @@ public class BedrockFluidVeinHandler {
     public final static LinkedHashMap<BedrockFluidDepositDefinition, Integer> veinList = new LinkedHashMap<>();
     private final static Map<Integer, HashMap<Integer, Integer>> totalWeightMap = new HashMap<>();
     public static HashMap<ChunkPosDimension, FluidVeinWorldEntry> veinCache = new HashMap<>();
-    public static int saveDataVersion;
-
 
     /**
      * 1: Original version
      * <br>
      * 2: Fixed interpretation of coordinates around axes
      */
+    public static int saveDataVersion;
+
+
     public static final int MAX_FLUID_SAVE_DATA_VERSION = 2;
 
     public static final int VEIN_CHUNK_SIZE = 8; // veins are 8x8 chunk squares
