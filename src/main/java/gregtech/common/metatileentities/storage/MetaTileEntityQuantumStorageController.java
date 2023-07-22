@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.storage;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.IDualHandler;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.capability.impl.FluidTankList;
@@ -26,7 +27,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -237,7 +237,12 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         return super.getCapability(capability, side);
     }
 
-    private final class QuantumControllerHandler implements IItemHandler, IFluidHandler {
+    @Override
+    public IDualHandler getHandler() {
+        return this.handler;
+    }
+
+    private class QuantumControllerHandler implements IDualHandler {
 
         // IFluidHandler saved values
         private FluidTankList fluidTanks = null;
@@ -270,10 +275,12 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             this.itemHandlers = itemHandlerList;
         }
 
+        @Override
         public boolean hasFluidTanks() {
             return getFluidTanks().getTanks() > 0;
         }
 
+        @Override
         public boolean hasItemHandlers() {
             return !getItemHandlers().isEmpty();
         }
