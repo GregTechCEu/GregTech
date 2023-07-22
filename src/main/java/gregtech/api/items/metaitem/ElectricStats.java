@@ -137,6 +137,12 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null && electricItem.canProvideChargeExternally()) {
             addTotalChargeTooltip(lines, electricItem.getMaxCharge(), electricItem.getTier());
+            if(isInDischargeMode(itemStack)) {
+                lines.add(I18n.format("metaitem.electric.discharge_mode.enabled"));
+            }
+            else {
+                lines.add(I18n.format("metaitem.electric.discharge_mode.disabled"));
+            }
             lines.add(I18n.format("metaitem.electric.discharge_mode.tooltip"));
         }
     }
