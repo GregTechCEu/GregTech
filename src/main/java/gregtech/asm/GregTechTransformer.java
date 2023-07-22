@@ -64,14 +64,14 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                         RegionRenderCacheBuilderVisitor::new), 0);
                 return classWriter.toByteArray();
             }
-            case RenderChunkVisitor.TARGET_CLASS_NAME: {
+            /*case RenderChunkVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                 classReader.accept(
                         new TargetClassVisitor(classWriter, RenderChunkVisitor.TARGET_METHOD, RenderChunkVisitor::new),
                         0);
                 return classWriter.toByteArray();
-            }
+            }*/
             case EntityRendererVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);

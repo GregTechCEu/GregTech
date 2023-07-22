@@ -9,6 +9,9 @@
     "DamageSourceMixin",
     "MinecraftMixin"
   ],
-  "client": ["RenderGlobalMixin"],
+  "client": [
+    "RenderChunkMixin",
+    "RenderGlobalMixin"
+  ],
   "server": []
 }
