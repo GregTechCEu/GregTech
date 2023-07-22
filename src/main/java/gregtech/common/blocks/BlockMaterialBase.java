@@ -1,8 +1,8 @@
 package gregtech.common.blocks;
 
-import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.Block;
@@ -97,7 +97,7 @@ public abstract class BlockMaterialBase extends Block {
     @Override
     public int getFlammability(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
         Material material = getGtMaterial(world.getBlockState(pos));
-        if (ModHandler.isMaterialWood(material)) {
+        if (material.hasFlag(MaterialFlags.FLAMMABLE)) {
             return 20; // flammability of things like Wood Planks
         }
         return super.getFlammability(world, pos, face);
