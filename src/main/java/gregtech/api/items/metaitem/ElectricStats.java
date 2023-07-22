@@ -88,15 +88,14 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
                         transferLimit -= chargedAmount;
                         if (transferLimit == 0L) break;
                     }
-                }
-                else if(ConfigHolder.compat.energy.nativeEUToFE && feEnergyItem != null) {
-                    if(feEnergyItem.getEnergyStored() < feEnergyItem.getMaxEnergyStored()) {
-                       int energyMissing = feEnergyItem.getMaxEnergyStored() - feEnergyItem.getEnergyStored();
-                       long euToCharge = FeCompat.toEu(energyMissing, ConfigHolder.compat.energy.feToEuRatio);
-                       long energyToTransfer = Math.min(euToCharge, transferLimit);
-                       long maxDischargeAmount = Math.min(energyToTransfer, electricItem.discharge(energyToTransfer, electricItem.getTier(), false, true, true));
-                       FeCompat.insertEu(feEnergyItem, maxDischargeAmount);
-                       electricItem.discharge(maxDischargeAmount, electricItem.getTier(), false, true, false);
+                } else if (ConfigHolder.compat.energy.nativeEUToFE && feEnergyItem != null) {
+                    if (feEnergyItem.getEnergyStored() < feEnergyItem.getMaxEnergyStored()) {
+                        int energyMissing = feEnergyItem.getMaxEnergyStored() - feEnergyItem.getEnergyStored();
+                        long euToCharge = FeCompat.toEu(energyMissing, ConfigHolder.compat.energy.feToEuRatio);
+                        long energyToTransfer = Math.min(euToCharge, transferLimit);
+                        long maxDischargeAmount = Math.min(energyToTransfer, electricItem.discharge(energyToTransfer, electricItem.getTier(), false, true, true));
+                        FeCompat.insertEu(feEnergyItem, maxDischargeAmount);
+                        electricItem.discharge(maxDischargeAmount, electricItem.getTier(), false, true, false);
                     }
                 }
             }
@@ -137,10 +136,9 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null && electricItem.canProvideChargeExternally()) {
             addTotalChargeTooltip(lines, electricItem.getMaxCharge(), electricItem.getTier());
-            if(isInDischargeMode(itemStack)) {
+            if (isInDischargeMode(itemStack)) {
                 lines.add(I18n.format("metaitem.electric.discharge_mode.enabled"));
-            }
-            else {
+            } else {
                 lines.add(I18n.format("metaitem.electric.discharge_mode.disabled"));
             }
             lines.add(I18n.format("metaitem.electric.discharge_mode.tooltip"));
