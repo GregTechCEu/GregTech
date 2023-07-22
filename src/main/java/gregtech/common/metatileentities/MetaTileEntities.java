@@ -223,6 +223,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV + 1]; // LV-UV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
     public static MetaTileEntityQuantumStorageController QUANTUM_STORAGE_CONTROLLER;
+    public static MetaTileEntityQuantumExtender QUANTUM_STORAGE_EXTENDER;
     public static final MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[11];
     public static final MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[11];
     public static final MetaTileEntityBuffer[] BUFFER = new MetaTileEntityBuffer[3];

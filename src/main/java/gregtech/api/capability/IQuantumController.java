@@ -1,5 +1,6 @@
 package gregtech.api.capability;
 
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumStorageController;
 import net.minecraft.util.math.BlockPos;
 
 public interface IQuantumController {
@@ -13,4 +14,6 @@ public interface IQuantumController {
     boolean canConnect(IQuantumStorage<?> storage);
 
     BlockPos getPos();
+
+    IDualHandler getHandler();
 }
