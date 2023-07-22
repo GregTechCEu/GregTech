@@ -6,16 +6,20 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
+import zone.rong.mixinbooter.IEarlyMixinLoader;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Name("GregTechLoadingPlugin")
 @MCVersion(ForgeVersion.mcVersion)
 @TransformerExclusions("gregtech.asm.")
 @SortingIndex(1001)
-public class GregTechLoadingPlugin implements IFMLLoadingPlugin {
+// TODO, move to mixin package
+public class GregTechLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
     @Override
     public String[] getASMTransformerClass() {
@@ -39,5 +43,15 @@ public class GregTechLoadingPlugin implements IFMLLoadingPlugin {
     @Override
     public String getAccessTransformerClass() {
         return null;
+    }
+
+    @Override
+    public List<String> getMixinConfigs() {
+        List<String> configs = new ArrayList<>();
+
+        configs.add("mixins.gregtech.forge.json");
+        configs.add("mixins.gregtech.minecraft.json");
+
+        return configs;
     }
 }
