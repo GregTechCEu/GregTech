@@ -102,4 +102,13 @@ public abstract class BlockMaterialBase extends Block {
         }
         return super.getFlammability(world, pos, face);
     }
+
+    @Override
+    public int getFireSpreadSpeed(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+        Material material = getGtMaterial(world.getBlockState(pos));
+        if (material.hasFlag(MaterialFlags.FLAMMABLE)) {
+            return 5; // encouragement of things like Wood Planks
+        }
+        return super.getFireSpreadSpeed(world, pos, face);
+    }
 }
