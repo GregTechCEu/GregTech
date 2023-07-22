@@ -6,6 +6,7 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Final;
@@ -34,7 +35,7 @@ public class RenderGlobalMixin {
                     for (IItemBehaviour behavior : valueItem.getBehaviours()) {
                         if (behavior instanceof MusicDiscStats musicBehavior) {
                             world.playRecord(blockPosIn, musicBehavior.getSound());
-                            this.mc.ingameGUI.setRecordPlayingMessage(musicBehavior.getName());
+                            this.mc.ingameGUI.setRecordPlayingMessage(I18n.format(musicBehavior.getName()));
                             ci.cancel();
                             return;
                         }
