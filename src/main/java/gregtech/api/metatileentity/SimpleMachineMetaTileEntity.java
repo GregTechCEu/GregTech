@@ -496,13 +496,11 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     // Method provided to override
     protected void getCircuitSlotTooltip(SlotWidget widget) {
-        int circuitConfig = circuitInventory == null ? -1 : circuitInventory.getCircuitValue();
-
         String configString;
-        if (circuitConfig == -1) {
+        if (circuitInventory == null) {
             configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
         } else {
-            configString = String.valueOf(circuitConfig);
+            configString = String.valueOf(circuitInventory.getCircuitValue());
         }
 
         widget.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
