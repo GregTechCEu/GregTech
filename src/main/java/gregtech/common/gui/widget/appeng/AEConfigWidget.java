@@ -82,6 +82,7 @@ public abstract class AEConfigWidget<T extends IAEStack<T>> extends AbstractWidg
             if (!areAEStackCountEquals(nConfig, oConfig) || !areAEStackCountEquals(nStock, oStock)) {
                 this.changeMap.put(index, newSlot.copy());
                 this.cached[index] = this.config[index].copy();
+                this.gui.holder.markAsDirty();
             }
         }
         if (!this.changeMap.isEmpty()) {

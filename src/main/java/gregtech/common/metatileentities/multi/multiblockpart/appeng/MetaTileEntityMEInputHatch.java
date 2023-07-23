@@ -245,7 +245,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         list.addAll(Arrays.asList(this.aeFluidTanks));
     }
 
-    public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack> implements IFluidTank, IFluidHandler, INotifiableHandler {
+    public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack> implements IFluidTank, INotifiableHandler {
         private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
 
         public ExportOnlyAEFluid(IAEFluidStack config, IAEFluidStack stock, MetaTileEntity mte) {
@@ -323,24 +323,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         }
 
         @Override
-        public IFluidTankProperties[] getTankProperties() {
-            return new IFluidTankProperties[] {
-                    new FluidTankProperties(this.getFluid(), 0)
-            };
-        }
-
-        @Override
         public int fill(FluidStack resource, boolean doFill) {
             return 0;
-        }
-
-        @Nullable
-        @Override
-        public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (this.getFluid() != null && this.getFluid().isFluidEqual(resource)) {
-                return this.drain(resource.amount, doDrain);
-            }
-            return null;
         }
 
         @Nullable
