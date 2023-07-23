@@ -72,14 +72,11 @@ public class ExNihiloModule extends IntegrationSubmodule {
     public static OrePrefix oreChunk;
     public static OrePrefix oreEnderChunk;
     public static OrePrefix oreNetherChunk;
-    public static OrePrefix oreSandyChunk;
 
     // Icon Types
-
     public static MaterialIconType oreChunkIcon;
     public static MaterialIconType oreEnderChunkIcon;
     public static MaterialIconType oreNetherChunkIcon;
-    public static MaterialIconType oreSandyChunkIcon;
 
     @Nonnull
     @Override
@@ -113,19 +110,17 @@ public class ExNihiloModule extends IntegrationSubmodule {
         oreChunkIcon = new MaterialIconType("oreChunk");
         oreEnderChunkIcon = new MaterialIconType("oreEnderChunk");
         oreNetherChunkIcon = new MaterialIconType("oreNetherChunk");
-        oreSandyChunkIcon = new MaterialIconType("oreSandyChunk");
+
 
         oreChunk = new OrePrefix("oreChunk", -1, null, oreChunkIcon, ENABLE_UNIFICATION, hasOreProperty);
         oreEnderChunk = new OrePrefix("oreEnderChunk", -1, null, oreEnderChunkIcon, ENABLE_UNIFICATION, hasOreProperty);
         oreNetherChunk = new OrePrefix("oreNetherChunk", -1, null, oreNetherChunkIcon, ENABLE_UNIFICATION, hasOreProperty);
-        oreSandyChunk = new OrePrefix("oreSandyChunk", -1, null, oreSandyChunkIcon, ENABLE_UNIFICATION, hasOreProperty);
 
         oreChunk.setAlternativeOreName(OrePrefix.ore.name());
         oreEnderChunk.setAlternativeOreName(OrePrefix.oreEndstone.name());
         oreNetherChunk.setAlternativeOreName(OrePrefix.oreNetherrack.name());
-        oreSandyChunk.setAlternativeOreName(OrePrefix.ore.name());
 
-        MetaItems.addOrePrefix(oreChunk, oreEnderChunk, oreNetherChunk, oreSandyChunk);
+        MetaItems.addOrePrefix(oreChunk, oreEnderChunk, oreNetherChunk);
     }
 
     private void registerMetaTileEntities() {

@@ -33,7 +33,6 @@ public class ExNihiloRecipes {
         ExNihiloModule.oreChunk.addProcessingHandler(PropertyKey.ORE, ExNihiloRecipes::processChunk);
         ExNihiloModule.oreEnderChunk.addProcessingHandler(PropertyKey.ORE, ExNihiloRecipes::processChunk);
         ExNihiloModule.oreNetherChunk.addProcessingHandler(PropertyKey.ORE, ExNihiloRecipes::processChunk);
-        ExNihiloModule.oreSandyChunk.addProcessingHandler(PropertyKey.ORE, ExNihiloRecipes::processChunk);
     }
 
     private static void processChunk(OrePrefix orePrefix, Material material, OreProperty oreProperty) {
@@ -42,7 +41,6 @@ public class ExNihiloRecipes {
         if (oreProperty.getDirectSmeltResult() != null) {
             smeltingMaterial = oreProperty.getDirectSmeltResult();
         }
-
         if (smeltingMaterial.hasProperty(PropertyKey.INGOT)) {
             smeltStack = OreDictUnifier.get(OrePrefix.ingot, smeltingMaterial);
         } else if (smeltingMaterial.hasProperty(PropertyKey.GEM)) {
@@ -60,7 +58,7 @@ public class ExNihiloRecipes {
         ModHandler.addShapedRecipe("steam_sieve_steel", STEAM_SIEVE_STEEL.getStackForm(), "BPB", "WMW", "BBB", 'B', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.WroughtIron), 'M', STEAM_SIEVE_BRONZE.getStackForm(), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel));
     }
 
-    // Has to be done in init phase because of ExNi registering outside of the Registry event
+    // Has to be done in init phase because of ExNi registering outside the Registry event
     public static void registerExNihiloRecipes() {
         // Mirror Ex Nihilo Sifter recipes to Sifter RecipeMap
         for (SieveRecipe recipe : ExNihiloRegistryManager.SIEVE_REGISTRY.getRecipeList()) {
@@ -74,7 +72,7 @@ public class ExNihiloRecipes {
                         if ((int) (siftable.getChance() * (float) Recipe.getMaxChancedValue()) >= Recipe.getMaxChancedValue()) {
                             builder.outputs(siftable.getDrop().getItemStack());
                         } else {
-                            builder.chancedOutput(siftable.getDrop().getItemStack(), (int) (siftable.getChance() * (float) Recipe.getMaxChancedValue()), 500);
+                            builder.chancedOutput(siftable.getDrop().getItemStack(), (int) (siftable.getChance() * (float) Recipe.getMaxChancedValue()), 200);
                         }
                 }
                 builder.buildAndRegister();
