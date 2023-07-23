@@ -9,6 +9,7 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.MetaItems;
@@ -90,12 +91,12 @@ public class ExNihiloModule extends IntegrationSubmodule {
     public void preInit(FMLPreInitializationEvent event) {
         getLogger().info("Registering Ex Nihilo Compat Items, Blocks, and Machines");
         GTPebbles = new ExNihiloPebble();
-        ExNihiloRegistryManager.registerSieveDefaultRecipeHandler(new SieveDrops());
         registerMetaTileEntities();
     }
 
     @Override
     public void init(FMLInitializationEvent event) {
+        SieveDrops.registerRecipes();
         ExNihiloRecipes.registerExNihiloRecipes();
         MeshRecipes.init();
     }
@@ -108,7 +109,7 @@ public class ExNihiloModule extends IntegrationSubmodule {
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
-    public static void registerMaterials(GregTechAPI.MaterialEvent event) {
+    public static void registerMaterials(MaterialEvent event) {
         oreChunkIcon = new MaterialIconType("oreChunk");
         oreEnderChunkIcon = new MaterialIconType("oreEnderChunk");
         oreNetherChunkIcon = new MaterialIconType("oreNetherChunk");
