@@ -27,7 +27,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
         int configuration = IntCircuitIngredient.getCircuitConfiguration(itemStack);
-        lines.add(I18n.format("metaitem.int_circuit.configuration", configuration));
+        lines.add(1, I18n.format("metaitem.int_circuit.configuration", configuration));
     }
 
     @Override
