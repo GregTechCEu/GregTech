@@ -72,7 +72,7 @@ public class PipeRecipeHandler {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
 
         // Some pipes like wood do not have an ingot
-        if (!OrePrefix.ingot.isIgnored(material)) {
+        if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(OrePrefix.ingot, material, 1)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
@@ -114,7 +114,7 @@ public class PipeRecipeHandler {
     private static void processPipeSmall(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
 
-        if (!OrePrefix.ingot.isIgnored(material)) {
+        if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(OrePrefix.ingot, material, 1)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_SMALL)
@@ -156,7 +156,7 @@ public class PipeRecipeHandler {
     private static void processPipeNormal(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
 
-        if (!OrePrefix.ingot.isIgnored(material)) {
+        if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(OrePrefix.ingot, material, 3)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
@@ -198,7 +198,7 @@ public class PipeRecipeHandler {
     private static void processPipeLarge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
 
-        if (!OrePrefix.ingot.isIgnored(material)) {
+        if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(OrePrefix.ingot, material, 6)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_LARGE)
@@ -240,7 +240,7 @@ public class PipeRecipeHandler {
     private static void processPipeHuge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
 
-        if (!OrePrefix.ingot.isIgnored(material)) {
+        if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(OrePrefix.ingot, material, 12)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_HUGE)
