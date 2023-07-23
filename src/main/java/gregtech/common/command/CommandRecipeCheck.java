@@ -17,6 +17,8 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.items.MetaItems;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
@@ -57,7 +59,7 @@ public class CommandRecipeCheck extends CommandBase {
 
         Object2ObjectOpenHashMap<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, Set<Recipe>>> mismatchedRecipes = new Object2ObjectOpenHashMap<>();
         Object2ObjectOpenHashMap<RecipeMap<?>, Set<Recipe>> emptyInputRecipes = new Object2ObjectOpenHashMap<>();
-        Set<Integer> emptyOreDicts = new ObjectOpenHashSet<>();
+        IntSet emptyOreDicts = new IntOpenHashSet();
 
         GTLog.logger.info("[Recipe Checker] Starting recipe issue check...");
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
