@@ -188,6 +188,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         }
 
         this.lockedFluid = FluidStack.loadFluidStackFromNBT(tag.getCompoundTag("LockedFluid"));
+        this.locked = this.lockedFluid != null;
     }
 
     @Override
