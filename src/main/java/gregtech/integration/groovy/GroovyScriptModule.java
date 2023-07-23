@@ -95,14 +95,16 @@ public class GroovyScriptModule extends IntegrationSubmodule {
     public static ItemStack getMetaItem(String name) {
         String[] resultName = splitObjectName(name);
         Map<String, ItemStack> map = metaItems.get(resultName[0]);
-        if (map == null) return null;
-
-        ItemStack item;
-        if ((item = map.get(resultName[1])) != null) {
-            return item.copy();
+        if (map != null) {
+            ItemStack stack = map.get(resultName[1]);
+            if (stack != null) {
+                return stack.copy();
+            }
         }
-        if ((item = getMetaTileEntityItem(resultName)) != null) {
-            return item.copy();
+
+        ItemStack stack = getMetaTileEntityItem(resultName);
+        if (stack != null) {
+            return stack.copy();
         }
         return null;
     }
