@@ -32,6 +32,9 @@ public class OverclockingLogic {
         double resultVoltage = recipeEUt;
 
         for (; numberOfOCs > 0; numberOfOCs--) {
+            // make sure that duration is not already as low as it can do
+            if (resultDuration == 1) break;
+
             // it is important to do voltage first,
             // so overclocking voltage does not go above the limit before changing duration
 
@@ -41,7 +44,7 @@ public class OverclockingLogic {
 
             double potentialDuration = resultDuration / durationDivisor;
             // do not allow duration to go below one tick
-            if (potentialDuration < 1) break;
+            if (potentialDuration < 1) potentialDuration = 1;
             // update the duration for the next iteration
             resultDuration = potentialDuration;
 
