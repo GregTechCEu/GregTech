@@ -76,6 +76,11 @@ public class GregTechMod {
     }
 
     @EventHandler
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        moduleManager.onServerAboutToStart(event);
+    }
+
+    @EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
         moduleManager.onServerStarting(event);
     }
@@ -83,6 +88,11 @@ public class GregTechMod {
     @EventHandler
     public void serverStarted(FMLServerStartedEvent event) {
         moduleManager.onServerStarted(event);
+    }
+
+    @EventHandler
+    public void serverStopping(FMLServerStoppingEvent event) {
+        moduleManager.onServerStopping(event);
     }
 
     @EventHandler
