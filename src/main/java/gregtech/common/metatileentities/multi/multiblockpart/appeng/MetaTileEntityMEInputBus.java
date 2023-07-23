@@ -49,7 +49,6 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
     public final static String WORKING_TAG = "WorkingEnabled";
     private final static int CONFIG_SIZE = 16;
     private boolean workingEnabled;
-    private ExportOnlyAEItem[] aeItemSlots;
     private ExportOnlyAEItemList aeItemHandler;
 
     public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId) {
@@ -59,11 +58,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
 
     @Override
     protected void initializeInventory() {
-        this.aeItemSlots = new ExportOnlyAEItem[CONFIG_SIZE];
-        for (int i = 0; i < CONFIG_SIZE; i ++) {
-            this.aeItemSlots[i] = new ExportOnlyAEItem(null, null);
-        }
-        this.aeItemHandler = new ExportOnlyAEItemList(this.aeItemSlots, this.getController());
+        this.aeItemHandler = new ExportOnlyAEItemList(this, CONFIG_SIZE, this.getController());
         super.initializeInventory();
     }
 
@@ -83,7 +78,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
             if (this.updateMEStatus()) {
                 try {
                     IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
-                    for (ExportOnlyAEItem aeSlot : this.aeItemSlots) {
+                    for (ExportOnlyAEItem aeSlot : this.aeItemHandler.inventory) {
                         // Try to clear the wrong item
                         IAEItemStack exceedItem = aeSlot.exceedStack();
                         if (exceedItem != null) {
@@ -115,7 +110,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
     public void onRemoval() {
         try {
             IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
-            for (ExportOnlyAEItem aeSlot : this.aeItemSlots) {
+            for (ExportOnlyAEItem aeSlot : this.aeItemHandler.inventory) {
                 IAEItemStack stock = aeSlot.stock;
                 if (stock instanceof WrappedItemStack) {
                     stock = ((WrappedItemStack) stock).getAEStack();
@@ -146,7 +141,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
                 0xFFFFFFFF);
 
         // Config slots
-        builder.widget(new AEItemConfigWidget(16, 25, this.aeItemSlots));
+        builder.widget(new AEItemConfigWidget(16, 25, this.aeItemHandler.inventory));
 
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
         return builder.build(this.getHolder(), entityPlayer);
@@ -192,7 +187,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         data.setBoolean(WORKING_TAG, this.workingEnabled);
         NBTTagList slots = new NBTTagList();
         for (int i = 0; i < CONFIG_SIZE; i ++) {
-            ExportOnlyAEItem slot = this.aeItemSlots[i];
+            ExportOnlyAEItem slot = this.aeItemHandler.inventory[i];
             NBTTagCompound slotTag = new NBTTagCompound();
             slotTag.setInteger("slot", i);
             slotTag.setTag("stack", slot.serializeNBT());
@@ -212,7 +207,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
             NBTTagList slots = (NBTTagList) data.getTag(ITEM_BUFFER_TAG);
             for (NBTBase nbtBase : slots) {
                 NBTTagCompound slotTag = (NBTTagCompound) nbtBase;
-                ExportOnlyAEItem slot = this.aeItemSlots[slotTag.getInteger("slot")];
+                ExportOnlyAEItem slot = this.aeItemHandler.inventory[slotTag.getInteger("slot")];
                 slot.deserializeNBT(slotTag.getCompoundTag("stack"));
             }
         }
@@ -247,14 +242,26 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
 
     private static class ExportOnlyAEItemList extends NotifiableItemStackHandler {
 
+        private final MetaTileEntity holder;
         ExportOnlyAEItem[] inventory;
 
-        public ExportOnlyAEItemList(ExportOnlyAEItem[] slots, MetaTileEntity entityToNotify) {
-            super(slots.length, entityToNotify, false);
-            this.inventory = slots;
+
+        public ExportOnlyAEItemList(MetaTileEntity holder, int slots, MetaTileEntity entityToNotify) {
+            super(slots, entityToNotify, false);
+            this.inventory = new ExportOnlyAEItem[CONFIG_SIZE];
+            for (int i = 0; i < CONFIG_SIZE; i ++) {
+                this.inventory[i] = new ExportOnlyAEItem(null, null);
+            }
+            this.holder = holder;
             for (ExportOnlyAEItem slot : this.inventory) {
                 slot.trigger = this::onContentsChanged;
             }
+        }
+
+        @Override
+        public void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+            this.holder.markDirty();
         }
 
         @Override

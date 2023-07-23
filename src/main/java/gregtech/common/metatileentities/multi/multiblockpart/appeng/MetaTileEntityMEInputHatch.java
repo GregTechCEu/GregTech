@@ -35,9 +35,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -67,7 +64,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
     protected void initializeInventory() {
         this.aeFluidTanks = new ExportOnlyAEFluid[CONFIG_SIZE];
         for (int i = 0; i < CONFIG_SIZE; i ++) {
-            this.aeFluidTanks[i] = new ExportOnlyAEFluid(null, null, this.getController());
+            this.aeFluidTanks[i] = new ExportOnlyAEFluid(this, null, null, this.getController());
         }
         super.initializeInventory();
     }
@@ -247,9 +244,11 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
 
     public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack> implements IFluidTank, INotifiableHandler {
         private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
+        private MetaTileEntity holder;
 
-        public ExportOnlyAEFluid(IAEFluidStack config, IAEFluidStack stock, MetaTileEntity mte) {
+        public ExportOnlyAEFluid(MetaTileEntity holder, IAEFluidStack config, IAEFluidStack stock, MetaTileEntity mte) {
             super(config, stock);
+            this.holder = holder;
             this.notifiableEntities.add(mte);
         }
 
@@ -361,11 +360,15 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
                     this.addToNotifiedList(metaTileEntity, this, false);
                 }
             }
+            if (holder != null) {
+                holder.markDirty();
+            }
         }
 
         @Override
         public ExportOnlyAEFluid copy() {
             return new ExportOnlyAEFluid(
+                    this.holder,
                     this.config == null ? null : this.config.copy(),
                     this.stock == null ? null : this.stock.copy(),
                     null
