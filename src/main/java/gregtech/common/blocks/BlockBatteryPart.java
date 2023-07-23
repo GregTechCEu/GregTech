@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.VariantBlock;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -27,6 +28,7 @@ public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartT
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
+        setHarvestLevel(ToolClasses.WRENCH, 3); // Diamond level, can be mined by a steel wrench or better
         setDefaultState(getState(BatteryPartType.EMPTY_TIER_I));
     }
 
