@@ -419,7 +419,7 @@ public class BatteryRecipes {
                 .output(ULTIMATE_BATTERY)
                 .research(b -> b
                         .researchStack(ENERGY_CLUSTER.getStackForm())
-                        .CWUt(128)
+                        .CWUt(144)
                         .EUt(VA[UHV]))
                 .buildAndRegister();
     }
