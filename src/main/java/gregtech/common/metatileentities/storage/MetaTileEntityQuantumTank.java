@@ -603,7 +603,11 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         @Override
         public int fillInternal(FluidStack resource, boolean doFill) {
             int accepted = super.fillInternal(resource, doFill);
-            if (accepted == 0) return accepted;
+
+            // if "resource" is not the same as the stored fluid, and we couldn't accept "resource"
+            if (!resource.isFluidEqual(getFluid()) && accepted == 0) {
+                return 0;
+            }
 
             if (doFill && locked && lockedFluid == null) {
                 lockedFluid = resource.copy();
