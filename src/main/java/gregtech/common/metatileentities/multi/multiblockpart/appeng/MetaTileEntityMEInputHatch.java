@@ -35,6 +35,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -242,7 +245,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         list.addAll(Arrays.asList(this.aeFluidTanks));
     }
 
-    public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack> implements IFluidTank, INotifiableHandler {
+    public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack> implements IFluidTank, INotifiableHandler, IFluidHandler {
         private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
         private MetaTileEntity holder;
 
@@ -322,8 +325,24 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         }
 
         @Override
+        public IFluidTankProperties[] getTankProperties() {
+            return new IFluidTankProperties[] {
+                    new FluidTankProperties(this.getFluid(), 0)
+            };
+        }
+
+        @Override
         public int fill(FluidStack resource, boolean doFill) {
             return 0;
+        }
+
+        @Nullable
+        @Override
+        public FluidStack drain(FluidStack resource, boolean doDrain) {
+            if (this.getFluid() != null && this.getFluid().isFluidEqual(resource)) {
+                return this.drain(resource.amount, doDrain);
+            }
+            return null;
         }
 
         @Nullable
