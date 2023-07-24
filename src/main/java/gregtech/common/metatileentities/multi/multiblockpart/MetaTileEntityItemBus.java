@@ -363,8 +363,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
             if (autoCollapse) {
                 if (isExportHatch) {
                     addNotifiedOutput(this.getExportItems());
-                }
-                else {
+                } else {
                     addNotifiedInput(this.getImportItems());
                 }
             }
