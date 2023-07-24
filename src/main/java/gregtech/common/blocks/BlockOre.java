@@ -127,6 +127,16 @@ public class BlockOre extends Block implements IBlockOre {
 
     @Nonnull
     @Override
+    protected ItemStack getSilkTouchDrop(IBlockState state) {
+        StoneType stoneType = state.getValue(STONE_TYPE);
+        if (stoneType.shouldBeDroppedAsItem) {
+            return super.getSilkTouchDrop(state);
+        }
+        return super.getSilkTouchDrop(this.getDefaultState());
+    }
+
+    @Nonnull
+    @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
         if (meta >= STONE_TYPE.getAllowedValues().size()) {
@@ -140,8 +150,9 @@ public class BlockOre extends Block implements IBlockOre {
         return STONE_TYPE.getAllowedValues().indexOf(state.getValue(STONE_TYPE));
     }
 
+    @Nonnull
     @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+    public ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
         // Still get correct block even if shouldBeDroppedAsItem is false
         return GTUtility.toItem(state);
     }
