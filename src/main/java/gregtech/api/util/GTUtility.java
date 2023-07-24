@@ -94,6 +94,16 @@ public class GTUtility {
         return opacity << 24 | colorValue;
     }
 
+    public static int convertRGBtoARGB(int colorValue) {
+        return convertRGBtoARGB(colorValue, 0xFF);
+    }
+
+    public static int convertRGBtoARGB(int colorValue, int opacity) {
+        // preserve existing opacity if present
+        if (((colorValue >> 24) & 0xFF) != 0) return colorValue;
+        return opacity << 24 | colorValue;
+    }
+
     /**
      * Attempts to merge given ItemStack with ItemStacks in slot list supplied
      * If it's not possible to merge it fully, it will attempt to insert it into first empty slots
