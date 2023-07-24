@@ -2,7 +2,6 @@ package gregtech.loaders;
 
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.ConfigHolder;
@@ -200,10 +199,10 @@ public class MaterialInfoLoader {
                 new ItemMaterialInfo(new MaterialStack(Bronze, M * 6 * 2 / 64), // 2 large pipe / 64
                         new MaterialStack(Steel, M * 8 / 64))); // 8 steel plate / 64
 
-        if (ConfigHolder.recipes.hardIronRecipes) {
+        if (ConfigHolder.recipes.hardAdvancedIronRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.IRON_DOOR, 1), new ItemMaterialInfo(
-                    new MaterialStack(Materials.Iron, (37 * M) / 9), // dust tiny
-                    new MaterialStack(Materials.Steel, M / 9))); // dust tiny
+                    new MaterialStack(Materials.Iron, M * 4 + (M * 3 / 16)), // 4 iron plates + 1 iron bars
+                    new MaterialStack(Materials.Steel, M / 9))); // tiny steel dust
         } else {
             OreDictUnifier.registerOre(new ItemStack(Items.IRON_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 2)));
         }
