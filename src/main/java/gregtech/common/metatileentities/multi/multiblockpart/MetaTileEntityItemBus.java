@@ -360,6 +360,12 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     public void setAutoCollapse(boolean inverted) {
         autoCollapse = inverted;
         if (!getWorld().isRemote) {
+            if (isExportHatch) {
+                addNotifiedOutput(this.getExportItems());
+            }
+            else {
+                addNotifiedInput(this.getImportItems());
+            }
             writeCustomData(GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS, packetBuffer -> packetBuffer.writeBoolean(autoCollapse));
             notifyBlockUpdate();
             markDirty();
