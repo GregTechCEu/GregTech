@@ -11,6 +11,7 @@ import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTTransferUtils;
@@ -40,7 +41,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     private int itemsPerCycle = 1;
     private int ticksPerCycle = 1;
 
-    private final ItemStackHandler handler = new ItemStackHandler(1) {
+    private final ItemStackHandler handler = new GTItemStackHandler(this,1) {
         @Override
         protected int getStackLimit(int slot, ItemStack stack) {
             return 1;

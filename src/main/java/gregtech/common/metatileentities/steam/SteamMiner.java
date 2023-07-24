@@ -84,12 +84,12 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(0, this, false);
+        return new NotifiableItemStackHandler(this, 0, this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(inventorySize, this, true);
+        return new NotifiableItemStackHandler(this, inventorySize, this, true);
     }
 
     @Override

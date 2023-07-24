@@ -15,6 +15,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTTransferUtils;
@@ -81,7 +82,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                                        Function<Integer, Integer> tankScalingFunction) {
         super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction);
         this.hasFrontFacing = hasFrontFacing;
-        this.chargerInventory = new ItemStackHandler(1);
+        this.chargerInventory = new GTItemStackHandler(this, 1);
     }
 
     @Override

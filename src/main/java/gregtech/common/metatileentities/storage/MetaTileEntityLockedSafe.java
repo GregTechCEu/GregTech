@@ -15,6 +15,7 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -85,7 +86,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
             recheckUnlockItemsAndUnlock();
         }
     };
-    private final ItemStackHandler safeLootInventory = new ItemStackHandler(27);
+    private final ItemStackHandler safeLootInventory = new GTItemStackHandler(this, 27);
     private float doorAngle = 0.0f;
     private float prevDoorAngle = 0.0f;
 

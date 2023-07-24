@@ -168,12 +168,12 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return isExportHatch ? new NotifiableItemStackHandler(getInventorySize(), getController(), true) : new ItemStackHandler(0);
+        return isExportHatch ? new NotifiableItemStackHandler(this, getInventorySize(), getController(), true) : new ItemStackHandler(0);
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return isExportHatch ? new ItemStackHandler(0) : new NotifiableItemStackHandler(getInventorySize(), getController(), false);
+        return isExportHatch ? new ItemStackHandler(0) : new NotifiableItemStackHandler(this, getInventorySize(), getController(), false);
     }
 
     @Override

@@ -104,6 +104,7 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
             @Override
             protected void onContentsChanged(int slot) {
                 ((EnergyContainerBatteryBuffer) energyContainer).notifyEnergyListener(false);
+                MetaTileEntityBatteryBuffer.this.markDirty();
             }
 
             @Nonnull

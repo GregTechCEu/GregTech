@@ -93,13 +93,13 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         if (workable == null) return new ItemStackHandler(0);
-        return new NotifiableItemStackHandler(workable.getRecipeMap().getMaxInputs(), this, false);
+        return new NotifiableItemStackHandler(this, workable.getRecipeMap().getMaxInputs(), this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
         if (workable == null) return new ItemStackHandler(0);
-        return new NotifiableItemStackHandler(workable.getRecipeMap().getMaxOutputs(), this, true);
+        return new NotifiableItemStackHandler(this, workable.getRecipeMap().getMaxOutputs(), this, true);
     }
 
     @Override

@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.electric;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.capability.impl.EnergyContainerBatteryBuffer;
 import gregtech.api.capability.impl.EnergyContainerBatteryCharger;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -49,6 +50,11 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         return new ItemStackHandler(inventorySize) {
+            @Override
+            protected void onContentsChanged(int slot) {
+                MetaTileEntityCharger.this.markDirty();
+            }
+
             @Nonnull
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {

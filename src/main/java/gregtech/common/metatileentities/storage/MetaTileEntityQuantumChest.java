@@ -16,6 +16,7 @@ import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -225,7 +226,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(1) {
+        return new GTItemStackHandler(this, 1) {
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 NBTTagCompound compound = stack.getTagCompound();
@@ -237,7 +238,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(1);
+        return new GTItemStackHandler(this, 1);
     }
 
     @Override

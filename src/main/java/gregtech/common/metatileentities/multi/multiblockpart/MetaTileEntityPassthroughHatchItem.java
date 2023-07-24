@@ -77,12 +77,12 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(getInventorySize(), getController(), true);
+        return new NotifiableItemStackHandler(this, getInventorySize(), getController(), true);
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(getInventorySize(), getController(), false);
+        return new NotifiableItemStackHandler(this, getInventorySize(), getController(), false);
     }
 
     @Override

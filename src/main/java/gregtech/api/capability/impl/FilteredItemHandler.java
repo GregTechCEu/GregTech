@@ -1,14 +1,15 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
+import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
-public class FilteredItemHandler extends ItemStackHandler {
+public class FilteredItemHandler extends GTItemStackHandler {
 
     public static Predicate<ItemStack> getCapabilityFilter(Capability<?> cap) {
         return stack -> stack.hasCapability(cap, null);
@@ -16,16 +17,16 @@ public class FilteredItemHandler extends ItemStackHandler {
 
     private Predicate<ItemStack> fillPredicate;
 
-    public FilteredItemHandler() {
-        super(1);
+    public FilteredItemHandler(MetaTileEntity metaTileEntity) {
+        super(metaTileEntity,1);
     }
 
-    public FilteredItemHandler(int size) {
-        super(size);
+    public FilteredItemHandler(MetaTileEntity metaTileEntity, int size) {
+        super(metaTileEntity, size);
     }
 
-    public FilteredItemHandler(NonNullList<ItemStack> stacks) {
-        super(stacks);
+    public FilteredItemHandler(MetaTileEntity metaTileEntity, NonNullList<ItemStack> stacks) {
+        super(metaTileEntity, stacks);
     }
 
     public FilteredItemHandler setFillPredicate(Predicate<ItemStack> fillPredicate) {
