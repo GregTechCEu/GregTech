@@ -204,6 +204,16 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
         this.lastTickSteamOutput = lastTickSteamOutput;
     }
 
+    @Override
+    public int getInfoProviderEUt() {
+        return this.lastTickSteamOutput;
+    }
+
+    @Override
+    public boolean consumesEnergy() {
+        return false;
+    }
+
     public void invalidate() {
         progressTime = 0;
         maxProgressTime = 0;
