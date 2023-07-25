@@ -1,0 +1,14 @@
+{
+  "ore:sand":{
+    "copper":{
+      "meshlevel": 1,
+      "chance": 0.02
+    }
+  },
+  "exnihilocreatio:block_netherrack_crushed":{
+    "copper":{
+      "meshlevel": 1,
+      "chance": 0.02
+    }
+  }
+}

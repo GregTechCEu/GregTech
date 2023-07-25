@@ -12,6 +12,7 @@ import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.FileUtility;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.IntegrationModule;
@@ -28,12 +29,14 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,7 +53,6 @@ import static gregtech.common.metatileentities.MetaTileEntities.*;
         descriptionKey = "gregtech.modules.en_integration.description"
 )
 public class ExNihiloModule extends IntegrationSubmodule {
-
 
     // Items
     public static ExNihiloPebble GTPebbles;
@@ -89,6 +91,7 @@ public class ExNihiloModule extends IntegrationSubmodule {
         getLogger().info("Registering Ex Nihilo Compat Items, Blocks, and Machines");
         GTPebbles = new ExNihiloPebble();
         registerMetaTileEntities();
+        FileUtility.extractJarFiles(String.format("/assets/%s/%s", GTValues.MODID, "exnihilo"), new File(Loader.instance().getConfigDir(), "gregtech"), false);
     }
 
     @Override
