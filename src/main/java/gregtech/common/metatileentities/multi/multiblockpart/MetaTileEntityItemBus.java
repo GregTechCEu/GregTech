@@ -119,7 +119,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
             }
             // Only attempt to auto collapse the inventory contents once the bus has been notified
             if (isAutoCollapse()) {
-                IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : this.getImportItems());
+                // Ghost Circuit Inventory messing with things
+                IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : super.getImportItems());
                 if (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) : this.getNotifiedItemInputList().contains(inventory)) {
                     collapseInventorySlotContents(inventory);
                 }
@@ -364,7 +365,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                 if (isExportHatch) {
                     addNotifiedOutput(this.getExportItems());
                 } else {
-                    addNotifiedInput(this.getImportItems());
+                    addNotifiedInput(super.getImportItems());
                 }
             }
             writeCustomData(GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS, packetBuffer -> packetBuffer.writeBoolean(autoCollapse));
