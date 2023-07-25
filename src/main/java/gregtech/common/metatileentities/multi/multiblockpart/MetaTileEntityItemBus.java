@@ -119,7 +119,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
             }
             // Only attempt to auto collapse the inventory contents once the bus has been notified
             if (isAutoCollapse()) {
-                // Ghost Circuit Inventory messing with things
+                // Exclude the ghost circuit inventory from the auto collapse, so it does not extract any ghost circuits from the slot
                 IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : super.getImportItems());
                 if (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) : this.getNotifiedItemInputList().contains(inventory)) {
                     collapseInventorySlotContents(inventory);
