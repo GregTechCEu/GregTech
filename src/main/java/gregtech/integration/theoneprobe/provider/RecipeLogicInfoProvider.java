@@ -49,7 +49,7 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
                 IGregTechTileEntity gtTileEntity = (IGregTechTileEntity) tileEntity;
                 MetaTileEntity mte = gtTileEntity.getMetaTileEntity();
                 if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler) {
-                    text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " L/t {*gregtech.top.steam*} " + Materials.Steam.getLocalizedName();
+                    text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " L/t {*gregtech.top.steam*} {*" + Materials.Steam.getUnlocalizedName() + "*}";
                 }
             }
             if (text == null) {
