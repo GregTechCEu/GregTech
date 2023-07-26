@@ -1053,6 +1053,9 @@ public class MachineRecipeLoader {
         //Jetpacks
         ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(), SEMIFLUID_JETPACK.getStackForm());
 
+        // ClipBoard
+        ModHandler.addShapedNBTClearingRecipe("clipboard_nbt", CLIPBOARD.getStackForm(), CLIPBOARD.getStackForm());
+
     }
 
     private static void ConvertHatchToHatch() {
