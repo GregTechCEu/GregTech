@@ -152,6 +152,7 @@ public class ElementMaterials {
 
         Chlorine = new Material.Builder(21, gregtechId("chlorine"))
                 .fluid(FluidTypes.GAS)
+                .color(0x2D8C8C, false)
                 .element(Elements.Cl)
                 .build();
 
@@ -206,6 +207,7 @@ public class ElementMaterials {
 
         Deuterium = new Material.Builder(28, gregtechId("deuterium"))
                 .fluid(FluidTypes.GAS)
+                .color(0xFCFC84, false)
                 .element(Elements.D)
                 .build();
 
@@ -253,6 +255,7 @@ public class ElementMaterials {
 
         Fluorine = new Material.Builder(36, gregtechId("fluorine"))
                 .fluid(FluidTypes.GAS)
+                .color(0x6EA7DC, false)
                 .element(Elements.F)
                 .build();
 
@@ -313,11 +316,13 @@ public class ElementMaterials {
 
         Helium = new Material.Builder(46, gregtechId("helium"))
                 .fluid(FluidTypes.GAS).plasma()
+                .color(0xFCFC94, false)
                 .element(Elements.He)
                 .build();
 
         Helium3 = new Material.Builder(47, gregtechId("helium_3"))
                 .fluid(FluidTypes.GAS)
+                .color(0xFCFCCC, false)
                 .element(Elements.He3)
                 .build();
 
@@ -346,7 +351,7 @@ public class ElementMaterials {
 
         Iron = new Material.Builder(51, gregtechId("iron"))
                 .ingot().fluid().plasma().ore()
-                .color(0xC8C8C8).iconSet(METALLIC)
+                .color(0xC8C8C8, false).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_SPRING_SMALL, GENERATE_SPRING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, BLAST_FURNACE_CALCITE_TRIPLE)
                 .element(Elements.Fe)
                 .toolStats(ToolProperty.Builder.of(2.0F, 2.0F, 256, 2)
@@ -358,7 +363,7 @@ public class ElementMaterials {
 
         Krypton = new Material.Builder(52, gregtechId("krypton"))
                 .fluid(FluidTypes.GAS)
-                .color(0x80FF80).iconSet(GAS)
+                .color(0x80FF80, false).iconSet(GAS)
                 .element(Elements.Kr)
                 .build();
 
@@ -769,6 +774,7 @@ public class ElementMaterials {
 
         Tritium = new Material.Builder(114, gregtechId("tritium"))
                 .fluid(FluidTypes.GAS)
+                .color(0xFC5C5C, false)
                 .iconSet(METALLIC)
                 .element(Elements.T)
                 .build();
