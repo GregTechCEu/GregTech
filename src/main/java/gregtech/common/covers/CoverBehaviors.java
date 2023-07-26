@@ -23,6 +23,7 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.util.GTUtility.gregtechId;
 
 public class CoverBehaviors {
@@ -55,15 +56,15 @@ public class CoverBehaviors {
         registerBehavior(gregtechId("shutter"), MetaItems.COVER_SHUTTER, CoverShutter::new);
 
         registerBehavior(gregtechId("solar_panel.basic"), MetaItems.COVER_SOLAR_PANEL, (tile, side) -> new CoverSolarPanel(tile, side, 1));
-        registerBehavior(gregtechId("solar_panel.ulv"), MetaItems.COVER_SOLAR_PANEL_ULV, (tile, side) -> new CoverSolarPanel(tile, side, GTValues.V[0]));
-        registerBehavior(gregtechId("solar_panel.lv"), MetaItems.COVER_SOLAR_PANEL_LV, (tile, side) -> new CoverSolarPanel(tile, side, GTValues.V[1]));
-        registerBehavior(gregtechId("solar_panel.mv"), MetaItems.COVER_SOLAR_PANEL_MV, (tile, side) -> new CoverSolarPanel(tile, side, GTValues.V[2]));
-        registerBehavior(gregtechId("solar_panel.hv"), MetaItems.COVER_SOLAR_PANEL_HV, (tile, side) -> new CoverSolarPanel(tile, side, GTValues.V[3]));
-        registerBehavior(gregtechId("solar_panel.ev"), MetaItems.COVER_SOLAR_PANEL_EV, (tile, side) -> new CoverSolarPanel(tile, side, GTValues.V[4]));
-        registerBehavior(gregtechId("solar_panel.iv"), MetaItems.COVER_SOLAR_PANEL_IV, (tile, side) -> new CoverSolarPanel(tile, side, GTValues.V[5]));
-        registerBehavior(gregtechId("solar_panel.luv"), MetaItems.COVER_SOLAR_PANEL_LUV, (tile, side) -> new CoverSolarPanel(tile, side, GTValues.V[6]));
-        registerBehavior(gregtechId("solar_panel.zpm"), MetaItems.COVER_SOLAR_PANEL_ZPM, (tile, side) -> new CoverSolarPanel(tile, side, GTValues.V[7]));
-        registerBehavior(gregtechId("solar_panel.uv"), MetaItems.COVER_SOLAR_PANEL_UV, (tile, side) -> new CoverSolarPanel(tile, side, GTValues.V[8]));
+        registerBehavior(gregtechId("solar_panel.ulv"), MetaItems.COVER_SOLAR_PANEL_ULV, (tile, side) -> new CoverSolarPanel(tile, side, V[ULV]));
+        registerBehavior(gregtechId("solar_panel.lv"), MetaItems.COVER_SOLAR_PANEL_LV, (tile, side) -> new CoverSolarPanel(tile, side, V[LV]));
+        registerBehavior(gregtechId("solar_panel.mv"), MetaItems.COVER_SOLAR_PANEL_MV, (tile, side) -> new CoverSolarPanel(tile, side, V[MV]));
+        registerBehavior(gregtechId("solar_panel.hv"), MetaItems.COVER_SOLAR_PANEL_HV, (tile, side) -> new CoverSolarPanel(tile, side, V[HV]));
+        registerBehavior(gregtechId("solar_panel.ev"), MetaItems.COVER_SOLAR_PANEL_EV, (tile, side) -> new CoverSolarPanel(tile, side, V[EV]));
+        registerBehavior(gregtechId("solar_panel.iv"), MetaItems.COVER_SOLAR_PANEL_IV, (tile, side) -> new CoverSolarPanel(tile, side, V[IV]));
+        registerBehavior(gregtechId("solar_panel.luv"), MetaItems.COVER_SOLAR_PANEL_LUV, (tile, side) -> new CoverSolarPanel(tile, side, V[LuV]));
+        registerBehavior(gregtechId("solar_panel.zpm"), MetaItems.COVER_SOLAR_PANEL_ZPM, (tile, side) -> new CoverSolarPanel(tile, side, V[ZPM]));
+        registerBehavior(gregtechId("solar_panel.uv"), MetaItems.COVER_SOLAR_PANEL_UV, (tile, side) -> new CoverSolarPanel(tile, side, V[UV]));
 
         registerBehavior(gregtechId("machine_controller"), MetaItems.COVER_MACHINE_CONTROLLER, CoverMachineController::new);
         registerBehavior(gregtechId("smart_filter"), MetaItems.SMART_FILTER, (tile, side) -> new CoverItemFilter(tile, side, "cover.smart_item_filter.title", Textures.SMART_FILTER_FILTER_OVERLAY, new SmartItemFilter()));

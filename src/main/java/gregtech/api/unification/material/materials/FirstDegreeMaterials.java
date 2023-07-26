@@ -34,7 +34,7 @@ public class FirstDegreeMaterials {
                 .color(0xFF8D3B).iconSet(BRIGHT)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE)
                 .components(Copper, 1)
-                .cableProperties(GTValues.V[2], 1, 1)
+                .cableProperties(V[MV], 1, 1)
                 .fluidTemp(1358)
                 .build();
         Copper.getProperty(PropertyKey.INGOT).setArcSmeltingInto(AnnealedCopper);
@@ -195,7 +195,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_SPRING, GENERATE_FINE_WIRE, GENERATE_DOUBLE_PLATE)
                 .components(Copper, 1, Nickel, 1)
                 .itemPipeProperties(2048, 1)
-                .cableProperties(GTValues.V[2], 1, 1)
+                .cableProperties(V[MV], 1, 1)
                 .fluidTemp(1542)
                 .build();
 
@@ -222,7 +222,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING, GENERATE_DOUBLE_PLATE)
                 .components(Silver, 1, Gold, 1)
                 .itemPipeProperties(1024, 2)
-                .cableProperties(GTValues.V[3], 2, 2)
+                .cableProperties(V[HV], 2, 2)
                 .fluidTemp(1285)
                 .build();
 
@@ -306,7 +306,7 @@ public class FirstDegreeMaterials {
                 .color(0xC2D2DF).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_SPRING)
                 .components(Iron, 1, Aluminium, 1, Chrome, 1)
-                .cableProperties(GTValues.V[3], 4, 3)
+                .cableProperties(V[HV], 4, 3)
                 .blastTemp(1800, GasTier.LOW, VA[HV], 900)
                 .fluidTemp(1708)
                 .build();
@@ -351,7 +351,7 @@ public class FirstDegreeMaterials {
                 .color(0xCDCEF6).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_SPRING)
                 .components(Nickel, 4, Chrome, 1)
-                .cableProperties(GTValues.V[4], 4, 4)
+                .cableProperties(V[EV], 4, 4)
                 .blastTemp(2700, GasTier.LOW, VA[HV], 1300)
                 .fluidTemp(1818)
                 .build();
@@ -361,7 +361,7 @@ public class FirstDegreeMaterials {
                 .color(0x1D291D)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .components(Niobium, 1, Nitrogen, 1)
-                .cableProperties(GTValues.V[6], 1, 1)
+                .cableProperties(V[LuV], 1, 1)
                 .blastTemp(2846, GasTier.MID)
                 .build();
 
@@ -372,7 +372,7 @@ public class FirstDegreeMaterials {
                         GENERATE_DOUBLE_PLATE)
                 .components(Niobium, 1, Titanium, 1)
                 .fluidPipeProperties(5900, 175, true)
-                .cableProperties(GTValues.V[6], 4, 2)
+                .cableProperties(V[LuV], 4, 2)
                 .blastTemp(4500, GasTier.HIGH, VA[HV], 1500)
                 .fluidTemp(2345)
                 .build();
@@ -600,7 +600,7 @@ public class FirstDegreeMaterials {
                         .enchantability(14).build())
                 .rotorStats(6.0f, 3.0f, 512)
                 .fluidPipeProperties(1855, 75, true)
-                .cableProperties(GTValues.V[4], 2, 2)
+                .cableProperties(V[EV], 2, 2)
                 .blastTemp(1000, null, VA[MV], 800) // no gas tier for steel
                 .fluidTemp(2046)
                 .build();
@@ -676,7 +676,7 @@ public class FirstDegreeMaterials {
                 .color(0x80808C).iconSet(SHINY)
                 .flags(STD_METAL, GENERATE_FOIL, GENERATE_SPRING, GENERATE_SPRING_SMALL)
                 .components(Vanadium, 3, Gallium, 1)
-                .cableProperties(GTValues.V[7], 4, 2)
+                .cableProperties(V[ZPM], 4, 2)
                 .blastTemp(4500, GasTier.HIGH, VA[EV], 1200)
                 .fluidTemp(1712)
                 .build();
@@ -713,7 +713,7 @@ public class FirstDegreeMaterials {
                 .color(0x504046).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_BOLT_SCREW)
                 .components(Yttrium, 1, Barium, 2, Copper, 3, Oxygen, 7)
-                .cableProperties(GTValues.V[8], 4, 4)
+                .cableProperties(V[UV], 4, 4)
                 .blastTemp(4500, GasTier.HIGH) // todo redo this EBF process
                 .fluidTemp(1799)
                 .build();
@@ -751,7 +751,7 @@ public class FirstDegreeMaterials {
                 .color(0x808080).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
-                .cableProperties(GTValues.V[5], 1, 1)
+                .cableProperties(V[IV], 1, 1)
                 .build();
 
         TungsticAcid = new Material.Builder(343, gregtechId("tungstic_acid"))

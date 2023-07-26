@@ -88,7 +88,7 @@ public class HigherDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_SPRING, GENERATE_FINE_WIRE, GENERATE_FOIL, GENERATE_GEAR)
                 .components(TungstenSteel, 5, Chrome, 1, Molybdenum, 2, Vanadium, 1)
                 .rotorStats(10.0f, 5.5f, 4000)
-                .cableProperties(GTValues.V[6], 4, 2)
+                .cableProperties(V[LuV], 4, 2)
                 .blastTemp(4200, GasTier.MID, VA[EV], 1300)
                 .build();
 
@@ -97,7 +97,7 @@ public class HigherDegreeMaterials {
                 .color(0xC80000)
                 .flags(STD_METAL, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
                 .components(Copper, 1, Redstone, 4)
-                .cableProperties(GTValues.V[0], 1, 0)
+                .cableProperties(V[ULV], 1, 0)
                 .fluidTemp(1400)
                 .build();
 
