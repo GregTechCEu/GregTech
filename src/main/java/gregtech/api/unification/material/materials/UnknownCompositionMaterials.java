@@ -378,7 +378,7 @@ public class UnknownCompositionMaterials {
         Wood = new Material.Builder(1617, gregtechId("wood"))
                 .wood()
                 .color(0x896727).iconSet(WOOD)
-                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, FLAMMABLE, GENERATE_GEAR, GENERATE_FRAME)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, GENERATE_GEAR, GENERATE_FRAME)
                 .fluidPipeProperties(340, 5, false)
                 .build();
 
@@ -486,7 +486,7 @@ public class UnknownCompositionMaterials {
         TreatedWood = new Material.Builder(1648, gregtechId("treated_wood"))
                 .wood()
                 .color(0x674A28).iconSet(WOOD)
-                .flags(GENERATE_PLATE, FLAMMABLE, GENERATE_ROD, GENERATE_FRAME)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_FRAME)
                 .fluidPipeProperties(340, 10, false)
                 .build();
 

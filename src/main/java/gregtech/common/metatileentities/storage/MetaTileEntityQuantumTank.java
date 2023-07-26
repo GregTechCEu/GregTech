@@ -188,6 +188,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         }
 
         this.lockedFluid = FluidStack.loadFluidStackFromNBT(tag.getCompoundTag("LockedFluid"));
+        this.locked = this.lockedFluid != null;
     }
 
     @Override
@@ -603,6 +604,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         @Override
         public int fillInternal(FluidStack resource, boolean doFill) {
             int accepted = super.fillInternal(resource, doFill);
+
+            // if we couldn't accept "resource", and "resource" is not the same as the stored fluid.
+            if (accepted == 0 && !resource.isFluidEqual(getFluid())) {
+                return 0;
+            }
+
             if (doFill && locked && lockedFluid == null) {
                 lockedFluid = resource.copy();
                 lockedFluid.amount = 1;

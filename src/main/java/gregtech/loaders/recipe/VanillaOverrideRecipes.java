@@ -437,6 +437,12 @@ public class VanillaOverrideRecipes {
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Steel),
                 'S', new UnificationEntry(OrePrefix.screw, Materials.Steel)
         );
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.Iron, 4)
+                .inputs(new ItemStack(Blocks.IRON_BARS))
+                .fluidInputs(Materials.Steel.getFluid(L / 9))
+                .outputs(new ItemStack(Items.IRON_DOOR))
+                .duration(400).EUt(VA[ULV]).buildAndRegister();
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:anvil"));
         ModHandler.addShapedRecipe("anvil", new ItemStack(Blocks.ANVIL), "BBB", "SBS", "PBP",
