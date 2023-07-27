@@ -541,7 +541,7 @@ public class MetaTileEntities {
         POWER_SUBSTATION = registerMetaTileEntity(1041, new MetaTileEntityPowerSubstation(gregtechId("power_substation")));
         ACTIVE_TRANSFORMER = registerMetaTileEntity(1042, new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
 
-        // MISC MTE's START: IDs 1150-2000
+        // MISC MetaTileEntity's START: IDs 1150-2000
 
         // Import/Export Buses/Hatches, IDs 1150-1209
         for (int i = 0; i < ITEM_IMPORT_BUS.length; i++) {
@@ -863,7 +863,7 @@ public class MetaTileEntities {
     }
 
     /**
-     * @param mteCreator Takes tier and voltage name for the machine, and outputs MTE to register
+     * @param mteCreator Takes tier and voltage name for the machine, and outputs MetaTileEntity to register
      */
     public static void registerMetaTileEntities(
             MetaTileEntity[] machines,

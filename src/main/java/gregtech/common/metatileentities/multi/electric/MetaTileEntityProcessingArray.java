@@ -7,7 +7,6 @@ import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.IMachineHatchMultiblock;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
@@ -263,9 +262,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             } else {
                 this.activeRecipeMap = mte.getRecipeMap();
                 // Set the world for MTEs, as some need it for checking their recipes
-                MetaTileEntityHolder holder = new MetaTileEntityHolder();
-                mte = holder.setMetaTileEntity(mte);
-                holder.setWorld(this.metaTileEntity.getWorld());
+                mte.setWorld(this.metaTileEntity.getWorld());
 
                 // Set the cleanroom of the MTEs to the PA's cleanroom reference
                 if (mte instanceof ICleanroomReceiver receiver) {
@@ -279,7 +276,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             }
 
             //Find the voltage tier of the machine.
-            this.machineTier = mte instanceof ITieredMetaTileEntity ? ((ITieredMetaTileEntity) mte).getTier() : 0;
+            this.machineTier = mte instanceof ITieredMetaTileEntity tiered ? tiered.getTier() : 0;
 
             this.machineVoltage = GTValues.V[this.machineTier];
 

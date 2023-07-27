@@ -1,6 +1,6 @@
 package gregtech.asm.hooks;
 
-import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.block.machines.MetaTileEntityBlock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -11,7 +11,7 @@ public class TheOneProbeHooks {
     @SuppressWarnings("deprecation")
     public static IBlockState getActualState(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() instanceof BlockMachine) {
+        if (state.getBlock() instanceof MetaTileEntityBlock) {
             state = state.getBlock().getActualState(state, world, pos);
         }
         return state;

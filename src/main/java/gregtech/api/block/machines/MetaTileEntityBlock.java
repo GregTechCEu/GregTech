@@ -11,7 +11,6 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.util.VanillaNameHelper;
@@ -261,41 +260,39 @@ public class MetaTileEntityBlock extends BlockCustomParticle implements ITileEnt
 
     @Override
     public void onBlockPlacedBy(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, ItemStack stack) {
-        IGregTechTileEntity holder = (IGregTechTileEntity) worldIn.getTileEntity(pos);
-        MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
-        if (holder != null && sampleMetaTileEntity != null) {
-            // TODO Fix this
-            if (stack.hasDisplayName() && holder instanceof MetaTileEntityHolder) {
-                ((MetaTileEntityHolder) holder).setCustomName(stack.getDisplayName());
+        worldIn.setTileEntity(pos, GregTechAPI.MTE_REGISTRY.createMetaTileEntity(stack.getMetadata()));
+        if ((IGregTechTileEntity) worldIn.getTileEntity(pos) instanceof MetaTileEntity mte) {
+            mte = GregTechAPI.MTE_REGISTRY.createMetaTileEntity(stack.getMetadata());
+
+            if (stack.hasDisplayName()) {
+                mte.setCustomName(stack.getDisplayName());
             }
-            MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity);
             if (stack.hasTagCompound()) {
-                //noinspection ConstantConditions
-                metaTileEntity.initFromItemStackData(stack.getTagCompound());
+                mte.initFromItemStackData(Objects.requireNonNull(stack.getTagCompound()));
             }
-            if (metaTileEntity.isValidFrontFacing(EnumFacing.UP)) {
-                metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
+            if (mte.isValidFrontFacing(EnumFacing.UP)) {
+                mte.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
             } else {
-                metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
+                mte.setFrontFacing(placer.getHorizontalFacing().getOpposite());
             }
             if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
-                if (metaTileEntity.getProxy() != null) {
-                    metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
+                if (mte.getProxy() != null) {
+                    mte.getProxy().setOwner((EntityPlayer) placer);
                 }
             }
 
             // Color machines on place if holding spray can in off-hand
-            if (placer instanceof EntityPlayer) {
+            if (placer instanceof EntityPlayer player) {
                 ItemStack offhand = placer.getHeldItemOffhand();
                 for (int i  = 0; i < EnumDyeColor.values().length; i++) {
                     if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
-                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
+                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse(player, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
                         break;
                     }
                 }
             }
 
-            metaTileEntity.onPlacement();
+            mte.onPlacement();
         }
     }
 
@@ -330,11 +327,8 @@ public class MetaTileEntityBlock extends BlockCustomParticle implements ITileEnt
         if (!tagCompound.isEmpty())
             itemStack.setTagCompound(tagCompound);
         // TODO Clean this up
-        if (metaTileEntity.getHolder() instanceof MetaTileEntityHolder) {
-            MetaTileEntityHolder holder = (MetaTileEntityHolder) metaTileEntity.getHolder();
-            if (holder.hasCustomName()) {
-                itemStack.setStackDisplayName(holder.getName());
-            }
+        if (metaTileEntity.hasCustomName()) {
+            itemStack.setStackDisplayName(metaTileEntity.getName());
         }
         drops.add(itemStack);
         metaTileEntity.getDrops(drops, harvesters.get());
@@ -422,7 +416,7 @@ public class MetaTileEntityBlock extends BlockCustomParticle implements ITileEnt
     @Nullable
     @Override
     public TileEntity createNewTileEntity(@Nullable World worldIn, int meta) {
-        return new MetaTileEntityHolder();
+        return null;
     }
 
     @Nonnull

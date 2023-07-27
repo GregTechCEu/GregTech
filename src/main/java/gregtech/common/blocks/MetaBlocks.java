@@ -3,7 +3,7 @@ package gregtech.common.blocks;
 import com.google.common.collect.ImmutableMap;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MetaTileEntityBlock;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.longdist.BlockLongDistancePipe;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -366,7 +366,6 @@ public class MetaBlocks {
     }
 
     public static void registerTileEntity() {
-        GameRegistry.registerTileEntity(MetaTileEntityHolder.class, gregtechId("machine"));
         GameRegistry.registerTileEntity(TileEntityCable.class, gregtechId("cable"));
         GameRegistry.registerTileEntity(TileEntityCableTickable.class, gregtechId("cable_tickable"));
         GameRegistry.registerTileEntity(TileEntityFluidPipe.class, gregtechId("fluid_pipe"));
@@ -380,7 +379,6 @@ public class MetaBlocks {
     @SideOnly(Side.CLIENT)
     public static void registerItemModels() {
         MetaTileEntityBlock.registerItemModels();
-        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE), stack -> MetaTileEntityRenderer.MODEL_LOCATION);
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             for (BlockCable cable : CABLES.get(registry.getModid())) cable.onModelRegister();
             for (BlockFluidPipe pipe : FLUID_PIPES.get(registry.getModid())) pipe.onModelRegister();
@@ -516,7 +514,7 @@ public class MetaBlocks {
         MinecraftForge.EVENT_BUS.register(modelHandler);
         FLUID_BLOCKS.forEach(modelHandler::addFluidBlock);
 
-        ClientRegistry.bindTileEntitySpecialRenderer(MetaTileEntityHolder.class, new MetaTileEntityTESR());
+        ClientRegistry.bindTileEntitySpecialRenderer(MetaTileEntity.class, new MetaTileEntityTESR());
     }
 
     @SideOnly(Side.CLIENT)

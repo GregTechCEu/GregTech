@@ -24,8 +24,8 @@ public class TransformerInfoProvider extends ElectricContainerInfoProvider {
 
     @Override
     protected void addProbeInfo(@Nonnull IEnergyContainer capability, @Nonnull IProbeInfo probeInfo, EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
-        if (tileEntity instanceof IGregTechTileEntity) {
-            MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
+        if (tileEntity instanceof IGregTechTileEntity igtte) {
+            MetaTileEntity metaTileEntity = igtte.getMetaTileEntity();
             if (metaTileEntity instanceof MetaTileEntityTransformer) {
                 StringBuilder input = new StringBuilder()
                         .append(GTValues.VNF[GTUtility.getTierByVoltage(capability.getInputVoltage())])

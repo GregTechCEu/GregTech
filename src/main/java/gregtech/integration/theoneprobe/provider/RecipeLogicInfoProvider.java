@@ -45,9 +45,8 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
             boolean consumer = capability.consumesEnergy();
             String text = null;
 
-            if (tileEntity instanceof IGregTechTileEntity) {
-                IGregTechTileEntity gtTileEntity = (IGregTechTileEntity) tileEntity;
-                MetaTileEntity mte = gtTileEntity.getMetaTileEntity();
+            if (tileEntity instanceof IGregTechTileEntity igtte) {
+                MetaTileEntity mte = igtte.getMetaTileEntity();
                 if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler) {
                     text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " L/t {*gregtech.top.steam*} {*" + Materials.Steam.getUnlocalizedName() + "*}";
                 }

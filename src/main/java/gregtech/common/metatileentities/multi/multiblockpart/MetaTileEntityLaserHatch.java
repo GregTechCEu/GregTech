@@ -135,9 +135,9 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
         private Supplier<ILaserContainer> bufferSupplier;
 
         /**
-         * Create a new MTE trait.
+         * Create a new MetaTileEntity trait.
          *
-         * @param metaTileEntity the MTE to reference, and add the trait to
+         * @param metaTileEntity the MetaTileEntity to reference, and add the trait to
          */
         public LaserHatchWrapper(@NotNull MetaTileEntity metaTileEntity, @Nullable Supplier<ILaserContainer> bufferSupplier) {
             super(metaTileEntity);

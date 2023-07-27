@@ -157,7 +157,7 @@ public class MetaTileEntityItemBlock extends ItemBlock {
             }
         }
 
-        // additional tooltips that the MTE provides
+        // additional tooltips that the MetaTileEntity provides
         metaTileEntity.addInformation(stack, worldIn, tooltip, flagIn.isAdvanced());
 
         // tool usages tooltips

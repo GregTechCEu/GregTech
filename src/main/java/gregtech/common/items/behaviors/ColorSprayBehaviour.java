@@ -119,7 +119,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
             return true;
         }
 
-        // MTE special case
+        // MetaTileEntity special case
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IGregTechTileEntity) {
             MetaTileEntity mte = ((IGregTechTileEntity) te).getMetaTileEntity();

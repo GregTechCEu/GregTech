@@ -6,7 +6,7 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemHUDProvider;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.CapesRegistry;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
@@ -49,8 +49,8 @@ public class ClientEventHandler {
             return;
         }
         TileEntity tileEntity = event.getPlayer().world.getTileEntity(event.getTarget().getBlockPos());
-        if (tileEntity instanceof MetaTileEntityHolder) {
-            if (((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+        if (tileEntity instanceof MetaTileEntity mte) {
+            if (mte instanceof MetaTileEntityMonitorScreen) {
                 event.setCanceled(true);
             }
         }

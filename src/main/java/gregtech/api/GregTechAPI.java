@@ -6,7 +6,7 @@ import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.event.HighTierEvent;
 import gregtech.api.gui.UIFactory;
-import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MTERegistry;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
 import gregtech.api.modules.IModuleManager;
 import gregtech.api.network.INetworkHandler;
@@ -59,7 +59,7 @@ public class GregTechAPI {
     private static boolean highTier;
     private static boolean highTierInitialized;
 
-    public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
+    public static final MTERegistry MTE_REGISTRY = new MTERegistry();
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTControlledRegistry<>(Integer.MAX_VALUE);
 

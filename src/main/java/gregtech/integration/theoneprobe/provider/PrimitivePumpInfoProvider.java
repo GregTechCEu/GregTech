@@ -24,9 +24,9 @@ public class PrimitivePumpInfoProvider implements IProbeInfoProvider {
     public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull IBlockState blockState, @Nonnull IProbeHitData data) {
         if (blockState.getBlock().hasTileEntity(blockState)) {
             TileEntity tileEntity = world.getTileEntity(data.getPos());
-            if (!(tileEntity instanceof IGregTechTileEntity)) return;
+            if (!(tileEntity instanceof IGregTechTileEntity igtte)) return;
 
-            MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
+            MetaTileEntity metaTileEntity = igtte.getMetaTileEntity();
             if (metaTileEntity instanceof IPrimitivePump) {
                 probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.primitive_pump_production*} " + TextFormatting.AQUA + ((IPrimitivePump) metaTileEntity).getFluidProduction() + TextFormatting.RESET + " L/s");
             }

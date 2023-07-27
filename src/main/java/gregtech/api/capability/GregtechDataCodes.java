@@ -2,7 +2,7 @@ package gregtech.api.capability;
 
 public class GregtechDataCodes {
 
-    // MTE implementation update codes
+    // MetaTileEntity implementation update codes
     public static final int INITIALIZE_MTE = -1;
     public static final int UPDATE_FRONT_FACING = -2;
     public static final int UPDATE_PAINTING_COLOR = -3;
@@ -140,7 +140,7 @@ public class GregtechDataCodes {
     // From MetaTileEntityHolder
     public static final String CUSTOM_NAME = "CustomName";
 
-    // MTE Trait Names
+    // MetaTileEntity Trait Names
 
     public static final String ABSTRACT_WORKABLE_TRAIT = "RecipeMapWorkable";
     public static final String ENERGY_CONTAINER_TRAIT = "EnergyContainer";

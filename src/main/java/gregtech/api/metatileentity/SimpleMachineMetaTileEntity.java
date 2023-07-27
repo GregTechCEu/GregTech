@@ -312,7 +312,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void setOutputFacing(EnumFacing outputFacing) {
         this.outputFacingItems = outputFacing;
         this.outputFacingFluids = outputFacing;
-        if (!getWorld().isRemote) {
+        if (getWorld() != null && !getWorld().isRemote) {
             notifyBlockUpdate();
             writeCustomData(UPDATE_OUTPUT_FACING, buf -> {
                 buf.writeByte(outputFacingItems.getIndex());

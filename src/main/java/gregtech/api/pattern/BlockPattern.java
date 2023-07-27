@@ -2,7 +2,6 @@ package gregtech.api.pattern;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
@@ -529,12 +528,9 @@ public class BlockPattern {
                         BlockInfo info = infos == null || infos.length == 0 ? BlockInfo.EMPTY : infos[0];
                         BlockPos pos = setActualRelativeOffset(z, y, x, EnumFacing.NORTH);
                         // TODO
-                        if (info.getTileEntity() instanceof MetaTileEntityHolder) {
-                            MetaTileEntityHolder holder = new MetaTileEntityHolder();
-                            MetaTileEntity mte = ((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity();
-                            holder.setMetaTileEntity(mte);
-                            holder.getMetaTileEntity().onPlacement();
-                            info = new BlockInfo(mte.getBlock().getDefaultState(), holder);
+                        if (info.getTileEntity() instanceof MetaTileEntity mte) {
+                            mte.getMetaTileEntity().onPlacement();
+                            info = new BlockInfo(mte.getBlock().getDefaultState(), mte);
                         }
                         blocks.put(pos, info);
                         minX = Math.min(pos.getX(), minX);
@@ -553,13 +549,12 @@ public class BlockPattern {
         int finalMinY = minY;
         int finalMinZ = minZ;
         blocks.forEach((pos, info) -> {
-            if (info.getTileEntity() instanceof MetaTileEntityHolder) {
-                MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity();
+            if (info.getTileEntity() instanceof MetaTileEntity mte) {
                 boolean find = false;
                 for (EnumFacing enumFacing : FACINGS) {
-                    if (metaTileEntity.isValidFrontFacing(enumFacing)) {
+                    if (mte.isValidFrontFacing(enumFacing)) {
                         if (!blocks.containsKey(pos.offset(enumFacing))) {
-                            metaTileEntity.setFrontFacing(enumFacing);
+                            mte.setFrontFacing(enumFacing);
                             find = true;
                             break;
                         }
@@ -568,8 +563,8 @@ public class BlockPattern {
                 if (!find) {
                     for (EnumFacing enumFacing : FACINGS) {
                         BlockInfo blockInfo = blocks.get(pos.offset(enumFacing));
-                        if (blockInfo != null && blockInfo.getBlockState().getBlock() == Blocks.AIR && metaTileEntity.isValidFrontFacing(enumFacing)) {
-                            metaTileEntity.setFrontFacing(enumFacing);
+                        if (blockInfo != null && blockInfo.getBlockState().getBlock() == Blocks.AIR && mte.isValidFrontFacing(enumFacing)) {
+                            mte.setFrontFacing(enumFacing);
                             break;
                         }
                     }

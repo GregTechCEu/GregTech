@@ -12,12 +12,10 @@ import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
 import net.minecraft.block.Block;
@@ -37,7 +35,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -46,7 +43,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -341,8 +337,7 @@ public class ToolEventHandlers {
             if (tile instanceof TileEntityPipeBase) {
                 TileEntityPipeBase<?, ?> tepb = (TileEntityPipeBase<?, ?>) tile;
                 drawGridOverlays(facing, box, face -> tepb.isConnected(face) || tepb.getCoverableImplementation().getCoverAtSide(face) != null);
-            } else if (tile instanceof MetaTileEntityHolder) {
-                MetaTileEntity mte = ((MetaTileEntityHolder) tile).getMetaTileEntity();
+            } else if (tile instanceof MetaTileEntity mte) {
                 drawGridOverlays(facing, box, mte::isSideUsed);
             } else {
                 drawGridOverlays(box);

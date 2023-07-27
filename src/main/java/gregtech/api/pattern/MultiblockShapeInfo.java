@@ -1,7 +1,6 @@
 package gregtech.api.pattern;
 
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.BlockInfo;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
@@ -57,12 +56,11 @@ public class MultiblockShapeInfo {
             return where(symbol, new BlockInfo(blockState, tileEntity));
         }
 
-        public Builder where(char symbol, MetaTileEntity tileEntity, EnumFacing frontSide) {
-            MetaTileEntityHolder holder = new MetaTileEntityHolder();
-            holder.setMetaTileEntity(tileEntity);
-            holder.getMetaTileEntity().onPlacement();
-            holder.getMetaTileEntity().setFrontFacing(frontSide);
-            return where(symbol, new BlockInfo(tileEntity.getBlock().getDefaultState(), holder));
+        public Builder where(char symbol, @Nonnull MetaTileEntity tileEntity, EnumFacing frontSide) {
+            MetaTileEntity mte = tileEntity.createMetaTileEntity(null);
+            mte.onPlacement();
+            mte.setFrontFacing(frontSide);
+            return where(symbol, new BlockInfo(tileEntity.getBlock().getDefaultState(), mte));
         }
 
         /**
@@ -90,13 +88,10 @@ public class MultiblockShapeInfo {
                     for (int x = 0; x < maxX; x++) {
                         BlockInfo info = symbolMap.getOrDefault(columnEntry.charAt(x), BlockInfo.EMPTY);
                         TileEntity tileEntity = info.getTileEntity();
-                        if (tileEntity instanceof MetaTileEntityHolder holder) {
-                            final MetaTileEntity mte = holder.getMetaTileEntity();
-                            holder = new MetaTileEntityHolder();
-                            holder.setMetaTileEntity(mte);
-                            holder.getMetaTileEntity().onPlacement();
-                            holder.getMetaTileEntity().setFrontFacing(mte.getFrontFacing());
-                            info = new BlockInfo(info.getBlockState(), holder);
+                        if (tileEntity instanceof MetaTileEntity mte) {
+                            mte.onPlacement();
+                            mte.setFrontFacing(mte.getFrontFacing());
+                            info = new BlockInfo(info.getBlockState(), mte);
                         } else if (tileEntity != null) {
                             info = new BlockInfo(info.getBlockState(), tileEntity);
                         }

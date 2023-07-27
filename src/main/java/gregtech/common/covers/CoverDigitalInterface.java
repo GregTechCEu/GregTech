@@ -179,7 +179,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
 
     public TileEntity getCoveredTE() {
         if (this.coverHolder instanceof MetaTileEntity) {
-            return (TileEntity) ((MetaTileEntity) this.coverHolder).getHolder();
+            return (TileEntity) this.coverHolder;
         }
         return null;
     }

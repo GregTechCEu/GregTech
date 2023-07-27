@@ -25,9 +25,9 @@ public abstract class MTETrait {
     private final int networkId;
 
     /**
-     * Create a new MTE trait.
+     * Create a new MetaTileEntity trait.
      *
-     * @param metaTileEntity the MTE to reference, and add the trait to
+     * @param metaTileEntity the MetaTileEntity to reference, and add the trait to
      */
     public MTETrait(@Nonnull MetaTileEntity metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
@@ -48,13 +48,13 @@ public abstract class MTETrait {
     }
 
     /**
-     * @return the name of the MTE Trait
+     * @return the name of the MetaTileEntity Trait
      */
     @Nonnull
     public abstract String getName();
 
     /**
-     * @return the network ID of the MTE Trait
+     * @return the network ID of the MetaTileEntity Trait
      */
     public final int getNetworkID() {
         return this.networkId;

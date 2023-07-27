@@ -31,8 +31,8 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
     public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull IBlockState blockState, @Nonnull IProbeHitData data) {
         if (mode == ProbeMode.DEBUG && ConfigHolder.misc.debug) {
             TileEntity tileEntity = world.getTileEntity(data.getPos());
-            if (tileEntity instanceof IGregTechTileEntity) {
-                MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
+            if (tileEntity instanceof IGregTechTileEntity igtte) {
+                MetaTileEntity metaTileEntity = igtte.getMetaTileEntity();
                 if (metaTileEntity != null) {
                     List<String> list = new ArrayList<>();
                     list.add("MetaTileEntity Id: " + metaTileEntity.metaTileEntityId);

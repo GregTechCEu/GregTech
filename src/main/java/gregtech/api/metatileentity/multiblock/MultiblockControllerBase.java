@@ -11,7 +11,6 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.*;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -146,12 +145,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
         return () -> Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
-            // TODO
-            MetaTileEntityHolder holder = new MetaTileEntityHolder();
-            holder.setMetaTileEntity(tile);
-            holder.getMetaTileEntity().onPlacement();
-            holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
-            return new BlockInfo(tile.getBlock().getDefaultState(), holder);
+            MetaTileEntity mte = tile.createMetaTileEntity(null);
+            mte.getMetaTileEntity().onPlacement();
+            mte.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
+            return new BlockInfo(tile.getBlock().getDefaultState(), mte);
         }).toArray(BlockInfo[]::new);
     }
 

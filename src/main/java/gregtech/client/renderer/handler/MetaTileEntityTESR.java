@@ -5,7 +5,6 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -22,10 +21,10 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
-public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntityHolder> {
+public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity> {
 
     @Override
-    public void render(MetaTileEntityHolder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void render(MetaTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -46,22 +45,22 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
         MetaTileEntity metaTileEntity = te.getMetaTileEntity();
-        if (metaTileEntity instanceof IFastRenderMetaTileEntity) {
+        if (metaTileEntity instanceof IFastRenderMetaTileEntity fastRender) {
             CCRenderState renderState = CCRenderState.instance();
             renderState.reset();
             renderState.bind(buffer);
             renderState.setBrightness(te.getWorld(), te.getPos());
-            ((IFastRenderMetaTileEntity) metaTileEntity).renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
+            fastRender.renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
         }
         if (metaTileEntity != null) {
             for (EnumFacing side : EnumFacing.VALUES) {
                 CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
-                if (cover instanceof IFastRenderMetaTileEntity) {
+                if (cover instanceof IFastRenderMetaTileEntity fastRender) {
                     CCRenderState renderState = CCRenderState.instance();
                     renderState.reset();
                     renderState.bind(buffer);
                     renderState.setBrightness(te.getWorld(), te.getPos().offset(side));
-                    ((IFastRenderMetaTileEntity) cover).renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
+                    fastRender.renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
                 }
             }
         }
@@ -77,43 +76,42 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
         if (metaTileEntity != null) {
             for (EnumFacing side : EnumFacing.VALUES) {
                 CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
-                if (cover instanceof IFastRenderMetaTileEntity) {
-                    ((IFastRenderMetaTileEntity) cover).renderMetaTileEntity(x, y, z, partialTicks);
+                if (cover instanceof IFastRenderMetaTileEntity fastRender) {
+                    fastRender.renderMetaTileEntity(x, y, z, partialTicks);
                 }
             }
         }
     }
 
     @Override
-    public void renderTileEntityFast(MetaTileEntityHolder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha, @Nonnull BufferBuilder buffer) {
-        MetaTileEntity metaTileEntity = te.getMetaTileEntity();
-        if (metaTileEntity instanceof IFastRenderMetaTileEntity) {
+    public void renderTileEntityFast(MetaTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha, @Nonnull BufferBuilder buffer) {
+        if (te instanceof IFastRenderMetaTileEntity fastRender) {
             CCRenderState renderState = CCRenderState.instance();
             renderState.reset();
             renderState.bind(buffer);
             renderState.setBrightness(te.getWorld(), te.getPos());
-            ((IFastRenderMetaTileEntity) metaTileEntity).renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
-            ((IFastRenderMetaTileEntity) metaTileEntity).renderMetaTileEntity(x, y, z, partialTicks);
+            fastRender.renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
+            fastRender.renderMetaTileEntity(x, y, z, partialTicks);
         }
-        if (metaTileEntity != null) {
+        if (te != null) {
             for (EnumFacing side : EnumFacing.VALUES) {
-                CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
-                if (cover instanceof IFastRenderMetaTileEntity) {
+                CoverBehavior cover = te.getCoverAtSide(side);
+                if (cover instanceof IFastRenderMetaTileEntity fastRender) {
                     CCRenderState renderState = CCRenderState.instance();
                     renderState.reset();
                     renderState.bind(buffer);
                     renderState.setBrightness(te.getWorld(), te.getPos().offset(side));
-                    ((IFastRenderMetaTileEntity) cover).renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
-                    ((IFastRenderMetaTileEntity) cover).renderMetaTileEntity(x, y, z, partialTicks);
+                    fastRender.renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
+                    fastRender.renderMetaTileEntity(x, y, z, partialTicks);
                 }
             }
         }
     }
 
     @Override
-    public boolean isGlobalRenderer(@Nonnull MetaTileEntityHolder te) {
-        if (te.getMetaTileEntity() instanceof IFastRenderMetaTileEntity) {
-            return ((IFastRenderMetaTileEntity) te.getMetaTileEntity()).isGlobalRenderer();
+    public boolean isGlobalRenderer(@Nonnull MetaTileEntity te) {
+        if (te.getMetaTileEntity() instanceof IFastRenderMetaTileEntity fastRender) {
+            return fastRender.isGlobalRenderer();
         }
         return false;
     }
