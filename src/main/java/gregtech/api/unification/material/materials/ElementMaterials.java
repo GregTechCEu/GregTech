@@ -351,7 +351,7 @@ public class ElementMaterials {
 
         Iron = new Material.Builder(51, gregtechId("iron"))
                 .ingot().fluid().plasma().ore()
-                .color(0xC8C8C8, false).iconSet(METALLIC)
+                .color(0xC8C8C8).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_SPRING_SMALL, GENERATE_SPRING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, BLAST_FURNACE_CALCITE_TRIPLE)
                 .element(Elements.Fe)
                 .toolStats(ToolProperty.Builder.of(2.0F, 2.0F, 256, 2)
