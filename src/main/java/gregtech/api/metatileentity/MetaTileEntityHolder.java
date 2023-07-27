@@ -61,7 +61,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     @SideOnly(Side.CLIENT)
     private GTNameTagParticle nameTagParticle;
 
-    private final int[] timeStatistics = new int[20];
+    public static final int TRACKED_TICKS = 20;
+    private final int[] timeStatistics = new int[TRACKED_TICKS];
     private int timeStatisticsIndex = 0;
     private int lagWarningCount = 0;
     protected static final DecimalFormat tricorderFormat = new DecimalFormat("#.#########");
@@ -231,17 +232,11 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             }
         }
         if (logLevel > 1) {
-            if (timeStatistics.length > 0) {
-                double averageTickTime = 0;
-                double worstTickTime = 0;
-                for (int tickTime : timeStatistics) {
-                    averageTickTime += tickTime;
-                    if (tickTime > worstTickTime) {
-                        worstTickTime = tickTime;
-                    }
-                    // Uncomment this line to print out tick-by-tick times.
-                    // list.add(new TextComponentTranslation("tickTime " + tickTime));
-                }
+            double[] timeStats = getTimeStatistics();
+            if (timeStats != null) {
+                double averageTickTime = timeStats[0];
+                double worstTickTime = timeStats[1];
+
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_cpu_load",
                         new TextComponentTranslation(TextFormattingUtil.formatNumbers(averageTickTime / timeStatistics.length)).setStyle(new Style().setColor(TextFormatting.YELLOW)),
                         new TextComponentTranslation(TextFormattingUtil.formatNumbers(timeStatistics.length)).setStyle(new Style().setColor(TextFormatting.GREEN)),
@@ -249,6 +244,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                 ));
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_cpu_load_seconds", tricorderFormat.format(worstTickTime / 1000000000)));
             }
+
             if (lagWarningCount > 0) {
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_lag_count",
                         new TextComponentTranslation(TextFormattingUtil.formatNumbers(lagWarningCount)).setStyle(new Style().setColor(TextFormatting.RED)),
@@ -257,6 +253,25 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             }
         }
         return list;
+    }
+
+    /**
+     * @return double array of length 2, with index 0 being the average time and index 1 the worst time, in ns.
+     *         If there is no tick time, it will return null.
+     */
+    public double @Nullable [] getTimeStatistics() {
+        if (timeStatistics.length > 0) {
+            double averageTickTime = 0;
+            double worstTickTime = 0;
+            for (int tickTime : timeStatistics) {
+                averageTickTime += tickTime;
+                if (tickTime > worstTickTime) {
+                    worstTickTime = tickTime;
+                }
+            }
+            return new double[] { averageTickTime, worstTickTime };
+        }
+        return null;
     }
 
     @Override
