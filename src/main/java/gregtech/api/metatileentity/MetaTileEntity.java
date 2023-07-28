@@ -173,8 +173,16 @@ public abstract class MetaTileEntity extends TickableTileEntityBase implements I
         initializeInventory();
     }
 
+    /**
+     * @deprecated use {@link #createMetaTileEntity()}
+     */
+    @Deprecated
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return null;
+    }
+
+    public MetaTileEntity createMetaTileEntity() {
+        return createMetaTileEntity(null);
     }
 
     protected void initializeInventory() {

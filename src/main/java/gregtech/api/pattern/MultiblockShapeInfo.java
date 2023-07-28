@@ -57,7 +57,7 @@ public class MultiblockShapeInfo {
         }
 
         public Builder where(char symbol, @Nonnull MetaTileEntity tileEntity, EnumFacing frontSide) {
-            MetaTileEntity mte = tileEntity.createMetaTileEntity(null);
+            MetaTileEntity mte = tileEntity.createMetaTileEntity();
             mte.onPlacement();
             mte.setFrontFacing(frontSide);
             return where(symbol, new BlockInfo(tileEntity.getBlock().getDefaultState(), mte));

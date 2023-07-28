@@ -46,7 +46,7 @@ public class AbstractRecipeLogicTest {
                                 map,
                                 null,
                                 1, false));
-        MetaTileEntity atte = at.createMetaTileEntity(null);
+        MetaTileEntity atte = at.createMetaTileEntity();
         atte.setWorld(world);
         map.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))

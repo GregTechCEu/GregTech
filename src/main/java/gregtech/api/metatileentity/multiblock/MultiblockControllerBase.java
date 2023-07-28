@@ -145,7 +145,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
         return () -> Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
-            MetaTileEntity mte = tile.createMetaTileEntity(null);
+            MetaTileEntity mte = tile.createMetaTileEntity();
             mte.getMetaTileEntity().onPlacement();
             mte.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
             return new BlockInfo(tile.getBlock().getDefaultState(), mte);

@@ -174,6 +174,12 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 classReader.accept(new TargetClassVisitor(classWriter, ModelLoaderRegistryVisitor.TARGET_METHOD, ModelLoaderRegistryVisitor::new), ClassReader.EXPAND_FRAMES);
                 return classWriter.toByteArray();
             }
+            case TileEntityVisitor.TARGET_CLASS_NAME: {
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(0);
+                classReader.accept(new TargetClassVisitor(classWriter, TileEntityVisitor.TARGET_METHOD, TileEntityVisitor::new), ClassWriter.COMPUTE_FRAMES);
+                return classWriter.toByteArray();
+            }
         }
         if (EnchantmentCanApplyVisitor.CLASS_TO_MAPPING_MAP.containsKey(internalName)) {
             ObfMapping methodMapping = EnchantmentCanApplyVisitor.CLASS_TO_MAPPING_MAP.get(internalName);
