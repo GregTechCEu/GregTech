@@ -260,40 +260,37 @@ public class MetaTileEntityBlock extends BlockCustomParticle implements ITileEnt
 
     @Override
     public void onBlockPlacedBy(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, ItemStack stack) {
-        worldIn.setTileEntity(pos, GregTechAPI.MTE_REGISTRY.createMetaTileEntity(stack.getMetadata()));
-        if ((IGregTechTileEntity) worldIn.getTileEntity(pos) instanceof MetaTileEntity mte) {
-            mte = GregTechAPI.MTE_REGISTRY.createMetaTileEntity(stack.getMetadata());
-
-            if (stack.hasDisplayName()) {
-                mte.setCustomName(stack.getDisplayName());
-            }
-            if (stack.hasTagCompound()) {
-                mte.initFromItemStackData(Objects.requireNonNull(stack.getTagCompound()));
-            }
-            if (mte.isValidFrontFacing(EnumFacing.UP)) {
-                mte.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
-            } else {
-                mte.setFrontFacing(placer.getHorizontalFacing().getOpposite());
-            }
-            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
-                if (mte.getProxy() != null) {
-                    mte.getProxy().setOwner((EntityPlayer) placer);
-                }
-            }
-
-            // Color machines on place if holding spray can in off-hand
-            if (placer instanceof EntityPlayer player) {
-                ItemStack offhand = placer.getHeldItemOffhand();
-                for (int i  = 0; i < EnumDyeColor.values().length; i++) {
-                    if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
-                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse(player, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
-                        break;
-                    }
-                }
-            }
-
-            mte.onPlacement();
+        MetaTileEntity mte = GregTechAPI.MTE_REGISTRY.createMetaTileEntity(stack.getMetadata());
+        worldIn.setTileEntity(pos, mte);
+        if (stack.hasDisplayName()) {
+            mte.setCustomName(stack.getDisplayName());
         }
+        if (stack.hasTagCompound()) {
+            mte.initFromItemStackData(Objects.requireNonNull(stack.getTagCompound()));
+        }
+        if (mte.isValidFrontFacing(EnumFacing.UP)) {
+            mte.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
+        } else {
+            mte.setFrontFacing(placer.getHorizontalFacing().getOpposite());
+        }
+        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            if (mte.getProxy() != null) {
+                mte.getProxy().setOwner((EntityPlayer) placer);
+            }
+        }
+
+        // Color machines on place if holding spray can in off-hand
+        if (placer instanceof EntityPlayer player) {
+            ItemStack offhand = placer.getHeldItemOffhand();
+            for (int i  = 0; i < EnumDyeColor.values().length; i++) {
+                if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
+                    MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse(player, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
+                    break;
+                }
+            }
+        }
+
+        mte.onPlacement();
     }
 
     @Override
