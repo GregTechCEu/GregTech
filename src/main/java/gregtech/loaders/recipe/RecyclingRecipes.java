@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.category.RecipeCategories;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTTagType;
@@ -19,6 +20,7 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 
@@ -36,6 +38,7 @@ import static gregtech.api.unification.material.info.MaterialFlags.*;
 public class RecyclingRecipes {
 
     private static final NBTCondition RENAMED_NBT = NBTCondition.create(NBTTagType.COMPOUND, "display", "");
+    private static final NBTCondition REPAIRCOST_NBT = NBTCondition.create(NBTTagType.INT, "RepairCost", "");
 
     // TODO - Fix recipe order with some things (noticed Hermetic Casings)
     // TODO - Figure out solution to LuV+ components
@@ -116,7 +119,8 @@ public class RecyclingRecipes {
                 .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(outputs))
-                .EUt(2 * multiplier);
+                .EUt(2 * multiplier)
+                .category(RecipeCategories.MACERATOR_RECYCLING);
 
         cleanInputNBT(input, recipe);
 
@@ -125,7 +129,6 @@ public class RecyclingRecipes {
     }
 
     private static void registerExtractorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier, @Nullable OrePrefix prefix) {
-
         // Handle simple materials separately
         if (prefix != null && prefix.secondaryMaterials.isEmpty()) {
             MaterialStack ms = OreDictUnifier.getMaterial(input);
@@ -144,6 +147,7 @@ public class RecyclingRecipes {
                     .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
                     .duration((int) Math.max(1, ms.amount * ms.material.getMass() / M))
                     .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                    .category(RecipeCategories.EXTRACTOR_RECYCLING)
                     .buildAndRegister();
 
             return;
@@ -171,7 +175,8 @@ public class RecyclingRecipes {
                 .inputs(input.copy())
                 .fluidOutputs(fluidMs.material.getFluid((int) (fluidMs.amount * L / M)))
                 .duration((int) duration)
-                .EUt(GTValues.VA[GTValues.LV] * multiplier);
+                .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                .category(RecipeCategories.EXTRACTOR_RECYCLING);
 
         // Null check the Item before adding it to the Builder.
         // - Try to output an Ingot, otherwise output a Dust.
@@ -190,13 +195,47 @@ public class RecyclingRecipes {
             return;
         } else if (prefix == OrePrefix.block) {
             if (ms != null && !ms.material.hasProperty(PropertyKey.GEM)) {
-                ItemStack output = OreDictUnifier.get(OrePrefix.ingot, ms.material.getProperty(PropertyKey.INGOT).getArcSmeltInto(), 9);
-                RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
-                        .inputs(input.copy())
-                        .outputs(output)
-                        .duration(calculateDuration(Collections.singletonList(output)))
-                        .EUt(GTValues.VA[GTValues.LV])
-                        .buildAndRegister();
+                Material arcSmeltInto = ms.material.getProperty(PropertyKey.INGOT).getArcSmeltInto();
+
+                // Check results to see if the material does not arc smelt into itself
+                MaterialStack materialOutput = getArcSmeltingResult(ms);
+
+                if (materialOutput == null) {
+                    return;
+                }
+
+                RecipeBuilder<?> builder;
+
+                // short circuit. Assuming ingot if material is the same
+                if (materialOutput.material == ms.material) {
+                    ItemStack output = OreDictUnifier.get(OrePrefix.ingot, arcSmeltInto, 9);
+                    builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+                            .inputs(input.copy())
+                            .outputs(output)
+                            .duration(calculateDuration(Collections.singletonList(output)))
+                            .EUt(GTValues.VA[GTValues.LV]);
+                }
+                else {
+                    // Finalize the output List
+                    List<ItemStack> outputs = finalizeOutputs(
+                            Collections.singletonList(materialOutput),
+                            RecipeMaps.ARC_FURNACE_RECIPES.getMaxOutputs(),
+                            RecyclingRecipes::getArcIngotOrDust
+                    );
+
+                    builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+                            .inputs(input.copy())
+                            .outputs(outputs)
+                            .duration(calculateDuration(outputs))
+                            .EUt(GTValues.VA[GTValues.LV]);
+                }
+
+                // separate special arc smelting recipes into the regular category
+                // i.e. Iron -> Wrought Iron, Copper -> Annealed Copper
+                if (ms.material.hasFlag(IS_MAGNETIC) || ms.material == arcSmeltInto) {
+                    builder.category(RecipeCategories.ARC_FURNACE_RECYCLING);
+                }
+                builder.buildAndRegister();
             }
             return;
         }
@@ -220,14 +259,38 @@ public class RecyclingRecipes {
         if (outputs.size() == 0) return;
 
         // Build the final Recipe.
-        RecipeBuilder<SimpleRecipeBuilder> recipe = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+        RecipeBuilder<SimpleRecipeBuilder> builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
                 .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(outputs))
                 .EUt(GTValues.VA[GTValues.LV]);
 
-        cleanInputNBT(input, recipe);
-        recipe.buildAndRegister();
+        if (needsRecyclingCategory(prefix, ms, outputs)) {
+            // all other recipes are recycling here
+            builder.category(RecipeCategories.ARC_FURNACE_RECYCLING);
+        }
+
+        cleanInputNBT(input, builder);
+        builder.buildAndRegister();
+    }
+
+    private static boolean needsRecyclingCategory(@Nullable OrePrefix prefix, @Nullable MaterialStack inputStack,
+                                                  @Nonnull List<ItemStack> outputs) {
+        // separate special arc smelting recipes into the regular category
+        // i.e. Iron -> Wrought Iron, Copper -> Annealed Copper
+        if (prefix == OrePrefix.nugget || prefix == OrePrefix.ingot || prefix == OrePrefix.block) {
+            if (outputs.size() == 1) {
+                UnificationEntry entry = OreDictUnifier.getUnificationEntry(outputs.get(0));
+                if (entry != null && inputStack != null) {
+                    Material material = inputStack.material;
+                    if (!material.hasFlag(IS_MAGNETIC) && material.hasProperty(PropertyKey.INGOT)) {
+                        // use default category for separation
+                        return material.getProperty(PropertyKey.INGOT).getArcSmeltInto() != entry.material;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     private static MaterialStack getArcSmeltingResult(MaterialStack materialStack) {
@@ -511,6 +574,15 @@ public class RecyclingRecipes {
             builder.clearInputs();
             // Don't use ANY to avoid issues with Drums, Super Chests, and other MTEs that hold an inventory
             builder.inputNBT(mte, NBTMatcher.NOT_PRESENT_OR_HAS_KEY, RENAMED_NBT);
+        }
+
+        Item inputItem = input.getItem();
+        // Check to see if we can recycle tools. Only allow Tools at full durability
+        if (inputItem.isDamageable()) {
+            if (inputItem.getDamage(input) == 0) {
+                builder.clearInputs();
+                builder.inputNBT(inputItem, NBTMatcher.NOT_PRESENT_OR_HAS_KEY, REPAIRCOST_NBT);
+            }
         }
     }
 }

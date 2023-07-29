@@ -3,13 +3,14 @@ package gregtech.api.recipes;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.EmptyRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
-import gregtech.integration.groovy.GroovyScriptCompat;
+import gregtech.integration.groovy.GroovyScriptModule;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -68,6 +69,7 @@ public class Recipe {
      * If this Recipe is hidden from JEI
      */
     private final boolean hidden;
+    private final GTRecipeCategory recipeCategory;
 
     /**
      * If this Recipe is a Crafttweaker recipe. Used for logging purposes
@@ -79,12 +81,11 @@ public class Recipe {
 
     private final int hashCode;
 
-    public Recipe(List<GTRecipeInput> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
+    public Recipe(@Nonnull List<GTRecipeInput> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
                   List<GTRecipeInput> fluidInputs, List<FluidStack> fluidOutputs,
-                  int duration, int EUt, boolean hidden, boolean isCTRecipe,
-                  IRecipePropertyStorage recipePropertyStorage) {
-        this.recipePropertyStorage =
-                recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE : recipePropertyStorage;
+                  int duration, int EUt, boolean hidden, boolean isCTRecipe, IRecipePropertyStorage recipePropertyStorage,
+                  @Nonnull GTRecipeCategory recipeCategory) {
+        this.recipePropertyStorage = recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE : recipePropertyStorage;
         if (inputs.isEmpty()) {
             this.inputs = Collections.emptyList();
         } else {
@@ -104,14 +105,16 @@ public class Recipe {
         this.duration = duration;
         this.EUt = EUt;
         this.hidden = hidden;
+        this.recipeCategory = recipeCategory;
         this.isCTRecipe = isCTRecipe;
         this.hashCode = makeHashCode();
-        this.groovyRecipe = GroovyScriptCompat.isCurrentlyRunning();
+        this.groovyRecipe = GroovyScriptModule.isCurrentlyRunning();
     }
 
+    @Nonnull
     public Recipe copy() {
-        return new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs,
-                this.fluidOutputs, this.duration, this.EUt, this.hidden, this.isCTRecipe, this.recipePropertyStorage);
+        return new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs, this.fluidOutputs,
+                this.duration, this.EUt, this.hidden, this.isCTRecipe, this.recipePropertyStorage, this.recipeCategory);
     }
 
     /**
@@ -557,6 +560,11 @@ public class Recipe {
             }
         }
         return false;
+    }
+
+    @Nonnull
+    public GTRecipeCategory getRecipeCategory() {
+        return this.recipeCategory;
     }
 
     ///////////////////////////////////////////////////////////

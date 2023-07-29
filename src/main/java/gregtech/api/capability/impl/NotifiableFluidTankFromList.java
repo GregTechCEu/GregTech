@@ -6,6 +6,11 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.function.Supplier;
 
+/**
+ * @deprecated Distinct insertion logic should be handled by {@link FluidTankList}s.
+ * Use other fluid tank implementations.
+ */
+@Deprecated
 public abstract class NotifiableFluidTankFromList extends NotifiableFluidTank {
 
     private final int index;

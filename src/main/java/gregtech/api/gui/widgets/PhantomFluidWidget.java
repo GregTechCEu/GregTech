@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static gregtech.api.util.GTUtility.getFluidFromContainer;
+
 public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhostIngredientTarget {
 
     private FluidTank fluidTank = null;
@@ -55,16 +57,6 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         this.fluidTank = fluidTank;
         this.fluidStackSupplier = fluidTank::getFluid;
         this.fluidStackUpdater = fluidTank::setFluid;
-    }
-
-    private static FluidStack drainFrom(Object ingredient) {
-        if (ingredient instanceof ItemStack) {
-            ItemStack itemStack = (ItemStack) ingredient;
-            IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-            if (fluidHandler != null)
-                return fluidHandler.drain(Integer.MAX_VALUE, false);
-        }
-        return null;
     }
 
     public PhantomFluidWidget showTip(boolean showTip) {
@@ -91,7 +83,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
 
     @Override
     public List<Target<?>> getPhantomTargets(Object ingredient) {
-        if (!(ingredient instanceof FluidStack) && drainFrom(ingredient) == null) {
+        if (!(ingredient instanceof FluidStack) && getFluidFromContainer(ingredient) == null) {
             return Collections.emptyList();
         }
 
@@ -109,7 +101,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                 if (ingredient instanceof FluidStack)
                     ingredientStack = (FluidStack) ingredient;
                 else
-                    ingredientStack = drainFrom(ingredient);
+                    ingredientStack = getFluidFromContainer(ingredient);
 
                 if (ingredientStack != null) {
                     NBTTagCompound tagCompound = ingredientStack.writeToNBT(new NBTTagCompound());

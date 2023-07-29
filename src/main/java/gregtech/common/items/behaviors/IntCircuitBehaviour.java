@@ -10,6 +10,7 @@ import com.cleanroommc.modularui.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import gregtech.api.gui.GTGuis;
+import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
@@ -19,7 +20,6 @@ import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
@@ -38,7 +38,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
         int configuration = IntCircuitIngredient.getCircuitConfiguration(itemStack);
-        lines.add(I18n.format("metaitem.int_circuit.configuration", configuration));
+        lines.add(1, I18n.format("metaitem.int_circuit.configuration", configuration));
     }
 
     @Override
@@ -46,10 +46,10 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
         MetaTileEntity mte = GTUtility.getMetaTileEntity(world, pos);
         ItemStack stack = player.getHeldItem(hand);
 
-        if (!(mte instanceof SimpleMachineMetaTileEntity)) {
+        if (!(mte instanceof IGhostSlotConfigurable)) {
             return ActionResult.newResult(EnumActionResult.FAIL, stack);
         } else if (!world.isRemote) {
-            ((SimpleMachineMetaTileEntity) mte).setGhostCircuitConfig(IntCircuitIngredient.getCircuitConfiguration(stack));
+            ((IGhostSlotConfigurable) mte).setGhostCircuitConfig(IntCircuitIngredient.getCircuitConfiguration(stack));
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
     }

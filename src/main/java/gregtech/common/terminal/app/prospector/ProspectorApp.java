@@ -6,7 +6,7 @@ import com.google.common.collect.Tables;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.core.network.packets.PacketProspecting;
+import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.TerminalOSWidget;
@@ -16,11 +16,13 @@ import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.ClickComponent;
 import gregtech.common.terminal.component.SearchComponent;
+import gregtech.core.network.packets.PacketProspecting;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,15 +31,15 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class ProspectorApp extends AbstractApplication implements SearchComponent.IWidgetSearch<String> {
-    WidgetOreList widgetOreList;
-    WidgetProspectingMap widgetProspectingMap;
-    ColorRectTexture background;
+    private WidgetOreList widgetOreList;
+    private WidgetProspectingMap widgetProspectingMap;
+    private ColorRectTexture background;
     @SideOnly(Side.CLIENT)
-    Table<Integer, Integer, PacketProspecting> persist;
-    final int mode;
+    private Table<Integer, Integer, PacketProspecting> persist;
+    private final ProspectorMode mode;
 
-    public ProspectorApp(int mode) {
-        super(mode == 0 ? "ore_prospector" : "fluid_prospector");
+    public ProspectorApp(@Nonnull ProspectorMode mode) {
+        super(mode.terminalName);
         this.mode = mode;
     }
 
@@ -74,23 +76,45 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
         });
         if (isClient) {
             loadPacketLocalConfig();
+            //Cardinal directions
+            this.addWidget(new LabelWidget(-2 + (16 * (chunkRadius * 2 - 1)) / 2, offset, "N", this::labelColor).setShadow(true));
+            this.addWidget(new LabelWidget(-2 + (16 * (chunkRadius * 2 - 1)) / 2, offset - 6 + 16 * (chunkRadius * 2 - 1), "S", this::labelColor).setShadow(true));
+            this.addWidget(new LabelWidget(0, offset - 3 + (16 * (chunkRadius * 2 - 1)) / 2, "W", this::labelColor).setShadow(true));
+            this.addWidget(new LabelWidget(-6 + 16 * (chunkRadius * 2 - 1), offset - 3 + (16 * (chunkRadius * 2 - 1)) / 2, "E", this::labelColor).setShadow(true));
         }
         return this;
     }
 
+    int labelColor() {
+        return this.widgetProspectingMap.getDarkMode() ? 0xF0F0F0 : 0x404040;
+    }
+
     @SideOnly(Side.CLIENT)
     protected void loadPacketLocalConfig() {
-        new Thread(()-> { // thread for better QoL
+        new Thread(() -> { // thread for better QoL
             int posX = gui.entityPlayer.getPosition().getX();
             int posZ = gui.entityPlayer.getPosition().getZ();
-            int playerChunkX = posX >> 4;
-            int playerChunkZ = posZ >> 4;
+
+            if (posX % 16 > 7 || posX % 16 == 0) {
+                posX -= 1;
+            } else {
+                posX += 1;
+            }
+            //draw red horizontal line
+            if (posZ % 16 > 7 || posZ % 16 == 0) {
+                posZ -= 1;
+            } else {
+                posZ += 1;
+            }
+
+            int playerChunkX = gui.entityPlayer.chunkCoordX;
+            int playerChunkZ = gui.entityPlayer.chunkCoordZ;
             int chunkRadius = getAppTier() + 3 - 1;
             for (int i = playerChunkX - chunkRadius; i <= playerChunkX + chunkRadius; i++) {
                 for (int j = playerChunkZ - chunkRadius; j <= playerChunkZ + chunkRadius; j++) {
                     NBTTagCompound nbt = null;
                     try {
-                        nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d/%d_%d.nbt", getRegistryName(), mode, i, j)));
+                        nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d/%d_%d.nbt", getRegistryName(), mode.ordinal(), i, j)));
                     } catch (IOException e) {
                         GTLog.logger.error("error while loading local nbt for {}", getRegistryName(), e);
                     }
@@ -110,8 +134,8 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
 
     @SideOnly(Side.CLIENT)
     protected void savePacketLocalConfig() {
-        new Thread(()->{ // thread for better QoL
-            File folder = new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d", getRegistryName(), mode));
+        new Thread(() -> { // thread for better QoL
+            File folder = new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d", getRegistryName(), mode.ordinal()));
             if (!folder.exists()) {
                 if (!folder.mkdirs()) return;
             }

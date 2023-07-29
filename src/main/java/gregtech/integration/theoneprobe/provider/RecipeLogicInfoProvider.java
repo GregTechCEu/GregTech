@@ -7,7 +7,9 @@ import gregtech.api.capability.impl.PrimitiveRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
@@ -38,15 +40,16 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
             if (capability instanceof PrimitiveRecipeLogic) {
                 return; // do not show info for primitive machines, as they are supposed to appear powerless
             }
-            int EUt = capability.getRecipeEUt();
+            int EUt = capability.getInfoProviderEUt();
             int absEUt = Math.abs(EUt);
+            boolean consumer = capability.consumesEnergy();
             String text = null;
 
             if (tileEntity instanceof IGregTechTileEntity) {
                 IGregTechTileEntity gtTileEntity = (IGregTechTileEntity) tileEntity;
                 MetaTileEntity mte = gtTileEntity.getMetaTileEntity();
-                if (mte instanceof SteamMetaTileEntity) {
-                    text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " L/t " + "{*material.steam*}";
+                if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler) {
+                    text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " L/t {*gregtech.top.steam*} {*" + Materials.Steam.getUnlocalizedName() + "*}";
                 }
             }
             if (text == null) {
@@ -54,9 +57,11 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
                 text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN + " (" + GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.GREEN + ")";
             }
 
-            if (EUt > 0) {
+            if (EUt == 0) return; // idk what to do for 0 eut
+
+            if (consumer) {
                 probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} " + text);
-            } else if (EUt < 0) {
+            } else {
                 probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} " + text);
             }
         }

@@ -1,5 +1,6 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
@@ -7,8 +8,10 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.util.Tuple;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -16,8 +19,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static gregtech.api.recipes.logic.OverclockingLogic.standardOverclockingLogic;
 
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
@@ -110,7 +111,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (controller instanceof RecipeMapMultiblockController) {
             RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
 
-            if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
+            if (distinctController.canBeDistinct() && distinctController.isDistinct() && getInputInventory().getSlots() > 0) {
                 boolean canWork = false;
                 if (invalidatedInputList.isEmpty()) {
                     return true;
@@ -121,16 +122,37 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     metaTileEntity.getNotifiedFluidInputList().clear();
                     metaTileEntity.getNotifiedItemInputList().clear();
                 } else {
-                    Iterator<IItemHandlerModifiable> iterator = metaTileEntity.getNotifiedItemInputList().iterator();
-                    while (iterator.hasNext()) {
-                        IItemHandlerModifiable bus = iterator.next();
-                        if (invalidatedInputList.remove(bus)) {
-                            canWork = true;
+                    Iterator<IItemHandlerModifiable> notifiedIter = metaTileEntity.getNotifiedItemInputList().iterator();
+                    while (notifiedIter.hasNext()) {
+                        IItemHandlerModifiable bus = notifiedIter.next();
+                        Iterator<IItemHandlerModifiable> invalidatedIter = invalidatedInputList.iterator();
+                        while (invalidatedIter.hasNext()) {
+                            IItemHandler invalidatedHandler = invalidatedIter.next();
+                            if (invalidatedHandler instanceof ItemHandlerList) {
+                                for (IItemHandler ih : ((ItemHandlerList) invalidatedHandler).getBackingHandlers()) {
+                                    if (ih == bus) {
+                                        canWork = true;
+                                        invalidatedIter.remove();
+                                        break;
+                                    }
+                                }
+                            } else if (invalidatedHandler == bus) {
+                                canWork = true;
+                                invalidatedIter.remove();
+                            }
                         }
-                        iterator.remove();
+                        notifiedIter.remove();
                     }
                 }
-                if (!invalidatedInputList.containsAll(getInputBuses())) {
+                ArrayList<IItemHandler> flattenedHandlers = new ArrayList<>();
+                for (IItemHandler ih : getInputBuses()) {
+                    if (ih instanceof ItemHandlerList) {
+                        flattenedHandlers.addAll(((ItemHandlerList) ih).getBackingHandlers());
+                    }
+                    flattenedHandlers.add(ih);
+                }
+
+                if (!invalidatedInputList.containsAll(flattenedHandlers)) {
                     canWork = true;
                 }
                 return canWork;
@@ -152,7 +174,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (controller instanceof RecipeMapMultiblockController) {
             RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
 
-            if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
+            if (distinctController.canBeDistinct() && distinctController.isDistinct() && getInputInventory().getSlots() > 0) {
                 trySearchNewRecipeDistinct();
                 return;
             }
@@ -217,7 +239,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     public void invalidateInputs() {
         MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
         RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
-        if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
+        if (distinctController.canBeDistinct() && distinctController.isDistinct() && getInputInventory().getSlots() > 0) {
             invalidatedInputList.add(currentDistinctInputBus);
         } else {
             super.invalidateInputs();
@@ -251,36 +273,29 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int amountOC) {
+    protected void modifyOverclockPre(@Nonnull int[] values, @Nonnull IRecipePropertyStorage storage) {
+        super.modifyOverclockPre(values, storage);
+
+        // apply maintenance bonuses
+        Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
+
+        // duration bonus
+        if (maintenanceValues.getSecond() != 1.0) {
+            values[1] = (int) Math.round(values[1] * maintenanceValues.getSecond());
+        }
+    }
+
+    @Override
+    protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {
+        super.modifyOverclockPost(overclockResults, storage);
+
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
-        int[] overclock = null;
-        if (maintenanceValues.getSecond() != 1.0)
-
-            overclock = standardOverclockingLogic(
-                    Math.abs(recipeEUt),
-                    maxVoltage,
-                    (int) Math.round(recipeDuration * maintenanceValues.getSecond()),
-                    amountOC,
-                    getOverclockingDurationDivisor(),
-                    getOverclockingVoltageMultiplier()
-            );
-
-        if (overclock == null)
-            overclock = standardOverclockingLogic(
-                    Math.abs(recipeEUt),
-                    maxVoltage,
-                    recipeDuration,
-                    amountOC,
-                    getOverclockingDurationDivisor(),
-                    getOverclockingVoltageMultiplier()
-            );
-
-        if (maintenanceValues.getFirst() > 0)
-            overclock[1] = (int) (overclock[1] * (1 + 0.1 * maintenanceValues.getFirst()));
-
-        return overclock;
+        // duration penalty
+        if (maintenanceValues.getFirst() > 0) {
+            overclockResults[1] = (int) (overclockResults[1] * (1 + 0.1 * maintenanceValues.getFirst()));
+        }
     }
 
     @Override
@@ -288,13 +303,13 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         return getMaxVoltage();
     }
 
+    @Nonnull
     protected Tuple<Integer, Double> getMaintenanceValues() {
         MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
         int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() || !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
         double durationMultiplier = 1.0D;
         if (displayBase != null && displayBase.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
-            IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-            durationMultiplier = hatch.getDurationMultiplier();
+            durationMultiplier = displayBase.getMaintenanceDurationMultiplier();
         }
         return new Tuple<>(numMaintenanceProblems, durationMultiplier);
     }
@@ -311,24 +326,20 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected void completeRecipe() {
-        performMaintenanceMufflerOperations();
+        performMufflerOperations();
         super.completeRecipe();
     }
 
-    protected void performMaintenanceMufflerOperations() {
-        if (metaTileEntity instanceof MultiblockWithDisplayBase) {
-            MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-
+    protected void performMufflerOperations() {
+        if (metaTileEntity instanceof MultiblockWithDisplayBase controller) {
             // output muffler items
             if (controller.hasMufflerMechanics()) {
-                if (parallelRecipesPerformed > 1)
+                if (parallelRecipesPerformed > 1) {
                     controller.outputRecoveryItems(parallelRecipesPerformed);
-                else controller.outputRecoveryItems();
+                } else {
+                    controller.outputRecoveryItems();
+                }
             }
-
-            // increase total on time
-            if (controller.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance)
-                controller.calculateMaintenance(this.progressTime);
         }
     }
 
@@ -358,7 +369,31 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected long getMaxVoltage() {
-        return Math.max(getEnergyContainer().getInputVoltage(), getEnergyContainer().getOutputVoltage());
+        IEnergyContainer energyContainer = getEnergyContainer();
+        if (energyContainer instanceof EnergyContainerList) {
+            long voltage;
+            long amperage;
+            if (energyContainer.getInputVoltage() > energyContainer.getOutputVoltage()) {
+                voltage = energyContainer.getInputVoltage();
+                amperage = energyContainer.getInputAmperage();
+            } else {
+                voltage = energyContainer.getOutputVoltage();
+                amperage = energyContainer.getOutputAmperage();
+            }
+
+            if (amperage == 1) {
+                // amperage is 1 when the energy is not exactly on a tier
+
+                // the voltage for recipe search is always on tier, so take the closest lower tier
+                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+            } else {
+                // amperage != 1 means the voltage is exactly on a tier
+                // ignore amperage, since only the voltage is relevant for recipe search
+                // amps are never > 3 in an EnergyContainerList
+                return voltage;
+            }
+        }
+        return Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
     }
 
     @Nullable
@@ -366,7 +401,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     public RecipeMap<?> getRecipeMap() {
         // if the multiblock has more than one RecipeMap, return the currently selected one
         if (metaTileEntity instanceof IMultipleRecipeMaps)
-                return ((IMultipleRecipeMaps) metaTileEntity).getCurrentRecipeMap();
+            return ((IMultipleRecipeMaps) metaTileEntity).getCurrentRecipeMap();
         return super.getRecipeMap();
     }
 }

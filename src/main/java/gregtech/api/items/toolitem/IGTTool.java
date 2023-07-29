@@ -32,6 +32,7 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
@@ -146,7 +147,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         stackCompound.setInteger(HIDE_FLAGS, 2);
 
         // Set Material
-        toolTag.setString(MATERIAL_KEY, material.toString());
+        toolTag.setString(MATERIAL_KEY, material.getRegistryName());
 
         // Grab the definition here because we cannot use getMaxAoEDefinition as it is not initialized yet
         AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
@@ -155,7 +156,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
 
         // Durability formula we are working with:
-        // Final Durability = (material durability * material durability multiplier) + (tool definition durability * definition durability multiplier)
+        // Final Durability = (material durability * material durability multiplier) + (tool definition durability * definition durability multiplier) - 1
+        // Subtracts 1 internally since Minecraft treats "0" as a valid durability, but we don't want to display this.
 
         int durability = toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
 
@@ -166,7 +168,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             durability += toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack);
         }
 
-        toolTag.setInteger(MAX_DURABILITY_KEY, durability);
+        toolTag.setInteger(MAX_DURABILITY_KEY, durability - 1);
         toolTag.setInteger(DURABILITY_KEY, 0);
         if (toolProperty.getUnbreakable()) {
             stackCompound.setBoolean(UNBREAKABLE_KEY, true);
@@ -222,7 +224,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default Material getToolMaterial(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
         String string = toolTag.getString(MATERIAL_KEY);
-        Material material = GregTechAPI.MaterialRegistry.get(string);
+        Material material = GregTechAPI.materialManager.getMaterial(string);
         if (material == null) {
             toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).toString());
         }
@@ -666,24 +668,24 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         // durability info
         if (!tagCompound.getBoolean(UNBREAKABLE_KEY)) {
-            int damageRemaining = tool.getTotalMaxDurability(stack) - stack.getItemDamage();
+            // Plus 1 to match vanilla behavior where tools can still be used once at zero durability. We want to not show this
+            int damageRemaining = tool.getTotalMaxDurability(stack) - stack.getItemDamage() + 1;
             if (toolStats.isSuitableForCrafting(stack)) {
-                tooltip.add(I18n.format("item.gt.tool.tooltip.crafting_uses", GTUtility.formatNumbers(damageRemaining / Math.max(1, toolStats.getToolDamagePerCraft(stack)))));
+                tooltip.add(I18n.format("item.gt.tool.tooltip.crafting_uses", TextFormattingUtil.formatNumbers(damageRemaining / Math.max(1, toolStats.getToolDamagePerCraft(stack)))));
             }
 
-            // Plus 1 to match vanilla behavior where tools can still be used once at zero durability
-            tooltip.add(I18n.format("item.gt.tool.tooltip.general_uses", GTUtility.formatNumbers(damageRemaining)));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.general_uses", TextFormattingUtil.formatNumbers(damageRemaining)));
         }
 
         // attack info
         if (toolStats.isSuitableForAttacking(stack)) {
-            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_damage", GTUtility.formatNumbers(2 + tool.getTotalAttackDamage(stack))));
-            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_speed", GTUtility.formatNumbers(4 + tool.getTotalAttackSpeed(stack))));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_damage", TextFormattingUtil.formatNumbers(2 + tool.getTotalAttackDamage(stack))));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.attack_speed", TextFormattingUtil.formatNumbers(4 + tool.getTotalAttackSpeed(stack))));
         }
 
         // mining info
         if (toolStats.isSuitableForBlockBreak(stack)) {
-            tooltip.add(I18n.format("item.gt.tool.tooltip.mining_speed", GTUtility.formatNumbers(tool.getTotalToolSpeed(stack))));
+            tooltip.add(I18n.format("item.gt.tool.tooltip.mining_speed", TextFormattingUtil.formatNumbers(tool.getTotalToolSpeed(stack))));
 
             int harvestLevel = tool.getTotalHarvestLevel(stack);
             String harvestName = "item.gt.tool.harvest_level." + harvestLevel;
@@ -735,27 +737,30 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         ));
 
         // repair info
-        if (TooltipHelper.isShiftDown()) {
-            Material material = getToolMaterial(stack);
+        if (!tagCompound.getBoolean(UNBREAKABLE_KEY)) {
+            if (TooltipHelper.isShiftDown()) {
+                Material material = getToolMaterial(stack);
 
-            Collection<String> repairItems = new ArrayList<>();
-            if (ModHandler.isMaterialWood(material)) {
-                repairItems.add(OrePrefix.plank.getLocalNameForItem(material));
-            } else {
-                if (material.hasProperty(PropertyKey.INGOT)) {
-                    repairItems.add(OrePrefix.ingot.getLocalNameForItem(material));
-                } else if (material.hasProperty(PropertyKey.GEM)) {
-                    repairItems.add(OrePrefix.gem.getLocalNameForItem(material));
+                Collection<String> repairItems = new ArrayList<>();
+                if (!ModHandler.isMaterialWood(material)) {
+                    if (material.hasProperty(PropertyKey.INGOT)) {
+                        repairItems.add(OrePrefix.ingot.getLocalNameForItem(material));
+                    } else if (material.hasProperty(PropertyKey.GEM)) {
+                        repairItems.add(OrePrefix.gem.getLocalNameForItem(material));
+                    }
                 }
-                repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                if (!OreDictUnifier.get(OrePrefix.plate, material).isEmpty()) {
+                    repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                }
+                if (!repairItems.isEmpty()) {
+                    tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", String.join(", ", repairItems)));
+                }
+            } else {
+                tooltip.add(I18n.format("item.gt.tool.tooltip.repair_info"));
             }
-            tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", String.join(", ", repairItems)));
-
-            if (this.isElectric()) {
-                tooltip.add(I18n.format("item.gt.tool.replace_tool_head"));
-            }
-        } else {
-            tooltip.add(I18n.format("item.gt.tool.tooltip.repair_info"));
+        }
+        if (this.isElectric()) {
+            tooltip.add(I18n.format("item.gt.tool.replace_tool_head"));
         }
     }
 

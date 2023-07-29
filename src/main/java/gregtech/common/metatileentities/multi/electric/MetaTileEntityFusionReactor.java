@@ -85,6 +85,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         return new MetaTileEntityFusionReactor(metaTileEntityId, tier);
     }
 
+    @Nonnull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -106,7 +107,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 .where('S', selfPredicate())
                 .where('G', states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.FUSION_GLASS)).or(states(getCasingState())))
                 .where('E', states(getCasingState()).or(metaTileEntities(Arrays.stream(MetaTileEntities.ENERGY_INPUT_HATCH)
-                        .filter(mte-> mte != null && tier <= mte.getTier() &&  mte.getTier() <= GTValues.UV)
+                        .filter(mte -> mte != null && tier <= mte.getTier() && mte.getTier() <= GTValues.UV)
                         .toArray(MetaTileEntity[]::new))
                         .setMinGlobalLimited(1).setPreviewCount(16)))
                 .where('C', states(getCasingState()))
@@ -233,7 +234,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                     writeCustomData(GregtechDataCodes.UPDATE_COLOR, this::writeColor);
                 }
             }
-        } else if (!recipeMapWorkable.isWorking() && isStructureFormed() && color != null){
+        } else if (!recipeMapWorkable.isWorking() && isStructureFormed() && color != null) {
             color = null;
             writeCustomData(GregtechDataCodes.UPDATE_COLOR, this::writeColor);
         }
@@ -273,12 +274,14 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.energy", this.energyContainer.getEnergyStored(), this.energyContainer.getEnergyCapacity()));
-        textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
+        if (isStructureFormed()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.energy", this.energyContainer.getEnergyStored(), this.energyContainer.getEnergyCapacity()));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
+        }
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.fusion_reactor.capacity", calculateEnergyStorageFactor(16) / 1000000L));
         tooltip.add(I18n.format("gregtech.machine.fusion_reactor.overclocking"));
@@ -323,7 +326,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         @Override
         public void updateWorkable() {
             super.updateWorkable();
-            if (!isActive && heat > 0) {
+            // Drain heat when the reactor is not active, is paused via soft mallet, or does not have enough energy and has fully wiped recipe progress
+            // Don't drain heat when there is not enough energy and there is still some recipe progress, as that makes it doubly hard to complete the recipe
+            // (Will have to recover heat and recipe progress)
+            if ((!(isActive || workingEnabled) || (hasNotEnoughEnergy && progressTime == 0)) && heat > 0) {
                 heat = heat <= 10000 ? 0 : (heat - 10000);
             }
         }
@@ -335,7 +341,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
             // if the reactor is not able to hold enough energy for it, do not run the recipe
             if (recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) > energyContainer.getEnergyCapacity())
-                 return false;
+                return false;
 
             long heatDiff = recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) - heat;
             // if the stored heat is >= required energy, recipe is okay to run
@@ -372,17 +378,17 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (color != null && MinecraftForgeClient.getRenderPass() == 0) {
             final int c = color;
-            BloomEffectUtil.requestCustomBloom(RENDER_HANDLER, (buffer)->{
+            BloomEffectUtil.requestCustomBloom(RENDER_HANDLER, (buffer) -> {
                 int color = RenderUtil.colorInterpolator(c, -1).apply(Eases.EaseQuadIn.getInterpolation(Math.abs((Math.abs(getOffsetTimer() % 50) + partialTicks) - 25) / 25));
-                float a = (float)(color >> 24 & 255) / 255.0F;
-                float r = (float)(color >> 16 & 255) / 255.0F;
-                float g = (float)(color >> 8 & 255) / 255.0F;
-                float b = (float)(color & 255) / 255.0F;
+                float a = (float) (color >> 24 & 255) / 255.0F;
+                float r = (float) (color >> 16 & 255) / 255.0F;
+                float g = (float) (color >> 8 & 255) / 255.0F;
+                float b = (float) (color & 255) / 255.0F;
                 Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
                 if (entity != null) {
                     buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
                     RenderBufferHelper.renderRing(buffer,
-                                x + getFrontFacing().getOpposite().getXOffset() * 7 + 0.5,
+                            x + getFrontFacing().getOpposite().getXOffset() * 7 + 0.5,
                             y + 0.5,
                             z + getFrontFacing().getOpposite().getZOffset() * 7 + 0.5,
                             6, 0.2, 10, 20,
@@ -395,8 +401,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        return new AxisAlignedBB(this.getPos().offset(getFrontFacing().getOpposite()).offset(getFrontFacing().rotateY(),6),
-                this.getPos().offset(getFrontFacing().getOpposite(), 13).offset(getFrontFacing().rotateY().getOpposite(),6));
+        return new AxisAlignedBB(this.getPos().offset(getFrontFacing().getOpposite()).offset(getFrontFacing().rotateY(), 6),
+                this.getPos().offset(getFrontFacing().getOpposite(), 13).offset(getFrontFacing().rotateY().getOpposite(), 6));
     }
 
     @Override
@@ -409,7 +415,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         return true;
     }
 
-    static BloomEffectUtil.IBloomRenderFast RENDER_HANDLER = new BloomEffectUtil.IBloomRenderFast(){
+    static BloomEffectUtil.IBloomRenderFast RENDER_HANDLER = new BloomEffectUtil.IBloomRenderFast() {
         @Override
         public int customBloomStyle() {
             return ConfigHolder.client.shader.fusionBloom.useShader ? ConfigHolder.client.shader.fusionBloom.bloomStyle : -1;
@@ -429,7 +435,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
             lastBrightnessX = OpenGlHelper.lastBrightnessX;
             lastBrightnessY = OpenGlHelper.lastBrightnessY;
-            GlStateManager.color(1,1,1,1);
+            GlStateManager.color(1, 1, 1, 1);
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
             GlStateManager.disableTexture2D();
         }

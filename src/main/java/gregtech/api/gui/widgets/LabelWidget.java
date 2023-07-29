@@ -12,6 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class LabelWidget extends Widget {
 
@@ -21,7 +22,8 @@ public class LabelWidget extends Widget {
 
     protected final String text;
     protected final Object[] formatting;
-    private final int color;
+    private Supplier<Integer> colorSupplier = null;
+    private int color;
     private boolean dropShadow;
     @SideOnly(Side.CLIENT)
     private List<String> texts;
@@ -32,6 +34,11 @@ public class LabelWidget extends Widget {
 
     public LabelWidget(int xPosition, int yPosition, String text, int color) {
         this(xPosition, yPosition, text, color, new Object[0]);
+    }
+
+    public LabelWidget(int xPosition, int yPosition, String text, Supplier<Integer> colorSupplier) {
+        this(xPosition, yPosition, text, colorSupplier.get(), new Object[0]);
+        this.colorSupplier = colorSupplier;
     }
 
     public LabelWidget(int xPosition, int yPosition, String text, int color, Object[] formatting) {
@@ -45,7 +52,7 @@ public class LabelWidget extends Widget {
         recomputeSize();
     }
 
-    public LabelWidget setShadow(boolean dropShadow){
+    public LabelWidget setShadow(boolean dropShadow) {
         this.dropShadow = dropShadow;
         return this;
     }
@@ -91,6 +98,9 @@ public class LabelWidget extends Widget {
     @SideOnly(Side.CLIENT)
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        if (this.colorSupplier != null) {
+            this.color = colorSupplier.get();
+        }
         Position pos = getPosition();
         int height = fontRenderer.FONT_HEIGHT * texts.size();
         for (int i = 0; i < texts.size(); i++) {

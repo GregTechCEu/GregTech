@@ -681,5 +681,33 @@ public class ReactorRecipes {
                 .fluidInputs(PolyvinylAcetate.getFluid(144))
                 .fluidOutputs(PolyvinylButyral.getFluid(144))
                 .duration(400).EUt(VA[HV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Benzene.getFluid(1000))
+                .fluidInputs(Toluene.getFluid(1000))
+                .output(dust, Biphenyl, 2)
+                .fluidOutputs(Methane.getFluid(1000))
+                .duration(200).EUt(VH[HV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Benzene.getFluid(2000))
+                .fluidInputs(Oxygen.getFluid(1000))
+                .circuitMeta(1)
+                .output(dust, Biphenyl, 2)
+                .fluidOutputs(Water.getFluid(1000))
+                .duration(400).EUt(VA[HV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Biphenyl, 2)
+                .fluidInputs(Hydrogen.getFluid(2000))
+                .fluidOutputs(Benzene.getFluid(2000))
+                .duration(400).EUt(VA[EV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Biphenyl, 2)
+                .fluidInputs(Chlorine.getFluid(4000))
+                .fluidOutputs(PolychlorinatedBiphenyl.getFluid(1000))
+                .fluidOutputs(HydrochloricAcid.getFluid(2000))
+                .duration(200).EUt(VH[HV]).buildAndRegister();
     }
 }

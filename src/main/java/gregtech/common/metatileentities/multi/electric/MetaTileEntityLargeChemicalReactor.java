@@ -19,11 +19,13 @@ import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -54,7 +56,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
                 .where('S', selfPredicate())
                 .where('X', casing.or(abilities))
                 .where('P', states(getPipeCasingState()))
-                .where('C', states(MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL)).setMinGlobalLimited(1).setMaxGlobalLimited(1)
+                .where('C', heatingCoils().setMinGlobalLimited(1).setMaxGlobalLimited(1)
                         .or(abilities)
                         .or(casing))
                 .build();
@@ -119,6 +121,11 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
 
     protected IBlockState getPipeCasingState() {
         return MetaBlocks.BOILER_CASING.getState(BlockBoilerCasing.BoilerCasingType.POLYTETRAFLUOROETHYLENE_PIPE);
+    }
+
+    @Override
+    public SoundEvent getBreakdownSound() {
+        return GTSoundEvents.BREAKDOWN_ELECTRICAL;
     }
 
     @Override

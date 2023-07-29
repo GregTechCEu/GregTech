@@ -25,6 +25,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -185,7 +187,8 @@ public abstract class CoverBehavior implements IUIHolder {
      * @param defaultValue value of the capability from meta tile entity itself
      * @return result capability value external caller will receive
      */
-    public <T> T getCapability(Capability<T> capability, T defaultValue) {
+    @Nullable
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable T defaultValue) {
         return defaultValue;
     }
 

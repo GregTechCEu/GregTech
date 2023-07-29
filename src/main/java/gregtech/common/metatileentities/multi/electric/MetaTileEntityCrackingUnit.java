@@ -10,14 +10,17 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -60,6 +63,11 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
 
     protected IBlockState getCasingState() {
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STAINLESS_CLEAN);
+    }
+
+    @Override
+    public SoundEvent getBreakdownSound() {
+        return GTSoundEvents.BREAKDOWN_ELECTRICAL;
     }
 
     @Override
@@ -110,7 +118,8 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected void performNonOverclockBonuses(int[] resultOverclock) {
+        protected void modifyOverclockPost(int[] resultOverclock, @Nonnull IRecipePropertyStorage storage) {
+            super.modifyOverclockPost(resultOverclock, storage);
 
             int coilTier = ((MetaTileEntityCrackingUnit) metaTileEntity).getCoilTier();
             if (coilTier <= 0)

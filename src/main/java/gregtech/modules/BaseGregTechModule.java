@@ -1,7 +1,7 @@
 package gregtech.modules;
 
 import gregtech.api.modules.IGregTechModule;
-import gregtech.api.GTValues;
+import gregtech.api.util.GTUtility;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -13,6 +13,6 @@ public abstract class BaseGregTechModule implements IGregTechModule {
     @Nonnull
     @Override
     public Set<ResourceLocation> getDependencyUids() {
-        return Collections.singleton(new ResourceLocation(GTValues.MODID, GregTechModules.MODULE_CORE));
+        return Collections.singleton(GTUtility.gregtechId(GregTechModules.MODULE_CORE));
     }
 }

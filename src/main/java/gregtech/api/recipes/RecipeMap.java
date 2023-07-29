@@ -6,9 +6,8 @@ import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
-import gnu.trove.map.TByteObjectMap;
-import gnu.trove.map.hash.TByteObjectHashMap;
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
@@ -18,8 +17,7 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
-import gregtech.api.recipes.crafttweaker.CTRecipe;
-import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
+import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.map.*;
@@ -27,8 +25,15 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
-import gregtech.integration.groovy.GroovyScriptCompat;
+import gregtech.integration.crafttweaker.CTRecipeHelper;
+import gregtech.integration.crafttweaker.recipe.CTRecipe;
+import gregtech.integration.crafttweaker.recipe.CTRecipeBuilder;
+import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.integration.groovy.VirtualizedRecipeMap;
+import gregtech.modules.GregTechModules;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -39,6 +44,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
+import org.jetbrains.annotations.ApiStatus;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.*;
 
@@ -84,7 +90,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private final boolean modifyItemOutputs;
     private final boolean modifyFluidInputs;
     private final boolean modifyFluidOutputs;
-    protected final TByteObjectMap<TextureArea> slotOverlays;
+    protected final Byte2ObjectMap<TextureArea> slotOverlays;
     protected TextureArea specialTexture;
     protected int[] specialTexturePosition;
     protected TextureArea progressBarTexture;
@@ -100,8 +106,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private static final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> ingredientRoot = new WeakHashMap<>();
     private final WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> fluidIngredientRoot = new WeakHashMap<>();
 
+    private final Map<GTRecipeCategory, List<Recipe>> recipeByCategory = new Object2ObjectOpenHashMap<>();
 
-    private Consumer<RecipeBuilder<?>> onRecipeBuildAction;
+    private Consumer<R> onRecipeBuildAction;
     protected SoundEvent sound;
     private RecipeMap<?> smallRecipeMap;
 
@@ -109,6 +116,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * Create and register new instance of RecipeMap with specified properties.
      *
      * @deprecated Use {@link RecipeMap#RecipeMap(String, int, int, int, int, R, boolean)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @SuppressWarnings("unused")
     @Deprecated
@@ -166,7 +175,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                      @Nonnull R defaultRecipeBuilder,
                      boolean isHidden) {
         this.unlocalizedName = unlocalizedName;
-        this.slotOverlays = new TByteObjectHashMap<>();
+        this.slotOverlays = new Byte2ObjectOpenHashMap<>();
         this.progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
         this.moveType = MoveType.HORIZONTAL;
 
@@ -182,10 +191,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         this.isHidden = isHidden;
         defaultRecipeBuilder.setRecipeMap(this);
+        defaultRecipeBuilder.category(GTRecipeCategory.create(GTValues.MODID, unlocalizedName, getTranslationKey(), this));
         this.recipeBuilderSample = defaultRecipeBuilder;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
 
-        this.virtualizedRecipeMap = GroovyScriptCompat.isLoaded() ? new VirtualizedRecipeMap(this) : null;
+        this.virtualizedRecipeMap = GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS)
+                ? new VirtualizedRecipeMap(this) : null;
     }
 
 
@@ -243,7 +254,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    public RecipeMap<R> onRecipeBuild(Consumer<RecipeBuilder<?>> consumer) {
+    public RecipeMap<R> onRecipeBuild(Consumer<R> consumer) {
         onRecipeBuildAction = consumer;
         return this;
     }
@@ -266,35 +277,47 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * Internal usage <strong>only</strong>, use {@link RecipeBuilder#buildAndRegister()}
      *
      * @param validationResult the validation result from building the recipe
+     * @return if adding the recipe was successful
      */
-    public void addRecipe(@Nonnull ValidationResult<Recipe> validationResult) {
+    public boolean addRecipe(@Nonnull ValidationResult<Recipe> validationResult) {
         validationResult = postValidateRecipe(validationResult);
         switch (validationResult.getType()) {
-            case SKIP:
-                return;
-            case INVALID:
+            case SKIP -> {
+                return false;
+            }
+            case INVALID -> {
                 setFoundInvalidRecipe(true);
-                return;
+                return false;
+            }
         }
         Recipe recipe = validationResult.getResult();
 
         if (recipe.isGroovyRecipe()) {
             this.virtualizedRecipeMap.addScripted(recipe);
         }
-        compileRecipe(recipe);
+        return compileRecipe(recipe);
     }
 
     /**
      * Compiles a recipe and adds it to the ingredient tree
      *
      * @param recipe the recipe to compile
+     * @return if the recipe was successfully compiled
      */
-    public void compileRecipe(Recipe recipe) {
+    public boolean compileRecipe(Recipe recipe) {
         if (recipe == null) {
-            return;
+            return false;
         }
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
-        recurseIngredientTreeAdd(recipe, items, lookup, 0, 0);
+        if (recurseIngredientTreeAdd(recipe, items, lookup, 0, 0)) {
+            recipeByCategory.compute(recipe.getRecipeCategory(), (k, v) -> {
+                if (v == null) v = new ArrayList<>();
+                v.add(recipe);
+                return v;
+            });
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -304,12 +327,24 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public boolean removeRecipe(@Nonnull Recipe recipe) {
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         if (recurseIngredientTreeRemove(recipe, items, lookup, 0) != null) {
-            if (GroovyScriptCompat.isCurrentlyRunning()) {
+            if (GroovyScriptModule.isCurrentlyRunning()) {
                 this.virtualizedRecipeMap.addBackup(recipe);
             }
             return true;
         }
         return false;
+    }
+
+    /**
+     * Removes all recipes.
+     *
+     * @see GTRecipeHandler#removeAllRecipes(RecipeMap)
+     */
+    @ApiStatus.Internal
+    void removeAllRecipes() {
+        this.lookup.getRecipes(false).forEach(this.virtualizedRecipeMap::addBackup);
+        this.lookup.getNodes().clear();
+        this.lookup.getSpecialNodes().clear();
     }
 
     /**
@@ -1189,7 +1224,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenGetter("localizedName")
     public String getLocalizedName() {
-        return LocalizationUtils.format("recipemap." + unlocalizedName + ".name");
+        return LocalizationUtils.format(getTranslationKey());
+    }
+
+    @ZenGetter("translationKey")
+    public String getTranslationKey() {
+        return "recipemap." + unlocalizedName + ".name";
     }
 
     @ZenGetter("unlocalizedName")
@@ -1270,6 +1310,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * @deprecated this value is no longer implemented
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @ZenGetter("minInputs")
@@ -1293,6 +1335,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * @deprecated this value is no longer used
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @ZenGetter("minOutputs")
@@ -1316,6 +1360,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * @deprecated this value is no longer used
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @ZenGetter("minFluidInputs")
@@ -1339,6 +1385,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * @deprecated this value is no longer used
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @ZenGetter("minFluidOutputs")
@@ -1358,6 +1406,17 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         } else {
             throw new UnsupportedOperationException("Cannot change max fluid output amount for " + getUnlocalizedName());
         }
+    }
+
+    /**
+     * <strong>This is not suitable for Recipe Lookup.</strong>
+     * Use {@link #findRecipe(long, List, List)} instead.
+     *
+     * @return the recipes stored by category.
+     */
+    @Nonnull
+    public Map<GTRecipeCategory, List<Recipe>> getRecipesByCategory() {
+        return Collections.unmodifiableMap(recipeByCategory);
     }
 
     @Override

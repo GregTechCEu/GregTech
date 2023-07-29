@@ -4,8 +4,9 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.Iterators;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
-import gregtech.integration.jei.GTJeiPlugin;
+import gregtech.integration.jei.JustEnoughItemsModule;
 import gregtech.integration.jei.utils.render.CompositeDrawable;
 import gregtech.integration.jei.utils.render.CompositeRenderer;
 import mcp.MethodsReturnNonnullByDefault;
@@ -26,7 +27,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
@@ -53,7 +53,7 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
 
     private final Supplier<IIngredientRenderer<ItemStack>> otherItemRenderer =
             Suppliers.memoize(() -> {
-                IIngredientRenderer<ItemStack> defaultRenderer = GTJeiPlugin.ingredientRegistry.getIngredientRenderer(VanillaTypes.ITEM);
+                IIngredientRenderer<ItemStack> defaultRenderer = JustEnoughItemsModule.ingredientRegistry.getIngredientRenderer(VanillaTypes.ITEM);
                 return CompositeRenderer.startBuilder(defaultRenderer)
                         .then(IntCircuitCategory::slice)
                         .then(defaultRenderer::render)
@@ -84,7 +84,7 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         slotBase = CompositeDrawable.startBuilder(SLOT_SIZE, SLOT_SIZE)
-                .then(guiHelper.drawableBuilder(new ResourceLocation(GTValues.MODID, "textures/gui/base/slot.png"), 0, 0, SLOT_SIZE, SLOT_SIZE)
+                .then(guiHelper.drawableBuilder(GTUtility.gregtechId("textures/gui/base/slot.png"), 0, 0, SLOT_SIZE, SLOT_SIZE)
                         .setTextureSize(SLOT_SIZE, SLOT_SIZE)
                         .build()::draw)
                 .then((minecraft, xOffset, yOffset) ->

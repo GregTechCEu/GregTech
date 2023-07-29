@@ -1,12 +1,10 @@
 package gregtech.api.recipes.recipeproperties;
 
-import gregtech.api.util.GTLog;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class EmptyRecipePropertyStorage implements IRecipePropertyStorage {
+public final class EmptyRecipePropertyStorage implements IRecipePropertyStorage {
 
     public static final EmptyRecipePropertyStorage INSTANCE = new EmptyRecipePropertyStorage();
 
@@ -46,8 +44,6 @@ public class EmptyRecipePropertyStorage implements IRecipePropertyStorage {
 
     @Override
     public <T> T getRecipePropertyValue(RecipeProperty<T> recipeProperty, T defaultValue) {
-        GTLog.logger.warn("There is no property with key {}", recipeProperty.getKey());
-        GTLog.logger.warn(STACKTRACE, new IllegalArgumentException());
         return defaultValue;
     }
 

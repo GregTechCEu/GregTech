@@ -15,7 +15,7 @@ import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.*;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.ConfigHolder;
@@ -196,9 +196,9 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
         list.add(new TextComponentTranslation("gregtech.battery_buffer.average_input",
-                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getInputPerSec() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getInputPerSec() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))));
         list.add(new TextComponentTranslation("gregtech.battery_buffer.average_output",
-                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getOutputPerSec() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getOutputPerSec() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))));
         return list;
     }
 }

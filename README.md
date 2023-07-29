@@ -59,12 +59,14 @@ Heating Coil Textures, Wooden Forms, World Accelerators, and the Extreme Combust
 
 Primitive Water Pump and Super Tank GUI Textures are from the **[IMPACT: GREGTECH EDITION Modpack](https://gtimpact.space/)**.
 
-Ender Fluid Link Cover and Auto-Maintenance Hatch Textures are from **[TecTech](https://github.com/Technus/TecTech)**.
+Ender Fluid Link Cover, Auto-Maintenance Hatch, Optical Fiber, and Data Bank Textures are from **[TecTech](https://github.com/Technus/TecTech)**.
 
 Steam Grinder is from **[GregTech++](https://www.curseforge.com/minecraft/mc-mods/gregtech-gt-gtplusplus)**.
 
 Certificate of Not Being a Noob Anymore is from **[Crops++](https://www.curseforge.com/minecraft/mc-mods/berries)**.
 
 NanoMuscle and QuarkTech Suite Armors are from **[Nukepowered Utils](https://www.curseforge.com/minecraft/mc-mods/nukepowered-utils)**.
+
+OpenComputers compatibility has some code from **[GTCE2OC](https://www.curseforge.com/minecraft/mc-mods/gtce2oc)**.
 
 See something we forgot to credit? Reach out to us on Discord, or open an issue and ask for appropriate credit, we will happily mark it here

@@ -16,9 +16,7 @@ public interface IGregTechModule {
         return Collections.emptySet();
     }
 
-    @Nonnull
-    default Set<String> getModDependencyIDs() {
-        return Collections.emptySet();
+    default void construction(FMLConstructionEvent event) {
     }
 
     default void preInit(FMLPreInitializationEvent event) {
@@ -33,10 +31,16 @@ public interface IGregTechModule {
     default void loadComplete(FMLLoadCompleteEvent event) {
     }
 
+    default void serverAboutToStart(FMLServerAboutToStartEvent event) {
+    }
+
     default void serverStarting(FMLServerStartingEvent event) {
     }
 
     default void serverStarted(FMLServerStartedEvent event) {
+    }
+
+    default void serverStopping(FMLServerStoppingEvent event) {
     }
 
     default void serverStopped(FMLServerStoppedEvent event) {

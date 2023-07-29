@@ -12,12 +12,14 @@ import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
+import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.*;
@@ -59,16 +61,23 @@ public class Material implements Comparable<Material> {
      */
     private String chemicalFormula;
 
-    // TODO Fix isotope tooltips being set toSmallDownNumbers
+    @Nonnull
     private String calculateChemicalFormula() {
         if (chemicalFormula != null) return this.chemicalFormula;
         if (materialInfo.element != null) {
             return materialInfo.element.getSymbol();
         }
         if (!materialInfo.componentList.isEmpty()) {
+            // prevent parenthesis around single component materials
+            if (materialInfo.componentList.size() == 1) {
+                MaterialStack stack = materialInfo.componentList.get(0);
+                if (stack.amount == 1) {
+                    return stack.material.getChemicalFormula();
+                }
+            }
             StringBuilder components = new StringBuilder();
             for (MaterialStack component : materialInfo.componentList)
-                components.append(component.toString());
+                components.append(component.toFormatted());
             return components.toString();
         }
         return "";
@@ -108,8 +117,8 @@ public class Material implements Comparable<Material> {
     }
 
     // thou shall not call
-    protected Material(String name) {
-        materialInfo = new MaterialInfo(0, name);
+    protected Material(@Nonnull ResourceLocation resourceLocation) {
+        materialInfo = new MaterialInfo(0, resourceLocation);
         materialInfo.iconSet = MaterialIconSet.DULL;
         properties = new MaterialProperties();
         flags = new MaterialFlags();
@@ -117,13 +126,13 @@ public class Material implements Comparable<Material> {
 
     protected void registerMaterial() {
         verifyMaterial();
-        GregTechAPI.MATERIAL_REGISTRY.register(this);
+        GregTechAPI.materialManager.getRegistry(getModid()).register(this);
     }
 
     public void addFlags(MaterialFlag... flags) {
-        if (GregTechAPI.MATERIAL_REGISTRY.isFrozen())
-            throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
-        this.flags.addFlags(flags).verify(this);
+        if (GregTechAPI.materialManager.canModifyMaterials()) {
+            this.flags.addFlags(flags).verify(this);
+        } else throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
     }
 
     @ZenMethod
@@ -176,8 +185,9 @@ public class Material implements Comparable<Material> {
 
     public Fluid getFluid() {
         FluidProperty prop = getProperty(PropertyKey.FLUID);
-        if (prop == null)
-            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a Fluid!");
+        if (prop == null) {
+            throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a Fluid!");
+        }
 
         Fluid fluid = prop.getFluid();
         if (fluid == null)
@@ -191,15 +201,17 @@ public class Material implements Comparable<Material> {
     }
 
     public int getBlockHarvestLevel() {
-        if (!hasProperty(PropertyKey.DUST))
-            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a harvest level! Is probably a Fluid");
+        if (!hasProperty(PropertyKey.DUST)) {
+            throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a harvest level! Is probably a Fluid");
+        }
         int harvestLevel = getProperty(PropertyKey.DUST).getHarvestLevel();
         return harvestLevel > 0 ? harvestLevel - 1 : harvestLevel;
     }
 
     public int getToolHarvestLevel() {
-        if (!hasProperty(PropertyKey.TOOL))
-            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a tool harvest level! Is probably not a Tool Material");
+        if (!hasProperty(PropertyKey.TOOL)) {
+            throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a tool harvest level! Is probably not a Tool Material");
+        }
         return getProperty(PropertyKey.TOOL).getToolHarvestLevel();
     }
 
@@ -289,6 +301,23 @@ public class Material implements Comparable<Material> {
         return prop == null ? null : prop.getPlasma(amount);
     }
 
+    //TODO clean up the name-related methods
+    @ZenGetter("name")
+    @Nonnull
+    public String getName() {
+        return getResourceLocation().getPath();
+    }
+
+    @Nonnull
+    public String getModid() {
+        return getResourceLocation().getNamespace();
+    }
+
+    @Nonnull
+    public ResourceLocation getResourceLocation() {
+        return materialInfo.resourceLocation;
+    }
+
     @ZenGetter("camelCaseName")
     public String toCamelCaseString() {
         return GTUtility.lowerUnderscoreToUpperCamel(toString());
@@ -296,7 +325,14 @@ public class Material implements Comparable<Material> {
 
     @ZenGetter("unlocalizedName")
     public String getUnlocalizedName() {
-        return "material." + materialInfo.name;
+        ResourceLocation location = getResourceLocation();
+        return location.getNamespace() + ".material." + location.getPath();
+    }
+
+    @Nonnull
+    public String getRegistryName() {
+        ResourceLocation location = getResourceLocation();
+        return location.getNamespace() + ':' + location.getPath();
     }
 
     @ZenGetter("localizedName")
@@ -307,13 +343,12 @@ public class Material implements Comparable<Material> {
     @Override
     @ZenMethod
     public int compareTo(Material material) {
-        return toString().compareTo(material.toString());
+        return getName().compareTo(material.getName());
     }
 
     @Override
-    @ZenGetter("name")
     public String toString() {
-        return materialInfo.name;
+        return getName();
     }
 
     public int getId() {
@@ -331,16 +366,16 @@ public class Material implements Comparable<Material> {
         return properties;
     }
 
-    public <T extends IMaterialProperty<T>> boolean hasProperty(PropertyKey<T> key) {
+    public <T extends IMaterialProperty> boolean hasProperty(PropertyKey<T> key) {
         return getProperty(key) != null;
     }
 
-    public <T extends IMaterialProperty<T>> T getProperty(PropertyKey<T> key) {
+    public <T extends IMaterialProperty> T getProperty(PropertyKey<T> key) {
         return properties.getProperty(key);
     }
 
-    public <T extends IMaterialProperty<T>> void setProperty(PropertyKey<T> key, IMaterialProperty<T> property) {
-        if (GregTechAPI.MATERIAL_REGISTRY.isFrozen()) {
+    public <T extends IMaterialProperty> void setProperty(PropertyKey<T> key, IMaterialProperty property) {
+        if (!GregTechAPI.materialManager.canModifyMaterials()) {
             throw new IllegalStateException("Cannot add properties to a Material when registry is frozen!");
         }
         properties.setProperty(key, property);
@@ -360,6 +395,11 @@ public class Material implements Comparable<Material> {
         flags.verify(this);
         this.chemicalFormula = calculateChemicalFormula();
         calculateDecompositionType();
+    }
+
+    @Nonnull
+    public MaterialRegistry getRegistry() {
+        return GregTechAPI.materialManager.getRegistry(getModid());
     }
 
     /**
@@ -385,15 +425,17 @@ public class Material implements Comparable<Material> {
          * Constructs a {@link Material}. This Builder replaces the old constructors, and
          * no longer uses a class hierarchy, instead using a {@link MaterialProperties} system.
          *
-         * @param id   The MetaItemSubID for this Material. Must be unique.
-         * @param name The Name of this Material. Will be formatted as
-         *             "material.<name>" for the Translation Key.
+         * @param id               The MetaItemSubID for this Material. Must be unique.
+         * @param resourceLocation The ModId and Name of this Material. Will be formatted as "<modid>.material.<name>"
+         *                         for the Translation Key.
          * @since GTCEu 2.0.0
          */
-        public Builder(int id, String name) {
-            if (name.charAt(name.length() - 1) == '_')
+        public Builder(int id, @Nonnull ResourceLocation resourceLocation) {
+            String name = resourceLocation.getPath();
+            if (name.charAt(name.length() - 1) == '_') {
                 throw new IllegalArgumentException("Material name cannot end with a '_'!");
-            materialInfo = new MaterialInfo(id, name);
+            }
+            materialInfo = new MaterialInfo(id, resourceLocation);
             properties = new MaterialProperties();
             flags = new MaterialFlags();
         }
@@ -482,6 +524,40 @@ public class Material implements Comparable<Material> {
          */
         public Builder dust(int harvestLevel, int burnTime) {
             properties.setProperty(PropertyKey.DUST, new DustProperty(harvestLevel, burnTime));
+            return this;
+        }
+
+        /**
+         * Add a {@link WoodProperty} to this Material.<br>
+         * Will be created with a Harvest Level of 0 and a Burn Time of 300 (Furnace Fuel).
+         */
+        public Builder wood() {
+            return wood(0, 300);
+        }
+
+        /**
+         * Add a {@link WoodProperty} to this Material.<br>
+         * Will be created with a Burn Time of 300 (Furnace Fuel).
+         *
+         * @param harvestLevel The Harvest Level of this block for Mining.<br>
+         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     also be used to determine the tool's Mining Level.
+         */
+        public Builder wood(int harvestLevel) {
+            return wood(harvestLevel, 300);
+        }
+
+        /**
+         * Add a {@link WoodProperty} to this Material.
+         *
+         * @param harvestLevel The Harvest Level of this block for Mining.<br>
+         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     also be used to determine the tool's Mining Level.
+         * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.
+         */
+        public Builder wood(int harvestLevel, int burnTime) {
+            properties.setProperty(PropertyKey.DUST, new DustProperty(harvestLevel, burnTime));
+            properties.setProperty(PropertyKey.WOOD, new WoodProperty());
             return this;
         }
 
@@ -685,7 +761,7 @@ public class Material implements Comparable<Material> {
             for (int i = 0; i < components.length; i += 2) {
                 if (components[i] == null) {
                     throw new IllegalArgumentException("Material in Components List is null for Material "
-                            + this.materialInfo.name);
+                            + this.materialInfo.resourceLocation);
                 }
                 composition.add(new MaterialStack(
                         (Material) components[i],
@@ -844,7 +920,7 @@ public class Material implements Comparable<Material> {
 
         public Builder addOreByproducts(Material... byproducts) {
             properties.ensureSet(PropertyKey.ORE);
-            properties.getProperty(PropertyKey.ORE).setOreByProducts(byproducts);
+            properties.getProperty(PropertyKey.ORE).addOreByProducts(byproducts);
             return this;
         }
 
@@ -854,13 +930,11 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon) {
-            properties.ensureSet(PropertyKey.DUST);
             properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon));
             return this;
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon, int criticalTemperature) {
-            properties.ensureSet(PropertyKey.DUST);
             properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon, criticalTemperature));
             return this;
         }
@@ -870,13 +944,11 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
-            properties.ensureSet(PropertyKey.INGOT);
             properties.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof));
             return this;
         }
 
         public Builder itemPipeProperties(int priority, float stacksPerSec) {
-            properties.ensureSet(PropertyKey.INGOT);
             properties.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, stacksPerSec));
             return this;
         }
@@ -902,11 +974,11 @@ public class Material implements Comparable<Material> {
      */
     private static class MaterialInfo {
         /**
-         * The unlocalized name of this Material.
+         * The modid and unlocalized name of this Material.
          * <p>
          * Required.
          */
-        private final String name;
+        private final ResourceLocation resourceLocation;
 
         /**
          * The MetaItem ID of this Material.
@@ -952,11 +1024,13 @@ public class Material implements Comparable<Material> {
          */
         private Element element;
 
-        private MaterialInfo(int metaItemSubId, String name) {
+        private MaterialInfo(int metaItemSubId, @Nonnull ResourceLocation resourceLocation) {
             this.metaItemSubId = metaItemSubId;
-            if (!GTUtility.toLowerCaseUnderscore(GTUtility.lowerUnderscoreToUpperCamel(name)).equals(name))
-                throw new IllegalStateException("Cannot add materials with names like 'materialnumber'! Use 'material_number' instead.");
-            this.name = name;
+            String name = resourceLocation.getPath();
+            if (!GTUtility.toLowerCaseUnderscore(GTUtility.lowerUnderscoreToUpperCamel(name)).equals(name)) {
+                throw new IllegalArgumentException("Cannot add materials with names like 'materialnumber'! Use 'material_number' instead.");
+            }
+            this.resourceLocation = resourceLocation;
         }
 
         private void verifyInfo(MaterialProperties p, boolean averageRGB) {

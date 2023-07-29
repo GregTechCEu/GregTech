@@ -17,7 +17,7 @@ import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
-import gregtech.integration.jei.GTJeiPlugin;
+import gregtech.integration.jei.JustEnoughItemsModule;
 import gregtech.integration.jei.recipe.GTRecipeWrapper;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.IFocus;
@@ -167,8 +167,8 @@ public class RGNode extends WidgetGroup implements IDraggable {
                 .setIcon(GuiTextures.ICON_LOCATION)
                 .setHoverText("terminal.recipe_chart.jei")
                 .setClickListener(cd -> {
-                    if (GTJeiPlugin.jeiRuntime != null && head != null && !(head instanceof ItemStack && ((ItemStack) head).isEmpty())) {
-                        GTJeiPlugin.jeiRuntime.getRecipesGui().show(new Focus<>(IFocus.Mode.OUTPUT, head));
+                    if (JustEnoughItemsModule.jeiRuntime != null && head != null && !(head instanceof ItemStack && ((ItemStack) head).isEmpty())) {
+                        JustEnoughItemsModule.jeiRuntime.getRecipesGui().show(new Focus<>(IFocus.Mode.OUTPUT, head));
                     }
                 }));
         inputsGroup.setVisible(false);
@@ -409,7 +409,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
                 }
             }
             IRecipeCategory<?> category = recipeLayout.getRecipeCategory();
-            List<Object> catalysts = GTJeiPlugin.jeiRuntime.getRecipeRegistry().getRecipeCatalysts(category);
+            List<Object> catalysts = JustEnoughItemsModule.jeiRuntime.getRecipeRegistry().getRecipeCatalysts(category);
             ItemStack catalyst = null;
 
             if (recipe != null) { // GT

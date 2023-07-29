@@ -1,16 +1,15 @@
 package gregtech.api.cover;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.UIFactory;
+import gregtech.api.util.GTUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 public class CoverBehaviorUIFactory extends UIFactory<CoverBehavior> {
@@ -21,7 +20,7 @@ public class CoverBehaviorUIFactory extends UIFactory<CoverBehavior> {
     }
 
     public void init() {
-        GregTechAPI.UI_FACTORY_REGISTRY.register(2, new ResourceLocation(GTValues.MODID, "cover_behavior_factory"), this);
+        GregTechAPI.UI_FACTORY_REGISTRY.register(2, GTUtility.gregtechId("cover_behavior_factory"), this);
     }
 
     @Override

@@ -55,6 +55,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -68,7 +69,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -124,6 +124,8 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
     private int cachedComparatorValue;
     private int cachedLightValue;
     protected boolean isFragile = false;
+
+    private boolean wasExploded = false;
 
     private final CoverBehavior[] coverBehaviors = new CoverBehavior[6];
     protected List<IItemHandlerModifiable> notifiedItemOutputList = new ArrayList<>();
@@ -334,7 +336,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
         return null;
     }
 
-    public final String getMetaName() {
+    public String getMetaName() {
         return String.format("%s.machine.%s", metaTileEntityId.getNamespace(), metaTileEntityId.getPath());
     }
 
@@ -347,9 +349,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
             if (!notifiedItemInputList.contains(input)) {
                 this.notifiedItemInputList.add((IItemHandlerModifiable) input);
             }
-        } else if (input instanceof FluidTank) {
+        } else if (input instanceof IFluidHandler) {
             if (!notifiedFluidInputList.contains(input)) {
-                this.notifiedFluidInputList.add((FluidTank) input);
+                this.notifiedFluidInputList.add((IFluidHandler) input);
             }
         }
     }
@@ -455,6 +457,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
      * @return true if something happened, so animation will be played
      */
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        ItemStack heldStack = playerIn.getHeldItem(hand);
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
                 if (usesMui2()) {
@@ -465,6 +468,18 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
             }
             return true;
         } else {
+            // Attempt to rename the MTE first
+            if (heldStack.getItem() == Items.NAME_TAG) {
+                if (playerIn.isSneaking() && heldStack.getTagCompound() != null && heldStack.getTagCompound().hasKey("display")) {
+                    MetaTileEntityHolder mteHolder = (MetaTileEntityHolder) getHolder();
+
+                    mteHolder.setCustomName(heldStack.getTagCompound().getCompoundTag("display").getString("Name"));
+                    if (!playerIn.isCreative()) {
+                        heldStack.shrink(1);
+                    }
+                    return true;
+                }
+            }
             EnumFacing hitFacing = hitResult.sideHit;
             CoverBehavior coverBehavior = hitFacing == null ? null : getCoverAtSide(hitFacing);
             if (coverBehavior == null) {
@@ -1372,7 +1387,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
     }
 
     public boolean shouldDropWhenDestroyed() {
-        return !isFragile();
+        return !wasExploded() && !isFragile();
     }
 
     public float getBlockHardness() {
@@ -1467,9 +1482,24 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
     }
 
     public void doExplosion(float explosionPower) {
+        setExploded();
         getWorld().setBlockToAir(getPos());
         getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
                 explosionPower, ConfigHolder.machines.doesExplosionDamagesTerrain);
+    }
+
+    /**
+     * Mark the MTE as having been blown up by an explosion
+     */
+    protected final void setExploded() {
+        this.wasExploded = true;
+    }
+
+    /**
+     * @return if the MTE was blown up by an explosion
+     */
+    protected final boolean wasExploded() {
+        return this.wasExploded;
     }
 
     public void setOnFire(double additionalFireChance) {

@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 /**
  * @author brachy84
  * @deprecated This class is deprecated in favor of the new ore filter system; see {@link gregtech.api.util.oreglob.OreGlob}.
+ *
+ * </p> This class was deprecated in 2.6 and will be removed in 2.8
  */
 @Deprecated
 public class OreDictExprFilter {

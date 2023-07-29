@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
+import static gregtech.api.util.GTUtility.getFluidFromContainer;
 
 /**
  * Class Designed for the Quantum Tank. Could be used elsewhere, but is very specialized.
@@ -56,7 +57,7 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
 
     @Override
     public List<Target<?>> getPhantomTargets(Object ingredient) {
-        if (lastFluidInTank != null || getFluidFromIngredient(ingredient) == null) {
+        if (lastFluidInTank != null || getFluidFromContainer(ingredient) == null) {
             return Collections.emptyList();
         }
 
@@ -71,7 +72,7 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
 
             @Override
             public void accept(@Nonnull Object ingredient) {
-                FluidStack stack = getFluidFromIngredient(ingredient);
+                FluidStack stack = getFluidFromContainer(ingredient);
 
                 if (stack != null) {
                     NBTTagCompound compound = stack.writeToNBT(new NBTTagCompound());
@@ -81,19 +82,6 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
                 phantomFluidSetter.accept(stack);
             }
         });
-    }
-
-    @Nullable
-    private static FluidStack getFluidFromIngredient(Object ingredient) {
-        if (ingredient instanceof FluidStack) {
-            return (FluidStack) ingredient;
-        } else if (ingredient instanceof ItemStack) {
-            ItemStack itemStack = (ItemStack) ingredient;
-            IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-            if (fluidHandler != null)
-                return fluidHandler.drain(Integer.MAX_VALUE, false);
-        }
-        return null;
     }
 
     @Override
@@ -201,5 +189,14 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
         }
         FluidStack fluid = phantomFluidGetter.get();
         return fluid == null ? "" : fluid.getLocalizedName();
+    }
+
+    @Override
+    public String getFluidUnlocalizedName() {
+        if (lastFluidInTank != null) {
+            return lastFluidInTank.getUnlocalizedName();
+        }
+        FluidStack fluid = phantomFluidGetter.get();
+        return fluid == null ? "" : fluid.getUnlocalizedName();
     }
 }

@@ -25,6 +25,7 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
@@ -173,21 +174,27 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         } else {
             textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
         }
+    }
 
-        if (!drainEnergy(true)) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            if (!drainEnergy(true)) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
+            }
+            if (minerLogic.isInventoryFull()) {
+                textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
+            }
         }
-
-        if (minerLogic.isInventoryFull())
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.description"));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.depletion", GTUtility.formatNumbers(100.0 / getDepletionChance())));
+        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.depletion", TextFormattingUtil.formatNumbers(100.0 / getDepletionChance())));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_tier_range", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier(), GTUtility.formatNumbers(getRigMultiplier() * 1.5)));
+        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier(), TextFormattingUtil.formatNumbers(getRigMultiplier() * 1.5)));
     }
 
     @Override

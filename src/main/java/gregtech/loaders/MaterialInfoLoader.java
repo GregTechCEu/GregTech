@@ -5,11 +5,8 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.ConfigHolder;
-import gregtech.common.blocks.BlockCleanroomCasing;
-import gregtech.common.blocks.BlockGlassCasing;
-import gregtech.common.blocks.BlockMetalCasing;
+import gregtech.common.blocks.*;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
-import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.loaders.recipe.WoodRecipeLoader;
 import net.minecraft.init.Blocks;
@@ -18,6 +15,9 @@ import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.GTValues.W;
+import static gregtech.api.unification.material.Materials.*;
+import static gregtech.common.metatileentities.MetaTileEntities.LONG_DIST_FLUID_ENDPOINT;
+import static gregtech.common.metatileentities.MetaTileEntities.LONG_DIST_ITEM_ENDPOINT;
 
 public class MaterialInfoLoader {
 
@@ -176,10 +176,33 @@ public class MaterialInfoLoader {
 
         OreDictUnifier.registerOre(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.PRIMITIVE_BRICKS), new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M * 4)));
 
-        if (ConfigHolder.recipes.hardIronRecipes) {
+        OreDictUnifier.registerOre(MetaBlocks.BATTERY_BLOCK.getItemVariant(BlockBatteryPart.BatteryPartType.EMPTY_TIER_I), new ItemMaterialInfo(
+                new MaterialStack(Materials.Ultimet, M * 2 + M * 6 + (M / 9 * 24)))); // frame + 6 plates + 24 screws
+        OreDictUnifier.registerOre(MetaBlocks.BATTERY_BLOCK.getItemVariant(BlockBatteryPart.BatteryPartType.EMPTY_TIER_II), new ItemMaterialInfo(
+                new MaterialStack(Materials.Ruridit, M * 2 + M * 6 + (M / 9 * 24)))); // frame + 6 plates + 24 screws
+        OreDictUnifier.registerOre(MetaBlocks.BATTERY_BLOCK.getItemVariant(BlockBatteryPart.BatteryPartType.EMPTY_TIER_III), new ItemMaterialInfo(
+                new MaterialStack(Materials.Neutronium, M * 2 + M * 6 + (M / 9 * 24)))); // frame + 6 plates + 24 screws
+      
+        OreDictUnifier.registerOre(LONG_DIST_ITEM_ENDPOINT.getStackForm(),
+                new ItemMaterialInfo(new MaterialStack(Tin, M * 6), // large pipe
+                        new MaterialStack(Steel, M * 8))); // 4 plates + 1 gear
+
+        OreDictUnifier.registerOre(LONG_DIST_FLUID_ENDPOINT.getStackForm(),
+                new ItemMaterialInfo(new MaterialStack(Bronze, M * 6), // large pipe
+                        new MaterialStack(Steel, M * 8))); // 4 plates + 1 gear
+
+        OreDictUnifier.registerOre(new ItemStack(MetaBlocks.LD_ITEM_PIPE),
+                new ItemMaterialInfo(new MaterialStack(Tin, M * 6 * 2 / 64), // 2 large pipe / 64
+                        new MaterialStack(Steel, M * 8 / 64))); // 8 steel plate / 64
+
+        OreDictUnifier.registerOre(new ItemStack(MetaBlocks.LD_FLUID_PIPE),
+                new ItemMaterialInfo(new MaterialStack(Bronze, M * 6 * 2 / 64), // 2 large pipe / 64
+                        new MaterialStack(Steel, M * 8 / 64))); // 8 steel plate / 64
+
+        if (ConfigHolder.recipes.hardAdvancedIronRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.IRON_DOOR, 1), new ItemMaterialInfo(
-                    new MaterialStack(Materials.Iron, (37 * M) / 9), // dust tiny
-                    new MaterialStack(Materials.Steel, M / 9))); // dust tiny
+                    new MaterialStack(Materials.Iron, M * 4 + (M * 3 / 16)), // 4 iron plates + 1 iron bars
+                    new MaterialStack(Materials.Steel, M / 9))); // tiny steel dust
         } else {
             OreDictUnifier.registerOre(new ItemStack(Items.IRON_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 2)));
         }
