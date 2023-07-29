@@ -44,11 +44,10 @@ public class PacketRecoverMTE implements IPacket, IServerExecutor {
     public void executeServer(NetHandlerPlayServer handler) {
         World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).isValid()) {
-            IGregTechTileEntity holder = (IGregTechTileEntity) te;
-            holder.writeCustomData(INITIALIZE_MTE, buffer -> {
-                buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(holder.getMetaTileEntity().metaTileEntityId));
-                holder.getMetaTileEntity().writeInitialSyncData(buffer);
+        if (te instanceof IGregTechTileEntity igtte && igtte.isValid()) {
+            igtte.writeCustomData(INITIALIZE_MTE, buffer -> {
+                buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(igtte.getMetaTileEntity().metaTileEntityId));
+                igtte.getMetaTileEntity().writeInitialSyncData(buffer);
             });
         } else if (!(world.getBlockState(pos).getBlock() instanceof MetaTileEntityBlock)) {
             handler.player.connection.sendPacket(new SPacketBlockChange(world, pos));

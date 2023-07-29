@@ -1,11 +1,13 @@
 package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
 
-public class TileEntityVisitor extends MethodVisitor implements Opcodes {
+import java.util.Iterator;
+
+public class TileEntityVisitor implements Opcodes {
 
     public static final String TARGET_CLASS_NAME = "net/minecraft/tileentity/TileEntity";
     public static final ObfMapping TARGET_METHOD = new ObfMapping(
@@ -30,47 +32,62 @@ public class TileEntityVisitor extends MethodVisitor implements Opcodes {
             HOOK_SIGNATURE
     );
 
-    public TileEntityVisitor(MethodVisitor mv) {
-        super(Opcodes.ASM5, mv);
-    }
+    public static void transform(@NotNull Iterator<MethodNode> methods) {
+        while (methods.hasNext()) {
+            MethodNode m = methods.next();
+            if (TARGET_METHOD.matches(m)) {
+                InsnList insnList = new InsnList();
 
-    @Override
-    public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        if (opcode == INVOKEVIRTUAL && NEW_INSTANCE.matches(name, desc)) {
-            mv.visitVarInsn(Opcodes.POP, 4); // unload oclass
-            mv.visitVarInsn(Opcodes.ALOAD, 3); // load s
-            HOOK.visitMethodInsn(this, INVOKESTATIC); // call hook
-            mv.visitVarInsn(Opcodes.ASTORE, 2); // store in tileentity
+                insnList.add(new VarInsnNode(Opcodes.ALOAD, 3)); // load TE string id
+                insnList.add(new MethodInsnNode(INVOKESTATIC, "gregtech/asm/hooks/TileEntityHooks", "createMTE", hookSignature(), false));
+                insnList.add(new VarInsnNode(Opcodes.ASTORE, 2)); //store in GT tileentity
 
-            // label for vanilla logic
-            Label elseLabel = new Label();
-            Label endLabel = new Label();
+                LabelNode endLabel = new LabelNode();
+                insnList.add(new LineNumberNode(124, endLabel));
 
-            // if (tileentity == null)
-            mv.visitVarInsn(Opcodes.ALOAD, 2); // load tileentity
-            mv.visitJumpInsn(Opcodes.IFNONNULL, elseLabel); // check null
+                // if (tileentity != null)
+                insnList.add(new VarInsnNode(Opcodes.ALOAD, 2)); // load tileentity
+                insnList.add(new JumpInsnNode(Opcodes.IFNONNULL, endLabel));
+                // if (tileentity == null)
+                insnList.add(new VarInsnNode(Opcodes.ALOAD, 4)); // push oclass to the stack
+                insnList.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Class", "newInstance",
+                        "()Ljava/lang/Object;", false));
+                //Checkcast is necessary.. really.
+                insnList.add(new TypeInsnNode(CHECKCAST, "net/minecraft/tileentity/TileEntity"));
 
-            mv.visitVarInsn(Opcodes.ALOAD, 4); // load oclass
-            NEW_INSTANCE.visitMethodInsn(mv, INVOKEVIRTUAL); // call oclass.newInstance()
-            mv.visitTypeInsn(Opcodes.CHECKCAST, TARGET_CLASS_NAME); // perform implicit type cast check, required by Class#newInstance
+                insnList.add(new VarInsnNode(Opcodes.ASTORE, 2)); // store in tileentity
+                insnList.add(endLabel);
 
-            mv.visitVarInsn(Opcodes.ASTORE, 2); // store the result in tileentity
-            mv.visitLabel(elseLabel); // complete the if block
+                int al4 = 0;
+                int idx = 0;
 
-            // go to the end of the if block
-            mv.visitJumpInsn(Opcodes.GOTO, endLabel);
-            mv.visitLabel(endLabel);
+                for (int i = 0; i < m.instructions.size(); i++) {
+                    AbstractInsnNode next = m.instructions.get(i);
+                    if (next instanceof VarInsnNode varInsnNode) {
+                        if (varInsnNode.getOpcode() == Opcodes.ALOAD && varInsnNode.var == 4) {
+                            al4++;
+                            if (al4 == 2) {
+                                idx = i;
+                                break;
+                            }
+                        }
+                    }
+                }
 
-            // load the tile entity, so the remaining methods store it in itself
-            mv.visitVarInsn(Opcodes.ALOAD, 2);
+                for (int i = 0; i < 4; i++) {
+                    AbstractInsnNode next = m.instructions.get(idx);
+                    m.instructions.remove(next);
+                }
 
-            return;
+                AbstractInsnNode next = m.instructions.get(idx);
+
+                m.instructions.insertBefore(next, insnList);
+            }
         }
-        super.visitMethodInsn(opcode, owner, name, desc, itf);
     }
 
     // public static TileEntity create(World worldIn, NBTTagCompound compound)
-    private static String targetSignature() {
+    private static @NotNull String targetSignature() {
         return "(" +
                 "Lnet/minecraft/world/World;" + // World
                 "Lnet/minecraft/nbt/NBTTagCompound;" + // NBTTagCompound
@@ -78,7 +95,7 @@ public class TileEntityVisitor extends MethodVisitor implements Opcodes {
     }
 
     // public static TileEntity createMTE(String id)
-    private static String hookSignature() {
+    private static @NotNull String hookSignature() {
         return "(" +
                 "Ljava/lang/String;" + // String
                 ")Lnet/minecraft/tileentity/TileEntity;"; // return TileEntity

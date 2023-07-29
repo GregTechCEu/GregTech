@@ -43,6 +43,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.core.advancement.AdvancementTriggers;
+import gregtech.core.network.packets.PacketRecoverMTE;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -878,7 +879,19 @@ public abstract class MetaTileEntity extends TickableTileEntityBase implements I
     @Override
     public void update() {
         long tickTime = System.nanoTime();
-        onUpdate();
+        if (this.isInvalid()) {
+            if (world.isRemote) {
+                // recover the mte
+                GregTechAPI.networkHandler.sendToServer(new PacketRecoverMTE(world.provider.getDimension(), getPos()));
+            } else {
+                // remove the block
+                if (world.getBlockState(pos).getBlock() instanceof MetaTileEntityBlock) {
+                    world.setBlockToAir(pos);
+                }
+            }
+        } else {
+            onUpdate();
+        }
 
         if (this.needToUpdateLightning) {
             getWorld().checkLight(getPos());
