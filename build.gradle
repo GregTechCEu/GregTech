@@ -1,4 +1,4 @@
-//version: 1689976122
+//version: 1690591996
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -20,10 +20,11 @@ import static org.gradle.internal.logging.text.StyledTextOutput.Style
 plugins {
     id 'java'
     id 'java-library'
+    id 'base'
     id 'eclipse'
     id 'maven-publish'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.7'
-    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.21'
+    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.23'
     id 'net.darkhax.curseforgegradle' version '1.0.14' apply false
     id 'com.modrinth.minotaur' version '2.8.0' apply false
     id 'com.diffplug.spotless' version '6.13.0' apply false
@@ -66,6 +67,7 @@ propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
+propertyDefaultIfUnsetWithEnvVar("enableCoreModDebug", false, "CORE_MOD_DEBUG")
 propertyDefaultIfUnset("generateMixinConfig", true)
 propertyDefaultIfUnset("usesShadowedDependencies", false)
 propertyDefaultIfUnset("minimizeShadowedDependencies", true)
@@ -277,7 +279,10 @@ else {
 }
 
 group = modGroup
-archivesBaseName = modArchivesBaseName
+
+base {
+    archivesName = modArchivesBaseName
+}
 
 minecraft {
     mcVersion = minecraftVersion
@@ -304,8 +309,21 @@ minecraft {
             '-Dmixin.debug.export=true'
         ])
     }
-    if (coreModClass) {
-        extraRunJvmArguments.add("-Dfml.coreMods.load=${modGroup}.${coreModClass}")
+
+    if (enableCoreModDebug.toBoolean()) {
+        extraRunJvmArguments.addAll([
+                '-Dlegacy.debugClassLoading=true',
+                '-Dlegacy.debugClassLoadingFiner=true',
+                '-Dlegacy.debugClassLoadingSave=true'
+        ])
+    }
+}
+
+if (coreModClass) {
+    for (runTask in ['runClient', 'runServer']) {
+        tasks.named(runTask).configure {
+            extraJvmArgs.add("-Dfml.coreMods.load=${modGroup}.${coreModClass}")
+        }
     }
 }
 
@@ -372,6 +390,11 @@ repositories {
             name 'BlameJared Maven'
             url 'https://maven.blamejared.com'
         }
+        maven {
+            name 'GTNH Maven'
+            url 'http://jenkins.usrv.eu:8081/nexus/content/groups/public'
+            allowInsecureProtocol = true
+        }
     }
     if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
         // need to add this here even if we did not above
@@ -402,13 +425,15 @@ configurations {
 }
 
 dependencies {
-    if (usesMixins.toBoolean() || forceEnableMixins.toBoolean()) {
-        implementation 'zone.rong:mixinbooter:8.3'
-        String mixin = 'zone.rong:mixinbooter:8.3'
-        if (usesMixins.toBoolean()) {
-            mixin = modUtils.enableMixins(mixin, "mixins.${modId}.refmap.json")
-        }
+    String mixin = 'zone.rong:mixinbooter:8.3'
+    if (usesMixins.toBoolean()) {
+        annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
+        // should use 24.1.1 but 30.0+ has a vulnerability fix
+        annotationProcessor 'com.google.guava:guava:30.0-jre'
+        // should use 2.8.6 but 2.8.9+ has a vulnerability fix
+        annotationProcessor 'com.google.code.gson:gson:2.8.9'
 
+        mixin = modUtils.enableMixins(mixin, "mixins.${modId}.refmap.json")
         api (mixin) {
             transitive = false
         }
@@ -416,17 +441,14 @@ dependencies {
         annotationProcessor(mixin) {
             transitive = false
         }
-
-        annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
-        // should use 24.1.1 but 30.0+ has a vulnerability fix
-        annotationProcessor 'com.google.guava:guava:30.0-jre'
-        // should use 2.8.6 but 2.8.9+ has a vulnerability fix
-        annotationProcessor 'com.google.code.gson:gson:2.8.9'
+    } else if (forceEnableMixins.toBoolean()) {
+        runtimeOnly(mixin)
     }
 
     if (enableJUnit.toBoolean()) {
-        testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
         testImplementation 'org.hamcrest:hamcrest:2.2'
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 
     if (enableModernJavaSyntax.toBoolean()) {
@@ -449,6 +471,9 @@ dependencies {
 
     compileOnlyApi 'org.jetbrains:annotations:23.0.0'
     annotationProcessor 'org.jetbrains:annotations:23.0.0'
+    patchedMinecraft('net.minecraft:launchwrapper:1.15') {
+        transitive = false
+    }
 
     if (includeCommonDevEnvMods.toBoolean()) {
         implementation 'mezz.jei:jei_1.12.2:4.16.1.302'
