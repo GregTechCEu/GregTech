@@ -465,7 +465,9 @@ public class OrePrefix {
             else if (material == Materials.Glass ||
                     material == Materials.Ice ||
                     material == Materials.Obsidian ||
-                    material == Materials.Concrete)
+                    material == Materials.Concrete ||
+                    // TODO, needs testing
+                    material == Materials.Stone)
                 return M;
         } else if (this == stick) {
             if (material == Materials.Blaze)
