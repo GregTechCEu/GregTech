@@ -929,6 +929,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(Polybenzimidazole.getFluid(pbiAmount))
                 .circuitMeta(1)
                 .output(inputBus)
+                .withRecycling()
                 .duration(300).EUt(VA[Math.min(GTValues.UV, tier)]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -937,6 +938,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(Polybenzimidazole.getFluid(pbiAmount))
                 .circuitMeta(2)
                 .output(outputBus)
+                .withRecycling()
                 .duration(300).EUt(VA[Math.min(GTValues.UV, tier)]).buildAndRegister();
     }
 
