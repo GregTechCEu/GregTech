@@ -1,8 +1,9 @@
 package gregtech.api.gui;
 
-import com.cleanroommc.modularui.api.IItemGuiHolder;
+import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.api.IThemeApi;
 import com.cleanroommc.modularui.manager.GuiInfo;
+import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.theme.ReloadThemeEvent;
 import com.cleanroommc.modularui.utils.JsonBuilder;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -30,41 +31,43 @@ public class GTGuis {
     private static final EnumMap<EnumFacing, GuiInfo> COVERS = new EnumMap<>(EnumFacing.class);
 
     public static final GuiInfo MTE = GuiInfo.builder()
-            .clientGui(context -> {
+            .clientGui((context, mainPanel) -> {
                 MetaTileEntity mte = GTUtility.getMetaTileEntity(context.getWorld(), context.getBlockPos());
                 if (mte != null) {
-                    return mte.createClientGui(context.getPlayer());
+                    return mte.createScreen(context, mainPanel);
                 }
                 throw new UnsupportedOperationException();
             })
-            .serverGui((context, syncHandler) -> {
+            .commonGui((context, syncHandler) -> {
                 MetaTileEntity mte = GTUtility.getMetaTileEntity(context.getWorld(), context.getBlockPos());
                 if (mte != null) {
-                    mte.buildSyncHandler(syncHandler, context.getPlayer());
+                    return mte.buildUI(context, syncHandler, context.getWorld().isRemote);
                 }
+                throw new UnsupportedOperationException();
             })
             .build();
 
     public static final GuiInfo PLAYER_META_ITEM_MAIN_HAND = GuiInfo.builder()
-            .clientGui(context -> {
+            .clientGui((context, mainPanel) -> {
                 ItemStack itemStack = context.getMainHandItem();
-                return getGuiHolder(itemStack).createGuiScreen(context.getPlayer(), itemStack);
+                return getGuiHolder(itemStack).createScreen(context, mainPanel);
 
             })
-            .serverGui((context, guiSyncHandler) -> {
+            .commonGui((context, guiSyncHandler) -> {
                 ItemStack itemStack = context.getMainHandItem();
-                getGuiHolder(itemStack).buildSyncHandler(guiSyncHandler, context.getPlayer(), itemStack);
+                return getGuiHolder(itemStack).buildUI(context, guiSyncHandler, context.getWorld().isRemote);
             })
             .build();
 
     public static final GuiInfo PLAYER_META_ITEM_OFF_HAND = GuiInfo.builder()
-            .clientGui(context -> {
+            .clientGui((context, mainPanel) -> {
                 ItemStack itemStack = context.getOffHandItem();
-                return getGuiHolder(itemStack).createGuiScreen(context.getPlayer(), itemStack);
+                return getGuiHolder(itemStack).createScreen(context, mainPanel);
+
             })
-            .serverGui((context, guiSyncHandler) -> {
+            .commonGui((context, guiSyncHandler) -> {
                 ItemStack itemStack = context.getOffHandItem();
-                getGuiHolder(itemStack).buildSyncHandler(guiSyncHandler, context.getPlayer(), itemStack);
+                return getGuiHolder(itemStack).buildUI(context, guiSyncHandler, context.getWorld().isRemote);
             })
             .build();
 
@@ -76,6 +79,24 @@ public class GTGuis {
         return COVERS.get(facing);
     }
 
+    public static ModularPanel createPanel(String name, int width, int height) {
+        return ModularPanel.defaultPanel(name, width, height);
+    }
+
+    public static ModularPanel createPanel(MetaTileEntity mte, int width, int height) {
+        return createPanel(mte.metaTileEntityId.getPath(), width, height);
+    }
+
+    public static ModularPanel createPanel(CoverBehavior cover, int width, int height) {
+        return createPanel(cover.getCoverDefinition().getCoverId().getPath(), width, height);
+    }
+
+    public static ModularPanel createPanel(ItemStack stack, int width, int height) {
+        MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
+        if (valueItem == null) throw new IllegalArgumentException("Item must be a meta item!");
+        return createPanel(valueItem.unlocalizedName, width, height);
+    }
+
     static {
         for (EnumFacing facing : EnumFacing.values()) {
             COVERS.put(facing, makeCoverUiInfo(facing));
@@ -84,28 +105,28 @@ public class GTGuis {
 
     private static GuiInfo makeCoverUiInfo(EnumFacing facing) {
         return GuiInfo.builder()
-                .clientGui(context -> {
+                .clientGui((context, mainPanel) -> {
                     TileEntity te = context.getTileEntity();
                     if (te == null) throw new IllegalStateException();
                     ICoverable coverable = te.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, facing);
                     if (coverable == null) throw new IllegalStateException();
                     CoverBehavior cover = coverable.getCoverAtSide(facing);
                     if (!(cover instanceof CoverWithUI)) throw new IllegalStateException();
-                    return ((CoverWithUI) cover).createClientGui(context.getPlayer());
+                    return ((CoverWithUI) cover).createScreen(context, mainPanel);
                 })
-                .serverGui((context, syncHandler) -> {
+                .commonGui((context, syncHandler) -> {
                     TileEntity te = context.getTileEntity();
                     if (te == null) throw new IllegalStateException();
                     ICoverable coverable = te.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, facing);
                     if (coverable == null) throw new IllegalStateException();
                     CoverBehavior cover = coverable.getCoverAtSide(facing);
                     if (!(cover instanceof CoverWithUI)) throw new IllegalStateException();
-                    ((CoverWithUI) cover).buildSyncHandler(syncHandler, context.getPlayer());
+                    return ((CoverWithUI) cover).buildUI(context, syncHandler, context.getWorld().isRemote);
                 })
                 .build();
     }
 
-    private static IItemGuiHolder getGuiHolder(ItemStack stack) {
+    private static IGuiHolder getGuiHolder(ItemStack stack) {
         if (stack.getItem() instanceof MetaItem) {
             MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
             if (valueItem != null && valueItem.getUIManager() != null) {

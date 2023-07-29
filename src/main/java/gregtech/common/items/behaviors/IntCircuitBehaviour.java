@@ -3,14 +3,14 @@ package gregtech.common.items.behaviors;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
-import com.cleanroommc.modularui.sync.GuiSyncHandler;
-import com.cleanroommc.modularui.sync.InteractionSyncHandler;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
-import gregtech.api.gui.GTGuis;
 import gregtech.api.capability.IGhostSlotConfigurable;
+import gregtech.api.gui.GTGuis;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
@@ -76,16 +76,18 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     }
 
     @Override
-    public void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer entityPlayer, ItemStack var3) {
+    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
+        ItemDrawable circuitPreview = new ItemDrawable(guiCreationContext.getUsedItemStack());
         for (int i = 0; i <= 32; i++) {
             int finalI = i;
-            guiSyncHandler.syncValue("config", i, new InteractionSyncHandler()
-                    .setOnMousePressed(b -> IntCircuitIngredient.setCircuitConfiguration(var3, finalI)));
+            guiSyncManager.syncValue("config", i, new InteractionSyncHandler()
+                    .setOnMousePressed(b -> {
+                        ItemStack item = IntCircuitIngredient.getIntegratedCircuit(finalI);
+                        circuitPreview.setItem(item);
+                        guiCreationContext.getPlayer().setHeldItem(guiCreationContext.getUsedHand(), item);
+                    }));
         }
-    }
 
-    @Override
-    public ModularPanel createUIPanel(GuiContext context, EntityPlayer player, ItemStack stack) {
         List<List<IWidget>> options = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             options.add(new ArrayList<>());
@@ -95,12 +97,12 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                 options.get(i).add(new ButtonWidget<>()
                         .size(18)
                         .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT, new ItemDrawable(IntCircuitIngredient.getIntegratedCircuit(index)).asIcon().size(16))
-                        .setSynced("config", index));
+                        .syncHandler("config", index));
             }
         }
-        return ModularPanel.defaultPanel(context, 176, 120)
+        return GTGuis.createPanel(guiCreationContext.getUsedItemStack(), 176, 120)
                 .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
-                .child(new ItemDrawable(stack).asWidget()
+                .child(circuitPreview.asWidget()
                         .size(16)
                         .top(19).alignX(0.5f)
                         .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT.asIcon().size(18)))

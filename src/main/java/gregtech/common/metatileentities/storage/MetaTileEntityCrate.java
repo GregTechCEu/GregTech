@@ -5,12 +5,15 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
-import com.cleanroommc.modularui.sync.GuiSyncHandler;
-import com.cleanroommc.modularui.sync.SyncHandlers;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import gregtech.api.gui.GTGuis;
+import gregtech.api.gui.GregTechGuiScreen;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -141,33 +144,32 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    protected ModularPanel createUIPanel(GuiContext context, EntityPlayer player) {
+    public ModularScreen createScreen(GuiCreationContext guiCreationContext, ModularPanel mainPanel) {
         if (this.material == Materials.Bronze) {
-            context.useTheme("gregtech:bronze");
+            return new GregTechGuiScreen(mainPanel).withTheme("gregtech:bronze");
         }
+        return super.createScreen(guiCreationContext, mainPanel);
+    }
+
+    @Override
+    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
+        guiSyncManager.registerSlotGroup("item_inv", this.rowSize);
+
         int rows = this.inventorySize / this.rowSize;
         List<List<IWidget>> widgets = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             widgets.add(new ArrayList<>());
             for (int j = 0; j < this.rowSize; j++) {
-                widgets.get(i).add(new ItemSlot().setSynced(i * this.rowSize + j));
+                widgets.get(i).add(new ItemSlot().slot(SyncHandlers.itemSlot(this.inventory, i * this.rowSize + j).slotGroup("item_inv")));
             }
         }
-        return ModularPanel.defaultPanel(context, this.rowSize * 18 + 14, 7 + 4 * 18 + 5 + 14 + 18 * rows)
+        return GTGuis.createPanel(this, this.rowSize * 18 + 14, 7 + 4 * 18 + 5 + 14 + 18 * rows)
                 .bindPlayerInventory()
                 .child(new Grid()
                         .top(7).left(7).right(7).height(rows * 18)
                         .minElementMargin(0, 0)
                         .minColWidth(18).minRowHeight(18)
                         .matrix(widgets));
-    }
-
-    @Override
-    public void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer entityPlayer) {
-        for (int i = 0; i < this.inventory.getSlots(); i++) {
-            guiSyncHandler.syncValue(i, SyncHandlers.itemSlot(this.inventory, i).slotGroup("item_inv"));
-        }
-        guiSyncHandler.registerSlotGroup("item_inv", this.rowSize);
     }
 
     @Override

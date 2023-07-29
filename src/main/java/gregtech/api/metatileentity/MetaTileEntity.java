@@ -12,10 +12,10 @@ import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
-import com.cleanroommc.modularui.sync.GuiSyncHandler;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
@@ -431,17 +431,13 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
     }
 
     @Override
-    public ModularScreen createClientGui(EntityPlayer entityPlayer) {
-        return GregTechGuiScreen.simple(this.metaTileEntityId, context -> createUIPanel(context, entityPlayer));
-    }
-
-    // TODO: make abstract
-    protected ModularPanel createUIPanel(GuiContext context, EntityPlayer player) {
-        return ModularPanel.defaultPanel(context);
+    public ModularScreen createScreen(GuiCreationContext guiCreationContext, ModularPanel mainPanel) {
+        return new GregTechGuiScreen(this.metaTileEntityId.getNamespace(), mainPanel);
     }
 
     @Override
-    public void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer entityPlayer) {
+    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
+        return null;
     }
 
     public final void onCoverLeftClick(EntityPlayer playerIn, CuboidRayTraceResult result) {

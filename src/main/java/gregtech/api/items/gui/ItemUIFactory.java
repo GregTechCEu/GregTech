@@ -1,18 +1,16 @@
 package gregtech.api.items.gui;
 
-import com.cleanroommc.modularui.api.IItemGuiHolder;
+import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
-import com.cleanroommc.modularui.sync.GuiSyncHandler;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import gregtech.api.gui.GregTechGuiScreen;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
-public interface ItemUIFactory extends IItemComponent, IItemGuiHolder {
+public interface ItemUIFactory extends IItemComponent, IGuiHolder {
 
     /**
      * Creates new UI basing on given holder. Holder contains information
@@ -22,17 +20,12 @@ public interface ItemUIFactory extends IItemComponent, IItemGuiHolder {
     ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer);
 
     @Override
-    default ModularScreen createGuiScreen(EntityPlayer entityPlayer, ItemStack stack) {
-        MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
-        return GregTechGuiScreen.simple(valueItem, context -> createUIPanel(context, entityPlayer, stack));
-    }
-
-    // TODO: make abstract
-    default ModularPanel createUIPanel(GuiContext context, EntityPlayer player, ItemStack stack) {
-        return ModularPanel.defaultPanel(context);
+    default ModularScreen createScreen(GuiCreationContext guiCreationContext, ModularPanel mainPanel) {
+        return new GregTechGuiScreen(mainPanel);
     }
 
     @Override
-    default void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer entityPlayer, ItemStack var3) {
+    default ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient){
+        return null;
     }
 }

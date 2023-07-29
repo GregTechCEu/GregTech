@@ -7,15 +7,16 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
-import com.cleanroommc.modularui.sync.GuiSyncHandler;
-import com.cleanroommc.modularui.sync.SyncHandlers;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GTGuis;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -90,14 +91,16 @@ public class CoverStorage extends CoverBehavior implements CoverWithUI {
     }
 
     @Override
-    public ModularPanel createUIPanel(GuiContext context, EntityPlayer player) {
+    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
+        guiSyncManager.registerSlotGroup("item_inv", this.storageHandler.getSlots());
+
         int rowSize = this.storageHandler.getSlots();
         List<List<IWidget>> widgets = new ArrayList<>();
         widgets.add(new ArrayList<>());
         for (int j = 0; j < rowSize; j++) {
-            widgets.get(0).add(new ItemSlot().setSynced(j));
+            widgets.get(0).add(new ItemSlot().slot(SyncHandlers.itemSlot(this.storageHandler, j).slotGroup("item_inv")));
         }
-        return ModularPanel.defaultPanel(context, MAX_WIDTH, MAX_HEIGHT)
+        return GTGuis.createPanel(this, MAX_WIDTH, MAX_HEIGHT)
                 .child(IKey.lang("cover.storage.title").asWidget().pos(5, 5))
                 .bindPlayerInventory()
                 .child(new Grid()
@@ -105,14 +108,6 @@ public class CoverStorage extends CoverBehavior implements CoverWithUI {
                         .minElementMargin(0, 0)
                         .minColWidth(18).minRowHeight(18)
                         .matrix(widgets));
-    }
-
-    @Override
-    public void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer entityPlayer) {
-        for (int i = 0; i < this.storageHandler.getSlots(); i++) {
-            guiSyncHandler.syncValue(i, SyncHandlers.itemSlot(this.storageHandler, i).slotGroup("item_inv"));
-        }
-        guiSyncHandler.registerSlotGroup("item_inv", this.storageHandler.getSlots());
     }
 
     @Override

@@ -1,10 +1,10 @@
 package gregtech.api.cover;
 
 import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
-import com.cleanroommc.modularui.sync.GuiSyncHandler;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import gregtech.api.gui.GTGuis;
 import gregtech.api.gui.GregTechGuiScreen;
 import gregtech.api.gui.ModularUI;
@@ -30,17 +30,12 @@ public interface CoverWithUI extends IGuiHolder {
     ModularUI createUI(EntityPlayer player);
 
     @Override
-    default ModularScreen createClientGui(EntityPlayer entityPlayer) {
-        CoverBehavior cover = (CoverBehavior) this;
-        return GregTechGuiScreen.simple(cover.getCoverDefinition().getCoverId(), context -> createUIPanel(context, entityPlayer));
-    }
-
-    // TODO: make abstract
-    default ModularPanel createUIPanel(GuiContext context, EntityPlayer player) {
-        return ModularPanel.defaultPanel(context);
+    default ModularScreen createScreen(GuiCreationContext guiCreationContext, ModularPanel mainPanel) {
+        return new GregTechGuiScreen(mainPanel);
     }
 
     @Override
-    default void buildSyncHandler(GuiSyncHandler guiSyncHandler, EntityPlayer entityPlayer) {
+    default ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
+        return null;
     }
 }
