@@ -12,7 +12,7 @@ import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
-import gregtech.api.gui.GTGuis;
+import gregtech.api.newgui.GTGuis;
 import gregtech.api.gui.GregTechGuiScreen;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;

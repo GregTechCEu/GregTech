@@ -16,7 +16,7 @@ import com.cleanroommc.modularui.widgets.layout.Grid;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.gui.GTGuis;
+import gregtech.api.newgui.GTGuis;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;

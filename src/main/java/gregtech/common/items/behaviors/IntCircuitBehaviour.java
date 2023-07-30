@@ -10,7 +10,7 @@ import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import gregtech.api.capability.IGhostSlotConfigurable;
-import gregtech.api.gui.GTGuis;
+import gregtech.api.newgui.GTGuis;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;

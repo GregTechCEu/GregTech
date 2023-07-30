@@ -1,4 +1,4 @@
-package gregtech.api.gui;
+package gregtech.api.newgui;
 
 import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.api.IThemeApi;
