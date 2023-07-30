@@ -1,4 +1,4 @@
-//version: 1690591996
+//version: 1690655342
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -471,7 +471,7 @@ dependencies {
 
     compileOnlyApi 'org.jetbrains:annotations:23.0.0'
     annotationProcessor 'org.jetbrains:annotations:23.0.0'
-    patchedMinecraft('net.minecraft:launchwrapper:1.15') {
+    patchedMinecraft('net.minecraft:launchwrapper:1.17.1') {
         transitive = false
     }
 
