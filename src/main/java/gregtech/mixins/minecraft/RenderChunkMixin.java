@@ -10,11 +10,11 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import javax.annotation.Nullable;
 
-//TODO, this one needs testing
+//TODO, error in log
 @Mixin(RenderChunk.class)
 public class RenderChunkMixin {
 
-    @ModifyExpressionValue(method = "rebuildChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher;getRenderer(Lnet/minecraft/tileentity/TileEntity;)Lnet/minecraft/client/renderer/tileentity/TileEntitySpecialRenderer;"))
+    @ModifyExpressionValue(method = "rebuildChunk", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher;getRenderer(Lnet/minecraft/tileentity/TileEntity;)Lnet/minecraft/client/renderer/tileentity/TileEntitySpecialRenderer;"))
     public <T extends TileEntity> TileEntitySpecialRenderer<T> adjustMTERenderer(TileEntitySpecialRenderer<T> originalRenderer, @Nullable TileEntity tileEntityIn) {
         // TODO, adjust when implementing second part of IGregTileEntity
         if (tileEntityIn instanceof MetaTileEntityHolder && !((MetaTileEntityHolder) tileEntityIn).hasTESR()) {
