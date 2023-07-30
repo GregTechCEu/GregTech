@@ -367,12 +367,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         }
     }
 
-    @Override
-    public int getComparatorInputOverride(@Nonnull IBlockState blockState, @Nonnull World worldIn, @Nonnull BlockPos pos) {
-        MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
-        return metaTileEntity == null ? 0 : metaTileEntity.getComparatorValue();
-    }
-
     protected final ThreadLocal<MetaTileEntity> tileEntities = new ThreadLocal<>();
 
     @Override
@@ -380,11 +374,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         tileEntities.set(te == null ? tileEntities.get() : ((IGregTechTileEntity) te).getMetaTileEntity());
         super.harvestBlock(worldIn, player, pos, state, te, stack);
         tileEntities.set(null);
-    }
-
-    @Override
-    public boolean hasComparatorInputOverride(@Nonnull IBlockState state) {
-        return true;
     }
 
     @Nullable
