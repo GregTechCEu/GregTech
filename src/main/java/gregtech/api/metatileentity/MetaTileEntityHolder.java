@@ -322,7 +322,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
 
     @Override
     public void markAsDirty() {
-        markDirty();
+        getWorld().markChunkDirty(getPos(), this);
     }
 
     @Override
