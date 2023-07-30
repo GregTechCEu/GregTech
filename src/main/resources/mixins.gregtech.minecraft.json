@@ -10,6 +10,8 @@
     "MinecraftMixin"
   ],
   "client": [
+    "LayerArmorBaseMixin",
+    "LayerCustomHeadMixin",
     "RenderChunkMixin",
     "RenderGlobalMixin"
   ],

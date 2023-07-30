@@ -1,12 +1,5 @@
 
 minecraft {
-    // ASM debug
-    extraRunJvmArguments.addAll([
-            "-Dlegacy.debugClassLoading=true",
-            "-Dlegacy.debugClassLoadingFiner=true",
-            "-Dlegacy.debugClassLoadingSave=true"
-    ])
-
     // Include the dep string version for addons to use
     injectedTags.put('DEP_VERSION_STRING', "required-after:gregtech@[${modVersion},);")
 }
