@@ -96,7 +96,7 @@ public class SecondDegreeMaterials {
                 .color(0x646464).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
                 .components(Nickel, 1, BlackBronze, 1, Steel, 3)
-                .cableProperties(GTValues.V[4], 3, 2)
+                .cableProperties(V[EV], 3, 2)
                 .blastTemp(1200, GasTier.LOW)
                 .build();
 
@@ -122,7 +122,7 @@ public class SecondDegreeMaterials {
                         .enchantability(14).build())
                 .rotorStats(8.0f, 4.0f, 2560)
                 .fluidPipeProperties(3587, 225, true)
-                .cableProperties(GTValues.V[5], 3, 2)
+                .cableProperties(V[IV], 3, 2)
                 .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1000)
                 .build();
 
@@ -327,7 +327,7 @@ public class SecondDegreeMaterials {
                 .toolStats(ToolProperty.Builder.of(40.0F, 12.0F, 3072, 5)
                         .attackSpeed(0.3F).enchantability(33).magnetic().build())
                 .rotorStats(8.0f, 5.0f, 5120)
-                .cableProperties(GTValues.V[8], 2, 4)
+                .cableProperties(V[UV], 2, 4)
                 .blastTemp(7200, GasTier.HIGH, VA[LuV], 1000)
                 .build();
 

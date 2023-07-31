@@ -58,6 +58,8 @@ public class BaublesModule extends IntegrationSubmodule {
         MetaItems.BATTERY_UV_NAQUADRIA.addComponents(new BaubleBehavior(BaubleType.TRINKET));
         MetaItems.ENERGY_LAPOTRONIC_ORB.addComponents(new BaubleBehavior(BaubleType.TRINKET));
         MetaItems.ENERGY_LAPOTRONIC_ORB_CLUSTER.addComponents(new BaubleBehavior(BaubleType.TRINKET));
+        MetaItems.ENERGY_MODULE.addComponents(new BaubleBehavior(BaubleType.TRINKET));
+        MetaItems.ENERGY_CLUSTER.addComponents(new BaubleBehavior(BaubleType.TRINKET));
         MetaItems.ZERO_POINT_MODULE.addComponents(new BaubleBehavior(BaubleType.TRINKET));
         MetaItems.ULTIMATE_BATTERY.addComponents(new BaubleBehavior(BaubleType.TRINKET));
     }

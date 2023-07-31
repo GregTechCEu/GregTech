@@ -121,11 +121,33 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             if (isAutoOutputFluids()) {
                 pushFluidsIntoNearbyHandlers(currentOutputFacing);
             }
-            if (previousFluid == null || !previousFluid.equals(fluidTank.getFluid()) || previousFluid.amount != fluidTank.getFluidAmount()) {
-                previousFluid = fluidTank.getFluid() == null ? null : fluidTank.getFluid().copy();
-                writeCustomData(UPDATE_FLUID, buf -> buf.writeCompoundTag(fluidTank.getFluid() == null ? null : fluidTank.getFluid().writeToNBT(new NBTTagCompound())));
+
+            FluidStack currentFluid = fluidTank.getFluid();
+            if (previousFluid == null) {
+                // tank was empty, but now is not
+                if (currentFluid != null) {
+                    updatePreviousFluid(currentFluid);
+                }
+            } else {
+                if (currentFluid == null) {
+                    // tank had fluid, but now is empty
+                    updatePreviousFluid(null);
+                } else if (previousFluid.getFluid().equals(currentFluid.getFluid()) && previousFluid.amount != currentFluid.amount) {
+                    // tank has fluid with changed amount
+                    previousFluid.amount = currentFluid.amount;
+                    writeCustomData(UPDATE_FLUID_AMOUNT, buf -> buf.writeInt(currentFluid.amount));
+                } else if (!previousFluid.equals(currentFluid)) {
+                    // tank has a different fluid from before
+                    updatePreviousFluid(currentFluid);
+                }
             }
         }
+    }
+
+    // should only be called on the server
+    private void updatePreviousFluid(FluidStack currentFluid) {
+        previousFluid = currentFluid == null ? null : currentFluid.copy();
+        writeCustomData(UPDATE_FLUID, buf -> buf.writeCompoundTag(currentFluid == null ? null : currentFluid.writeToNBT(new NBTTagCompound())));
     }
 
     @Override
@@ -427,6 +449,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at " + this.getPos() + " on a routine fluid update");
             }
             scheduleRenderUpdate();
+        } else if (dataId == UPDATE_FLUID_AMOUNT) {
+            FluidStack stack = fluidTank.getFluid();
+            if (stack != null) {
+                stack.amount = Math.min(buf.readInt(), fluidTank.getCapacity());
+                scheduleRenderUpdate();
+            }
         }
     }
 
@@ -604,6 +632,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         @Override
         public int fillInternal(FluidStack resource, boolean doFill) {
             int accepted = super.fillInternal(resource, doFill);
+
+            // if we couldn't accept "resource", and "resource" is not the same as the stored fluid.
+            if (accepted == 0 && !resource.isFluidEqual(getFluid())) {
+                return 0;
+            }
+
             if (doFill && locked && lockedFluid == null) {
                 lockedFluid = resource.copy();
                 lockedFluid.amount = 1;

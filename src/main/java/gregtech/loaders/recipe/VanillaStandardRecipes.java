@@ -845,11 +845,13 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.IRON_TRAPDOOR))
                 .duration(100).EUt(16).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.Iron, 6)
-                .circuitMeta(6)
-                .outputs(new ItemStack(Items.IRON_DOOR))
-                .duration(100).EUt(16).buildAndRegister();
+        if (!ConfigHolder.recipes.hardAdvancedIronRecipes) {
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.plate, Materials.Iron, 6)
+                    .circuitMeta(6)
+                    .outputs(new ItemStack(Items.IRON_DOOR, 3))
+                    .duration(100).EUt(16).buildAndRegister();
+        }
     }
 
     /**

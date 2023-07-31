@@ -19,6 +19,7 @@ import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.common.blocks.MetaBlocks;
+import io.github.drmanganese.topaddons.reference.Colors;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -27,6 +28,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -237,6 +239,7 @@ public class MetaFluids {
             if (material.hasFluidColor()) {
                 fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
             } else {
+                // set color to 0xFFFFFFFF to preserve fluid texture
                 fluid.setColor(0xFFFFFFFF);
             }
 
@@ -244,6 +247,8 @@ public class MetaFluids {
             FluidType.setFluidProperties(fluidType, fluid);
 
             if (material.hasFlag(MaterialFlags.STICKY)) fluid.setViscosity(2000);
+
+            registerFluidModCompat(fluidName, material, fluid);
 
             ((MaterialFluid) fluid).registerFluidTooltip();
             FluidRegistry.registerFluid(fluid);
@@ -265,6 +270,12 @@ public class MetaFluids {
 
         fluidToMaterialMappings.put(fluid.getName(), material);
         return fluid;
+    }
+
+    private static void registerFluidModCompat(@Nonnull String fluidName, @Nonnull Material material, @Nonnull Fluid fluid) {
+        if (!material.hasFluidColor() && Loader.isModLoaded(GTValues.MODID_TOP_ADDONS)) {
+            Colors.FLUID_NAME_COLOR_MAP.put(fluidName, GTUtility.convertRGBtoARGB(material.getMaterialRGB()));
+        }
     }
 
     /**

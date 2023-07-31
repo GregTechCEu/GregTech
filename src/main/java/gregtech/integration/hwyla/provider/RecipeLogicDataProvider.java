@@ -5,7 +5,9 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaRegistrar;
@@ -58,18 +60,25 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
             if (tag.getBoolean("Working")) {
                 int EUt = tag.getInteger("RecipeEUt");
                 int absEUt = Math.abs(EUt);
+                boolean consumer = EUt > 0;
                 String endText = null;
 
                 if (accessor.getTileEntity() instanceof IGregTechTileEntity gtte) {
-                    if (gtte.getMetaTileEntity() instanceof SteamMetaTileEntity) {
-                        endText = ": " + absEUt + TextFormatting.RESET + " L/t " + I18n.format("material.steam");
+                    if (gtte.getMetaTileEntity() instanceof SteamMetaTileEntity || gtte.getMetaTileEntity() instanceof MetaTileEntityLargeBoiler) {
+                        endText = ": " + absEUt + TextFormatting.RESET + " L/t " + I18n.format("gregtech.top.steam")+ " " + I18n.format(Materials.Steam.getUnlocalizedName());
+                    }
+                    AbstractRecipeLogic arl = gtte.getMetaTileEntity().getRecipeLogic();
+                    if (arl != null) {
+                        consumer = arl.consumesEnergy();
                     }
                 }
                 if (endText == null) {
                     endText = ": " + absEUt + TextFormatting.RESET + " EU/t (" + GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.RESET + ")";
                 }
 
-                if (EUt > 0) {
+                if (EUt == 0) return tooltip;
+
+                if (consumer) {
                     tooltip.add(I18n.format("gregtech.top.energy_consumption") + endText);
                 } else {
                     tooltip.add(I18n.format("gregtech.top.energy_production") + endText);
