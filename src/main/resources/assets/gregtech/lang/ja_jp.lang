@@ -4039,7 +4039,7 @@ gregtech.machine.transformer.adjustable.uxv.name=16A対応UXV変圧器
 gregtech.machine.transformer.adjustable.opv.name=16A対応OpV変圧器
 
 # Diodes
-gregtech.machine.diode.message=通す最大A数: %s
+gregtech.machine.diode.message=通す最大アンペア数: %s
 gregtech.machine.diode.tooltip_tool_usage=ソフトマレットで叩いて通すアンペア数を切り替えます。
 gregtech.machine.diode.tooltip_general=エネルギーを一方通行にし、通すA数を制限できる。
 gregtech.machine.diode.tooltip_starts_at=ソフトマレットでA数を変更。最初は§f1A§7です。
@@ -4674,12 +4674,12 @@ gregtech.multiblock.charcoal_pile.description=最大9×4×9の範囲の原木を
 
 gregtech.machine.data_bank.name=データバンク
 gregtech.machine.data_bank.tooltip.1=個人用NAS (ネットワークHDD)
-gregtech.machine.data_bank.tooltip.2=大容量データストレージ。光ファイバーで輸送。
+gregtech.machine.data_bank.tooltip.2=大容量のNASに格納し、伝送には光ファイバーを利用する。
 gregtech.machine.data_bank.tooltip.3=データバンクは連結可能
 gregtech.machine.data_bank.tooltip.4=データハッチ1つにつき§f%s EU/t§7、連結時§f%s EU/t§7消費する。
 gregtech.machine.data_bank.tooltip.4=通常時、データハッチ1つにつき§f%s EU/t§7消費する。
 gregtech.machine.data_bank.tooltip.5=連結時、データハッチ1つにつき§f%s EU/t§7消費する。
-gregtech.multiblock.data_bank.description=データバンクはアセンブリライン用研究データを複数のアセンブリラインで共有できるようにするマルチブロックです。さらに、アセンブリラインがより複雑なデータを読み取れるようにします。
+gregtech.multiblock.data_bank.description=データバンクは複数のアセンブリラインで研究データを共有するマルチブロックで、複雑なデータの送受信が可能です。
 
 gregtech.machine.power_substation.name=大型蓄電器
 gregtech.machine.power_substation.tooltip1=中央集権型送電網の心臓部
