@@ -9,12 +9,12 @@ public class GTItemStackHandler extends ItemStackHandler {
 
     final private MetaTileEntity metaTileEntity;
 
-    GTItemStackHandler(MetaTileEntity metaTileEntity){
+    public GTItemStackHandler(MetaTileEntity metaTileEntity) {
         super();
         this.metaTileEntity = metaTileEntity;
     }
 
-    public GTItemStackHandler(MetaTileEntity metaTileEntity,int size) {
+    public GTItemStackHandler(MetaTileEntity metaTileEntity, int size) {
         super(size);
         this.metaTileEntity = metaTileEntity;
     }

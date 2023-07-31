@@ -182,7 +182,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.itemInventory = new InaccessibleItemStackHandler();
+        this.itemInventory = new InaccessibleItemStackHandler(this);
     }
 
     public ItemStack getClipboard() {

@@ -1,11 +1,15 @@
 package gregtech.api.items.itemhandlers;
 
+import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class InaccessibleItemStackHandler extends ItemStackHandler {
+public class InaccessibleItemStackHandler extends GTItemStackHandler {
+    public InaccessibleItemStackHandler(MetaTileEntity metaTileEntity) {
+        super(metaTileEntity);
+    }
+
     @Nonnull
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         return stack;

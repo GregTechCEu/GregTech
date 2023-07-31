@@ -64,8 +64,8 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     private boolean isSafeUnlocked = false;
 
     private long unlockComponentsSeed = 0L;
-    private final ItemStackHandler unlockComponents = new ItemStackHandler(2);
-    private final ItemStackHandler unlockInventory = new ItemStackHandler(2) {
+    private final ItemStackHandler unlockComponents = new GTItemStackHandler(this, 2);
+    private final ItemStackHandler unlockInventory = new GTItemStackHandler(this, 2) {
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {

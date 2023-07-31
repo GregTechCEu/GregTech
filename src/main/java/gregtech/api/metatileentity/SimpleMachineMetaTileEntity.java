@@ -56,7 +56,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     private final boolean hasFrontFacing;
 
-    protected final ItemStackHandler chargerInventory;
+    protected final GTItemStackHandler chargerInventory;
     @Nullable
     protected GhostCircuitItemStackHandler circuitInventory;
     private EnumFacing outputFacingItems;
@@ -93,10 +93,10 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.outputItemInventory = new ItemHandlerProxy(new ItemStackHandler(0), exportItems);
+        this.outputItemInventory = new ItemHandlerProxy(new GTItemStackHandler(this, 0), exportItems);
         this.outputFluidInventory = new FluidHandlerProxy(new FluidTankList(false), exportFluids);
         if (this.hasGhostCircuitInventory()) {
-            this.circuitInventory = new GhostCircuitItemStackHandler();
+            this.circuitInventory = new GhostCircuitItemStackHandler(this);
             this.circuitInventory.addNotifiableMetaTileEntity(this);
         }
 

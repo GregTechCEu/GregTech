@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.*;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.recipes.RecipeMap;
@@ -21,7 +22,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -92,13 +92,13 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        if (workable == null) return new ItemStackHandler(0);
+        if (workable == null) return new GTItemStackHandler(this, 0);
         return new NotifiableItemStackHandler(this, workable.getRecipeMap().getMaxInputs(), this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        if (workable == null) return new ItemStackHandler(0);
+        if (workable == null) return new GTItemStackHandler(this, 0);
         return new NotifiableItemStackHandler(this, workable.getRecipeMap().getMaxOutputs(), this, true);
     }
 

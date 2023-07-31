@@ -45,7 +45,6 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -216,7 +215,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     protected void initializeInventory() {
         super.initializeInventory();
         this.itemInventory = new QuantumChestItemHandler();
-        this.outputItemInventory = new ItemHandlerProxy(new ItemStackHandler(0), exportItems);
+        this.outputItemInventory = new ItemHandlerProxy(new GTItemStackHandler(this, 0), exportItems);
         List<IItemHandler> temp = new ArrayList<>();
         temp.add(outputItemInventory);
         temp.add(itemInventory);

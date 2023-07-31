@@ -126,11 +126,6 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     }
 
     @Override
-    protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(0);
-    }
-
-    @Override
     protected void initializeInventory() {
         super.initializeInventory();
         this.itemInventory = importItems;
