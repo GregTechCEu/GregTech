@@ -18,10 +18,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Ensure build script version is up to date
-        id: update-buildscript
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Run script updater
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: 'updateBuildScript'
+          generate-job-summary: false
+          gradle-home-cache-includes: |
+            caches
+            jdks
+            notifications
+            wrapper
+
+      - name: Get new script version
+        id: version-check
         run: |
-          curl https://raw.githubusercontent.com/GregTechCEu/Buildscripts/master/build.gradle --output build.gradle
           new_version=$(head -1 build.gradle | sed -r 's|//version: (.*)|\1|g')
           echo "NEW_VERSION=$new_version" >> "$GITHUB_OUTPUT"
 
@@ -34,10 +50,9 @@ jobs:
           token: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          add-paths: build.gradle
-          commit-message: 'update build script version to ${{ steps.update-buildscript.outputs.NEW_VERSION }}'
+          commit-message: 'update build script version to ${{ steps.version_check.outputs.NEW_VERSION }}'
           branch: gha-update-buildscript
-          title: Update build script version to ${{ steps.update-buildscript.outputs.NEW_VERSION }}
+          title: Update build script version to ${{ steps.version_check.outputs.NEW_VERSION }}
           body: This pull request is created by the buildscript-update workflow
           labels: ignore changelog
 
