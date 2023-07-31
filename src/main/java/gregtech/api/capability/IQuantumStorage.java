@@ -21,6 +21,6 @@ public interface IQuantumStorage<T> {
     T getTypeValue();
 
     enum Type {
-        ITEM, FLUID, EXTENDER
+        ITEM, FLUID, EXTENDER, NONE
     }
 }
