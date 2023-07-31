@@ -26,8 +26,7 @@ plugins {
 
 blowdryerSetup {
     repoSubfolder 'spotless'
-    github 'GregTechCEu/Buildscripts', 'tag', 'v1.0.0'
-    //devLocal '.' // Use this when testing config updated locally
+    github 'GregTechCEu/Buildscripts', 'tag', 'v1.0.7'
 }
 
 rootProject.name = rootProject.projectDir.getName()
