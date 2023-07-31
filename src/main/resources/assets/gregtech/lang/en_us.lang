@@ -4385,6 +4385,10 @@ gregtech.machine.quantum_tank.uhv.name=Quantum Tank V
 
 #Quantum Storage Controller
 gregtech.machine.quantum_storage_controller.name=Quantum Storage Controller
+gregtech.machine.quantum_storage_proxy.name=Quantum Storage Proxy
+gregtech.machine.quantum_storage_proxy.tooltip=Proxies the Quantum Storage Controller inventory
+gregtech.machine.quantum_storage_extender.name=Quantum Storage Extender
+gregtech.machine.quantum_storage_extender.tooltip=Extends the Quantum Storage network to other chests/tanks
 
 #Buffers
 gregtech.machine.buffer.tooltip=A Small Buffer to store Items and Fluids

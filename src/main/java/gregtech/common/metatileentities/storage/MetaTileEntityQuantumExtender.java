@@ -23,16 +23,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDualHandler> {
-
-    IDualHandler handler = null;
-    public MetaTileEntityQuantumProxy(ResourceLocation metaTileEntityId) {
+public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<IDualHandler> {
+    public MetaTileEntityQuantumExtender(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityQuantumProxy(metaTileEntityId);
+        return new MetaTileEntityQuantumExtender(metaTileEntityId);
     }
 
     @Override
@@ -58,36 +56,20 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
     @Override
     public void setConnected(IQuantumController controller) {
         super.setConnected(controller);
-        this.handler = getController().getHandler();
     }
 
     @Override
     public void setDisconnected() {
         super.setDisconnected();
-        this.handler = null;
     }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (getController() == null && this.handler == null) return super.getCapability(capability, side);
-
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (T) getTypeValue();
-        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return (T) getTypeValue();
-        }
-        return super.getCapability(capability, side);
-    }
-
     @Override
     public Type getType() {
-        return Type.EXTENDER;
+        return Type.NONE;
     }
 
     @Override
     public IDualHandler getTypeValue() {
-        return getController().getHandler();
+        return null;
     }
 
     @Override
