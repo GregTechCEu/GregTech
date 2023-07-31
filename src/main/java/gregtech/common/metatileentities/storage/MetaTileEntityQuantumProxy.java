@@ -4,7 +4,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IDualHandler;
-import gregtech.api.capability.IQuantumController;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -25,7 +24,6 @@ import java.util.List;
 
 public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDualHandler> {
 
-    IDualHandler handler = null;
     public MetaTileEntityQuantumProxy(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
@@ -55,22 +53,10 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
         return false;
     }
 
-    @Override
-    public void setConnected(IQuantumController controller) {
-        super.setConnected(controller);
-        this.handler = getController().getHandler();
-    }
-
-    @Override
-    public void setDisconnected() {
-        super.setDisconnected();
-        this.handler = null;
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (getController() == null && this.handler == null) return super.getCapability(capability, side);
+        if (getTypeValue() == null) return super.getCapability(capability, side);
 
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return (T) getTypeValue();
@@ -87,6 +73,7 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
 
     @Override
     public IDualHandler getTypeValue() {
+        if (getController() == null) return null;
         return getController().getHandler();
     }
 

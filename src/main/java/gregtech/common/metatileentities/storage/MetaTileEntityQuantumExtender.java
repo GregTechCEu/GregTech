@@ -4,7 +4,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IDualHandler;
-import gregtech.api.capability.IQuantumController;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -12,12 +11,8 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,16 +46,6 @@ public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<
     @Override
     protected boolean openGUIOnRightClick() {
         return false;
-    }
-
-    @Override
-    public void setConnected(IQuantumController controller) {
-        super.setConnected(controller);
-    }
-
-    @Override
-    public void setDisconnected() {
-        super.setDisconnected();
     }
     @Override
     public Type getType() {

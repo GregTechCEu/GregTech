@@ -1,6 +1,7 @@
 package gregtech.api.capability;
 
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
 
 public interface IQuantumStorage<T> {
 
@@ -12,6 +13,7 @@ public interface IQuantumStorage<T> {
 
     BlockPos getControllerPos();
 
+    @Nullable
     IQuantumController getController();
 
     BlockPos getPos();
