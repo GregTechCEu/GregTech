@@ -62,6 +62,7 @@ gregtech.top.working_disabled=停止中
 
 gregtech.top.energy_consumption=使用量:
 gregtech.top.energy_production=発電量:
+gregtech.top.steam=の
 
 gregtech.top.transform_up=昇圧
 gregtech.top.transform_down=降圧
