@@ -10,27 +10,22 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<IDualHandler> {
+public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDualHandler> {
 
     IDualHandler handler = null;
-    public MetaTileEntityQuantumExtender(ResourceLocation metaTileEntityId) {
+    public MetaTileEntityQuantumProxy(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityQuantumExtender(metaTileEntityId);
+        return new MetaTileEntityQuantumProxy(metaTileEntityId);
     }
 
     @Override
