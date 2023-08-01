@@ -8,10 +8,13 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.*;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenProperty;
 
@@ -110,6 +113,15 @@ public class RecipeMaps {
                     int amount = recipeBuilder.fluidInputs.get(0).getInputFluidStack().amount;
 
                     recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.Tin.getFluid(amount * 2)).buildAndRegister();
+                }
+
+                if (recipeBuilder.isWithRecycling()) {
+                    // ignore input fluids for recycling
+                    ItemStack outputStack = recipeBuilder.getOutputs().get(0);
+                    ItemMaterialInfo info = RecyclingHandler.getRecyclingIngredients(recipeBuilder.getInputs(), outputStack.getCount());
+                    if (info != null) {
+                        OreDictUnifier.registerOre(outputStack, info);
+                    }
                 }
             });
 
