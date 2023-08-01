@@ -4956,7 +4956,7 @@ gregtech.maintenance.configurable_time=故障率: %fx
 gregtech.maintenance.configurable_time.unchanged_description=故障は通常の頻度で発生します。設定を変更するとアップデートされます。
 gregtech.maintenance.configurable_time.changed_description=故障は通常の%f倍の頻度で発生します
 
-gregtech.maintenance.configurable.tooltip_basic=故障頻度に応じて機械の動作速度が変化する。
+gregtech.maintenance.configurable.tooltip_basic=故障頻度に応じて機械の動作速度を変化させる。
 gregtech.maintenance.configurable.tooltip_more_info=SHIFTで特殊な操作を表示
 gregtech.maintenance.configurable.tooltip_pss_header=§8:大型蓄電器
 gregtech.maintenance.configurable.tooltip_pss_info=  §f損失量が増減
