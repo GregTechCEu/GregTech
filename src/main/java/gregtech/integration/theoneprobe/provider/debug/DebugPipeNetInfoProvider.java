@@ -1,4 +1,4 @@
-package gregtech.integration.theoneprobe.provider;
+package gregtech.integration.theoneprobe.provider.debug;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -29,7 +29,7 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
 
     @Override
     public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull IBlockState blockState, @Nonnull IProbeHitData data) {
-        if (mode == ProbeMode.DEBUG && ConfigHolder.misc.debug) {
+        if (ConfigHolder.misc.debug) {
             TileEntity tileEntity = world.getTileEntity(data.getPos());
             if (tileEntity instanceof IGregTechTileEntity) {
                 MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();

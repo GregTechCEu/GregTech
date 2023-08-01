@@ -1,4 +1,4 @@
-//version: 1690655342
+//version: 1690847429
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -30,10 +30,6 @@ plugins {
     id 'com.diffplug.spotless' version '6.13.0' apply false
     id 'com.palantir.git-version' version '3.0.0' apply false
     id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
-}
-
-if (verifySettingsGradle()) {
-    throw new GradleException("Settings has been updated, please re-run task.")
 }
 
 def out = services.get(StyledTextOutputFactory).create('an-output')
@@ -471,7 +467,7 @@ dependencies {
 
     compileOnlyApi 'org.jetbrains:annotations:23.0.0'
     annotationProcessor 'org.jetbrains:annotations:23.0.0'
-    patchedMinecraft('net.minecraft:launchwrapper:1.17.1') {
+    patchedMinecraft('net.minecraft:launchwrapper:1.17.2') {
         transitive = false
     }
 
@@ -1022,29 +1018,18 @@ static URL availableBuildScriptUrl() {
     new URL("https://raw.githubusercontent.com/GregTechCEu/Buildscripts/master/build.gradle")
 }
 
-static URL exampleSettingsGradleUrl() {
+static URL availableSettingsGradleUrl() {
     new URL("https://raw.githubusercontent.com/GregTechCEu/Buildscripts/master/settings.gradle")
-}
-
-boolean verifySettingsGradle() {
-    def settingsFile = getFile("settings.gradle")
-    if (!settingsFile.exists()) {
-        println("Downloading default settings.gradle")
-        exampleSettingsGradleUrl().withInputStream { i -> settingsFile.withOutputStream { it << i } }
-        return true
-    }
-    return false
 }
 
 boolean performBuildScriptUpdate() {
     if (isNewBuildScriptVersionAvailable()) {
         def buildscriptFile = getFile("build.gradle")
+        def settingsFile = getFile("settings.gradle")
         availableBuildScriptUrl().withInputStream { i -> buildscriptFile.withOutputStream { it << i } }
+        availableSettingsGradleUrl().withInputStream { i -> settingsFile.withOutputStream { it << i } }
         def out = services.get(StyledTextOutputFactory).create('buildscript-update-output')
         out.style(Style.Success).print("Build script updated. Please REIMPORT the project or RESTART your IDE!")
-        if (verifySettingsGradle()) {
-            throw new GradleException("Settings has been updated, please re-run task.")
-        }
         return true
     }
     return false
