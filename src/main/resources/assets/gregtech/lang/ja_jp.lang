@@ -105,8 +105,8 @@ gregtech.top.ld_pipe_incomplete=パイプラインの構造に不備あり
 gregtech.top.ld_pipe_length=長さ:
 gregtech.top.ld_pipe_input=搬入
 gregtech.top.ld_pipe_output=搬出
-gregtech.top.ld_pipe_input_endpoint=搬入末端:
-gregtech.top.ld_pipe_output_endpoint=搬出末端:
+gregtech.top.ld_pipe_input_endpoint=搬入口:
+gregtech.top.ld_pipe_output_endpoint=搬出口:
 
 gregtech.waila.energy_stored=エネルギー: %d EU / %d EU
 gregtech.waila.progress_idle=停止中
@@ -156,7 +156,7 @@ metaitem.electric.discharge_mode.tooltip=スニーク中に使うことで放電
 
 metaitem.dust.tooltip.purify=大釜に投げ入れることで綺麗な粉を得られる。
 metaitem.crushed.tooltip.purify=大釜に投げ入れることで洗浄された鉱石を得られる。
-metaitem.int_circuit.configuration=§a設定番号: §f%d§7
+metaitem.int_circuit.configuration=§a設定値: §f%d§7
 metaitem.credit.copper.name=銅製コイン
 metaitem.credit.copper.tooltip=0.125クレジット
 metaitem.credit.cupronickel.name=キュプロニッケル製コイン
@@ -848,8 +848,8 @@ metaitem.cover.item.voiding.advanced.name=発展型アイテム消去カバー
 metaitem.cover.item.voiding.advanced.tooltip=§fアイテム§7を消去する量を制御できる§fカバー§7。/n設置後に§fソフトマレット§7で有効化する必要がある。
 metaitem.cover.storage.name=収納カバー
 metaitem.cover.storage.tooltip=小物用の収納スペースを持つカバー
-metaitem.cover.maintenance.detector.name=メンテナンス告知カバー
-metaitem.cover.maintenance.detector.tooltip=§f修理の有無§7を赤石信号として検出する§fカバー§7。
+metaitem.cover.maintenance.detector.name=メンテナンス検出カバー
+metaitem.cover.maintenance.detector.tooltip=§f修理が必要かどうか§7を赤石信号として検出する§fカバー§7。
 
 metaitem.cover.facade.name=%sの外装
 metaitem.cover.facade.tooltip=ケーブルを装飾する§fカバー§7
@@ -1176,8 +1176,8 @@ cover.ore_dictionary_filter.info=§b論理式対応/n§6a & b§r = AND/n§6a | b
 cover.ore_dictionary_filter.test_slot.info=フィルタ式に一致するかどうかのテスト用スロット
 cover.ore_dictionary_filter.test_slot.matches=§a* %s
 cover.ore_dictionary_filter.test_slot.matches_not=§c* %s
-cover.ore_dictionary_filter.test_slot.no_oredict.matches=§a(鉱石辞書がない)
-cover.ore_dictionary_filter.test_slot.no_oredict.matches_not=§c(鉱石辞書がない)
+cover.ore_dictionary_filter.test_slot.no_oredict.matches=§a(鉱石辞書なし)
+cover.ore_dictionary_filter.test_slot.no_oredict.matches_not=§c(鉱石辞書なし)
 cover.ore_dictionary_filter.status.err=§c%s個のエラー
 cover.ore_dictionary_filter.status.err_warn=§c%s個のエラーと%s個の警告
 cover.ore_dictionary_filter.status.warn=§7%s個の警告
@@ -2250,7 +2250,7 @@ recipemap.gas_collector.name=ガス収集機
 recipemap.rock_breaker.name=破砕機
 recipemap.primitive_blast_furnace.name=初歩的な溶鉱炉
 recipemap.coke_oven.name=コークス炉
-recipemap.research_station.name=研究設備
+recipemap.research_station.name=研究ステーション
 
 gregtech.recipe.category.arc_furnace_recycling=リサイクル (アーク炉)
 gregtech.recipe.category.macerator_recycling=リサイクル (粉砕機)
@@ -2295,10 +2295,10 @@ tile.brittle_charcoal.tooltip.1=炭窯で製造される。
 tile.brittle_charcoal.tooltip.2=採掘すると木炭を得られる。
 
 tile.optical_pipe_normal.name=光ファイバーケーブル
-tile.optical_pipe_normal.tooltip1=§f計算情報§7や§f研究データ§7を転送
+tile.optical_pipe_normal.tooltip1=§f計算情報§7や§f研究データ§7を伝送
 
-tile.laser_pipe_normal.name=レーザー伝達ケーブル
-tile.laser_pipe_normal.tooltip1=エネルギーを損失無しで直線的に伝達する
+tile.laser_pipe_normal.name=レーザー伝送ケーブル
+tile.laser_pipe_normal.tooltip1=エネルギーを損失無しで直線的に伝送する
 
 metaitem.prospector.lv.name=LV電動探知機
 metaitem.prospector.hv.name=HV電動探知機
@@ -2650,13 +2650,13 @@ tile.cleanroom_casing.filter_sterile.tooltip=§a滅菌§7環境を構築する
 
 # Computer Casings
 tile.computer_casing.computer_casing.name=コンピュータ外装
-tile.computer_casing.computer_casing.tooltip=ナイスで綺麗な外装
+tile.computer_casing.computer_casing.tooltip=きれいで清潔な外装
 tile.computer_casing.computer_heat_vent.name=コンピュータ排熱口
 tile.computer_casing.computer_heat_vent.tooltip=フィルタ付きの排気口
 tile.computer_casing.high_power_casing.name=高出力外装
 tile.computer_casing.high_power_casing.tooltip=出力が上昇中!
 tile.computer_casing.advanced_computer_casing.name=発展型コンピュータ外装
-tile.computer_casing.advanced_computer_casing.tooltip=数千の量子ビット幅
+tile.computer_casing.advanced_computer_casing.tooltip=幅数千量子ビット
 
 # Asphalt
 tile.asphalt.asphalt.name=アスファルト
@@ -4298,22 +4298,22 @@ gregtech.machine.world_accelerator.mode_entity=Random Tickモード
 
 # HPCA Components
 gregtech.machine.hpca.empty_component.name=空のHPCAコンポーネント
-gregtech.machine.hpca.empty_component.tooltip=空きスペースを埋めるために
+gregtech.machine.hpca.empty_component.tooltip=隙間埋め用
 gregtech.machine.hpca.heat_sink_component.name=HPCAヒートシンクコンポーネント
-gregtech.machine.hpca.heat_sink_component.tooltip=冷却無料! 何でもタダなの?
+gregtech.machine.hpca.heat_sink_component.tooltip=人生で本当に無料なものなんてない、この冷却材を除いて
 gregtech.machine.hpca.active_cooler_component.name=HPCAアクティブ冷却コンポーネント
-gregtech.machine.hpca.active_cooler_component.tooltip=無料じゃないけどより効率的な冷却
+gregtech.machine.hpca.active_cooler_component.tooltip=冷却プレミアムプラン
 gregtech.machine.hpca.computation_component.name=HPCA計算コンポーネント
-gregtech.machine.hpca.computation_component.tooltip=赤ちゃんの初めてのコンピュータ
+gregtech.machine.hpca.computation_component.tooltip=猫でもわかるHPCA 第3版
 gregtech.machine.hpca.advanced_computation_component.name=発展型HPCA計算コンポーネント
-gregtech.machine.hpca.advanced_computation_component.tooltip=メジャーリーグで計算
+gregtech.machine.hpca.advanced_computation_component.tooltip=デンサンシティにようこそ
 gregtech.machine.hpca.bridge_component.name=HPCAブリッジコンポーネント
-gregtech.machine.hpca.bridge_component.tooltip=HPCAの"アレイ"はここから来ているんだ
+gregtech.machine.hpca.bridge_component.tooltip=HPCAのAは本当は天橋立のAなんだよ
 
 gregtech.machine.hpca.computation_component.damaged.name=壊れたHPCA計算コンポーネント
-gregtech.machine.hpca.computation_component.damaged.tooltip=無料のリサイクル可能な素材
+gregtech.machine.hpca.computation_component.damaged.tooltip=♲プラ
 gregtech.machine.hpca.advanced_computation_component.damaged.name=壊れた発展型HPCA計算コンポーネント
-gregtech.machine.hpca.advanced_computation_component.damaged.tooltip=手も足も出なかった
+gregtech.machine.hpca.advanced_computation_component.damaged.tooltip=デンサンシティの凋落
 
 gregtech.machine.hpca.component_general.upkeep_eut=§e維持エネルギー: §f%,d EU/t
 gregtech.machine.hpca.component_general.max_eut=§6最大エネルギー: §f%,d EU/t
@@ -4324,7 +4324,7 @@ gregtech.machine.hpca.component_type.cooler_active_coolant=§c要求: §f%,d L/t
 gregtech.machine.hpca.component_type.computation_cwut=§9計算力: §f%,d CWU/t
 gregtech.machine.hpca.component_type.computation_cooling=§c要求: §f%,d 冷却P
 gregtech.machine.hpca.component_type.bridge=§fHPCA§7が§fネットワークスイッチ§7に接続できるようになる
-gregtech.machine.hpca.component_type.damaged=HPCAはオーバーヒートで壊れてしまう!
+gregtech.machine.hpca.component_type.damaged=HPCAのオーバーヒートで壊れてしまう!
 
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=搬出口からの搬入を許可
@@ -4334,12 +4334,12 @@ gregtech.machine.muffle.off=消音: 無効
 gregtech.machine.perfect_oc=オーバークロック時のエネルギーロスがない。
 gregtech.machine.parallel_limit=一度に§b%d§r§7レシピまで実行できる。
 
-gregtech.machine.ld_item_endpoint.name=長距離アイテムパイプ末端
-gregtech.machine.ld_fluid_endpoint.name=長距離液体パイプ末端
-gregtech.machine.endpoint.tooltip.min_length=§b最小末端間距離: §f%d ブロック
+gregtech.machine.ld_item_endpoint.name=長距離アイテムパイプ接続口
+gregtech.machine.ld_fluid_endpoint.name=長距離液体パイプ接続口
+gregtech.machine.endpoint.tooltip.min_length=§b最小接続口間距離: §f%d ブロック
 gregtech.machine.endpoint.tooltip.1=§f長距離パイプ§7で接続すると長距離パイプラインを構築できる。
-gregtech.machine.endpoint.tooltip.2=パイプラインは必ず§f1つの搬入末端§7と§f1つの搬出末端§7が必要。
-gregtech.machine.endpoint.tooltip.3=パイプライン末端のみ§fチャンクロード§7が必要。
+gregtech.machine.endpoint.tooltip.2=パイプラインは必ず§f1つの搬入口§7と§f1つの搬出口§7が必要。
+gregtech.machine.endpoint.tooltip.3=パイプライン口のみ§fチャンクロード§7が必要。
 
 # Advancements
 gregtech.advancement.root_steam.name=蒸気時代
@@ -4524,10 +4524,10 @@ gregtech.advancement.zero_point_module.72_wetware_processor.name=濡れたソフ
 gregtech.advancement.zero_point_module.72_wetware_processor.desc=ウェットウェア処理装置を入手する。
 gregtech.advancement.zero_point_module.73_trinium_coil.name=9000越え!
 gregtech.advancement.zero_point_module.73_trinium_coil.desc=トリニウムコイルブロックを作成する。
-gregtech.advancement.zero_point_module.80_hpca.name=計算に必要なものがここに集結
+gregtech.advancement.zero_point_module.80_hpca.name=CASIOの本気
 gregtech.advancement.zero_point_module.80_hpca.desc=高機能計算アレイを作成する。
-gregtech.advancement.zero_point_module.81_research_station.name=さらなる発展研究
-gregtech.advancement.zero_point_module.81_research_station.desc=研究設備を作成する。
+gregtech.advancement.zero_point_module.81_research_station.name=深く、力強く、きょう色々。
+gregtech.advancement.zero_point_module.81_research_station.desc=研究ステーションを作成する。
 gregtech.advancement.root_uv.name=UV (Ultimate Voltage) 時代
 gregtech.advancement.root_uv.desc=トリタニウムを生産する。
 gregtech.advancement.ultimate_voltage.74_wetware_mainframe.name=不気味な輝き
@@ -4674,12 +4674,12 @@ gregtech.multiblock.charcoal_pile.description=最大9×4×9の範囲の原木を
 
 gregtech.machine.data_bank.name=データバンク
 gregtech.machine.data_bank.tooltip.1=個人用NAS (ネットワークHDD)
-gregtech.machine.data_bank.tooltip.2=大容量のNASに格納し、伝送には光ファイバーを利用する。
+gregtech.machine.data_bank.tooltip.2=大容量データストレージ。伝送には光ファイバーを利用する。
 gregtech.machine.data_bank.tooltip.3=データバンクは連結可能
 gregtech.machine.data_bank.tooltip.4=データハッチ1つにつき§f%s EU/t§7、連結時§f%s EU/t§7消費する。
 gregtech.machine.data_bank.tooltip.4=通常時、データハッチ1つにつき§f%s EU/t§7消費する。
 gregtech.machine.data_bank.tooltip.5=連結時、データハッチ1つにつき§f%s EU/t§7消費する。
-gregtech.multiblock.data_bank.description=データバンクは複数のアセンブリラインで研究データを共有するマルチブロックで、複雑なデータの送受信が可能です。
+gregtech.multiblock.data_bank.description=データバンクは複数のアセンブリラインで研究データを共有するマルチブロックで、アセンブリラインにより複雑な研究データの読み取りを可能にさせます。
 
 gregtech.machine.power_substation.name=大型蓄電器
 gregtech.machine.power_substation.tooltip1=中央集権型送電網の心臓部
@@ -4690,17 +4690,17 @@ gregtech.machine.power_substation.tooltip5=蓄電ブロック当たり§f%,d EU/
 gregtech.multiblock.power_substation.description=大型蓄電器は大量の電力を蓄えることができるマルチブロックです。蓄電ブロックの層は18層まで拡張できます。蓄電ブロック層は埋め尽くさないといけないので、空いた空間は空の蓄電ブロックを設置しましょう。
 
 gregtech.machine.active_transformer.name=大型変圧器
-gregtech.machine.active_transformer.tooltip1=変圧器: レーザーが代理
+gregtech.machine.active_transformer.tooltip1=レーザー式変圧器
 gregtech.machine.active_transformer.tooltip2=任意の数の§fエナジーハッチ§7と§fダイナモハッチ§7を組み合わせられる。
 gregtech.machine.active_transformer.tooltip3=
 gregtech.machine.active_transformer.tooltip3.5=レーザー§7を用いることで驚異の超距離電力輸送が可能。
 gregtech.multiblock.active_transformer.description=大型変圧器は任意の電圧及び任意の数のエナジーハッチとダイナモハッチを組み込むことができるマルチブロックです。レーザー照射ハッチとレーザー照準ハッチによって大型変圧器同士を連携させると、長距離の無損失電力輸送ができます。 レーザーは直線でなければならず、そうでなければ電力は輸送されません。
 
-gregtech.machine.research_station.name=研究設備
+gregtech.machine.research_station.name=研究ステーション
 gregtech.machine.research_station.tooltip.1=単なるマルチブロックスキャナーではない
 gregtech.machine.research_station.tooltip.2=§fデータオーブ§7または§fデータモジュール§7へのスキャンに用いる。
 gregtech.machine.research_station.tooltip.3=動作には§f計算力§7が必要です。
-gregtech.multiblock.research_station.description=研究設備はアセンブリライン用のより複雑な研究を行うマルチブロックです。研究にはデータオーブまたはデータモジュールが必要です。また、動作には高機能計算アレイ (HPCAs) から供給されるComputer Work Units (CWU/t)が必要です。
+gregtech.multiblock.research_station.description=研究ステーションはアセンブリライン用のより複雑な研究を行うマルチブロックです。研究にはデータオーブまたはデータモジュールが必要です。また、動作には高機能計算アレイ (HPCAs) から供給されるComputer Work Units (CWU/t)が必要です。
 
 gregtech.machine.network_switch.name=ネットワークスイッチ
 gregtech.machine.network_switch.tooltip.1=イーサネットハブ
@@ -4712,7 +4712,7 @@ gregtech.machine.high_performance_computing_array.name=高機能計算アレイ 
 gregtech.machine.high_performance_computing_array.tooltip.1=ごくごく一般的なスーパーコンピュータ
 gregtech.machine.high_performance_computing_array.tooltip.2=§f計算力§7 (と熱) を産み出すのに使われる。
 gregtech.machine.high_performance_computing_array.tooltip.3=§fCWU/t§7 (Compute Work Units) を産み出すためにはHPCAコンポーネントが必要。
-gregtech.multiblock.high_performance_computing_array.description=高機能計算アレイ (HPCA) はより複雑なアセンブリライン用データに必要なCompute Work Units (CWU/t) を生産するマルチブロックです。このマルチブロックは任意のHPCAコンポーネントで構成される3x3のエリアがあります。組み込むコンポーネントによって供給できる計算力、冷却力、発熱量及びHPCAのエネルギー使用量が異なります。ブリッジコンポーネントを組み込んだ場合、HPCAはネットワークスイッチに接続し、複数の供給元から1つまたは複数の宛先への計算の統合と分配を行うことができます。
+gregtech.multiblock.high_performance_computing_array.description高機能計算アレイ (HPCA) はより複雑なアセンブリライン用データに必要なCompute Work Units (CWU/t) を生産するマルチブロックです。このマルチブロックには任意のHPCAコンポーネントで構成される可変長の3x3のエリアがあります。組み込むコンポーネントによって供給できる計算力、冷却力、発熱量及びHPCAのエネルギー使用量が異なります。ブリッジコンポーネントを組み込んだ場合、HPCAはネットワークスイッチに接続し、複数の供給元から1つまたは複数の宛先への計算の統合と分配を行うことができます。
 
 gregtech.machine.central_monitor.name=セントラルモニター
 gregtech.multiblock.central_monitor.low_power=電力不足
@@ -4957,7 +4957,7 @@ gregtech.maintenance.configurable_time.unchanged_description=故障は通常の�
 gregtech.maintenance.configurable_time.changed_description=故障は通常の%f倍の頻度で発生します
 
 gregtech.maintenance.configurable.tooltip_basic=故障頻度に応じて機械の動作速度が変化する。
-gregtech.maintenance.configurable.tooltip_more_info=SHIFTで特殊な場合を表示
+gregtech.maintenance.configurable.tooltip_more_info=SHIFTで特殊な操作を表示
 gregtech.maintenance.configurable.tooltip_pss_header=§8:大型蓄電器
 gregtech.maintenance.configurable.tooltip_pss_info=  §f損失量が増減
 
@@ -4996,7 +4996,7 @@ gregtech.machine.passthrough_hatch_fluid.name=液体通過ハッチ
 gregtech.machine.passthrough_hatch_fluid.tooltip=一方通行で液体を送る
 
 gregtech.machine.data_access_hatch.name=データアクセスハッチ
-gregtech.machine.data_access_hatch.tooltip.1=マルチブロックのためのデータアクセス
+gregtech.machine.data_access_hatch.tooltip.1=マルチブロック用データ搬入出口
 gregtech.machine.data_access_hatch.tooltip.2=データ格納アイテム用の§a%s§7スロットを追加する
 gregtech.machine.data_access_hatch.advanced.name=発展型データアクセスハッチ
 gregtech.machine.data_access_hatch.creative.name=クリエイティブデータアクセスハッチ
@@ -5010,7 +5010,7 @@ gregtech.machine.computation_hatch.transmitter.tooltip=マルチブロックか�
 gregtech.machine.computation_hatch.receiver.name=計算データ受信ハッチ
 gregtech.machine.computation_hatch.receiver.tooltip=マルチブロックへの計算データの搬入
 gregtech.machine.research_station.object_holder.name=オブジェクトホルダー
-gregtech.machine.research_station.object_holder.tooltip=研究設備のための高度な保持機構
+gregtech.machine.research_station.object_holder.tooltip=研究ステーションのための高度な保持機構
 
 gregtech.machine.laser_hatch.source.name=レーザー照射ハッチ
 gregtech.machine.laser_hatch.source.tooltip1=遠くにエネルギーを送信する
@@ -5024,12 +5024,12 @@ gregtech.machine.fluid_tank.fluid=内容物: %s L の %s
 
 gregtech.machine.me_export_fluid_hatch.name=ME 搬出ハッチ
 gregtech.machine.me_export_item_bus.name=ME 搬出バス
-gregtech.machine.me_import_fluid_hatch.name=MEネットワーク仕入れ搬入ハッチ
-gregtech.machine.me_import_item_bus.name=MEネットワーク仕入れ搬入バス
-gregtech.machine.me.fluid_export.tooltip=MEネットワークに液体を自動搬出
-gregtech.machine.me.item_export.tooltip=MEネットワークにアイテムを自動搬出
-gregtech.machine.me.fluid_import.tooltip=MEネットワークから液体を自動搬入
-gregtech.machine.me.item_import.tooltip=MEネットワークからアイテムを自動搬入
+gregtech.machine.me_import_fluid_hatch.name=ME在庫搬入ハッチ
+gregtech.machine.me_import_item_bus.name=ME在庫搬入バス
+gregtech.machine.me.fluid_export.tooltip=MEネットワークに液体を自動搬入
+gregtech.machine.me.item_export.tooltip=MEネットワークにアイテムを自動搬入
+gregtech.machine.me.fluid_import.tooltip=MEネットワークから液体を自動搬出
+gregtech.machine.me.item_import.tooltip=MEネットワークからアイテムを自動搬出
 gregtech.machine.me.export.tooltip=MEネットワーク接続前は無限の容量を持つ。
 
 # Universal tooltips
@@ -5087,7 +5087,7 @@ gregtech.recipe.dimensions=ディメンション: %s
 gregtech.recipe.cleanroom=%sが必要
 gregtech.recipe.cleanroom.display_name=クリーンルーム
 gregtech.recipe.cleanroom_sterile.display_name=滅菌クリーンルーム
-gregtech.recipe.research=調査が必要
+gregtech.recipe.research=研究が必要
 gregtech.recipe.computation_per_tick=計算力: %,d CWU/t
 
 gregtech.fluid.click_to_fill=§7中身の入った液体容器でクリックすると、§b中身をタンクに移す§7。Shiftクリックで1スタック全て移す。
@@ -5323,7 +5323,7 @@ gregtech.multiblock.energy_consumption=エネルギー使用量: %s EU/t
 gregtech.multiblock.computation.max=最大計算力: %s CWU/t
 gregtech.multiblock.computation.usage=使用量: %s CWU/t
 gregtech.multiblock.computation.non_bridging=非ブリッジ接続を検出
-gregtech.multiblock.computation.non_bridging.detailed=受信ハッチがブリッジできない機械ににリンクされている。
+gregtech.multiblock.computation.non_bridging.detailed=受信ハッチがブリッジできない機械にリンクされている。
 gregtech.multiblock.computation.not_enough_computation=§c警告:§f 計算力が不足
 
 gregtech.multiblock.power_substation.stored=蓄電量: %s EU
@@ -5668,14 +5668,14 @@ gregtech.subtitle.tick.furnace=かまどで製錬する
 gregtech.subtitle.tick.cooling=インゴットが冷却される
 gregtech.subtitle.tick.fire=燃える
 gregtech.subtitle.tick.bath=アイテムが浸される
-gregtech.subtitle.tick.motor=モーターが開店する
+gregtech.subtitle.tick.motor=モーターが回転する
 gregtech.subtitle.tick.cut=ブロックが切断される
 gregtech.subtitle.tick.turbine=タービンが回転する
-gregtech.subtitle.tick.combustion=燃料が燃焼される
+gregtech.subtitle.tick.combustion=燃料が燃やされる
 gregtech.subtitle.tick.miner=採掘機が採掘する
 gregtech.subtitle.tick.computation=コンピュータ処理
 gregtech.subtitle.use.wrench=レンチを使う
-gregtech.subtitle.use.soft_hammer=ブロックが優しくたたかれる
+gregtech.subtitle.use.soft_hammer=ブロックが軽くたたかれる
 gregtech.subtitle.use.drill=ブロックがドリルで採掘される
 gregtech.subtitle.use.plunger=液体が除去される
 gregtech.subtitle.use.file=インゴットが削られる
@@ -5684,7 +5684,7 @@ gregtech.subtitle.use.screwdriver=ネジを締める
 gregtech.subtitle.use.chainsaw=チェーンソーが唸る
 gregtech.subtitle.use.wirecutter=ワイヤーが切断される
 gregtech.subtitle.use.spray_can=スプレーをする
-gregtech.subtitle.use.tricorder=音楽を聴く
+gregtech.subtitle.use.tricorder=スキャンする
 gregtech.subtitle.use.mortar=粉々にする
 gregtech.subtitle.record.sus=Sus
 gregtech.subtitle.entity.portal_opening=ポータルが開く
