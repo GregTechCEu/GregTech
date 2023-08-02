@@ -5,7 +5,7 @@ import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import gregtech.api.gui.GregTechGuiScreen;
+import gregtech.api.newgui.GregTechGuiScreen;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import net.minecraft.entity.player.EntityPlayer;

@@ -13,7 +13,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import gregtech.api.newgui.GTGuis;
-import gregtech.api.gui.GregTechGuiScreen;
+import gregtech.api.newgui.GregTechGuiScreen;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -146,7 +146,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     @Override
     public ModularScreen createScreen(GuiCreationContext guiCreationContext, ModularPanel mainPanel) {
         if (this.material == Materials.Bronze) {
-            return new GregTechGuiScreen(mainPanel).withTheme("gregtech:bronze");
+            return new GregTechGuiScreen(mainPanel).useTheme("gregtech:bronze");
         }
         return super.createScreen(guiCreationContext, mainPanel);
     }

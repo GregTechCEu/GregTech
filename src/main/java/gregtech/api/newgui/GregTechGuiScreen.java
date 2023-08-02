@@ -1,4 +1,4 @@
-package gregtech.api.gui;
+package gregtech.api.newgui;
 
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
@@ -12,11 +12,6 @@ public class GregTechGuiScreen extends ModularScreen {
 
     public GregTechGuiScreen(String owner, ModularPanel mainPanel) {
         super(owner, mainPanel);
-        this.context.useTheme("gregtech");
-    }
-
-    public GregTechGuiScreen withTheme(String theme) {
-        this.context.useTheme(theme);
-        return this;
+        useTheme("gregtech");
     }
 }

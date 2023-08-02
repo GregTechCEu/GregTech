@@ -30,7 +30,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverIO;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.newgui.GTGuis;
-import gregtech.api.gui.GregTechGuiScreen;
+import gregtech.api.newgui.GregTechGuiScreen;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
