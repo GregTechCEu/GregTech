@@ -50,7 +50,7 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
 
     @Nullable
     @Override
-    public IRecipeTransferError transferRecipe(ModularUIContainer container, @Nonnull IRecipeLayout recipeLayout, @Nonnull EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
+    public IRecipeTransferError transferRecipe(@Nonnull ModularUIContainer container, @Nonnull IRecipeLayout recipeLayout, @Nonnull EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
         if (this.recipeTransferCategoryBlacklist.contains(recipeLayout.getRecipeCategory().getUid())) {
             return this.transferHelper.createInternalError();
         }
@@ -60,7 +60,7 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
                 .map(it -> (IRecipeTransferHandlerWidget) it)
                 .filter(validHandlers)
                 .findFirst();
-        if (!transferHandler.isPresent()) {
+        if (transferHandler.isEmpty()) {
             return transferHelper.createInternalError();
         }
         String errorTooltip = transferHandler.get().transferRecipe(container, recipeLayout, player, maxTransfer, doTransfer);
@@ -95,8 +95,7 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
         Collection<Widget> widgets = gui.getModularUI().guiWidgets.values();
         List<Target<I>> targets = new ArrayList<>();
         for (Widget widget : widgets) {
-            if (widget instanceof IGhostIngredientTarget) {
-                IGhostIngredientTarget ghostTarget = (IGhostIngredientTarget) widget;
+            if (widget instanceof IGhostIngredientTarget ghostTarget) {
                 List<Target<?>> widgetTargets = ghostTarget.getPhantomTargets(ingredient);
                 //noinspection unchecked
                 targets.addAll((List<Target<I>>) (Object) widgetTargets);

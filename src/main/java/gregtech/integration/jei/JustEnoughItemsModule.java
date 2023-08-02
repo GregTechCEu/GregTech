@@ -163,8 +163,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
                 IControllable workableCapability = metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
 
-                if (workableCapability instanceof AbstractRecipeLogic) {
-                    AbstractRecipeLogic logic = (AbstractRecipeLogic) workableCapability;
+                if (workableCapability instanceof AbstractRecipeLogic logic) {
                     if (metaTileEntity instanceof IMultipleRecipeMaps) {
                         for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps()) {
                             registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
