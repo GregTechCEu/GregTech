@@ -21,7 +21,7 @@
  */
 dependencies {
     // Hard Dependencies
-    api files("libs/modularui-2.0.5-dev.jar")
+    api files("libs/modularui-2.1.0-dev.jar")
 
     // the CCL deobf jar uses very old MCP mappings, making it error at runtime in runClient/runServer
     // therefore we manually deobf the regular jar
