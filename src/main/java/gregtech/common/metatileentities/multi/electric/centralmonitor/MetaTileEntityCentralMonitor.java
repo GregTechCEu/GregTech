@@ -3,22 +3,27 @@ package gregtech.common.metatileentities.multi.electric.centralmonitor;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widget.ParentWidget;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.cover.CoverBehavior;
-import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.newgui.GTGuis;
+import gregtech.api.newgui.GuiTextures;
+import gregtech.api.newgui.widgets.WidgetScreenGrid;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -31,7 +36,6 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.covers.CoverDigitalInterface;
-import gregtech.common.gui.widget.monitor.WidgetScreenGrid;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
@@ -145,7 +149,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 continue;
             }
             for (EnumFacing facing : EnumFacing.VALUES) {
-                if (((TileEntityPipeBase<?,?>) tileEntityCable).isConnected(facing)) {
+                if (((TileEntityPipeBase<?, ?>) tileEntityCable).isConnected(facing)) {
                     TileEntity tileEntity = world.getTileEntity(pos.offset(facing));
                     if (tileEntity instanceof IGregTechTileEntity) {
                         MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
@@ -183,20 +187,20 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     private void writeCovers(PacketBuffer buf) {
-        if(netCovers == null) {
+        if (netCovers == null) {
             buf.writeInt(0);
         } else {
             buf.writeInt(netCovers.size());
-            for (FacingPos cover : netCovers){
+            for (FacingPos cover : netCovers) {
                 buf.writeBlockPos(cover.getPos());
                 buf.writeByte(cover.getFacing().getIndex());
             }
         }
-        if(remoteCovers == null) {
+        if (remoteCovers == null) {
             buf.writeInt(0);
         } else {
             buf.writeInt(remoteCovers.size());
-            for (FacingPos cover : remoteCovers){
+            for (FacingPos cover : remoteCovers) {
                 buf.writeBlockPos(cover.getPos());
                 buf.writeByte(cover.getFacing().getIndex());
             }
@@ -219,7 +223,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     private void writeParts(PacketBuffer buf) {
         buf.writeInt((int) this.getMultiblockParts().stream().filter(MetaTileEntityMonitorScreen.class::isInstance).count());
-        this.getMultiblockParts().forEach(part->{
+        this.getMultiblockParts().forEach(part -> {
             if (part instanceof MetaTileEntityMonitorScreen) {
                 buf.writeBlockPos(((MetaTileEntityMonitorScreen) part).getPos());
             }
@@ -236,15 +240,15 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     public void setHeight(int height) {
-        if(this.height == height || height < 2 || height > MAX_HEIGHT) return;
+        if (this.height == height || height < 2 || height > MAX_HEIGHT) return;
         this.height = height;
         reinitializeStructurePattern();
         checkStructurePattern();
-        writeCustomData(GregtechDataCodes.UPDATE_HEIGHT, buf-> buf.writeInt(height));
+        writeCustomData(GregtechDataCodes.UPDATE_HEIGHT, buf -> buf.writeInt(height));
     }
 
     private void setActive(boolean isActive) {
-        if(isActive == this.isActive) return;
+        if (isActive == this.isActive) return;
         this.isActive = isActive;
         writeCustomData(GregtechDataCodes.UPDATE_ACTIVE, buf -> buf.writeBoolean(this.isActive));
     }
@@ -257,7 +261,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         if (screens != null) {
             for (MetaTileEntityMonitorScreen[] screen : screens) {
                 for (MetaTileEntityMonitorScreen s : screen) {
-                    if(s != null) s.removeFromMultiBlock(this);
+                    if (s != null) s.removeFromMultiBlock(this);
                 }
             }
         }
@@ -362,7 +366,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     @Override
     protected void updateFormedValid() {
-        if (this.getOffsetTimer() % 20 ==0) {
+        if (this.getOffsetTimer() % 20 == 0) {
             setActive(inputEnergy.changeEnergy(ENERGY_COST * this.getMultiblockParts().size()) == ENERGY_COST * this.getMultiblockParts().size());
             if (checkCovers()) {
                 this.getMultiblockParts().forEach(part -> {
@@ -447,7 +451,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if(side == this.frontFacing.getOpposite() && capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
+        if (side == this.frontFacing.getOpposite() && capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(IEnergyContainer.DEFAULT);
         }
         return null;
@@ -476,13 +480,13 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (!this.isStructureFormed()) return;
-        RenderUtil.useStencil(()->{
+        RenderUtil.useStencil(() -> {
             GlStateManager.pushMatrix();
             RenderUtil.moveToFace(x, y, z, this.frontFacing);
             RenderUtil.rotateToFace(this.frontFacing, EnumFacing.NORTH);
             RenderUtil.renderRect(0.5f, -0.5f - (height - 2), width, height, 0.001f, 0xFF000000);
             GlStateManager.popMatrix();
-        }, ()->{
+        }, () -> {
             if (isActive) {
                 GlStateManager.pushMatrix();
                 /* hack the lightmap */
@@ -516,7 +520,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                     clearScreens();
                     for (BlockPos pos : parts) {
                         TileEntity tileEntity = getWorld().getTileEntity(pos);
-                        if(tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+                        if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
                             MetaTileEntityMonitorScreen screen = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                             screen.addToMultiBlock(this);
                             int sx = screen.getX(), sy = screen.getY();
@@ -547,8 +551,49 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
+    public boolean usesMui2() {
+        return isActive();
+    }
+
+    @Override
+    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
+        ModularPanel panel = GTGuis.createPanel("central_monitor", 28 * width, 28 * height)
+                .background(GuiTextures.BOXED_BACKGROUND);
+        WidgetScreenGrid[][] screenGrids = new WidgetScreenGrid[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                screenGrids[i][j] = new WidgetScreenGrid()
+                        .syncHandler()
+                        .size(20).pos(4 * this.width + i * 20, 4 * this.height + j * 20);
+                panel.child(screenGrids[i][j]);
+            }
+        }
+        if (!this.getWorld().isRemote) {
+            this.getMultiblockParts().forEach(part -> {
+                if (part instanceof MetaTileEntityMonitorScreen) {
+                    int x = ((MetaTileEntityMonitorScreen) part).getX();
+                    int y = ((MetaTileEntityMonitorScreen) part).getY();
+                    screenGrids[x][y].setScreen((MetaTileEntityMonitorScreen) part);
+                }
+            });
+        } else {
+            parts.forEach(partPos -> {
+                TileEntity tileEntity = this.getWorld().getTileEntity(partPos);
+                if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+                    MetaTileEntityMonitorScreen part = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
+                    int x = part.getX();
+                    int y = part.getY();
+                    screenGrids[x][y].setScreen(part);
+                }
+            });
+        }
+        return panel;
+    }
+
+    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        if (!isActive()) {
+        return super.createUI(entityPlayer);
+        /*if (!isActive()) {
             return super.createUI(entityPlayer);
         } else {
             WidgetScreenGrid[][] screenGrids = new WidgetScreenGrid[width][height];
@@ -560,7 +605,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 }
             }
             if (!this.getWorld().isRemote) {
-                this.getMultiblockParts().forEach(part->{
+                this.getMultiblockParts().forEach(part -> {
                     if (part instanceof MetaTileEntityMonitorScreen) {
                         int x = ((MetaTileEntityMonitorScreen) part).getX();
                         int y = ((MetaTileEntityMonitorScreen) part).getY();
@@ -568,7 +613,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                     }
                 });
             } else {
-                parts.forEach(partPos->{
+                parts.forEach(partPos -> {
                     TileEntity tileEntity = this.getWorld().getTileEntity(partPos);
                     if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
                         MetaTileEntityMonitorScreen part = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
@@ -581,7 +626,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             return ModularUI.builder(GuiTextures.BOXED_BACKGROUND, 28 * width, 28 * height)
                     .widget(group)
                     .build(this.getHolder(), entityPlayer);
-        }
+        }*/
     }
 
     @Override

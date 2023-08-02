@@ -2,7 +2,7 @@
 
 ## Central Monitor
 
-* [ ]  Central Monitor UI (when formed)
+* [x]  Central Monitor UI (when formed)
 * [ ]  Monitor Screen config UI
 * [ ]  Plugin config UI's:
   * [ ] Text
