@@ -424,7 +424,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
         Iterator<Widget> iterator = children.keySet().iterator();
         for (NBTBase nbtBase : childrenTag) {
             int[] nbt = ((NBTTagIntArray) nbtBase).getIntArray();
-            children.get(iterator.next()).addAll(Arrays.stream(nbt).mapToObj(it -> container.nodes.get(it)).toList());
+            children.get(iterator.next()).addAll(Arrays.stream(nbt).mapToObj(it -> container.nodes.get(it)).collect(Collectors.toList()));
         }
     }
 

@@ -60,7 +60,7 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
                 .map(it -> (IRecipeTransferHandlerWidget) it)
                 .filter(validHandlers)
                 .findFirst();
-        if (transferHandler.isEmpty()) {
+        if (!transferHandler.isPresent()) {
             return transferHelper.createInternalError();
         }
         String errorTooltip = transferHandler.get().transferRecipe(container, recipeLayout, player, maxTransfer, doTransfer);
