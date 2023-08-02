@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 
 public class RGNode extends WidgetGroup implements IDraggable {
     protected Object head;
-    protected int recipePer;
+    protected int recipePer = 1;
     protected ItemStack catalyst;
     private boolean isSelected;
     private WidgetGroup toolGroup;
@@ -435,7 +435,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
                     }
                 }
             }
-            setRecipe(itemInputs, fluidInputs, catalyst, recipePer);
+            setRecipe(itemInputs, fluidInputs, catalyst, Math.max(1, this.recipePer));
             return true;
         }
         return false;

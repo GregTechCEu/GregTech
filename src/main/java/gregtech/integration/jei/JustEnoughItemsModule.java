@@ -41,7 +41,6 @@ import mezz.jei.api.ingredients.IIngredientRegistry;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
-import mezz.jei.api.recipe.wrapper.ICraftingRecipeWrapper;
 import mezz.jei.config.Constants;
 import mezz.jei.input.IShowsRecipeFocuses;
 import mezz.jei.input.InputHandler;
@@ -49,7 +48,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -127,9 +125,11 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         // register transfer handler for all categories, but not for the crafting station
         ModularUIGuiHandler modularUIGuiHandler = new ModularUIGuiHandler(jeiHelpers.recipeTransferHandlerHelper());
         modularUIGuiHandler.setValidHandlers(widget -> !(widget instanceof CraftingSlotWidget));
-        if (Loader.isModLoaded(GTValues.MODID_JEI)) {
-            modularUIGuiHandler.setValidHandlers(widget -> !(widget instanceof CraftingSlotWidget) && widget instanceof ICraftingRecipeWrapper);
-        }
+        modularUIGuiHandler.blacklistCategory(
+                IntCircuitCategory.UID,
+                GTValues.MODID + ":material_tree",
+                VanillaRecipeCategoryUid.INFORMATION,
+                VanillaRecipeCategoryUid.FUEL);
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler, Constants.UNIVERSAL_RECIPE_TRANSFER_UID);
 
         registry.addAdvancedGuiHandlers(modularUIGuiHandler);

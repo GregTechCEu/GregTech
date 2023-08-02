@@ -6,6 +6,7 @@ import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mezz.jei.api.gui.IAdvancedGuiHandler;
 import mezz.jei.api.gui.IGhostIngredientHandler;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -25,6 +26,7 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
 
     private final IRecipeTransferHandlerHelper transferHelper;
     private Predicate<IRecipeTransferHandlerWidget> validHandlers = widget -> true;
+    private final Set<String> recipeTransferCategoryBlacklist = new ObjectOpenHashSet<>();
 
     public ModularUIGuiHandler(IRecipeTransferHandlerHelper transferHelper) {
         this.transferHelper = transferHelper;
@@ -49,6 +51,9 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
     @Nullable
     @Override
     public IRecipeTransferError transferRecipe(ModularUIContainer container, @Nonnull IRecipeLayout recipeLayout, @Nonnull EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
+        if (this.recipeTransferCategoryBlacklist.contains(recipeLayout.getRecipeCategory().getUid())) {
+            return this.transferHelper.createInternalError();
+        }
         Optional<IRecipeTransferHandlerWidget> transferHandler = container.getModularUI()
                 .getFlatVisibleWidgetCollection().stream()
                 .filter(it -> it instanceof IRecipeTransferHandlerWidget)
@@ -63,6 +68,10 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
             return null;
         }
         return transferHelper.createUserErrorWithTooltip(errorTooltip);
+    }
+
+    public void blacklistCategory(String... category) {
+        Collections.addAll(this.recipeTransferCategoryBlacklist, category);
     }
 
     @Nullable
