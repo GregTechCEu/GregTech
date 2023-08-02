@@ -2,6 +2,7 @@ package gregtech.api.capability;
 
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.CoverHolder;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.worldgen.generator.GTWorldGenCapability;
@@ -38,6 +39,7 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(IElectricItem.class);
         registerCapabilityWithNoDefault(IWorkable.class);
         registerCapabilityWithNoDefault(ICoverable.class);
+        registerCapabilityWithNoDefault(CoverHolder.class);
         registerCapabilityWithNoDefault(IControllable.class);
         registerCapabilityWithNoDefault(IActiveOutputSide.class);
         registerCapabilityWithNoDefault(IMultiblockController.class);

@@ -3,7 +3,6 @@ package gregtech.common.pipelike.cable;
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.cover.ICoverable;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -158,8 +157,9 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
         return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER) ||
                 GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
-                        coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
-    }
+                        coverDef -> getPipeTileEntity(world, pos).getCoverableImplementation()
+                                .canPlaceCoverOnSide(EnumFacing.DOWN)); //TODO figure out dir
+        }
 
     @Override
     public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {

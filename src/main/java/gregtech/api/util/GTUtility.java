@@ -5,8 +5,9 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover2.CoverDefinition2;
 import gregtech.api.fluids.GTFluid;
+import gregtech.api.items.behavior.CoverItemBehavior;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -17,7 +18,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -503,15 +503,15 @@ public class GTUtility {
         return pos1.getX() == pos2.getX() & pos1.getY() == pos2.getY() & pos1.getZ() == pos2.getZ();
     }
 
-    public static boolean isCoverBehaviorItem(ItemStack itemStack, @Nullable BooleanSupplier hasCoverSupplier, @Nullable Predicate<CoverDefinition> canPlaceCover) {
+    public static boolean isCoverBehaviorItem(ItemStack itemStack, @Nullable BooleanSupplier hasCoverSupplier, @Nullable Predicate<CoverDefinition2> canPlaceCover) {
         Item item = itemStack.getItem();
         if (item instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) itemStack.getItem();
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
                 for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
-                    if (behaviour instanceof CoverPlaceBehavior) {
-                        return canPlaceCover == null || canPlaceCover.test(((CoverPlaceBehavior) behaviour).coverDefinition);
+                    if (behaviour instanceof CoverItemBehavior coverItemBehavior) {
+                        return canPlaceCover == null || canPlaceCover.test(coverItemBehavior.getDefinition());
                     }
                 }
             }

@@ -2,7 +2,6 @@ package gregtech.common.pipelike.laser;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover.ICoverable;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -138,7 +137,8 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
         return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER) ||
                 GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
-                        coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
+                        coverDef -> getPipeTileEntity(world, pos).getCoverableImplementation()
+                                .canPlaceCoverOnSide(EnumFacing.DOWN)); //TODO figure out dir
     }
 
     @Override

@@ -5,6 +5,7 @@ import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover2.CoverDefinition2;
 import gregtech.api.event.HighTierEvent;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -66,6 +67,7 @@ public class GregTechAPI {
     public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> MTE_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, UIFactory> UI_FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
     public static final GTControlledRegistry<ResourceLocation, CoverDefinition> COVER_REGISTRY = new GTControlledRegistry<>(Integer.MAX_VALUE);
+    public static final GTControlledRegistry<ResourceLocation, CoverDefinition2> COVER_REGISTRY_2 = new GTControlledRegistry<>(Integer.MAX_VALUE);
 
     public static BlockMachine MACHINE;
     public static final Map<Material, Map<StoneType, IBlockOre>> oreBlockTable = new HashMap<>();

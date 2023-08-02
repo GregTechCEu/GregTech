@@ -4,8 +4,8 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.RecipeLogicSteam;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
+import gregtech.api.cover2.Cover;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
@@ -311,7 +311,7 @@ public class MachineConsoleWidget extends WidgetGroup {
             }
 
             // CoverBehavior
-            CoverBehavior cover = mte.getCoverAtSide(facing);
+            Cover cover = mte.getCoverAtSide(facing);
             if (cover != null) {
                 this.addWidget(new SlotWidget(new ItemStackHandler(NonNullList.withSize(1, cover.getPickItem())), 0,
                         10, y, false, false));

@@ -7,7 +7,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover2.Cover;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
@@ -22,6 +22,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.FacingPos;
 import gregtech.client.renderer.ICubeRenderer;
@@ -145,14 +146,14 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 continue;
             }
             for (EnumFacing facing : EnumFacing.VALUES) {
-                if (((TileEntityPipeBase<?,?>) tileEntityCable).isConnected(facing)) {
+                if (((IPipeTile<?, ?>) tileEntityCable).isConnected(facing)) {
                     TileEntity tileEntity = world.getTileEntity(pos.offset(facing));
                     if (tileEntity instanceof IGregTechTileEntity) {
                         MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                         if (metaTileEntity != null) {
-                            CoverBehavior cover = metaTileEntity.getCoverAtSide(facing.getOpposite());
-                            if (cover instanceof CoverDigitalInterface && ((CoverDigitalInterface) cover).isProxy()) {
-                                checkCovers.add(new FacingPos(metaTileEntity.getPos(), cover.attachedSide));
+                            Cover cover = metaTileEntity.getCoverAtSide(facing.getOpposite());
+                            if (cover instanceof CoverDigitalInterface digitalInterface && digitalInterface.isProxy()) {
+                                checkCovers.add(new FacingPos(metaTileEntity.getPos(), cover.getAttachedSide()));
                             }
                         }
                     }
@@ -166,8 +167,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             if (tileEntity instanceof IGregTechTileEntity) {
                 MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                 if (metaTileEntity != null) {
-                    CoverBehavior cover = metaTileEntity.getCoverAtSide(blockPosFace.getFacing());
-                    if (cover instanceof CoverDigitalInterface && ((CoverDigitalInterface) cover).isProxy()) {
+                    Cover cover = metaTileEntity.getCoverAtSide(blockPosFace.getFacing());
+                    if (cover instanceof CoverDigitalInterface digitalInterface && digitalInterface.isProxy()) {
                         continue;
                     }
                 }

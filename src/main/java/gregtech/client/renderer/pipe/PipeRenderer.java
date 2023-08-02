@@ -15,7 +15,7 @@ import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.CoverHolder;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.block.ItemBlockPipe;
@@ -166,8 +166,8 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
                 }
             }
 
-            ICoverable coverable = pipeTile.getCoverableImplementation();
-            coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), renderLayer);
+            CoverHolder coverHolder = pipeTile.getCoverableImplementation();
+            coverHolder.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), renderLayer);
             Textures.RENDER_STATE.set(null);
         }
         return true;

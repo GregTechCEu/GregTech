@@ -6,7 +6,7 @@ import gregtech.api.GregTechAPIInternal;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
-import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover2.CoverDefinition2;
 import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
@@ -226,10 +226,10 @@ public class CoreModule implements IGregTechModule {
         FilterTypeRegistry.init();
 
         /* Start Cover Definition Registration */
-        COVER_REGISTRY.unfreeze();
+        COVER_REGISTRY_2.unfreeze();
         CoverBehaviors.init();
-        MinecraftForge.EVENT_BUS.post(new RegisterEvent<>(COVER_REGISTRY, CoverDefinition.class));
-        COVER_REGISTRY.freeze();
+        MinecraftForge.EVENT_BUS.post(new RegisterEvent<>(COVER_REGISTRY_2, CoverDefinition2.class));
+        COVER_REGISTRY_2.freeze();
         /* End Cover Definition Registration */
 
         DungeonLootLoader.init();

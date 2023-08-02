@@ -2,7 +2,7 @@ package gregtech.client.renderer.handler;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover2.Cover;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -55,13 +55,13 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
         }
         if (metaTileEntity != null) {
             for (EnumFacing side : EnumFacing.VALUES) {
-                CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
-                if (cover instanceof IFastRenderMetaTileEntity) {
+                Cover cover = metaTileEntity.getCoverAtSide(side);
+                if (cover instanceof IFastRenderMetaTileEntity fastRender) {
                     CCRenderState renderState = CCRenderState.instance();
                     renderState.reset();
                     renderState.bind(buffer);
                     renderState.setBrightness(te.getWorld(), te.getPos().offset(side));
-                    ((IFastRenderMetaTileEntity) cover).renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
+                    fastRender.renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
                 }
             }
         }
@@ -76,9 +76,9 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
         }
         if (metaTileEntity != null) {
             for (EnumFacing side : EnumFacing.VALUES) {
-                CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
-                if (cover instanceof IFastRenderMetaTileEntity) {
-                    ((IFastRenderMetaTileEntity) cover).renderMetaTileEntity(x, y, z, partialTicks);
+                Cover cover = metaTileEntity.getCoverAtSide(side);
+                if (cover instanceof IFastRenderMetaTileEntity fastRender) {
+                    fastRender.renderMetaTileEntity(x, y, z, partialTicks);
                 }
             }
         }
@@ -97,14 +97,14 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
         }
         if (metaTileEntity != null) {
             for (EnumFacing side : EnumFacing.VALUES) {
-                CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
-                if (cover instanceof IFastRenderMetaTileEntity) {
+                Cover cover = metaTileEntity.getCoverAtSide(side);
+                if (cover instanceof IFastRenderMetaTileEntity fastRender) {
                     CCRenderState renderState = CCRenderState.instance();
                     renderState.reset();
                     renderState.bind(buffer);
                     renderState.setBrightness(te.getWorld(), te.getPos().offset(side));
-                    ((IFastRenderMetaTileEntity) cover).renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
-                    ((IFastRenderMetaTileEntity) cover).renderMetaTileEntity(x, y, z, partialTicks);
+                    fastRender.renderMetaTileEntityFast(renderState, new Matrix4().translate(x, y, z), partialTicks);
+                    fastRender.renderMetaTileEntity(x, y, z, partialTicks);
                 }
             }
         }

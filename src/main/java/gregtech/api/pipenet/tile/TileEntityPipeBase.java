@@ -2,7 +2,7 @@ package gregtech.api.pipenet.tile;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover2.Cover;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
@@ -304,8 +304,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == GregtechTileCapabilities.CAPABILITY_COVERABLE) {
-            return GregtechTileCapabilities.CAPABILITY_COVERABLE.cast(getCoverableImplementation());
+        if (capability == GregtechTileCapabilities.CAPABILITY_COVER_HOLDER) {
+            return GregtechTileCapabilities.CAPABILITY_COVER_HOLDER.cast(getCoverableImplementation());
         }
         return super.getCapability(capability, facing);
     }
@@ -313,8 +313,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Nullable
     @Override
     public final <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        boolean isCoverable = capability == GregtechTileCapabilities.CAPABILITY_COVERABLE;
-        CoverBehavior coverBehavior = facing == null ? null : coverableImplementation.getCoverAtSide(facing);
+        boolean isCoverable = capability == GregtechTileCapabilities.CAPABILITY_COVER_HOLDER;
+        Cover cover = facing == null ? null : coverableImplementation.getCoverAtSide(facing);
         T defaultValue;
         if (getPipeBlock() == null)
             defaultValue = null;
@@ -324,11 +324,11 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (isCoverable) {
             return defaultValue;
         }
-        if (coverBehavior == null && facing != null) {
+        if (cover == null && facing != null) {
             return isConnected(facing) ? defaultValue : null;
         }
-        if (coverBehavior != null) {
-            return coverBehavior.getCapability(capability, defaultValue);
+        if (cover != null) {
+            return cover.getCapability(capability, defaultValue);
         }
         return defaultValue;
     }

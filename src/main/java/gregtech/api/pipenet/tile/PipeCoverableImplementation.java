@@ -1,36 +1,31 @@
 package gregtech.api.pipenet.tile;
 
-import com.google.common.base.Preconditions;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.CoverDefinition;
-import gregtech.api.cover.CoverIO;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.Cover;
+import gregtech.api.cover2.CoverHolder;
+import gregtech.api.cover2.CoverSaveHandler;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import gregtech.core.advancement.AdvancementTriggers;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.EnumMap;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public class PipeCoverableImplementation implements ICoverable {
+public class PipeCoverableImplementation implements CoverHolder {
 
     private final IPipeTile<?, ?> holder;
-    private final CoverBehavior[] coverBehaviors = new CoverBehavior[6];
+    private final EnumMap<EnumFacing, Cover> covers = new EnumMap<>(EnumFacing.class);
     private final int[] sidedRedstoneInput = new int[6];
 
     public PipeCoverableImplementation(IPipeTile<?, ?> holder) {
@@ -38,79 +33,48 @@ public class PipeCoverableImplementation implements ICoverable {
     }
 
     public void transferDataTo(PipeCoverableImplementation destImpl) {
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            CoverBehavior behavior = coverBehaviors[coverSide.getIndex()];
-            if (behavior == null) continue;
+        for (EnumFacing side : EnumFacing.VALUES) {
+            Cover cover = covers.get(side);
+            if (cover == null) continue;
             NBTTagCompound tagCompound = new NBTTagCompound();
-            behavior.writeToNBT(tagCompound);
-            CoverBehavior newBehavior = behavior.getCoverDefinition().createCoverBehavior(destImpl, coverSide);
-            newBehavior.readFromNBT(tagCompound);
-            destImpl.coverBehaviors[coverSide.getIndex()] = newBehavior;
-        }
-    }
-
-    public final boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition, EntityPlayer player) {
-        Preconditions.checkNotNull(side, "side");
-        Preconditions.checkNotNull(coverDefinition, "coverDefinition");
-        CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, side);
-        if (!canPlaceCoverOnSide(side) || !coverBehavior.canAttach()) {
-            return false;
-        }
-        //if cover requires ticking and we're not tickable, update ourselves and redirect call to new tickable tile entity
-        boolean requiresTicking = coverBehavior instanceof ITickable;
-        if (requiresTicking && !holder.supportsTicking()) {
-            IPipeTile<?, ?> newHolderTile = holder.setSupportsTicking();
-            return newHolderTile.getCoverableImplementation().placeCoverOnSide(side, itemStack, coverDefinition, player);
-        }
-        if (coverBehaviors[side.getIndex()] != null) {
-            removeCover(side);
-        }
-        this.coverBehaviors[side.getIndex()] = coverBehavior;
-        coverBehavior.onAttached(itemStack, player);
-        writeCustomData(COVER_ATTACHED_PIPE, CoverIO.getCoverPlacementCustomDataWriter(side, coverBehavior));
-        if (coverBehavior.shouldAutoConnect()) {
-            holder.setConnection(side, true, false);
-        }
-        holder.notifyBlockUpdate();
-        holder.markAsDirty();
-        AdvancementTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
-        return true;
-    }
-
-    public final boolean removeCover(EnumFacing side) {
-        Preconditions.checkNotNull(side, "side");
-        CoverBehavior coverBehavior = getCoverAtSide(side);
-        if (coverBehavior == null) {
-            return false;
-        }
-        List<ItemStack> drops = coverBehavior.getDrops();
-        coverBehavior.onRemoved();
-        this.coverBehaviors[side.getIndex()] = null;
-        for (ItemStack dropStack : drops) {
-            Block.spawnAsEntity(getWorld(), getPos(), dropStack);
-        }
-        writeCustomData(COVER_REMOVED_PIPE, buffer -> buffer.writeByte(side.getIndex()));
-        if (coverBehavior.shouldAutoConnect()) {
-            holder.setConnection(side, false, false);
-        }
-        holder.notifyBlockUpdate();
-        holder.markAsDirty();
-        return true;
-    }
-
-    public final void dropAllCovers() {
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            CoverBehavior coverBehavior = coverBehaviors[coverSide.getIndex()];
-            if (coverBehavior == null) continue;
-            List<ItemStack> drops = coverBehavior.getDrops();
-            coverBehavior.onRemoved();
-            for (ItemStack dropStack : drops) {
-                Block.spawnAsEntity(getWorld(), getPos(), dropStack);
-            }
+            cover.writeToNBT(tagCompound);
+            Cover newCover = cover.getDefinition().createCover(destImpl, side);
+            newCover.readFromNBT(tagCompound);
+            destImpl.covers.put(side, newCover);
         }
     }
 
     @Override
+    public final void addCover(@NotNull EnumFacing side, @NotNull Cover cover) {
+        if (cover.isTickable() && !holder.supportsTicking()) {
+            IPipeTile<?, ?> newHolderTile = holder.setSupportsTicking();
+            newHolderTile.getCoverableImplementation().addCover(side, cover);
+            return;
+        }
+        this.covers.put(side, cover);
+        CoverSaveHandler.writeCoverPlacement(this, COVER_ATTACHED_PIPE, side, cover);
+        if (cover.shouldAutoConnectToPipes()) {
+            holder.setConnection(side, true, false);
+        }
+        holder.notifyBlockUpdate();
+        holder.markAsDirty();
+    }
+
+    @Override
+    public final void removeCover(EnumFacing side) {
+        Cover cover = getCoverAtSide(side);
+        if (cover == null) return;
+
+        dropCover(side);
+        covers.remove(side);
+        writeCustomData(COVER_REMOVED_PIPE, buffer -> buffer.writeByte(side.getIndex()));
+        if (cover.shouldAutoConnectToPipes()) {
+            holder.setConnection(side, false, false);
+        }
+        holder.notifyBlockUpdate();
+        holder.markAsDirty();
+    }
+
     @SuppressWarnings("unchecked")
     public ItemStack getStackForm() {
         BlockPipe pipeBlock = holder.getPipeBlock();
@@ -137,9 +101,9 @@ public class PipeCoverableImplementation implements ICoverable {
             int currentValue = sidedRedstoneInput[side.getIndex()];
             if (redstoneValue != currentValue) {
                 this.sidedRedstoneInput[side.getIndex()] = redstoneValue;
-                CoverBehavior coverBehavior = getCoverAtSide(side);
-                if (coverBehavior != null) {
-                    coverBehavior.onRedstoneInputSignalChange(redstoneValue);
+                Cover cover = getCoverAtSide(side);
+                if (cover != null) {
+                    cover.onRedstoneInputSignalChange(redstoneValue);
                 }
             }
         }
@@ -171,18 +135,18 @@ public class PipeCoverableImplementation implements ICoverable {
     }
 
     @Override
+    public boolean shouldRenderCoverBackSides() {
+        return false;
+    }
+
+    @Override
     public int getPaintingColorForRendering() {
         return ConfigHolder.client.defaultPaintingColor;
     }
 
     @Override
-    public boolean shouldRenderBackSide() {
+    public boolean hasCover(@NotNull EnumFacing side) {
         return false;
-    }
-
-    @Override
-    public CoverBehavior getCoverAtSide(EnumFacing side) {
-        return side == null ? null : coverBehaviors[side.getIndex()];
     }
 
     @Override
@@ -197,85 +161,81 @@ public class PipeCoverableImplementation implements ICoverable {
             return canConnectRedstone(EnumFacing.UP) ||
                     canConnectRedstone(EnumFacing.DOWN);
         }
-        CoverBehavior behavior = getCoverAtSide(side);
-        return behavior != null && behavior.canConnectRedstone();
+        Cover cover = getCoverAtSide(side);
+        return cover != null && cover.canConnectRedstone();
     }
 
     public int getOutputRedstoneSignal(@Nullable EnumFacing side) {
         if (side == null) {
             return getHighestOutputRedstoneSignal();
         }
-        CoverBehavior behavior = getCoverAtSide(side);
-        return behavior == null ? 0 : behavior.getRedstoneSignalOutput();
+        Cover cover = getCoverAtSide(side);
+        return cover == null ? 0 : cover.getRedstoneSignalOutput();
     }
 
     public int getHighestOutputRedstoneSignal() {
         int highestSignal = 0;
         for (EnumFacing side : EnumFacing.VALUES) {
-            CoverBehavior behavior = getCoverAtSide(side);
-            highestSignal = Math.max(highestSignal, behavior.getRedstoneSignalOutput());
+            Cover cover = getCoverAtSide(side);
+            if (cover == null) continue;
+            highestSignal = Math.max(highestSignal, cover.getRedstoneSignalOutput());
         }
         return highestSignal;
     }
 
     public void update() {
         if (!getWorld().isRemote) {
-            for (CoverBehavior coverBehavior : coverBehaviors) {
-                if (coverBehavior instanceof ITickable) {
-                    ((ITickable) coverBehavior).update();
-                }
-            }
+            updateCovers();
         }
     }
 
     @Override
-    public void writeCoverData(CoverBehavior behavior, int id, Consumer<PacketBuffer> writer) {
+    public void writeCoverData(@Nonnull Cover cover, int discriminator, @NotNull Consumer<@NotNull PacketBuffer> buf) {
         writeCustomData(UPDATE_COVER_DATA_PIPE, buffer -> {
-            buffer.writeByte(behavior.attachedSide.getIndex());
-            buffer.writeVarInt(id);
-            writer.accept(buffer);
+            buffer.writeByte(cover.getAttachedSide().getIndex());
+            buffer.writeVarInt(discriminator);
+            buf.accept(buffer);
         });
     }
 
     public void writeInitialSyncData(PacketBuffer buf) {
-        CoverIO.writeCoverSyncData(buf, this);
+        CoverSaveHandler.receiveInitialSyncData(buf, this);
     }
 
     public void readInitialSyncData(PacketBuffer buf) {
-        CoverIO.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
+        CoverSaveHandler.receiveInitialSyncData(buf, this);
     }
 
-    public void writeCustomData(int dataId, Consumer<PacketBuffer> writer) {
+    @Override
+    public void writeCustomData(int dataId, @NotNull Consumer<PacketBuffer> writer) {
         holder.writeCoverCustomData(dataId, writer);
     }
 
     public void readCustomData(int dataId, PacketBuffer buf) {
         if (dataId == COVER_ATTACHED_PIPE) {
-            CoverIO.readCoverPlacement(buf, this,
-                    (s, cover) -> this.coverBehaviors[s.getIndex()] = cover,
-                    holder::scheduleChunkForRenderUpdate);
+            CoverSaveHandler.readCoverPlacement(buf, this);
         } else if (dataId == COVER_REMOVED_PIPE) {
             //cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
-            this.coverBehaviors[placementSide.getIndex()] = null;
+            this.covers.remove(placementSide);
             holder.scheduleChunkForRenderUpdate();
         } else if (dataId == UPDATE_COVER_DATA_PIPE) {
             //cover custom data received
             EnumFacing coverSide = EnumFacing.VALUES[buf.readByte()];
-            CoverBehavior coverBehavior = getCoverAtSide(coverSide);
+            Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();
-            if (coverBehavior != null) {
-                coverBehavior.readUpdateData(internalId, buf);
+            if (cover != null) {
+                cover.readCustomData(internalId, buf);
             }
         }
     }
 
     public void writeToNBT(NBTTagCompound data) {
-        CoverIO.writeCoverNBT(data, (side) -> coverBehaviors[side.getIndex()]);
+        CoverSaveHandler.writeCoverNBT(data, this);
     }
 
     public void readFromNBT(NBTTagCompound data) {
-        CoverIO.readCoverNBT(data, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
+        CoverSaveHandler.readCoverNBT(data, this);
     }
 
     @Override
@@ -293,14 +253,24 @@ public class PipeCoverableImplementation implements ICoverable {
         return holder.getTickTimer();
     }
 
+    @Nullable
+    @Override
+    public Cover getCoverAtSide(@NotNull EnumFacing side) {
+        return covers.get(side);
+    }
+
     @Override
     public void markDirty() {
         holder.markAsDirty();
     }
 
-    @Override
     public boolean isValid() {
         return holder.isValidTile();
+    }
+
+    @Override
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        return getCapability(capability, facing) != null;
     }
 
     @Override

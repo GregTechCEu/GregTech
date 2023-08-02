@@ -35,6 +35,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -190,7 +192,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean canPlaceCoverOnSide(EnumFacing side) {
+    public boolean canPlaceCoverOnSide(@NotNull EnumFacing side) {
         return side != EnumFacing.DOWN && side != EnumFacing.UP;
     }
 

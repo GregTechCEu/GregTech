@@ -3,7 +3,8 @@ package gregtech.common.metatileentities.multi.electric.centralmonitor;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.Cover;
+import gregtech.api.cover2.CoverHolder;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
@@ -54,6 +55,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -120,20 +122,21 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
     public CoverDigitalInterface getCoverFromPosSide(FacingPos posFacing) {
         if (posFacing == null) return null;
-        ICoverable mte = null;
+        CoverHolder mte = null;
         IGregTechTileEntity holder = getHolderFromPos(posFacing.getPos());
         if (holder == null) {
             TileEntity te = this.getWorld() == null ? null : this.getWorld().getTileEntity(posFacing.getPos());
             if (te instanceof TileEntityPipeBase) {
-                mte = ((TileEntityPipeBase<?, ?>) te).getCoverableImplementation();
+                //TODO
+//                mte = ((TileEntityPipeBase<?, ?>) te).getCoverableImplementation();
             }
         } else {
             mte = holder.getMetaTileEntity();
         }
         if (mte != null) {
-            CoverBehavior cover = mte.getCoverAtSide(posFacing.getFacing());
-            if (cover instanceof CoverDigitalInterface) {
-                return (CoverDigitalInterface) cover;
+            Cover cover = mte.getCoverAtSide(posFacing.getFacing());
+            if (cover instanceof CoverDigitalInterface digitalInterface) {
+                return digitalInterface;
             }
         }
         return null;
@@ -440,7 +443,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public boolean canPlaceCoverOnSide(EnumFacing side) {
+    public boolean canPlaceCoverOnSide(@NotNull EnumFacing side) {
         return this.getController() != null && this.getController().getFrontFacing() != side;
     }
 

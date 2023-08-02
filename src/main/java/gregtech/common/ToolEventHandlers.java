@@ -6,8 +6,8 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
-import gregtech.api.cover.CoverDefinition;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.CoverDefinition2;
+import gregtech.api.cover2.CoverHolder;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -17,7 +17,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
 import net.minecraft.block.Block;
@@ -37,7 +36,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -46,7 +44,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -301,7 +298,7 @@ public class ToolEventHandlers {
                         offToolClasses.stream().anyMatch(s -> pipe.isToolEffective(s, state))) return true;
 
                 BooleanSupplier hasCover = () -> tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getCoverableImplementation().hasAnyCover();
-                Predicate<CoverDefinition> canCover = coverDef -> tile instanceof IPipeTile && ICoverable.canPlaceCover(coverDef, ((IPipeTile<?, ?>) tile).getCoverableImplementation());
+                Predicate<CoverDefinition2> canCover = coverDef -> tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getCoverableImplementation().canPlaceCoverOnSide(EnumFacing.DOWN); //TODO find dir
                 if (GTUtility.isCoverBehaviorItem(mainHand, hasCover, canCover) || GTUtility.isCoverBehaviorItem(offHand, hasCover, canCover)) {
                     return true;
                 }
@@ -314,8 +311,8 @@ public class ToolEventHandlers {
                 return true;
             }
         }
-        ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
-        return coverable != null && GTUtility.isCoverBehaviorItem(mainHand, coverable::hasAnyCover, coverDef -> ICoverable.canPlaceCover(coverDef, coverable));
+        CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, null);
+        return coverHolder != null && GTUtility.isCoverBehaviorItem(mainHand, coverHolder::hasAnyCover, coverDef -> coverHolder.canPlaceCoverOnSide(EnumFacing.DOWN)); //TODO find dir
     }
 
     private static float rColour;

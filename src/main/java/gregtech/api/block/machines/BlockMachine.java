@@ -9,8 +9,8 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.block.UnlistedIntegerProperty;
 import gregtech.api.block.UnlistedStringProperty;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.IFacadeCover;
+import gregtech.api.cover2.Cover;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -445,9 +445,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         if (metaTileEntity != null && side != null) {
-            CoverBehavior coverBehavior = metaTileEntity.getCoverAtSide(side);
-            if (coverBehavior instanceof IFacadeCover) {
-                return ((IFacadeCover) coverBehavior).getVisualState();
+            Cover cover = metaTileEntity.getCoverAtSide(side);
+            if (cover instanceof IFacadeCover facadeCover) {
+                return facadeCover.getVisualState();
             }
         }
         return world.getBlockState(pos);

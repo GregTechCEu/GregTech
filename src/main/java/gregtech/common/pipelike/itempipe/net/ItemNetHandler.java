@@ -1,8 +1,8 @@
 package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.Cover;
+import gregtech.api.cover2.CoverHolder;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
@@ -76,8 +76,8 @@ public class ItemNetHandler implements IItemHandler {
         }
 
         copyTransferred();
-        CoverBehavior pipeCover = getCoverOnPipe(pipe.getPipePos(), facing);
-        CoverBehavior tileCover = getCoverOnNeighbour(pipe.getPipePos(), facing);
+        Cover pipeCover = getCoverOnPipe(pipe.getPipePos(), facing);
+        Cover tileCover = getCoverOnNeighbour(pipe.getPipePos(), facing);
 
         boolean pipeConveyor = pipeCover instanceof CoverConveyor, tileConveyor = tileCover instanceof CoverConveyor;
         // abort if there are two conveyors
@@ -99,7 +99,7 @@ public class ItemNetHandler implements IItemHandler {
         return insertFirst(stack, simulate);
     }
 
-    public static boolean checkImportCover(CoverBehavior cover, boolean onPipe, ItemStack stack) {
+    public static boolean checkImportCover(Cover cover, boolean onPipe, ItemStack stack) {
         if (cover == null) return true;
         if (cover instanceof CoverItemFilter) {
             CoverItemFilter filter = (CoverItemFilter) cover;
@@ -304,8 +304,8 @@ public class ItemNetHandler implements IItemHandler {
         if (allowed == 0 || !handler.matchesFilters(stack)) {
             return stack;
         }
-        CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
-        CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
+        Cover pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
+        Cover tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
         if (pipeCover != null) {
             testHandler.setStackInSlot(0, stack.copy());
             IItemHandler itemHandler = pipeCover.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, testHandler);
@@ -343,21 +343,21 @@ public class ItemNetHandler implements IItemHandler {
         return remainder;
     }
 
-    public CoverBehavior getCoverOnPipe(BlockPos pos, EnumFacing handlerFacing) {
+    public Cover getCoverOnPipe(BlockPos pos, EnumFacing handlerFacing) {
         TileEntity tile = pipe.getWorld().getTileEntity(pos);
         if (tile instanceof TileEntityItemPipe) {
-            ICoverable coverable = ((TileEntityItemPipe) tile).getCoverableImplementation();
-            return coverable.getCoverAtSide(handlerFacing);
+            CoverHolder coverHolder = ((TileEntityItemPipe) tile).getCoverableImplementation();
+            return coverHolder.getCoverAtSide(handlerFacing);
         }
         return null;
     }
 
-    public CoverBehavior getCoverOnNeighbour(BlockPos pos, EnumFacing handlerFacing) {
+    public Cover getCoverOnNeighbour(BlockPos pos, EnumFacing handlerFacing) {
         TileEntity tile = pipe.getWorld().getTileEntity(pos.offset(handlerFacing));
         if (tile != null) {
-            ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, handlerFacing.getOpposite());
-            if (coverable == null) return null;
-            return coverable.getCoverAtSide(handlerFacing.getOpposite());
+            CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, handlerFacing.getOpposite());
+            if (coverHolder == null) return null;
+            return coverHolder.getCoverAtSide(handlerFacing.getOpposite());
         }
         return null;
     }
