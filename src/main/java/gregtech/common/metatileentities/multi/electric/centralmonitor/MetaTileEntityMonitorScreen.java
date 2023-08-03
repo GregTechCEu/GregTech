@@ -521,6 +521,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         guiSyncManager.syncValue(0, frameColorValue);
         guiSyncManager.syncValue(1, digitalModeValue);
         guiSyncManager.syncValue(2, pluginUI);
+        gregtech.api.newgui.widgets.WidgetMonitorScreen screenPreview = new gregtech.api.newgui.widgets.WidgetMonitorScreen(this).leftRel(1f).size(150);
+        // TODO add jei exclusion zone
 
         int y = 17;
         DecimalFormat format = new DecimalFormat("#.##");
@@ -530,7 +532,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                         .onMousePressed(mouseButton -> true)
                         .width(35).pos(7, y)
                         .overlay(IKey.lang("monitor.gui.title.back").shadow(true)))
-                .child(new gregtech.api.newgui.widgets.WidgetMonitorScreen(this).leftRel(1f).size(150))
+                .child(screenPreview)
                 .child(new Row()
                         // TODO: proper overlay textures
                         .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.ITEM, new Rectangle().setColor(Color.ORANGE.normal).asIcon().size(9)))
@@ -544,6 +546,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                         .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT)
                         .overlay(IKey.dynamic(() -> format.format(this.scale)).color(Color.WHITE.normal))
                         .bounds(1, 8)
+                        .stopper(0.2)
                         .value(new DoubleSyncValue(() -> this.scale, val -> setConfig(this.slot, (float) val, this.frameColor)))
                         .size(100, 18)
                         .pos(42, y - 5))

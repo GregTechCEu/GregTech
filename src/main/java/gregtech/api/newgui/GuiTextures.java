@@ -47,6 +47,9 @@ public class GuiTextures {
             .adaptable(2)
             .build();
 
+    public static final UITexture CLIPBOARD_BUTTON = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/clipboard_button.png", false);
+    public static final UITexture CLIPBOARD_CHECK_BOX = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/clipboard_checkbox.png", false);
+
     /*public static final UITexture BLANK = UITexture.fullImage("textures/gui/base/blank.png", 1, 1, 0, 0);
     public static final UITexture DISPLAY = UITexture.fullImage("textures/gui/base/display.png", 143, 75, 2, 2);
     public static final SteamTexture DISPLAY_STEAM = SteamTexture.fullImage("textures/gui/base/display_%s.png", 143, 75, 2, 2);
