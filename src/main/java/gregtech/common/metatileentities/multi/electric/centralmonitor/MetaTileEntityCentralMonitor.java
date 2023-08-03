@@ -40,6 +40,7 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -381,7 +382,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     public Set<FacingPos> getAllCovers() {
-        Set<FacingPos> allCovers = new HashSet<>();
+        Set<FacingPos> allCovers = new ObjectOpenHashSet<>();
         if (netCovers != null) {
             allCovers.addAll(netCovers);
         }

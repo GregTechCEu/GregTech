@@ -1,5 +1,19 @@
 package gregtech.common.items.behaviors.monitorplugin;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.GuiDraw;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.Dialog;
+import com.cleanroommc.modularui.widgets.ListWidget;
+import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IUIHolder;
@@ -15,11 +29,17 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.newgui.GTGuis;
+import gregtech.api.newgui.widgets.ProxyDisplayWidget;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GregFakePlayer;
+import gregtech.common.covers.CoverDigitalInterface;
 import gregtech.common.gui.impl.FakeModularUIPluginContainer;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -36,6 +56,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -51,12 +72,13 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
     private FakeModularUIPluginContainer fakeModularUIContainer;
     private GregFakePlayer fakePlayer;
     private static final Method methodCreateUI = ObfuscationReflectionHelper.findMethod(MetaTileEntity.class, "createUI", ModularUI.class, EntityPlayer.class);
-    static{
+
+    static {
         methodCreateUI.setAccessible(true);
     }
 
     public void setConfig(int partIndex) {
-        if(this.partIndex == partIndex || partIndex < 0) return;
+        if (this.partIndex == partIndex || partIndex < 0) return;
         this.partIndex = partIndex;
         this.partPos = null;
         writePluginData(GregtechDataCodes.UPDATE_PLUGIN_CONFIG, buffer -> buffer.writeVarInt(this.partIndex));
@@ -81,7 +103,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
             }
             Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
             List<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
-            parts.sort(Comparator.comparing((it) -> ((MetaTileEntity)it).getPos().hashCode()));
+            parts.sort(Comparator.comparing((it) -> ((MetaTileEntity) it).getPos().hashCode()));
             if (parts.size() > partIndex - 1 && parts.get(partIndex - 1) instanceof MetaTileEntity) {
                 target = (MetaTileEntity) parts.get(partIndex - 1);
                 partPos = target.getPos();
@@ -124,7 +146,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
                 }
                 widgets.add(widget);
             }
-            ModularUI.Builder builder = new ModularUI.Builder(ui.backgroundPath, ui.getWidth(), ui.getHeight() - (hasPlayerInventory? 80:0));
+            ModularUI.Builder builder = new ModularUI.Builder(ui.backgroundPath, ui.getWidth(), ui.getHeight() - (hasPlayerInventory ? 80 : 0));
             for (Widget widget : widgets) {
                 builder.widget(widget);
             }
@@ -160,7 +182,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        partIndex = data.hasKey("part")? data.getInteger("part"):0;
+        partIndex = data.hasKey("part") ? data.getInteger("part") : 0;
     }
 
     @Override
@@ -190,7 +212,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
         } else {
             if (partIndex > 0 && this.screen.getOffsetTimer() % 20 == 0) {
                 if (fakeModularUIContainer != null && getRealMTE() == null) {
-                    this.writePluginData(GregtechDataCodes.UPDATE_PLUGIN_CONFIG, buf-> buf.writeVarInt(this.partIndex));
+                    this.writePluginData(GregtechDataCodes.UPDATE_PLUGIN_CONFIG, buf -> buf.writeVarInt(this.partIndex));
                     fakeModularUIContainer = null;
                 }
             }
@@ -225,15 +247,15 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
             float halfW = width / 2f;
             float halfH = height / 2f;
             float scale = 0.5f / Math.max(halfW, halfH);
-            int mouseX = (int) ((x / scale) + (halfW > halfH? 0: (halfW - halfH)));
-            int mouseY = (int) ((y / scale) + (halfH > halfW? 0: (halfH - halfW)));
+            int mouseX = (int) ((x / scale) + (halfW > halfH ? 0 : (halfW - halfH)));
+            int mouseY = (int) ((y / scale) + (halfH > halfW ? 0 : (halfH - halfW)));
             MetaTileEntity mte = getRealMTE();
-            if (mte != null && 0 <= mouseX && mouseX <= width && 0 <= mouseY&& mouseY <= height) {
+            if (mte != null && 0 <= mouseX && mouseX <= width && 0 <= mouseY && mouseY <= height) {
                 if (playerIn.isSneaking()) {
-                    writePluginData(GregtechDataCodes.UPDATE_PLUGIN_CLICK, buf->{
+                    writePluginData(GregtechDataCodes.UPDATE_PLUGIN_CLICK, buf -> {
                         buf.writeVarInt(mouseX);
                         buf.writeVarInt(mouseY);
-                        buf.writeVarInt(isRight?1:0);
+                        buf.writeVarInt(isRight ? 1 : 0);
                         buf.writeVarInt(fakeModularUIContainer.syncId);
                     });
                 } else {
@@ -250,8 +272,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
             this.partIndex = buf.readVarInt();
             this.partPos = null;
             createFakeGui();
-        }
-        else if (id == GregtechDataCodes.UPDATE_FAKE_GUI) {
+        } else if (id == GregtechDataCodes.UPDATE_FAKE_GUI) {
             int windowID = buf.readVarInt();
             int widgetID = buf.readVarInt();
             if (fakeModularGui != null)
@@ -264,11 +285,110 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
             int mouseY = buf.readVarInt();
             int button = buf.readVarInt();
             int syncID = buf.readVarInt();
-            if (fakeModularGui != null &&  fakeModularUIContainer != null) {
+            if (fakeModularGui != null && fakeModularUIContainer != null) {
                 fakeModularUIContainer.syncId = syncID;
                 fakeModularGui.mouseClicked(mouseX, mouseY, button);
             }
         }
+    }
+
+    @Override
+    public boolean useMui2() {
+        return true;
+    }
+
+    public static ProxyDisplayWidget makeProxyChooser(MetaTileEntityMonitorScreen screen, ModularPanel panel, GuiSyncManager syncManager) {
+        ModularPanel chooser = new Dialog<>("proxy_chooser", null)
+                .setCloseOnOutOfBoundsClick(true)
+                .size(90, 100)
+                .leftRel(1f).top(0)
+                .relative(panel)
+                .background((context1, x, y, width, height) -> {
+                    GuiDraw.drawRect(x, y, width, height, Color.WHITE.dark(7));
+                    GuiDraw.drawBorder(x, y, width, height, 0xFF888888, 1);
+                });
+
+        ListWidget<?, ?, ?> proxiesWidget = new ListWidget<>();
+        chooser.child(proxiesWidget.sizeRel(1f));
+        ProxyDisplayWidget currentProxy = new ProxyDisplayWidget()
+                .pos(7, 18)
+                .onMousePressed(mouseButton -> {
+                    if (!panel.getScreen().isPanelOpen(chooser.getName())) {
+                        panel.getScreen().openPanel(chooser);
+                    }
+                    return true;
+                });
+        int i = 0;
+        for (FacingPos facingPos : ((MetaTileEntityCentralMonitor) screen.getController()).getAllCovers()) {
+            CoverDigitalInterface digitalInterface = screen.getCoverFromPosSide(facingPos);
+            if (digitalInterface != null) {
+                ProxyDisplayWidget widget = ProxyDisplayWidget.make(digitalInterface);
+                if (widget != null) {
+                    if (facingPos.equals(screen.coverPos)) {
+                        currentProxy.set(widget);
+                    }
+                    String key = GuiSyncManager.AUTO_SYNC_PREFIX + "proxy";
+                    syncManager.syncValue(key, i, new InteractionSyncHandler()
+                            .setOnMousePressed(mouseData -> {
+                                if (mouseData.side.isClient()) {
+                                    currentProxy.set(widget);
+                                    chooser.animateClose();
+                                } else {
+                                    screen.setMode(widget.getFacingPos());
+                                }
+                            }));
+                    widget.syncHandler(key, i);
+                    proxiesWidget.child(widget);
+                    i++;
+                }
+            }
+        }
+        return currentProxy;
+    }
+
+    @Override
+    public ModularPanel createPluginConfigUI(GuiSyncManager syncManager, @Nullable MetaTileEntityMonitorScreen screen, @Nullable GuiCreationContext context) {
+        ModularPanel panel = GTGuis.createPanel("cm_plugin_text", 100, 77);
+        panel.child(IKey.str("Plugin Config").asWidget().pos(5, 5));
+
+        panel.child(makeProxyChooser(screen, panel, syncManager)
+                .pos(7, 18));
+
+        IntSyncValue partIndexValue = new IntSyncValue(() -> this.partIndex, val -> {
+            this.partIndex = val;
+            this.partPos = null;
+            markAsDirty();
+            if (NetworkUtils.isClient()) {
+                createFakeGui();
+            }
+        });
+
+        panel.child(IKey.str("Part: ").asWidget().pos(7, 40))
+                .child(new Row()
+                        .coverChildren()
+                        .pos(7, 52)
+                        .child(new ButtonWidget<>()
+                                .overlay(IKey.str("-1"))
+                                .onMousePressed(mouseButton -> {
+                                    if (this.partIndex > 0) {
+                                        partIndexValue.setIntValue(this.partIndex - 1);
+                                    }
+                                    return true;
+                                }))
+                        .child(new TextFieldWidget()
+                                .size(50, 18)
+                                .value(partIndexValue)
+                                .setNumbers(0, Integer.MAX_VALUE))
+                        .child(new ButtonWidget<>()
+                                .overlay(IKey.str("+1"))
+                                .onMousePressed(mouseButton -> {
+                                    if (this.partIndex < Integer.MAX_VALUE) {
+                                        partIndexValue.setIntValue(this.partIndex + 1);
+                                    }
+                                    return true;
+                                })));
+
+        return panel;
     }
 
     @Override
