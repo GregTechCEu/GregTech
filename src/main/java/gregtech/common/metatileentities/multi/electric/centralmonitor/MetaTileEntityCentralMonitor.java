@@ -4,10 +4,10 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.drawable.GuiTextures;
+import com.cleanroommc.modularui.drawable.Stencil;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.widget.ParentWidget;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
@@ -480,67 +480,69 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (!this.isStructureFormed()) return;
-        RenderUtil.useStencil(() -> {
+        Stencil.reset();
+        Stencil.apply(() -> {
             GlStateManager.pushMatrix();
             RenderUtil.moveToFace(x, y, z, this.frontFacing);
             RenderUtil.rotateToFace(this.frontFacing, EnumFacing.NORTH);
             RenderUtil.renderRect(0.5f, -0.5f - (height - 2), width, height, 0.001f, 0xFF000000);
             GlStateManager.popMatrix();
-        }, () -> {
-            if (isActive) {
-                GlStateManager.pushMatrix();
-                /* hack the lightmap */
-                GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-                net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
-                float lastBrightnessX = OpenGlHelper.lastBrightnessX;
-                float lastBrightnessY = OpenGlHelper.lastBrightnessY;
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
-                EntityPlayer player = Minecraft.getMinecraft().player;
-                RayTraceResult rayTraceResult = player == null ? null : player.rayTrace(Minecraft.getMinecraft().playerController.getBlockReachDistance(), partialTicks);
-                int size = 0;
-                for (int w = 0; w < width; w++) {
-                    for (int h = 0; h < height; h++) {
-                        MetaTileEntityMonitorScreen screen = screens[w][h];
-                        if (screen != null) {
-                            size++;
-                            if (screen.isActive()) {
-                                BlockPos pos = screen.getPos();
-                                BlockPos pos2 = this.getPos();
-                                GlStateManager.pushMatrix();
-                                RenderUtil.moveToFace(x + pos.getX() - pos2.getX(), y + pos.getY() - pos2.getY(), z + pos.getZ() - pos2.getZ(), this.frontFacing);
-                                RenderUtil.rotateToFace(this.frontFacing, EnumFacing.NORTH);
-                                screen.renderScreen(partialTicks, rayTraceResult);
-                                GlStateManager.popMatrix();
-                            }
+        }, false);
+
+        if (isActive) {
+            GlStateManager.pushMatrix();
+            /* hack the lightmap */
+            GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+            net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+            float lastBrightnessX = OpenGlHelper.lastBrightnessX;
+            float lastBrightnessY = OpenGlHelper.lastBrightnessY;
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
+            EntityPlayer player = Minecraft.getMinecraft().player;
+            RayTraceResult rayTraceResult = player == null ? null : player.rayTrace(Minecraft.getMinecraft().playerController.getBlockReachDistance(), partialTicks);
+            int size = 0;
+            for (int w = 0; w < width; w++) {
+                for (int h = 0; h < height; h++) {
+                    MetaTileEntityMonitorScreen screen = screens[w][h];
+                    if (screen != null) {
+                        size++;
+                        if (screen.isActive()) {
+                            BlockPos pos = screen.getPos();
+                            BlockPos pos2 = this.getPos();
+                            GlStateManager.pushMatrix();
+                            RenderUtil.moveToFace(x + pos.getX() - pos2.getX(), y + pos.getY() - pos2.getY(), z + pos.getZ() - pos2.getZ(), this.frontFacing);
+                            RenderUtil.rotateToFace(this.frontFacing, EnumFacing.NORTH);
+                            screen.renderScreen(partialTicks, rayTraceResult);
+                            GlStateManager.popMatrix();
                         }
                     }
                 }
-
-                if (size != parts.size()) {
-                    clearScreens();
-                    for (BlockPos pos : parts) {
-                        TileEntity tileEntity = getWorld().getTileEntity(pos);
-                        if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-                            MetaTileEntityMonitorScreen screen = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
-                            screen.addToMultiBlock(this);
-                            int sx = screen.getX(), sy = screen.getY();
-                            if (sx < 0 || sx >= width || sy < 0 || sy >= height) {
-                                parts.clear();
-                                clearScreens();
-                                break;
-                            }
-                            screens[sx][sy] = screen;
-                        }
-                    }
-                }
-
-                /* restore the lightmap  */
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
-                net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
-                GL11.glPopAttrib();
-                GlStateManager.popMatrix();
             }
-        }, true);
+
+            if (size != parts.size()) {
+                clearScreens();
+                for (BlockPos pos : parts) {
+                    TileEntity tileEntity = getWorld().getTileEntity(pos);
+                    if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+                        MetaTileEntityMonitorScreen screen = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
+                        screen.addToMultiBlock(this);
+                        int sx = screen.getX(), sy = screen.getY();
+                        if (sx < 0 || sx >= width || sy < 0 || sy >= height) {
+                            parts.clear();
+                            clearScreens();
+                            break;
+                        }
+                        screens[sx][sy] = screen;
+                    }
+                }
+            }
+
+            /* restore the lightmap  */
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
+            net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+            GL11.glPopAttrib();
+            GlStateManager.popMatrix();
+        }
+        Stencil.remove();
     }
 
     @Override

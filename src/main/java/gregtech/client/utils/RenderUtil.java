@@ -113,44 +113,6 @@ public class RenderUtil {
         GL11.glScissor(x * s, translatedY * s, w * s, h * s);
     }
 
-    /***
-     * used to render pixels in stencil mask. (e.g. Restrict rendering results to be displayed only in Monitor Screens)
-     * if you want to do the similar things in Gui(2D) not World(3D), plz consider using the {@link #useScissor(int, int, int, int, Runnable)}
-     * that you don't need to draw mask to build a rect mask easily.
-     * @param mask draw mask
-     * @param renderInMask rendering in the mask
-     * @param shouldRenderMask should mask be rendered too
-     */
-    public static void useStencil(Runnable mask, Runnable renderInMask, boolean shouldRenderMask) {
-        GL11.glStencilMask(0xFF);
-        GL11.glClearStencil(0);
-        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
-
-        GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
-
-        if (!shouldRenderMask) {
-            GL11.glColorMask(false, false, false, false);
-            GL11.glDepthMask(false);
-        }
-
-        mask.run();
-
-        if (!shouldRenderMask) {
-            GL11.glColorMask(true, true, true, true);
-            GL11.glDepthMask(true);
-        }
-
-        GL11.glStencilMask(0x00);
-        GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-
-        renderInMask.run();
-
-        GL11.glDisable(GL11.GL_STENCIL_TEST);
-    }
-
     public static void useLightMap(float x, float y, Runnable codeBlock) {
         /* hack the lightmap */
         GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
