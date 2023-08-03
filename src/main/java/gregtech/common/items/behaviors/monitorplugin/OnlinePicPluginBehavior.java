@@ -127,7 +127,7 @@ public class OnlinePicPluginBehavior extends MonitorPluginBaseBehavior {
 
     @Override
     public ModularPanel createPluginConfigUI(GuiSyncManager syncManager, @Nullable MetaTileEntityMonitorScreen screen, @Nullable GuiCreationContext context) {
-        ModularPanel panel = GTGuis.createPanel("cm_plugin_text", 150, 122);
+        ModularPanel panel = GTGuis.createPanel("cm_plugin_online_pic", 150, 122);
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         panel.child(IKey.str("Plugin Config").asWidget().pos(5, 5))
                 .child(new Column()

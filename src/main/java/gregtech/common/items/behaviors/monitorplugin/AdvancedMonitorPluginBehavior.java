@@ -5,6 +5,17 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.widgets.SliderWidget;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.widgets.LabelWidget;
@@ -14,6 +25,8 @@ import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.newgui.GTGuis;
+import gregtech.api.newgui.GuiTextures;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
@@ -45,10 +58,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector3f;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -98,14 +113,14 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
             FBO = new Framebuffer(RESOLUTION, RESOLUTION, true);
         }
         TrackedDummyWorld dummyWorld = new TrackedDummyWorld(world);
-        dummyWorld.setRenderFilter(pos->validPos.contains(pos));
+        dummyWorld.setRenderFilter(pos -> validPos.contains(pos));
         worldSceneRenderer = new FBOWorldSceneRenderer(dummyWorld, FBO);
         worldSceneRenderer.addRenderedBlocks(validPos, null);
         center = new Vector3f((minX + maxX) / 2f + 0.5f, (minY + maxY) / 2f + 0.5f, (minZ + maxZ) / 2f + 0.5f);
         worldSceneRenderer.setCameraLookAt(center, 10 / scale, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
         worldSceneRenderer.setBeforeWorldRender(this::renderBefore);
         worldSceneRenderer.setAfterWorldRender(this::renderAfter);
-        worldSceneRenderer.setOnLookingAt(rayTrace->renderBlockOverLay(rayTrace.getBlockPos()));
+        worldSceneRenderer.setOnLookingAt(rayTrace -> renderBlockOverLay(rayTrace.getBlockPos()));
     }
 
     @SideOnly(Side.CLIENT)
@@ -261,7 +276,90 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
             }
         }
         if (this.screen.getWorld().isRemote && spin > 0 && lastMouse == null) {
-            rotationPitch = (int) ((rotationPitch + spin * 4)% 360);
+            rotationPitch = (int) ((rotationPitch + spin * 4) % 360);
+        }
+    }
+
+    @Override
+    public boolean useMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel createPluginConfigUI(GuiSyncManager syncManager, @Nullable MetaTileEntityMonitorScreen screen, @Nullable GuiCreationContext context) {
+        ModularPanel panel = GTGuis.createPanel("cm_plugin_advanced_monitor", 150, 150);
+        panel.child(IKey.str("Plugin Config").asWidget().pos(5, 5));
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+
+        panel.child(new Column()
+                .top(18).left(7).right(7).bottom(7)
+                .child(FakeGuiPluginBehavior.makeProxyChooser(screen, panel, syncManager)
+                        .marginBottom(3))
+                .child(IKey.dynamic(() -> "Zoom: " + decimalFormat.format(this.scale)).asWidget().widthRel(1f))
+                .child(new SliderWidget()
+                        .widthRel(1f)
+                        .height(10)
+                        .bounds(0.3, 2.0)
+                        .stopper(0.1)
+                        .value(new DoubleSyncValue(() -> this.scale, val -> {
+                            this.scale = (float) val;
+                            updateWorldScene();
+                            markAsDirty();
+                        }))
+                        .marginBottom(3))
+                .child(IKey.dynamic(() -> "Rotation Pitch: " + decimalFormat.format(this.rotationPitch)).asWidget().widthRel(1f))
+                .child(new SliderWidget()
+                        .widthRel(1f)
+                        .height(10)
+                        .bounds(-90.0, 90.0)
+                        .stopper(1.0)
+                        .value(new DoubleSyncValue(() -> this.rotationPitch, val -> {
+                            this.rotationPitch = (int) val;
+                            updateWorldScene();
+                            markAsDirty();
+                        }))
+                        .marginBottom(3))
+                .child(IKey.dynamic(() -> "Rotation Yaw: " + decimalFormat.format(this.rotationYaw)).asWidget().widthRel(1f))
+                .child(new SliderWidget()
+                        .widthRel(1f)
+                        .height(10)
+                        .bounds(0.0, 360.0)
+                        .stopper(1.0)
+                        .value(new DoubleSyncValue(() -> this.rotationYaw, val -> {
+                            this.rotationYaw = (int) val;
+                            updateWorldScene();
+                            markAsDirty();
+                        }))
+                        .marginBottom(3))
+                .child(IKey.dynamic(() -> "Spin: " + decimalFormat.format(this.spin)).asWidget().widthRel(1f))
+                .child(new SliderWidget()
+                        .widthRel(1f)
+                        .height(10)
+                        .bounds(0.0, 2.0)
+                        .stopper(0.1)
+                        .value(new DoubleSyncValue(() -> this.spin, val -> {
+                            this.spin = (float) val;
+                            markAsDirty();
+                        }))
+                        .marginBottom(3))
+                .child(new Row()
+                        .widthRel(1f)
+                        .height(15)
+                        .child(IKey.str("Fake GUI: ").asWidget().height(15))
+                        .child(new CycleButtonWidget()
+                                .value(new BooleanSyncValue(() -> this.connect, val -> {
+                                    this.connect = val;
+                                    markAsDirty();
+                                }))
+                                .size(15)
+                                .texture(GuiTextures.CLIPBOARD_CHECK_BOX)
+                                .marginRight(6))));
+        return panel;
+    }
+
+    private void updateWorldScene() {
+        if (NetworkUtils.isClient() && this.worldSceneRenderer != null) {
+            this.worldSceneRenderer.setCameraLookAt(center, 10 / scale, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
         }
     }
 
@@ -390,7 +488,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
             GlStateManager.translate(-0.5, -0.5, 0.01);
             double[] currentMouse = this.screen.checkLookingAt(rayTraceResult);
             if (currentMouse != null) {
-                worldSceneRenderer.render(0, 0, 1, 1, (float)currentMouse[0], (float)currentMouse[1]);
+                worldSceneRenderer.render(0, 0, 1, 1, (float) currentMouse[0], (float) currentMouse[1]);
                 if (lastMouse != null) {
                     if (Mouse.isButtonDown(0)) {
                         rotationPitch += (currentMouse[0] - lastMouse[0]) * 300;

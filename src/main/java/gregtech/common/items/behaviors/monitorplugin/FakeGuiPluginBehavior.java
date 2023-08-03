@@ -311,7 +311,6 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
         ListWidget<?, ?, ?> proxiesWidget = new ListWidget<>();
         chooser.child(proxiesWidget.sizeRel(1f));
         ProxyDisplayWidget currentProxy = new ProxyDisplayWidget()
-                .pos(7, 18)
                 .onMousePressed(mouseButton -> {
                     if (!panel.getScreen().isPanelOpen(chooser.getName())) {
                         panel.getScreen().openPanel(chooser);
@@ -348,7 +347,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
 
     @Override
     public ModularPanel createPluginConfigUI(GuiSyncManager syncManager, @Nullable MetaTileEntityMonitorScreen screen, @Nullable GuiCreationContext context) {
-        ModularPanel panel = GTGuis.createPanel("cm_plugin_text", 100, 77);
+        ModularPanel panel = GTGuis.createPanel("cm_plugin_fake_gui", 100, 77);
         panel.child(IKey.str("Plugin Config").asWidget().pos(5, 5));
 
         panel.child(makeProxyChooser(screen, panel, syncManager)
