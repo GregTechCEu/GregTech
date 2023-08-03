@@ -50,24 +50,24 @@ public class GTGuis {
     public static final GuiInfo PLAYER_META_ITEM_MAIN_HAND = GuiInfo.builder()
             .clientGui((context, mainPanel) -> {
                 ItemStack itemStack = context.getMainHandItem();
-                return getGuiHolder(itemStack).createScreen(context, mainPanel);
+                return getGuiHolder(itemStack).createScreen(context.with(EnumHand.MAIN_HAND), mainPanel);
 
             })
             .commonGui((context, guiSyncHandler) -> {
                 ItemStack itemStack = context.getMainHandItem();
-                return getGuiHolder(itemStack).buildUI(context, guiSyncHandler, context.getWorld().isRemote);
+                return getGuiHolder(itemStack).buildUI(context.with(EnumHand.MAIN_HAND), guiSyncHandler, context.getWorld().isRemote);
             })
             .build();
 
     public static final GuiInfo PLAYER_META_ITEM_OFF_HAND = GuiInfo.builder()
             .clientGui((context, mainPanel) -> {
                 ItemStack itemStack = context.getOffHandItem();
-                return getGuiHolder(itemStack).createScreen(context, mainPanel);
+                return getGuiHolder(itemStack).createScreen(context.with(EnumHand.OFF_HAND), mainPanel);
 
             })
             .commonGui((context, guiSyncHandler) -> {
                 ItemStack itemStack = context.getOffHandItem();
-                return getGuiHolder(itemStack).buildUI(context, guiSyncHandler, context.getWorld().isRemote);
+                return getGuiHolder(itemStack).buildUI(context.with(EnumHand.OFF_HAND), guiSyncHandler, context.getWorld().isRemote);
             })
             .build();
 
@@ -138,13 +138,14 @@ public class GTGuis {
 
     public static void initThemes() {
         MinecraftForge.EVENT_BUS.register(GTGuis.class);
-        IThemeApi.get().registerTheme("gregtech:bronze", bronzeTheme);
         IThemeApi.get().registerTheme("gregtech", gregtechTheme);
+        IThemeApi.get().registerTheme("gregtech:bronze", bronzeTheme);
     }
 
     @SubscribeEvent
     public static void onReloadThemes(ReloadThemeEvent.Pre event) {
-        bronzeTheme.add("color", 0xFA9D23);
         gregtechTheme.add("color", ConfigHolder.client.defaultUIColor);
+        bronzeTheme.add("parent", "gregtech")
+                .add("color", 0xFA9D23);
     }
 }
