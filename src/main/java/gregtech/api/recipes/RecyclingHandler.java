@@ -82,7 +82,7 @@ public class RecyclingHandler {
     public static @Nullable ItemMaterialInfo getRecyclingIngredients(List<GTRecipeInput> inputs, int outputCount) {
         Object2LongMap<Material> materialStacksExploded = new Object2LongOpenHashMap<>();
         for (GTRecipeInput input : inputs) {
-            if (input == null) continue;
+            if (input == null || input.isNonConsumable()) continue;
             ItemStack[] inputStacks = input.getInputStacks();
             if (inputStacks == null || inputStacks.length == 0) continue;
             ItemStack inputStack = inputStacks[0];
