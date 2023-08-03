@@ -1,5 +1,10 @@
 package gregtech.api.items.behavior;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.gui.GuiTextures;
@@ -9,10 +14,11 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.core.network.packets.PacketPluginSynced;
+import gregtech.api.newgui.GTGuis;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
+import gregtech.core.network.packets.PacketPluginSynced;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +34,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -54,6 +61,28 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
     }
 
     abstract public MonitorPluginBaseBehavior createPlugin();
+
+    public boolean useMui2() {
+        return false;
+    }
+
+    @Override
+    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
+        ItemStack itemStack = guiCreationContext.getUsedItemStack();
+        MonitorPluginBaseBehavior behavior = MonitorPluginBaseBehavior.getBehavior(itemStack);
+        if (behavior != null) {
+            behavior = behavior.createPlugin();
+            behavior.readFromNBT(itemStack.getOrCreateSubCompound("monitor_plugin"));
+            guiCreationContext.setItemInUsedHand(itemStack);
+            return behavior.createPluginConfigUI(guiSyncManager, null, guiCreationContext);
+        }
+        return GTGuis.createPanel("error", 60, 20)
+                .overlay(IKey.str("Error").color(Color.RED.normal));
+    }
+
+    public ModularPanel createPluginConfigUI(GuiSyncManager syncManager, @Nullable MetaTileEntityMonitorScreen screen, @Nullable GuiCreationContext context) {
+        return null;
+    }
 
     /***
      * Do not override createUI below.
@@ -206,13 +235,22 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (!world.isRemote) {
-            if (hand != EnumHand.MAIN_HAND)
-                return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
             ItemStack itemStack = player.getHeldItem(hand);
             MonitorPluginBaseBehavior behavior = getBehavior(itemStack);
             if (behavior != null && behavior.hasUI()) {
-                PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
-                holder.openUI();
+                if (useMui2()) {
+                    if (hand == EnumHand.OFF_HAND) {
+                        GTGuis.PLAYER_META_ITEM_OFF_HAND.open(player);
+                    } else {
+                        GTGuis.PLAYER_META_ITEM_MAIN_HAND.open(player);
+                    }
+                } else {
+                    if (hand != EnumHand.MAIN_HAND) {
+                        return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
+                    }
+                    PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
+                    holder.openUI();
+                }
                 return ActionResult.newResult(EnumActionResult.SUCCESS, itemStack);
             }
         }

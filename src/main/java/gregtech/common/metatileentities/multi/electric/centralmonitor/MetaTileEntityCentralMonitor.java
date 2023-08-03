@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.electric.centralmonitor;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
@@ -22,7 +23,6 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.newgui.GTGuis;
-import gregtech.api.newgui.GuiTextures;
 import gregtech.api.newgui.widgets.WidgetScreenGrid;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -558,7 +558,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     @Override
     public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
         ModularPanel panel = GTGuis.createPanel("central_monitor", 28 * width, 28 * height)
-                .background(GuiTextures.BOXED_BACKGROUND);
+                .background(GuiTextures.BACKGROUND);
         WidgetScreenGrid[][] screenGrids = new WidgetScreenGrid[width][height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {

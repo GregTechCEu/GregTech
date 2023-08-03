@@ -1,6 +1,21 @@
 package gregtech.common.metatileentities.multi.electric.centralmonitor;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.GuiDraw;
+import com.cleanroommc.modularui.drawable.Rectangle;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.*;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.widgets.SliderWidget;
+import com.cleanroommc.modularui.widgets.*;
+import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
@@ -15,6 +30,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.newgui.GTGuis;
+import gregtech.api.newgui.PluginConfigUISyncHandler;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTLog;
@@ -53,10 +70,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
@@ -76,6 +94,32 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
     public MetaTileEntityMonitorScreen(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 1);
+    }
+
+    public ItemStack getPluginItem() {
+        return this.inventory.getStackInSlot(0);
+    }
+
+    public void setPluginItem(ItemStack item) {
+        if (item.isEmpty()) {
+            unloadPlugin();
+            this.inventory.setStackInSlot(0, ItemStack.EMPTY);
+            markDirty();
+            return;
+        }
+        MonitorPluginBaseBehavior behavior = MonitorPluginBaseBehavior.getBehavior(item);
+        if (behavior == null) {
+            throw new IllegalArgumentException();
+        }
+        this.inventory.setStackInSlot(0, item.copy());
+        loadPlugin(behavior);
+        markDirty();
+        writeCustomData(GregtechDataCodes.UPDATE_PLUGIN_ITEM, packetBuffer -> packetBuffer.writeItemStack(inventory.getStackInSlot(0)));
+    }
+
+    @Nullable
+    public MonitorPluginBaseBehavior getPlugin() {
+        return plugin;
     }
 
     public void setMode(FacingPos cover, CoverDigitalInterface.MODE mode) {
@@ -236,7 +280,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     private void loadPlugin(MonitorPluginBaseBehavior plugin) {
-        if (plugin !=null && this.plugin != plugin) {
+        if (plugin != null && this.plugin != plugin) {
             this.plugin = plugin.createPlugin();
             this.plugin.readFromNBT(this.itemInventory.getStackInSlot(0).getOrCreateSubCompound("monitor_plugin"));
             this.plugin.onMonitorValid(this, true);
@@ -412,12 +456,11 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             }
 
             @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                MonitorPluginBaseBehavior behavior = MonitorPluginBaseBehavior.getBehavior(stack);
-                return behavior != null;
+            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+                return MonitorPluginBaseBehavior.getBehavior(stack) != null;
             }
 
-            @Nonnull
+            @NotNull
             @Override
             public ItemStack extractItem(int slot, int amount, boolean simulate) {
                 if (!getWorld().isRemote && !getStackInSlot(slot).isEmpty() && !simulate) {
@@ -465,6 +508,93 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity metaTileEntityHolder) {
         return new MetaTileEntityMonitorScreen(this.metaTileEntityId);
+    }
+
+    @Override
+    public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
+        ModularPanel panel = GTGuis.createPanel("monitor_screen", 274, 204).background(com.cleanroommc.modularui.drawable.GuiTextures.BACKGROUND);
+        MultiblockControllerBase controller = this.getController();
+        if (!(controller instanceof MetaTileEntityCentralMonitor) || !controller.isActive()) return panel;
+        IntSyncValue frameColorValue = new IntSyncValue(() -> this.frameColor, val -> setConfig(this.slot, this.scale, val));
+        EnumSyncValue<CoverDigitalInterface.MODE> digitalModeValue = new EnumSyncValue<>(CoverDigitalInterface.MODE.class, () -> this.mode, val -> this.mode = val);
+        PluginConfigUISyncHandler pluginUI = new PluginConfigUISyncHandler(panel, this, () -> this.plugin);
+        guiSyncManager.syncValue(0, frameColorValue);
+        guiSyncManager.syncValue(1, digitalModeValue);
+        guiSyncManager.syncValue(2, pluginUI);
+
+        int y = 17;
+        DecimalFormat format = new DecimalFormat("#.##");
+        panel.child(SlotGroupWidget.playerInventory().left(7))
+                .child(IKey.lang("gregtech.machine.monitor_screen.name").asWidget().pos(7, 7))
+                .child(new ButtonWidget<>()
+                        .onMousePressed(mouseButton -> true)
+                        .width(35).pos(7, y)
+                        .overlay(IKey.lang("monitor.gui.title.back").shadow(true)))
+                .child(new gregtech.api.newgui.widgets.WidgetMonitorScreen(this).leftRel(1f).size(150))
+                .child(new Row()
+                        // TODO: proper overlay textures
+                        .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.ITEM, new Rectangle().setColor(Color.ORANGE.normal).asIcon().size(9)))
+                        .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.FLUID, new Rectangle().setColor(Color.BLUE.normal).asIcon().size(9)))
+                        .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.ENERGY, new Rectangle().setColor(Color.YELLOW.normal).asIcon().size(9)))
+                        .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.MACHINE, new Rectangle().setColor(Color.LIGHT_BLUE.normal).asIcon().size(9)))
+                        .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.PROXY, new Rectangle().setColor(Color.RED.normal).asIcon().size(9)))
+                        .top(y).left(175))
+                .child(IKey.lang("monitor.gui.title.scale").asWidget().pos(7, y += 25))
+                .child(new SliderWidget()
+                        .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT)
+                        .overlay(IKey.dynamic(() -> format.format(this.scale)).color(Color.WHITE.normal))
+                        .bounds(1, 8)
+                        .value(new DoubleSyncValue(() -> this.scale, val -> setConfig(this.slot, (float) val, this.frameColor)))
+                        .size(100, 18)
+                        .pos(42, y - 5))
+                .child(IKey.lang("monitor.gui.title.frame_color").asWidget().pos(7, y += 20))
+                .child(new ButtonWidget<>()
+                        .background((context, x, y1, width, height) -> {
+                            GuiDraw.drawRect(x, y1, width, height, this.frameColor);
+                            GuiDraw.drawBorder(x + 1, y1 + 1, width - 2, height - 2, Color.BLACK.normal, 1);
+                        })
+                        .onMousePressed(mouseButton -> {
+                            panel.getScreen().openPanel(new ColorPickerDialog(val -> frameColorValue.setIntValue(val, true, true), this.frameColor, true));
+                            return true;
+                        })
+                        .pos(75, y - 5))
+                .child(IKey.lang("monitor.gui.title.slot").asWidget().pos(7, y += 20))
+                .child(new TextFieldWidget()
+                        .value(new IntSyncValue(() -> this.slot, val -> setConfig(val, this.scale, this.frameColor)))
+                        .setNumbers(0, Integer.MAX_VALUE)
+                        .setTextAlignment(Alignment.Center)
+                        .background(gregtech.api.newgui.GuiTextures.DISPLAY)
+                        .size(100, 18)
+                        .pos(42, y - 5))
+                .child(IKey.lang("monitor.gui.title.plugin").asWidget().pos(7, y += 20))
+                .child(new ItemSlot().slot(SyncHandlers.itemSlot(this.inventory, 0)
+                                .changeListener(stack -> {
+                                    if (this.getWorld() != null && !this.getWorld().isRemote) {
+                                        setPluginItem(this.inventory.getStackInSlot(0));
+                                    }
+                                })
+                                .singletonSlotGroup())
+                        .pos(42, y - 5))
+                .child(new ButtonWidget<>()
+                        .onMousePressed(mouseButton -> {
+                            if (this.plugin != null && this.plugin.useMui2()) {
+                                pluginUI.openPanel();
+                            }
+                            return true;
+                        })
+                        .overlay(IKey.lang("monitor.gui.title.config"))
+                        .pos(65, y - 5)
+                        .width(40));
+        return panel;
+    }
+
+    private CycleButtonWidget makeDigitalModeButton(EnumSyncValue<CoverDigitalInterface.MODE> digitalModeValue, CoverDigitalInterface.MODE mode, IDrawable overlay) {
+        return new CycleButtonWidget()
+                .value(new BoolValue.Dynamic(() -> this.mode == mode, val -> digitalModeValue.setValue(mode)))
+                .addTooltipLine(IKey.lang("metaitem.cover.digital.mode." + mode.name().toLowerCase()))
+                .textureGetter(state -> state == 1 ? com.cleanroommc.modularui.drawable.GuiTextures.BUTTON : com.cleanroommc.modularui.drawable.GuiTextures.SLOT)
+                .overlay(overlay)
+                .size(18);
     }
 
     @Override
@@ -642,7 +772,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                 : rayTraceResult.hitVec.y - rayTraceResult.getBlockPos().getY();
         dX = 1 - dX;
         dY = 1 - dY;
-        if(rayTraceResult.sideHit.getYOffset() < 0) {
+        if (rayTraceResult.sideHit.getYOffset() < 0) {
             dY = 1 - dY;
         }
         if (rayTraceResult.sideHit == EnumFacing.WEST || rayTraceResult.sideHit == EnumFacing.SOUTH) {
@@ -727,7 +857,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking() && this.getWorld() != null && !this.getWorld().isRemote) {
-            MetaTileEntityUIFactory.INSTANCE.openUI(this.getHolder(), (EntityPlayerMP) playerIn);
+            //MetaTileEntityUIFactory.INSTANCE.openUI(this.getHolder(), (EntityPlayerMP) playerIn);
+            GTGuis.MTE.open(playerIn, getWorld(), getPos());
             return true;
         } else {
             return false;
