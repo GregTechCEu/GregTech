@@ -527,7 +527,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack insertedStack, boolean simulate) {
-
             if (insertedStack.isEmpty()) {
                 return ItemStack.EMPTY;
             }
@@ -562,9 +561,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 long amountLeftInChest = itemStack.isEmpty() ? maxStoredItems : maxStoredItems - itemsStoredInside;
                 virtualizedAmount = (int) Math.min(insertedStack.getCount() - amountInsertedIntoExport, amountLeftInChest);
 
-            }
-            // Return early, as we did not virtualize anything, as it all fit into the output slot
-            else {
+            } else {
+                // Return early, as we did not virtualize anything, as it all fit into the output slot
                 return MetaTileEntityQuantumChest.this.exportItems.insertItem(0, insertedStack, simulate);
             }
 
@@ -591,9 +589,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                         insertedStackCopy.setCount(amountInsertedIntoExport);
                         MetaTileEntityQuantumChest.this.exportItems.insertItem(0, insertedStackCopy, simulate);
                     }
-                    return insertedStack;
-                }
-                else {
+                } else {
                     MetaTileEntityQuantumChest.this.itemsStoredInside += remainingStack.getCount();
                 }
             }
