@@ -13,15 +13,10 @@ import com.cleanroommc.modularui.widgets.ColorPickerDialog;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.gui.IUIHolder;
-import gregtech.api.gui.widgets.TextFieldWidget;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.newgui.GTGuis;
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.gui.widget.WidgetARGB;
-import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.RayTraceResult;
@@ -112,22 +107,6 @@ public class TextPluginBehavior extends MonitorPluginBaseBehavior {
 
     @Override
     public boolean hasUI() {
-        return true;
-    }
-
-    @Override
-    public WidgetPluginConfig customUI(WidgetPluginConfig widgets, IUIHolder holder, EntityPlayer entityPlayer) {
-        widgets.setSize(260, 210);
-        for (int i = 0; i < texts.length; i++) {
-            int finalI = i;
-            widgets.addWidget(new TextFieldWidget(25, 25 + i * 10, 100, 10, true, () -> this.texts[finalI], (text) -> setText(finalI, text, this.colors[finalI])).setValidator((data) -> true));
-            widgets.addWidget(new WidgetARGB(135, 25 + i * 10, 10, colors[i], color -> setText(finalI, this.texts[finalI], color)));
-        }
-        return widgets;
-    }
-
-    @Override
-    public boolean useMui2() {
         return true;
     }
 

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class ProxyHolderPluginBehavior extends MonitorPluginBaseBehavior {
+
     protected IGregTechTileEntity holder;
     private BlockPos pos;
 

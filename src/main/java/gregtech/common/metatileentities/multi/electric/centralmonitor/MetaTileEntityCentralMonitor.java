@@ -13,7 +13,6 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.cover.CoverBehavior;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
@@ -71,6 +70,7 @@ import java.util.*;
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase implements IFastRenderMetaTileEntity {
+
     private final static long ENERGY_COST = -ConfigHolder.machines.centralMonitorEuCost;
     public final static int MAX_HEIGHT = 9;
     public final static int MAX_WIDTH = 14;
@@ -582,8 +582,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         } else {
             parts.forEach(partPos -> {
                 TileEntity tileEntity = this.getWorld().getTileEntity(partPos);
-                if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-                    MetaTileEntityMonitorScreen part = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
+                if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen part) {
                     int x = part.getX();
                     int y = part.getY();
                     screenGrids[x][y].setScreen(part);
@@ -591,45 +590,6 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             });
         }
         return panel;
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return super.createUI(entityPlayer);
-        /*if (!isActive()) {
-            return super.createUI(entityPlayer);
-        } else {
-            WidgetScreenGrid[][] screenGrids = new WidgetScreenGrid[width][height];
-            WidgetGroup group = new WidgetGroup();
-            for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
-                    screenGrids[i][j] = new WidgetScreenGrid(4 * width, 4 * height, i, j);
-                    group.addWidget(screenGrids[i][j]);
-                }
-            }
-            if (!this.getWorld().isRemote) {
-                this.getMultiblockParts().forEach(part -> {
-                    if (part instanceof MetaTileEntityMonitorScreen) {
-                        int x = ((MetaTileEntityMonitorScreen) part).getX();
-                        int y = ((MetaTileEntityMonitorScreen) part).getY();
-                        screenGrids[x][y].setScreen((MetaTileEntityMonitorScreen) part);
-                    }
-                });
-            } else {
-                parts.forEach(partPos -> {
-                    TileEntity tileEntity = this.getWorld().getTileEntity(partPos);
-                    if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-                        MetaTileEntityMonitorScreen part = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
-                        int x = part.getX();
-                        int y = part.getY();
-                        screenGrids[x][y].setScreen(part);
-                    }
-                });
-            }
-            return ModularUI.builder(GuiTextures.BOXED_BACKGROUND, 28 * width, 28 * height)
-                    .widget(group)
-                    .build(this.getHolder(), entityPlayer);
-        }*/
     }
 
     @Override

@@ -7,16 +7,11 @@ import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.IUIHolder;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.items.gui.ItemUIFactory;
-import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.newgui.GTGuis;
 import gregtech.api.util.IDirtyNotifiable;
-import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.core.network.packets.PacketPluginSynced;
 import io.netty.buffer.Unpooled;
@@ -41,6 +36,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemUIFactory, IDirtyNotifiable {
+
     protected MetaTileEntityMonitorScreen screen;
     private NBTTagCompound nbtTagCompound;
 
@@ -62,10 +58,6 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
 
     abstract public MonitorPluginBaseBehavior createPlugin();
 
-    public boolean useMui2() {
-        return false;
-    }
-
     @Override
     public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
         ItemStack itemStack = guiCreationContext.getUsedItemStack();
@@ -84,19 +76,6 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
         return null;
     }
 
-    /***
-     * Do not override createUI below.
-     * @param holder It should be one of PlayerInventoryHolder or MetaTileEntityHolder.
-     * @param entityPlayer Player
-     * @return WidgetGroup back
-     */
-    public WidgetPluginConfig customUI(WidgetPluginConfig widgetGroup, IUIHolder holder, EntityPlayer entityPlayer) {
-        return widgetGroup;
-    }
-
-    /***
-     * Can player using item (right-click) to open the customUI.
-     */
     public boolean hasUI() {
         return false;
     }
@@ -238,38 +217,15 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
             ItemStack itemStack = player.getHeldItem(hand);
             MonitorPluginBaseBehavior behavior = getBehavior(itemStack);
             if (behavior != null && behavior.hasUI()) {
-                if (useMui2()) {
-                    if (hand == EnumHand.OFF_HAND) {
-                        GTGuis.PLAYER_META_ITEM_OFF_HAND.open(player);
-                    } else {
-                        GTGuis.PLAYER_META_ITEM_MAIN_HAND.open(player);
-                    }
+                if (hand == EnumHand.OFF_HAND) {
+                    GTGuis.PLAYER_META_ITEM_OFF_HAND.open(player);
                 } else {
-                    if (hand != EnumHand.MAIN_HAND) {
-                        return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
-                    }
-                    PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
-                    holder.openUI();
+                    GTGuis.PLAYER_META_ITEM_MAIN_HAND.open(player);
                 }
                 return ActionResult.newResult(EnumActionResult.SUCCESS, itemStack);
             }
         }
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
-    }
-
-    @Override
-    public final ModularUI createUI(PlayerInventoryHolder playerInventoryHolder, EntityPlayer entityPlayer) {
-        ItemStack itemStack = playerInventoryHolder.getCurrentItem();
-        MonitorPluginBaseBehavior behavior = MonitorPluginBaseBehavior.getBehavior(itemStack);
-        if (behavior != null) {
-            behavior = behavior.createPlugin();
-            behavior.readFromNBT(itemStack.getOrCreateSubCompound("monitor_plugin"));
-            return ModularUI.builder(GuiTextures.BOXED_BACKGROUND, 260, 210)
-                    .widget(behavior.customUI(new WidgetPluginConfig().setBackGround(GuiTextures.BACKGROUND), playerInventoryHolder, entityPlayer))
-                    .bindCloseListener(this::markAsDirty)
-                    .build(playerInventoryHolder, entityPlayer);
-        }
-        return null;
     }
 
     @Override

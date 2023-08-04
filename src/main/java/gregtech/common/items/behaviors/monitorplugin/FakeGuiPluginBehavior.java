@@ -16,12 +16,10 @@ import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGui;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -38,7 +36,6 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.common.covers.CoverDigitalInterface;
 import gregtech.common.gui.impl.FakeModularUIPluginContainer;
-import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -293,11 +290,6 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
         }
     }
 
-    @Override
-    public boolean useMui2() {
-        return true;
-    }
-
     public static int mixColor(int c1, int c2) {
         return Color.interpolate(c1, c2, 0.5);
     }
@@ -398,15 +390,5 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
                                 })));
 
         return panel;
-    }
-
-    @Override
-    public WidgetPluginConfig customUI(WidgetPluginConfig widgetGroup, IUIHolder holder, EntityPlayer entityPlayer) {
-        return widgetGroup.setSize(170, 50)
-                .widget(new LabelWidget(20, 20, "Part:", 0xFFFFFFFF))
-                .widget(new ClickButtonWidget(55, 15, 20, 20, "-1", (data) -> setConfig(this.partIndex - 1)))
-                .widget(new ClickButtonWidget(135, 15, 20, 20, "+1", (data) -> setConfig(this.partIndex + 1)))
-                .widget(new ImageWidget(75, 15, 60, 20, GuiTextures.DISPLAY))
-                .widget(new SimpleTextWidget(105, 25, "", 16777215, () -> Integer.toString(this.partIndex)));
     }
 }

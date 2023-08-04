@@ -121,11 +121,6 @@ public class OnlinePicPluginBehavior extends MonitorPluginBaseBehavior {
     }
 
     @Override
-    public boolean useMui2() {
-        return true;
-    }
-
-    @Override
     public ModularPanel createPluginConfigUI(GuiSyncManager syncManager, @Nullable MetaTileEntityMonitorScreen screen, @Nullable GuiCreationContext context) {
         ModularPanel panel = GTGuis.createPanel("cm_plugin_online_pic", 150, 122);
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
@@ -196,24 +191,6 @@ public class OnlinePicPluginBehavior extends MonitorPluginBaseBehavior {
                                         .texture(GuiTextures.CLIPBOARD_CHECK_BOX))));
 
         return panel;
-    }
-
-    @Override
-    public WidgetPluginConfig customUI(WidgetPluginConfig widgetGroup, IUIHolder holder, EntityPlayer entityPlayer) {
-        tmpUrl = url;
-        return widgetGroup.setSize(260, 150)
-                .widget(new DynamicLabelWidget(20, 20, () -> url.length() > 40 ? (url.substring(0, 39) + "...") : url, 0XFFFFFFFF))
-                .widget(new TextFieldWidget(20, 30, 175, 10, true, () -> tmpUrl, (text) -> {
-                    tmpUrl = text;
-                }).setValidator((data) -> true).setMaxStringLength(200))
-                .widget(new ClickButtonWidget(200, 30, 45, 10, "confirm", pressed -> setConfig(tmpUrl, this.rotation, this.scaleX, this.scaleY, this.flippedX, this.flippedY)))
-                .widget(new WidgetScrollBar(25, 40, 210, -180, 180, 1, value -> setConfig(this.url, value, this.scaleX, this.scaleY, this.flippedX, this.flippedY)).setTitle("rotation", 0XFFFFFFFF).setInitValue(this.rotation))
-                .widget(new WidgetScrollBar(25, 60, 210, 0, 1, 0.05f, value -> setConfig(this.url, this.rotation, value, this.scaleY, this.flippedX, this.flippedY)).setTitle("scaleX", 0XFFFFFFFF).setInitValue(this.scaleX))
-                .widget(new WidgetScrollBar(25, 80, 210, 0, 1, 0.05f, value -> setConfig(this.url, this.rotation, this.scaleX, value, this.flippedX, this.flippedY)).setTitle("scaleY", 0XFFFFFFFF).setInitValue(this.scaleY))
-                .widget(new LabelWidget(40, 115, "flippedX:", 0XFFFFFFFF))
-                .widget(new ToggleButtonWidget(90, 110, 20, 20, () -> this.flippedX, state -> setConfig(this.url, this.rotation, this.scaleX, this.scaleY, state, this.flippedY)))
-                .widget(new LabelWidget(140, 115, "flippedY:", 0XFFFFFFFF))
-                .widget(new ToggleButtonWidget(190, 110, 20, 20, () -> this.flippedY, state -> setConfig(this.url, this.rotation, this.scaleX, this.scaleY, this.flippedX, state)));
     }
 
     @Override

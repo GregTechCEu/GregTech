@@ -19,9 +19,6 @@ import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.gui.IUIHolder;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -34,8 +31,6 @@ import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TrackedDummyWorld;
-import gregtech.common.gui.widget.WidgetScrollBar;
-import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import net.minecraft.block.state.IBlockState;
@@ -70,6 +65,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
+
     @SideOnly(Side.CLIENT)
     private static Framebuffer FBO;
     private static final int RESOLUTION = 1080;
@@ -283,11 +279,6 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
     }
 
     @Override
-    public boolean useMui2() {
-        return true;
-    }
-
-    @Override
     public ModularPanel createPluginConfigUI(GuiSyncManager syncManager, @Nullable MetaTileEntityMonitorScreen screen, @Nullable GuiCreationContext context) {
         ModularPanel panel = GTGuis.createPanel("cm_plugin_advanced_monitor", 150, 172);
         panel.child(IKey.str("Plugin Config").asWidget().pos(5, 5));
@@ -330,7 +321,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                 .child(new SliderWidget()
                         .widthRel(1f)
                         .height(10)
-                        .bounds(-89.999, 89.999)
+                        .bounds(-89.999, 89.999) // at -90 and 90 the multiblock is invisible
                         .stopper(1.0)
                         .stopperTexture(null)
                         .background(new Rectangle().setColor(Color.withAlpha(Color.WHITE.normal, 0.5f)))
@@ -372,17 +363,6 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
         if (NetworkUtils.isClient() && this.worldSceneRenderer != null) {
             this.worldSceneRenderer.setCameraLookAt(center, 10 / scale, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
         }
-    }
-
-    @Override
-    public WidgetPluginConfig customUI(WidgetPluginConfig widgetGroup, IUIHolder holder, EntityPlayer entityPlayer) {
-        return widgetGroup.setSize(260, 170)
-                .widget(new WidgetScrollBar(25, 20, 210, 0.3f, 2, 0.1f, value -> setConfig(value, this.rotationPitch, this.rotationYaw, this.spin, this.connect)).setTitle("zoom", 0XFFFFFFFF).setInitValue(this.scale))
-                .widget(new WidgetScrollBar(25, 40, 210, 0, 360, 1, value -> setConfig(this.scale, value.intValue(), this.rotationYaw, this.spin, this.connect)).setTitle("rotationPitch", 0XFFFFFFFF).setInitValue(this.rotationPitch))
-                .widget(new WidgetScrollBar(25, 60, 210, -90, 90, 1, value -> setConfig(this.scale, this.rotationPitch, value.intValue(), this.spin, this.connect)).setTitle("rotationYaw", 0XFFFFFFFF).setInitValue(this.rotationYaw))
-                .widget(new WidgetScrollBar(25, 100, 210, 0, 2, 0.1f, value -> setConfig(this.scale, this.rotationPitch, this.rotationYaw, value, this.connect)).setTitle("spinDur", 0XFFFFFFFF).setInitValue(this.spin))
-                .widget(new LabelWidget(25, 135, "Fake GUI:", 0XFFFFFFFF))
-                .widget(new ToggleButtonWidget(80, 130, 20, 20, () -> this.connect, state -> setConfig(this.scale, this.rotationPitch, this.rotationYaw, this.spin, state)));
     }
 
     @Override
