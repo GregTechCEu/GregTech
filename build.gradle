@@ -1,4 +1,4 @@
-//version: 1690847429
+//version: 1690966774
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -30,6 +30,9 @@ plugins {
     id 'com.diffplug.spotless' version '6.13.0' apply false
     id 'com.palantir.git-version' version '3.0.0' apply false
     id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
+    id 'org.jetbrains.kotlin.jvm' version '1.8.0' apply false
+    id 'org.jetbrains.kotlin.kapt' version '1.8.0' apply false
+    id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
 }
 
 def out = services.get(StyledTextOutputFactory).create('an-output')
@@ -86,24 +89,25 @@ propertyDefaultIfUnsetWithEnvVar("deploymentDebug", false, "DEPLOYMENT_DEBUG")
 
 final String javaSourceDir = 'src/main/java/'
 final String scalaSourceDir = 'src/main/scala/'
-// If Kotlin is supported, add the path here
+final String kotlinSourceDir = 'src/main/kotlin/'
 
 final String modGroupPath = modGroup.toString().replace('.' as char, '/' as char)
 final String apiPackagePath = apiPackage.toString().replace('.' as char, '/' as char)
 
 String targetPackageJava = javaSourceDir + modGroupPath
 String targetPackageScala = scalaSourceDir + modGroupPath
-// If Kotlin is supported, add the path here
+String targetPackageKotlin = kotlinSourceDir + modGroupPath
 
-if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists()) {
-    throw new GradleException("Could not resolve \"modGroup\"! Could not find ${targetPackageJava} or ${targetPackageScala}")
+if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists() && !getFile(targetPackageKotlin).exists()) {
+    throw new GradleException("Could not resolve \"modGroup\"! Could not find ${targetPackageJava} or ${targetPackageScala} or ${targetPackageKotlin}")
 }
 
 if (apiPackage) {
     targetPackageJava = javaSourceDir + modGroupPath + '/' + apiPackagePath
     targetPackageScala = scalaSourceDir + modGroupPath + '/' + apiPackagePath
-    if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists()) {
-        throw new GradleException("Could not resolve \"apiPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala}")
+    targetPackageKotlin = kotlinSourceDir + modGroupPath + '/' + apiPackagePath
+    if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists() && !getFile(targetPackageKotlin).exists()) {
+        throw new GradleException("Could not resolve \"apiPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala} or ${targetPackageKotlin}")
     }
 }
 
@@ -125,8 +129,9 @@ if (usesMixins.toBoolean()) {
     final String mixinPackagePath = mixinsPackage.toString().replaceAll('\\.', '/')
     targetPackageJava = javaSourceDir + modGroupPath + '/' + mixinPackagePath
     targetPackageScala = scalaSourceDir + modGroupPath + '/' + mixinPackagePath
-    if (!getFile(targetPackageJava).exists()) {
-        throw new GradleException("Could not resolve \"mixinsPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala}")
+    targetPackageKotlin = kotlinSourceDir + modGroupPath + '/' + mixinPackagePath
+    if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists() && !getFile(targetPackageKotlin).exists()) {
+        throw new GradleException("Could not resolve \"mixinsPackage\"! Could not find ${targetPackageJava} or ${targetPackageScala} or ${targetPackageKotlin}")
     }
 }
 
@@ -135,8 +140,9 @@ if (coreModClass) {
     String targetFileJava = javaSourceDir + modGroupPath + '/' + coreModPath + '.java'
     String targetFileScala = scalaSourceDir + modGroupPath + '/' + coreModPath + '.scala'
     String targetFileScalaJava = scalaSourceDir + modGroupPath + '/' + coreModPath + '.java'
-    if (!getFile(targetFileJava).exists() && !getFile(targetFileScala).exists() && !getFile(targetFileScalaJava).exists()) {
-        throw new GradleException("Could not resolve \"coreModClass\"! Could not find " + targetFileJava)
+    String targetFileKotlin = kotlinSourceDir + modGroupPath + '/' + coreModPath + '.kt'
+    if (!getFile(targetFileJava).exists() && !getFile(targetFileScala).exists() && !getFile(targetFileScalaJava).exists() && !getFile(targetFileKotlin).exists()) {
+        throw new GradleException("Could not resolve \"coreModClass\"! Could not find ${targetFileJava} or ${targetFileScala} or ${targetFileScalaJava} or ${targetFileKotlin}")
     }
 }
 
@@ -146,6 +152,36 @@ if (coreModClass) {
 // Scala
 if (getFile('src/main/scala').exists()) {
     apply plugin: 'scala'
+}
+
+if (getFile('src/main/kotlin').exists()) {
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+}
+
+// Kotlin
+pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
+    kotlin {
+        jvmToolchain(8)
+    }
+    def disabledKotlinTaskList = [
+            "kaptGenerateStubsMcLauncherKotlin",
+            "kaptGenerateStubsPatchedMcKotlin",
+            "kaptGenerateStubsInjectedTagsKotlin",
+            "compileMcLauncherKotlin",
+            "compilePatchedMcKotlin",
+            "compileInjectedTagsKotlin",
+            "kaptMcLauncherKotlin",
+            "kaptPatchedMcKotlin",
+            "kaptInjectedTagsKotlin",
+            "kspMcLauncherKotlin",
+            "kspPatchedMcKotlin",
+            "kspInjectedTagsKotlin",
+    ]
+    tasks.configureEach { task ->
+        if (task.name in disabledKotlinTaskList) {
+            task.enabled = false
+        }
+    }
 }
 
 // Spotless
@@ -420,8 +456,8 @@ configurations {
     }
 }
 
+String mixinProviderSpec = 'zone.rong:mixinbooter:8.3'
 dependencies {
-    String mixin = 'zone.rong:mixinbooter:8.3'
     if (usesMixins.toBoolean()) {
         annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
         // should use 24.1.1 but 30.0+ has a vulnerability fix
@@ -429,16 +465,16 @@ dependencies {
         // should use 2.8.6 but 2.8.9+ has a vulnerability fix
         annotationProcessor 'com.google.code.gson:gson:2.8.9'
 
-        mixin = modUtils.enableMixins(mixin, "mixins.${modId}.refmap.json")
-        api (mixin) {
+        mixinProviderSpec = modUtils.enableMixins(mixinProviderSpec, "mixins.${modId}.refmap.json")
+        api (mixinProviderSpec) {
             transitive = false
         }
 
-        annotationProcessor(mixin) {
+        annotationProcessor(mixinProviderSpec) {
             transitive = false
         }
     } else if (forceEnableMixins.toBoolean()) {
-        runtimeOnly(mixin)
+        runtimeOnly(mixinProviderSpec)
     }
 
     if (enableJUnit.toBoolean()) {
@@ -475,6 +511,14 @@ dependencies {
         implementation 'mezz.jei:jei_1.12.2:4.16.1.302'
         //noinspection DependencyNotationArgument
         implementation rfg.deobf('curse.maven:top-245211:2667280') // TOP 1.4.28
+    }
+}
+
+pluginManager.withPlugin('org.jetbrains.kotlin.kapt') {
+    if (usesMixins.toBoolean()) {
+        dependencies {
+            kapt(mixinProviderSpec)
+        }
     }
 }
 
