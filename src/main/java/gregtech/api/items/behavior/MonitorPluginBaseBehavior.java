@@ -1,6 +1,8 @@
 package gregtech.api.items.behavior;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
@@ -36,6 +38,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemUIFactory, IDirtyNotifiable {
+
+    protected static final IDrawable SLIDER_BACKGROUND = new Rectangle().setColor(Color.withAlpha(Color.WHITE.normal, 0.5f))
+            .asIcon()
+            .height(4);
 
     protected MetaTileEntityMonitorScreen screen;
     private NBTTagCompound nbtTagCompound;

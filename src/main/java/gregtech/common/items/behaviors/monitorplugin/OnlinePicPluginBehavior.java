@@ -1,30 +1,24 @@
 package gregtech.common.items.behaviors.monitorplugin;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.layout.MainAxisAlignment;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.resources.picturetexture.PictureTexture;
 import gregtech.api.gui.resources.utils.DownloadThread;
-import gregtech.api.gui.widgets.*;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.newgui.GTGuis;
 import gregtech.api.newgui.GuiTextures;
-import gregtech.common.gui.widget.WidgetScrollBar;
-import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.RayTraceResult;
@@ -127,7 +121,7 @@ public class OnlinePicPluginBehavior extends MonitorPluginBaseBehavior {
         panel.child(IKey.str("Plugin Config").asWidget().pos(5, 5))
                 .child(new Column()
                         .top(18).left(7).right(7).bottom(7)
-                        .child(new com.cleanroommc.modularui.widgets.textfield.TextFieldWidget()
+                        .child(new TextFieldWidget()
                                 .value(new StringSyncValue(() -> this.url, val -> {
                                     this.url = val;
                                     markAsDirty();
@@ -142,6 +136,8 @@ public class OnlinePicPluginBehavior extends MonitorPluginBaseBehavior {
                                 .height(10)
                                 .bounds(-180.0, 180.0)
                                 .stopper(1.0)
+                                .stopperTexture(null)
+                                .background(SLIDER_BACKGROUND)
                                 .value(new DoubleSyncValue(() -> this.rotation, val -> {
                                     this.rotation = (float) val;
                                     markAsDirty();
@@ -153,6 +149,8 @@ public class OnlinePicPluginBehavior extends MonitorPluginBaseBehavior {
                                 .height(10)
                                 .bounds(0.0, 1.0)
                                 .stopper(0.05)
+                                .stopperTexture(null)
+                                .background(SLIDER_BACKGROUND)
                                 .value(new DoubleSyncValue(() -> this.scaleX, val -> {
                                     this.scaleX = (float) val;
                                     markAsDirty();
@@ -164,6 +162,8 @@ public class OnlinePicPluginBehavior extends MonitorPluginBaseBehavior {
                                 .height(10)
                                 .bounds(0.0, 1.0)
                                 .stopper(0.05)
+                                .stopperTexture(null)
+                                .background(SLIDER_BACKGROUND)
                                 .value(new DoubleSyncValue(() -> this.scaleY, val -> {
                                     this.scaleY = (float) val;
                                     markAsDirty();

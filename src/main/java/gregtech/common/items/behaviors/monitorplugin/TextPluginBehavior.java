@@ -12,6 +12,7 @@ import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ColorPickerDialog;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.newgui.GTGuis;
@@ -123,7 +124,7 @@ public class TextPluginBehavior extends MonitorPluginBaseBehavior {
             syncManager.syncValue("color", finalI, colorValue);
             list.child(new Row()
                     .widthRel(1f).height(12)
-                    .child(new com.cleanroommc.modularui.widgets.textfield.TextFieldWidget()
+                    .child(new TextFieldWidget()
                             .size(100, 12)
                             .value(new StringSyncValue(() -> this.texts[finalI], val -> setText(finalI, val))))
                     .child(new ButtonWidget<>()

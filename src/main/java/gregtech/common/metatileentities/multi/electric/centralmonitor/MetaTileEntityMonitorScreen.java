@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.GuiDraw;
+import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -27,6 +28,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.newgui.GTGuis;
 import gregtech.api.newgui.PluginConfigUISyncHandler;
+import gregtech.api.newgui.widgets.WidgetMonitorScreen;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTLog;
@@ -521,7 +523,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
     @Override
     public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
-        ModularPanel panel = GTGuis.createPanel("monitor_screen", 176, 204).background(com.cleanroommc.modularui.drawable.GuiTextures.BACKGROUND);
+        ModularPanel panel = GTGuis.createPanel("monitor_screen", 176, 204).background(GuiTextures.BACKGROUND);
         MultiblockControllerBase controller = this.getController();
         if (!(controller instanceof MetaTileEntityCentralMonitor) || !controller.isActive()) return panel;
         IntSyncValue frameColorValue = new IntSyncValue(() -> this.frameColor, val -> {
@@ -533,10 +535,18 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             markDirty();
         });
         PluginConfigUISyncHandler pluginUI = new PluginConfigUISyncHandler(panel, this, () -> this.plugin);
+        InteractionSyncHandler openCentralMonitorUI = new InteractionSyncHandler()
+                .setOnMousePressed(mouseData -> {
+                    if (mouseData.side.isServer()) {
+                        MetaTileEntityCentralMonitor monitor = (MetaTileEntityCentralMonitor) getController();
+                        GTGuis.MTE.open(guiSyncManager.getPlayer(), monitor.getWorld(), monitor.getPos());
+                    }
+                });
         guiSyncManager.syncValue(0, frameColorValue);
         guiSyncManager.syncValue(1, slotValue);
         guiSyncManager.syncValue(2, pluginUI);
-        gregtech.api.newgui.widgets.WidgetMonitorScreen screenPreview = new gregtech.api.newgui.widgets.WidgetMonitorScreen(this).leftRel(1f).size(150);
+        guiSyncManager.syncValue(3, openCentralMonitorUI);
+        WidgetMonitorScreen screenPreview = new WidgetMonitorScreen(this).leftRel(1f).size(150);
         // TODO add jei exclusion zone
 
         int y = 17;
@@ -544,13 +554,13 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         panel.child(SlotGroupWidget.playerInventory().left(7))
                 .child(IKey.lang("gregtech.machine.monitor_screen.name").asWidget().pos(7, 7))
                 .child(new ButtonWidget<>()
-                        .onMousePressed(mouseButton -> true)
+                        .syncHandler(3)
                         .width(35).pos(7, y)
                         .overlay(IKey.lang("monitor.gui.title.back").shadow(true)))
                 .child(screenPreview)
                 .child(IKey.lang("monitor.gui.title.scale").asWidget().pos(7, y += 25))
                 .child(new SliderWidget()
-                        .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT)
+                        .background(GuiTextures.SLOT)
                         .overlay(IKey.dynamic(() -> format.format(this.scale)).color(Color.WHITE.normal).shadow(true))
                         .bounds(1, 8)
                         .stopper(0.2)
@@ -620,7 +630,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         return new CycleButtonWidget()
                 .value(new BoolValue.Dynamic(() -> this.mode == mode, val -> digitalModeValue.setValue(mode)))
                 .addTooltipLine(IKey.lang("metaitem.cover.digital.mode." + mode.name().toLowerCase()))
-                .textureGetter(state -> state == 1 ? com.cleanroommc.modularui.drawable.GuiTextures.BUTTON : com.cleanroommc.modularui.drawable.GuiTextures.SLOT)
+                .textureGetter(state -> state == 1 ? GuiTextures.BUTTON : GuiTextures.SLOT)
                 .overlay(overlay instanceof ItemDrawable ? overlay.asIcon().size(16) : overlay)
                 .size(18);
     }

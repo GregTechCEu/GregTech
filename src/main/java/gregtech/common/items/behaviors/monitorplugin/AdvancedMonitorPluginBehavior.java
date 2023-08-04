@@ -297,6 +297,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                         .bounds(0.3, 2.0)
                         .stopper(0.1)
                         .stopperTexture(null)
+                        .background(SLIDER_BACKGROUND)
                         .value(new DoubleSyncValue(() -> this.scale, val -> {
                             this.scale = (float) val;
                             updateWorldScene();
@@ -310,7 +311,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                         .bounds(0.0, 360.0)
                         .stopper(1.0)
                         .stopperTexture(null)
-                        .background(new Rectangle().setColor(Color.withAlpha(Color.WHITE.normal, 0.5f)))
+                        .background(SLIDER_BACKGROUND)
                         .value(new DoubleSyncValue(() -> this.rotationPitch, val -> {
                             this.rotationPitch = (int) val;
                             updateWorldScene();
@@ -324,7 +325,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                         .bounds(-89.999, 89.999) // at -90 and 90 the multiblock is invisible
                         .stopper(1.0)
                         .stopperTexture(null)
-                        .background(new Rectangle().setColor(Color.withAlpha(Color.WHITE.normal, 0.5f)))
+                        .background(SLIDER_BACKGROUND)
                         .value(new DoubleSyncValue(() -> this.rotationYaw, val -> {
                             this.rotationYaw = (int) val;
                             updateWorldScene();
@@ -338,7 +339,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                         .bounds(0.0, 2.0)
                         .stopper(0.1)
                         .stopperTexture(null)
-                        .background(new Rectangle().setColor(Color.withAlpha(Color.WHITE.normal, 0.5f)))
+                        .background(SLIDER_BACKGROUND)
                         .value(new DoubleSyncValue(() -> this.spin, val -> {
                             this.spin = (float) val;
                             markAsDirty();
