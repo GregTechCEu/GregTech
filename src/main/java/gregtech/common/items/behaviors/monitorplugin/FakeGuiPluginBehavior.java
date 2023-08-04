@@ -333,7 +333,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
                                     currentProxy.set(widget);
                                     chooser.animateClose();
                                 } else {
-                                    screen.setMode(widget.getFacingPos());
+                                    screen.setMode(widget.getFacingPos(), true);
                                 }
                             }));
                     widget.syncHandler(key, i);
@@ -347,11 +347,13 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
 
     @Override
     public ModularPanel createPluginConfigUI(GuiSyncManager syncManager, @Nullable MetaTileEntityMonitorScreen screen, @Nullable GuiCreationContext context) {
-        ModularPanel panel = GTGuis.createPanel("cm_plugin_fake_gui", 100, 77);
+        ModularPanel panel = GTGuis.createPanel("cm_plugin_fake_gui", 100, 95);
         panel.child(IKey.str("Plugin Config").asWidget().pos(5, 5));
 
         panel.child(makeProxyChooser(screen, panel, syncManager)
-                .pos(7, 18));
+                        .pos(7, 18))
+                .child(screen.makeDigitalModeWidget(syncManager)
+                        .pos(7, 38));
 
         IntSyncValue partIndexValue = new IntSyncValue(() -> this.partIndex, val -> {
             this.partIndex = val;
@@ -362,10 +364,10 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
             }
         });
 
-        panel.child(IKey.str("Part: ").asWidget().pos(7, 40))
+        panel.child(IKey.str("Part: ").asWidget().pos(7, 58))
                 .child(new Row()
                         .coverChildren()
-                        .pos(7, 52)
+                        .pos(7, 70)
                         .child(new ButtonWidget<>()
                                 .overlay(IKey.str("-1"))
                                 .onMousePressed(mouseButton -> {

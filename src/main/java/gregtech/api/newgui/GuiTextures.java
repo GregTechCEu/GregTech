@@ -47,6 +47,7 @@ public class GuiTextures {
             .adaptable(2)
             .build();
 
+    public static final UITexture BUTTON_PROXY = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/button_proxy.png", false);
     public static final UITexture CLIPBOARD_BUTTON = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/clipboard_button.png", false);
     public static final UITexture CLIPBOARD_CHECK_BOX = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/clipboard_checkbox.png", false);
 

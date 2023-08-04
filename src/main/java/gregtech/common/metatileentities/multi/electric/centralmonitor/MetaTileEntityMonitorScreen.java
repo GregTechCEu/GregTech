@@ -4,13 +4,14 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.GuiDraw;
-import com.cleanroommc.modularui.drawable.Rectangle;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.*;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.*;
@@ -41,6 +42,7 @@ import gregtech.common.gui.widget.WidgetARGB;
 import gregtech.common.gui.widget.monitor.WidgetCoverList;
 import gregtech.common.gui.widget.monitor.WidgetMonitorScreen;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
+import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.block.state.IBlockState;
@@ -50,6 +52,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -122,7 +125,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         return plugin;
     }
 
-    public void setMode(FacingPos cover, CoverDigitalInterface.MODE mode) {
+    public void setMode(FacingPos cover, CoverDigitalInterface.MODE mode, boolean sync) {
         CoverDigitalInterface last_cover = this.getCoverFromPosSide(coverPos);
         CoverDigitalInterface now_cover = this.getCoverFromPosSide(cover);
         if (this.mode == mode) {
@@ -139,16 +142,18 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         this.coverPos = cover;
         this.mode = mode;
         updateProxyPlugin();
-        writeCustomData(GregtechDataCodes.UPDATE_ALL, this::writeSync);
+        if (sync && !getWorld().isRemote) {
+            writeCustomData(GregtechDataCodes.UPDATE_ALL, this::writeSync);
+        }
         this.markDirty();
     }
 
-    public void setMode(FacingPos cover) {
-        setMode(cover, this.mode);
+    public void setMode(FacingPos cover, boolean sync) {
+        setMode(cover, this.mode, sync);
     }
 
-    public void setMode(CoverDigitalInterface.MODE mode) {
-        this.setMode(this.coverPos, mode);
+    public void setMode(CoverDigitalInterface.MODE mode, boolean sync) {
+        this.setMode(this.coverPos, mode, sync);
     }
 
     public void setConfig(int slot, float scale, int color) {
@@ -193,7 +198,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     public void updateCoverValid(Set<FacingPos> covers) {
         if (this.coverPos != null) {
             if (!covers.contains(this.coverPos)) {
-                setMode(null, CoverDigitalInterface.MODE.PROXY);
+                setMode(null, CoverDigitalInterface.MODE.PROXY, true);
             }
         }
     }
@@ -490,7 +495,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     public void onRemoval() {
         super.onRemoval();
         if (!this.getWorld().isRemote) {
-            this.setMode(null, this.mode);
+            this.setMode(null, this.mode, true);
         }
     }
 
@@ -510,16 +515,26 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         return new MetaTileEntityMonitorScreen(this.metaTileEntityId);
     }
 
+    public Widget<?> makeDigitalModeWidget(GuiSyncManager syncManager) {
+        EnumSyncValue<CoverDigitalInterface.MODE> digitalModeValue = new EnumSyncValue<>(CoverDigitalInterface.MODE.class, () -> this.mode, val -> setMode(val, false));
+        syncManager.syncValue(GuiSyncManager.AUTO_SYNC_PREFIX + "digital_mode", digitalModeValue);
+        return new Row()
+                .size(90, 18)
+                .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.ITEM, new ItemDrawable(new ItemStack(Items.IRON_INGOT))))
+                .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.FLUID, new ItemDrawable(new ItemStack(Items.WATER_BUCKET))))
+                .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.ENERGY, new ItemDrawable(MetaItems.BATTERY_HV_LITHIUM.getStackForm())))
+                .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.MACHINE, new ItemDrawable(MetaTileEntities.ALLOY_SMELTER[1].getStackForm())))
+                .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.PROXY, gregtech.api.newgui.GuiTextures.BUTTON_PROXY));
+    }
+
     @Override
     public ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
-        ModularPanel panel = GTGuis.createPanel("monitor_screen", 274, 204).background(com.cleanroommc.modularui.drawable.GuiTextures.BACKGROUND);
+        ModularPanel panel = GTGuis.createPanel("monitor_screen", 176, 204).background(com.cleanroommc.modularui.drawable.GuiTextures.BACKGROUND);
         MultiblockControllerBase controller = this.getController();
         if (!(controller instanceof MetaTileEntityCentralMonitor) || !controller.isActive()) return panel;
         IntSyncValue frameColorValue = new IntSyncValue(() -> this.frameColor, val -> setConfig(this.slot, this.scale, val));
-        EnumSyncValue<CoverDigitalInterface.MODE> digitalModeValue = new EnumSyncValue<>(CoverDigitalInterface.MODE.class, () -> this.mode, val -> this.mode = val);
         PluginConfigUISyncHandler pluginUI = new PluginConfigUISyncHandler(panel, this, () -> this.plugin);
         guiSyncManager.syncValue(0, frameColorValue);
-        guiSyncManager.syncValue(1, digitalModeValue);
         guiSyncManager.syncValue(2, pluginUI);
         gregtech.api.newgui.widgets.WidgetMonitorScreen screenPreview = new gregtech.api.newgui.widgets.WidgetMonitorScreen(this).leftRel(1f).size(150);
         // TODO add jei exclusion zone
@@ -533,14 +548,6 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                         .width(35).pos(7, y)
                         .overlay(IKey.lang("monitor.gui.title.back").shadow(true)))
                 .child(screenPreview)
-                .child(new Row()
-                        // TODO: proper overlay textures
-                        .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.ITEM, new Rectangle().setColor(Color.ORANGE.normal).asIcon().size(9)))
-                        .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.FLUID, new Rectangle().setColor(Color.BLUE.normal).asIcon().size(9)))
-                        .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.ENERGY, new Rectangle().setColor(Color.YELLOW.normal).asIcon().size(9)))
-                        .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.MACHINE, new Rectangle().setColor(Color.LIGHT_BLUE.normal).asIcon().size(9)))
-                        .child(makeDigitalModeButton(digitalModeValue, CoverDigitalInterface.MODE.PROXY, new Rectangle().setColor(Color.RED.normal).asIcon().size(9)))
-                        .top(y).left(175))
                 .child(IKey.lang("monitor.gui.title.scale").asWidget().pos(7, y += 25))
                 .child(new SliderWidget()
                         .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT)
@@ -596,7 +603,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                 .value(new BoolValue.Dynamic(() -> this.mode == mode, val -> digitalModeValue.setValue(mode)))
                 .addTooltipLine(IKey.lang("metaitem.cover.digital.mode." + mode.name().toLowerCase()))
                 .textureGetter(state -> state == 1 ? com.cleanroommc.modularui.drawable.GuiTextures.BUTTON : com.cleanroommc.modularui.drawable.GuiTextures.SLOT)
-                .overlay(overlay)
+                .overlay(overlay instanceof ItemDrawable ? overlay.asIcon().size(16) : overlay)
                 .size(18);
     }
 
@@ -608,19 +615,19 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             int height = 260;
             ToggleButtonWidget[] buttons = new ToggleButtonWidget[5];
             buttons[0] = new ToggleButtonWidget(width - 135, 25, 20, 20, GuiTextures.BUTTON_FLUID, () -> this.mode == CoverDigitalInterface.MODE.FLUID, (isPressed) -> {
-                if (isPressed) setMode(CoverDigitalInterface.MODE.FLUID);
+                if (isPressed) setMode(CoverDigitalInterface.MODE.FLUID, true);
             }).setTooltipText("metaitem.cover.digital.mode.fluid");
             buttons[1] = new ToggleButtonWidget(width - 115, 25, 20, 20, GuiTextures.BUTTON_ITEM, () -> this.mode == CoverDigitalInterface.MODE.ITEM, (isPressed) -> {
-                if (isPressed) setMode(CoverDigitalInterface.MODE.ITEM);
+                if (isPressed) setMode(CoverDigitalInterface.MODE.ITEM, true);
             }).setTooltipText("metaitem.cover.digital.mode.item");
             buttons[2] = new ToggleButtonWidget(width - 95, 25, 20, 20, GuiTextures.BUTTON_ENERGY, () -> this.mode == CoverDigitalInterface.MODE.ENERGY, (isPressed) -> {
-                if (isPressed) setMode(CoverDigitalInterface.MODE.ENERGY);
+                if (isPressed) setMode(CoverDigitalInterface.MODE.ENERGY, true);
             }).setTooltipText("metaitem.cover.digital.mode.energy");
             buttons[3] = new ToggleButtonWidget(width - 75, 25, 20, 20, GuiTextures.BUTTON_MACHINE, () -> this.mode == CoverDigitalInterface.MODE.MACHINE, (isPressed) -> {
-                if (isPressed) setMode(CoverDigitalInterface.MODE.MACHINE);
+                if (isPressed) setMode(CoverDigitalInterface.MODE.MACHINE, true);
             }).setTooltipText("metaitem.cover.digital.mode.machine");
             buttons[4] = new ToggleButtonWidget(width - 35, 25, 20, 20, GuiTextures.BUTTON_INTERFACE, () -> this.mode == CoverDigitalInterface.MODE.PROXY, (isPressed) -> {
-                if (isPressed) setMode(CoverDigitalInterface.MODE.PROXY);
+                if (isPressed) setMode(CoverDigitalInterface.MODE.PROXY, true);
             }).setTooltipText("metaitem.cover.digital.mode.proxy");
             List<CoverDigitalInterface> covers = new ArrayList<>();
             ((MetaTileEntityCentralMonitor) controller).getAllCovers().forEach(coverPos -> covers.add(getCoverFromPosSide(coverPos)));
@@ -673,9 +680,9 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
                     .widget(new WidgetCoverList(width - 140, 50, 120, 11, covers, getCoverFromPosSide(this.coverPos), (coverPos) -> {
                         if (coverPos == null) {
-                            this.setMode(null, this.mode);
+                            this.setMode(null, this.mode, true);
                         } else {
-                            this.setMode(new FacingPos(coverPos.coverHolder.getPos(), coverPos.attachedSide));
+                            this.setMode(new FacingPos(coverPos.coverHolder.getPos(), coverPos.attachedSide), true);
                         }
                     }))
 

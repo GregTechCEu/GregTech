@@ -23,7 +23,10 @@ public class PluginConfigUISyncHandler extends PanelSyncHandler {
 
     @Override
     public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-        ModularPanel panel = this.pluginGetter.get().createPluginConfigUI(syncManager, this.screen, null);
+        ModularPanel panel = this.pluginGetter.get().createPluginConfigUI(syncManager, this.screen, null)
+                .relative(mainPanel)
+                .top(0)
+                .leftRel(-1f);
         return panel.child(new ButtonWidget<>()
                         .size(10)
                         .top(5).right(5)

@@ -287,14 +287,16 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
 
     @Override
     public ModularPanel createPluginConfigUI(GuiSyncManager syncManager, @Nullable MetaTileEntityMonitorScreen screen, @Nullable GuiCreationContext context) {
-        ModularPanel panel = GTGuis.createPanel("cm_plugin_advanced_monitor", 150, 150);
+        ModularPanel panel = GTGuis.createPanel("cm_plugin_advanced_monitor", 150, 172);
         panel.child(IKey.str("Plugin Config").asWidget().pos(5, 5));
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
         panel.child(new Column()
                 .top(18).left(7).right(7).bottom(7)
                 .child(FakeGuiPluginBehavior.makeProxyChooser(screen, panel, syncManager)
-                        .marginBottom(3))
+                        .marginBottom(4))
+                .child(screen.makeDigitalModeWidget(syncManager)
+                        .marginBottom(4))
                 .child(IKey.dynamic(() -> "Zoom: " + decimalFormat.format(this.scale)).asWidget().widthRel(1f))
                 .child(new SliderWidget()
                         .widthRel(1f)
@@ -306,7 +308,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                             updateWorldScene();
                             markAsDirty();
                         }))
-                        .marginBottom(3))
+                        .marginBottom(4))
                 .child(IKey.dynamic(() -> "Rotation Pitch: " + decimalFormat.format(this.rotationPitch)).asWidget().widthRel(1f))
                 .child(new SliderWidget()
                         .widthRel(1f)
@@ -318,7 +320,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                             updateWorldScene();
                             markAsDirty();
                         }))
-                        .marginBottom(3))
+                        .marginBottom(4))
                 .child(IKey.dynamic(() -> "Rotation Yaw: " + decimalFormat.format(this.rotationYaw)).asWidget().widthRel(1f))
                 .child(new SliderWidget()
                         .widthRel(1f)
@@ -330,7 +332,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                             updateWorldScene();
                             markAsDirty();
                         }))
-                        .marginBottom(3))
+                        .marginBottom(4))
                 .child(IKey.dynamic(() -> "Spin: " + decimalFormat.format(this.spin)).asWidget().widthRel(1f))
                 .child(new SliderWidget()
                         .widthRel(1f)
@@ -341,7 +343,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                             this.spin = (float) val;
                             markAsDirty();
                         }))
-                        .marginBottom(3))
+                        .marginBottom(4))
                 .child(new Row()
                         .widthRel(1f)
                         .height(15)
