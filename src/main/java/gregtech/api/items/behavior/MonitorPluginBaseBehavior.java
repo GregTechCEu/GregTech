@@ -41,7 +41,7 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
 
     protected static final IDrawable SLIDER_BACKGROUND = new Rectangle().setColor(Color.withAlpha(Color.WHITE.normal, 0.5f))
             .asIcon()
-            .height(4);
+            .size(0, 4);
 
     protected MetaTileEntityMonitorScreen screen;
     private NBTTagCompound nbtTagCompound;
