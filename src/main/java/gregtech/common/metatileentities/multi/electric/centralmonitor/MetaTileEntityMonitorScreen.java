@@ -532,9 +532,17 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         ModularPanel panel = GTGuis.createPanel("monitor_screen", 176, 204).background(com.cleanroommc.modularui.drawable.GuiTextures.BACKGROUND);
         MultiblockControllerBase controller = this.getController();
         if (!(controller instanceof MetaTileEntityCentralMonitor) || !controller.isActive()) return panel;
-        IntSyncValue frameColorValue = new IntSyncValue(() -> this.frameColor, val -> setConfig(this.slot, this.scale, val));
+        IntSyncValue frameColorValue = new IntSyncValue(() -> this.frameColor, val -> {
+            this.frameColor = val;
+            markDirty();
+        });
+        IntSyncValue slotValue = new IntSyncValue(() -> this.slot, val -> {
+            this.slot = val;
+            markDirty();
+        });
         PluginConfigUISyncHandler pluginUI = new PluginConfigUISyncHandler(panel, this, () -> this.plugin);
         guiSyncManager.syncValue(0, frameColorValue);
+        guiSyncManager.syncValue(1, slotValue);
         guiSyncManager.syncValue(2, pluginUI);
         gregtech.api.newgui.widgets.WidgetMonitorScreen screenPreview = new gregtech.api.newgui.widgets.WidgetMonitorScreen(this).leftRel(1f).size(150);
         // TODO add jei exclusion zone
@@ -551,9 +559,10 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                 .child(IKey.lang("monitor.gui.title.scale").asWidget().pos(7, y += 25))
                 .child(new SliderWidget()
                         .background(com.cleanroommc.modularui.drawable.GuiTextures.SLOT)
-                        .overlay(IKey.dynamic(() -> format.format(this.scale)).color(Color.WHITE.normal))
+                        .overlay(IKey.dynamic(() -> format.format(this.scale)).color(Color.WHITE.normal).shadow(true))
                         .bounds(1, 8)
                         .stopper(0.2)
+                        .stopperTexture(null)
                         .value(new DoubleSyncValue(() -> this.scale, val -> setConfig(this.slot, (float) val, this.frameColor)))
                         .size(100, 18)
                         .pos(42, y - 5))
@@ -569,13 +578,30 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                         })
                         .pos(75, y - 5))
                 .child(IKey.lang("monitor.gui.title.slot").asWidget().pos(7, y += 20))
-                .child(new TextFieldWidget()
-                        .value(new IntSyncValue(() -> this.slot, val -> setConfig(val, this.scale, this.frameColor)))
-                        .setNumbers(0, Integer.MAX_VALUE)
-                        .setTextAlignment(Alignment.Center)
-                        .background(gregtech.api.newgui.GuiTextures.DISPLAY)
-                        .size(100, 18)
-                        .pos(42, y - 5))
+                .child(new Row()
+                        .coverChildren()
+                        .pos(42, y - 5)
+                        .child(new ButtonWidget<>()
+                                .overlay(IKey.str("-1"))
+                                .onMousePressed(mouseButton -> {
+                                    if (this.slot > 0) {
+                                        slotValue.setIntValue(this.slot - 1);
+                                    }
+                                    return true;
+                                }))
+                        .child(new TextFieldWidget()
+                                .size(64, 18)
+                                .setTextAlignment(Alignment.Center)
+                                .value(slotValue)
+                                .setNumbers(0, Integer.MAX_VALUE))
+                        .child(new ButtonWidget<>()
+                                .overlay(IKey.str("+1"))
+                                .onMousePressed(mouseButton -> {
+                                    if (this.slot < Integer.MAX_VALUE) {
+                                        slotValue.setIntValue(this.slot + 1);
+                                    }
+                                    return true;
+                                })))
                 .child(IKey.lang("monitor.gui.title.plugin").asWidget().pos(7, y += 20))
                 .child(new ItemSlot().slot(SyncHandlers.itemSlot(this.inventory, 0)
                                 .changeListener(stack -> {

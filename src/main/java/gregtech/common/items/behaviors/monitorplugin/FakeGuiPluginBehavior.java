@@ -5,6 +5,7 @@ import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -297,6 +298,10 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
         return true;
     }
 
+    public static int mixColor(int c1, int c2) {
+        return Color.interpolate(c1, c2, 0.5);
+    }
+
     public static ProxyDisplayWidget makeProxyChooser(MetaTileEntityMonitorScreen screen, ModularPanel panel, GuiSyncManager syncManager) {
         ModularPanel chooser = new Dialog<>("proxy_chooser", null)
                 .setCloseOnOutOfBoundsClick(true)
@@ -304,8 +309,11 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
                 .leftRel(1f).top(0)
                 .relative(panel)
                 .background((context1, x, y, width, height) -> {
-                    GuiDraw.drawRect(x, y, width, height, Color.WHITE.dark(7));
-                    GuiDraw.drawBorder(x, y, width, height, 0xFF888888, 1);
+                    WidgetTheme widgetTheme = panel.getContext().getTheme().getPanelTheme();
+                    int color = widgetTheme.getColor();
+
+                    GuiDraw.drawRect(x, y, width, height, mixColor(Color.WHITE.dark(7), color));
+                    GuiDraw.drawBorder(x, y, width, height, mixColor(0xFF888888, color), 1);
                 });
 
         ListWidget<?, ?, ?> proxiesWidget = new ListWidget<>();

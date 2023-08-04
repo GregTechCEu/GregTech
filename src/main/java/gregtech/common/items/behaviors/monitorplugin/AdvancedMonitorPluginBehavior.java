@@ -6,9 +6,11 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
@@ -303,6 +305,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                         .height(10)
                         .bounds(0.3, 2.0)
                         .stopper(0.1)
+                        .stopperTexture(null)
                         .value(new DoubleSyncValue(() -> this.scale, val -> {
                             this.scale = (float) val;
                             updateWorldScene();
@@ -313,8 +316,10 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                 .child(new SliderWidget()
                         .widthRel(1f)
                         .height(10)
-                        .bounds(-90.0, 90.0)
+                        .bounds(0.0, 360.0)
                         .stopper(1.0)
+                        .stopperTexture(null)
+                        .background(new Rectangle().setColor(Color.withAlpha(Color.WHITE.normal, 0.5f)))
                         .value(new DoubleSyncValue(() -> this.rotationPitch, val -> {
                             this.rotationPitch = (int) val;
                             updateWorldScene();
@@ -325,8 +330,10 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                 .child(new SliderWidget()
                         .widthRel(1f)
                         .height(10)
-                        .bounds(0.0, 360.0)
+                        .bounds(-89.999, 89.999)
                         .stopper(1.0)
+                        .stopperTexture(null)
+                        .background(new Rectangle().setColor(Color.withAlpha(Color.WHITE.normal, 0.5f)))
                         .value(new DoubleSyncValue(() -> this.rotationYaw, val -> {
                             this.rotationYaw = (int) val;
                             updateWorldScene();
@@ -339,6 +346,8 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                         .height(10)
                         .bounds(0.0, 2.0)
                         .stopper(0.1)
+                        .stopperTexture(null)
+                        .background(new Rectangle().setColor(Color.withAlpha(Color.WHITE.normal, 0.5f)))
                         .value(new DoubleSyncValue(() -> this.spin, val -> {
                             this.spin = (float) val;
                             markAsDirty();
