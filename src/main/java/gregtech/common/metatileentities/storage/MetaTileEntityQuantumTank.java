@@ -306,7 +306,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", maxFluidCapacity));
         NBTTagCompound tag = stack.getTagCompound();

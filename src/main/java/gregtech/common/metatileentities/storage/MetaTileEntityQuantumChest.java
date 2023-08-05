@@ -192,7 +192,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_total", maxStoredItems));
 
         NBTTagCompound compound = stack.getTagCompound();
