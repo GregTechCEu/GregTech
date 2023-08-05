@@ -76,10 +76,4 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
         if (getController() == null) return null;
         return getController().getHandler();
     }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.quantum_storage_proxy.tooltip"));
-    }
 }

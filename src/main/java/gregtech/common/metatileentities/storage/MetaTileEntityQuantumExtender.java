@@ -8,15 +8,8 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<IDualHandler> {
     public MetaTileEntityQuantumExtender(ResourceLocation metaTileEntityId) {
@@ -57,9 +50,4 @@ public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<
         return null;
     }
 
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.quantum_storage_proxy.tooltip"));
-    }
 }
