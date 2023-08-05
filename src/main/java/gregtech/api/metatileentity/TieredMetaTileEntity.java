@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -45,14 +44,6 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
                     tierVoltage * 64L, tierVoltage, getMaxInputOutputAmperage());
         } else this.energyContainer = EnergyContainerHandler.receiverContainer(this,
                 tierVoltage * 64L, tierVoltage, getMaxInputOutputAmperage());
-    }
-
-    @Override
-    public int getActualComparatorValue() {
-        long energyStored = energyContainer.getEnergyStored();
-        long energyCapacity = energyContainer.getEnergyCapacity();
-        float f = energyCapacity == 0L ? 0.0f : energyStored / (energyCapacity * 1.0f);
-        return MathHelper.floor(f * 14.0f) + (energyStored > 0 ? 1 : 0);
     }
 
     @Override

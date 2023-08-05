@@ -24,7 +24,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -69,11 +68,6 @@ public class MetaTileEntityCrate extends MetaTileEntity {
         super.initializeInventory();
         this.inventory = new ItemStackHandler(inventorySize);
         this.itemInventory = inventory;
-    }
-
-    @Override
-    public int getActualComparatorValue() {
-        return ItemHandlerHelper.calcRedstoneFromInventory(inventory);
     }
 
     @Override
