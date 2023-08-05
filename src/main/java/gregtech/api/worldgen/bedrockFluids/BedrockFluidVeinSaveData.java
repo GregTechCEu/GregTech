@@ -34,6 +34,9 @@ public class BedrockFluidVeinSaveData extends WorldSavedData {
 
         if (nbt.hasKey("version")) {
             BedrockFluidVeinHandler.saveDataVersion = nbt.getInteger("version");
+        } else if (veinList.isEmpty()) {
+            // there are no veins, so there is no data to be changed or lost by bumping the version
+            BedrockFluidVeinHandler.saveDataVersion = BedrockFluidVeinHandler.MAX_FLUID_SAVE_DATA_VERSION;
         } else {
             // version number was added to the save data with version 2
             BedrockFluidVeinHandler.saveDataVersion = 1;
