@@ -98,7 +98,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         return getPos();
     }
 
-    @SuppressWarnings("all") // yes this CAN actually be null
+    @SuppressWarnings("ConstantConditions") // yes this CAN actually be null
     @Override
     public void markDirty() {
         if (getWorld() != null && getPos() != null) {

@@ -320,7 +320,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         return getPos();
     }
 
-    @SuppressWarnings("all") // yes it CAN actually be null
+    @SuppressWarnings("ConstantConditions") // yes this CAN actually be null
     @Override
     public void markAsDirty() {
         if (getWorld() != null && getPos() != null) {
