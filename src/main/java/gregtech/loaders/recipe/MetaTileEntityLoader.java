@@ -1023,7 +1023,7 @@ public class MetaTileEntityLoader {
         );
 
         // Quantum Storage Extender
-        ModHandler.addShapedRecipe(true, "quantum_storage_controller", MetaTileEntities.QUANTUM_STORAGE_CONTROLLER.getStackForm(),
+        ModHandler.addShapedRecipe(true, "quantum_storage_extender", MetaTileEntities.QUANTUM_STORAGE_EXTENDER.getStackForm(4),
                 "PPP", "CHC", "PPP",
                 'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium),
                 'C', new UnificationEntry(OrePrefix.pipeNormalItem, Materials.Cobalt),
