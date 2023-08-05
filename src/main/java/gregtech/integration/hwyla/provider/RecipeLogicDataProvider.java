@@ -68,7 +68,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
                 if (accessor.getTileEntity() instanceof IGregTechTileEntity gtte) {
                     MetaTileEntity mte = gtte.getMetaTileEntity();
                     if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler || mte instanceof RecipeMapSteamMultiblockController) {
-                        endText = ": " + absEUt + TextFormatting.RESET + " L/t " + I18n.format("gregtech.top.of") + I18n.format(Materials.Steam.getUnlocalizedName());
+                        endText = ": " + absEUt + TextFormatting.RESET + " L/t " + I18n.format("gregtech.top.of") + " " + I18n.format(Materials.Steam.getUnlocalizedName());
                     }
                     AbstractRecipeLogic arl = mte.getRecipeLogic();
                     if (arl != null) {
