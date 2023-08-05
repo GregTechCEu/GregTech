@@ -5,14 +5,20 @@ import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONTROLLER_POS;
 import static gregtech.api.capability.GregtechDataCodes.REMOVE_CONTROLLER;
@@ -175,5 +181,10 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         if (data.getBoolean("HasController")) {
             this.controllerPos = BlockPos.fromLong(data.getLong("ControllerPos"));
         }
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip"));
     }
 }
