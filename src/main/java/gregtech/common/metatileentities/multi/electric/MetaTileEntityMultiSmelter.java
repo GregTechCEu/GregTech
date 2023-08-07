@@ -25,6 +25,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -92,6 +94,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         return MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.HEAT_PROOF_CASING;
@@ -102,6 +105,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         return GTSoundEvents.BREAKDOWN_ELECTRICAL;
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {

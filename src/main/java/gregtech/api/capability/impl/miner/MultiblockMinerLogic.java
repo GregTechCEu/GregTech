@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl.miner;
 
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.block.state.IBlockState;
@@ -12,6 +13,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -35,8 +38,8 @@ public class MultiblockMinerLogic extends MinerLogic {
      * @param speed          the speed in ticks per block mined
      * @param maximumRadius  the maximum radius (square shaped) the miner can mine in
      */
-    public MultiblockMinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture, RecipeMap<?> blockDropRecipeMap) {
-        super(metaTileEntity, fortune, speed, maximumRadius, pipeTexture);
+    public MultiblockMinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, RecipeMap<?> blockDropRecipeMap) {
+        super(metaTileEntity, fortune, speed, maximumRadius, null);
         this.blockDropRecipeMap = blockDropRecipeMap;
     }
 
@@ -113,6 +116,12 @@ public class MultiblockMinerLogic extends MinerLogic {
         if (!isWorking()) {
             this.isSilkTouchMode = isSilkTouchMode;
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    protected ICubeRenderer getPipeTexture() {
+        return ((MultiblockControllerBase) metaTileEntity).getBaseTexture(null);
     }
 
     @Override

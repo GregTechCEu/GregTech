@@ -39,6 +39,8 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -112,6 +114,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         return MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.HEAT_PROOF_CASING;
@@ -130,6 +133,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         return this.blastFurnaceTemperature;
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {

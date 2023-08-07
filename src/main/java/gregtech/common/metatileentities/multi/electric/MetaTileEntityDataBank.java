@@ -187,6 +187,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.HIGH_POWER_CASING);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (sourcePart instanceof IDataAccessHatch) {
@@ -212,6 +213,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
         getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(), this.isWorkingEnabled());
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {

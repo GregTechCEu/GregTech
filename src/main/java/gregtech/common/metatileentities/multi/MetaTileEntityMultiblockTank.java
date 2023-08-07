@@ -31,6 +31,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -95,6 +97,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         return MetaTileEntities.WOODEN_TANK_VALVE;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     @Nonnull
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
@@ -131,6 +134,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
         getFrontOverlay().renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {
