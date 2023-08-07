@@ -28,6 +28,7 @@ public class WorldGeneratorImpl implements IWorldGenerator {
     public static final WorldGeneratorImpl INSTANCE = new WorldGeneratorImpl();
 
     private static final Set<EventType> ORE_EVENT_TYPES = ImmutableSet.of(COAL, DIAMOND, GOLD, IRON, LAPIS, REDSTONE, QUARTZ, EMERALD);
+
     public static final int GRID_SIZE_X = 3;
     public static final int GRID_SIZE_Z = 3;
 

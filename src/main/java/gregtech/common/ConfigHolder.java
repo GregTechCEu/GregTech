@@ -180,6 +180,13 @@ public class ConfigHolder {
 
         @Config.Comment({"Should all Stone Types drop unique Ore Item Blocks?", "Default: false (meaning only Stone, Netherrack, and Endstone"})
         public boolean allUniqueStoneTypes = false;
+
+        @Config.Comment({"Whether to disable Vanilla blobs from generating.",
+                "Only applies in dimensions where GT does terrain generation.",
+                "This config covers: dirt, gravel, andesite, diorite, granite, and silverfish blobs underground.",
+                "Default: true"
+        })
+        public boolean disableVanillaBlobs = true;
     }
 
     public static class RecipeOptions {
