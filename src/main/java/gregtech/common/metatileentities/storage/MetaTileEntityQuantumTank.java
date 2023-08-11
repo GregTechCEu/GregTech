@@ -36,7 +36,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -100,15 +99,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.importFluids = new FluidTankList(false, fluidTank);
         this.exportFluids = new FluidTankList(false, fluidTank);
         this.outputFluidInventory = new FluidHandlerProxy(new FluidTankList(false), exportFluids);
-    }
-
-    @Override
-    public int getActualComparatorValue() {
-        FluidTank fluidTank = this.fluidTank;
-        int fluidAmount = fluidTank.getFluidAmount();
-        int maxCapacity = fluidTank.getCapacity();
-        float f = fluidAmount / (maxCapacity * 1.0f);
-        return MathHelper.floor(f * 14.0f) + (fluidAmount > 0 ? 1 : 0);
     }
 
     @Override

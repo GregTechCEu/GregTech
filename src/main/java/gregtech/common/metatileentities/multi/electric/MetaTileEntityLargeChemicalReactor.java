@@ -27,6 +27,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -110,6 +112,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     }
 
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.INERT_PTFE_CASING;
@@ -134,6 +137,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
         tooltip.add(TooltipHelper.RAINBOW_SLOW + I18n.format("gregtech.machine.perfect_oc"));
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {

@@ -9,7 +9,6 @@ import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.recipes.recipes.DummyRecipe;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -26,10 +25,6 @@ import gregtech.common.crafting.FluidReplaceRecipe;
 import gregtech.common.crafting.GTShapedOreRecipe;
 import gregtech.common.crafting.GTShapelessOreRecipe;
 import gregtech.common.crafting.ShapedOreEnergyTransferRecipe;
-import it.unimi.dsi.fastutil.chars.Char2IntFunction;
-import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
-import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -48,6 +43,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -290,7 +286,7 @@ public final class ModHandler {
         addRecipe(regName, result, isNBTClearing, isMirrored, recipe);
 
         if (withUnificationData) {
-            OreDictUnifier.registerOre(result, getRecyclingIngredients(result.getCount(), recipe));
+            OreDictUnifier.registerOre(result, RecyclingHandler.getRecyclingIngredients(result.getCount(), recipe));
         }
     }
 
@@ -437,97 +433,13 @@ public final class ModHandler {
      * @param outputCount the amount of outputs the recipe has
      * @param recipe      the recipe to retrieve from
      * @return the recycling ingredients for a recipe
+     * @deprecated Use {@link RecyclingHandler#getRecyclingIngredients(int, Object...)}. Will be removed in 2.9
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Nullable
     public static ItemMaterialInfo getRecyclingIngredients(int outputCount, @Nonnull Object... recipe) {
-        Char2IntOpenHashMap inputCountMap = new Char2IntOpenHashMap();
-        Object2LongMap<Material> materialStacksExploded = new Object2LongOpenHashMap<>();
-
-        int itr = 0;
-        while (recipe[itr] instanceof String s) {
-            for (char c : s.toCharArray()) {
-                if (ToolHelper.getToolFromSymbol(c) != null) continue; // skip tools
-                int count = inputCountMap.getOrDefault(c, 0);
-                inputCountMap.put(c, count + 1);
-            }
-            itr++;
-        }
-
-        char lastChar = ' ';
-        for (int i = itr; i < recipe.length; i++) {
-            Object ingredient = recipe[i];
-
-            // Track the current working ingredient symbol
-            if (ingredient instanceof Character) {
-                lastChar = (char) ingredient;
-                continue;
-            }
-
-            // Should never happen if recipe is formatted correctly
-            // In the case that it isn't, this error should be handled
-            // by an earlier method call parsing the recipe.
-            if (lastChar == ' ') return null;
-
-            ItemStack stack;
-            if (ingredient instanceof MetaItem.MetaValueItem) {
-                stack = ((MetaItem<?>.MetaValueItem) ingredient).getStackForm();
-            } else if (ingredient instanceof UnificationEntry) {
-                stack = OreDictUnifier.get((UnificationEntry) ingredient);
-            } else if (ingredient instanceof ItemStack) {
-                stack = (ItemStack) ingredient;
-            } else if (ingredient instanceof Item) {
-                stack = new ItemStack((Item) ingredient, 1);
-            } else if (ingredient instanceof Block) {
-                stack = new ItemStack((Block) ingredient, 1);
-            } else if (ingredient instanceof String) {
-                stack = OreDictUnifier.get((String) ingredient);
-            } else continue; // throw out bad entries
-
-            // First try to get ItemMaterialInfo
-            ItemMaterialInfo info = OreDictUnifier.getMaterialInfo(stack);
-            if (info != null) {
-                for (MaterialStack ms : info.getMaterials()) {
-                    if (!(ms.material instanceof MarkerMaterial)) {
-                        addMaterialStack(materialStacksExploded, inputCountMap, ms, lastChar);
-                    }
-                }
-                continue;
-            }
-
-            // Then try to get a single Material (UnificationEntry needs this, for example)
-            MaterialStack materialStack = OreDictUnifier.getMaterial(stack);
-            if (materialStack != null && !(materialStack.material instanceof MarkerMaterial)) {
-                addMaterialStack(materialStacksExploded, inputCountMap, materialStack, lastChar);
-            }
-
-            // Gather any secondary materials if this item has an OrePrefix
-            OrePrefix prefix = OreDictUnifier.getPrefix(stack);
-            if (prefix != null && !prefix.secondaryMaterials.isEmpty()) {
-                for (MaterialStack ms : prefix.secondaryMaterials) {
-                    addMaterialStack(materialStacksExploded, inputCountMap, ms, lastChar);
-                }
-            }
-        }
-
-        return new ItemMaterialInfo(materialStacksExploded.entrySet().stream()
-                .map(e -> new MaterialStack(e.getKey(), e.getValue() / outputCount))
-                .sorted(Comparator.comparingLong(m -> -m.amount))
-                .collect(Collectors.toList())
-        );
-    }
-
-    /**
-     * Adds a MaterialStack to a map of {@code <Material, Quantity>}
-     *
-     * @param materialStacksExploded the map to add to
-     * @param inputCountMap          the map supplying quantities by char
-     * @param ms                     the stack to add
-     * @param c                      the char for quantities
-     */
-    private static void addMaterialStack(@Nonnull Object2LongMap<Material> materialStacksExploded,
-                                         @Nonnull Char2IntFunction inputCountMap, @Nonnull MaterialStack ms, char c) {
-        long amount = materialStacksExploded.getOrDefault(ms.material, 0L);
-        materialStacksExploded.put(ms.material, (ms.amount * inputCountMap.get(c)) + amount);
+        return RecyclingHandler.getRecyclingIngredients(outputCount, recipe);
     }
 
     /**

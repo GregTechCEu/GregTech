@@ -47,7 +47,15 @@ public class MaterialFluid extends Fluid {
     @Override
     @SideOnly(Side.CLIENT)
     public String getLocalizedName(FluidStack stack) {
-        String localizedName = I18n.format(getUnlocalizedName());
+        String localizedName;
+        String customTranslationKey = "fluid." + material.getUnlocalizedName();
+
+        if (I18n.hasKey(customTranslationKey)) {
+            localizedName = I18n.format(customTranslationKey);
+        } else {
+            localizedName = I18n.format(getUnlocalizedName());
+        }
+
         if (fluidType != null) {
             return I18n.format(fluidType.getLocalization(), localizedName);
         }

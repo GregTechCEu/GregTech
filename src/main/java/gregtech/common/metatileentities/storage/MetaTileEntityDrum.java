@@ -29,7 +29,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -72,15 +71,6 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     public int getLightOpacity() {
         return 1;
-    }
-
-    @Override
-    public int getActualComparatorValue() {
-        FluidTank fluidTank = this.fluidTank;
-        int fluidAmount = fluidTank.getFluidAmount();
-        int maxCapacity = fluidTank.getCapacity();
-        float f = fluidAmount / (maxCapacity * 1.0f);
-        return MathHelper.floor(f * 14.0f) + (fluidAmount > 0 ? 1 : 0);
     }
 
     @Override

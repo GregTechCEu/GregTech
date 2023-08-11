@@ -3,8 +3,10 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
@@ -64,10 +66,11 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
                 String endText = null;
 
                 if (accessor.getTileEntity() instanceof IGregTechTileEntity gtte) {
-                    if (gtte.getMetaTileEntity() instanceof SteamMetaTileEntity || gtte.getMetaTileEntity() instanceof MetaTileEntityLargeBoiler) {
-                        endText = ": " + absEUt + TextFormatting.RESET + " L/t " + I18n.format("gregtech.top.steam")+ " " + I18n.format(Materials.Steam.getUnlocalizedName());
+                    MetaTileEntity mte = gtte.getMetaTileEntity();
+                    if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler || mte instanceof RecipeMapSteamMultiblockController) {
+                        endText = ": " + absEUt + TextFormatting.RESET + " L/t " + I18n.format("gregtech.top.of") + " " + I18n.format(Materials.Steam.getUnlocalizedName());
                     }
-                    AbstractRecipeLogic arl = gtte.getMetaTileEntity().getRecipeLogic();
+                    AbstractRecipeLogic arl = mte.getRecipeLogic();
                     if (arl != null) {
                         consumer = arl.consumesEnergy();
                     }

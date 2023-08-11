@@ -98,6 +98,14 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         return getPos();
     }
 
+    @SuppressWarnings("ConstantConditions") // yes this CAN actually be null
+    @Override
+    public void markDirty() {
+        if (getWorld() != null && getPos() != null) {
+            getWorld().markChunkDirty(getPos(), this);
+        }
+    }
+
     @Override
     public PipeCoverableImplementation getCoverableImplementation() {
         return coverableImplementation;

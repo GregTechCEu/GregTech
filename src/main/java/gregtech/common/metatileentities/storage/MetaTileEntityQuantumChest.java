@@ -35,7 +35,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -114,12 +113,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(Textures.VOLTAGE_CASINGS[tier].getParticleSprite(), getPaintingColorForRendering());
-    }
-
-    @Override
-    public int getActualComparatorValue() {
-        float f = itemsStoredInside / (maxStoredItems * 1.0f);
-        return MathHelper.floor(f * 14.0f) + (itemsStoredInside > 0 ? 1 : 0);
     }
 
     @Override
@@ -527,7 +520,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack insertedStack, boolean simulate) {
-
             if (insertedStack.isEmpty()) {
                 return ItemStack.EMPTY;
             }
@@ -562,9 +554,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 long amountLeftInChest = itemStack.isEmpty() ? maxStoredItems : maxStoredItems - itemsStoredInside;
                 virtualizedAmount = (int) Math.min(insertedStack.getCount() - amountInsertedIntoExport, amountLeftInChest);
 
-            }
-            // Return early, as we did not virtualize anything, as it all fit into the output slot
-            else {
+            } else {
+                // Return early, as we did not virtualize anything, as it all fit into the output slot
                 return MetaTileEntityQuantumChest.this.exportItems.insertItem(0, insertedStack, simulate);
             }
 
@@ -591,9 +582,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                         insertedStackCopy.setCount(amountInsertedIntoExport);
                         MetaTileEntityQuantumChest.this.exportItems.insertItem(0, insertedStackCopy, simulate);
                     }
-                    return insertedStack;
-                }
-                else {
+                } else {
                     MetaTileEntityQuantumChest.this.itemsStoredInside += remainingStack.getCount();
                 }
             }

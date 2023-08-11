@@ -67,7 +67,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
     protected void initializeInventory() {
         this.aeFluidTanks = new ExportOnlyAEFluid[CONFIG_SIZE];
         for (int i = 0; i < CONFIG_SIZE; i ++) {
-            this.aeFluidTanks[i] = new ExportOnlyAEFluid(null, null, this.getController());
+            this.aeFluidTanks[i] = new ExportOnlyAEFluid(this, null, null, this.getController());
         }
         super.initializeInventory();
     }
@@ -245,11 +245,13 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
         list.addAll(Arrays.asList(this.aeFluidTanks));
     }
 
-    public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack> implements IFluidTank, IFluidHandler, INotifiableHandler {
+    public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack> implements IFluidTank, INotifiableHandler, IFluidHandler {
         private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
+        private MetaTileEntity holder;
 
-        public ExportOnlyAEFluid(IAEFluidStack config, IAEFluidStack stock, MetaTileEntity mte) {
+        public ExportOnlyAEFluid(MetaTileEntity holder, IAEFluidStack config, IAEFluidStack stock, MetaTileEntity mte) {
             super(config, stock);
+            this.holder = holder;
             this.notifiableEntities.add(mte);
         }
 
@@ -377,11 +379,15 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart imp
                     this.addToNotifiedList(metaTileEntity, this, false);
                 }
             }
+            if (holder != null) {
+                holder.markDirty();
+            }
         }
 
         @Override
         public ExportOnlyAEFluid copy() {
             return new ExportOnlyAEFluid(
+                    this.holder,
                     this.config == null ? null : this.config.copy(),
                     this.stock == null ? null : this.stock.copy(),
                     null
