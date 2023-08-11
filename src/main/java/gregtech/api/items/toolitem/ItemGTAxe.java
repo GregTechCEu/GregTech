@@ -66,7 +66,7 @@ public class ItemGTAxe extends ItemAxe implements IGTTool {
     }
 
     @Override
-    public String getId() {
+    public String getToolId() {
         return id;
     }
 
