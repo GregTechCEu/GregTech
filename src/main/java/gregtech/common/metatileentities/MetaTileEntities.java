@@ -817,11 +817,11 @@ public class MetaTileEntities {
         LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(1749, new MetaTileEntityLDItemEndpoint(gregtechId("ld_item_endpoint")));
         LONG_DIST_FLUID_ENDPOINT = registerMetaTileEntity(1750, new MetaTileEntityLDFluidEndpoint(gregtechId("ld_fluid_endpoint")));
 
-        FUEL_ROD_INPUT = registerMetaTileEntity(1730, new MetaTileEntityFuelRodImportHatch(gregtechId("fuel_rod_input")));
-        FUEL_ROD_OUTPUT = registerMetaTileEntity(1731, new MetaTileEntityFuelRodExportHatch(gregtechId("fuel_rod_output")));
-        COOLANT_INPUT = registerMetaTileEntity(1732, new MetaTileEntityCoolantImportHatch(gregtechId("coolant_input")));
-        COOLANT_OUTPUT = registerMetaTileEntity(1733, new MetaTileEntityCoolantExportHatch(gregtechId("coolant_output")));
-        CONTROL_ROD = registerMetaTileEntity(1734, new MetaTileEntityControlRodPort(gregtechId("control_rod"), false));
+        FUEL_ROD_INPUT = registerMetaTileEntity(1751, new MetaTileEntityFuelRodImportHatch(gregtechId("fuel_rod_input")));
+        FUEL_ROD_OUTPUT = registerMetaTileEntity(1752, new MetaTileEntityFuelRodExportHatch(gregtechId("fuel_rod_output")));
+        COOLANT_INPUT = registerMetaTileEntity(1753, new MetaTileEntityCoolantImportHatch(gregtechId("coolant_input")));
+        COOLANT_OUTPUT = registerMetaTileEntity(1754, new MetaTileEntityCoolantExportHatch(gregtechId("coolant_output")));
+        CONTROL_ROD = registerMetaTileEntity(1755, new MetaTileEntityControlRodPort(gregtechId("control_rod"), false));
 
         /*
          * FOR ADDON DEVELOPERS:
