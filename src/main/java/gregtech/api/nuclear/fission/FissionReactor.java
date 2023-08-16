@@ -76,7 +76,7 @@ public class FissionReactor {
     public double coolantBaseTemperature;
     public double fuelDepletion;
     public double prevFuelDepletion;
-    public double coolantFlowRate;
+    public double heatRemoved;
     public double neutronPoisonAmount;
     public double decayProductsAmount;
     public double envTemperature;
@@ -351,7 +351,7 @@ public class FissionReactor {
     }
 
     public void updateTemperature() {
-        this.temperature = responseFunctionTemperature(this.maxTemperature, this.temperature, this.criticalCoolantFlow(), this.coolantFlowRate, this.coolantBaseTemperature);
+        this.temperature = responseFunctionTemperature(this.maxTemperature, this.temperature, this.power, this.heatRemoved, this.coolantBaseTemperature);
     }
 
     public void updatePressure() {
