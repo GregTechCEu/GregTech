@@ -360,7 +360,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                     if (mte instanceof MetaTileEntityCoolantImportHatch coolantIn) {
                         FluidStack containedFluid = coolantIn.getImportFluids().getTankAt(0).getFluid();
                             if (containedFluid != null) {
-                                Material mat = GregTechAPI.MaterialRegistry.get(coolantIn.getImportFluids().getTankAt(0).getFluid().getFluid().getName());
+                                Material mat = GregTechAPI.materialManager.getMaterial(coolantIn.getImportFluids().getTankAt(0).getFluid().getFluid().getName());
                                 if (mat != null) component = new CoolantChannel(0, 0, mat);
                             }
                     } else if (mte instanceof MetaTileEntityFuelRodImportHatch fuelIn) {
