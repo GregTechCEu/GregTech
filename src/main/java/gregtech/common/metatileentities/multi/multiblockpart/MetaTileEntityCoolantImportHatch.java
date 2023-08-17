@@ -4,6 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
@@ -19,6 +20,8 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.blocks.BlockFissionCasing;
@@ -39,11 +42,12 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.LOCK_UPDATE;
 
-public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<ILockableHandler>, ILockableHandler, IControllable, IFissionReactorHatch {
+public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<ICoolantHandler>, ICoolantHandler, IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private boolean valid;
     private LockableFluidTank fluidTank;
+    private Material coolant;
 
     public MetaTileEntityCoolantImportHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, false);
@@ -131,12 +135,12 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
     }
 
     @Override
-    public MultiblockAbility<ILockableHandler> getAbility() {
+    public MultiblockAbility<ICoolantHandler> getAbility() {
         return MultiblockAbility.IMPORT_COOLANT;
     }
 
     @Override
-    public void registerAbilities(List<ILockableHandler> abilityList) {
+    public void registerAbilities(List<ICoolantHandler> abilityList) {
         abilityList.add(this);
     }
 
@@ -183,5 +187,23 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
+    }
+
+    @Override
+    public Material getCoolant() {
+        return this.coolant;
+    }
+
+    @Override
+    public void setCoolant(Material material) {
+        if (!material.hasProperty(PropertyKey.COOLANT)) {
+            throw new IllegalStateException("Can't use material " + material.getName() + " as a coolant without a coolant property");
+        }
+        this.coolant = material;
+    }
+
+    @Override
+    public LockableFluidTank getFluidTank() {
+        return this.fluidTank;
     }
 }

@@ -1,6 +1,7 @@
 package gregtech.api.nuclear.fission.components;
 
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -14,7 +15,7 @@ public class CoolantChannel extends ReactorComponent {
 
 
     public CoolantChannel(double maxTemperature, double thermalConductivity, Material coolant) {
-        super(0/*coolant.getCoolantProperties().getModeratorFactor()*/, maxTemperature, thermalConductivity, true);
+        super(coolant.getProperty(PropertyKey.COOLANT).getModerationFactor(), maxTemperature, thermalConductivity, true);
         this.coolant = coolant;
         this.weight = 0;
     }

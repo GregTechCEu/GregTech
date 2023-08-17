@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi;
 
 import gregtech.api.GregTechAPI;
+import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.gui.Widget;
 import gregtech.api.metatileentity.IDataInfoProvider;
@@ -56,6 +57,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     private int heightTop;
     private int heightBottom;
     private int height;
+    private int flowRate;
     private boolean locked;
 
     public MetaTileEntityFissionReactor(ResourceLocation metaTileEntityId) {
@@ -104,11 +106,16 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     @Override
     protected void updateFormedValid() {
         // Take in coolant, take in fuel, update reactor, output steam
-        if (this.locked) {
-            List<ILockableHandler> coolantImports = this.getAbilities(MultiblockAbility.IMPORT_COOLANT);
-            for (ILockableHandler coolantImport : coolantImports) {
+        double heatRemovedTemp = 0;
 
+        if (this.locked) {
+            List<ICoolantHandler> coolantImports = this.getAbilities(MultiblockAbility.IMPORT_COOLANT);
+            for (ICoolantHandler coolantImport : coolantImports) {
+                heatRemovedTemp += coolantImport.getCoolant().getProperty(PropertyKey.COOLANT).getCoolingFactor() * this.flowRate;
+                coolantImport.getFluidTank().drain(this.flowRate, true);
             }
+
+            this.fissionReactor.heatRemoved = heatRemovedTemp;
 
             this.updateReactorState();
 
@@ -122,6 +129,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
                     //TODO Secondary explosion consequences
                 }
             }
+
         }
     }
 
@@ -164,7 +172,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
             interiorBuilder.setLength(0);
         }
 
-        //Second loop is to detect where to put walls, the controller and I/O, two less iterations are needed because two strings always represent two walls on opposite sides
+        //Second loop is to detect where to put walls, the controller and I/O, two fewer iterations are needed because two strings always represent two walls on opposite sides
         interiorSlice[this.diameter - 1] = interiorSlice[0] = interiorSlice[0].replace('A', 'B');
         for (int i = 1; i < this.diameter - 1; i++) {
             for (int j = 0; j < this.diameter; j++) {

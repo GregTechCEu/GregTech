@@ -1,7 +1,11 @@
 package gregtech.api.unification.material.properties;
 
+import gregtech.api.unification.material.Material;
+
 public class CoolantProperty implements IMaterialProperty {
 
+    private Material hotCoolant;
+    private Material hotHPCoolant;
     private double moderatorFactor = 0.D;
     private double coolingFactor = 0.D;
     private double boilingPoint;
@@ -11,6 +15,22 @@ public class CoolantProperty implements IMaterialProperty {
     @Override
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.FLUID, true);
+    }
+
+    public void setHotCoolant(Material hotCoolant) {
+        this.hotCoolant = hotCoolant;
+    }
+
+    public Material getHotCoolant() {
+        return this.hotCoolant;
+    }
+
+    public void setHotHPCoolant(Material hotHPCoolant) {
+        this.hotHPCoolant = hotHPCoolant;
+    }
+
+    public Material getHotHPCoolant() {
+        return this.hotHPCoolant;
     }
 
     public void setModeratorFactor(double moderatorFactor) {
