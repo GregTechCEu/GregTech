@@ -106,16 +106,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
     @Override
     protected void updateFormedValid() {
         // Take in coolant, take in fuel, update reactor, output steam
-        double heatRemovedTemp = 0;
 
         if (this.locked) {
             List<ICoolantHandler> coolantImports = this.getAbilities(MultiblockAbility.IMPORT_COOLANT);
             for (ICoolantHandler coolantImport : coolantImports) {
-                heatRemovedTemp += coolantImport.getCoolant().getProperty(PropertyKey.COOLANT).getCoolingFactor() * this.flowRate;
+                this.fissionReactor.heatRemoved += coolantImport.getCoolant().getProperty(PropertyKey.COOLANT).getCoolingFactor() * this.flowRate;
                 coolantImport.getFluidTank().drain(this.flowRate, true);
             }
-
-            this.fissionReactor.heatRemoved = heatRemovedTemp;
 
             this.updateReactorState();
 
