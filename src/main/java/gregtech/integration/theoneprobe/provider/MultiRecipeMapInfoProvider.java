@@ -35,7 +35,7 @@ public class MultiRecipeMapInfoProvider extends CapabilityInfoProvider<IMultiple
             if (recipeMap.equals(iMultipleRecipeMaps.getCurrentRecipeMap())) {
                 iProbeInfo.text("   " + TextStyleClass.INFOIMP + "{*recipemap." + recipeMap.getUnlocalizedName() + ".name*} {*<*}");
             } else {
-                iProbeInfo.text("   " + TextStyleClass.LABEL + recipeMap.getLocalizedName());
+                iProbeInfo.text("   " + TextStyleClass.LABEL + "{*recipemap." + recipeMap.getUnlocalizedName() + ".name*}");
             }
         }
     }
