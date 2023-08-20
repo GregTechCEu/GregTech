@@ -455,18 +455,18 @@ public class OrePrefix {
         }
 
         if (this == block) {
-            //glowstone and nether quartz blocks use 4 gems (dusts)
-            if (material == Materials.Glowstone ||
-                    material == Materials.NetherQuartz ||
-                    material == Materials.Brick ||
-                    material == Materials.Clay)
-                return M * 4;
-                //glass, ice and obsidian gain only one dust
-            else if (material == Materials.Glass ||
-                    material == Materials.Ice ||
-                    material == Materials.Obsidian ||
-                    material == Materials.Concrete)
-                return M;
+            // Use 4 gems (dusts)
+            for (String materialName : ConfigHolder.recipes.materialOutputFourDustRecipes) {
+                if (Objects.equals(materialName, material.getName())) {
+                    return M * 4;
+                }
+            }
+            // Gain only one dust
+            for (String materialName : ConfigHolder.recipes.materialOutputOneDustRecipe) {
+                if (Objects.equals(materialName, material.getName())) {
+                    return M;
+                }
+            }
         } else if (this == stick) {
             if (material == Materials.Blaze)
                 return M * 4;

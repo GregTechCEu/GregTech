@@ -243,6 +243,18 @@ public class ConfigHolder {
 
         @Config.Comment({"Whether to make the recipe for the EBF Controller harder.", "Default: false"})
         public boolean harderEBFControllerRecipe = false;
+
+        @Config.Comment({"Change to 4 like glowstone and nether quartz blocks.",
+                "Default: \"glowstone\", \"nether_quartz\", \"brick\", \"clay\""})
+        public String[] materialOutputFourDustRecipes = new String[]{
+                "glowstone", "nether_quartz", "brick", "clay"
+        };
+
+        @Config.Comment({"Make you get one dust from one block.",
+                "Default: \"glass\", \"ice\", \"obsidian\", \"concrete\""})
+        public String[] materialOutputOneDustRecipe = new String[]{
+                "glass", "ice", "obsidian", "concrete"
+        };
     }
 
     public static class CompatibilityOptions {
