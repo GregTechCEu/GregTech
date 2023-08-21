@@ -366,6 +366,18 @@ public class OrePrefix {
 
         dustSmall.setIgnored(Materials.Lapotron);
         dustTiny.setIgnored(Materials.Lapotron);
+
+        block.modifyMaterialAmount(Materials.Glowstone,4);
+        block.modifyMaterialAmount(Materials.NetherQuartz, 4);
+        block.modifyMaterialAmount(Materials.Brick, 4);
+        block.modifyMaterialAmount(Materials.Clay, 4);
+        block.modifyMaterialAmount(Materials.Glass, 1);
+        block.modifyMaterialAmount(Materials.Ice, 1);
+        block.modifyMaterialAmount(Materials.Obsidian, 1);
+        block.modifyMaterialAmount(Materials.Concrete, 1);
+
+        stick.modifyMaterialAmount(Materials.Blaze, 4);
+        stick.modifyMaterialAmount(Materials.Bone, 5);
     }
 
     private static void excludeAllGems(Material material) {
@@ -405,6 +417,7 @@ public class OrePrefix {
     private final List<IOreRegistrationHandler> oreProcessingHandlers = new ArrayList<>();
     private final Set<Material> ignoredMaterials = new HashSet<>();
     private final Set<Material> generatedMaterials = new HashSet<>();
+    private final Map<Material, Integer> materialAmounts = new HashMap<>();
     private boolean isMarkerPrefix = false;
 
     public byte maxStackSize = 64;
@@ -453,25 +466,8 @@ public class OrePrefix {
         if (material == null) {
             return this.materialAmount;
         }
-
-        if (this == block) {
-            //glowstone and nether quartz blocks use 4 gems (dusts)
-            if (material == Materials.Glowstone ||
-                    material == Materials.NetherQuartz ||
-                    material == Materials.Brick ||
-                    material == Materials.Clay)
-                return M * 4;
-                //glass, ice and obsidian gain only one dust
-            else if (material == Materials.Glass ||
-                    material == Materials.Ice ||
-                    material == Materials.Obsidian ||
-                    material == Materials.Concrete)
-                return M;
-        } else if (this == stick) {
-            if (material == Materials.Blaze)
-                return M * 4;
-            else if (material == Materials.Bone)
-                return M * 5;
+        if (isAmountModified(material)) {
+            return M * materialAmounts.get(material);
         }
         return materialAmount;
     }
@@ -587,6 +583,14 @@ public class OrePrefix {
     @ZenMethod
     public void removeIgnored(@Nonnull Material material) {
         ignoredMaterials.remove(material);
+    }
+
+    public boolean isAmountModified(Material material) {
+        return materialAmounts.containsKey(material);
+    }
+    @ZenMethod
+    public void modifyMaterialAmount(@Nonnull Material material, @Nonnull int amount) {
+        materialAmounts.put(material, amount);
     }
 
     public boolean isMarkerPrefix() {
