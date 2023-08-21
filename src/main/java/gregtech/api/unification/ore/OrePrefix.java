@@ -588,6 +588,7 @@ public class OrePrefix {
     public boolean isAmountModified(Material material) {
         return materialAmounts.containsKey(material);
     }
+
     @ZenMethod
     public void modifyMaterialAmount(@Nonnull Material material, @Nonnull int amount) {
         materialAmounts.put(material, amount);
