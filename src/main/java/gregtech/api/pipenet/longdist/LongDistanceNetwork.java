@@ -1,7 +1,6 @@
 package gregtech.api.pipenet.longdist;
 
 import gregtech.api.pipenet.WorldPipeNet;
-import gregtech.api.util.GTLog;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
@@ -69,6 +68,7 @@ public class LongDistanceNetwork {
      * Called from the {@link NetworkBuilder} to set the gathered data
      */
     protected void setData(Collection<BlockPos> pipes, List<ILDEndpoint> endpoints) {
+        invalidateEndpoints();
         boolean wasEmpty = this.longDistancePipeBlocks.isEmpty();
         this.longDistancePipeBlocks.clear();
         this.longDistancePipeBlocks.addAll(pipes);
@@ -202,7 +202,9 @@ public class LongDistanceNetwork {
         // return null for invalid network configurations
         if (!isValid() || (!endpoint.isInput() && !endpoint.isOutput())) return null;
 
-        if (this.activeInputIndex >= 0 && this.activeOutputIndex >= 0) {
+        if (isIOIndexInvalid()) {
+            invalidateEndpoints();
+        } else if (this.activeInputIndex >= 0) {
             // there is an active input and output endpoint
             ILDEndpoint in = this.endpoints.get(this.activeInputIndex);
             ILDEndpoint out = this.endpoints.get(this.activeOutputIndex);
@@ -221,10 +223,6 @@ public class LongDistanceNetwork {
                 return in;
             }
             return null;
-        } else if (this.activeInputIndex < 0 != this.activeOutputIndex < 0) {
-            // only input or output is active
-            GTLog.logger.warn("Long Distance Network has an {}. This should not happen!", this.activeInputIndex < 0 ? "active input, but not an active output" : "active output, but not an active input");
-            invalidateEndpoints(); // shouldn't happen
         }
 
         // find a valid endpoint in this net
@@ -255,6 +253,12 @@ public class LongDistanceNetwork {
             }
         }
         return -1;
+    }
+
+    public boolean isIOIndexInvalid() {
+        return (this.activeInputIndex >= 0 && this.activeInputIndex >= this.endpoints.size())
+                || (this.activeOutputIndex >= 0 && this.activeOutputIndex >= this.endpoints.size())
+                || this.activeInputIndex < 0 != this.activeOutputIndex < 0;
     }
 
     public ILDEndpoint getActiveInputIndex() {

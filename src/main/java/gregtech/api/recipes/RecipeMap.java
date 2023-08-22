@@ -330,6 +330,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             if (GroovyScriptModule.isCurrentlyRunning()) {
                 this.virtualizedRecipeMap.addBackup(recipe);
             }
+            recipeByCategory.compute(recipe.getRecipeCategory(), (k, v) -> {
+                if (v != null) v.remove(recipe);
+                return v == null || v.isEmpty() ? null : v;
+            });
             return true;
         }
         return false;
@@ -345,6 +349,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.lookup.getRecipes(false).forEach(this.virtualizedRecipeMap::addBackup);
         this.lookup.getNodes().clear();
         this.lookup.getSpecialNodes().clear();
+        this.recipeByCategory.clear();
     }
 
     /**

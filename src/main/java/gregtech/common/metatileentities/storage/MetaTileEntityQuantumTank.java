@@ -36,7 +36,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -103,15 +102,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     @Override
-    public int getActualComparatorValue() {
-        FluidTank fluidTank = this.fluidTank;
-        int fluidAmount = fluidTank.getFluidAmount();
-        int maxCapacity = fluidTank.getCapacity();
-        float f = fluidAmount / (maxCapacity * 1.0f);
-        return MathHelper.floor(f * 14.0f) + (fluidAmount > 0 ? 1 : 0);
-    }
-
-    @Override
     public void update() {
         super.update();
         EnumFacing currentOutputFacing = getOutputFacing();
@@ -121,11 +111,33 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             if (isAutoOutputFluids()) {
                 pushFluidsIntoNearbyHandlers(currentOutputFacing);
             }
-            if (previousFluid == null || !previousFluid.equals(fluidTank.getFluid()) || previousFluid.amount != fluidTank.getFluidAmount()) {
-                previousFluid = fluidTank.getFluid() == null ? null : fluidTank.getFluid().copy();
-                writeCustomData(UPDATE_FLUID, buf -> buf.writeCompoundTag(fluidTank.getFluid() == null ? null : fluidTank.getFluid().writeToNBT(new NBTTagCompound())));
+
+            FluidStack currentFluid = fluidTank.getFluid();
+            if (previousFluid == null) {
+                // tank was empty, but now is not
+                if (currentFluid != null) {
+                    updatePreviousFluid(currentFluid);
+                }
+            } else {
+                if (currentFluid == null) {
+                    // tank had fluid, but now is empty
+                    updatePreviousFluid(null);
+                } else if (previousFluid.getFluid().equals(currentFluid.getFluid()) && previousFluid.amount != currentFluid.amount) {
+                    // tank has fluid with changed amount
+                    previousFluid.amount = currentFluid.amount;
+                    writeCustomData(UPDATE_FLUID_AMOUNT, buf -> buf.writeInt(currentFluid.amount));
+                } else if (!previousFluid.equals(currentFluid)) {
+                    // tank has a different fluid from before
+                    updatePreviousFluid(currentFluid);
+                }
             }
         }
+    }
+
+    // should only be called on the server
+    private void updatePreviousFluid(FluidStack currentFluid) {
+        previousFluid = currentFluid == null ? null : currentFluid.copy();
+        writeCustomData(UPDATE_FLUID, buf -> buf.writeCompoundTag(currentFluid == null ? null : currentFluid.writeToNBT(new NBTTagCompound())));
     }
 
     @Override
@@ -427,6 +439,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at " + this.getPos() + " on a routine fluid update");
             }
             scheduleRenderUpdate();
+        } else if (dataId == UPDATE_FLUID_AMOUNT) {
+            FluidStack stack = fluidTank.getFluid();
+            if (stack != null) {
+                stack.amount = Math.min(buf.readInt(), fluidTank.getCapacity());
+                scheduleRenderUpdate();
+            }
         }
     }
 

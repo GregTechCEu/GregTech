@@ -115,6 +115,7 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.Helium, FluidTypes.PLASMA);
         setMaterialFluidTexture(Materials.Helium3, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.Fluorine, FluidTypes.GAS);
+        setMaterialFluidTexture(Materials.Krypton, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.TitaniumTetrachloride, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Steam, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.OilHeavy, FluidTypes.LIQUID);
@@ -130,10 +131,18 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.LightFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.HeavyFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.LPG, FluidTypes.GAS);
+        setMaterialFluidTexture(Materials.LightlySteamCrackedNaphtha, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.SeverelySteamCrackedNaphtha, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.LightlyHydroCrackedNaphtha, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.SeverelyHydroCrackedNaphtha, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.LightlySteamCrackedLightFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.SeverelySteamCrackedLightFuel, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.LightlyHydroCrackedLightFuel, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.SeverelyHydroCrackedLightFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.LightlySteamCrackedHeavyFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.SeverelySteamCrackedHeavyFuel, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.LightlyHydroCrackedHeavyFuel, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.SeverelyHydroCrackedHeavyFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Chlorine, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.CetaneBoostedDiesel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.SodiumPersulfate, FluidTypes.LIQUID);
@@ -161,6 +170,8 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.UUMatter, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Toluene, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.LiquidAir, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.Epichlorohydrin, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.Glass, FluidTypes.LIQUID);
     }
 
     /**

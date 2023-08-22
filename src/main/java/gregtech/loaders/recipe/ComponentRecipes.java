@@ -352,6 +352,7 @@ public class ComponentRecipes {
                 .outputs(FLUID_REGULATOR_LV.getStackForm())
                 .EUt(VA[LV])
                 .duration(400)
+                .withRecycling()
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -361,6 +362,7 @@ public class ComponentRecipes {
                 .outputs(FLUID_REGULATOR_MV.getStackForm())
                 .EUt(VA[MV])
                 .duration(350)
+                .withRecycling()
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -370,6 +372,7 @@ public class ComponentRecipes {
                 .outputs(FLUID_REGULATOR_HV.getStackForm())
                 .EUt(VA[HV])
                 .duration(300)
+                .withRecycling()
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -379,6 +382,7 @@ public class ComponentRecipes {
                 .outputs(FLUID_REGULATOR_EV.getStackForm())
                 .EUt(VA[EV])
                 .duration(250)
+                .withRecycling()
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -388,6 +392,7 @@ public class ComponentRecipes {
                 .outputs(FLUID_REGULATOR_IV.getStackForm())
                 .EUt(VA[IV])
                 .duration(200)
+                .withRecycling()
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()

@@ -144,6 +144,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.SOLID_STEEL_CASING;

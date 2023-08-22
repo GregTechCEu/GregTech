@@ -198,7 +198,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart impl
 
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
-        abilityList.add(new InaccessibleInfiniteSlot(this.internalBuffer, this.getController()));
+        abilityList.add(new InaccessibleInfiniteSlot(this, this.internalBuffer, this.getController()));
     }
 
     @Override
@@ -212,8 +212,10 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart impl
     private static class InaccessibleInfiniteSlot implements IItemHandlerModifiable, INotifiableHandler {
         private final IItemList<IAEItemStack> internalBuffer;
         private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
+        private final MetaTileEntity holder;
 
-        public InaccessibleInfiniteSlot(IItemList<IAEItemStack> internalBuffer, MetaTileEntity mte) {
+        public InaccessibleInfiniteSlot(MetaTileEntity holder, IItemList<IAEItemStack> internalBuffer, MetaTileEntity mte) {
+            this.holder = holder;
             this.internalBuffer = internalBuffer;
             this.notifiableEntities.add(mte);
         }
@@ -221,6 +223,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart impl
         @Override
         public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
             this.internalBuffer.add(AEItemStack.fromItemStack(stack));
+            this.holder.markDirty();
             this.trigger();
         }
 
@@ -243,6 +246,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart impl
             }
             if (!simulate) {
                 this.internalBuffer.add(AEItemStack.fromItemStack(stack));
+                this.holder.markDirty();
             }
             this.trigger();
             return ItemStack.EMPTY;

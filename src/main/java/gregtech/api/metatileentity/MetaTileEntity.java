@@ -81,6 +81,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -121,7 +122,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
 
     private final int[] sidedRedstoneOutput = new int[6];
     private final int[] sidedRedstoneInput = new int[6];
-    private int cachedComparatorValue;
     private int cachedLightValue;
     protected boolean isFragile = false;
 
@@ -166,6 +166,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
         return holder == null ? null : holder.pos();
     }
 
+    @Override
     public void markDirty() {
         if (holder != null) {
             holder.markAsDirty();
@@ -699,7 +700,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
     }
 
     public void onLoad() {
-        this.cachedComparatorValue = getActualComparatorValue();
         for (EnumFacing side : EnumFacing.VALUES) {
             this.sidedRedstoneInput[side.getIndex()] = GTUtility.getRedstonePower(getWorld(), getPos(), side);
         }
@@ -760,6 +760,11 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
         }
     }
 
+    /**
+     * @deprecated Will be removed in 2.9. Comparators no longer supported for MetaTileEntities, as cover are interactions favored.
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public int getActualComparatorValue() {
         return 0;
     }
@@ -768,22 +773,17 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
         return 0;
     }
 
+    /**
+     * @deprecated Will be removed in 2.9.
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public final int getComparatorValue() {
-        return cachedComparatorValue;
+        return 0;
     }
 
     public final int getLightValue() {
         return cachedLightValue;
-    }
-
-    private void updateComparatorValue() {
-        int newComparatorValue = getActualComparatorValue();
-        if (cachedComparatorValue != newComparatorValue) {
-            this.cachedComparatorValue = newComparatorValue;
-            if (getWorld() != null && !getWorld().isRemote) {
-                notifyBlockUpdate();
-            }
-        }
     }
 
     private void updateLightValue() {
@@ -807,9 +807,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
                 if (coverBehavior instanceof ITickable) {
                     ((ITickable) coverBehavior).update();
                 }
-            }
-            if (getOffsetTimer() % 5 == 0L) {
-                updateComparatorValue();
             }
         } else {
             updateSound();
@@ -1161,7 +1158,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable, IGuiHolde
         this.sidedRedstoneOutput[side.getIndex()] = strength;
         if (getWorld() != null && !getWorld().isRemote && getCoverAtSide(side) == null) {
             notifyBlockUpdate();
-            markDirty();
         }
     }
 
