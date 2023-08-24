@@ -12,6 +12,10 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.objects.Object2FloatMap;
+import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.Validate;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -417,7 +421,7 @@ public class OrePrefix {
     private final List<IOreRegistrationHandler> oreProcessingHandlers = new ArrayList<>();
     private final Set<Material> ignoredMaterials = new HashSet<>();
     private final Set<Material> generatedMaterials = new HashSet<>();
-    private final Map<Material, Integer> materialAmounts = new HashMap<>();
+    private final Object2IntMap<Material> materialAmounts = new Object2IntOpenHashMap<>();
     private boolean isMarkerPrefix = false;
 
     public byte maxStackSize = 64;
@@ -467,7 +471,7 @@ public class OrePrefix {
             return this.materialAmount;
         }
         if (isAmountModified(material)) {
-            return M * materialAmounts.get(material);
+            return (long) (M * materialAmounts.get(material));
         }
         return materialAmount;
     }
