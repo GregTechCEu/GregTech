@@ -14,15 +14,13 @@ import gregtech.api.util.function.TriConsumer;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -371,7 +369,7 @@ public class OrePrefix {
         dustSmall.setIgnored(Materials.Lapotron);
         dustTiny.setIgnored(Materials.Lapotron);
 
-        block.modifyMaterialAmount(Materials.Glowstone,4);
+        block.modifyMaterialAmount(Materials.Glowstone, 4);
         block.modifyMaterialAmount(Materials.NetherQuartz, 4);
         block.modifyMaterialAmount(Materials.Brick, 4);
         block.modifyMaterialAmount(Materials.Clay, 4);
@@ -421,7 +419,7 @@ public class OrePrefix {
     private final List<IOreRegistrationHandler> oreProcessingHandlers = new ArrayList<>();
     private final Set<Material> ignoredMaterials = new HashSet<>();
     private final Set<Material> generatedMaterials = new HashSet<>();
-    private final Object2IntMap<Material> materialAmounts = new Object2IntOpenHashMap<>();
+    private final Object2FloatMap<Material> materialAmounts = new Object2FloatOpenHashMap<>();
     private boolean isMarkerPrefix = false;
 
     public byte maxStackSize = 64;
@@ -466,14 +464,10 @@ public class OrePrefix {
     }
 
     public long getMaterialAmount(@Nullable Material material) {
-
-        if (material == null) {
+        if (material == null || !isAmountModified(material)) {
             return this.materialAmount;
         }
-        if (isAmountModified(material)) {
-            return (long) (M * materialAmounts.get(material));
-        }
-        return materialAmount;
+        return (long) (M * materialAmounts.getFloat(material));
     }
 
     @ZenMethod
@@ -554,7 +548,7 @@ public class OrePrefix {
     }
 
     // todo clean this up
-    public String getLocalNameForItem(@Nonnull Material material) {
+    public String getLocalNameForItem(@NotNull Material material) {
         String specifiedUnlocalized = "item." + material.getUnlocalizedName() + "." + this.name;
         if (LocalizationUtils.hasKey(specifiedUnlocalized)) return LocalizationUtils.format(specifiedUnlocalized);
         String unlocalized = findUnlocalizedName(material);
@@ -563,7 +557,7 @@ public class OrePrefix {
         return formatted.equals(unlocalized) ? matLocalized : formatted;
     }
 
-    private String findUnlocalizedName(@Nonnull Material material) {
+    private String findUnlocalizedName(@NotNull Material material) {
         if (material.hasProperty(PropertyKey.POLYMER)) {
             String localizationKey = String.format("item.material.oreprefix.polymer.%s", this.name);
             // Not every polymer ore prefix gets a special name
@@ -585,7 +579,7 @@ public class OrePrefix {
     }
 
     @ZenMethod
-    public void removeIgnored(@Nonnull Material material) {
+    public void removeIgnored(@NotNull Material material) {
         ignoredMaterials.remove(material);
     }
 
@@ -594,7 +588,7 @@ public class OrePrefix {
     }
 
     @ZenMethod
-    public void modifyMaterialAmount(@Nonnull Material material, @Nonnull int amount) {
+    public void modifyMaterialAmount(@NotNull Material material, float amount) {
         materialAmounts.put(material, amount);
     }
 
