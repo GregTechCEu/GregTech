@@ -275,7 +275,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         @Override
         public ICapabilityProvider createProvider(ItemStack itemStack) {
             return new GTFluidHandlerItemStack(itemStack, maxCapacity)
-                    .setFilter(JETPACK_FUEL_FILTER)
+                    .setFilter(JETPACK_FUEL_FILTER);
         }
 
         @Override
