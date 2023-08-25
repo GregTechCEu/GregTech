@@ -79,9 +79,7 @@ public abstract class MTETrait implements ISyncedTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
-        writeInitialData(buf);
-    }
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {}
 
     /**
      * Deprecated since 2.7 and will be removed in 2.8.
@@ -90,12 +88,12 @@ public abstract class MTETrait implements ISyncedTileEntity {
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.8")
     @Deprecated
-    public void writeInitialData(@NotNull PacketBuffer buffer) {}
+    public void writeInitialData(@NotNull PacketBuffer buffer) {
+        writeInitialSyncData(buffer);
+    }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
-        receiveInitialData(buf);
-    }
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {}
 
     /**
      * Deprecated since 2.7 and will be removed in 2.8.
@@ -104,7 +102,9 @@ public abstract class MTETrait implements ISyncedTileEntity {
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.8")
     @Deprecated
-    public void receiveInitialData(@NotNull PacketBuffer buffer) {}
+    public void receiveInitialData(@NotNull PacketBuffer buffer) {
+        receiveInitialSyncData(buffer);
+    }
 
     @Override
     public void receiveCustomData(int discriminator, @NotNull PacketBuffer buf) {}
