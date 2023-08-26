@@ -99,7 +99,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private boolean allowEmptyOutput;
 
-    private final Object virtualizedRecipeMap;
+    private final Object grsVirtualizedRecipeMap;
     private final Branch lookup = new Branch();
     private boolean hasOreDictedInputs = false;
     private boolean hasNBTMatcherInputs = false;
@@ -195,7 +195,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.recipeBuilderSample = defaultRecipeBuilder;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
 
-        this.virtualizedRecipeMap = GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS)
+        this.grsVirtualizedRecipeMap = GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS)
                 ? new VirtualizedRecipeMap(this) : null;
     }
 
@@ -918,7 +918,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @Method(modid = GregTechModules.MODULE_GRS)
     private VirtualizedRecipeMap getGroovyScriptRecipeMap() {
-        return ((VirtualizedRecipeMap) virtualizedRecipeMap);
+        return ((VirtualizedRecipeMap) grsVirtualizedRecipeMap);
     }
 
     /**
