@@ -3,6 +3,8 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
@@ -19,6 +21,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -28,11 +31,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
+public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch>, IControllable {
 
     private static final int TANK_SIZE = 16_000;
 
     private FluidTankList fluidTankList;
+
+    private boolean workingEnabled = true;
 
     public MetaTileEntityPassthroughHatchFluid(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
@@ -58,8 +63,10 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     public void update() {
         super.update();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
-            pushFluidsIntoNearbyHandlers(getFrontFacing().getOpposite()); // outputs to back
-            pullFluidsFromNearbyHandlers(getFrontFacing()); // inputs from front
+            if (workingEnabled) {
+                pushFluidsIntoNearbyHandlers(getFrontFacing().getOpposite()); // outputs to back
+                pullFluidsFromNearbyHandlers(getFrontFacing()); // inputs from front
+            }
         }
     }
 
@@ -114,6 +121,7 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
         tag.setTag("FluidInventory", fluidTankList.serializeNBT());
+        tag.setBoolean("workingEnabled", workingEnabled);
         return tag;
     }
 
@@ -121,6 +129,29 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         this.fluidTankList.deserializeNBT(tag.getCompoundTag("FluidInventory"));
+        if (tag.hasKey("workingEnabled")) {
+            this.workingEnabled = tag.getBoolean("workingEnabled");
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(workingEnabled);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.workingEnabled = buf.readBoolean();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+         if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+            this.workingEnabled = buf.readBoolean();
+        }
     }
 
     @Override
@@ -149,5 +180,19 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     @Override
     public Class<IFluidHandler> getPassthroughType() {
         return IFluidHandler.class;
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return workingEnabled;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean workingEnabled) {
+        this.workingEnabled = workingEnabled;
+        World world = getWorld();
+        if (world != null && !world.isRemote) {
+            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
+        }
     }
 }

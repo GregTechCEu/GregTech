@@ -3,6 +3,8 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -17,6 +19,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -27,9 +30,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
+public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch>, IControllable {
 
     private ItemStackHandler itemStackHandler;
+
+    private boolean workingEnabled = true;
 
     public MetaTileEntityPassthroughHatchItem(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
@@ -56,8 +61,10 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     public void update() {
         super.update();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
-            pushItemsIntoNearbyHandlers(getFrontFacing().getOpposite()); // outputs to back
-            pullItemsFromNearbyHandlers(getFrontFacing()); // inputs from front
+            if (workingEnabled) {
+                pushItemsIntoNearbyHandlers(getFrontFacing().getOpposite()); // outputs to back
+                pullItemsFromNearbyHandlers(getFrontFacing()); // inputs from front
+            }
         }
     }
 
@@ -111,6 +118,7 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
         tag.setTag("Inventory", itemStackHandler.serializeNBT());
+        tag.setBoolean("workingEnabled", workingEnabled);
         return tag;
     }
 
@@ -118,6 +126,29 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         this.itemStackHandler.deserializeNBT(tag.getCompoundTag("Inventory"));
+        if (tag.hasKey("workingEnabled")) {
+            this.workingEnabled = tag.getBoolean("workingEnabled");
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(workingEnabled);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.workingEnabled = buf.readBoolean();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+            this.workingEnabled = buf.readBoolean();
+        }
     }
 
     @Override
@@ -151,5 +182,19 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     @Override
     public Class<IItemHandlerModifiable> getPassthroughType() {
         return IItemHandlerModifiable.class;
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return workingEnabled;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean workingEnabled) {
+        this.workingEnabled = workingEnabled;
+        World world = getWorld();
+        if (world != null && !world.isRemote) {
+            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
+        }
     }
 }
