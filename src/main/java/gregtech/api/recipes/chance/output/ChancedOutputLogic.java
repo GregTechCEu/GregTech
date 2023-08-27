@@ -18,11 +18,6 @@ import java.util.List;
 public interface ChancedOutputLogic {
 
     /**
-     * The upper bound for rolling chances
-     */
-    int CHANCE_BOUND = 10_000;
-
-    /**
      * Chanced Output Logic where any ingredients succeeding their roll will be produced
      */
     ChancedOutputLogic OR = new ChancedOutputLogic() {
@@ -98,7 +93,14 @@ public interface ChancedOutputLogic {
      * @return if the roll with the chance is successful
      */
     static boolean passesChance(int chance) {
-        return GTValues.RNG.nextInt(CHANCE_BOUND) >= chance;
+        return chance > 0 && GTValues.RNG.nextInt(getMaxChancedValue()) <= chance;
+    }
+
+    /**
+     * @return the upper bound for rolling chances
+     */
+    static int getMaxChancedValue() {
+        return 10_000;
     }
 
     /**

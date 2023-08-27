@@ -1,4 +1,4 @@
-package gregtech.api.recipes.logic;
+package gregtech.api.recipes.chance.boost;
 
 import gregtech.api.GTValues;
 import gregtech.api.recipes.RecipeMap;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ChancedOutputTest {
+public class ChanceBoostTest {
 
     private static final int BASE_AMOUNT = 1400;
     private static final int BOOST_AMOUNT = 850;

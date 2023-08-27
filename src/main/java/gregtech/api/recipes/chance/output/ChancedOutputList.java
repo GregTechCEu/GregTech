@@ -34,11 +34,15 @@ public class ChancedOutputList<I, T extends ChancedOutput<I>> {
      *
      * @param boostFunction the function used to boost the outputs
      * @param baseTier      the base tier of the recipe
-     * @param machineTier    the tier the recipe is run at
+     * @param machineTier   the tier the recipe is run at
      * @return a list of the rolled outputs
      */
-    public @Nullable RolledOutputList<I, T> roll(@NotNull ChanceBoostFunction boostFunction, int baseTier, int machineTier) {
-        List<T> list = chancedOutputLogic.roll(getChancedEntries(), boostFunction, baseTier, machineTier);
-        return list == null ? null : new RolledOutputList<>(list);
+    public @Nullable List<T> roll(@NotNull ChanceBoostFunction boostFunction, int baseTier, int machineTier) {
+        return chancedOutputLogic.roll(getChancedEntries(), boostFunction, baseTier, machineTier);
+    }
+
+    @Override
+    public String toString() {
+        return chancedEntries.toString();
     }
 }

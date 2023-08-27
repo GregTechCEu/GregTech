@@ -9,12 +9,20 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface ChanceBoostFunction {
 
+    /**
+     * Chance boosting function based on the number of performed overclocks
+     */
     ChanceBoostFunction OVERCLOCK = (entry, recipeTier, machineTier) -> {
         int tierDiff = machineTier - recipeTier;
         if (tierDiff <= 0) return entry.getChance(); // equal or invalid tiers do not boost at all
         if (recipeTier == GTValues.ULV) tierDiff--; // LV does not boost over ULV
         return entry.getChance() + (entry.getChanceBoost() * tierDiff);
     };
+
+    /**
+     * Chance boosting function which performs no boosting
+     */
+    ChanceBoostFunction NONE = (entry, recipeTier, machineTier) -> entry.getChance();
 
     /**
      * @param entry       the amount to boost by

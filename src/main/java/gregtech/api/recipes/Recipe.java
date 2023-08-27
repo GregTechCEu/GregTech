@@ -5,7 +5,7 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.chance.output.ChancedOutputList;
-import gregtech.api.recipes.chance.output.RolledOutputList;
+import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -24,6 +24,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -44,12 +45,15 @@ public class Recipe {
 
     private static final NonNullList<ItemStack> EMPTY = NonNullList.create();
 
+    /**
+     * This method was deprecated in 2.7 and will be removed in 2.8
+     *
+     * @deprecated use {@link ChancedOutputLogic#getMaxChancedValue()}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.8")
+    @Deprecated
     public static int getMaxChancedValue() {
-        return 10000;
-    }
-
-    public static String formatChanceValue(int outputChance) {
-        return String.format("%.2f", outputChance / (getMaxChancedValue() * 1.0) * 100);
+        return ChancedOutputLogic.getMaxChancedValue();
     }
 
     private final List<GTRecipeInput> inputs;
@@ -406,12 +410,12 @@ public class Recipe {
     public List<ItemStack> getResultItemOutputs(int recipeTier, int machineTier, RecipeMap<?> recipeMap) {
         List<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
         ChanceBoostFunction function = recipeMap.getChanceFunction();
-        RolledOutputList<ItemStack, ChancedItemOutput> chancedOutputsList = getChancedOutputs().roll(function, recipeTier, machineTier);
+        List<ChancedItemOutput> chancedOutputsList = getChancedOutputs().roll(function, recipeTier, machineTier);
 
         if (chancedOutputsList == null) return outputs;
 
         Collection<ItemStack> resultChanced = new ArrayList<>();
-        for (ChancedItemOutput chancedOutput : chancedOutputsList.getProducedOutputs()) {
+        for (ChancedItemOutput chancedOutput : chancedOutputsList) {
             ItemStack stackToAdd = chancedOutput.getIngredient();
             for (ItemStack stackInList : resultChanced) {
                 int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
@@ -600,12 +604,12 @@ public class Recipe {
         List<FluidStack> outputs = new ArrayList<>(GTUtility.copyFluidList(getFluidOutputs()));
 
         ChanceBoostFunction function = recipeMap.getChanceFunction();
-        RolledOutputList<FluidStack, ChancedFluidOutput> chancedOutputsList = getChancedFluidOutputs().roll(function, recipeTier, machineTier);
+        List<ChancedFluidOutput> chancedOutputsList = getChancedFluidOutputs().roll(function, recipeTier, machineTier);
 
         if (chancedOutputsList == null) return outputs;
 
         Collection<FluidStack> resultChanced = new ArrayList<>();
-        for (ChancedFluidOutput chancedOutput : chancedOutputsList.getProducedOutputs()) {
+        for (ChancedFluidOutput chancedOutput : chancedOutputsList) {
             FluidStack stackToAdd = chancedOutput.getIngredient();
             for (FluidStack stackInList : resultChanced) {
                 if (stackToAdd == null) break;
