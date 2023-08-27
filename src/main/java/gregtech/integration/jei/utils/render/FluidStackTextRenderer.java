@@ -71,7 +71,12 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
 
             GlStateManager.popMatrix();
         } else if (notConsumed) {
-            fontRenderer.drawStringWithShadow("NC", (xPosition + 6) * 2 - fontRenderer.getStringWidth("NC") + 19, (yPosition + 1) * 2, 0xFFFFFF);
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(0.5, 0.5, 1);
+
+            fontRenderer.drawStringWithShadow("NC", (xPosition + 6) * 2 - fontRenderer.getStringWidth("NC") + 19, (yPosition + 1) * 2, 0xFFFF00);
+
+            GlStateManager.popMatrix();
         }
 
         GlStateManager.enableBlend();

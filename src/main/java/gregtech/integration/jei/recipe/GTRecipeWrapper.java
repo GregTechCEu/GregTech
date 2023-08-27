@@ -163,14 +163,30 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 if (outputIndex >= recipe.getOutputs().size()) {
                     entry = recipe.getChancedOutputs().getChancedEntries().get(outputIndex - recipe.getOutputs().size());
                 }
-            } else if (!recipe.getChancedFluidOutputs().getChancedEntries().isEmpty()) {
-                int outputIndex = slotIndex - recipeMap.getMaxFluidInputs();
-                if (outputIndex >= recipe.getFluidOutputs().size()) {
-                    entry = recipe.getChancedFluidOutputs().getChancedEntries().get(outputIndex - recipe.getFluidOutputs().size());
-                }
             }
         }
 
+        addIngredientTooltips(tooltip, notConsumed, entry);
+    }
+
+    public void addFluidTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
+        FluidStack fluidStack = (FluidStack) ingredient;
+        TankWidget.addIngotMolFluidTooltip(fluidStack, tooltip);
+
+        boolean notConsumed = input && isNotConsumedFluid(slotIndex);
+
+        BoostableChanceEntry<?> entry = null;
+        if (!recipe.getChancedFluidOutputs().getChancedEntries().isEmpty()) {
+            int outputIndex = slotIndex - recipeMap.getMaxFluidInputs();
+            if (outputIndex >= recipe.getFluidOutputs().size()) {
+                entry = recipe.getChancedFluidOutputs().getChancedEntries().get(outputIndex - recipe.getFluidOutputs().size());
+            }
+        }
+
+        addIngredientTooltips(tooltip, notConsumed, entry);
+    }
+
+    public void addIngredientTooltips(Collection<String> tooltip, boolean notConsumed, BoostableChanceEntry<?> entry) {
         if (entry != null) {
             double chance = entry.getChance() / 100.0;
             double boost = entry.getChanceBoost() / 100.0;
@@ -192,16 +208,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             }
             // If we are here, we know this is not the data item, so add the tooltip
             tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.research_result"));
-        }
-    }
-
-    public void addFluidTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-        FluidStack fluidStack = (FluidStack) ingredient;
-        TankWidget.addIngotMolFluidTooltip(fluidStack, tooltip);
-
-        boolean notConsumed = input && isNotConsumedFluid(slotIndex);
-        if (notConsumed) {
-            tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.not_consumed"));
         }
     }
 
