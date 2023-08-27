@@ -8,8 +8,11 @@ import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
-import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.category.GTRecipeCategory;
+import gregtech.api.recipes.chance.output.ChancedOutputList;
+import gregtech.api.recipes.chance.output.ChancedOutputLogic;
+import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
+import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.*;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
@@ -34,12 +37,12 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 /**
  * @see Recipe
@@ -52,10 +55,14 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected final List<GTRecipeInput> inputs;
     protected final List<ItemStack> outputs;
-    protected final List<ChanceEntry> chancedOutputs;
+    protected final List<ChancedItemOutput> chancedOutputs;
 
     protected final List<GTRecipeInput> fluidInputs;
     protected final List<FluidStack> fluidOutputs;
+    protected final List<ChancedFluidOutput> chancedFluidOutputs;
+
+    protected ChancedOutputLogic chancedOutputLogic = ChancedOutputLogic.OR;
+    protected ChancedOutputLogic chancedFluidOutputLogic = ChancedOutputLogic.OR;
 
     protected int duration, EUt;
     protected boolean hidden = false;
@@ -73,6 +80,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.chancedOutputs = new ArrayList<>();
         this.fluidInputs = new ArrayList<>();
         this.fluidOutputs = new ArrayList<>();
+        this.chancedFluidOutputs = new ArrayList<>();
     }
 
     public RecipeBuilder(Recipe recipe, RecipeMap<R> recipeMap) {
@@ -81,9 +89,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.inputs.addAll(recipe.getInputs());
         this.outputs = NonNullList.create();
         this.outputs.addAll(GTUtility.copyStackList(recipe.getOutputs()));
-        this.chancedOutputs = new ArrayList<>(recipe.getChancedOutputs());
+        this.chancedOutputs = new ArrayList<>(recipe.getChancedOutputs().getChancedEntries());
         this.fluidInputs = new ArrayList<>(recipe.getFluidInputs());
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
+        this.chancedFluidOutputs = new ArrayList<>(recipe.getChancedFluidOutputs().getChancedEntries());
         this.duration = recipe.getDuration();
         this.EUt = recipe.getEUt();
         this.hidden = recipe.isHidden();
@@ -104,6 +113,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.chancedOutputs = new ArrayList<>(recipeBuilder.chancedOutputs);
         this.fluidInputs = new ArrayList<>(recipeBuilder.getFluidInputs());
         this.fluidOutputs = GTUtility.copyFluidList(recipeBuilder.getFluidOutputs());
+        this.chancedFluidOutputs = new ArrayList<>(recipeBuilder.chancedFluidOutputs);
+        this.chancedOutputLogic = recipeBuilder.chancedOutputLogic;
+        this.chancedFluidOutputLogic = recipeBuilder.chancedFluidOutputLogic;
         this.duration = recipeBuilder.duration;
         this.EUt = recipeBuilder.EUt;
         this.hidden = recipeBuilder.hidden;
@@ -522,7 +534,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             recipeStatus = EnumValidationResult.INVALID;
             return (R) this;
         }
-        this.chancedOutputs.add(new ChanceEntry(stack.copy(), chance, tierChanceBoost));
+        this.chancedOutputs.add(new ChancedItemOutput(stack.copy(), chance, tierChanceBoost));
         return (R) this;
     }
 
@@ -542,13 +554,51 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return chancedOutput(item, 1, chance, tierChanceBoost);
     }
 
-    public R chancedOutputs(List<ChanceEntry> chancedOutputs) {
-        chancedOutputs.stream().map(ChanceEntry::copy).forEach(this.chancedOutputs::add);
+    public R chancedOutputs(List<ChancedItemOutput> chancedOutputs) {
+        for (ChancedItemOutput output : chancedOutputs) {
+            this.chancedOutputs.add(output.copy());
+        }
         return (R) this;
     }
 
     public R clearChancedOutput() {
         this.chancedOutputs.clear();
+        return (R) this;
+    }
+
+    public R chancedOutputLogic(@NotNull ChancedOutputLogic logic) {
+        this.chancedOutputLogic = logic;
+        return (R) this;
+    }
+
+    public R chancedFluidOutput(FluidStack stack, int chance, int tierChanceBoost) {
+        if (stack == null || stack.amount == 0) {
+            return (R) this;
+        }
+        if (0 >= chance || chance > Recipe.getMaxChancedValue()) {
+            GTLog.logger.error("Chance cannot be less or equal to 0 or more than {}. Actual: {}.", Recipe.getMaxChancedValue(), chance);
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            recipeStatus = EnumValidationResult.INVALID;
+            return (R) this;
+        }
+        this.chancedFluidOutputs.add(new ChancedFluidOutput(stack.copy(), chance, tierChanceBoost));
+        return (R) this;
+    }
+
+    public R chancedFluidOutputs(List<ChancedFluidOutput> chancedOutputs) {
+        for (ChancedFluidOutput output : chancedOutputs) {
+            this.chancedFluidOutputs.add(output.copy());
+        }
+        return (R) this;
+    }
+
+    public R clearChancedFluidOutputs() {
+        this.chancedFluidOutputs.clear();
+        return (R) this;
+    }
+
+    public R chancedFluidOutputLogic(@NotNull ChancedOutputLogic logic) {
+        this.chancedFluidOutputLogic = logic;
         return (R) this;
     }
 
@@ -602,15 +652,25 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
      */
 
     public void chancedOutputsMultiply(Recipe chancedOutputsFrom, int numberOfOperations) {
-        for (Recipe.ChanceEntry entry : chancedOutputsFrom.getChancedOutputs()) {
+        for (ChancedItemOutput entry : chancedOutputsFrom.getChancedOutputs().getChancedEntries()) {
             int chance = entry.getChance();
-            int boost = entry.getBoostPerTier();
+            int boost = entry.getChanceBoost();
 
             // Add individual chanced outputs per number of parallel operations performed, to mimic regular recipes.
             // This is done instead of simply batching the chanced outputs by the number of parallel operations performed
-            IntStream.range(0, numberOfOperations).forEach(value -> {
-                this.chancedOutput(entry.getItemStack(), chance, boost);
-            });
+            for (int i = 0; i < numberOfOperations; i++) {
+                this.chancedOutput(entry.getIngredient().copy(), chance, boost);
+            }
+        }
+        for (ChancedFluidOutput entry : chancedOutputsFrom.getChancedFluidOutputs().getChancedEntries()) {
+            int chance = entry.getChance();
+            int boost = entry.getChanceBoost();
+
+            // Add individual chanced outputs per number of parallel operations performed, to mimic regular recipes.
+            // This is done instead of simply batching the chanced outputs by the number of parallel operations performed
+            for (int i = 0; i < numberOfOperations; i++) {
+                this.chancedFluidOutput(entry.getIngredient().copy(), chance, boost);
+            }
         }
     }
 
@@ -740,8 +800,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public ValidationResult<Recipe> build() {
-        return ValidationResult.newResult(finalizeAndValidate(), new Recipe(inputs, outputs, chancedOutputs,
-                fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe, recipePropertyStorage, category));
+        return ValidationResult.newResult(finalizeAndValidate(), new Recipe(inputs, outputs,
+                new ChancedOutputList<>(this.chancedOutputLogic, chancedOutputs),
+                fluidInputs, fluidOutputs,
+                new ChancedOutputList<>(this.chancedFluidOutputLogic, chancedFluidOutputs),
+                duration, EUt, hidden, isCTRecipe, recipePropertyStorage, category));
     }
 
     protected EnumValidationResult validate() {
@@ -845,8 +908,12 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return outputs;
     }
 
-    public List<ChanceEntry> getChancedOutputs() {
+    public List<ChancedItemOutput> getChancedOutputs() {
         return chancedOutputs;
+    }
+
+    public List<ChancedFluidOutput> getChancedFluidOutputs() {
+        return chancedFluidOutputs;
     }
 
     /**
@@ -857,8 +924,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public List<ItemStack> getAllItemOutputs() {
         List<ItemStack> stacks = new ArrayList<>(getOutputs());
 
-        for (ChanceEntry entry : this.chancedOutputs) {
-            stacks.add(entry.getItemStack());
+        for (ChancedItemOutput entry : this.chancedOutputs) {
+            stacks.add(entry.getIngredient());
         }
 
         return stacks;
@@ -893,6 +960,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 .append("inputs", inputs)
                 .append("outputs", outputs)
                 .append("chancedOutputs", chancedOutputs)
+                .append("chancedFluidOutputs", chancedFluidOutputs)
                 .append("fluidInputs", fluidInputs)
                 .append("fluidOutputs", fluidOutputs)
                 .append("duration", duration)

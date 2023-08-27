@@ -27,10 +27,10 @@ public interface ChancedOutputLogic {
      */
     ChancedOutputLogic OR = new ChancedOutputLogic() {
         @Override
-        public @Nullable @Unmodifiable <T> List<@NotNull ChancedOutput<?>> roll(@NotNull @Unmodifiable List<@NotNull ChancedOutput<T>> chancedEntries, @NotNull ChanceBoostFunction boostFunction) {
-            ImmutableList.Builder<ChancedOutput<?>> builder = null;
-            for (ChancedOutput<?> entry : chancedEntries) {
-                if (passesChance(getChance(entry, boostFunction))) {
+        public @Nullable @Unmodifiable <I, T extends ChancedOutput<I>> List<@NotNull T> roll(@NotNull @Unmodifiable List<@NotNull T> chancedEntries, @NotNull ChanceBoostFunction boostFunction, int baseTier, int machineTier) {
+            ImmutableList.Builder<T> builder = null;
+            for (T entry : chancedEntries) {
+                if (passesChance(getChance(entry, boostFunction, baseTier, machineTier))) {
                     if (builder == null) builder = ImmutableList.builder();
                     builder.add(entry);
                 }
@@ -44,9 +44,9 @@ public interface ChancedOutputLogic {
      */
     ChancedOutputLogic AND = new ChancedOutputLogic() {
         @Override
-        public @Nullable @Unmodifiable <T> List<@NotNull ChancedOutput<?>> roll(@NotNull @Unmodifiable List<@NotNull ChancedOutput<T>> chancedEntries, @NotNull ChanceBoostFunction boostFunction) {
-            for (ChancedOutput<?> entry : chancedEntries) {
-                if (!passesChance(getChance(entry, boostFunction))) {
+        public @Nullable @Unmodifiable <I, T extends ChancedOutput<I>> List<@NotNull T> roll(@NotNull @Unmodifiable List<@NotNull T> chancedEntries, @NotNull ChanceBoostFunction boostFunction, int baseTier, int machineTier) {
+            for (T entry : chancedEntries) {
+                if (!passesChance(getChance(entry, boostFunction, baseTier, machineTier))) {
                     return null;
                 }
             }
@@ -59,9 +59,9 @@ public interface ChancedOutputLogic {
      */
     ChancedOutputLogic XOR = new ChancedOutputLogic() {
         @Override
-        public @Nullable @Unmodifiable <T> List<@NotNull ChancedOutput<?>> roll(@NotNull @Unmodifiable List<@NotNull ChancedOutput<T>> chancedEntries, @NotNull ChanceBoostFunction boostFunction) {
-            for (ChancedOutput<?> entry : chancedEntries) {
-                if (passesChance(getChance(entry, boostFunction))) {
+        public @Nullable @Unmodifiable <I, T extends ChancedOutput<I>> List<@NotNull T> roll(@NotNull @Unmodifiable List<@NotNull T> chancedEntries, @NotNull ChanceBoostFunction boostFunction, int baseTier, int machineTier) {
+            for (T entry : chancedEntries) {
+                if (passesChance(getChance(entry, boostFunction, baseTier, machineTier))) {
                     return Collections.singletonList(entry);
                 }
             }
@@ -70,13 +70,25 @@ public interface ChancedOutputLogic {
     };
 
     /**
+     * Chanced Output Logic where nothing is produced
+     */
+    ChancedOutputLogic NONE = new ChancedOutputLogic() {
+        @Override
+        public @Nullable @Unmodifiable <I, T extends ChancedOutput<I>> List<@NotNull T> roll(@NotNull @Unmodifiable List<@NotNull T> chancedEntries, @NotNull ChanceBoostFunction boostFunction, int baseTier, int machineTier) {
+            return null;
+        }
+    };
+
+    /**
      * @param entry         the entry to get the complete chance for
      * @param boostFunction the function boosting the entry's chance
+     * @param baseTier       the base tier of the recipe
+     * @param machineTier    the tier the recipe is run at
      * @return the total chance for the entry
      */
-    static int getChance(@NotNull ChancedOutput<?> entry, @NotNull ChanceBoostFunction boostFunction) {
+    static int getChance(@NotNull ChancedOutput<?> entry, @NotNull ChanceBoostFunction boostFunction, int baseTier, int machineTier) {
         if (entry instanceof BoostableChanceEntry<?> boostableChanceEntry) {
-            return boostFunction.getBoostedChance(boostableChanceEntry);
+            return boostFunction.getBoostedChance(boostableChanceEntry, baseTier, machineTier);
         }
         return entry.getChance();
     }
@@ -94,8 +106,11 @@ public interface ChancedOutputLogic {
      *
      * @param chancedEntries the list of entries to roll
      * @param boostFunction  the function to boost the entries' chances
+     * @param baseTier       the base tier of the recipe
+     * @param machineTier    the tier the recipe is run at
      * @return a list of the produced outputs
      */
-    <T> @Nullable @Unmodifiable List<@NotNull ChancedOutput<?>> roll(@NotNull @Unmodifiable List<@NotNull ChancedOutput<T>> chancedEntries,
-                                                                 @NotNull ChanceBoostFunction boostFunction);
+    <I, T extends ChancedOutput<I>> @Nullable @Unmodifiable List<@NotNull T> roll(
+            @NotNull @Unmodifiable List<@NotNull T> chancedEntries, @NotNull ChanceBoostFunction boostFunction,
+            int baseTier, int machineTier);
 }

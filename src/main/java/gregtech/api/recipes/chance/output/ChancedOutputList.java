@@ -5,22 +5,27 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * A list of rollable chanced outputs
  */
-public class ChancedOutputList<T> {
+public class ChancedOutputList<I, T extends ChancedOutput<I>> {
 
     private final ChancedOutputLogic chancedOutputLogic;
-    private final List<ChancedOutput<T>> chancedEntries;
+    private final List<T> chancedEntries;
 
-    public ChancedOutputList(@NotNull ChancedOutputLogic chancedOutputLogic, @NotNull List<@NotNull ChancedOutput<T>> chancedEntries) {
+    public static <I, T extends ChancedOutput<I>> @NotNull ChancedOutputList<I, T> empty() {
+        return new ChancedOutputList<>(ChancedOutputLogic.NONE, Collections.emptyList());
+    }
+
+    public ChancedOutputList(@NotNull ChancedOutputLogic chancedOutputLogic, @NotNull List<@NotNull T> chancedEntries) {
         this.chancedOutputLogic = chancedOutputLogic;
         this.chancedEntries = chancedEntries;
     }
 
-    public @NotNull @Unmodifiable List<@NotNull ChancedOutput<T>> getChancedEntries() {
+    public @NotNull @Unmodifiable List<@NotNull T> getChancedEntries() {
         return chancedEntries;
     }
 
@@ -28,10 +33,12 @@ public class ChancedOutputList<T> {
      * Roll the chances for this output list
      *
      * @param boostFunction the function used to boost the outputs
+     * @param baseTier      the base tier of the recipe
+     * @param machineTier    the tier the recipe is run at
      * @return a list of the rolled outputs
      */
-    public @Nullable RolledOutputList roll(@NotNull ChanceBoostFunction boostFunction) {
-        List<ChancedOutput<?>> list = chancedOutputLogic.roll(getChancedEntries(), boostFunction);
-        return list == null ? null : new RolledOutputList(list);
+    public @Nullable RolledOutputList<I, T> roll(@NotNull ChanceBoostFunction boostFunction, int baseTier, int machineTier) {
+        List<T> list = chancedOutputLogic.roll(getChancedEntries(), boostFunction, baseTier, machineTier);
+        return list == null ? null : new RolledOutputList<>(list);
     }
 }

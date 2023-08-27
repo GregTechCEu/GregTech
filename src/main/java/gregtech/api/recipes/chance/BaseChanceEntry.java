@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> the type of ingredient contained by the chanced entry
  */
-public class BaseChanceEntry<T> implements ChanceEntry<T> {
+public abstract class BaseChanceEntry<T> implements ChanceEntry<T> {
 
     private final T ingredient;
     private final int chance;

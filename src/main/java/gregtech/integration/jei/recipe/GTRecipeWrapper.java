@@ -7,9 +7,11 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IDataItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
+import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
+import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
@@ -87,9 +89,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
 
         // Outputs
-        if (!recipe.getOutputs().isEmpty() || !recipe.getChancedOutputs().isEmpty()) {
+        if (!recipe.getOutputs().isEmpty() || !recipe.getChancedOutputs().getChancedEntries().isEmpty()) {
             List<ItemStack> recipeOutputs = recipe.getOutputs()
-                    .stream().map(ItemStack::copy).collect(Collectors.toList());
+                    .stream().map(ItemStack::copy)
+                    .collect(Collectors.toList());
 
             List<ItemStack> scannerPossibilities = null;
             if (this.recipeMap instanceof IScannerRecipeMap) {
@@ -121,10 +124,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 }
             }
 
-            List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
+            List<ChancedItemOutput> chancedOutputs = new ArrayList<>(recipe.getChancedOutputs().getChancedEntries());
             chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
-            for (ChanceEntry chancedEntry : chancedOutputs) {
-                recipeOutputs.add(chancedEntry.getItemStackRaw());
+            for (ChancedItemOutput chancedEntry : chancedOutputs) {
+                recipeOutputs.add(chancedEntry.getIngredient());
             }
 
             if (scannerPossibilities == null || scannerPossibilities.isEmpty()) {
@@ -135,25 +138,42 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
 
         // Fluid Outputs
-        if (!recipe.getFluidOutputs().isEmpty()) {
-            ingredients.setOutputs(VanillaTypes.FLUID, recipe.getFluidOutputs().stream()
+        if (!recipe.getFluidOutputs().isEmpty() || !recipe.getChancedFluidOutputs().getChancedEntries().isEmpty()) {
+            List<FluidStack> recipeOutputs = recipe.getFluidOutputs().stream()
                     .map(FluidStack::copy)
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toList());
+
+            List<ChancedFluidOutput> chancedOutputs = new ArrayList<>(recipe.getChancedFluidOutputs().getChancedEntries());
+            chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
+            for (ChancedFluidOutput chancedEntry : chancedOutputs) {
+                recipeOutputs.add(chancedEntry.getIngredient());
+            }
+
+            ingredients.setOutputs(VanillaTypes.FLUID, recipeOutputs);
         }
     }
 
     public void addItemTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
         boolean notConsumed = input && isNotConsumedItem(slotIndex);
 
-        ChanceEntry entry = null;
-        int outputIndex = slotIndex - recipeMap.getMaxInputs();
-        if (!input && !recipe.getChancedOutputs().isEmpty() && outputIndex >= recipe.getOutputs().size()) {
-            entry = recipe.getChancedOutputs().get(outputIndex - recipe.getOutputs().size());
+        BoostableChanceEntry<?> entry = null;
+        if (!input) {
+            if (!recipe.getChancedOutputs().getChancedEntries().isEmpty()) {
+                int outputIndex = slotIndex - recipeMap.getMaxInputs();
+                if (outputIndex >= recipe.getOutputs().size()) {
+                    entry = recipe.getChancedOutputs().getChancedEntries().get(outputIndex - recipe.getOutputs().size());
+                }
+            } else if (!recipe.getChancedFluidOutputs().getChancedEntries().isEmpty()) {
+                int outputIndex = slotIndex - recipeMap.getMaxFluidInputs();
+                if (outputIndex >= recipe.getFluidOutputs().size()) {
+                    entry = recipe.getChancedFluidOutputs().getChancedEntries().get(outputIndex - recipe.getFluidOutputs().size());
+                }
+            }
         }
 
         if (entry != null) {
             double chance = entry.getChance() / 100.0;
-            double boost = entry.getBoostPerTier() / 100.0;
+            double boost = entry.getChanceBoost() / 100.0;
             tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.chance", chance, boost));
         } else if (notConsumed) {
             tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.not_consumed"));
@@ -265,9 +285,14 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 .setActiveSupplier(creativePlayerCtPredicate));
     }
 
-    public ChanceEntry getOutputChance(int slot) {
-        if (slot >= recipe.getChancedOutputs().size() || slot < 0) return null;
-        return recipe.getChancedOutputs().get(slot);
+    public ChancedItemOutput getOutputChance(int slot) {
+        if (slot >= recipe.getChancedOutputs().getChancedEntries().size() || slot < 0) return null;
+        return recipe.getChancedOutputs().getChancedEntries().get(slot);
+    }
+
+    public ChancedFluidOutput getFluidOutputChance(int slot) {
+        if (slot >= recipe.getChancedFluidOutputs().getChancedEntries().size() || slot < 0) return null;
+        return recipe.getChancedFluidOutputs().getChancedEntries().get(slot);
     }
 
     public boolean isNotConsumedItem(int slot) {

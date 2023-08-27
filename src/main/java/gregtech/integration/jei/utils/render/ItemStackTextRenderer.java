@@ -1,6 +1,6 @@
 package gregtech.integration.jei.utils.render;
 
-import gregtech.api.recipes.Recipe.ChanceEntry;
+import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
 import mezz.jei.plugins.vanilla.ingredients.item.ItemStackRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -15,10 +15,10 @@ public class ItemStackTextRenderer extends ItemStackRenderer {
     private final int chanceBoost;
     private final boolean notConsumed;
 
-    public ItemStackTextRenderer(ChanceEntry chance) {
+    public ItemStackTextRenderer(BoostableChanceEntry<ItemStack> chance) {
         if (chance != null) {
             this.chanceBase = chance.getChance();
-            this.chanceBoost = chance.getBoostPerTier();
+            this.chanceBoost = chance.getChanceBoost();
         } else {
             this.chanceBase = -1;
             this.chanceBoost = -1;
@@ -58,8 +58,7 @@ public class ItemStackTextRenderer extends ItemStackRenderer {
 
             GlStateManager.popMatrix();
             GlStateManager.enableBlend();
-        }
-        else if (this.notConsumed) {
+        } else if (this.notConsumed) {
             GlStateManager.disableBlend();
             GlStateManager.pushMatrix();
             GlStateManager.scale(0.5, 0.5, 1);

@@ -1,9 +1,7 @@
 package gregtech.api.recipes.chance.output.impl;
 
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.chance.output.BoostableChanceOutput;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,7 +14,7 @@ public class ChancedFluidOutput extends BoostableChanceOutput<FluidStack> {
     }
 
     @Override
-    public boolean addToInventory(@NotNull IItemHandler itemHandler, @NotNull IMultipleTankHandler fluidHandler, boolean simulate) {
-        return fluidHandler.fill(getIngredient(), !simulate) == getIngredient().amount;
+    public @NotNull ChancedFluidOutput copy() {
+        return new ChancedFluidOutput(getIngredient(), getChance(), getChanceBoost());
     }
 }

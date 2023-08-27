@@ -15,6 +15,4 @@ public abstract class ChancedOutput<T> extends BaseChanceEntry<T> {
     public ChancedOutput(@NotNull T ingredient, int chance) {
         super(ingredient, chance);
     }
-
-    public abstract boolean addToInventory(@NotNull IItemHandler itemHandler, @NotNull IMultipleTankHandler fluidHandler, boolean simulate);
 }

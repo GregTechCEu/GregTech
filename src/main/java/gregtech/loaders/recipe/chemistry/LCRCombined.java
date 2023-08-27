@@ -15,7 +15,7 @@ public class LCRCombined {
                 .fluidInputs(Nitrogen.getFluid(4000))
                 .fluidInputs(Oxygen.getFluid(3000))
                 .fluidOutputs(Ammonia.getFluid(4000))
-                .fluidOutputs(CarbonMonoxide.getFluid(3000))
+                .chancedFluidOutput(CarbonMonoxide.getFluid(3000), 1000, 2000)
                 .EUt(VA[HV])
                 .duration(320)
                 .buildAndRegister();
