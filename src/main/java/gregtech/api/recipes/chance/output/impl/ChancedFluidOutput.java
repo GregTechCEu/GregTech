@@ -17,4 +17,14 @@ public class ChancedFluidOutput extends BoostableChanceOutput<FluidStack> {
     public @NotNull ChancedFluidOutput copy() {
         return new ChancedFluidOutput(getIngredient().copy(), getChance(), getChanceBoost());
     }
+
+    @Override
+    public String toString() {
+        return "ChancedFluidOutput{" +
+                "ingredient=FluidStack{" + getIngredient().getUnlocalizedName() +
+                ", amount=" + getIngredient().amount +
+                "}, chance=" + getChance() +
+                ", chanceBoost=" + getChanceBoost() +
+                '}';
+    }
 }

@@ -416,7 +416,7 @@ public class Recipe {
 
         Collection<ItemStack> resultChanced = new ArrayList<>();
         for (ChancedItemOutput chancedOutput : chancedOutputsList) {
-            ItemStack stackToAdd = chancedOutput.getIngredient();
+            ItemStack stackToAdd = chancedOutput.getIngredient().copy();
             for (ItemStack stackInList : resultChanced) {
                 int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
                 if (insertable > 0 && ItemHandlerHelper.canItemStacksStack(stackInList, stackToAdd)) {
@@ -610,13 +610,13 @@ public class Recipe {
 
         Collection<FluidStack> resultChanced = new ArrayList<>();
         for (ChancedFluidOutput chancedOutput : chancedOutputsList) {
-            FluidStack stackToAdd = chancedOutput.getIngredient();
+            FluidStack stackToAdd = chancedOutput.getIngredient().copy();
             for (FluidStack stackInList : resultChanced) {
-                if (stackToAdd == null) break;
                 int insertable = stackInList.amount;
                 if (insertable > 0 && stackInList.getFluid() == stackToAdd.getFluid()) {
                     stackInList.amount += stackToAdd.amount;
                     stackToAdd = null;
+                    break;
                 }
             }
             if (stackToAdd != null) {

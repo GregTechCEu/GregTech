@@ -925,7 +925,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         List<ItemStack> stacks = new ArrayList<>(getOutputs());
 
         for (ChancedItemOutput entry : this.chancedOutputs) {
-            stacks.add(entry.getIngredient());
+            stacks.add(entry.getIngredient().copy());
         }
 
         return stacks;

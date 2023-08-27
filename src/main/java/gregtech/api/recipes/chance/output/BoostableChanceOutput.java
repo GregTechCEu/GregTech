@@ -21,4 +21,13 @@ public abstract class BoostableChanceOutput<T> extends ChancedOutput<T> implemen
     public int getChanceBoost() {
         return this.chanceBoost;
     }
+
+    @Override
+    public String toString() {
+        return "BoostableChanceOutput{" +
+                "ingredient=" + getIngredient() +
+                ", chance=" + getChance() +
+                ", chanceBoost=" + getChanceBoost() +
+                '}';
+    }
 }
