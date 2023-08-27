@@ -579,20 +579,24 @@ public class Recipe {
     }
 
     /**
-     * Trims the list of fluid outputs based on some passed factor.
-     * Similar to {@link Recipe#getItemAndChanceOutputs(int)} but does not handle chanced fluid outputs
+     * Returns a list of every possible FluidStack output from a recipe, including all possible chanced outputs.
      *
-     * @param outputLimit The limiting factor to trim the fluid outputs to, -1 for disabled.
-     * @return A trimmed List of fluid outputs.
+     * @return A List of FluidStack outputs from the recipe, including all chanced outputs
      */
-    public List<FluidStack> getAllFluidOutputs(int outputLimit) {
-        return outputLimit == -1 ? fluidOutputs : fluidOutputs.subList(0, Math.min(fluidOutputs.size(), outputLimit));
+    public List<FluidStack> getAllFluidOutputs() {
+        List<FluidStack> recipeOutputs = new ArrayList<>(this.fluidOutputs);
+
+        for (ChancedFluidOutput entry : this.chancedFluidOutputs.getChancedEntries()) {
+            recipeOutputs.add(entry.getIngredient().copy());
+        }
+
+        return recipeOutputs;
     }
 
     /**
      * Returns all outputs from the recipe.
      * This is where Chanced Outputs for the recipe are calculated.
-     * The Recipe should be trimmed by calling {@link Recipe#getItemAndChanceOutputs(int)} before calling this method,
+     * The Recipe should be trimmed by calling {@link Recipe#getFluidAndChanceOutputs(int)} before calling this method,
      * if trimming is required.
      *
      * @param recipeTier  The Voltage Tier of the Recipe, used for chanced output calculation
