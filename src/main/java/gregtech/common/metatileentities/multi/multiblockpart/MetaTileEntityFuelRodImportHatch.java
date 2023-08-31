@@ -4,6 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -14,6 +15,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.unification.material.Material;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.blocks.BlockFissionCasing;
@@ -32,7 +34,7 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.LOCK_UPDATE;
 
-public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<ILockableHandler>, ILockableHandler, IControllable, IFissionReactorHatch {
+public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFuelRodHandler>, IFuelRodHandler, IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private boolean valid;
@@ -94,12 +96,12 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     }
 
     @Override
-    public MultiblockAbility<ILockableHandler> getAbility() {
+    public MultiblockAbility<IFuelRodHandler> getAbility() {
         return MultiblockAbility.IMPORT_FUEL_ROD;
     }
 
     @Override
-    public void registerAbilities(List<ILockableHandler> abilityList) {
+    public void registerAbilities(List<IFuelRodHandler> abilityList) {
         abilityList.add(this);
     }
 
@@ -162,5 +164,20 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     @Override
     public boolean isLocked() {
         return getLockedImport().isLocked();
+    }
+
+    @Override
+    public Material getFuel() {
+        return null;
+    }
+
+    @Override
+    public void setFuel(Material material) {
+
+    }
+
+    @Override
+    public LockableItemStackHandler getStackHandler() {
+        return this.getLockedImport();
     }
 }

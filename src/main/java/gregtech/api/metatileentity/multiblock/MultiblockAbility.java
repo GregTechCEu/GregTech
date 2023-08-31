@@ -76,7 +76,7 @@ public class MultiblockAbility<T> {
             "hpca_component");
     public static final MultiblockAbility<IObjectHolder> OBJECT_HOLDER = new MultiblockAbility<>("object_holder");
 
-    public static final MultiblockAbility<ILockableHandler> IMPORT_FUEL_ROD = new MultiblockAbility<>("import_fuel_rod");
+    public static final MultiblockAbility<IFuelRodHandler> IMPORT_FUEL_ROD = new MultiblockAbility<>("import_fuel_rod");
     public static final MultiblockAbility<IItemHandlerModifiable> EXPORT_FUEL_ROD = new MultiblockAbility<>("export_fuel_rod");
     public static final MultiblockAbility<ICoolantHandler> IMPORT_COOLANT = new MultiblockAbility<>("import_coolant");
     public static final MultiblockAbility<IFluidTank> EXPORT_COOLANT = new MultiblockAbility<>("export_coolant");
