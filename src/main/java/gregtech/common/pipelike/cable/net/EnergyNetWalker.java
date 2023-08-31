@@ -3,7 +3,6 @@ package gregtech.common.pipelike.cable.net;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.PipeNetWalker;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -15,7 +14,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnergyNetWalker extends PipeNetWalker {
+public class EnergyNetWalker extends PipeNetWalker<TileEntityCable> {
 
     public static List<RoutePath> createNetData(World world, BlockPos sourcePipe) {
         if (!(world.getTileEntity(sourcePipe) instanceof TileEntityCable)) {
@@ -36,7 +35,7 @@ public class EnergyNetWalker extends PipeNetWalker {
     }
 
     @Override
-    protected PipeNetWalker createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks) {
+    protected PipeNetWalker<TileEntityCable> createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks) {
         EnergyNetWalker walker = new EnergyNetWalker(world, nextPos, walkedBlocks, routes);
         walker.loss = loss;
         walker.pipes = pipes;
@@ -44,13 +43,13 @@ public class EnergyNetWalker extends PipeNetWalker {
     }
 
     @Override
-    protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
-        pipes = ArrayUtils.add(pipes, (TileEntityCable) pipeTile);
-        loss += ((TileEntityCable) pipeTile).getNodeData().getLossPerBlock();
+    protected void checkPipe(TileEntityCable pipeTile, BlockPos pos) {
+        pipes = ArrayUtils.add(pipes, pipeTile);
+        loss += pipeTile.getNodeData().getLossPerBlock();
     }
 
     @Override
-    protected void checkNeighbour(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
+    protected void checkNeighbour(TileEntityCable pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
         if (neighbourTile != null) {
             IEnergyContainer container = neighbourTile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, faceToNeighbour.getOpposite());
             if (container != null) {
@@ -60,7 +59,7 @@ public class EnergyNetWalker extends PipeNetWalker {
     }
 
     @Override
-    protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
-        return neighbourPipe instanceof TileEntityCable;
+    protected Class<TileEntityCable> getBasePipeClass() {
+        return TileEntityCable.class;
     }
 }

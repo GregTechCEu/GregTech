@@ -2,7 +2,6 @@ package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.pipenet.PipeNetWalker;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.CoverItemFilter;
@@ -23,7 +22,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ItemNetWalker extends PipeNetWalker {
+public class ItemNetWalker extends PipeNetWalker<TileEntityItemPipe> {
 
     public static List<ItemPipeNet.Inventory> createNetData(World world, BlockPos sourcePipe, EnumFacing faceToSourceHandler) {
         if (!(world.getTileEntity(sourcePipe) instanceof TileEntityItemPipe)) {
@@ -50,7 +49,7 @@ public class ItemNetWalker extends PipeNetWalker {
     }
 
     @Override
-    protected PipeNetWalker createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks) {
+    protected PipeNetWalker<TileEntityItemPipe> createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks) {
         ItemNetWalker walker = new ItemNetWalker(world, nextPos, walkedBlocks, inventories, minProperties);
         walker.facingToHandler = facingToHandler;
         walker.sourcePipe = sourcePipe;
@@ -63,14 +62,14 @@ public class ItemNetWalker extends PipeNetWalker {
     }
 
     @Override
-    protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
+    protected void checkPipe(TileEntityItemPipe pipeTile, BlockPos pos) {
         for (List<Predicate<ItemStack>> filters : nextFilters.values()) {
             if (!filters.isEmpty()) {
                 this.filters.addAll(filters);
             }
         }
         nextFilters.clear();
-        ItemPipeProperties pipeProperties = ((TileEntityItemPipe) pipeTile).getNodeData();
+        ItemPipeProperties pipeProperties = pipeTile.getNodeData();
         if (minProperties == null) {
             minProperties = pipeProperties;
         } else {
@@ -79,7 +78,7 @@ public class ItemNetWalker extends PipeNetWalker {
     }
 
     @Override
-    protected void checkNeighbour(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
+    protected void checkNeighbour(TileEntityItemPipe pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
         if (neighbourTile == null || (GTUtility.arePosEqual(pipePos, sourcePipe) && faceToNeighbour == facingToHandler)) {
             return;
         }
@@ -95,10 +94,12 @@ public class ItemNetWalker extends PipeNetWalker {
     }
 
     @Override
-    protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
-        if (!(neighbourPipe instanceof TileEntityItemPipe)) {
-            return false;
-        }
+    protected Class<TileEntityItemPipe> getBasePipeClass() {
+        return TileEntityItemPipe.class;
+    }
+
+    @Override
+    protected boolean isValidPipe(TileEntityItemPipe currentPipe, TileEntityItemPipe neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
         CoverBehavior thisCover = currentPipe.getCoverableImplementation().getCoverAtSide(faceToNeighbour);
         CoverBehavior neighbourCover = neighbourPipe.getCoverableImplementation().getCoverAtSide(faceToNeighbour.getOpposite());
         List<Predicate<ItemStack>> filters = new ArrayList<>();

@@ -19,13 +19,13 @@ import java.util.*;
  * <p><b>Do not walk a walker more than once</b>
  * <p>For example implementations look at {@link ItemNetWalker}
  */
-public abstract class PipeNetWalker {
+public abstract class PipeNetWalker<T extends IPipeTile<?, ?>> {
 
-    private PipeNetWalker root;
+    private PipeNetWalker<T> root;
     private final World world;
     private final Set<Long> walked = new HashSet<>();
     private final List<EnumFacing> pipes = new ArrayList<>();
-    private List<PipeNetWalker> walkers;
+    private List<PipeNetWalker<T>> walkers;
     private final BlockPos.MutableBlockPos currentPos;
     private int walkedBlocks;
     private boolean invalid;
@@ -48,7 +48,7 @@ public abstract class PipeNetWalker {
      * @param walkedBlocks distance from source in blocks
      * @return new sub walker
      */
-    protected abstract PipeNetWalker createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks);
+    protected abstract PipeNetWalker<T> createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks);
 
     /**
      * You can increase walking stats here. for example
@@ -56,7 +56,7 @@ public abstract class PipeNetWalker {
      * @param pipeTile current checking pipe
      * @param pos      current pipe pos
      */
-    protected abstract void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos);
+    protected abstract void checkPipe(T pipeTile, BlockPos pos);
 
     /**
      * Checks the neighbour of the current pos
@@ -65,7 +65,7 @@ public abstract class PipeNetWalker {
      * @param faceToNeighbour face to neighbour
      * @param neighbourTile   neighbour tile
      */
-    protected abstract void checkNeighbour(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile);
+    protected abstract void checkNeighbour(T pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile);
 
     /**
      * If the pipe is valid to perform a walk on
@@ -76,7 +76,11 @@ public abstract class PipeNetWalker {
      * @param faceToNeighbour face to pipeTile
      * @return if the pipe is valid
      */
-    protected abstract boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour);
+    protected boolean isValidPipe(T currentPipe, T neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
+        return true;
+    }
+
+    protected abstract Class<T> getBasePipeClass();
 
     /**
      * The directions that this net can traverse from this pipe
@@ -92,7 +96,7 @@ public abstract class PipeNetWalker {
      *
      * @param subWalker the finished sub walker
      */
-    protected void onRemoveSubWalker(PipeNetWalker subWalker) {
+    protected void onRemoveSubWalker(PipeNetWalker<T> subWalker) {
     }
 
     public void traversePipeNet() {
@@ -135,14 +139,14 @@ public abstract class PipeNetWalker {
 
             walkers = new ArrayList<>();
             for (EnumFacing side : pipes) {
-                PipeNetWalker walker = Objects.requireNonNull(createSubWalker(world, side, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null");
+                PipeNetWalker<T> walker = Objects.requireNonNull(createSubWalker(world, side, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null");
                 walker.root = root;
                 walkers.add(walker);
             }
         }
-        Iterator<PipeNetWalker> iterator = walkers.iterator();
+        Iterator<PipeNetWalker<T>> iterator = walkers.iterator();
         while (iterator.hasNext()) {
-            PipeNetWalker walker = iterator.next();
+            PipeNetWalker<T> walker = iterator.next();
             if (walker.walk()) {
                 onRemoveSubWalker(walker);
                 iterator.remove();
@@ -159,7 +163,10 @@ public abstract class PipeNetWalker {
             GTLog.logger.fatal("PipeWalker expected a pipe, but found {} at {}", thisPipe, currentPos);
             return false;
         }
-        IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) thisPipe;
+        if (!getBasePipeClass().isAssignableFrom(thisPipe.getClass())) {
+            return false;
+        }
+        T pipeTile = (T) thisPipe;
         checkPipe(pipeTile, currentPos);
         root.walked.add(pipeTile.getPipePos().toLong());
 
@@ -172,7 +179,8 @@ public abstract class PipeNetWalker {
 
             pos.setPos(currentPos).move(accessSide);
             TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof IPipeTile<?, ?> otherPipe) {
+            if (tile != null && getBasePipeClass().isAssignableFrom(tile.getClass())) {
+                T otherPipe = (T) tile;
                 if (!otherPipe.isConnected(accessSide.getOpposite()) || otherPipe.isFaceBlocked(accessSide.getOpposite()) || isWalked(otherPipe))
                     continue;
                 if (isValidPipe(pipeTile, otherPipe, currentPos, accessSide)) {
