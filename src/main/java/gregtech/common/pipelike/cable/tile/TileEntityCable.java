@@ -9,7 +9,6 @@ import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.WireProperties;
-import gregtech.api.util.PerTickLongCounter;
 import gregtech.api.util.TaskScheduler;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.particle.GTOverheatParticle;
@@ -44,9 +43,9 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     private static final int meltTemp = 3000;
 
     private final EnumMap<EnumFacing, EnergyNetHandler> handlers = new EnumMap<>(EnumFacing.class);
-    private final PerTickLongCounter maxVoltageCounter = new PerTickLongCounter(this::getWorldTime);
-    private final AveragingPerTickCounter averageVoltageCounter = new AveragingPerTickCounter(this::getWorldTime);
-    private final AveragingPerTickCounter averageAmperageCounter = new AveragingPerTickCounter(this::getWorldTime);
+    private final PerTickLongCounter maxVoltageCounter = new PerTickLongCounter();
+    private final AveragingPerTickCounter averageVoltageCounter = new AveragingPerTickCounter();
+    private final AveragingPerTickCounter averageAmperageCounter = new AveragingPerTickCounter();
     private EnergyNetHandler defaultHandler;
     // the EnergyNetHandler can only be created on the server, so we have an empty placeholder for the client
     private final IEnergyContainer clientCapability = IEnergyContainer.DEFAULT;
@@ -104,13 +103,13 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
      * @return if the cable should be destroyed
      */
     public boolean incrementAmperage(long amps, long voltage) {
-        if (voltage > maxVoltageCounter.get()) {
-            maxVoltageCounter.set(voltage);
+        if (voltage > maxVoltageCounter.get(getWorld())) {
+            maxVoltageCounter.set(getWorld(), voltage);
         }
-        averageVoltageCounter.increment(voltage);
-        averageAmperageCounter.increment(amps);
+        averageVoltageCounter.increment(getWorld(), voltage);
+        averageAmperageCounter.increment(getWorld(), amps);
 
-        int dif = (int) (averageAmperageCounter.getLast() - getMaxAmperage());
+        int dif = (int) (averageAmperageCounter.getLast(getWorld()) - getMaxAmperage());
         if (dif > 0) {
             applyHeat(dif * 40);
             return true;
@@ -228,15 +227,15 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     }
 
     public double getAverageAmperage() {
-        return averageAmperageCounter.getAverage();
+        return averageAmperageCounter.getAverage(getWorld());
     }
 
     public long getCurrentMaxVoltage() {
-        return maxVoltageCounter.get();
+        return maxVoltageCounter.get(getWorld());
     }
 
     public double getAverageVoltage() {
-        return averageVoltageCounter.getAverage();
+        return averageVoltageCounter.getAverage(getWorld());
     }
 
     public long getMaxAmperage() {

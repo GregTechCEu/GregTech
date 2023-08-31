@@ -423,7 +423,7 @@ public class ItemNetHandler implements IItemHandler {
         if (simulate)
             simulatedTransfers += amount;
         else
-            pipe.transferItems(amount);
+            pipe.addTransferredItems(amount);
     }
 
     @Override

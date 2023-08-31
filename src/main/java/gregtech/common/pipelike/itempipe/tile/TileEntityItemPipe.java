@@ -133,7 +133,7 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     //    this.transferredItems = 0;
     // }
     // if it was in a ticking TileEntity
-    private void checkTransferredState() {
+    private void updateTransferredState() {
         long currentTime = getWorldTime();
         long dif = currentTime - this.timer;
         if (dif >= 20 || dif < 0) {
@@ -142,13 +142,13 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
         }
     }
 
-    public void transferItems(int amount) {
-        checkTransferredState();
+    public void addTransferredItems(int amount) {
+        updateTransferredState();
         this.transferredItems += amount;
     }
 
     public int getTransferredItems() {
-        checkTransferredState();
-        return 0;
+        updateTransferredState();
+        return this.transferredItems;
     }
 }
