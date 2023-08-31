@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multi;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.ICoolantHandler;
+import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.capability.ILockableHandler;
 import gregtech.api.gui.Widget;
 import gregtech.api.metatileentity.IDataInfoProvider;
@@ -108,10 +109,21 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase impl
         // Take in coolant, take in fuel, update reactor, output steam
 
         if (this.locked) {
-            List<ICoolantHandler> coolantImports = this.getAbilities(MultiblockAbility.IMPORT_COOLANT);
-            for (ICoolantHandler coolantImport : coolantImports) {
+
+            //Coolant handling
+            for (ICoolantHandler coolantImport : this.getAbilities(MultiblockAbility.IMPORT_COOLANT)) {
                 this.fissionReactor.heatRemoved += coolantImport.getCoolant().getProperty(PropertyKey.COOLANT).getCoolingFactor() * this.flowRate;
                 coolantImport.getFluidTank().drain(this.flowRate, true);
+            }
+
+            //Fuel handling
+            if (this.fissionReactor.fuelDepletion == 1.) {
+                boolean gotFuel = true;
+                for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
+                    gotFuel = fuelImport.getStackHandler().extractItem(0, 1, false).isEmpty();
+                    if (!gotFuel) break;
+                }
+                if (gotFuel) this.fissionReactor.fuelDepletion = 0.;
             }
 
             this.updateReactorState();
