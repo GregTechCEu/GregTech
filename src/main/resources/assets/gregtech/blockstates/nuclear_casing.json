@@ -1,0 +1,47 @@
+{
+  "forge_marker" : 1,
+  "defaults": {
+    "model" : "minecraft:cube_all",
+    "textures" : {
+      "all" : "gregtech:blocks/casings/solid/machine_casing_solid_steel"
+    }
+  },
+  "variants" : {
+    "active=false,variant=gas_centrifuge_column" : {
+      "model" : "gregtech:gas_centrifuge",
+      "textures" : {
+        "0" : "gregtech:blocks/casings/nuclear/gas_centrifuge",
+        "particle" : "gregtech:blocks/casings/nuclear/gas_centrifuge"
+      }
+    },
+    "active=true,variant=gas_centrifuge_column" : {
+      "model" : "gregtech:gas_centrifuge",
+      "textures" : {
+        "0" : "gregtech:blocks/casings/nuclear/gas_centrifuge",
+        "particle" : "gregtech:blocks/casings/nuclear/gas_centrifuge"
+      }
+    },
+    "active=false,variant=spent_fuel_casing" : {
+      "model" : "gregtech:cube_2_layer_bottom_top",
+      "textures" : {
+        "bot_side" : "gregtech:blocks/casings/nuclear/spent_fuel_casing_side",
+        "bot_bottom" : "gregtech:blocks/casings/nuclear/spent_fuel_casing_top",
+        "bot_top" : "gregtech:blocks/casings/nuclear/spent_fuel_casing_top",
+        "top_side" : "gregtech:blocks/casings/nuclear/spent_fuel_casing_side_bloom",
+        "top_bottom" : "gregtech:blocks/casings/nuclear/spent_fuel_casing_top_bloom",
+        "top_top" : "gregtech:blocks/casings/nuclear/spent_fuel_casing_top_bloom"
+      }
+    },
+    "active=true,variant=spent_fuel_casing" : {
+      "model" : "gregtech:cube_2_layer_bottom_top",
+      "textures" : {
+        "bot_side" : "gregtech:blocks/casings/nuclear/spent_fuel_casing_side",
+        "bot_bottom" : "gregtech:blocks/casings/nuclear/spent_fuel_casing_top",
+        "bot_top" : "gregtech:blocks/casings/nuclear/spent_fuel_casing_top",
+        "top_side" : "gregtech:blocks/casings/nuclear/spent_fuel_casing_side_bloom",
+        "top_bottom" : "gregtech:blocks/casings/nuclear/spent_fuel_casing_top_bloom",
+        "top_top" : "gregtech:blocks/casings/nuclear/spent_fuel_casing_top_bloom"
+      }
+    }
+  }
+}
