@@ -7,14 +7,13 @@ import gregtech.api.gui.ISizeProvider;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
@@ -30,6 +29,7 @@ import net.minecraftforge.items.SlotItemHandler;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SlotWidget extends Widget implements INativeWidget {
 
@@ -41,8 +41,10 @@ public class SlotWidget extends Widget implements INativeWidget {
     protected IGuiTexture[] backgroundTexture;
     protected Runnable changeListener;
 
-    private String tooltipText;
-    private Object[] tooltipArgs;
+    protected String tooltipText;
+    protected Object[] tooltipArgs;
+
+    protected Consumer<SlotWidget> consumer;
 
     public SlotWidget(IInventory inventory, int slotIndex, int xPosition, int yPosition, boolean canTakeItems, boolean canPutItems) {
         super(new Position(xPosition, yPosition), new Size(18, 18));
@@ -83,7 +85,7 @@ public class SlotWidget extends Widget implements INativeWidget {
     public void drawInForeground(int mouseX, int mouseY) {
         ((ISlotWidget) slotReference).setHover(isMouseOverElement(mouseX, mouseY) && isActive());
         if (tooltipText != null && isMouseOverElement(mouseX, mouseY) && !slotReference.getHasStack()) {
-            List<String> hoverList = Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(tooltipText, tooltipArgs)));
+            List<String> hoverList = Arrays.asList(LocalizationUtils.formatLines(tooltipText, tooltipArgs));
             drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
         }
     }
@@ -100,7 +102,7 @@ public class SlotWidget extends Widget implements INativeWidget {
         }
         ItemStack itemStack = slotReference.getStack();
         ModularUIGui modularUIGui = gui == null ? null : gui.getModularUIGui();
-        if (itemStack.isEmpty() && modularUIGui!= null && modularUIGui.getDragSplitting() && modularUIGui.getDragSplittingSlots().contains(slotReference)) { // draw split
+        if (itemStack.isEmpty() && modularUIGui != null && modularUIGui.getDragSplitting() && modularUIGui.getDragSplittingSlots().contains(slotReference)) { // draw split
             int splitSize = modularUIGui.getDragSplittingSlots().size();
             itemStack = gui.entityPlayer.inventory.getItemStack();
             if (!itemStack.isEmpty() && splitSize > 1 && Container.canAddItemToSlot(slotReference, itemStack, true)) {
@@ -159,11 +161,9 @@ public class SlotWidget extends Widget implements INativeWidget {
                 modularUIGui.dragSplittingButton = button;
                 if (button == 0) {
                     modularUIGui.dragSplittingLimit = 0;
-                }
-                else if (button == 1) {
+                } else if (button == 1) {
                     modularUIGui.dragSplittingLimit = 1;
-                }
-                else if (Minecraft.getMinecraft().gameSettings.keyBindPickBlock.isActiveAndMatches(button - 100)) {
+                } else if (Minecraft.getMinecraft().gameSettings.keyBindPickBlock.isActiveAndMatches(button - 100)) {
                     modularUIGui.dragSplittingLimit = 2;
                 }
             }
@@ -197,6 +197,11 @@ public class SlotWidget extends Widget implements INativeWidget {
             this.slotReference.xPos = position.x + 1 - sizes.getGuiLeft();
             this.slotReference.yPos = position.y + 1 - sizes.getGuiTop();
         }
+    }
+
+    public SlotWidget setConsumer(Consumer<SlotWidget> consumer) {
+        this.consumer = consumer;
+        return this;
     }
 
     public SlotWidget setChangeListener(Runnable changeListener) {
@@ -271,6 +276,7 @@ public class SlotWidget extends Widget implements INativeWidget {
 
     public interface ISlotWidget {
         void setHover(boolean isHover);
+
         boolean isHover();
     }
 

@@ -48,6 +48,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -61,7 +62,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -74,6 +74,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -114,9 +115,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     private final int[] sidedRedstoneOutput = new int[6];
     private final int[] sidedRedstoneInput = new int[6];
-    private int cachedComparatorValue;
     private int cachedLightValue;
     protected boolean isFragile = false;
+
+    private boolean wasExploded = false;
 
     private final CoverBehavior[] coverBehaviors = new CoverBehavior[6];
     protected List<IItemHandlerModifiable> notifiedItemOutputList = new ArrayList<>();
@@ -157,6 +159,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return holder == null ? null : holder.pos();
     }
 
+    @Override
     public void markDirty() {
         if (holder != null) {
             holder.markAsDirty();
@@ -326,7 +329,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return null;
     }
 
-    public final String getMetaName() {
+    public String getMetaName() {
         return String.format("%s.machine.%s", metaTileEntityId.getNamespace(), metaTileEntityId.getPath());
     }
 
@@ -339,9 +342,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (!notifiedItemInputList.contains(input)) {
                 this.notifiedItemInputList.add((IItemHandlerModifiable) input);
             }
-        } else if (input instanceof FluidTank) {
+        } else if (input instanceof IFluidHandler) {
             if (!notifiedFluidInputList.contains(input)) {
-                this.notifiedFluidInputList.add((FluidTank) input);
+                this.notifiedFluidInputList.add((IFluidHandler) input);
             }
         }
     }
@@ -425,12 +428,25 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return true if something happened, so animation will be played
      */
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        ItemStack heldStack = playerIn.getHeldItem(hand);
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
             return true;
         } else {
+            // Attempt to rename the MTE first
+            if (heldStack.getItem() == Items.NAME_TAG) {
+                if (playerIn.isSneaking() && heldStack.getTagCompound() != null && heldStack.getTagCompound().hasKey("display")) {
+                    MetaTileEntityHolder mteHolder = (MetaTileEntityHolder) getHolder();
+
+                    mteHolder.setCustomName(heldStack.getTagCompound().getCompoundTag("display").getString("Name"));
+                    if (!playerIn.isCreative()) {
+                        heldStack.shrink(1);
+                    }
+                    return true;
+                }
+            }
             EnumFacing hitFacing = hitResult.sideHit;
             CoverBehavior coverBehavior = hitFacing == null ? null : getCoverAtSide(hitFacing);
             if (coverBehavior == null) {
@@ -653,7 +669,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void onLoad() {
-        this.cachedComparatorValue = getActualComparatorValue();
         for (EnumFacing side : EnumFacing.VALUES) {
             this.sidedRedstoneInput[side.getIndex()] = GTUtility.getRedstonePower(getWorld(), getPos(), side);
         }
@@ -714,6 +729,11 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         }
     }
 
+    /**
+     * @deprecated Will be removed in 2.9. Comparators no longer supported for MetaTileEntities, as cover are interactions favored.
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public int getActualComparatorValue() {
         return 0;
     }
@@ -722,22 +742,17 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return 0;
     }
 
+    /**
+     * @deprecated Will be removed in 2.9.
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public final int getComparatorValue() {
-        return cachedComparatorValue;
+        return 0;
     }
 
     public final int getLightValue() {
         return cachedLightValue;
-    }
-
-    private void updateComparatorValue() {
-        int newComparatorValue = getActualComparatorValue();
-        if (cachedComparatorValue != newComparatorValue) {
-            this.cachedComparatorValue = newComparatorValue;
-            if (getWorld() != null && !getWorld().isRemote) {
-                notifyBlockUpdate();
-            }
-        }
     }
 
     private void updateLightValue() {
@@ -761,9 +776,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
                 if (coverBehavior instanceof ITickable) {
                     ((ITickable) coverBehavior).update();
                 }
-            }
-            if (getOffsetTimer() % 5 == 0L) {
-                updateComparatorValue();
             }
         } else {
             updateSound();
@@ -1115,7 +1127,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         this.sidedRedstoneOutput[side.getIndex()] = strength;
         if (getWorld() != null && !getWorld().isRemote && getCoverAtSide(side) == null) {
             notifyBlockUpdate();
-            markDirty();
         }
     }
 
@@ -1254,13 +1265,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     /**
-     * Deprecated, use {@link MetaTileEntity#onPlacement()} instead
-     */
-    @Deprecated
-    public void onAttached(Object... data) {
-    }
-
-    /**
      * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy}
      * <p>
      * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
@@ -1346,7 +1350,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public boolean shouldDropWhenDestroyed() {
-        return !isFragile();
+        return !wasExploded() && !isFragile();
     }
 
     public float getBlockHardness() {
@@ -1441,9 +1445,24 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void doExplosion(float explosionPower) {
+        setExploded();
         getWorld().setBlockToAir(getPos());
         getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
                 explosionPower, ConfigHolder.machines.doesExplosionDamagesTerrain);
+    }
+
+    /**
+     * Mark the MTE as having been blown up by an explosion
+     */
+    protected final void setExploded() {
+        this.wasExploded = true;
+    }
+
+    /**
+     * @return if the MTE was blown up by an explosion
+     */
+    protected final boolean wasExploded() {
+        return this.wasExploded;
     }
 
     public void setOnFire(double additionalFireChance) {

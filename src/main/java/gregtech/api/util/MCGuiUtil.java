@@ -5,6 +5,10 @@ import net.minecraft.client.gui.GuiPageButtonList.GuiResponder;
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
+/**
+ * This class exists to avoid java always trying to load client classes when loading {@link gregtech.api.gui.widgets.TextFieldWidget}.
+ * Do not remove
+ */
 public class MCGuiUtil {
 
     public static GuiResponder createTextFieldResponder(Consumer<String> onChanged) {

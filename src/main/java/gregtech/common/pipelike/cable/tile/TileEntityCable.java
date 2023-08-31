@@ -9,9 +9,9 @@ import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.WireProperties;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.PerTickLongCounter;
 import gregtech.api.util.TaskScheduler;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.particle.GTOverheatParticle;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.common.blocks.MetaBlocks;
@@ -165,7 +165,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         int temp = temperature;
         setTemperature(getDefaultTemp());
         int index = getPipeType().insulationLevel;
-        BlockCable newBlock = MetaBlocks.CABLES[index];
+        BlockCable newBlock = MetaBlocks.CABLES.get(getPipeBlock().getMaterialRegistry().getModid())[index];
         world.setBlockState(pos, newBlock.getDefaultState());
         TileEntityCable newCable = (TileEntityCable) world.getTileEntity(pos);
         if (newCable != null) { // should never be null
@@ -343,10 +343,10 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
         list.add(new TextComponentTranslation("behavior.tricorder.eut_per_sec",
-                new TextComponentTranslation(GTUtility.formatNumbers(this.getAverageVoltage())).setStyle(new Style().setColor(TextFormatting.RED))
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getAverageVoltage())).setStyle(new Style().setColor(TextFormatting.RED))
         ));
         list.add(new TextComponentTranslation("behavior.tricorder.amp_per_sec",
-                new TextComponentTranslation(GTUtility.formatNumbers(this.getAverageAmperage())).setStyle(new Style().setColor(TextFormatting.RED))
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getAverageAmperage())).setStyle(new Style().setColor(TextFormatting.RED))
         ));
         return list;
     }

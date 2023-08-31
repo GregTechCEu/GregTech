@@ -13,6 +13,8 @@ public class OverclockingLogic {
     public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = ConfigHolder.machines.overclockDivisor;
     public static final double PERFECT_OVERCLOCK_DURATION_DIVISOR = 4.0;
 
+    public static final int COIL_EUT_DISCOUNT_TEMPERATURE = 900;
+
     /**
      * applies standard logic for overclocking, where each overclock modifies energy and duration
      *
@@ -30,6 +32,9 @@ public class OverclockingLogic {
         double resultVoltage = recipeEUt;
 
         for (; numberOfOCs > 0; numberOfOCs--) {
+            // make sure that duration is not already as low as it can do
+            if (resultDuration == 1) break;
+
             // it is important to do voltage first,
             // so overclocking voltage does not go above the limit before changing duration
 
@@ -39,7 +44,7 @@ public class OverclockingLogic {
 
             double potentialDuration = resultDuration / durationDivisor;
             // do not allow duration to go below one tick
-            if (potentialDuration < 1) break;
+            if (potentialDuration < 1) potentialDuration = 1;
             // update the duration for the next iteration
             resultDuration = potentialDuration;
 
@@ -51,13 +56,33 @@ public class OverclockingLogic {
         return new int[]{(int) resultVoltage, (int) resultDuration};
     }
 
+    /**
+     * @param providedTemp the temperate provided by the machine
+     * @param requiredTemp the required temperature of the recipe
+     * @return the amount of EU/t discounts to apply
+     */
+    private static int calculateAmountCoilEUtDiscount(int providedTemp, int requiredTemp) {
+        return Math.max(0, (providedTemp - requiredTemp) / COIL_EUT_DISCOUNT_TEMPERATURE);
+    }
+
+    /**
+     * Handles applying the coil EU/t discount. Call before overclocking.
+     *
+     * @param recipeEUt the EU/t of the recipe
+     * @param providedTemp the temperate provided by the machine
+     * @param requiredTemp the required temperature of the recipe
+     * @return the discounted EU/t
+     */
+    public static int applyCoilEUtDiscount(int recipeEUt, int providedTemp, int requiredTemp) {
+        if (requiredTemp < COIL_EUT_DISCOUNT_TEMPERATURE) return recipeEUt;
+        int amountEUtDiscount = calculateAmountCoilEUtDiscount(providedTemp, requiredTemp);
+        if (amountEUtDiscount < 1) return recipeEUt;
+        return (int) (recipeEUt * Math.min(1, Math.pow(0.95, amountEUtDiscount)));
+    }
+
     @Nonnull
     public static int[] heatingCoilOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, int maxOverclocks, int currentTemp, int recipeRequiredTemp) {
-        int amountEUDiscount = Math.max(0, (currentTemp - recipeRequiredTemp) / 900);
-        int amountPerfectOC = amountEUDiscount / 2;
-
-        // apply a multiplicative 95% energy multiplier for every 900k over recipe temperature
-        recipeEUt *= Math.min(1, Math.pow(0.95, amountEUDiscount));
+        int amountPerfectOC = calculateAmountCoilEUtDiscount(currentTemp, recipeRequiredTemp) / 2;
 
         // perfect overclock for every 1800k over recipe temperature
         if (amountPerfectOC > 0) {

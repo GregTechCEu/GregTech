@@ -31,21 +31,24 @@ public class CircuitRecipes {
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, Silicon, 32)
                 .input(dustSmall, GalliumArsenide)
+                .circuitMeta(2)
                 .output(SILICON_BOULE)
                 .blastFurnaceTemp(1784)
                 .duration(9000).EUt(VA[MV]).buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, Silicon, 64)
-                .input(dust, Glowstone, 8)
+                .input(dust, Phosphorus, 8)
+                .input(dustSmall, GalliumArsenide, 2)
                 .fluidInputs(Nitrogen.getFluid(8000))
-                .output(GLOWSTONE_BOULE)
+                .output(PHOSPHORUS_BOULE)
                 .blastFurnaceTemp(2484)
                 .duration(12000).EUt(VA[HV]).buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder()
                 .input(block, Silicon, 16)
                 .input(ingot, Naquadah)
+                .input(dust, GalliumArsenide)
                 .fluidInputs(Argon.getFluid(8000))
                 .output(NAQUADAH_BOULE)
                 .blastFurnaceTemp(5400)
@@ -54,6 +57,7 @@ public class CircuitRecipes {
         BLAST_RECIPES.recipeBuilder()
                 .input(block, Silicon, 32)
                 .input(ingot, Neutronium, 4)
+                .input(dust, GalliumArsenide, 2)
                 .fluidInputs(Xenon.getFluid(8000))
                 .output(NEUTRONIUM_BOULE)
                 .blastFurnaceTemp(6484)
@@ -66,8 +70,8 @@ public class CircuitRecipes {
                 .duration(400).EUt(64).buildAndRegister();
 
         CUTTER_RECIPES.recipeBuilder()
-                .input(GLOWSTONE_BOULE)
-                .output(GLOWSTONE_WAFER, 32)
+                .input(PHOSPHORUS_BOULE)
+                .output(PHOSPHORUS_WAFER, 32)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(800).EUt(VA[HV]).buildAndRegister();
 
@@ -86,48 +90,48 @@ public class CircuitRecipes {
 
         // Wafer engraving
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(PHOSPHORUS_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 8).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 16).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Green).output(RANDOM_ACCESS_MEMORY_WAFER).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Green).output(RANDOM_ACCESS_MEMORY_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(PHOSPHORUS_WAFER).notConsumable(craftingLens, Color.Green).output(RANDOM_ACCESS_MEMORY_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Green).output(RANDOM_ACCESS_MEMORY_WAFER, 8).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Green).output(RANDOM_ACCESS_MEMORY_WAFER, 16).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.LightBlue).output(CENTRAL_PROCESSING_UNIT_WAFER).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.LightBlue).output(CENTRAL_PROCESSING_UNIT_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(PHOSPHORUS_WAFER).notConsumable(craftingLens, Color.LightBlue).output(CENTRAL_PROCESSING_UNIT_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.LightBlue).output(CENTRAL_PROCESSING_UNIT_WAFER, 8).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.LightBlue).output(CENTRAL_PROCESSING_UNIT_WAFER, 16).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(PHOSPHORUS_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 8).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 16).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Orange).output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Orange).output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(PHOSPHORUS_WAFER).notConsumable(craftingLens, Color.Orange).output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Orange).output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 8).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Orange).output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 16).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Cyan).output(SIMPLE_SYSTEM_ON_CHIP_WAFER).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Cyan).output(SIMPLE_SYSTEM_ON_CHIP_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(PHOSPHORUS_WAFER).notConsumable(craftingLens, Color.Cyan).output(SIMPLE_SYSTEM_ON_CHIP_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Cyan).output(SIMPLE_SYSTEM_ON_CHIP_WAFER, 8).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Cyan).output(SIMPLE_SYSTEM_ON_CHIP_WAFER, 16).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Gray).output(NAND_MEMORY_CHIP_WAFER).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[HV]).input(PHOSPHORUS_WAFER).notConsumable(craftingLens, Color.Gray).output(NAND_MEMORY_CHIP_WAFER).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Gray).output(NAND_MEMORY_CHIP_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Gray).output(NAND_MEMORY_CHIP_WAFER, 8).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Pink).output(NOR_MEMORY_CHIP_WAFER).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[HV]).input(PHOSPHORUS_WAFER).notConsumable(craftingLens, Color.Pink).output(NOR_MEMORY_CHIP_WAFER).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Pink).output(NOR_MEMORY_CHIP_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Pink).output(NOR_MEMORY_CHIP_WAFER, 8).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Brown).output(POWER_INTEGRATED_CIRCUIT_WAFER).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[HV]).input(PHOSPHORUS_WAFER).notConsumable(craftingLens, Color.Brown).output(POWER_INTEGRATED_CIRCUIT_WAFER).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Brown).output(POWER_INTEGRATED_CIRCUIT_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Brown).output(POWER_INTEGRATED_CIRCUIT_WAFER, 8).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Yellow).output(SYSTEM_ON_CHIP_WAFER).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[HV]).input(PHOSPHORUS_WAFER).notConsumable(craftingLens, Color.Yellow).output(SYSTEM_ON_CHIP_WAFER).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Yellow).output(SYSTEM_ON_CHIP_WAFER, 4).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Yellow).output(SYSTEM_ON_CHIP_WAFER, 8).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
@@ -429,6 +433,13 @@ public class CircuitRecipes {
                 .output(SMD_RESISTOR, 16)
                 .duration(160).EUt(VA[HV]).buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(dust, Carbon)
+                .input(wireFine, Tantalum, 4)
+                .fluidInputs(Polyethylene.getFluid(L * 2))
+                .output(SMD_RESISTOR, 32)
+                .duration(160).EUt(VA[HV]).buildAndRegister();
+
         // SMD Diode
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, GalliumArsenide)
@@ -443,6 +454,13 @@ public class CircuitRecipes {
                 .input(wireFine, AnnealedCopper, 8)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .output(SMD_TRANSISTOR, 16)
+                .duration(160).EUt(VA[HV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(foil, Gallium)
+                .input(wireFine, Tantalum, 8)
+                .fluidInputs(Polyethylene.getFluid(L))
+                .output(SMD_TRANSISTOR, 32)
                 .duration(160).EUt(VA[HV]).buildAndRegister();
 
         // SMD Capacitor
@@ -482,6 +500,13 @@ public class CircuitRecipes {
                 .output(SMD_INDUCTOR, 16)
                 .duration(160).EUt(VA[HV]).buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ring, NickelZincFerrite)
+                .input(wireFine, Tantalum, 4)
+                .fluidInputs(Polyethylene.getFluid(L))
+                .output(SMD_INDUCTOR, 32)
+                .duration(160).EUt(VA[HV]).buildAndRegister();
+
         // Advanced SMD Resistor
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Graphene)
@@ -492,11 +517,11 @@ public class CircuitRecipes {
 
         // Advanced SMD Diode
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(dustSmall, IndiumGalliumPhosphide)
-                .input(wireFine, NiobiumTitanium, 4)
-                .fluidInputs(Polybenzimidazole.getFluid(L / 2))
-                .output(ADVANCED_SMD_DIODE, 16)
-                .EUt(3840).duration(150).buildAndRegister();
+                .input(dust, IndiumGalliumPhosphide)
+                .input(wireFine, NiobiumTitanium, 16)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 2))
+                .output(ADVANCED_SMD_DIODE, 64)
+                .EUt(3840).duration(640).buildAndRegister();
 
         // Advanced SMD Transistor
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -667,10 +692,10 @@ public class CircuitRecipes {
         // Phenolic Board
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Wood)
-                .notConsumable(SHAPE_MOLD_PLATE)
+                .circuitMeta(1)
                 .fluidInputs(Glue.getFluid(50))
                 .output(PHENOLIC_BOARD)
-                .duration(30).EUt(VA[ULV]).buildAndRegister();
+                .duration(150).EUt(VA[LV]).buildAndRegister();
 
         // Good Circuit Board
         ModHandler.addShapedRecipe("good_circuit_board", GOOD_CIRCUIT_BOARD.getStackForm(),
@@ -806,7 +831,7 @@ public class CircuitRecipes {
         // Multi-Layer Fiber Reinforced Epoxy Board
         CHEMICAL_RECIPES.recipeBuilder().duration(500).EUt(VA[HV])
                 .input(FIBER_BOARD, 2)
-                .input(foil, Platinum, 8)
+                .input(foil, Palladium, 8)
                 .fluidInputs(SulfuricAcid.getFluid(500))
                 .output(MULTILAYER_FIBER_BOARD)
                 .cleanroom(CleanroomType.CLEANROOM)
@@ -1340,6 +1365,9 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_DIODE, 8)
                 .fluidInputs(SolderingAlloy.getFluid(L * 10))
                 .output(CRYSTAL_MAINFRAME_UV)
+                .research(b -> b
+                        .researchStack(CRYSTAL_COMPUTER_ZPM.getStackForm())
+                        .CWUt(16))
                 .buildAndRegister();
 
         // T7: Wetware =================================================================================================
@@ -1404,6 +1432,9 @@ public class CircuitRecipes {
                 .input(plate, Europium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(1152))
                 .output(WETWARE_SUPER_COMPUTER_UV)
+                .research(b -> b
+                        .researchStack(WETWARE_PROCESSOR_ASSEMBLY_ZPM.getStackForm())
+                        .CWUt(16))
                 .buildAndRegister();
 
         // UHV
@@ -1422,34 +1453,51 @@ public class CircuitRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 20))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 8))
                 .output(WETWARE_MAINFRAME_UHV)
+                .research(b -> b
+                        .researchStack(WETWARE_SUPER_COMPUTER_UV.getStackForm())
+                        .CWUt(96)
+                        .EUt(VA[UV]))
                 .EUt(300000).duration(2000).buildAndRegister();
 
         // Misc ========================================================================================================
 
         // Data Stick
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
-                .input(PLASTIC_CIRCUIT_BOARD)
-                .input(CENTRAL_PROCESSING_UNIT, 2)
-                .input(NAND_MEMORY_CHIP, 32)
-                .input(RANDOM_ACCESS_MEMORY, 4)
-                .input(wireFine, RedAlloy, 16)
-                .input(plate, Polyethylene, 4)
-                .output(TOOL_DATA_STICK)
-                .solderMultiplier(2)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .duration(400).EUt(90).buildAndRegister();
-
-        // Data Orb
-        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ADVANCED_CIRCUIT_BOARD)
                 .input(circuit, Tier.HV, 2)
                 .input(RANDOM_ACCESS_MEMORY, 4)
-                .input(NOR_MEMORY_CHIP, 32)
-                .input(NAND_MEMORY_CHIP, 64)
+                .input(NOR_MEMORY_CHIP, 16)
+                .input(NAND_MEMORY_CHIP, 32)
                 .input(wireFine, Platinum, 32)
-                .output(TOOL_DATA_ORB)
+                .output(TOOL_DATA_STICK)
                 .solderMultiplier(2)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(400).EUt(1200).buildAndRegister();
+
+        // Data Orb
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
+                .input(EXTREME_CIRCUIT_BOARD)
+                .input(circuit, Tier.IV, 2)
+                .input(RANDOM_ACCESS_MEMORY, 8)
+                .input(NOR_MEMORY_CHIP, 32)
+                .input(NAND_MEMORY_CHIP, 48)
+                .input(wireFine, NiobiumTitanium, 32)
+                .output(TOOL_DATA_ORB)
+                .solderMultiplier(2)
+                .cleanroom(CleanroomType.CLEANROOM)
+                .duration(400).EUt(9600).buildAndRegister();
+
+        // Data Module
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
+                .input(WETWARE_CIRCUIT_BOARD)
+                .input(circuit, Tier.ZPM, 2)
+                .input(RANDOM_ACCESS_MEMORY, 32)
+                .input(NOR_MEMORY_CHIP, 64)
+                .input(NAND_MEMORY_CHIP, 64)
+                .input(wireFine, YttriumBariumCuprate, 32)
+                .output(TOOL_DATA_MODULE)
+                .solderMultiplier(2)
+                .cleanroom(CleanroomType.STERILE_CLEANROOM)
+                .duration(400).EUt(38400).buildAndRegister();
     }
 }

@@ -2,6 +2,7 @@ package gregtech.api.unification.material;
 
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.materials.*;
+import gregtech.api.unification.ore.OrePrefix;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,8 +92,8 @@ public class Materials {
          * - Gregicality: 3000-19999
          * - Gregification: 20000-20999
          * - HtmlTech: 21000-21499
-         * - GregTech Food Option: 21500-21999
-         * - PCM's Ore Addon: 22000-23599
+         * - GregTech Food Option: 21500-22499
+         * - FREE RANGE 22500-23599
          * - MechTech: 23600-23999
          * - FREE RANGE 24000-31999
          * - Reserved for CraftTweaker: 32000-32767
@@ -108,6 +109,8 @@ public class Materials {
                 Materials.DyeBrown, Materials.DyeGreen,
                 Materials.DyeRed, Materials.DyeBlack
         };
+
+        OrePrefix.init();
     }
 
     public static final List<MaterialFlag> STD_METAL = new ArrayList<>();
@@ -547,6 +550,8 @@ public class Materials {
     public static Material RhodiumPlatedPalladium;
     public static Material Butyraldehyde;
     public static Material PolyvinylButyral;
+    public static Material Biphenyl;
+    public static Material PolychlorinatedBiphenyl;
 
     /**
      * Not possible to determine exact Components
@@ -678,6 +683,7 @@ public class Materials {
     public static Material NaquadriaWaste;
     public static Material Lapotron;
     public static Material UUMatter;
+    public static Material PCBCoolant;
 
     /**
      * Second Degree Compounds

@@ -14,7 +14,6 @@ import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -28,11 +27,12 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import static gregtech.api.util.GTUtility.getFluidFromContainer;
 
 public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhostIngredientTarget {
 
@@ -59,16 +59,6 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         this.fluidStackUpdater = fluidTank::setFluid;
     }
 
-    private static FluidStack drainFrom(Object ingredient) {
-        if (ingredient instanceof ItemStack) {
-            ItemStack itemStack = (ItemStack) ingredient;
-            IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-            if (fluidHandler != null)
-                return fluidHandler.drain(Integer.MAX_VALUE, false);
-        }
-        return null;
-    }
-
     public PhantomFluidWidget showTip(boolean showTip) {
         this.showTip = showTip;
         return this;
@@ -93,7 +83,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
 
     @Override
     public List<Target<?>> getPhantomTargets(Object ingredient) {
-        if (!(ingredient instanceof FluidStack) && drainFrom(ingredient) == null) {
+        if (!(ingredient instanceof FluidStack) && getFluidFromContainer(ingredient) == null) {
             return Collections.emptyList();
         }
 
@@ -111,7 +101,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                 if (ingredient instanceof FluidStack)
                     ingredientStack = (FluidStack) ingredient;
                 else
-                    ingredientStack = drainFrom(ingredient);
+                    ingredientStack = getFluidFromContainer(ingredient);
 
                 if (ingredientStack != null) {
                     NBTTagCompound tagCompound = ingredientStack.writeToNBT(new NBTTagCompound());
@@ -303,7 +293,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                 hoverStringList.add(fluidName);
                 if (showTip) {
                     hoverStringList.add(lastFluidStack.amount + " L");
-                    hoverStringList.addAll(Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format("cover.fluid_filter.config_amount"))));
+                    Collections.addAll(hoverStringList, LocalizationUtils.formatLines("cover.fluid_filter.config_amount"));
                 }
                 drawHoveringText(ItemStack.EMPTY, hoverStringList, -1, mouseX, mouseY);
             }

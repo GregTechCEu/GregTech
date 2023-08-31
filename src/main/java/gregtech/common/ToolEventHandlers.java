@@ -17,6 +17,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
 import net.minecraft.block.Block;
@@ -26,6 +27,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -35,6 +37,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -42,6 +45,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -53,6 +58,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
@@ -154,23 +160,38 @@ public class ToolEventHandlers {
                         // only try once, so future water placement does not get eaten too
                         return false;
                     });
+                    ((IGTTool) stack.getItem()).playSound(player);
                 }
             }
             if (behaviorTag.getBoolean(ToolHelper.RELOCATE_MINED_BLOCKS_KEY)) {
-                event.getDrops().removeIf(player::addItemStackToInventory);
+
+                Iterator<ItemStack> dropItr = event.getDrops().iterator();
+                while (dropItr.hasNext()) {
+                    ItemStack dropStack = dropItr.next();
+                    EntityItem drop = new EntityItem(event.getWorld());
+                    drop.setItem(dropStack);
+
+                    if (ForgeEventFactory.onItemPickup(drop, player) == -1 || player.addItemStackToInventory(dropStack)) {
+                        dropItr.remove();
+                    }
+                }
             }
         }
     }
 
     /**
-     * Prevents anvil repairing if tools do not have the same material
+     * Prevents anvil repairing if tools do not have the same material, or if either are electric.
+     * Electric tools can still be repaired with ingots in the anvil, but electric tools cannot
+     * be combined with other GT tools, electric or otherwise.
      */
     @SubscribeEvent
     public static void onAnvilUpdateEvent(AnvilUpdateEvent event) {
         ItemStack left = event.getLeft(), right = event.getRight();
-        if (left.getItem() instanceof IGTTool && right.getItem() instanceof IGTTool) {
-            IGTTool leftTool = (IGTTool) left.getItem(), rightTool = (IGTTool) right.getItem();
+        if (left.getItem() instanceof IGTTool leftTool && right.getItem() instanceof IGTTool rightTool) {
             if (leftTool.getToolMaterial(left) != rightTool.getToolMaterial(right)) {
+                event.setCanceled(true);
+            }
+            if (leftTool.isElectric() || rightTool.isElectric()) {
                 event.setCanceled(true);
             }
         }

@@ -16,6 +16,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
@@ -29,11 +30,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -67,12 +68,12 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 FluidStack oxygenStack = getInputFluidInventory().drain(Materials.Oxygen.getFluid(Integer.MAX_VALUE), false);
                 FluidStack liquidOxygenStack = getInputFluidInventory().drain(Materials.LiquidOxygen.getFluid(Integer.MAX_VALUE), false);
                 int lubricantAmount = lubricantStack == null ? 0 : lubricantStack.amount;
-                textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.lubricant_amount", lubricantAmount));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.lubricant_amount", TextFormattingUtil.formatNumbers(lubricantAmount)));
                 if (boostAllowed) {
                     if (!isExtreme) {
                         if (((LargeCombustionEngineWorkableHandler) recipeMapWorkable).isOxygenBoosted) {
                             int oxygenAmount = oxygenStack == null ? 0 : oxygenStack.amount;
-                            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.oxygen_amount", oxygenAmount));
+                            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.oxygen_amount", TextFormattingUtil.formatNumbers(oxygenAmount)));
                             textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.oxygen_boosted"));
                         } else {
                             textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost"));
@@ -81,20 +82,35 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                     else {
                         if (((LargeCombustionEngineWorkableHandler) recipeMapWorkable).isOxygenBoosted) {
                             int liquidOxygenAmount = liquidOxygenStack == null ? 0 : liquidOxygenStack.amount;
-                            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount", liquidOxygenAmount));
+                            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount", TextFormattingUtil.formatNumbers((liquidOxygenAmount))));
                             textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted"));
                         } else {
                             textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost"));
                         }
                     }
-                }
-                else {
+                } else {
                     textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.boost_disallowed"));
                 }
             }
+        }
+    }
 
-            if (isStructureObstructed())
-                textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.obstructed").setStyle(new Style().setColor(TextFormatting.RED)));
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            FluidStack lubricantStack = getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE), false);
+            if (lubricantStack == null || lubricantStack.amount == 0) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.no_lubricant"));
+            }
+        }
+    }
+
+    @Override
+    protected void addErrorText(List<ITextComponent> textList) {
+        super.addErrorText(textList);
+        if (isStructureFormed() && checkIntakesObstructed()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.obstructed"));
         }
     }
 
@@ -147,11 +163,13 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.ENGINE_INTAKE_CASING);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return isExtreme ? Textures.ROBUST_TUNGSTENSTEEL_CASING : Textures.STABLE_TITANIUM_CASING;
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {

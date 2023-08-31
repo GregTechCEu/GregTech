@@ -15,6 +15,12 @@ public abstract class MTETrait {
     private static final Object2IntFunction<String> traitIds = new Object2IntOpenHashMap<>();
     private static int rollingNetworkId = 0;
 
+    private static final int NO_NETWORK_ID = -1;
+
+    static {
+        traitIds.defaultReturnValue(NO_NETWORK_ID);
+    }
+
     protected final MetaTileEntity metaTileEntity;
     private final int networkId;
 
@@ -27,12 +33,12 @@ public abstract class MTETrait {
         this.metaTileEntity = metaTileEntity;
 
         final String traitName = getName();
-        if (!traitIds.containsKey(traitName)) {
-            this.networkId = rollingNetworkId++;
-            traitIds.put(traitName, this.networkId);
-        } else {
-            this.networkId = traitIds.getInt(traitName);
+        int networkId = traitIds.getInt(traitName);
+        if (networkId == NO_NETWORK_ID) {
+            networkId = rollingNetworkId++;
+            traitIds.put(traitName, networkId);
         }
+        this.networkId = networkId;
         metaTileEntity.addMetaTileEntityTrait(this);
     }
 

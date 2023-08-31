@@ -31,6 +31,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Arrays;
@@ -63,6 +64,7 @@ public class MachineRecipeLoader {
         MiscRecipeLoader.init();
         BatteryRecipes.init();
         CircuitRecipes.init();
+        ComputerRecipes.init();
         WoodRecipeLoader.registerRecipes();
 
         registerDecompositionRecipes();
@@ -539,6 +541,15 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
+                .input(EMITTER_LV)
+                .input(plate, Steel)
+                .circuitMeta(1)
+                .fluidInputs(solder)
+                .outputs(COVER_MAINTENANCE_DETECTOR.getStackForm())
+                .EUt(16).duration(100)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Glass)
                 .input(foil, Aluminium, 4)
                 .input(circuit, MarkerMaterials.Tier.LV)
@@ -604,6 +615,7 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.StainlessSteel, 6).input(OrePrefix.frameGt, Materials.StainlessSteel, 1).circuitMeta(6).outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.STAINLESS_CLEAN, 2)).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Titanium, 6).input(OrePrefix.frameGt, Materials.Titanium, 1).circuitMeta(6).outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.TITANIUM_STABLE, 2)).duration(50).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(plate, HSSE, 6).input(frameGt, Europium).circuitMeta(6).outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.HSSE_STURDY, 2)).duration(50).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(plate, Palladium, 6).input(frameGt, Iridium).circuitMeta(6).outputs(METAL_CASING.getItemVariant(MetalCasingType.PALLADIUM_SUBSTATION, 2)).duration(50).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.STEEL_SOLID)).fluidInputs(Materials.Polytetrafluoroethylene.getFluid(216)).circuitMeta(6).outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.PTFE_INERT_CASING)).duration(50).buildAndRegister();
 
@@ -656,6 +668,9 @@ public class MachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Steel, 2).input(plate, Steel, 4).outputs(STEEL_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Aluminium, 2).input(plate, Aluminium, 4).outputs(ALUMINIUM_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, StainlessSteel, 2).input(plate, StainlessSteel, 4).outputs(STAINLESS_STEEL_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Titanium, 2).input(plate, Titanium, 4).outputs(TITANIUM_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, TungstenSteel, 2).input(plate, TungstenSteel, 4).outputs(TUNGSTENSTEEL_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Gold, 2).input(plate, Gold, 4).outputs(GOLD_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, Polyethylene, 4).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(288)).output(DUCT_TAPE).duration(100).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, SiliconeRubber, 2).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(288)).output(DUCT_TAPE, 2).duration(100).buildAndRegister();
@@ -764,10 +779,10 @@ public class MachineRecipeLoader {
                 .fluidOutputs(SulfurDioxide.getFluid(2000))
                 .buildAndRegister();
 
-        BLAST_RECIPES.recipeBuilder().duration(240).EUt(VA[MV]).blastFurnaceTemp(1200)
-                .input(dust, SiliconDioxide)
+        BLAST_RECIPES.recipeBuilder().duration(240).EUt(VA[MV]).blastFurnaceTemp(2273)
+                .input(dust, SiliconDioxide, 3)
                 .input(dust, Carbon, 2)
-                .output(ingot, Silicon)
+                .output(ingotHot, Silicon)
                 .output(dustTiny, Ash)
                 .fluidOutputs(CarbonMonoxide.getFluid(2000))
                 .buildAndRegister();
@@ -1016,6 +1031,9 @@ public class MachineRecipeLoader {
         ModHandler.addShapelessNBTClearingRecipe("drum_nbt_steel", MetaTileEntities.STEEL_DRUM.getStackForm(), MetaTileEntities.STEEL_DRUM.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("drum_nbt_aluminium", MetaTileEntities.ALUMINIUM_DRUM.getStackForm(), MetaTileEntities.ALUMINIUM_DRUM.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("drum_nbt_stainless_steel", MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm(), MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("drum_nbt_titanium", MetaTileEntities.TITANIUM_DRUM.getStackForm(), MetaTileEntities.TITANIUM_DRUM.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("drum_nbt_tungstensteel", MetaTileEntities.TUNGSTENSTEEL_DRUM.getStackForm(), MetaTileEntities.TUNGSTENSTEEL_DRUM.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("drum_nbt_gold", MetaTileEntities.GOLD_DRUM.getStackForm(), MetaTileEntities.GOLD_DRUM.getStackForm());
 
         // Cells
         ModHandler.addShapedNBTClearingRecipe("cell_nbt_regular", MetaItems.FLUID_CELL.getStackForm(), " C", "  ", 'C', MetaItems.FLUID_CELL.getStackForm());
@@ -1027,9 +1045,16 @@ public class MachineRecipeLoader {
         ModHandler.addShapelessNBTClearingRecipe("cell_nbt_tungstensteel", MetaItems.FLUID_CELL_LARGE_TUNGSTEN_STEEL.getStackForm(), MetaItems.FLUID_CELL_LARGE_TUNGSTEN_STEEL.getStackForm());
         ModHandler.addShapelessNBTClearingRecipe("cell_vial_nbt", MetaItems.FLUID_CELL_GLASS_VIAL.getStackForm(), MetaItems.FLUID_CELL_GLASS_VIAL.getStackForm());
 
+        // Data Items
+        ModHandler.addShapelessNBTClearingRecipe("data_stick_nbt", TOOL_DATA_STICK.getStackForm(), TOOL_DATA_STICK.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("data_orb_nbt", TOOL_DATA_ORB.getStackForm(), TOOL_DATA_ORB.getStackForm());
+        ModHandler.addShapelessNBTClearingRecipe("data_module_nbt", TOOL_DATA_MODULE.getStackForm(), TOOL_DATA_MODULE.getStackForm());
 
         //Jetpacks
         ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(), SEMIFLUID_JETPACK.getStackForm());
+
+        // ClipBoard
+        ModHandler.addShapelessNBTClearingRecipe("clipboard_nbt", CLIPBOARD.getStackForm(), CLIPBOARD.getStackForm());
 
     }
 
@@ -1061,6 +1086,13 @@ public class MachineRecipeLoader {
                 ModHandler.addShapedRecipe("multi_fluid_hatch_input_to_output_" + MULTI_FLUID_EXPORT_HATCH[i].getTier(), MULTI_FLUID_EXPORT_HATCH[i].getStackForm(),
                         "d", "B", 'B', MULTI_FLUID_IMPORT_HATCH[i].getStackForm());
             }
+        }
+
+        if (Loader.isModLoaded(MODID_APPENG)) {
+            ModHandler.addShapedRecipe("me_fluid_hatch_output_to_input", FLUID_IMPORT_HATCH_ME.getStackForm(), "d", "B", 'B', FLUID_EXPORT_HATCH_ME.getStackForm());
+            ModHandler.addShapedRecipe("me_fluid_hatch_input_to_output", FLUID_EXPORT_HATCH_ME.getStackForm(), "d", "B", 'B', FLUID_IMPORT_HATCH_ME.getStackForm());
+            ModHandler.addShapedRecipe("me_item_bus_output_to_input", ITEM_IMPORT_BUS_ME.getStackForm(), "d", "B", 'B', ITEM_EXPORT_BUS_ME.getStackForm());
+            ModHandler.addShapedRecipe("me_item_bus_input_to_output", ITEM_EXPORT_BUS_ME.getStackForm(), "d", "B", 'B', ITEM_IMPORT_BUS_ME.getStackForm());
         }
 
         if (STEAM_EXPORT_BUS != null && STEAM_IMPORT_BUS != null) {

@@ -1,11 +1,14 @@
 package gregtech.api.gui.resources;
 
 import gregtech.api.GTValues;
+import gregtech.api.util.GTUtility;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -54,7 +57,7 @@ public final class ResourceHelper {
         if (!cachedResources.containsKey(rs)) {
             URL url = ResourceHelper.class.getResource(String.format("/assets/%s/%s", GTValues.MODID, rs));
             if (url == null) return false;
-            cachedResources.put(rs, new ResourceLocation(GTValues.MODID, rs));
+            cachedResources.put(rs, GTUtility.gregtechId(rs));
         }
         return true;
     }
@@ -72,7 +75,7 @@ public final class ResourceHelper {
     }
 
     /**
-     * @param modid           the modid of the texture, formatted with the root dir and file extension
+     * @param modid    the modid of the texture, formatted with the root dir and file extension
      * @param resource the location of the resource
      * @return if the resource exists
      */
@@ -90,7 +93,8 @@ public final class ResourceHelper {
         IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
         try {
             // check if the texture file exists
-            manager.getResource(resource);
+            IResource ignored = manager.getResource(resource);
+            IOUtils.closeQuietly(ignored);
             return true;
         } catch (IOException ignored) {
             return false;

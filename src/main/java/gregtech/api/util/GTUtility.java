@@ -1,15 +1,11 @@
 package gregtech.api.util;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -19,119 +15,53 @@ import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
-import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.play.client.CPacketPlayerDigging;
-import net.minecraft.network.play.client.CPacketPlayerDigging.Action;
-import net.minecraft.network.play.server.SPacketBlockChange;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DimensionType;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.*;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-import java.util.stream.Collector;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static gregtech.api.GTValues.V;
 
 public class GTUtility {
-
-    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
-    private static final DecimalFormat TWO_PLACES_FORMAT = new DecimalFormat("#.##");
-
-    private static final TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
-
-    private static final NavigableMap<Long, Byte> tierByVoltage = new TreeMap<>();
-
-    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("/n");
-
-    static {
-        for (int i = 0; i < V.length; i++) {
-            tierByVoltage.put(V[i], (byte) i);
-        }
-    }
-
-    public static Runnable combine(Runnable... runnables) {
-        return () -> {
-            for (Runnable runnable : runnables) {
-                if (runnable != null)
-                    runnable.run();
-            }
-        };
-    }
-
-    private static final Pattern UNDERSCORE_TO_SPACE = Pattern.compile("_");
-
-    public static Stream<Object> flatten(Object[] array) {
-        return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o) : Stream.of(o));
-    }
-
-    public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest) {
-        for (int i = 0; i < src.getSlots(); i++) {
-            ItemStack itemStack = src.getStackInSlot(i);
-            dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
-        }
-    }
-
-    public static <T> IntStream indices(T[] array) {
-        int[] indices = new int[array.length];
-        for (int i = 0; i < indices.length; i++)
-            indices[i] = i;
-        return Arrays.stream(indices);
-    }
 
     public static <T> String[] mapToString(T[] array, Function<T, String> mapper) {
         String[] result = new String[array.length];
@@ -139,27 +69,6 @@ public class GTUtility {
             result[i] = mapper.apply(array[i]);
         }
         return result;
-    }
-
-    //magic is here
-    @SuppressWarnings("unchecked")
-    public static <T, R> Class<T> getActualTypeParameter(Class<? extends R> thisClass, Class<R> declaringClass, int index) {
-        Type type = thisClass.getGenericSuperclass();
-
-        while (!(type instanceof ParameterizedType) || ((ParameterizedType) type).getRawType() != declaringClass) {
-            if (type instanceof ParameterizedType) {
-                type = ((Class<?>) ((ParameterizedType) type).getRawType()).getGenericSuperclass();
-            } else {
-                type = ((Class<?>) type).getGenericSuperclass();
-            }
-        }
-        return (Class<T>) ((ParameterizedType) type).getActualTypeArguments()[index];
-    }
-
-    public static PotionEffect copyPotionEffect(PotionEffect sample) {
-        PotionEffect potionEffect = new PotionEffect(sample.getPotion(), sample.getDuration(), sample.getAmplifier(), sample.getIsAmbient(), sample.doesShowParticles());
-        potionEffect.setCurativeItems(sample.getCurativeItems());
-        return potionEffect;
     }
 
     //just because CCL uses a different color format
@@ -185,20 +94,14 @@ public class GTUtility {
         return opacity << 24 | colorValue;
     }
 
-    public static int convertOpaqueRGBA_MCtoRGB(int alphaColor) {
-        return alphaColor & 0xFFFFFF;
+    public static int convertRGBtoARGB(int colorValue) {
+        return convertRGBtoARGB(colorValue, 0xFF);
     }
 
-    /**
-     * Exists because for stack equality checks actual ItemStack.itemDamage
-     * field is used, and ItemStack.getItemDamage() can be overriden,
-     * giving incorrect results for itemstack equality comparisons,
-     * which still use raw ItemStack.itemDamage field
-     *
-     * @return actual value of ItemStack.itemDamage field
-     */
-    public static int getActualItemDamageFromStack(ItemStack itemStack) {
-        return Items.FEATHER.getDamage(itemStack);
+    public static int convertRGBtoARGB(int colorValue, int opacity) {
+        // preserve existing opacity if present
+        if (((colorValue >> 24) & 0xFF) != 0) return colorValue;
+        return opacity << 24 | colorValue;
     }
 
     /**
@@ -261,94 +164,6 @@ public class GTUtility {
         return merged;
     }
 
-    /**
-     * Attempts to merge given ItemStack with ItemStacks in list supplied
-     * growing up to their max stack size
-     *
-     * @param stackToAdd item stack to merge.
-     * @return a list of stacks, with optimized stack sizes
-     */
-
-    public static List<ItemStack> addStackToItemStackList(ItemStack stackToAdd, List<ItemStack> itemStackList) {
-        if (!itemStackList.isEmpty()) {
-            for (ItemStack stackInList : itemStackList) {
-                if (ItemStackHashStrategy.comparingAllButCount().equals(stackInList, stackToAdd)) {
-                    if (stackInList.getCount() < stackInList.getMaxStackSize()) {
-                        int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
-                        if (insertable >= stackToAdd.getCount()) {
-                            stackInList.grow(stackToAdd.getCount());
-                            stackToAdd = ItemStack.EMPTY;
-                        } else {
-                            stackInList.grow(insertable);
-                            stackToAdd = stackToAdd.copy();
-                            stackToAdd.setCount(stackToAdd.getCount() - insertable);
-                        }
-                        if (stackToAdd.isEmpty()) {
-                            break;
-                        }
-                    }
-                }
-            }
-            if (!stackToAdd.isEmpty()) {
-                itemStackList.add(stackToAdd);
-            }
-        } else {
-            itemStackList.add(stackToAdd.copy());
-        }
-        return itemStackList;
-    }
-
-    public static boolean harvestBlock(World world, BlockPos pos, EntityPlayer player) {
-        IBlockState blockState = world.getBlockState(pos);
-        TileEntity tileEntity = world.getTileEntity(pos);
-
-        if (blockState.getBlock().isAir(blockState, world, pos)) {
-            return false;
-        }
-
-        if (!blockState.getBlock().canHarvestBlock(world, pos, player)) {
-            return false;
-        }
-
-        int expToDrop = 0;
-        if (!world.isRemote) {
-            EntityPlayerMP playerMP = (EntityPlayerMP) player;
-            expToDrop = ForgeHooks.onBlockBreakEvent(world, playerMP.interactionManager.getGameType(), playerMP, pos);
-            if (expToDrop == -1) {
-                //notify client if block can't be removed because of BreakEvent cancelled on server side
-                playerMP.connection.sendPacket(new SPacketBlockChange(world, pos));
-                return false;
-            }
-        }
-
-        world.playEvent(player, 2001, pos, Block.getStateId(blockState));
-
-        boolean wasRemovedByPlayer = blockState.getBlock().removedByPlayer(blockState, world, pos, player, !player.capabilities.isCreativeMode);
-        if (wasRemovedByPlayer) {
-            blockState.getBlock().onPlayerDestroy(world, pos, blockState);
-
-            if (!world.isRemote && !player.capabilities.isCreativeMode) {
-                ItemStack stackInHand = player.getHeldItemMainhand();
-                blockState.getBlock().harvestBlock(world, player, pos, blockState, tileEntity, stackInHand);
-                if (expToDrop > 0) {
-                    blockState.getBlock().dropXpOnBlockBreak(world, pos, expToDrop);
-                }
-            }
-        }
-
-        if (!world.isRemote) {
-            EntityPlayerMP playerMP = (EntityPlayerMP) player;
-            playerMP.connection.sendPacket(new SPacketBlockChange(world, pos));
-        } else {
-            Minecraft mc = Minecraft.getMinecraft();
-            NetHandlerPlayClient connection = mc.getConnection();
-            if (connection != null) {
-                connection.sendPacket(new CPacketPlayerDigging(Action.START_DESTROY_BLOCK, pos, mc.objectMouseOver.sideHit));
-            }
-        }
-        return wasRemovedByPlayer;
-    }
-
     public static void writeItems(IItemHandler handler, String tagName, NBTTagCompound tag) {
         NBTTagList tagList = new NBTTagList();
 
@@ -378,63 +193,69 @@ public class GTUtility {
         }
     }
 
-    public static boolean isBetweenInclusive(long start, long end, long value) {
-        return start <= value && value <= end;
-    }
-
     /**
-     * Capitalizes string, making first letter upper case
-     *
-     * @return capitalized string
+     * @param array Array sorted with natural order
+     * @param value Value to search for
+     * @return Index of the nearest value lesser or equal than {@code value},
+     * or {@code -1} if there's no entry matching the condition
      */
-    public static String capitalizeString(String string) {
-        if (string != null && string.length() > 0)
-            return string.substring(0, 1).toUpperCase() + string.substring(1);
-        return "";
+    public static int nearestLesserOrEqual(@Nonnull long[] array, long value) {
+        int low = 0, high = array.length - 1;
+        while (true) {
+            int median = (low + high) / 2;
+            if (array[median] <= value) {
+                if (low == high) return low;
+                low = median + 1;
+            } else {
+                if (low == high) return low - 1;
+                high = median - 1;
+            }
+        }
     }
 
     /**
-     * @return lowest tier that can handle passed voltage
+     * @param array Array sorted with natural order
+     * @param value Value to search for
+     * @return Index of the nearest value lesser than {@code value},
+     * or {@code -1} if there's no entry matching the condition
+     */
+    public static int nearestLesser(@Nonnull long[] array, long value) {
+        int low = 0, high = array.length - 1;
+        while (true) {
+            int median = (low + high) / 2;
+            if (array[median] < value) {
+                if (low == high) return low;
+                low = median + 1;
+            } else {
+                if (low == high) return low - 1;
+                high = median - 1;
+            }
+        }
+    }
+
+    /**
+     * @return Lowest tier of the voltage that can handle {@code voltage}; that is,
+     * a voltage with value greater than equal than {@code voltage}. If there's no
+     * tier that can handle it, {@code MAX} is returned.
      */
     public static byte getTierByVoltage(long voltage) {
-        if (voltage > V[GTValues.MAX]) return GTValues.MAX;
-        return tierByVoltage.ceilingEntry(voltage).getValue();
+        return (byte) Math.min(GTValues.MAX, nearestLesser(V, voltage) + 1);
     }
 
     /**
      * Ex: This method turns both 1024 and 512 into HV.
      *
-     * @return the highest tier below or equal to the voltage value given
+     * @return the highest voltage tier with value below or equal to {@code voltage}, or
+     * {@code ULV} if there's no tier below
      */
     public static byte getFloorTierByVoltage(long voltage) {
-        if (voltage < V[GTValues.ULV]) return GTValues.ULV;
-        return tierByVoltage.floorEntry(voltage).getValue();
+        return (byte) Math.max(GTValues.ULV, nearestLesserOrEqual(V, voltage));
     }
 
+    @SuppressWarnings("deprecation")
     public static BiomeDictionary.Type getBiomeTypeTagByName(String name) {
         Map<String, BiomeDictionary.Type> byName = ReflectionHelper.getPrivateValue(BiomeDictionary.Type.class, null, "byName");
         return byName.get(name);
-    }
-
-    public static List<Tuple<ItemStack, Integer>> getGrassSeedEntries() {
-        ArrayList<Tuple<ItemStack, Integer>> result = new ArrayList<>();
-        try {
-            Field seedListField = ForgeHooks.class.getDeclaredField("seedList");
-            seedListField.setAccessible(true);
-            Class<?> seedEntryClass = Class.forName("net.minecraftforge.common.ForgeHooks$SeedEntry");
-            Field seedField = seedEntryClass.getDeclaredField("seed");
-            seedField.setAccessible(true);
-            List<WeightedRandom.Item> seedList = (List<WeightedRandom.Item>) seedListField.get(null);
-            for (WeightedRandom.Item seedEntryObject : seedList) {
-                ItemStack seedStack = (ItemStack) seedField.get(seedEntryObject);
-                int chanceValue = seedEntryObject.itemWeight;
-                if (!seedStack.isEmpty())
-                    result.add(new Tuple<>(seedStack, chanceValue));
-            }
-        } catch (ReflectiveOperationException exception) {
-            GTLog.logger.error("Failed to get forge grass seed list", exception);
-        }
-        return result;
     }
 
     public static <T> int getRandomItem(Random random, List<? extends Entry<Integer, T>> randomList, int size) {
@@ -545,15 +366,15 @@ public class GTUtility {
      * modifications in list will reflect on fluid handler and wise-versa
      */
     public static List<FluidStack> fluidHandlerToList(IMultipleTankHandler fluidInputs) {
-        List<IFluidTank> backedList = fluidInputs.getFluidTanks();
+        List<IMultipleTankHandler.MultiFluidTankEntry> backedList = fluidInputs.getFluidTanks();
         return new AbstractList<FluidStack>() {
             @Override
             public FluidStack set(int index, FluidStack element) {
-                IFluidTank fluidTank = backedList.get(index);
+                IFluidTank fluidTank = backedList.get(index).getDelegate();
                 FluidStack oldStack = fluidTank.getFluid();
-                if (!(fluidTank instanceof FluidTank))
-                    return oldStack;
-                ((FluidTank) backedList.get(index)).setFluid(element);
+                if (fluidTank instanceof FluidTank) {
+                    ((FluidTank) fluidTank).setFluid(element);
+                }
                 return oldStack;
             }
 
@@ -567,49 +388,6 @@ public class GTUtility {
                 return backedList.size();
             }
         };
-    }
-
-    public static List<EntityPlayerMP> findPlayersUsing(MetaTileEntity metaTileEntity, double radius) {
-        ArrayList<EntityPlayerMP> result = new ArrayList<>();
-        AxisAlignedBB box = new AxisAlignedBB(metaTileEntity.getPos())
-                .expand(radius, radius, radius)
-                .expand(-radius, -radius, -radius);
-        List<EntityPlayerMP> entities = metaTileEntity.getWorld().getEntitiesWithinAABB(EntityPlayerMP.class, box);
-        for (EntityPlayerMP player : entities) {
-            if (player.openContainer instanceof ModularUIContainer) {
-                ModularUI modularUI = ((ModularUIContainer) player.openContainer).getModularUI();
-                if (modularUI.holder instanceof IGregTechTileEntity &&
-                        ((IGregTechTileEntity) modularUI.holder).getMetaTileEntity() == metaTileEntity) {
-                    result.add(player);
-                }
-            }
-        }
-        return result;
-    }
-
-    public static <T> boolean iterableContains(Iterable<T> list, Predicate<T> predicate) {
-        for (T t : list) {
-            if (predicate.test(t)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static int amountOfNonNullElements(List<?> collection) {
-        int amount = 0;
-        for (Object object : collection) {
-            if (object != null) amount++;
-        }
-        return amount;
-    }
-
-    public static int amountOfNonEmptyStacks(List<ItemStack> collection) {
-        int amount = 0;
-        for (ItemStack object : collection) {
-            if (object != null && !object.isEmpty()) amount++;
-        }
-        return amount;
     }
 
     public static NBTTagCompound getOrCreateNbtCompound(ItemStack stack) {
@@ -635,72 +413,95 @@ public class GTUtility {
         return Lists.newArrayList(stacks);
     }
 
-    public static ItemStack copy(ItemStack... stacks) {
+    /**
+     * @deprecated Ambiguous naming; use either {@link #copy(ItemStack)} or {@link #copyFirst(ItemStack...)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
+     */
+    @Deprecated
+    @Nonnull
+    public static ItemStack copy(@Nonnull ItemStack... stacks) {
         for (ItemStack stack : stacks)
             if (!stack.isEmpty()) return stack.copy();
         return ItemStack.EMPTY;
     }
 
-    public static ItemStack copyAmount(int amount, @Nonnull ItemStack stack) {
+    /**
+     * Copies the ItemStack.
+     *
+     * @param stack item stack for copying
+     * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if the stack is empty
+     */
+    @Nonnull
+    public static ItemStack copy(@Nonnull ItemStack stack) {
+        return stack.isEmpty() ? ItemStack.EMPTY : stack.copy();
+    }
+
+    /**
+     * Copies the ItemStack with new stack size.
+     *
+     * @param stack item stack for copying
+     * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if the stack is empty
+     */
+    @Nonnull
+    public static ItemStack copy(int newCount, @Nonnull ItemStack stack) {
         if (stack.isEmpty()) return ItemStack.EMPTY;
         ItemStack copy = stack.copy();
-        if (amount > 64) amount = 64;
-        else if (amount == -1) amount = 111;
-        else if (amount < 0) amount = 0;
-        copy.setCount(amount);
+        copy.setCount(newCount);
         return copy;
     }
 
-    public static ItemStack copyAmount(int amount, ItemStack... stacks) {
-        ItemStack stack = copy(stacks);
-        return copyAmount(amount, stack);
-    }
-
-    public static FluidStack copyAmount(int amount, FluidStack fluidStack) {
-        if (fluidStack == null) return null;
-        FluidStack stack = fluidStack.copy();
-        stack.amount = amount;
-        return stack;
-    }
-
-    public static <T extends Comparable<T>> IBlockState[] getAllPropertyValues(IBlockState blockState, IProperty<T> property) {
-        Collection<T> allowedValues = property.getAllowedValues();
-        IBlockState[] resultArray = new IBlockState[allowedValues.size()];
-        int index = 0;
-        for (T propertyValue : allowedValues) {
-            resultArray[index++] = blockState.withProperty(property, propertyValue);
+    /**
+     * Copies first non-empty ItemStack from stacks.
+     *
+     * @param stacks list of candidates for copying
+     * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if all the candidates are empty
+     * @throws IllegalArgumentException if {@code stacks} is empty
+     */
+    @Nonnull
+    public static ItemStack copyFirst(@Nonnull ItemStack... stacks) {
+        if (stacks.length == 0) {
+            throw new IllegalArgumentException("Empty ItemStack candidates");
         }
-        return resultArray;
+        for (ItemStack stack : stacks) {
+            if (!stack.isEmpty()) {
+                return stack.copy();
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
-    public static <T> Collector<T, ?, ImmutableList<T>> toImmutableList() {
-        return Collector.of(ImmutableList::builder, Builder::add,
-                (b1, b2) -> {
-                    b1.addAll(b2.build());
-                    return b2;
-                },
-                ImmutableList.Builder<T>::build);
+    /**
+     * Copies first non-empty ItemStack from stacks, with new stack size.
+     *
+     * @param stacks list of candidates for copying
+     * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if all the candidates are empty
+     * @throws IllegalArgumentException if {@code stacks} is empty
+     */
+    @Nonnull
+    public static ItemStack copyFirst(int newCount, @Nonnull ItemStack... stacks) {
+        if (stacks.length == 0) {
+            throw new IllegalArgumentException("Empty ItemStack candidates");
+        }
+        for (ItemStack stack : stacks) {
+            if (!stack.isEmpty()) {
+                ItemStack copy = stack.copy();
+                copy.setCount(newCount);
+                return copy;
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
-    public static <M> M selectItemInList(int index, M replacement, List<M> list, Class<M> minClass) {
-        if (list.isEmpty())
-            return replacement;
-
-        M maybeResult;
-        if (list.size() <= index) {
-            maybeResult = list.get(list.size() - 1);
-        } else if (index < 0) {
-            maybeResult = list.get(0);
-        } else maybeResult = list.get(index);
-
-        if (maybeResult != null) return maybeResult;
-        return replacement;
-    }
-
-    public static <M> M getItem(List<? extends M> list, int index, M replacement) {
-        if (index >= 0 && index < list.size())
-            return list.get(index);
-        return replacement;
+    /**
+     * @deprecated Use {@link #copy(int, ItemStack)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
+     */
+    @Deprecated
+    @Nonnull
+    public static ItemStack copyAmount(int amount, @Nonnull ItemStack stack) {
+        return copy(amount, stack);
     }
 
     public static int getExplosionPower(long voltage) {
@@ -720,20 +521,8 @@ public class GTUtility {
         return worldPower;
     }
 
-    public static Comparator<ItemStack> createItemStackComparator() {
-        return Comparator.<ItemStack, Integer>comparing(it -> Item.REGISTRY.getIDForObject(it.getItem()))
-                .thenComparing(ItemStack::getItemDamage)
-                .thenComparing(ItemStack::hasTagCompound)
-                .thenComparing(it -> -Objects.hashCode(it.getTagCompound()))
-                .thenComparing(it -> -it.getCount());
-    }
-
     public static boolean arePosEqual(BlockPos pos1, BlockPos pos2) {
         return pos1.getX() == pos2.getX() & pos1.getY() == pos2.getY() & pos1.getZ() == pos2.getZ();
-    }
-
-    public static boolean isCoverBehaviorItem(ItemStack itemStack) {
-        return isCoverBehaviorItem(itemStack, null, null);
     }
 
     public static boolean isCoverBehaviorItem(ItemStack itemStack, @Nullable BooleanSupplier hasCoverSupplier, @Nullable Predicate<CoverDefinition> canPlaceCover) {
@@ -754,49 +543,6 @@ public class GTUtility {
             return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
         }
         return false;
-    }
-
-    public static int getDecompositionReductionRatio(FluidStack fluidInput, FluidStack fluidOutput, ItemStack input, ItemStack output) {
-        int[] divisors = new int[]{2, 5, 10, 25, 50};
-        int ratio = -1;
-
-        for (int divisor : divisors) {
-
-            if (!(isFluidStackAmountDivisible(fluidInput, divisor)))
-                continue;
-
-            if (!(isFluidStackAmountDivisible(fluidOutput, divisor)))
-                continue;
-
-            if (input != null && !(GTUtility.isItemStackCountDivisible(input, divisor)))
-                continue;
-
-            if (output != null && !(GTUtility.isItemStackCountDivisible(output, divisor)))
-                continue;
-
-            ratio = divisor;
-        }
-
-        return Math.max(1, ratio);
-    }
-
-    public static boolean isFluidStackAmountDivisible(FluidStack fluidStack, int divisor) {
-        return fluidStack.amount % divisor == 0 && fluidStack.amount % divisor != fluidStack.amount && fluidStack.amount / divisor != 0;
-    }
-
-    public static boolean isItemStackCountDivisible(ItemStack itemStack, int divisor) {
-        return itemStack.getCount() % divisor == 0 && itemStack.getCount() % divisor != itemStack.getCount() && itemStack.getCount() / divisor != 0;
-    }
-
-    public static AxisAlignedBB rotateAroundYAxis(AxisAlignedBB aabb, EnumFacing from, EnumFacing to) {
-        if (from == EnumFacing.UP || from == EnumFacing.DOWN || to == EnumFacing.UP || to == EnumFacing.DOWN)
-            throw new IllegalArgumentException("Either the second or third parameters were EnumFacing.DOWN or EnumFacing.UP.");
-        AxisAlignedBB rotatedAABB = new AxisAlignedBB(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ);
-        while (from != to) {
-            from = from.rotateY();
-            rotatedAABB = new AxisAlignedBB(1 - rotatedAABB.maxZ, rotatedAABB.minY, rotatedAABB.minX, 1 - rotatedAABB.minZ, rotatedAABB.maxY, rotatedAABB.maxX);
-        }
-        return rotatedAABB;
     }
 
     /**
@@ -852,31 +598,6 @@ public class GTUtility {
 
     public static final Function<Integer, Integer> genericGeneratorTankSizeFunction = tier -> Math.min(4000 * (1 << (tier - 1)), 16000);
 
-    public static String romanNumeralString(int num) {
-
-        if (romanNumeralConversions.isEmpty()) { // Initialize on first run-through.
-            romanNumeralConversions.put(1000, "M");
-            romanNumeralConversions.put(900, "CM");
-            romanNumeralConversions.put(500, "D");
-            romanNumeralConversions.put(400, "CD");
-            romanNumeralConversions.put(100, "C");
-            romanNumeralConversions.put(90, "XC");
-            romanNumeralConversions.put(50, "L");
-            romanNumeralConversions.put(40, "XL");
-            romanNumeralConversions.put(10, "X");
-            romanNumeralConversions.put(9, "IX");
-            romanNumeralConversions.put(5, "V");
-            romanNumeralConversions.put(4, "IV");
-            romanNumeralConversions.put(1, "I");
-        }
-
-        int conversion = romanNumeralConversions.floorKey(num);
-        if (num == conversion) {
-            return romanNumeralConversions.get(num);
-        }
-        return romanNumeralConversions.get(conversion) + romanNumeralString(num - conversion);
-    }
-
     public static ItemStack toItem(IBlockState state) {
         return toItem(state, 1);
     }
@@ -891,35 +612,12 @@ public class GTUtility {
     }
 
     /**
-     * @param values to find the mean of
-     * @return the mean value
-     */
-    public static long mean(@Nonnull long[] values) {
-        if (values.length == 0L)
-            return 0L;
-
-        long sum = 0L;
-        for (long v : values)
-            sum += v;
-        return sum / values.length;
-    }
-
-    /**
-     * @param world the {@link World} to get the average tick time of
-     * @return the mean tick time
-     */
-    public static double getMeanTickTime(@Nonnull World world) {
-        return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
-    }
-
-    /**
      * Checks whether a machine is not a multiblock and has a recipemap not present in a blacklist
      *
      * @param machineStack the ItemStack containing the machine to check the validity of
      * @return whether the machine is valid or not
      */
     public static boolean isMachineValidForMachineHatch(ItemStack machineStack, String[] recipeMapBlacklist) {
-
         if (machineStack == null || machineStack.isEmpty()) {
             return false;
         }
@@ -927,20 +625,10 @@ public class GTUtility {
         MetaTileEntity machine = getMetaTileEntity(machineStack);
         if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity)) {
             RecipeMap<?> recipeMap = machine.getRecipeMap();
-            return recipeMap != null && !findMachineInBlacklist(recipeMap.getUnlocalizedName(), recipeMapBlacklist);
+            return recipeMap != null && !ArrayUtils.contains(recipeMapBlacklist, recipeMap.getUnlocalizedName());
         }
 
         return false;
-    }
-
-    /**
-     * Attempts to find a passed in RecipeMap unlocalized name in a list of names
-     *
-     * @param unlocalizedName The unlocalized name of a RecipeMap
-     * @return {@code true} If the RecipeMap is in the config blacklist
-     */
-    public static boolean findMachineInBlacklist(String unlocalizedName, String[] recipeMapBlacklist) {
-        return Arrays.asList(recipeMapBlacklist).contains(unlocalizedName);
     }
 
     /**
@@ -980,24 +668,24 @@ public class GTUtility {
         return result.toString();
     }
 
+    /**
+     * @deprecated Use {@link TextFormattingUtil#formatNumbers(long)} instead.
+     *
+     * </p> This class was deprecated in 2.7 and will be removed in 2.8
+     */
+    @Deprecated
     public static String formatNumbers(long number) {
-        return NUMBER_FORMAT.format(number);
-    }
-
-    public static String formatNumbers(double number) {
-        return NUMBER_FORMAT.format(number);
-    }
-
-    @Nonnull
-    public static String formatNumber2Places(float number) {
-        return TWO_PLACES_FORMAT.format(number);
+        return TextFormattingUtil.formatNumbers(number);
     }
 
     /**
-     * If pos of this world loaded
+     * @deprecated Use {@link TextFormattingUtil#formatNumbers(double)} instead.
+     *
+     * </p> This class was deprecated in 2.7 and will be removed in 2.8
      */
-    public static boolean isPosChunkLoaded(World world, BlockPos pos) {
-        return !world.getChunkProvider().provideChunk(pos.getX() >> 4, pos.getZ() >> 4).isEmpty();
+    @Deprecated
+    public static String formatNumbers(double number) {
+        return TextFormattingUtil.formatNumbers(number);
     }
 
     public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
@@ -1046,9 +734,9 @@ public class GTUtility {
             int colorG = (colorValue >> 8) & 0xFF;
             int colorB = colorValue & 0xFF;
 
-            int distR = Math.abs(originalR - colorR);
-            int distG = Math.abs(originalG - colorG);
-            int distB = Math.abs(originalB - colorB);
+            int distR = originalR - colorR;
+            int distG = originalG - colorG;
+            int distB = originalB - colorB;
             int dist = distR * distR + distG * distG + distB * distB;
 
             if (dist < distance) {
@@ -1057,25 +745,6 @@ public class GTUtility {
             }
         }
         return color;
-    }
-
-    /**
-     * Gather a list of all registered dimensions. Done as a Supplier so that it can be called at any time and catch
-     * dimensions that are registered late
-     *
-     * @param filter An Optional filter to restrict the returned dimensions
-     * @return A Supplier containing a list of all registered dimensions
-     */
-    public static Supplier<List<Integer>> getAllRegisteredDimensions(@Nullable Predicate<WorldProvider> filter) {
-        List<Integer> dims = new ArrayList<>();
-
-        Map<DimensionType, IntSortedSet> dimMap = DimensionManager.getRegisteredDimensions();
-        dimMap.values().stream()
-                .flatMapToInt(s -> Arrays.stream(s.toIntArray()))
-                .filter(num -> filter == null || filter.test(DimensionManager.createProviderFor(num)))
-                .forEach(dims::add);
-
-        return () -> dims;
     }
 
     public static boolean isBlockSnowLayer(@Nonnull IBlockState blockState) {
@@ -1098,115 +767,71 @@ public class GTUtility {
         return false;
     }
 
-    @Nonnull
-    public static String convertUnderscoreToSpace(@Nonnull CharSequence sequence) {
-        return UNDERSCORE_TO_SPACE.matcher(sequence).replaceAll(" ");
-    }
-
-    @Nonnull
-    public static Pattern getForwardNewLineRegex() {
-        return NEW_LINE_PATTERN;
-    }
-
-    /**
-     * Tries to parse a string into an int, returning a default value if it fails.
-     *
-     * @param val          string to parse
-     * @param defaultValue default value to return
-     * @return returns an int from the parsed string, otherwise the default value
-     */
-    public static int tryParseInt(String val, int defaultValue) {
-        try {
-            return Integer.parseInt(val);
-        } catch (NumberFormatException e) {
-            GTLog.logger.warn(e);
-        }
-        return defaultValue;
-    }
-
-    /**
-     * Tries to parse a string into a long, returning a default value if it fails.
-     *
-     * @param val          string to parse
-     * @param defaultValue default value to return
-     * @return returns a long from the parsed string, otherwise the default value
-     */
-    public static long tryParseLong(String val, long defaultValue) {
-        try {
-            return Long.parseLong(val);
-        } catch (NumberFormatException e) {
-            GTLog.logger.warn(e);
-        }
-        return defaultValue;
-    }
-
-    /**
-     * @param fluidHandler the handler to drain from
-     * @param doDrain      if the handler should be actually drained
-     * @return a valid boiler fluid from a container, with amount=1
-     */
-    @Nullable
-    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, boolean doDrain) {
-        return getBoilerFluidFromContainer(fluidHandler, 1, doDrain);
-    }
-
-    /**
-     * @param fluidHandler the handler to drain from
-     * @param amount       the amount to drain
-     * @param doDrain      if the handler should be actually drained
-     * @return a valid boiler fluid from a container
-     */
-    @Nullable
-    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, int amount, boolean doDrain) {
-        if (amount == 0) return null;
-        FluidStack drainedWater = fluidHandler.drain(Materials.Water.getFluid(amount), doDrain);
-        if (drainedWater == null || drainedWater.amount == 0) {
-            drainedWater = fluidHandler.drain(Materials.DistilledWater.getFluid(amount), doDrain);
-        }
-        if (drainedWater == null || drainedWater.amount == 0) {
-            for (String fluidName : ConfigHolder.machines.boilerFluids) {
-                Fluid fluid = FluidRegistry.getFluid(fluidName);
-                if (fluid != null) {
-                    drainedWater = fluidHandler.drain(new FluidStack(fluid, amount), doDrain);
-                    if (drainedWater != null && drainedWater.amount > 0) {
-                        break;
-                    }
-                }
-            }
-        }
-        return drainedWater;
-    }
-
     /**
      * @param stack the stack to retrieve from
      * @return all the sub-items of an ItemStack
+     * @deprecated Use {@link #getAllSubItems(Item)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Nonnull
+    @Deprecated
     public static Set<ItemStack> getAllSubItems(@Nonnull ItemStack stack) {
         //match subtypes only on wildcard damage value items
         if (stack.getItemDamage() != GTValues.W) return Collections.singleton(stack);
+        return getAllSubItems(stack.getItem());
+    }
 
-        Set<ItemStack> set = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingItemDamageCount());
-        for (CreativeTabs tab : stack.getItem().getCreativeTabs()) {
-            NonNullList<ItemStack> subItems = NonNullList.create();
-            stack.getItem().getSubItems(tab, subItems);
-            set.addAll(subItems);
+    /**
+     * Returns all known sub-variant of an {@code item}. The sub-variants
+     * are set of ItemStacks returned from
+     * {@link Item#getSubItems(CreativeTabs, NonNullList)}.
+     * <p>
+     * Due to how the aforementioned method works, it may not generate all
+     * existing variants, especially item variants hidden from creative tab.
+     *
+     * @param item item
+     * @return all the sub-items of an item
+     */
+    @Nonnull
+    public static Set<ItemStack> getAllSubItems(@Nonnull Item item) {
+        NonNullList<ItemStack> subItems = NonNullList.create();
+        for (CreativeTabs tab : item.getCreativeTabs()) {
+            if (tab == null || tab == CreativeTabs.SEARCH) continue;
+            item.getSubItems(tab, subItems);
         }
+        Set<ItemStack> set = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingItemDamageCount());
+        set.addAll(subItems);
         return set;
     }
 
     /**
-     * Checks if an (X,Y) point is within a defined box range
+     * Get fluidstack from a container.
      *
-     * @param initialX The initial X point of the box
-     * @param initialY The initial Y point of the box
-     * @param width    The width of the box
-     * @param height   The height of the box
-     * @param pointX   The X value of the point to check
-     * @param pointY   The Y value of the point to check
-     * @return True if the provided (X,Y) point is within the described box, else false
+     * @param ingredient the fluidstack or fluid container item
+     * @return the fluidstack in container
      */
-    public static boolean isPointWithinRange(int initialX, int initialY, int width, int height, int pointX, int pointY) {
-        return initialX <= pointX && pointX <= initialX + width && initialY <= pointY && pointY <= initialY + height;
+    @Nullable
+    public static FluidStack getFluidFromContainer(Object ingredient) {
+        if (ingredient instanceof FluidStack) {
+            return (FluidStack) ingredient;
+        } else if (ingredient instanceof ItemStack) {
+            ItemStack itemStack = (ItemStack) ingredient;
+            IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            if (fluidHandler != null)
+                return fluidHandler.drain(Integer.MAX_VALUE, false);
+        }
+        return null;
+    }
+
+    /**
+     * Create a new {@link ResourceLocation} with {@link GTValues#MODID} as the namespace and a specified path
+     *
+     * @param path the path in the location
+     * @return the new location
+     */
+    @Nonnull
+    public static ResourceLocation gregtechId(@Nonnull String path) {
+        return new ResourceLocation(GTValues.MODID, path);
     }
 }

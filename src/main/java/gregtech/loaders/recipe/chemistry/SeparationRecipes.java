@@ -2,6 +2,7 @@ package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
@@ -10,11 +11,13 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Tuple;
+import net.minecraft.util.WeightedRandom;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import java.util.Collection;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import static gregtech.api.GTValues.*;
@@ -57,10 +60,15 @@ public class SeparationRecipes {
                 .duration(24).EUt(5).buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder()
-                .input(OrePrefix.ore, Oilsands)
+                .input(ore, Oilsands)
                 .chancedOutput(new ItemStack(Blocks.SAND), 5000, 5000)
-                .fluidOutputs(Oil.getFluid(500))
-                .duration(200).EUt(5).buildAndRegister();
+                .fluidOutputs(OilHeavy.getFluid(2000))
+                .duration(200).EUt(30).buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(7)
+                .input(dust, Oilsands)
+                .fluidOutputs(OilHeavy.getFluid(1000))
+                .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(144).EUt(5)
                 .inputs(new ItemStack(Items.NETHER_WART))
@@ -86,8 +94,7 @@ public class SeparationRecipes {
         for (Item item : ForgeRegistries.ITEMS.getValuesCollection()) {
             if (item instanceof ItemFood) {
                 ItemFood itemFood = (ItemFood) item;
-                Collection<ItemStack> subItems = GTUtility.getAllSubItems(new ItemStack(item, 1, GTValues.W));
-                for (ItemStack itemStack : subItems) {
+                for (ItemStack itemStack : GTUtility.getAllSubItems(item)) {
                     int healAmount = itemFood.getHealAmount(itemStack);
                     float saturationModifier = itemFood.getSaturationModifier(itemStack);
                     if (healAmount > 0) {
@@ -285,11 +292,6 @@ public class SeparationRecipes {
                 .chancedOutput(dustTiny, Ilmenite, 5000, 500)
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(5)
-                .input(dust, Oilsands)
-                .fluidOutputs(Oil.getFluid(1000))
-                .buildAndRegister();
-
         CENTRIFUGE_RECIPES.recipeBuilder().duration(60).EUt(VA[LV])
                 .input(dust, QuartzSand, 2)
                 .output(dust, Quartzite)
@@ -462,6 +464,13 @@ public class SeparationRecipes {
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(64).EUt(VA[LV]).buildAndRegister();
 
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(dust, Apatite, 9)
+                .output(dust, Calcium, 5)
+                .output(dust, Phosphorus, 3)
+                .fluidOutputs(Chlorine.getFluid(1000))
+                .duration(288).EUt(60).buildAndRegister();
+
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
@@ -475,11 +484,10 @@ public class SeparationRecipes {
                 .fluidOutputs(Helium.getFluid(200))
                 .duration(64).EUt(64).buildAndRegister();
 
-        List<Tuple<ItemStack, Integer>> seedEntries = GTUtility.getGrassSeedEntries();
-        for (Tuple<ItemStack, Integer> seedEntry : seedEntries) {
+        for (ItemStack seed : getGrassSeedItems()) {
             EXTRACTOR_RECIPES.recipeBuilder()
                     .duration(32).EUt(2)
-                    .inputs(seedEntry.getFirst())
+                    .inputs(GTUtility.copy(1, seed))
                     .fluidOutputs(SeedOil.getFluid(10))
                     .buildAndRegister();
         }
@@ -565,5 +573,28 @@ public class SeparationRecipes {
                 .outputs(new ItemStack(Items.BOOK, 3))
                 .duration(300).EUt(2).buildAndRegister();
 
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<ItemStack> getGrassSeedItems() {
+        List<ItemStack> result = new ArrayList<>();
+        try {
+            Field seedListField = ForgeHooks.class.getDeclaredField("seedList");
+            seedListField.setAccessible(true);
+            Class<?> seedEntryClass = Class.forName("net.minecraftforge.common.ForgeHooks$SeedEntry");
+            Field seedField = seedEntryClass.getDeclaredField("seed");
+            seedField.setAccessible(true);
+
+            List<WeightedRandom.Item> seedList = (List<WeightedRandom.Item>) seedListField.get(null);
+            for (WeightedRandom.Item seedEntryObject : seedList) {
+                ItemStack seedStack = (ItemStack) seedField.get(seedEntryObject);
+                if (!seedStack.isEmpty()) {
+                    result.add(seedStack);
+                }
+            }
+        } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException ex) {
+            GTLog.logger.error("Failed to get forge grass seed list", ex);
+        }
+        return result;
     }
 }

@@ -17,7 +17,7 @@ import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import gregtech.common.items.behaviors.TurbineRotorBehavior;
+import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
@@ -71,7 +71,7 @@ public class PartsRecipeHandler {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(OrePrefix.ingot, material)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_BOLT)
-                    .outputs(GTUtility.copyAmount(8, boltStack))
+                    .outputs(GTUtility.copy(8, boltStack))
                     .duration(15)
                     .EUt(VA[MV])
                     .buildAndRegister();
@@ -80,7 +80,7 @@ public class PartsRecipeHandler {
                 RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                         .input(OrePrefix.dust, material)
                         .notConsumable(MetaItems.SHAPE_EXTRUDER_BOLT)
-                        .outputs(GTUtility.copyAmount(8, boltStack))
+                        .outputs(GTUtility.copy(8, boltStack))
                         .duration(15)
                         .EUt(VA[MV])
                         .buildAndRegister();
@@ -115,6 +115,14 @@ public class PartsRecipeHandler {
                 .duration((int) material.getMass())
                 .EUt(24)
                 .circuitMeta(1)
+                .buildAndRegister();
+
+        RecipeMaps.BENDER_RECIPES.recipeBuilder()
+                .input(ingot, material)
+                .output(foilPrefix, material, 4)
+                .duration((int) material.getMass())
+                .EUt(24)
+                .circuitMeta(10)
                 .buildAndRegister();
 
         if (material.hasFlag(NO_SMASHING)) {
@@ -436,13 +444,13 @@ public class PartsRecipeHandler {
             ItemStack boltStack = OreDictUnifier.get(OrePrefix.bolt, material);
             RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                     .input(stickPrefix, material)
-                    .outputs(GTUtility.copyAmount(4, boltStack))
+                    .outputs(GTUtility.copy(4, boltStack))
                     .duration((int) Math.max(material.getMass() * 2L, 1L))
                     .EUt(4)
                     .buildAndRegister();
 
             ModHandler.addShapedRecipe(String.format("bolt_saw_%s", material),
-                    GTUtility.copyAmount(2, boltStack),
+                    GTUtility.copy(2, boltStack),
                     "s ", " X",
                     'X', new UnificationEntry(OrePrefix.stick, material));
         }
@@ -454,15 +462,15 @@ public class PartsRecipeHandler {
 
         RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                 .input(longStickPrefix, material)
-                .outputs(GTUtility.copyAmount(2, stickStack))
+                .outputs(GTUtility.copy(2, stickStack))
                 .duration((int) Math.max(material.getMass(), 1L)).EUt(4)
                 .buildAndRegister();
 
         ModHandler.addShapedRecipe(String.format("stick_long_%s", material),
-                GTUtility.copyAmount(2, stickStack),
+                GTUtility.copy(2, stickStack),
                 "s", "X", 'X', new UnificationEntry(OrePrefix.stickLong, material));
 
-        if(material.hasProperty(PropertyKey.GEM)) {
+        if (material.hasProperty(PropertyKey.GEM)) {
             ModHandler.addShapedRecipe(String.format("stick_long_gem_flawless_%s", material),
                     stickStack,
                     "sf",
@@ -470,7 +478,7 @@ public class PartsRecipeHandler {
                     'G', new UnificationEntry(OrePrefix.gemFlawless, material));
 
             ModHandler.addShapedRecipe(String.format("stick_long_gem_exquisite_%s", material),
-                    GTUtility.copyAmount(2, stickStack),
+                    GTUtility.copy(2, stickStack),
                     "sf", "G ",
                     'G', new UnificationEntry(OrePrefix.gemExquisite, material));
 
@@ -510,8 +518,7 @@ public class PartsRecipeHandler {
 
     public static void processTurbine(OrePrefix toolPrefix, Material material, IngotProperty property) {
         ItemStack rotorStack = MetaItems.TURBINE_ROTOR.getStackForm();
-        //noinspection ConstantConditions
-        TurbineRotorBehavior.getInstanceFor(rotorStack).setPartMaterial(rotorStack, material);
+        AbstractMaterialPartBehavior.setPartMaterial(rotorStack, material);
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.turbineBlade, material, 8)
@@ -521,19 +528,22 @@ public class PartsRecipeHandler {
                 .EUt(400)
                 .buildAndRegister();
 
+        boolean hasDoublePlate = OrePrefix.plateDouble.doGenerateItem(material);
         RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder()
-                .input(OrePrefix.plateDouble, material, 5)
+                .input(hasDoublePlate ? OrePrefix.plateDouble : OrePrefix.plate, material, hasDoublePlate ? 5 : 10)
                 .input(OrePrefix.screw, material, 2)
                 .outputs(OreDictUnifier.get(toolPrefix, material))
                 .duration(20)
                 .EUt(256)
                 .buildAndRegister();
 
-        ModHandler.addShapedRecipe(String.format("turbine_blade_%s", material),
-                OreDictUnifier.get(toolPrefix, material),
-                "PPP", "SPS", "fPd",
-                'P', new UnificationEntry(OrePrefix.plateDouble, material),
-                'S', new UnificationEntry(OrePrefix.screw, material));
+        if (hasDoublePlate) {
+            ModHandler.addShapedRecipe(String.format("turbine_blade_%s", material),
+                    OreDictUnifier.get(toolPrefix, material),
+                    "PPP", "SPS", "fPd",
+                    'P', new UnificationEntry(OrePrefix.plateDouble, material),
+                    'S', new UnificationEntry(OrePrefix.screw, material));
+        }
     }
 
     public static void processRound(OrePrefix roundPrefix, Material material, IngotProperty property) {

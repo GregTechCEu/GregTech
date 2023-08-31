@@ -5,14 +5,14 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.IngotProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraft.item.ItemStack;
 
-import static gregtech.api.GTValues.LV;
-import static gregtech.api.GTValues.VA;
+import static gregtech.api.GTValues.*;
 
 public class PolarizingRecipeHandler {
 
@@ -35,7 +35,7 @@ public class PolarizingRecipeHandler {
                     .input(polarizingPrefix, material)
                     .outputs(magneticStack)
                     .duration((int) ((int) material.getMass() * polarizingPrefix.getMaterialAmount(material) / GTValues.M))
-                    .EUt(8 * getVoltageMultiplier(material))
+                    .EUt(getVoltageMultiplier(material))
                     .buildAndRegister();
 
             ModHandler.addSmeltingRecipe(new UnificationEntry(polarizingPrefix, magneticMaterial),
@@ -44,7 +44,9 @@ public class PolarizingRecipeHandler {
     }
 
     private static int getVoltageMultiplier(Material material) {
+        if (material == Materials.Iron || material == Materials.Steel) return VH[LV];
+        if (material == Materials.Neodymium) return VH[HV];
+        if (material == Materials.Samarium) return VH[IV];
         return material.getBlastTemperature() >= 1200 ? VA[LV] : 2;
     }
-
 }

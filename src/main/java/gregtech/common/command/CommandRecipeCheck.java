@@ -17,7 +17,10 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.items.MetaItems;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -55,12 +58,25 @@ public class CommandRecipeCheck extends CommandBase {
         sender.sendMessage(new TextComponentTranslation("gregtech.command.recipecheck.begin"));
 
         Object2ObjectOpenHashMap<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, Set<Recipe>>> mismatchedRecipes = new Object2ObjectOpenHashMap<>();
+        Object2ObjectOpenHashMap<RecipeMap<?>, Set<Recipe>> emptyInputRecipes = new Object2ObjectOpenHashMap<>();
+        IntSet emptyOreDicts = new IntOpenHashSet();
 
-        GTLog.logger.info("[Recipe Checker] Starting recipe conflict check...");
+        GTLog.logger.info("[Recipe Checker] Starting recipe issue check...");
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
             mismatchedRecipes.put(recipeMap, new Object2ObjectOpenHashMap<>());
+            emptyInputRecipes.put(recipeMap, new ObjectOpenHashSet<>());
             GTLog.logger.info("Checking Recipe Map: {}", recipeMap.unlocalizedName);
             for (Recipe currentRecipe : recipeMap.getRecipeList()) {
+                // check for any empty or null inputs
+                for (GTRecipeInput input : currentRecipe.getInputs()) {
+                    if (input == null || input.getInputStacks().length == 0) {
+                        emptyInputRecipes.get(recipeMap).add(currentRecipe);
+                        if (input != null && input.isOreDict()) {
+                            emptyOreDicts.add(input.getOreDict());
+                        }
+                    }
+                }
+
                 // set amount of itemstacks to Integer.MAX_VALUE to detect conflicts only occurring if batching the recipe
                 List<ItemStack> inputs = new ArrayList<>();
                 for (GTRecipeInput input : currentRecipe.getInputs()) {
@@ -100,6 +116,11 @@ public class CommandRecipeCheck extends CommandBase {
             } else {
                 GTLog.logger.error("Mismatched recipes found for recipe map: {}", recipeMap.unlocalizedName);
             }
+            if (emptyInputRecipes.get(recipeMap).isEmpty()) {
+                emptyInputRecipes.remove(recipeMap);
+            } else {
+                GTLog.logger.error("Recipes with empty inputs found in recipe map: {}", recipeMap.unlocalizedName);
+            }
         }
 
         GTLog.logger.info("[Recipe Checker] Completed recipe check!");
@@ -111,7 +132,7 @@ public class CommandRecipeCheck extends CommandBase {
             GTLog.logger.info("[Recipe Checker] Found {} potential conflicts", count);
             for (Map.Entry<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, Set<Recipe>>> recipeMap : mismatchedRecipes.entrySet()) {
                 GTLog.logger.error(
-                        "\n[In Recipe map] :\"{}\"", recipeMap.getKey().unlocalizedName);
+                        "\n[In Recipe map] : \"{}\"", recipeMap.getKey().unlocalizedName);
                 for (Map.Entry<Recipe, Set<Recipe>> reciper : mismatchedRecipes.get(recipeMap.getKey()).entrySet()) {
                     StringBuilder conflictingRecipes = new StringBuilder();
                     conflictingRecipes.append("\n[Tried matching]: ").append(prettyPrintRecipe(reciper.getKey()));
@@ -123,15 +144,39 @@ public class CommandRecipeCheck extends CommandBase {
             }
         }
 
+        int emptyCount = 0;
+        if (emptyInputRecipes.size() != 0) {
+            emptyCount = (int) emptyInputRecipes.values().stream().mapToLong(Set::size).sum();
+            GTLog.logger.info("[Recipe Checker] Found {} recipes with empty inputs", emptyCount);
+            for (Map.Entry<RecipeMap<?>, Set<Recipe>> recipeMap : emptyInputRecipes.entrySet()) {
+                GTLog.logger.error("\n[In Recipe map] : \"{}\"", recipeMap.getKey().unlocalizedName);
+                for (Recipe recipe : recipeMap.getValue()) {
+                    GTLog.logger.error("\n" + prettyPrintRecipe(recipe));
+                }
+            }
+
+            GTLog.logger.info("[Recipe Checker] Found {} empty oredicts", emptyOreDicts.size());
+            if (emptyOreDicts.size() > 0) {
+                StringBuilder oredicts = new StringBuilder();
+                for (int dictID : emptyOreDicts) {
+                    oredicts.append("\n").append(OreDictionary.getOreName(dictID));
+                }
+                GTLog.logger.error(oredicts.toString());
+            }
+        }
+
         if (mismatchedRecipes.size() == 0) {
             sender.sendMessage(new TextComponentTranslation("gregtech.command.recipecheck.end_no_conflicts")
                     .setStyle(new Style().setColor(TextFormatting.GREEN)));
         } else {
             sender.sendMessage(new TextComponentTranslation("gregtech.command.recipecheck.end", count));
         }
+        if (emptyInputRecipes.size() != 0) {
+            sender.sendMessage(new TextComponentTranslation("gregtech.command.recipecheck.end_empty_inputs", emptyCount, emptyOreDicts.size()));
+        }
     }
 
-    public String prettyPrintRecipe(Recipe recipe) {
+    public static String prettyPrintRecipe(Recipe recipe) {
         if (recipe == null) {
             return "null (Is something else going wrong?)\n";
         }
@@ -201,7 +246,7 @@ public class CommandRecipeCheck extends CommandBase {
         return output.toString();
     }
 
-    public String prettyPrintRecipeInput(GTRecipeInput recipeInput) {
+    public static String prettyPrintRecipeInput(GTRecipeInput recipeInput) {
         StringBuilder output = new StringBuilder();
         if (recipeInput.isOreDict()) {
             output.append("(OreDict: ")
@@ -227,13 +272,12 @@ public class CommandRecipeCheck extends CommandBase {
     }
 
     public static String prettyPrintItemStack(ItemStack stack) {
-        if (stack.getItem() instanceof MetaItem) {
-            MetaItem<?> metaItem = (MetaItem<?>) stack.getItem();
+        if (stack.getItem() instanceof MetaItem<?> metaItem) {
             MetaValueItem metaValueItem = metaItem.getItem(stack);
             if (metaValueItem == null) {
-                if (metaItem instanceof MetaPrefixItem) {
-                    Material material = MetaPrefixItem.getMaterial(stack);
-                    OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
+                if (metaItem instanceof MetaPrefixItem metaPrefixItem) {
+                    Material material = metaPrefixItem.getMaterial(stack);
+                    OrePrefix orePrefix = metaPrefixItem.getOrePrefix();
                     return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material + " * " + stack.getCount();
                 }
             } else {
@@ -254,11 +298,11 @@ public class CommandRecipeCheck extends CommandBase {
             Block block = Block.getBlockFromItem(stack.getItem());
             String id = null;
             if (block instanceof BlockCompressed) {
-                id = "block" + ((BlockCompressed) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+                id = "block" + ((BlockCompressed) block).getGtMaterial(stack).toCamelCaseString();
             } else if (block instanceof BlockFrame) {
-                id = "frame" + ((BlockFrame) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
-            } else if (block instanceof BlockMaterialPipe) {
-                id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
+                id = "frame" + ((BlockFrame) block).getGtMaterial(stack).toCamelCaseString();
+            } else if (block instanceof BlockMaterialPipe<?, ?, ?> blockMaterialPipe) {
+                id = blockMaterialPipe.getPrefix().name + blockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
             }
 
             if (id != null) {

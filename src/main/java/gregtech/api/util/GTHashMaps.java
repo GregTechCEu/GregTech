@@ -1,6 +1,7 @@
 package gregtech.api.util;
 
 import gregtech.api.recipes.FluidKey;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
@@ -16,7 +17,7 @@ import java.util.Set;
 
 public final class GTHashMaps {
 
-    private GTHashMaps() {/**/}
+    private GTHashMaps() {}
 
     /**
      * Maps all items in the {@link IItemHandler} into a {@link ItemStack}, {@link Integer} value as amount
@@ -26,7 +27,19 @@ public final class GTHashMaps {
      */
     @Nonnull
     public static Object2IntMap<ItemStack> fromItemHandler(@Nonnull IItemHandler inputs) {
-        final Object2IntMap<ItemStack> map = new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+        return fromItemHandler(inputs, false);
+    }
+
+    /**
+     * Maps all items in the {@link IItemHandler} into a {@link ItemStack}, {@link Integer} value as amount
+     *
+     * @param inputs The inventory handler of the inventory
+     * @param linked If the Map should be a Linked Map to preserve insertion order
+     * @return a {@link Map} of {@link ItemStack} and {@link Integer} as amount on the inventory
+     */
+    @Nonnull
+    public static Object2IntMap<ItemStack> fromItemHandler(@Nonnull IItemHandler inputs, boolean linked) {
+        final Object2IntMap<ItemStack> map = createItemStackMap(linked);
 
         // Create a single stack of the combined count for each item
 
@@ -48,7 +61,19 @@ public final class GTHashMaps {
      */
     @Nonnull
     public static Object2IntMap<ItemStack> fromItemStackCollection(@Nonnull Iterable<ItemStack> inputs) {
-        final Object2IntMap<ItemStack> map = new Object2IntOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+        return fromItemStackCollection(inputs, false);
+    }
+
+    /**
+     * Maps all items in the {@link ItemStack} {@link Collection} into a {@link ItemStack}, {@link Integer} value as amount
+     *
+     * @param inputs The inventory handler of the inventory
+     * @param linked If the Map should be a Linked Map to preserve insertion order
+     * @return a {@link Map} of {@link ItemStack} and {@link Integer} as amount on the inventory
+     */
+    @Nonnull
+    public static Object2IntMap<ItemStack> fromItemStackCollection(@Nonnull Iterable<ItemStack> inputs, boolean linked) {
+        final Object2IntMap<ItemStack> map = createItemStackMap(linked);
 
         // Create a single stack of the combined count for each item
 
@@ -59,6 +84,12 @@ public final class GTHashMaps {
         }
 
         return map;
+    }
+
+    @Nonnull
+    private static Object2IntMap<ItemStack> createItemStackMap(boolean linked) {
+        ItemStackHashStrategy strategy = ItemStackHashStrategy.comparingAllButCount();
+        return linked ? new Object2IntLinkedOpenCustomHashMap<>(strategy) : new Object2IntOpenCustomHashMap<>(strategy);
     }
 
     /**

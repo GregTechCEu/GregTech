@@ -13,6 +13,8 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -23,8 +25,9 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -94,25 +97,32 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     }
 
     @Override
+    protected long getMaxVoltage() {
+        long maxProduction = ((LargeTurbineWorkableHandler) recipeMapWorkable).getMaxVoltage();
+        long currentProduction = ((LargeTurbineWorkableHandler) recipeMapWorkable).boostProduction((int) maxProduction);
+        if (isActive() && currentProduction < maxProduction) {
+            return ((LargeTurbineWorkableHandler) recipeMapWorkable).getMaxVoltage();
+        } else {
+            return 0L;
+        }
+    }
+
+    @Override
     protected void addDisplayText(List<ITextComponent> textList) {
+        super.addDisplayText(textList);
         if (isStructureFormed()) {
             IRotorHolder rotorHolder = getRotorHolder();
-            FluidStack fuelStack = ((LargeTurbineWorkableHandler) recipeMapWorkable).getInputFluidStack();
-            int fuelAmount = fuelStack == null ? 0 : fuelStack.amount;
-
-            ITextComponent fuelName = new TextComponentTranslation(fuelAmount == 0 ? "gregtech.fluid.empty" : fuelStack.getUnlocalizedName());
-            textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", fuelAmount, fuelName));
 
             if (rotorHolder.getRotorEfficiency() > 0) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_speed", rotorHolder.getRotorSpeed(), rotorHolder.getMaxRotorHolderSpeed()));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_speed", TextFormattingUtil.formatNumbers(rotorHolder.getRotorSpeed()), TextFormattingUtil.formatNumbers(rotorHolder.getMaxRotorHolderSpeed())));
                 textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.efficiency", rotorHolder.getTotalEfficiency()));
 
                 long maxProduction = ((LargeTurbineWorkableHandler) recipeMapWorkable).getMaxVoltage();
                 long currentProduction = isActive() ? ((LargeTurbineWorkableHandler) recipeMapWorkable).boostProduction((int) maxProduction) : 0;
-                if (currentProduction >= maxProduction) {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.energy_per_tick_maxed", maxProduction));
-                } else {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.energy_per_tick", currentProduction, maxProduction));
+                String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(currentProduction)];
+
+                if (isActive()) {
+                    textList.add(3, new TextComponentTranslation("gregtech.multiblock.turbine.energy_per_tick", TextFormattingUtil.formatNumbers(currentProduction), voltageName));
                 }
 
                 int rotorDurability = rotorHolder.getRotorDurabilityPercent();
@@ -122,12 +132,30 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
                     textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_durability", rotorDurability).setStyle(new Style().setColor(TextFormatting.RED)));
                 }
             }
-            if (!isRotorFaceFree()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.obstructed")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
+        }
+    }
+
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            IRotorHolder rotorHolder = getRotorHolder();
+            if (rotorHolder.getRotorEfficiency() > 0) {
+                if (rotorHolder.getRotorDurabilityPercent() <= MIN_DURABILITY_TO_WARN) {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_durability_low"));
+                }
+            } else {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.no_rotor"));
             }
         }
-        super.addDisplayText(textList);
+    }
+
+    @Override
+    protected void addErrorText(List<ITextComponent> textList) {
+        super.addErrorText(textList);
+        if (isStructureFormed() && !isRotorFaceFree()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.obstructed").setStyle(new Style().setColor(TextFormatting.RED)));
+        }
     }
 
     @Override
@@ -170,11 +198,13 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
         return gearboxState;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return casingRenderer;
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {

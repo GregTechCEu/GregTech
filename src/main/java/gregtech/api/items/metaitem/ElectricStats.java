@@ -7,11 +7,12 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.items.metaitem.stats.*;
 import gregtech.common.ConfigHolder;
+import gregtech.integration.baubles.BaublesModule;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
@@ -23,6 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.common.Loader;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -64,13 +66,16 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
     @Override
     public void onUpdate(ItemStack itemStack, Entity entity) {
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (!entity.world.isRemote && entity instanceof EntityPlayer && electricItem != null &&
+        if (!entity.world.isRemote && entity instanceof EntityPlayer entityPlayer && electricItem != null &&
                 electricItem.canProvideChargeExternally() &&
                 isInDischargeMode(itemStack) && electricItem.getCharge() > 0L) {
 
-            EntityPlayer entityPlayer = (EntityPlayer) entity;
-            InventoryPlayer inventoryPlayer = entityPlayer.inventory;
+            IInventory inventoryPlayer = entityPlayer.inventory;
             long transferLimit = electricItem.getTransferLimit();
+
+            if (Loader.isModLoaded(GTValues.MODID_BAUBLES)) {
+                inventoryPlayer = BaublesModule.getBaublesWrappedInventory(entityPlayer);
+            }
 
             for (int i = 0; i < inventoryPlayer.getSizeInventory(); i++) {
                 ItemStack itemInSlot = inventoryPlayer.getStackInSlot(i);
@@ -83,15 +88,14 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
                         transferLimit -= chargedAmount;
                         if (transferLimit == 0L) break;
                     }
-                }
-                else if(ConfigHolder.compat.energy.nativeEUToFE && feEnergyItem != null) {
-                    if(feEnergyItem.getEnergyStored() < feEnergyItem.getMaxEnergyStored()) {
-                       int energyMissing = feEnergyItem.getMaxEnergyStored() - feEnergyItem.getEnergyStored();
-                       long euToCharge = FeCompat.toEu(energyMissing, ConfigHolder.compat.energy.feToEuRatio);
-                       long energyToTransfer = Math.min(euToCharge, transferLimit);
-                       long maxDischargeAmount = Math.min(energyToTransfer, electricItem.discharge(energyToTransfer, electricItem.getTier(), false, true, true));
-                       FeCompat.insertEu(feEnergyItem, maxDischargeAmount);
-                       electricItem.discharge(maxDischargeAmount, electricItem.getTier(), false, true, false);
+                } else if (ConfigHolder.compat.energy.nativeEUToFE && feEnergyItem != null) {
+                    if (feEnergyItem.getEnergyStored() < feEnergyItem.getMaxEnergyStored()) {
+                        int energyMissing = feEnergyItem.getMaxEnergyStored() - feEnergyItem.getEnergyStored();
+                        long euToCharge = FeCompat.toEu(energyMissing, ConfigHolder.compat.energy.feToEuRatio);
+                        long energyToTransfer = Math.min(euToCharge, transferLimit);
+                        long maxDischargeAmount = Math.min(energyToTransfer, electricItem.discharge(energyToTransfer, electricItem.getTier(), false, true, true));
+                        FeCompat.insertEu(feEnergyItem, maxDischargeAmount);
+                        electricItem.discharge(maxDischargeAmount, electricItem.getTier(), false, true, false);
                     }
                 }
             }
@@ -132,6 +136,11 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null && electricItem.canProvideChargeExternally()) {
             addTotalChargeTooltip(lines, electricItem.getMaxCharge(), electricItem.getTier());
+            if (isInDischargeMode(itemStack)) {
+                lines.add(I18n.format("metaitem.electric.discharge_mode.enabled"));
+            } else {
+                lines.add(I18n.format("metaitem.electric.discharge_mode.disabled"));
+            }
             lines.add(I18n.format("metaitem.electric.discharge_mode.tooltip"));
         }
     }

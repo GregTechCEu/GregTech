@@ -125,50 +125,6 @@ public class AssemblerRecipeLoader {
                 .output(TOOL_MATCHES, 4)
                 .duration(64).EUt(16).buildAndRegister();
 
-        // Wood Pipes
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(plate, Wood)
-                .circuitMeta(12)
-                .fluidInputs(Glue.getFluid(50))
-                .output(pipeSmallFluid, Wood)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(plate, Wood, 3)
-                .circuitMeta(6)
-                .fluidInputs(Glue.getFluid(20))
-                .output(pipeNormalFluid, Wood)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
-                .input(plate, Wood, 6)
-                .circuitMeta(2)
-                .fluidInputs(Glue.getFluid(10))
-                .output(pipeLargeFluid, Wood)
-                .buildAndRegister();
-				
-        // Treated Wood Pipes
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(plate, TreatedWood)
-                .circuitMeta(12)
-                .fluidInputs(Glue.getFluid(50))
-                .output(pipeSmallFluid, TreatedWood)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(plate, TreatedWood, 3)
-                .circuitMeta(6)
-                .fluidInputs(Glue.getFluid(20))
-                .output(pipeNormalFluid, TreatedWood)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
-                .input(plate, TreatedWood, 6)
-                .circuitMeta(2)
-                .fluidInputs(Glue.getFluid(10))
-                .output(pipeLargeFluid, TreatedWood)
-                .buildAndRegister();
-
         // Voltage Coils
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[ULV])
                 .input(stick, IronMagnetic)

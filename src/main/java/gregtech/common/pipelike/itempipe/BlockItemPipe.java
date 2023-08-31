@@ -8,7 +8,9 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import gregtech.client.renderer.pipe.PipeRenderer;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
@@ -38,8 +40,8 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
 
     private final Map<Material, ItemPipeProperties> enabledMaterials = new HashMap<>();
 
-    public BlockItemPipe(ItemPipeType itemPipeType) {
-        super(itemPipeType);
+    public BlockItemPipe(ItemPipeType itemPipeType, MaterialRegistry registry) {
+        super(itemPipeType, registry);
         setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WRENCH, 1);
     }
@@ -47,7 +49,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     public void addPipeMaterial(Material material, ItemPipeProperties properties) {
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(properties, "material %s itemPipeProperties was null", material);
-        Preconditions.checkArgument(GregTechAPI.MATERIAL_REGISTRY.getNameForObject(material) != null, "material %s is not registered", material);
+        Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null, "material %s is not registered", material);
         this.enabledMaterials.put(material, properties);
     }
 
@@ -79,6 +81,13 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     @Override
     protected ItemPipeProperties createProperties(ItemPipeType itemPipeType, Material material) {
         return itemPipeType.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Nonnull
+    @Override
+    public PipeRenderer getPipeRenderer() {
+        return ItemPipeRenderer.INSTANCE;
     }
 
     public Collection<Material> getEnabledMaterials() {

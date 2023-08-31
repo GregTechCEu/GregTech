@@ -13,8 +13,9 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.miner.MultiblockMinerLogic;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -49,8 +50,11 @@ import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,7 +80,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private boolean isInventoryFull = false;
 
     private final int drillingFluidConsumePerTick;
-    private final String romanNumeralString;
 
     private final MultiblockMinerLogic minerLogic;
 
@@ -85,8 +88,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.material = material;
         this.tier = tier;
         this.drillingFluidConsumePerTick = drillingFluidConsumePerTick;
-        this.romanNumeralString = GTUtility.romanNumeralString(fortune);
-        this.minerLogic = new MultiblockMinerLogic(this, fortune, speed, maximumChunkDiameter * CHUNK_LENGTH / 2, getBaseTexture(null), RecipeMaps.MACERATOR_RECIPES);
+        this.minerLogic = new MultiblockMinerLogic(this, fortune, speed, maximumChunkDiameter * CHUNK_LENGTH / 2, RecipeMaps.MACERATOR_RECIPES);
     }
 
     @Override
@@ -125,7 +127,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     public int getEnergyTier() {
         if (energyContainer == null) return this.tier;
-        return Math.min(this.tier + 1 , Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
+        return Math.min(this.tier + 1, Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
     }
 
     @Override
@@ -152,6 +154,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         return false;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
@@ -170,7 +173,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     protected BlockPattern createStructurePattern() {
-        return material == null ? null : FactoryBlockPattern.start()
+        return FactoryBlockPattern.start()
                 .aisle("XXX", "#F#", "#F#", "#F#", "###", "###", "###")
                 .aisle("XXX", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
                 .aisle("XSX", "#F#", "#F#", "#F#", "###", "###", "###")
@@ -238,24 +241,34 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 textList.add(new TextComponentTranslation("gregtech.machine.miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
             else if (!this.isWorkingEnabled())
                 textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-            if (this.isInventoryFull)
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
-            if (!drainFluid(true))
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.multi.needsfluid").setStyle(new Style().setColor(TextFormatting.RED)));
-            if (!drainEnergy(true))
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.needspower").setStyle(new Style().setColor(TextFormatting.RED)));
         }
     }
 
     private void addDisplayText2(List<ITextComponent> textList) {
         if (this.isStructureFormed()) {
             ITextComponent mCoords = new TextComponentString("    ")
-                .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()))
-                .appendText("\n    ")
-                .appendSibling(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()))
-                .appendText("\n    ")
-                .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
+                    .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()))
+                    .appendText("\n    ")
+                    .appendSibling(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()))
+                    .appendText("\n    ")
+                    .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
             textList.add(mCoords);
+        }
+    }
+
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            if (this.isInventoryFull) {
+                textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
+            }
+            if (!drainFluid(true)) {
+                textList.add(new TextComponentTranslation("gregtech.machine.miner.multi.needsfluid").setStyle(new Style().setColor(TextFormatting.RED)));
+            }
+            if (!drainEnergy(true)) {
+                textList.add(new TextComponentTranslation("gregtech.machine.miner.needspower").setStyle(new Style().setColor(TextFormatting.RED)));
+            }
         }
     }
 
@@ -276,6 +289,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         return frames(Materials.Steel);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (this.material.equals(Materials.Titanium))
@@ -320,6 +334,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.minerLogic.receiveCustomData(dataId, buf);
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {
@@ -335,24 +350,62 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.extendedBuilder();
-        builder.image(7, 4, 162, 121, GuiTextures.DISPLAY);
-        builder.label(11, 9, this.getMetaFullName(), 0xFFFFFF);
-        builder.widget((new AdvancedTextWidget(11, 19, this::addDisplayText,
-                0xFFFFFF)).setMaxWidthLimit(139).setClickHandler(this::handleDisplayClick));
-        builder.widget((new AdvancedTextWidget(63, 30, this::addDisplayText2,
-                0xFFFFFF)).setMaxWidthLimit(68).setClickHandler(this::handleDisplayClick));
-        builder.bindPlayerInventory(entityPlayer.inventory, 134);
+    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
+        ModularUI.Builder builder = super.createUITemplate(entityPlayer);
+        builder.widget(new AdvancedTextWidget(63, 31, this::addDisplayText2, 0xFFFFFF)
+                .setMaxWidthLimit(68).setClickHandler(this::handleDisplayClick));
+        return builder;
+    }
 
-        builder.widget(new ToggleButtonWidget(133, 107, 18, 18,
-                this.minerLogic::isChunkMode, this.minerLogic::setChunkMode).setButtonTexture(GuiTextures.BUTTON_CHUNK_MODE)
-                .setTooltipText("gregtech.gui.chunkmode"));
-        builder.widget(new ToggleButtonWidget(151, 107, 18, 18,
-                this.minerLogic::isSilkTouchMode, this.minerLogic::setSilkTouchMode).setButtonTexture(GuiTextures.BUTTON_SILK_TOUCH_MODE)
-                .setTooltipText("gregtech.gui.silktouch"));
+    // used for UI
+    private int getCurrentMode() {
+        // 0 -> not chunk mode, not silk touch mode
+        if (!minerLogic.isChunkMode() && !minerLogic.isSilkTouchMode()) {
+            return 0;
+        }
+        // 1 -> is chunk mode, not silk touch mode
+        if (minerLogic.isChunkMode() && !minerLogic.isSilkTouchMode()) {
+            return 1;
+        }
+        // 2 -> not chunk mode, is silk touch mode
+        if (!minerLogic.isChunkMode() && minerLogic.isSilkTouchMode()) {
+            return 2;
+        }
+        // 3 -> is chunk mode, is silk touch mode
+        return 3;
+    }
 
-        return builder.build(getHolder(), entityPlayer);
+    // used for UI
+    private void setCurrentMode(int mode) {
+        switch (mode) {
+            case 0 -> {
+                minerLogic.setChunkMode(false);
+                minerLogic.setSilkTouchMode(false);
+            }
+            case 1 -> {
+                minerLogic.setChunkMode(true);
+                minerLogic.setSilkTouchMode(false);
+            }
+            case 2 -> {
+                minerLogic.setChunkMode(false);
+                minerLogic.setSilkTouchMode(true);
+            }
+            default -> {
+                minerLogic.setChunkMode(true);
+                minerLogic.setSilkTouchMode(true);
+            }
+        }
+    }
+
+    @Override
+    protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
+        return new ImageCycleButtonWidget(x, y, width, height, GuiTextures.BUTTON_MINER_MODES, 4, this::getCurrentMode, this::setCurrentMode)
+                .setTooltipHoverString(mode -> switch (mode) {
+                    case 0  -> "gregtech.multiblock.miner.neither_mode";
+                    case 1  -> "gregtech.multiblock.miner.chunk_mode";
+                    case 2  -> "gregtech.multiblock.miner.silk_touch_mode";
+                    default -> "gregtech.multiblock.miner.both_modes";
+                });
     }
 
     @Override
@@ -411,10 +464,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     public int getDrillingFluidConsumePerTick() {
         return this.drillingFluidConsumePerTick;
-    }
-
-    public String getRomanNumeralString() {
-        return this.romanNumeralString;
     }
 
     @Override

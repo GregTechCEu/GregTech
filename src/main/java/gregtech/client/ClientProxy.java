@@ -15,22 +15,18 @@ import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.client.renderer.pipe.CableRenderer;
-import gregtech.client.renderer.pipe.FluidPipeRenderer;
-import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import gregtech.client.renderer.pipe.*;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
-import gregtech.common.blocks.*;
+import gregtech.common.blocks.BlockCompressed;
+import gregtech.common.blocks.BlockFrame;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockColored;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.IBlockColor;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,9 +38,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
@@ -70,47 +64,6 @@ import java.util.Optional;
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
 
-    public static final IBlockColor COMPRESSED_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-            state.getValue(((BlockCompressed) state.getBlock()).variantProperty).getMaterialRGB();
-
-    public static final IItemColor COMPRESSED_ITEM_COLOR = (stack, tintIndex) -> {
-        BlockCompressed block = (BlockCompressed) ((ItemBlock) stack.getItem()).getBlock();
-        IBlockState state = block.getStateFromMeta(stack.getItemDamage());
-        return state.getValue(block.variantProperty).getMaterialRGB();
-    };
-
-    public static final IBlockColor FRAME_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-            state.getValue(((BlockFrame) state.getBlock()).variantProperty).getMaterialRGB();
-
-    public static final IItemColor FRAME_ITEM_COLOR = (stack, tintIndex) -> {
-        BlockFrame block = (BlockFrame) ((ItemBlock) stack.getItem()).getBlock();
-        IBlockState state = block.getStateFromMeta(stack.getItemDamage());
-        return state.getValue(block.variantProperty).getMaterialRGB();
-    };
-
-    public static final IBlockColor ORE_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-            tintIndex == 1 ? ((BlockOre) state.getBlock()).material.getMaterialRGB() : 0xFFFFFF;
-
-    public static final IItemColor ORE_ITEM_COLOR = (stack, tintIndex) ->
-            tintIndex == 1 ? ((BlockOre) ((ItemBlock) stack.getItem()).getBlock()).material.getMaterialRGB() : 0xFFFFFF;
-
-    public static final IBlockColor FOAM_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-            state.getValue(BlockColored.COLOR).colorValue;
-
-    public static final IBlockColor SURFACE_ROCK_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-            tintIndex == 1 ? state.getValue(((BlockSurfaceRock) state.getBlock()).variantProperty).getMaterialRGB() : -1;
-
-    public static final IBlockColor RUBBER_LEAVES_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-            0x98de4b;
-
-    public static final IItemColor RUBBER_LEAVES_ITEM_COLOR = (stack, tintIndex) -> 0x98de4b;
-
-    public static final IBlockColor MACHINE_CASING_BLOCK_COLOR = (state, world, pos, tintIndex) ->
-            state.getBlock() instanceof BlockMachineCasing && MetaBlocks.MACHINE_CASING.getMetaFromState(state) == 0 ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;
-
-    public static final IItemColor MACHINE_CASING_ITEM_COLOR = (stack, tintIndex) ->
-            stack.getItemDamage() == 0 && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockMachineCasing ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;
-
     public void onPreLoad() {
         super.onPreLoad();
 
@@ -126,6 +79,8 @@ public class ClientProxy extends CommonProxy {
         CableRenderer.INSTANCE.preInit();
         FluidPipeRenderer.INSTANCE.preInit();
         ItemPipeRenderer.INSTANCE.preInit();
+        OpticalPipeRenderer.INSTANCE.preInit();
+        LaserPipeRenderer.INSTANCE.preInit();
         MetaEntities.initRenderers();
         MetaFluids.initIconFluidSprites();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);

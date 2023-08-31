@@ -23,6 +23,7 @@ import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.common.terminal.app.hardwaremanager.HardwareManagerApp;
 import gregtech.common.terminal.app.multiblockhelper.MultiBlockPreviewARApp;
 import gregtech.common.terminal.app.prospector.ProspectorApp;
+import gregtech.common.terminal.app.prospector.ProspectorMode;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
 import gregtech.common.terminal.app.settings.SettingsApp;
 import gregtech.common.terminal.app.teleport.TeleportApp;
@@ -45,11 +46,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class TerminalRegistry {
-    protected static final Map<String, AbstractApplication> APP_REGISTER = new LinkedHashMap<>();
-    protected static final Map<String, Hardware> HW_REGISTER = new LinkedHashMap<>();
-    protected static final Map<String, List<Hardware>[]> APP_HW_DEMAND = new HashMap<>();
-    protected static final Map<String, List<ItemStack>[]> APP_UPGRADE_CONDITIONS = new HashMap<>();
-    protected static final List<String> DEFAULT_APPS = new ArrayList<>();
+    public static final Map<String, AbstractApplication> APP_REGISTER = new LinkedHashMap<>();
+    public static final Map<String, Hardware> HW_REGISTER = new LinkedHashMap<>();
+    public static final Map<String, List<Hardware>[]> APP_HW_DEMAND = new HashMap<>();
+    public static final Map<String, List<ItemStack>[]> APP_UPGRADE_CONDITIONS = new HashMap<>();
+    public static final List<String> DEFAULT_APPS = new ArrayList<>();
     @SideOnly(Side.CLIENT)
     public static File TERMINAL_PATH;
 
@@ -89,7 +90,7 @@ public class TerminalRegistry {
                 .battery(GTValues.LV, 150)
                 .build();
 
-        AppRegistryBuilder.create(new ProspectorApp(0))
+        AppRegistryBuilder.create(new ProspectorApp(ProspectorMode.ORE))
                 .battery(0, GTValues.LV, 640)
                 .battery(1, GTValues.LV, 640)
                 .battery(2, GTValues.MV, 1000)
@@ -107,7 +108,7 @@ public class TerminalRegistry {
                 .device(4, DeviceHardware.DEVICE.PROSPECTOR_HV)
                 .build();
 
-        AppRegistryBuilder.create(new ProspectorApp(1))
+        AppRegistryBuilder.create(new ProspectorApp(ProspectorMode.FLUID))
                 .battery(0, GTValues.MV, 1000)
                 .battery(1, GTValues.MV, 1000)
                 .battery(2, GTValues.HV, 1500)
@@ -158,9 +159,6 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new CapeSelectorApp())
                 .battery(GTValues.ULV, 8)
                 .build();
-        if (Loader.isModLoaded(GTValues.MODID_CT)) { // handle CT register
-            CTTerminalRegistry.register();
-        }
     }
 
     @SideOnly(Side.CLIENT)

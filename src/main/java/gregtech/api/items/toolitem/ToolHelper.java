@@ -58,6 +58,9 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Supplier;
 
+import static gregtech.api.GTValues.LV;
+import static gregtech.api.GTValues.V;
+
 /**
  * Collection of tool related helper methods
  */
@@ -186,7 +189,7 @@ public final class ToolHelper {
         if (toolProperty != null) {
             toolProperty.getEnchantments().forEach((enchantment, level) -> {
                 if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
-                    stack.addEnchantment(enchantment, level);
+                    stack.addEnchantment(enchantment, level.getLevel(toolProperty.getToolHarvestLevel()));
                 }
             });
         }
@@ -582,7 +585,7 @@ public final class ToolHelper {
                 // Stack lists can be immutable going into Recipe#matches barring no rewrites
                 List<ItemStack> dropAsList = Collections.singletonList(silktouchDrop);
                 // Search for forge hammer recipes from all drops individually (only LV or under)
-                Recipe hammerRecipe = RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(GTValues.V[1], dropAsList, Collections.emptyList(), false);
+                Recipe hammerRecipe = RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(V[LV], dropAsList, Collections.emptyList(), false);
                 if (hammerRecipe != null && hammerRecipe.matches(true, dropAsList, Collections.emptyList())) {
                     drops.clear();
                     OrePrefix prefix = OreDictUnifier.getPrefix(silktouchDrop);

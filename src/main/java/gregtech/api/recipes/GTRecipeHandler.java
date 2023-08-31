@@ -55,7 +55,8 @@ public class GTRecipeHandler {
             }
         }
 
-        boolean wasRemoved = map.removeRecipe(map.findRecipe(Long.MAX_VALUE, itemIn, fluidIn));
+        Recipe recipeFound = map.findRecipe(Long.MAX_VALUE, itemIn, fluidIn);
+        boolean wasRemoved = recipeFound != null && map.removeRecipe(recipeFound);
         if (ConfigHolder.misc.debug) {
             if (wasRemoved)
                 GTLog.logger.info("Removed Recipe for inputs: Items: {} Fluids: {}", itemNames, fluidNames);
@@ -84,13 +85,9 @@ public class GTRecipeHandler {
      * @param map The RecipeMap to clear all recipes from.
      */
     public static <R extends RecipeBuilder<R>> void removeAllRecipes(RecipeMap<R> map) {
-
-        List<Recipe> recipes = new ArrayList<>(map.getRecipeList());
-
-        for (Recipe r : recipes)
-            map.removeRecipe(r);
-
-        if(ConfigHolder.misc.debug)
+        map.removeAllRecipes();
+        if (ConfigHolder.misc.debug) {
             GTLog.logger.info("Removed all recipes for Recipe Map: {}", map.unlocalizedName);
+        }
     }
 }

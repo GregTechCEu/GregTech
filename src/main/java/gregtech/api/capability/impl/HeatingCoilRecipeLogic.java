@@ -2,9 +2,9 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IHeatingCoil;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.recipes.logic.OverclockingLogic;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
-import net.minecraft.util.Tuple;
 
 import javax.annotation.Nonnull;
 
@@ -18,22 +18,30 @@ public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
 
     public HeatingCoilRecipeLogic(RecipeMapMultiblockController metaTileEntity) {
         super(metaTileEntity);
+        if (!(metaTileEntity instanceof IHeatingCoil)) {
+            throw new IllegalArgumentException("MetaTileEntity must be instanceof IHeatingCoil");
+        }
     }
 
     @Override
-    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int amountOC) {
-        // apply maintenance penalties
-        Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
+    protected void modifyOverclockPre(@Nonnull int[] values, @Nonnull IRecipePropertyStorage storage) {
+        super.modifyOverclockPre(values, storage);
+        // coil EU/t discount
+        values[0] = OverclockingLogic.applyCoilEUtDiscount(values[0],
+                ((IHeatingCoil) metaTileEntity).getCurrentTemperature(),
+                storage.getRecipePropertyValue(TemperatureProperty.getInstance(), 0));
+    }
 
+    @Nonnull
+    @Override
+    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int amountOC) {
         return heatingCoilOverclockingLogic(
                 Math.abs(recipeEUt),
                 maxVoltage,
-                (int) Math.round(duration * maintenanceValues.getSecond()),
+                duration,
                 amountOC,
                 ((IHeatingCoil) metaTileEntity).getCurrentTemperature(),
                 propertyStorage.getRecipePropertyValue(TemperatureProperty.getInstance(), 0)
         );
     }
-
-
 }

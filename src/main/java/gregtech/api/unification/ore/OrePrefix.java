@@ -17,6 +17,7 @@ import org.apache.commons.lang3.Validate;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -100,7 +101,7 @@ public class OrePrefix {
     // 9 Plates combined in one Item.
     public static final OrePrefix plateDense = new OrePrefix("plateDense", M * 9, null, MaterialIconType.plateDense, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_DENSE) && !mat.hasFlag(NO_SMASHING));
     // 2 Plates combined in one Item
-    public static final OrePrefix plateDouble = new OrePrefix("plateDouble", M * 2, null, MaterialIconType.plateDouble, ENABLE_UNIFICATION, hasIngotProperty.and(mat -> mat.hasFlag(GENERATE_PLATE) && !mat.hasFlag(NO_SMASHING)));
+    public static final OrePrefix plateDouble = new OrePrefix("plateDouble", M * 2, null, MaterialIconType.plateDouble, ENABLE_UNIFICATION, hasIngotProperty.and(mat -> mat.hasFlags(GENERATE_PLATE, GENERATE_DOUBLE_PLATE) && !mat.hasFlag(NO_SMASHING)));
     // Regular Plate made of one Ingot/Dust. Introduced by Calclavia
     public static final OrePrefix plate = new OrePrefix("plate", M, null, MaterialIconType.plate, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_PLATE));
 
@@ -239,7 +240,7 @@ public class OrePrefix {
         public static final Predicate<Material> hasRotorProperty = mat -> mat.hasProperty(PropertyKey.ROTOR);
     }
 
-    static {
+    public static void init() {
         ingotHot.heatDamageFunction = (temp) -> ((temp - 1750) / 1000.0F) + 2;
         gemFlawless.maxStackSize = 32;
         gemExquisite.maxStackSize = 16;
@@ -291,15 +292,12 @@ public class OrePrefix {
 
         ingot.setIgnored(Materials.Iron);
         ingot.setIgnored(Materials.Gold);
-        ingot.setIgnored(Materials.Wood);
-        ingot.setIgnored(Materials.TreatedWood);
         ingot.setIgnored(Materials.Paper);
 
-        nugget.setIgnored(Materials.Wood);
-        nugget.setIgnored(Materials.TreatedWood);
         nugget.setIgnored(Materials.Gold);
         nugget.setIgnored(Materials.Paper);
         nugget.setIgnored(Materials.Iron);
+
         plate.setIgnored(Materials.Paper);
 
         block.setIgnored(Materials.Iron);
@@ -352,14 +350,6 @@ public class OrePrefix {
         toolHeadChainsaw.addSecondaryMaterial(new MaterialStack(Materials.Steel, plate.materialAmount * 4 + ring.materialAmount * 2));
         toolHeadWrench.addSecondaryMaterial(new MaterialStack(Materials.Steel, ring.materialAmount + screw.materialAmount * 2));
 
-        pipeTinyFluid.setIgnored(Materials.Wood);
-        pipeHugeFluid.setIgnored(Materials.Wood);
-        pipeQuadrupleFluid.setIgnored(Materials.Wood);
-        pipeNonupleFluid.setIgnored(Materials.Wood);
-        pipeTinyFluid.setIgnored(Materials.TreatedWood);
-        pipeHugeFluid.setIgnored(Materials.TreatedWood);
-        pipeQuadrupleFluid.setIgnored(Materials.TreatedWood);
-        pipeNonupleFluid.setIgnored(Materials.TreatedWood);
         pipeSmallRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeNormalRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeLargeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
@@ -371,7 +361,6 @@ public class OrePrefix {
         cableGtOctal.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 3));
         cableGtHex.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 5));
 
-        plateDouble.setIgnored(Materials.BorosilicateGlass);
         plate.setIgnored(Materials.BorosilicateGlass);
         foil.setIgnored(Materials.BorosilicateGlass);
 
@@ -510,7 +499,7 @@ public class OrePrefix {
         return oreProcessingHandlers.addAll(Arrays.asList(processingHandler));
     }
 
-    public <T extends IMaterialProperty<T>> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {
+    public <T extends IMaterialProperty> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
             if (material.hasProperty(propertyKey) && !material.hasFlag(NO_UNIFICATION)) {
                 handler.accept(orePrefix, material, material.getProperty(propertyKey));
@@ -565,8 +554,8 @@ public class OrePrefix {
     }
 
     // todo clean this up
-    public String getLocalNameForItem(Material material) {
-        String specifiedUnlocalized = "item." + material.toString() + "." + this.name;
+    public String getLocalNameForItem(@Nonnull Material material) {
+        String specifiedUnlocalized = "item." + material.getUnlocalizedName() + "." + this.name;
         if (LocalizationUtils.hasKey(specifiedUnlocalized)) return LocalizationUtils.format(specifiedUnlocalized);
         String unlocalized = findUnlocalizedName(material);
         String matLocalized = material.getLocalizedName();
@@ -574,7 +563,7 @@ public class OrePrefix {
         return formatted.equals(unlocalized) ? matLocalized : formatted;
     }
 
-    private String findUnlocalizedName(Material material) {
+    private String findUnlocalizedName(@Nonnull Material material) {
         if (material.hasProperty(PropertyKey.POLYMER)) {
             String localizationKey = String.format("item.material.oreprefix.polymer.%s", this.name);
             // Not every polymer ore prefix gets a special name
@@ -593,6 +582,11 @@ public class OrePrefix {
     @ZenMethod
     public void setIgnored(Material material) {
         ignoredMaterials.add(material);
+    }
+
+    @ZenMethod
+    public void removeIgnored(@Nonnull Material material) {
+        ignoredMaterials.remove(material);
     }
 
     public boolean isMarkerPrefix() {

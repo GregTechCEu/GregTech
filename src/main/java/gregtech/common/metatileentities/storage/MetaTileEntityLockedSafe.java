@@ -76,7 +76,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
             stack.setCount(maxAmount);
             int addAmount = super.insertItem(slot, stack, simulate).getCount();
             int totalAmount = remainder + addAmount;
-            return totalAmount == 0 ? ItemStack.EMPTY : GTUtility.copyAmount(totalAmount, stack);
+            return totalAmount == 0 ? ItemStack.EMPTY : GTUtility.copy(totalAmount, stack);
         }
 
         @Override
@@ -226,7 +226,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     private void generateChestContents() {
-        ResourceLocation lootTableLocation = new ResourceLocation(GTValues.MODID, "chests/abandoned_safe_" + unlockComponentTier);
+        ResourceLocation lootTableLocation = GTUtility.gregtechId("chests/abandoned_safe_" + unlockComponentTier);
         WorldServer worldServer = (WorldServer) getWorld();
         LootTable lootTable = worldServer.getLootTableManager().getLootTableFromLocation(lootTableLocation);
         LootContext lootContext = new LootContext.Builder(worldServer).build();

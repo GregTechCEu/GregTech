@@ -57,7 +57,12 @@
       },
       "hsse_sturdy": {
         "textures": {
-          "all": "gregtech:blocks/casings/solid/machine_casing_study_hsse"
+          "all": "gregtech:blocks/casings/solid/machine_casing_sturdy_hsse"
+        }
+      },
+      "palladium_substation": {
+        "textures": {
+          "all": "gregtech:blocks/casings/solid/machine_casing_palladium_substation"
         }
       }
     }

@@ -6,6 +6,8 @@ import gregtech.api.recipes.RecipeMap;
 
 public class AssemblerRecipeBuilder extends RecipeBuilder<AssemblerRecipeBuilder> {
 
+    private boolean withRecycling;
+
     public AssemblerRecipeBuilder() {/**/}
 
     @SuppressWarnings("unused")
@@ -15,10 +17,26 @@ public class AssemblerRecipeBuilder extends RecipeBuilder<AssemblerRecipeBuilder
 
     public AssemblerRecipeBuilder(AssemblerRecipeBuilder recipeBuilder) {
         super(recipeBuilder);
+        if (recipeBuilder.isWithRecycling()) {
+            this.withRecycling = true;
+        }
     }
 
     @Override
     public AssemblerRecipeBuilder copy() {
-        return new AssemblerRecipeBuilder(this);
+        var builder = new AssemblerRecipeBuilder(this);
+        if (withRecycling) {
+            return builder.withRecycling();
+        }
+        return builder;
+    }
+
+    public AssemblerRecipeBuilder withRecycling() {
+        withRecycling = true;
+        return this;
+    }
+
+    public boolean isWithRecycling() {
+        return withRecycling;
     }
 }

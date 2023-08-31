@@ -1,6 +1,7 @@
 package gregtech.common.blocks.wood;
 
 import gregtech.api.GregTechAPI;
+import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.common.items.MetaItems;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.properties.PropertyBool;
@@ -25,6 +26,7 @@ public class BlockRubberLog extends BlockLog {
                 .withProperty(NATURAL, false));
         setTranslationKey("rubber_log");
         setCreativeTab(GregTechAPI.TAB_GREGTECH);
+        setHarvestLevel(ToolClasses.AXE, 0);
     }
 
     @Nonnull

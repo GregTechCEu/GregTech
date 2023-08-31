@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.FileUtility;
-import gregtech.api.util.GTJEIUtility;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.FillerConfigUtils;
 import gregtech.api.worldgen.config.OreDepositDefinition;
@@ -16,6 +15,7 @@ import gregtech.api.worldgen.populator.IVeinPopulator;
 import gregtech.api.worldgen.populator.SurfaceBlockPopulator;
 import gregtech.api.worldgen.populator.SurfaceRockPopulator;
 import gregtech.common.blocks.BlockOre;
+import gregtech.integration.jei.utils.JEIResourceDepositCategoryUtils;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -37,8 +37,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static gregtech.api.GTValues.M;
 import static gregtech.api.GTValues.MODID_CC;
@@ -262,7 +260,7 @@ public class GTOreInfo implements IRecipeWrapper {
 
         //Only add the Biome Information to the selected Ore
         if (slotIndex == 0) {
-            tooltip.addAll(GTJEIUtility.createSpawnPageBiomeTooltip(biomeFunction, weight));
+            tooltip.addAll(JEIResourceDepositCategoryUtils.createSpawnPageBiomeTooltip(biomeFunction, weight));
             if (description != null) {
                 tooltip.add(description);
             }

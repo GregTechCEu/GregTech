@@ -6,6 +6,7 @@ import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.category.RecipeCategories;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.unification.OreDictUnifier;
@@ -37,6 +38,14 @@ public class MiscRecipeLoader {
         ModHandler.addShapedRecipe(true, "basic_terminal", TERMINAL.getStackForm(),
                 "SGS", "PBP", "PWP", 'S', new UnificationEntry(screw, WroughtIron), 'G', OreDictUnifier.get("paneGlass"), 'B', new ItemStack(Items.BOOK),
                                         'P', new UnificationEntry(plate, WroughtIron), 'W', new UnificationEntry(wireGtSingle, RedAlloy));
+
+        // Multiblock Builder
+        ModHandler.addShapedRecipe(true, "multiblock_builder", MULTIBLOCK_BUILDER.getStackForm(),
+                "wCE", "SRC", "RSd",
+                'C', new UnificationEntry(circuit, MarkerMaterials.Tier.HV),
+                'E', new UnificationEntry(gem, EnderEye),
+                'S', new UnificationEntry(screw, StainlessSteel),
+                'R', new UnificationEntry(stick, StainlessSteel));
 
         // Potin Recipe
         ModHandler.addShapelessRecipe("potin_dust", OreDictUnifier.get(dust, Potin, 8),
@@ -175,7 +184,7 @@ public class MiscRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
                 .input(circuit, MarkerMaterials.Tier.LuV, 2)
                 .input(wireGtQuadruple, Tungsten, 5)
-                .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
+                .inputNBT(ENERGY_LAPOTRONIC_ORB, NBTMatcher.ANY, NBTCondition.ANY)
                 .inputs(SENSOR_IV.getStackForm())
                 .inputs(FIELD_GENERATOR_IV.getStackForm())
                 .input(screw, TungstenSteel, 4)
@@ -189,7 +198,7 @@ public class MiscRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
                 .input(circuit, MarkerMaterials.Tier.LuV, 2)
                 .input(wireGtQuadruple, Tungsten, 8)
-                .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
+                .inputNBT(ENERGY_LAPOTRONIC_ORB, NBTMatcher.ANY, NBTCondition.ANY)
                 .inputs(EMITTER_IV.getStackForm(2))
                 .inputs(FIELD_GENERATOR_IV.getStackForm())
                 .input(screw, TungstenSteel, 4)
@@ -203,7 +212,7 @@ public class MiscRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
                 .input(circuit, MarkerMaterials.Tier.LuV, 2)
                 .input(wireGtQuadruple, Tungsten, 7)
-                .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
+                .inputNBT(ENERGY_LAPOTRONIC_ORB, NBTMatcher.ANY, NBTCondition.ANY)
                 .inputs(ELECTRIC_MOTOR_IV.getStackForm(4))
                 .inputs(FIELD_GENERATOR_IV.getStackForm())
                 .input(screw, TungstenSteel, 4)
@@ -217,7 +226,7 @@ public class MiscRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
                 .input(circuit, MarkerMaterials.Tier.LuV, 2)
                 .input(wireGtQuadruple, Tungsten, 4)
-                .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
+                .inputNBT(ENERGY_LAPOTRONIC_ORB, NBTMatcher.ANY, NBTCondition.ANY)
                 .inputs(ELECTRIC_PISTON_IV.getStackForm(2))
                 .inputs(FIELD_GENERATOR_IV.getStackForm())
                 .input(screw, TungstenSteel, 4)
@@ -237,11 +246,12 @@ public class MiscRecipeLoader {
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
                 .input(circuit, MarkerMaterials.Tier.ZPM)
                 .input(plateDense, RhodiumPlatedPalladium, 2)
-                .inputs(ENERGY_LAPOTRONIC_ORB_CLUSTER.getStackForm())
+                .inputNBT(ENERGY_LAPOTRONIC_ORB_CLUSTER, NBTMatcher.ANY, NBTCondition.ANY)
                 .inputs(FIELD_GENERATOR_LuV.getStackForm(2))
                 .inputs(ELECTRIC_MOTOR_LuV.getStackForm(2))
                 .input(screw, HSSS, 8)
                 .outputs(QUANTUM_CHESTPLATE_ADVANCED.getStackForm())
+                .research(GRAVITATION_ENGINE.getStackForm())
                 .buildAndRegister();
 
 
@@ -341,11 +351,13 @@ public class MiscRecipeLoader {
             EXTRACTOR_RECIPES.recipeBuilder().EUt(VA[LV]).duration(15)
                     .input(item)
                     .fluidOutputs(Glass.getFluid(108))
+                    .category(RecipeCategories.EXTRACTOR_RECYCLING)
                     .buildAndRegister();
 
             MACERATOR_RECIPES.recipeBuilder().duration(15)
                     .input(item)
                     .output(dustSmall, Glass, 3)
+                    .category(RecipeCategories.MACERATOR_RECYCLING)
                     .buildAndRegister();
         }
 

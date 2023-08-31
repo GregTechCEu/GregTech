@@ -13,11 +13,10 @@ public class ItemBlockMaterialPipe<PipeType extends Enum<PipeType> & IMaterialPi
     }
 
     @Nonnull
-    @SuppressWarnings("unchecked")
     @Override
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         PipeType pipeType = blockPipe.getItemPipeType(stack);
-        Material material = BlockMaterialPipe.getItemMaterial(stack);
+        Material material = ((BlockMaterialPipe<PipeType, NodeDataType, ?>) blockPipe).getItemMaterial(stack);
         return material == null ? " " : pipeType.getOrePrefix().getLocalNameForItem(material);
     }
 }

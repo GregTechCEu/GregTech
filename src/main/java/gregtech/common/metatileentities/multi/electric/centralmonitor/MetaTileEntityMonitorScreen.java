@@ -764,4 +764,9 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     public boolean showToolUsages() {
         return false;
     }
+
+    @Override
+    public boolean hasFrontFacing() {
+        return false;
+    }
 }

@@ -2,6 +2,7 @@ package gregtech.common.blocks.wood;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
+import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -10,8 +11,15 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
+
+import javax.annotation.Nonnull;
+import java.util.Random;
 
 public abstract class BlockGregWoodSlab extends BlockSlab {
 
@@ -28,6 +36,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
         this.useNeighborBrightness = true;
     }
 
+    @Nonnull
     @Override
     public IProperty<BlockGregPlanks.BlockType> getVariantProperty() {
         return VARIANT;
@@ -38,18 +47,26 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
         return state.getValue(VARIANT).ordinal();
     }
 
+    @Nonnull
+    @Override
+    public Item getItemDropped(@Nonnull IBlockState state, @Nonnull Random rand, int fortune) {
+        return Item.getItemFromBlock(MetaBlocks.WOOD_SLAB);
+    }
+
+    @Nonnull
     @Override
     public String getTranslationKey(int meta) {
         return super.getTranslationKey() + "." + blockTypeFromMeta(meta).getName();
     }
 
+    @Nonnull
     @Override
     public BlockGregPlanks.BlockType getTypeForItem(ItemStack stack) {
         return blockTypeFromMeta(stack.getMetadata());
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
+    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
         for (BlockGregPlanks.BlockType type : BlockGregPlanks.BlockType.values()) {
             items.add(new ItemStack(this, 1, type.ordinal()));
         }
@@ -72,6 +89,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             return false;
         }
 
+        @Nonnull
         @SuppressWarnings("deprecation")
         @Override
         public IBlockState getStateFromMeta(int meta) {
@@ -89,9 +107,15 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             return i;
         }
 
+        @Nonnull
         @Override
         protected BlockStateContainer createBlockState() {
             return new BlockStateContainer(this, HALF, VARIANT);
+        }
+
+        @Override
+        public boolean doesSideBlockChestOpening(@Nonnull IBlockState blockState, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+            return false;
         }
     }
 
@@ -107,6 +131,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             return true;
         }
 
+        @Nonnull
         @SuppressWarnings("deprecation")
         @Override
         public IBlockState getStateFromMeta(int meta) {
@@ -118,6 +143,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
             return state.getValue(VARIANT).ordinal();
         }
 
+        @Nonnull
         @Override
         protected BlockStateContainer createBlockState() {
             return new BlockStateContainer(this, VARIANT);

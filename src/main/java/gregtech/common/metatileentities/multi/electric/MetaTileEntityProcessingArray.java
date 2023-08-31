@@ -9,9 +9,7 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -31,20 +29,21 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 import static gregtech.api.GTValues.ULV;
-import static gregtech.api.recipes.logic.OverclockingLogic.standardOverclockingLogic;
 
 public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController implements IMachineHatchMultiblock {
 
@@ -73,6 +72,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         return tier == 0 ? 16 : 64;
     }
 
+    @Nonnull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -81,7 +81,10 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 .aisle("XXX", "XSX", "XXX")
                 .where('L', states(getCasingState()))
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(tier == 0 ? 11 : 4).or(autoAbilities())
+                .where('X', states(getCasingState())
+                        .setMinGlobalLimited(tier == 0 ? 11 : 4)
+                        .or(autoAbilities(false, true, true, true, true, true, true))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)) // no energy hatch maximum
                         .or(abilities(MultiblockAbility.MACHINE_HATCH).setExactLimit(1)))
                 .where('#', air())
                 .build();
@@ -93,21 +96,23 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSE_STURDY);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return tier == 0
                 ? Textures.ROBUST_TUNGSTENSTEEL_CASING
-                : Textures.ROBUST_HSSE_CASING;
+                : Textures.STURDY_HSSE_CASING;
     }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        if(this.isActive()) {
+        if (this.isActive()) {
             textList.add(new TextComponentTranslation("gregtech.machine.machine_hatch.locked").setStyle(new Style().setColor(TextFormatting.RED)));
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
@@ -129,6 +134,11 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @Override
     public String[] getBlacklist() {
         return ConfigHolder.machines.processingArrayBlacklist;
+    }
+
+    @Override
+    public SoundEvent getBreakdownSound() {
+        return GTSoundEvents.BREAKDOWN_MECHANICAL;
     }
 
     @Override
@@ -169,6 +179,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @SuppressWarnings("InnerClassMayBeStatic")
     protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
 
+        private static final ICleanroomProvider DUMMY_CLEANROOM = DummyCleanroom.createForAllTypes();
+
         ItemStack currentMachineStack = ItemStack.EMPTY;
         MetaTileEntity mte = null;
         //The Voltage Tier of the machines the PA is operating upon, from GTValues.V
@@ -185,6 +197,12 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         @Override
         public void invalidate() {
             super.invalidate();
+
+            // invalidate mte's cleanroom reference
+            if (mte != null && mte instanceof ICleanroomReceiver){
+                ((ICleanroomReceiver) mte).setCleanroom(null);
+            }
+
             // Reset locally cached variables upon invalidation
             currentMachineStack = ItemStack.EMPTY;
             mte = null;
@@ -203,7 +221,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
          */
         @Override
         public boolean isRecipeMapValid(@Nonnull RecipeMap<?> recipeMap) {
-            if (GTUtility.findMachineInBlacklist(recipeMap.getUnlocalizedName(), ((IMachineHatchMultiblock) metaTileEntity).getBlacklist())) {
+            if (ArrayUtils.contains(((IMachineHatchMultiblock) metaTileEntity).getBlacklist(), recipeMap.getUnlocalizedName())) {
                 return false;
             }
 
@@ -246,15 +264,23 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
             if (mte == null) {
                 this.activeRecipeMap = null;
-            }
-            else {
+            } else {
                 this.activeRecipeMap = mte.getRecipeMap();
                 // Set the world for MTEs, as some need it for checking their recipes
                 MetaTileEntityHolder holder = new MetaTileEntityHolder();
                 mte = holder.setMetaTileEntity(mte);
                 holder.setWorld(this.metaTileEntity.getWorld());
-            }
 
+                // Set the cleanroom of the MTEs to the PA's cleanroom reference
+                if (mte instanceof ICleanroomReceiver receiver) {
+                    if (ConfigHolder.machines.cleanMultiblocks) {
+                        receiver.setCleanroom(DUMMY_CLEANROOM);
+                    } else {
+                        ICleanroomProvider provider = controller.getCleanroom();
+                        if (provider != null) receiver.setCleanroom(provider);
+                    }
+                }
+            }
 
             //Find the voltage tier of the machine.
             this.machineTier = mte instanceof ITieredMetaTileEntity ? ((ITieredMetaTileEntity) mte).getTier() : 0;
@@ -290,32 +316,18 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        protected int[] calculateOverclock(@Nonnull Recipe recipe) {
-            int recipeEUt = recipe.getEUt();
-            int recipeDuration = recipe.getDuration();
-            if (!isAllowOverclocking()) {
-                return new int[]{recipeEUt, recipeDuration};
-            }
+        protected int getNumberOfOCs(int recipeEUt) {
+            if (!isAllowOverclocking()) return 0;
 
-            // apply maintenance penalties
-            Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
+            int recipeTier = Math.max(0, GTUtility.getTierByVoltage(recipeEUt / Math.max(1, this.parallelRecipesPerformed)));
+            int maximumTier = Math.min(this.machineTier, GTUtility.getTierByVoltage(getMaxVoltage()));
 
-            int originalTier = Math.max(0, GTUtility.getTierByVoltage(recipeEUt / Math.max(1, this.parallelRecipesPerformed)));
-            int numOverclocks = Math.min(this.machineTier, GTUtility.getTierByVoltage(getMaxVoltage())) - originalTier;
+            // The maximum number of overclocks is determined by the difference between the tier the recipe is running at,
+            // and the maximum tier that the machine can overclock to.
+            int numberOfOCs = maximumTier - recipeTier;
+            if (recipeTier == ULV) numberOfOCs--; // no ULV overclocking
 
-            if (originalTier == ULV) numOverclocks--; // no ULV overclocking
-
-            // cannot overclock, so return the starting values
-            if (numOverclocks <= 0) return new int[]{recipe.getEUt(), recipe.getDuration()};
-
-            return standardOverclockingLogic(
-                    recipeEUt,
-                    getMaximumOverclockVoltage(),
-                    (int) Math.round(recipeDuration * maintenanceValues.getSecond()),
-                    numOverclocks,
-                    getOverclockingDurationDivisor(),
-                    getOverclockingVoltageMultiplier()
-            );
+            return numberOfOCs;
         }
 
         private ItemStack getMachineStack() {

@@ -1,15 +1,16 @@
 package gregtech.common.command;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
-import gregtech.integration.groovy.GroovyScriptCompat;
 import gregtech.api.util.GTLog;
+import gregtech.integration.RecipeCompatUtil;
+import gregtech.modules.GregTechModules;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -91,7 +92,7 @@ public class CommandHand extends CommandBase {
                 }
             }
 
-            String id = CTRecipeHelper.getMetaItemId(stackInHand);
+            String id = RecipeCompatUtil.getMetaItemId(stackInHand);
             if (id != null) {
                 String ctId = "<metaitem:" + id + ">";
                 ClipboardUtil.copyToClipboard(player, ctId);
@@ -127,7 +128,7 @@ public class CommandHand extends CommandBase {
                 }
             }
 
-            if (GroovyScriptCompat.isLoaded()) {
+            if (GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS)) {
                 sender.sendMessage(new TextComponentTranslation("gregtech.command.hand.groovy"));
             }
         } else {
