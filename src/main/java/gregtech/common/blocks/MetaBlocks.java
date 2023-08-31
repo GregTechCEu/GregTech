@@ -140,6 +140,7 @@ public class MetaBlocks {
     public static BlockBrittleCharcoal BRITTLE_CHARCOAL;
 
     public static BlockFissionCasing FISSION_CASING;
+    public static BlockNuclearCasing NUCLEAR_CASING;
 
     public static final Map<Material, BlockCompressed> COMPRESSED = new Object2ObjectOpenHashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new Object2ObjectOpenHashMap<>();
@@ -288,6 +289,8 @@ public class MetaBlocks {
 
         FISSION_CASING = new BlockFissionCasing();
         FISSION_CASING.setRegistryName("fission_casing");
+        NUCLEAR_CASING = new BlockNuclearCasing();
+        NUCLEAR_CASING.setRegistryName("nuclear_casing");
 
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
@@ -413,6 +416,7 @@ public class MetaBlocks {
         registerItemModel(BATTERY_BLOCK);
         registerItemModel(ASPHALT);
         registerItemModel(FISSION_CASING);
+        registerItemModel(NUCLEAR_CASING);
         for (StoneVariantBlock block : STONE_BLOCKS.values())
             registerItemModel(block);
         registerItemModelWithOverride(RUBBER_LOG, ImmutableMap.of(BlockLog.LOG_AXIS, EnumAxis.Y));
