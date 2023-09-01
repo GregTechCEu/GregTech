@@ -84,8 +84,7 @@ public class EventHandlers {
         TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
         if (tileEntity instanceof IGregTechTileEntity) {
             event.setUseBlock(Event.Result.ALLOW);
-        }
-        if (tileEntity instanceof IPipeTile<?,?>) {
+        } else if (tileEntity instanceof IPipeTile<?,?>) {
             event.setUseBlock(Event.Result.ALLOW);
         }
 
