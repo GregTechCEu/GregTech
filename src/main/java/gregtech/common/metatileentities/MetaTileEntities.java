@@ -383,6 +383,7 @@ public class MetaTileEntities {
     public static MetaTileEntityCoolantImportHatch COOLANT_INPUT;
     public static MetaTileEntityCoolantExportHatch COOLANT_OUTPUT;
     public static MetaTileEntityControlRodPort CONTROL_ROD;
+    public static MetaTileEntitySpentFuelPool SPENT_FUEL_POOL;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -820,7 +821,8 @@ public class MetaTileEntities {
         ACTIVE_TRANSFORMER = registerMetaTileEntity(1042,
                 new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
 
-        FISSION_REACTOR = registerMetaTileEntity(1037, new MetaTileEntityFissionReactor(gregtechId("fission_reactor")));
+        FISSION_REACTOR = registerMetaTileEntity(1043, new MetaTileEntityFissionReactor(gregtechId("fission_reactor")));
+        SPENT_FUEL_POOL = registerMetaTileEntity(1044, new MetaTileEntitySpentFuelPool(gregtechId("spent_fuel_pool")));
 
         // MISC MTE's START: IDs 1150-2000
 
