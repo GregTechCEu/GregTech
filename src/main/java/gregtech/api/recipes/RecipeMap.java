@@ -99,7 +99,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private boolean allowEmptyOutput;
 
-    private final VirtualizedRecipeMap virtualizedRecipeMap;
+    private final Object grsVirtualizedRecipeMap;
     private final Branch lookup = new Branch();
     private boolean hasOreDictedInputs = false;
     private boolean hasNBTMatcherInputs = false;
@@ -195,7 +195,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.recipeBuilderSample = defaultRecipeBuilder;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
 
-        this.virtualizedRecipeMap = GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS)
+        this.grsVirtualizedRecipeMap = GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS)
                 ? new VirtualizedRecipeMap(this) : null;
     }
 
@@ -293,7 +293,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         Recipe recipe = validationResult.getResult();
 
         if (recipe.isGroovyRecipe()) {
-            this.virtualizedRecipeMap.addScripted(recipe);
+            this.getGroovyScriptRecipeMap().addScripted(recipe);
         }
         return compileRecipe(recipe);
     }
@@ -328,7 +328,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         if (recurseIngredientTreeRemove(recipe, items, lookup, 0) != null) {
             if (GroovyScriptModule.isCurrentlyRunning()) {
-                this.virtualizedRecipeMap.addBackup(recipe);
+                this.getGroovyScriptRecipeMap().addBackup(recipe);
             }
             recipeByCategory.compute(recipe.getRecipeCategory(), (k, v) -> {
                 if (v != null) v.remove(recipe);
@@ -346,7 +346,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      */
     @ApiStatus.Internal
     void removeAllRecipes() {
-        this.lookup.getRecipes(false).forEach(this.virtualizedRecipeMap::addBackup);
+        if (GroovyScriptModule.isCurrentlyRunning()) {
+            this.lookup.getRecipes(false).forEach(this.getGroovyScriptRecipeMap()::addBackup);
+        }
         this.lookup.getNodes().clear();
         this.lookup.getSpecialNodes().clear();
         this.recipeByCategory.clear();
@@ -914,6 +916,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private boolean shouldShiftWidgets() {
         return getMaxInputs() + getMaxOutputs() >= 6 ||
                 getMaxFluidInputs() + getMaxFluidOutputs() >= 6;
+    }
+
+    @Method(modid = GregTechModules.MODULE_GRS)
+    private VirtualizedRecipeMap getGroovyScriptRecipeMap() {
+        return ((VirtualizedRecipeMap) grsVirtualizedRecipeMap);
     }
 
     /**
