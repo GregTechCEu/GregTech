@@ -33,9 +33,9 @@ public class MultiRecipeMapInfoProvider extends CapabilityInfoProvider<IMultiple
         iProbeInfo.text(TextStyleClass.INFO + IProbeInfo.STARTLOC + "gregtech.multiblock.multiple_recipemaps.header" + IProbeInfo.ENDLOC);
         for (RecipeMap<?> recipeMap : iMultipleRecipeMaps.getAvailableRecipeMaps()) {
             if (recipeMap.equals(iMultipleRecipeMaps.getCurrentRecipeMap())) {
-                iProbeInfo.text("   " + TextStyleClass.INFOIMP + "{*recipemap." + recipeMap.getUnlocalizedName() + ".name*} {*<*}");
+                iProbeInfo.text("   " + TextStyleClass.INFOIMP + "{*" + recipeMap.getTranslationKey() + "*} {*<*}");
             } else {
-                iProbeInfo.text("   " + TextStyleClass.LABEL + "{*recipemap." + recipeMap.getUnlocalizedName() + ".name*}");
+                iProbeInfo.text("   " + TextStyleClass.LABEL + "{*" + recipeMap.getTranslationKey() + "*}");
             }
         }
     }
