@@ -44,7 +44,6 @@ public abstract class Filter<T> {
         return new CycleButtonWidget()
                 .value(new BooleanSyncValue(this::isInverted, this::setInverted))
                 .texture(GuiTextures.BUTTON_BLACKLIST)
-                .background(GuiTextures.BUTTON)
                 .size(18, 18)
                 .pos(121, 0);
     }

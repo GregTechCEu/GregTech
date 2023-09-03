@@ -55,8 +55,8 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
         FilterPanelSyncHandler filterPanelSyncHandler = new FilterPanelSyncHandler(mainPanel, this);
         syncManager.syncValue("filter_config", filterPanelSyncHandler);
         return new ParentWidget<>()
-                .child(IKey.lang("cover.filter.label").asWidget()
-                        .pos(0, 4))
+                .coverChildren()
+                .child(IKey.lang("cover.filter.label").asWidget().pos(0, 4))
                 .child(new ItemSlot()
                         .slot(new ModularSlot(this.filterInventory, this.filterSlotIndex)
                                 .filter(item -> getFilterOf(item) != null)
@@ -81,7 +81,7 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                                         filterPanelSyncHandler.openPanel();
                                     }
                                 }))
-                        .background(gregtech.api.newgui.GuiTextures.BUTTON, IKey.lang("cover.filter.settings_open.label"))
+                        .overlay(IKey.lang("cover.filter.settings_open.label"))
                         .pos(82, 0)
                         .size(80, 18));
     }
@@ -102,12 +102,13 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
         }
 
         IWidget filterUI = this.currentFilter.createFilterUI(mainPanel, syncManager);
-        filterUI.flex().pos(5, 20);
+        filterUI.flex().pos(5, 20).margin(5);
         panel = new ModularPanel("filter_config")
                 .coverChildren()
                 .relative(mainPanel)
                 .top(0)
                 .rightRel(1f)
+                .padding(5)
                 .child(IKey.lang("cover.filter.settings.label").asWidget().pos(5, 5));
         panel.child(new ButtonWidget<>()
                         .onMousePressed(mouseButton -> {

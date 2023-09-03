@@ -7,6 +7,7 @@ import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.filter.FilterRegistry;
 import gregtech.api.fluids.MetaFluids;
 import gregtech.api.newgui.GTGuis;
 import gregtech.api.gui.UIFactory;
@@ -225,6 +226,7 @@ public class CoreModule implements IGregTechModule {
 
         LootTableHelper.initialize();
         FilterTypeRegistry.init();
+        FilterRegistry.init();
 
         /* Start Cover Definition Registration */
         COVER_REGISTRY.unfreeze();

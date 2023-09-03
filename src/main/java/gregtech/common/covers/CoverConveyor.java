@@ -531,6 +531,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                         .size(80, 48))
                 .child(new Column()
                         .child(new Row()
+                                .coverChildren()
                                 .child(new ButtonWidget<>()
                                         .syncHandler(new InteractionSyncHandler()
                                                 .setOnMousePressed(GuiFunctions.getIncrementer(-1, -8, -64, -512, this::adjustTransferRate)))
