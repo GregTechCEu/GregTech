@@ -5,6 +5,18 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.value.sync.IServerMouseAction;
+import com.cleanroommc.modularui.api.widget.IGuiAction;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.*;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -16,21 +28,23 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.newgui.GTGuis;
+import gregtech.api.newgui.GuiFunctions;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
+import gregtech.common.covers.filter.item.ItemFilter;
+import gregtech.common.covers.filter.item.ItemFilterHolder;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -42,11 +56,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
@@ -56,7 +70,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     protected ConveyorMode conveyorMode;
     protected DistributionMode distributionMode;
     protected ManualImportExportMode manualImportExportMode = ManualImportExportMode.DISABLED;
-    protected final ItemFilterContainer itemFilterContainer;
+    protected final ItemFilterHolder filterHolder;
     protected int itemsLeftToTransferLastSecond;
     private CoverableItemHandlerWrapper itemHandlerWrapper;
     protected boolean isWorkingAllowed = true;
@@ -69,7 +83,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.itemsLeftToTransferLastSecond = transferRate;
         this.conveyorMode = ConveyorMode.EXPORT;
         this.distributionMode = DistributionMode.INSERT_FIRST;
-        this.itemFilterContainer = new ItemFilterContainer(this);
+        this.filterHolder = new ItemFilterHolder(this);
     }
 
     public void setTransferRate(int transferRate) {
@@ -126,8 +140,13 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         coverHolder.markDirty();
     }
 
-    public ItemFilterContainer getItemFilterContainer() {
-        return itemFilterContainer;
+    public ItemFilterHolder getFilterHolder() {
+        return filterHolder;
+    }
+
+    @Nullable
+    public ItemFilter getItemFilter() {
+        return filterHolder.getCurrentFilter();
     }
 
     @Override
@@ -259,7 +278,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object matchSlotIndex = itemFilterContainer.matchItemStack(itemStack);
+            Object matchSlotIndex = filterHolder.matchItemStack(itemStack);
             if (matchSlotIndex == null || !itemInfos.containsKey(matchSlotIndex)) {
                 continue;
             }
@@ -302,7 +321,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (sourceStack.isEmpty()) {
                 continue;
             }
-            if (!itemFilterContainer.testItemStack(sourceStack)) {
+            if (!filterHolder.test(sourceStack)) {
                 continue;
             }
             ItemStack remainder = GTTransferUtils.insertItem(targetInventory, sourceStack, true);
@@ -324,6 +343,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     }
 
     protected static class TypeItemInfo {
+
         public final ItemStack itemStack;
         public final Object filterSlot;
         public final IntList slots;
@@ -338,13 +358,12 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     }
 
     protected static class GroupItemInfo {
+
         public final Object filterSlot;
-        public final Set<ItemStack> itemStackTypes;
         public int totalCount;
 
-        public GroupItemInfo(Object filterSlot, Set<ItemStack> itemStackTypes, int totalCount) {
+        public GroupItemInfo(Object filterSlot, int totalCount) {
             this.filterSlot = filterSlot;
-            this.itemStackTypes = itemStackTypes;
             this.totalCount = totalCount;
         }
     }
@@ -357,20 +376,13 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object transferSlotIndex = itemFilterContainer.matchItemStack(itemStack);
+            Object transferSlotIndex = filterHolder.matchItemStack(itemStack);
             if (transferSlotIndex == null) {
                 continue;
             }
-            if (!result.containsKey(itemStack)) {
-                TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), transferSlotIndex, new IntArrayList(), 0);
-                itemInfo.totalCount += itemStack.getCount();
-                itemInfo.slots.add(srcIndex);
-                result.put(itemStack.copy(), itemInfo);
-            } else {
-                TypeItemInfo itemInfo = result.get(itemStack);
-                itemInfo.totalCount += itemStack.getCount();
-                itemInfo.slots.add(srcIndex);
-            }
+            TypeItemInfo itemInfo = result.computeIfAbsent(itemStack, key -> new TypeItemInfo(itemStack.copy(), transferSlotIndex, new IntArrayList(), 0));
+            itemInfo.slots.add(srcIndex);
+            itemInfo.totalCount += itemStack.getCount();
         }
         return result;
     }
@@ -383,20 +395,12 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object transferSlotIndex = itemFilterContainer.matchItemStack(itemStack);
+            Object transferSlotIndex = filterHolder.matchItemStack(itemStack);
             if (transferSlotIndex == null) {
                 continue;
             }
-            if (!result.containsKey(transferSlotIndex)) {
-                GroupItemInfo itemInfo = new GroupItemInfo(transferSlotIndex, new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount()), 0);
-                itemInfo.itemStackTypes.add(itemStack.copy());
-                itemInfo.totalCount += itemStack.getCount();
-                result.put(transferSlotIndex, itemInfo);
-            } else {
-                GroupItemInfo itemInfo = result.get(transferSlotIndex);
-                itemInfo.itemStackTypes.add(itemStack.copy());
-                itemInfo.totalCount += itemStack.getCount();
-            }
+            GroupItemInfo itemInfo = result.computeIfAbsent(transferSlotIndex, key -> new GroupItemInfo(transferSlotIndex, 0));
+            itemInfo.totalCount += itemStack.getCount();
         }
         return result;
     }
@@ -414,7 +418,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public void onRemoved() {
         NonNullList<ItemStack> drops = NonNullList.create();
-        MetaTileEntity.clearInventory(drops, itemFilterContainer.getFilterInventory());
+        MetaTileEntity.clearInventory(drops, filterHolder.getFilterInventory());
         for (ItemStack itemStack : drops) {
             Block.spawnAsEntity(coverHolder.getWorld(), coverHolder.getPos(), itemStack);
         }
@@ -432,7 +436,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!coverHolder.getWorld().isRemote) {
-            openUI((EntityPlayerMP) playerIn);
+            //openUI((EntityPlayerMP) playerIn);
+            GTGuis.openCoverUi(this, playerIn);
         }
         return EnumActionResult.SUCCESS;
     }
@@ -500,12 +505,73 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             primaryGroup.addWidget(distributionModeButton);
         }
 
-        this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
+        //this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 190 + 82)
                 .widget(primaryGroup)
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 190);
         return buildUI(builder, player);
+    }
+
+    @Override
+    public ModularPanel buildUI(GuiCreationContext creationContext, GuiSyncManager syncManager, boolean isClient) {
+        ModularPanel panel = GTGuis.createPanel("conveyor", 176, 172);
+        panel.child(IKey.format(getUITitle(), GTValues.VN[tier]).asWidget().pos(6, 6))
+                .bindPlayerInventory()
+                .child(new Column()
+                        .child(IKey.lang("cover.transfer_rate").asWidget()
+                                .size(80, 12))
+                        .child(IKey.lang("cover.mode").asWidget()
+                                .size(80, 12))
+                        .child(IKey.lang("cover.mode.manual_io").asWidget()
+                                .size(80, 12))
+                        .child(IKey.lang("cover.conveyor.distribution_mode").asWidget()
+                                .size(80, 12))
+                        .pos(7, 18)
+                        .size(80, 48))
+                .child(new Column()
+                        .child(new Row()
+                                .child(new ButtonWidget<>()
+                                        .syncHandler(new InteractionSyncHandler()
+                                                .setOnMousePressed(GuiFunctions.getIncrementer(-1, -8, -64, -512, this::adjustTransferRate)))
+                                        .addTooltipLine(IKey.format("modularui.decrement.tooltip", 1, 8, 64, 512))
+                                        .overlay(IKey.lang("-").color(0xFFFFFF))
+                                        .size(12, 12))
+                                .child(new TextFieldWidget()
+                                        .value(new IntSyncValue(() -> transferRate, this::setTransferRate))
+                                        .setNumbers(1, maxItemTransferRate)
+                                        .setTextAlignment(Alignment.Center)
+                                        .size(56, 12))
+                                .child(new ButtonWidget<>()
+                                        .syncHandler(new InteractionSyncHandler()
+                                                .setOnMousePressed(GuiFunctions.getIncrementer(1, 8, 64, 512, this::adjustTransferRate)))
+                                        .addTooltipLine(IKey.format("modularui.increment.tooltip", 1, 8, 64, 512))
+                                        .overlay(IKey.lang("+").color(0xFFFFFF))
+                                        .size(12, 12)))
+                        .child(new com.cleanroommc.modularui.widgets.CycleButtonWidget()
+                                .value(new EnumSyncValue<>(ConveyorMode.class, this::getConveyorMode, this::setConveyorMode))
+                                .textureGetter(GuiFunctions.enumStringTextureGetter(ConveyorMode.class))
+                                .size(80, 12))
+                        .child(new com.cleanroommc.modularui.widgets.CycleButtonWidget()
+                                .value(new EnumSyncValue<>(ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode))
+                                .textureGetter(GuiFunctions.enumStringTextureGetter(ManualImportExportMode.class))
+                                .addTooltip(0, IKey.lang(ManualImportExportMode.values()[0].localeDescription))
+                                .addTooltip(1, IKey.lang(ManualImportExportMode.values()[1].localeDescription))
+                                .addTooltip(2, IKey.lang(ManualImportExportMode.values()[2].localeDescription))
+                                .size(80, 12))
+                        .child(new com.cleanroommc.modularui.widgets.CycleButtonWidget()
+                                .value(new EnumSyncValue<>(DistributionMode.class, this::getDistributionMode, this::setDistributionMode))
+                                .textureGetter(GuiFunctions.enumStringTextureGetter(DistributionMode.class))
+                                .addTooltip(0, IKey.lang(DistributionMode.values()[0].localeDescription))
+                                .addTooltip(1, IKey.lang(DistributionMode.values()[1].localeDescription))
+                                .addTooltip(2, IKey.lang(DistributionMode.values()[2].localeDescription))
+                                .size(80, 12))
+                        .pos(89, 18)
+                        .size(80, 48));
+        IWidget filterUI = this.filterHolder.createFilterUI(panel, creationContext, syncManager);
+        filterUI.flex().pos(7, 66);
+        panel.child(filterUI);
+        return panel;
     }
 
     @Override
@@ -549,7 +615,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
-        tagCompound.setTag("Filter", this.itemFilterContainer.serializeNBT());
+        tagCompound.setTag("Filter", this.filterHolder.serializeNBT());
 
         return tagCompound;
     }
@@ -562,7 +628,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
-        this.itemFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
+        this.filterHolder.deserializeNBT(tagCompound.getCompoundTag("Filter"));
     }
 
     @Override
@@ -605,7 +671,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (conveyorMode == ConveyorMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
                 return stack;
             }
-            if (manualImportExportMode == ManualImportExportMode.FILTERED && !itemFilterContainer.testItemStack(stack)) {
+            if (manualImportExportMode == ManualImportExportMode.FILTERED && !filterHolder.test(stack)) {
                 return stack;
             }
             return super.insertItem(slot, stack, simulate);
@@ -619,7 +685,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             }
             if (manualImportExportMode == ManualImportExportMode.FILTERED) {
                 ItemStack result = super.extractItem(slot, amount, true);
-                if (result.isEmpty() || !itemFilterContainer.testItemStack(result)) {
+                if (result.isEmpty() || !filterHolder.test(result)) {
                     return ItemStack.EMPTY;
                 }
                 return simulate ? result : super.extractItem(slot, amount, false);

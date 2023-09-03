@@ -35,7 +35,7 @@ public interface CoverWithUI extends IGuiHolder {
     }
 
     @Override
-    default ModularPanel buildUI(GuiCreationContext guiCreationContext, GuiSyncManager guiSyncManager, boolean isClient) {
+    default ModularPanel buildUI(GuiCreationContext creationContext, GuiSyncManager syncManager, boolean isClient) {
         return null;
     }
 }

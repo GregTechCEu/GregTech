@@ -12,6 +12,7 @@ import gregtech.api.gui.widgets.*;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.SmartItemFilter;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,7 +32,7 @@ public class CoverRoboticArm extends CoverConveyor {
     public CoverRoboticArm(ICoverable coverable, EnumFacing attachedSide, int tier, int itemsPerSecond) {
         super(coverable, attachedSide, tier, itemsPerSecond);
         this.transferMode = TransferMode.TRANSFER_ANY;
-        this.itemFilterContainer.setMaxStackSize(1);
+        this.filterHolder.setMaxStackSize(1);
     }
 
     @Override
@@ -69,18 +70,18 @@ public class CoverRoboticArm extends CoverConveyor {
         while (iterator.hasNext()) {
             TypeItemInfo sourceInfo = sourceItemAmount.get(iterator.next());
             int itemAmount = sourceInfo.totalCount;
-            int itemToMoveAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
+            int itemToMoveAmount = this.filterHolder.getSlotTransferLimit(sourceInfo.filterSlot);
 
             // if smart item filter
-            if (itemFilterContainer.getFilterWrapper().getItemFilter() instanceof SmartItemFilter) {
-                if (itemFilterContainer.getTransferStackSize() > 1 && itemToMoveAmount * 2 <= itemAmount) {
+            /*TODO if (getItemFilter() instanceof SmartItemFilter) {
+                if (this.filterHolder.getTransferStackSize() > 1 && itemToMoveAmount * 2 <= itemAmount) {
                     // get the max we can extract from the item filter variable
                     int maxMultiplier = Math.floorDiv(maxTransferAmount, itemToMoveAmount);
 
                     // multiply up to the total count of all the items
-                    itemToMoveAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+                    itemToMoveAmount *= Math.min(this.filterHolder.getTransferStackSize(), maxMultiplier);
                 }
-            }
+            }*/
 
             if (itemAmount >= itemToMoveAmount) {
                 sourceInfo.totalCount = itemToMoveAmount;
@@ -118,18 +119,18 @@ public class CoverRoboticArm extends CoverConveyor {
         while (iterator.hasNext()) {
             Object filterSlotIndex = iterator.next();
             GroupItemInfo sourceInfo = sourceItemAmounts.get(filterSlotIndex);
-            int itemToKeepAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot);
+            int itemToKeepAmount = this.filterHolder.getSlotTransferLimit(sourceInfo.filterSlot);
 
             // only run multiplier for smart item
-            if (itemFilterContainer.getFilterWrapper().getItemFilter() instanceof SmartItemFilter) {
-                if (itemFilterContainer.getTransferStackSize() > 1 && itemToKeepAmount * 2 <= sourceInfo.totalCount) {
+            /*TODO if (getItemFilter() instanceof SmartItemFilter) {
+                if (this.filterHolder.getTransferStackSize() > 1 && itemToKeepAmount * 2 <= sourceInfo.totalCount) {
                     // get the max we can keep from the item filter variable
                     int maxMultiplier = Math.floorDiv(sourceInfo.totalCount, itemToKeepAmount);
 
                     // multiply up to the total count of all the items
-                    itemToKeepAmount *= Math.min(itemFilterContainer.getTransferStackSize(), maxMultiplier);
+                    itemToKeepAmount *= Math.min(this.filterHolder.getTransferStackSize(), maxMultiplier);
                 }
-            }
+            }*/
 
             int itemAmount = 0;
             if (currentItemAmount.containsKey(filterSlotIndex)) {
@@ -160,7 +161,7 @@ public class CoverRoboticArm extends CoverConveyor {
     public void setTransferMode(TransferMode transferMode) {
         this.transferMode = transferMode;
         this.coverHolder.markDirty();
-        this.itemFilterContainer.setMaxStackSize(transferMode.maxStackSize);
+        this.filterHolder.setMaxStackSize(transferMode.maxStackSize);
     }
 
     public TransferMode getTransferMode() {
@@ -171,7 +172,7 @@ public class CoverRoboticArm extends CoverConveyor {
         if (transferMode == TransferMode.TRANSFER_ANY) {
             return false;
         }
-        return itemFilterContainer.showGlobalTransferLimitSlider();
+        return this.filterHolder.showGlobalTransferLimitSlider();
     }
 
     @Override
@@ -189,18 +190,18 @@ public class CoverRoboticArm extends CoverConveyor {
         ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
         stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
 
-        stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, itemFilterContainer::adjustTransferStackSize)
+        stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, this.filterHolder::adjustTransferStackSize)
                 .setDefaultTooltip()
                 .setTextScale(0.7f)
                 .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512, itemFilterContainer::adjustTransferStackSize)
+        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512, this.filterHolder::adjustTransferStackSize)
                 .setDefaultTooltip()
                 .setTextScale(0.7f)
                 .setShouldClientCallback(false));
 
-        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20, () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
+        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20, () -> String.valueOf(this.filterHolder.getTransferStackSize()), val -> {
                     if (val != null && !val.isEmpty())
-                        itemFilterContainer.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
+                        this.filterHolder.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
                 })
                         .setNumbersOnly(1, transferMode.maxStackSize)
                         .setMaxLength(4)

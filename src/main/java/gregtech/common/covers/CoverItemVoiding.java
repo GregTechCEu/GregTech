@@ -5,6 +5,11 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
@@ -12,6 +17,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.newgui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -57,7 +63,7 @@ public class CoverItemVoiding extends CoverConveyor {
             if (sourceStack.isEmpty()) {
                 continue;
             }
-            if (!itemFilterContainer.testItemStack(sourceStack)) {
+            if (!this.filterHolder.test(sourceStack)) {
                 continue;
             }
             myItemHandler.extractItem(srcIndex, Integer.MAX_VALUE, false);
@@ -73,7 +79,7 @@ public class CoverItemVoiding extends CoverConveyor {
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
-        this.itemFilterContainer.initUI(20, primaryGroup::addWidget);
+        //this.itemFilterContainer.initUI(20, primaryGroup::addWidget);
 
         primaryGroup.addWidget(new CycleButtonWidget(10, 92 + 23, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
                 "cover.voiding.label.disabled", "cover.voiding.label.enabled")
@@ -87,6 +93,15 @@ public class CoverItemVoiding extends CoverConveyor {
                 .widget(primaryGroup)
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 125 + 16 + 24);
         return builder.build(this, player);
+    }
+
+    @Override
+    public ModularPanel buildUI(GuiCreationContext creationContext, GuiSyncManager syncManager, boolean isClient) {
+        ModularPanel panel = GTGuis.createPanel("cover_item_voiding", 176, 126).bindPlayerInventory();
+        panel.child(IKey.lang(getUITitle()).asWidget().pos(10, 5));
+        IWidget filterUI = filterHolder.createFilterUI(panel, creationContext, syncManager);
+        filterUI.flex().pos(7, 20);
+        return panel.child(filterUI);
     }
 
     @Override
@@ -130,7 +145,7 @@ public class CoverItemVoiding extends CoverConveyor {
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            if (!itemFilterContainer.testItemStack(stack)) {
+            if (!filterHolder.test(stack)) {
                 return stack;
             }
             return ItemStack.EMPTY;

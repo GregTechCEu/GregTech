@@ -14,6 +14,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -77,6 +78,10 @@ public class GTGuis {
 
     public static GuiInfo getCoverUiInfo(EnumFacing facing) {
         return COVERS.get(facing);
+    }
+
+    public static <T extends CoverBehavior & CoverWithUI> void openCoverUi(T cover, EntityPlayer player) {
+        getCoverUiInfo(cover.getAttachedSide()).open(player, cover.coverHolder.getWorld(), cover.coverHolder.getPos());
     }
 
     public static ModularPanel createPanel(String name, int width, int height) {

@@ -3,7 +3,7 @@ package gregtech.api.newgui;
 import com.cleanroommc.modularui.drawable.UITexture;
 import gregtech.api.GTValues;
 
-public class GuiTextures {
+public class GuiTextures extends com.cleanroommc.modularui.drawable.GuiTextures {
 
     //GREGTECH
     public static final UITexture GREGTECH_LOGO = UITexture.fullImage(GTValues.MODID, "textures/gui/icon/gregtech_logo.png", false);
@@ -50,6 +50,8 @@ public class GuiTextures {
     public static final UITexture BUTTON_PROXY = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/button_proxy.png", false);
     public static final UITexture CLIPBOARD_BUTTON = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/clipboard_button.png", false);
     public static final UITexture CLIPBOARD_CHECK_BOX = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/clipboard_checkbox.png", false);
+
+    public static final UITexture BUTTON_BLACKLIST = UITexture.fullImage("textures/gui/widget/button_blacklist.png");
 
     /*public static final UITexture BLANK = UITexture.fullImage("textures/gui/base/blank.png", 1, 1, 0, 0);
     public static final UITexture DISPLAY = UITexture.fullImage("textures/gui/base/display.png", 143, 75, 2, 2);

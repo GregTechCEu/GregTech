@@ -7,6 +7,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.*;
 import gregtech.common.covers.filter.*;
+import gregtech.common.covers.filter.item.ItemFilterHolder;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
@@ -63,12 +64,12 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
             transferRateText(probeInfo, conveyor.getConveyorMode(), rateUnit, conveyor.getTransferRate());
         }
 
-        ItemFilterContainer filter = conveyor.getItemFilterContainer();
-        if (conveyor instanceof CoverRoboticArm) {
-            CoverRoboticArm roboticArm = (CoverRoboticArm) conveyor;
-            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, filter.getTransferStackSize(), filter.getFilterWrapper().getItemFilter() != null);
+        ItemFilterHolder filter = conveyor.getFilterHolder();
+        if (conveyor instanceof CoverRoboticArm roboticArm) {
+            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, filter.getTransferStackSize(), filter.hasFilter());
         }
-        itemFilterText(probeInfo, filter.getFilterWrapper().getItemFilter());
+        // TODO
+        itemFilterText(probeInfo, null);
     }
 
     /**
@@ -80,11 +81,11 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
     private static void itemVoidingInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverItemVoiding voiding) {
         String unit = " {*gregtech.top.unit.items*}";
 
-        ItemFilterContainer container = voiding.getItemFilterContainer();
+        ItemFilterHolder container = voiding.getFilterHolder();
         if (voiding instanceof CoverItemVoidingAdvanced) {
             CoverItemVoidingAdvanced advanced = (CoverItemVoidingAdvanced) voiding;
             VoidingMode mode = advanced.getVoidingMode();
-            voidingText(probeInfo, mode, unit, container.getTransferStackSize(), container.getFilterWrapper().getItemFilter() != null);
+            voidingText(probeInfo, mode, unit, container.getTransferStackSize(), container.hasFilter());
         }
     }
 
