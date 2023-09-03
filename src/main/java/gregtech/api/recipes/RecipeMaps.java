@@ -1476,6 +1476,10 @@ public final class RecipeMaps {
                     .sound(GTSoundEvents.MOTOR)
                     .build();
 
+    public static final RecipeMap<NoEnergyRecipeBuilder> HEAT_EXCHANGER_RECIPES = new RecipeMap<>("heat_exchanger", 1, 0, 2, 2, new NoEnergyRecipeBuilder(), false)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, ProgressWidget.MoveType.HORIZONTAL)
+            .setSound(GTSoundEvents.COOLING);
+
     //////////////////////////////////////
     // Fuel Recipe Maps //
     //////////////////////////////////////
