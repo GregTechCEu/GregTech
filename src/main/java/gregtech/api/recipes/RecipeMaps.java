@@ -1282,6 +1282,9 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, ProgressWidget.MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.COOLING);
 
+    public static final RecipeMap<SimpleRecipeBuilder> SPENT_FUEL_POOL_RECIPES = new RecipeMap<>("spent_fuel_pool", 1, 1, 1, 1, new SimpleRecipeBuilder(), false)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL);
+
     //////////////////////////////////////
     // Fuel Recipe Maps //
     //////////////////////////////////////
