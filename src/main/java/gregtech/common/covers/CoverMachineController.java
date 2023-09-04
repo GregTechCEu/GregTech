@@ -202,7 +202,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     }
 
     private boolean shouldAllowWorking() {
-        boolean shouldAllowWorking = getCoverable().getInputRedstoneSignal(getAttachedSide(), false) < minRedstoneStrength;
+        boolean shouldAllowWorking = getCoverable().getInputRedstoneSignal(getAttachedSide(), true) < minRedstoneStrength;
         //noinspection SimplifiableConditionalExpression
         return isInverted ? !shouldAllowWorking : shouldAllowWorking;
     }

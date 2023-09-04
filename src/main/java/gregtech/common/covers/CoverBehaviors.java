@@ -15,8 +15,7 @@ import gregtech.common.covers.filter.SmartItemFilter;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.CoverDigitalInterfaceWirelessPlaceBehaviour;
 import net.minecraft.util.ResourceLocation;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.util.GTUtility.gregtechId;
@@ -136,8 +135,8 @@ public final class CoverBehaviors {
      * @param placerItem      the item which places the cover
      * @param behaviorCreator a function creating the cover behavior
      */
-    public static void registerBehavior(@Nonnull ResourceLocation coverId, @Nonnull MetaValueItem placerItem,
-                                        @Nonnull CoverDefinition2.CoverCreator behaviorCreator) {
+    public static void registerBehavior(@NotNull ResourceLocation coverId, @NotNull MetaValueItem placerItem,
+                                        @NotNull CoverDefinition2.CoverCreator behaviorCreator) {
         placerItem.addComponents(new CoverItemBehavior(registerCover(coverId, placerItem, behaviorCreator)));
     }
 
@@ -149,9 +148,8 @@ public final class CoverBehaviors {
      * @param behaviorCreator a function creating the cover behavior
      * @return the registered cover definition
      */
-    @Nonnull
-    public static CoverDefinition2 registerCover(@Nonnull ResourceLocation coverId, @Nonnull MetaValueItem itemStack,
-                                                 @Nonnull CoverDefinition2.CoverCreator behaviorCreator) {
+    public static @NotNull CoverDefinition2 registerCover(@NotNull ResourceLocation coverId, @NotNull MetaValueItem itemStack,
+                                                          @NotNull CoverDefinition2.CoverCreator behaviorCreator) {
         CoverDefinition2 coverDefinition = new CoverDefinition2(coverId, behaviorCreator, itemStack.getStackForm());
         GregTechAPI.COVER_REGISTRY_2.register(rollingId++, coverId, coverDefinition);
         return coverDefinition;

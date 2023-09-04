@@ -47,14 +47,14 @@ public class CoverItemBehavior implements IItemBehaviour {
 
         if (world.isRemote) return EnumActionResult.SUCCESS;
 
-        Cover cover = definition.createCover(coverHolder, side);
+        Cover cover = definition.createCover(coverHolder, coverSide);
         if (!coverHolder.canPlaceCoverOnSide(coverSide)) return EnumActionResult.PASS;
-        if (!cover.canAttach(coverHolder, side)) return EnumActionResult.PASS;
+        if (!cover.canAttach(coverHolder, coverSide)) return EnumActionResult.PASS;
 
         ItemStack itemStack = player.getHeldItem(hand);
 
         coverHolder.addCover(coverSide, cover);
-        cover.onAttachment(coverHolder, side, player, itemStack);
+        cover.onAttachment(coverHolder, coverSide, player, itemStack);
 
         AdvancementTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
 

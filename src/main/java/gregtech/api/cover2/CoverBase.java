@@ -20,8 +20,8 @@ public abstract class CoverBase implements Cover {
     private final CoverableView coverableView;
     private final EnumFacing attachedSide;
 
-    protected CoverBase(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
-                        @NotNull EnumFacing attachedSide) {
+    public CoverBase(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+                     @NotNull EnumFacing attachedSide) {
         this.definition = definition;
         this.coverableView = coverableView;
         this.attachedSide = attachedSide;
