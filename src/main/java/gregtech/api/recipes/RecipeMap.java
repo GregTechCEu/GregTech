@@ -918,7 +918,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 getMaxFluidInputs() + getMaxFluidOutputs() >= 6;
     }
 
-    @Method(modid = GregTechModules.MODULE_GRS)
+    @Method(modid = GTValues.MODID_GROOVYSCRIPT)
     private VirtualizedRecipeMap getGroovyScriptRecipeMap() {
         return ((VirtualizedRecipeMap) grsVirtualizedRecipeMap);
     }
