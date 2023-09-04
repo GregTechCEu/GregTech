@@ -6,9 +6,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.base.Preconditions;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.CoverBase;
+import gregtech.api.cover2.CoverDefinition2;
+import gregtech.api.cover2.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.storage.ICraftingStorage;
@@ -27,6 +28,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +39,7 @@ import static gregtech.api.metatileentity.MetaTileEntity.clearInventory;
 /**
  * Code from this class is mostly copied from {@link MetaTileEntityWorkbench}
  */
-public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, ITickable, ICraftingStorage {
+public class CoverCraftingTable extends CoverBase implements CoverWithUI, ITickable, ICraftingStorage {
 
     private final ItemStackHandler internalInventory = new ItemStackHandler(18);
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
@@ -46,36 +49,36 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     private CraftingRecipeLogic recipeLogic = null;
     private int itemsCrafted = 0;
 
-    public CoverCraftingTable(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
+    public CoverCraftingTable(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
     }
 
     @Override
-    public boolean canAttach() {
+    public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
         return true;
     }
 
     @Override
-    public boolean shouldAutoConnect() {
+    public boolean shouldAutoConnectToPipes() {
         return false;
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.CRAFTING.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        Textures.CRAFTING.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     private void createCraftingRecipeLogic() {
         this.recipeLogic = new CraftingRecipeLogic(this);
         this.recipeLogic.setItemsCraftedAmount(itemsCrafted);
         ItemSources itemSources = this.recipeLogic.getItemSourceList();
-        itemSources.addItemHandler(new InventoryItemSource(coverHolder.getWorld(), toolInventory, -2));
-        itemSources.addItemHandler(new InventoryItemSource(coverHolder.getWorld(), internalInventory, -1));
-        this.recipeLogic.checkNeighbourInventories(coverHolder.getPos());
+        itemSources.addItemHandler(new InventoryItemSource(getWorld(), toolInventory, -2));
+        itemSources.addItemHandler(new InventoryItemSource(getWorld(), internalInventory, -1));
+        this.recipeLogic.checkNeighbourInventories(getPos());
     }
 
     @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
             this.openUI((EntityPlayerMP) playerIn);
         }
@@ -83,11 +86,15 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     }
 
     @Override
+    public @UnknownNullability World getWorld() {
+        // this override is needed
+        return super.getWorld();
+    }
+
+    @Override
     public void update() {
-        if (!coverHolder.getWorld().isRemote && recipeLogic == null) {
-            createCraftingRecipeLogic();
-        }
-        if (!coverHolder.getWorld().isRemote) {
+        if (!getWorld().isRemote) {
+            if (recipeLogic == null) createCraftingRecipeLogic();
             getRecipeLogic().update();
         }
     }
@@ -98,12 +105,12 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     }
 
     private CraftingRecipeLogic getRecipeLogic() {
-        Preconditions.checkState(coverHolder.getWorld() != null, "getRecipeResolver called too early");
+        Preconditions.checkState(getCoverable().getWorld() != null, "getRecipeResolver called too early");
         return recipeLogic;
     }
 
     @Override
-    public List<ItemStack> getDrops() {
+    public @NotNull List<ItemStack> getDrops() {
         List<ItemStack> itemStacks = new ArrayList<>();
         for (int i = 0; i < internalInventory.getSlots(); i++) {
             itemStacks.add(internalInventory.getStackInSlot(i));
@@ -128,30 +135,23 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setTag("CraftingGridInventory", craftingGrid.serializeNBT());
         tagCompound.setTag("ToolInventory", toolInventory.serializeNBT());
         tagCompound.setTag("InternalInventory", internalInventory.serializeNBT());
         tagCompound.setInteger("ItemsCrafted", recipeLogic == null ? itemsCrafted : recipeLogic.getItemsCraftedAmount());
         tagCompound.setTag("RecipeMemory", recipeMemory.serializeNBT());
-
-        return tagCompound;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.craftingGrid.deserializeNBT(tagCompound.getCompoundTag("CraftingGridInventory"));
         this.toolInventory.deserializeNBT(tagCompound.getCompoundTag("ToolInventory"));
         this.internalInventory.deserializeNBT(tagCompound.getCompoundTag("InternalInventory"));
         this.itemsCrafted = tagCompound.getInteger("ItemsCrafted");
         this.recipeMemory.deserializeNBT(tagCompound.getCompoundTag("RecipeMemory"));
-    }
-
-    @Override
-    public World getWorld() {
-        return coverHolder.getWorld();
     }
 
     @Override

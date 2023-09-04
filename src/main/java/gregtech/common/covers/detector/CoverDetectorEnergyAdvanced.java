@@ -8,7 +8,8 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.CoverDefinition2;
+import gregtech.api.cover2.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
@@ -23,6 +24,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -33,27 +35,24 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     private static final long DEFAULT_MIN_EU = 0, DEFAULT_MAX_EU = 2048;
     private static final int DEFAULT_MIN_PERCENT = 33, DEFAULT_MAX_PERCENT = 66;
 
-    public long minValue, maxValue;
-    private int outputAmount;
-    private boolean usePercent;
+    public long minValue = DEFAULT_MIN_EU;
+    public long maxValue = DEFAULT_MAX_EU;
+    private int outputAmount = 0;
+    private boolean usePercent = false;
     private WidgetGroup widgetsToUpdate;
 
-    public CoverDetectorEnergyAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
-        this.minValue = DEFAULT_MIN_EU;
-        this.maxValue = DEFAULT_MAX_EU;
-        this.outputAmount = 0;
-        this.usePercent = false;
+    public CoverDetectorEnergyAdvanced(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.DETECTOR_ENERGY_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        Textures.DETECTOR_ENERGY_ADVANCED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        if (!this.coverHolder.getWorld().isRemote) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+        if (!this.getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
         return EnumActionResult.SUCCESS;
@@ -61,9 +60,9 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
 
     @Override
     public void update() {
-        if (coverHolder.getOffsetTimer() % 20 != 0) return;
+        if (getOffsetTimer() % 20 != 0) return;
 
-        IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
+        IEnergyContainer energyContainer = getCoverable().getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
         if (energyContainer != null) {
             if (usePercent) {
                 if (energyContainer.getEnergyCapacity() > 0) {
@@ -187,16 +186,13 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         return usePercent ? 3 : 19;
     }
 
-    @Nonnull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound tagCompound) {
+    public void writeToNBT(@Nonnull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setLong("maxEU", this.maxValue);
         tagCompound.setLong("minEU", this.minValue);
         tagCompound.setInteger("outputAmount", this.outputAmount);
         tagCompound.setBoolean("usePercent", this.usePercent);
-
-        return tagCompound;
     }
 
     @Override

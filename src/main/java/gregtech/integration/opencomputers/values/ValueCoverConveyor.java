@@ -1,6 +1,6 @@
 package gregtech.integration.opencomputers.values;
 
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover2.Cover;
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.covers.CoverConveyor.ConveyorMode;
 import gregtech.integration.opencomputers.InputValidator;
@@ -20,14 +20,14 @@ public class ValueCoverConveyor extends ValueCoverBehavior {
     }
 
     @Override
-    protected CoverConveyor getCoverBehavior() {
-        CoverBehavior cover = super.getCoverBehavior();
-        return cover instanceof CoverConveyor ? (CoverConveyor) cover : null;
+    protected CoverConveyor getCover() {
+        Cover cover = super.getCover();
+        return cover instanceof CoverConveyor conveyor ? conveyor : null;
     }
 
     @Callback(doc = "function():number --  Returns tier.")
     public Object[] getTier(final Context context, final Arguments args) {
-        CoverConveyor cover = getCoverBehavior();
+        CoverConveyor cover = getCover();
         if (cover == null) {
             return NULL_COVER;
         }
@@ -37,7 +37,7 @@ public class ValueCoverConveyor extends ValueCoverBehavior {
 
     @Callback(doc = "function():number --  Returns transfer rate.")
     public Object[] getTransferRate(final Context context, final Arguments args) {
-        CoverConveyor cover = getCoverBehavior();
+        CoverConveyor cover = getCover();
         if (cover == null) {
             return NULL_COVER;
         }
@@ -47,7 +47,7 @@ public class ValueCoverConveyor extends ValueCoverBehavior {
 
     @Callback(doc = "function(number) --  Sets transfer rate.")
     public Object[] setTransferRate(final Context context, final Arguments args) {
-        CoverConveyor cover = getCoverBehavior();
+        CoverConveyor cover = getCover();
         if (cover == null) {
             return NULL_COVER;
         }
@@ -59,7 +59,7 @@ public class ValueCoverConveyor extends ValueCoverBehavior {
 
     @Callback(doc = "function(mode:number) --  Sets conveyor mode. (0:IMPORT, 1:EXPORT)")
     public Object[] setConveyorMode(final Context context, final Arguments args) {
-        CoverConveyor cover = getCoverBehavior();
+        CoverConveyor cover = getCover();
         if (cover == null) {
             return NULL_COVER;
         }
@@ -71,7 +71,7 @@ public class ValueCoverConveyor extends ValueCoverBehavior {
 
     @Callback(doc = "function():number --  Gets conveyor mode. (0:IMPORT, 1:EXPORT)")
     public Object[] getConveyorMode(final Context context, final Arguments args) {
-        CoverConveyor cover = getCoverBehavior();
+        CoverConveyor cover = getCover();
         if (cover == null) {
             return NULL_COVER;
         }

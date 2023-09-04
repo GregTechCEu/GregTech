@@ -44,6 +44,11 @@ public interface CoverableView extends ICapabilityProvider {
     long getOffsetTimer();
 
     /**
+     * @return if the CoverableView is a valid TileEntity
+     */
+    boolean isValid();
+
+    /**
      * @param side the side to retrieve a cover from
      * @return the cover at the side
      */

@@ -7,9 +7,11 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.Cover;
+import gregtech.api.cover2.CoverBase;
+import gregtech.api.cover2.CoverDefinition2;
+import gregtech.api.cover2.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
@@ -20,20 +22,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CoverMachineController extends CoverBehavior implements CoverWithUI {
+public class CoverMachineController extends CoverBase implements CoverWithUI {
 
     private int minRedstoneStrength;
     private boolean isInverted;
     private ControllerMode controllerMode;
     private final ItemStackHandler displayInventory = new ItemStackHandler(1);
 
-    public CoverMachineController(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
+    public CoverMachineController(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+                                  @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
         this.minRedstoneStrength = 1;
         this.isInverted = false;
         this.controllerMode = ControllerMode.MACHINE;
@@ -54,13 +59,13 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     public void setMinRedstoneStrength(int minRedstoneStrength) {
         this.minRedstoneStrength = minRedstoneStrength;
         updateRedstoneStatus();
-        coverHolder.markDirty();
+        getCoverable().markDirty();
     }
 
     public void setInverted(boolean inverted) {
         isInverted = inverted;
         updateRedstoneStatus();
-        coverHolder.markDirty();
+        getCoverable().markDirty();
     }
 
     public void setControllerMode(ControllerMode controllerMode) {
@@ -68,27 +73,27 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
         this.controllerMode = controllerMode;
         updateRedstoneStatus();
         updateDisplayInventory();
-        coverHolder.markDirty();
+        getCoverable().markDirty();
     }
 
     private void cycleNextControllerMode() {
-        List<ControllerMode> allowedModes = getAllowedModes();
+        List<ControllerMode> allowedModes = getAllowedModes(getCoverable(), getAttachedSide());
         int nextIndex = allowedModes.indexOf(controllerMode) + 1;
         if (!allowedModes.isEmpty()) {
             setControllerMode(allowedModes.get(nextIndex % allowedModes.size()));
         }
     }
 
-    public List<ControllerMode> getAllowedModes() {
-        ArrayList<ControllerMode> results = new ArrayList<>();
+    public List<ControllerMode> getAllowedModes(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
+        List<ControllerMode> results = new ArrayList<>();
         for (ControllerMode controllerMode : ControllerMode.values()) {
             IControllable controllable = null;
             if (controllerMode.side == null) {
-                controllable = coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, attachedSide);
+                controllable = coverable.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, side);
             } else {
-                CoverBehavior coverBehavior = coverHolder.getCoverAtSide(controllerMode.side);
-                if (coverBehavior != null) {
-                    controllable = coverBehavior.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+                Cover cover = coverable.getCoverAtSide(controllerMode.side);
+                if (cover != null) {
+                    controllable = cover.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
                 }
             }
             if (controllable != null) {
@@ -99,13 +104,13 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     }
 
     @Override
-    public boolean canAttach() {
-        return !getAllowedModes().isEmpty();
+    public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
+        return !getAllowedModes(coverable, side).isEmpty();
     }
 
     @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        if (!coverHolder.getWorld().isRemote) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+        if (!getCoverable().getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
         return EnumActionResult.SUCCESS;
@@ -130,21 +135,21 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     }
 
     @Override
-    public void onAttached(ItemStack itemStack) {
-        super.onAttached(itemStack);
-        this.controllerMode = getAllowedModes().iterator().next();
+    public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
+        super.onAttachment(coverableView, side, player, itemStack);
+        this.controllerMode = getAllowedModes(getCoverable(), getAttachedSide()).iterator().next();
         updateRedstoneStatus();
     }
 
     @Override
-    public void onRemoved() {
-        super.onRemoved();
+    public void onRemoval() {
+        super.onRemoval();
         resetCurrentControllable();
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.MACHINE_CONTROLLER_OVERLAY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        Textures.MACHINE_CONTROLLER_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override
@@ -161,24 +166,24 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
         EnumFacing controlledSide = getControllerMode().side;
         ItemStack resultStack = ItemStack.EMPTY;
         if (controlledSide != null) {
-            CoverBehavior coverBehavior = coverHolder.getCoverAtSide(controlledSide);
-            if (coverBehavior != null) {
-                resultStack = coverBehavior.getCoverDefinition().getDropItemStack();
+            Cover cover = getCoverable().getCoverAtSide(controlledSide);
+            if (cover != null) {
+                resultStack = cover.getDefinition().getDropItemStack();
             }
         }
         this.displayInventory.setStackInSlot(0, resultStack);
     }
 
-    private IControllable getControllable() {
+    private @Nullable IControllable getControllable() {
         EnumFacing side = controllerMode.side;
         if (side == null) {
-            return coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, attachedSide);
+            return getCoverable().getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, getAttachedSide());
         } else {
-            CoverBehavior coverBehavior = coverHolder.getCoverAtSide(side);
-            if (coverBehavior == null) {
+            Cover cover = getCoverable().getCoverAtSide(side);
+            if (cover == null) {
                 return null;
             }
-            return coverBehavior.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+            return cover.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
         }
     }
 
@@ -197,7 +202,7 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     }
 
     private boolean shouldAllowWorking() {
-        boolean shouldAllowWorking = getRedstoneSignalInput() < minRedstoneStrength;
+        boolean shouldAllowWorking = getCoverable().getInputRedstoneSignal(getAttachedSide(), false) < minRedstoneStrength;
         //noinspection SimplifiableConditionalExpression
         return isInverted ? !shouldAllowWorking : shouldAllowWorking;
     }
@@ -205,9 +210,11 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     private boolean doesOtherAllowingWork() {
         boolean otherAllow = true;
         CoverMachineController cover;
+        EnumFacing attachedSide = getAttachedSide();
+        CoverableView coverable = getCoverable();
         for (EnumFacing side : EnumFacing.values()) {
-            if (side != attachedSide && coverHolder.getCoverAtSide(side) instanceof CoverMachineController) {
-                cover = (CoverMachineController) coverHolder.getCoverAtSide(side);
+            if (side != attachedSide && coverable.getCoverAtSide(side) instanceof CoverMachineController machineController) {
+                cover = machineController;
                 otherAllow = otherAllow && cover.controllerMode == controllerMode && cover.shouldAllowWorking();
             }
         }
@@ -215,17 +222,15 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("MinRedstoneStrength", minRedstoneStrength);
         tagCompound.setBoolean("Inverted", isInverted);
         tagCompound.setInteger("ControllerMode", controllerMode.ordinal());
-
-        return tagCompound;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.minRedstoneStrength = tagCompound.getInteger("MinRedstoneStrength");
         this.isInverted = tagCompound.getBoolean("Inverted");

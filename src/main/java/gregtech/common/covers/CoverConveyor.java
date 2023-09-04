@@ -10,14 +10,16 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.ItemHandlerDelegate;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.CoverBase;
+import gregtech.api.cover2.CoverDefinition2;
+import gregtech.api.cover2.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
@@ -43,13 +45,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
+public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, IControllable {
 
     public final int tier;
     public final int maxItemTransferRate;
@@ -62,8 +65,9 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     private CoverableItemHandlerWrapper itemHandlerWrapper;
     protected boolean isWorkingAllowed = true;
 
-    public CoverConveyor(ICoverable coverable, EnumFacing attachedSide, int tier, int itemsPerSecond) {
-        super(coverable, attachedSide);
+    public CoverConveyor(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+                         @NotNull EnumFacing attachedSide, int tier, int itemsPerSecond) {
+        super(definition, coverableView, attachedSide);
         this.tier = tier;
         this.maxItemTransferRate = itemsPerSecond;
         this.transferRate = maxItemTransferRate;
@@ -75,16 +79,17 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     public void setTransferRate(int transferRate) {
         this.transferRate = transferRate;
-        coverHolder.markDirty();
+        CoverableView coverable = getCoverable();
+        coverable.markDirty();
 
-        if (coverHolder.getWorld() != null && coverHolder.getWorld().isRemote) {
+        if (coverable.getWorld() != null && coverable.getWorld().isRemote) {
             // tile at cover holder pos
-            TileEntity te = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
+            TileEntity te = coverable.getWorld().getTileEntity(coverable.getPos());
             if (te instanceof TileEntityItemPipe) {
                 ((TileEntityItemPipe) te).resetTransferred();
             }
             // tile neighbour to holder pos at attached side
-            te = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
+            te = coverable.getWorld().getTileEntity(coverable.getPos().offset(getAttachedSide()));
             if (te instanceof TileEntityItemPipe) {
                 ((TileEntityItemPipe) te).resetTransferred();
             }
@@ -101,8 +106,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     public void setConveyorMode(ConveyorMode conveyorMode) {
         this.conveyorMode = conveyorMode;
-        writeUpdateData(GregtechDataCodes.UPDATE_COVER_MODE, buf -> buf.writeEnumValue(conveyorMode));
-        coverHolder.markDirty();
+        writeCustomData(GregtechDataCodes.UPDATE_COVER_MODE, buf -> buf.writeEnumValue(conveyorMode));
+        getCoverable().markDirty();
     }
 
     public ConveyorMode getConveyorMode() {
@@ -115,7 +120,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     public void setDistributionMode(DistributionMode distributionMode) {
         this.distributionMode = distributionMode;
-        coverHolder.markDirty();
+        getCoverable().markDirty();
     }
 
     public ManualImportExportMode getManualImportExportMode() {
@@ -124,7 +129,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     protected void setManualImportExportMode(ManualImportExportMode manualImportExportMode) {
         this.manualImportExportMode = manualImportExportMode;
-        coverHolder.markDirty();
+        getCoverable().markDirty();
     }
 
     public ItemFilterContainer getItemFilterContainer() {
@@ -133,11 +138,13 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     @Override
     public void update() {
-        long timer = coverHolder.getOffsetTimer();
+        CoverableView coverable = getCoverable();
+        long timer = coverable.getOffsetTimer();
         if (timer % 5 == 0 && isWorkingAllowed && itemsLeftToTransferLastSecond > 0) {
-            TileEntity tileEntity = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
-            IItemHandler itemHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide.getOpposite());
-            IItemHandler myItemHandler = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide);
+            EnumFacing side = getAttachedSide();
+            TileEntity tileEntity = coverable.getWorld().getTileEntity(coverable.getPos().offset(side));
+            IItemHandler itemHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
+            IItemHandler myItemHandler = coverable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
             if (itemHandler != null && myItemHandler != null) {
                 int totalTransferred = doTransferItems(itemHandler, myItemHandler, itemsLeftToTransferLastSecond);
                 this.itemsLeftToTransferLastSecond -= totalTransferred;
@@ -403,36 +410,37 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     }
 
     @Override
-    public boolean canAttach() {
-        return coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide) != null;
+    public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
+        return coverable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getAttachedSide()) != null;
     }
 
     @Override
-    public boolean shouldCoverInteractWithOutputside() {
+    public boolean canInteractWithOutputSide() {
         return true;
     }
 
     @Override
-    public void onRemoved() {
+    public void onRemoval() {
         NonNullList<ItemStack> drops = NonNullList.create();
         MetaTileEntity.clearInventory(drops, itemFilterContainer.getFilterInventory());
+        CoverableView coverable = getCoverable();
         for (ItemStack itemStack : drops) {
-            Block.spawnAsEntity(coverHolder.getWorld(), coverHolder.getPos(), itemStack);
+            Block.spawnAsEntity(coverable.getWorld(), coverable.getPos(), itemStack);
         }
     }
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         if (conveyorMode == ConveyorMode.EXPORT) {
-            Textures.CONVEYOR_OVERLAY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+            Textures.CONVEYOR_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         } else {
-            Textures.CONVEYOR_OVERLAY_INVERTED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+            Textures.CONVEYOR_OVERLAY_INVERTED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         }
     }
 
     @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        if (!coverHolder.getWorld().isRemote) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+        if (!getCoverable().getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
         return EnumActionResult.SUCCESS;
@@ -492,8 +500,9 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                 ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
                 .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
-        if (coverHolder.getWorld().getTileEntity(coverHolder.getPos()) instanceof TileEntityItemPipe ||
-                coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide)) instanceof TileEntityItemPipe) {
+        CoverableView coverable = getCoverable();
+        if (coverable.getWorld().getTileEntity(coverable.getPos()) instanceof TileEntityItemPipe ||
+                coverable.getWorld().getTileEntity(coverable.getPos().offset(getAttachedSide())) instanceof TileEntityItemPipe) {
             final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
                     () -> distributionMode.ordinal(),
                     val -> setDistributionMode(DistributionMode.values()[val]))
@@ -520,11 +529,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     }
 
     @Override
-    public void readUpdateData(int id, PacketBuffer packetBuffer) {
-        super.readUpdateData(id, packetBuffer);
-        if (id == GregtechDataCodes.UPDATE_COVER_MODE) {
-            this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
-            coverHolder.scheduleRenderUpdate();
+    public void readCustomData(int discriminator, @NotNull PacketBuffer buf) {
+        super.readCustomData(discriminator, buf);
+        if (discriminator == GregtechDataCodes.UPDATE_COVER_MODE) {
+            this.conveyorMode = buf.readEnumValue(ConveyorMode.class);
+            getCoverable().scheduleRenderUpdate();
         }
     }
 
@@ -536,14 +545,14 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     }
 
     @Override
-    public void readInitialSyncData(PacketBuffer packetBuffer) {
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
         this.distributionMode = packetBuffer.readEnumValue(DistributionMode.class);
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferRate", transferRate);
         tagCompound.setInteger("ConveyorMode", conveyorMode.ordinal());
@@ -551,12 +560,10 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
         tagCompound.setTag("Filter", this.itemFilterContainer.serializeNBT());
-
-        return tagCompound;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
         this.conveyorMode = ConveyorMode.values()[tagCompound.getInteger("ConveyorMode")];
@@ -568,7 +575,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     @Override
     @SideOnly(Side.CLIENT)
-    protected TextureAtlasSprite getPlateSprite() {
+    protected @NotNull TextureAtlasSprite getPlateSprite() {
         return Textures.VOLTAGE_CASINGS[this.tier].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
     }
 

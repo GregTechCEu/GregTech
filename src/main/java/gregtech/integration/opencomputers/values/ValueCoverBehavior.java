@@ -1,8 +1,8 @@
 package gregtech.integration.opencomputers.values;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.Cover;
+import gregtech.api.cover2.CoverableView;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.integration.opencomputers.InputValidator;
 import li.cil.oc.api.machine.Arguments;
@@ -28,22 +28,22 @@ public class ValueCoverBehavior extends AbstractValue {
 
     public final Object[] NULL_COVER = new Object[]{null, "Found no cover, this is an invalid object."};
 
-    protected ValueCoverBehavior(CoverBehavior coverBehavior, EnumFacing side, String coverName) {
-        pos = coverBehavior.coverHolder.getPos();
-        dim = coverBehavior.coverHolder.getWorld().provider.getDimension();
+    protected ValueCoverBehavior(Cover cover, EnumFacing side, String coverName) {
+        this.pos = cover.getPos();
+        this.dim = cover.getWorld().provider.getDimension();
         this.side = side;
         this.coverName = coverName;
     }
 
-    public ValueCoverBehavior(CoverBehavior coverBehavior, EnumFacing side) {
+    public ValueCoverBehavior(Cover coverBehavior, EnumFacing side) {
         this(coverBehavior, side, "gt_coverBehavior");
     }
 
-    protected CoverBehavior getCoverBehavior() {
+    protected Cover getCover() {
         World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim);
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IGregTechTileEntity) {
-            ICoverable coverable = te.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
+            CoverableView coverable = te.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, null);
             if (coverable != null) {
                 return coverable.getCoverAtSide(side);
             }
@@ -61,21 +61,9 @@ public class ValueCoverBehavior extends AbstractValue {
         return new Object[]{coverName};
     }
 
-    @Callback(doc = "function(signal:number) --  Sets redstone signal output.")
-    public Object[] setRedstoneSignalOutput(final Context context, final Arguments args) {
-        CoverBehavior cover = getCoverBehavior();
-        if (cover == null) {
-            return NULL_COVER;
-        }
-
-        int signal = InputValidator.getInteger(args, 0, 0, 15);
-        cover.setRedstoneSignalOutput(signal);
-        return new Object[]{};
-    }
-
     @Callback(doc = "function():number --  Gets redstone signal output.")
     public final Object[] getRedstoneSignalOutput(final Context context, final Arguments args) {
-        CoverBehavior cover = getCoverBehavior();
+        Cover cover = getCover();
         if (cover == null) {
             return NULL_COVER;
         }
@@ -85,12 +73,12 @@ public class ValueCoverBehavior extends AbstractValue {
 
     @Callback(doc = "function():number --  Gets redstone signal input.")
     public final Object[] getRedstoneSignalInput(final Context context, final Arguments args) {
-        CoverBehavior cover = getCoverBehavior();
+        Cover cover = getCover();
         if (cover == null) {
             return NULL_COVER;
         }
 
-        return new Object[]{cover.getRedstoneSignalInput()};
+        return new Object[]{cover.getCoverable().getInputRedstoneSignal(cover.getAttachedSide(), false)};
     }
 
     @Override

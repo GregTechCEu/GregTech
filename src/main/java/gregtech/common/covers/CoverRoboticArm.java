@@ -5,6 +5,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.CoverDefinition2;
+import gregtech.api.cover2.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -19,6 +21,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -28,8 +31,9 @@ public class CoverRoboticArm extends CoverConveyor {
     protected TransferMode transferMode;
     protected int itemsTransferBuffered;
 
-    public CoverRoboticArm(ICoverable coverable, EnumFacing attachedSide, int tier, int itemsPerSecond) {
-        super(coverable, attachedSide, tier, itemsPerSecond);
+    public CoverRoboticArm(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+                           @NotNull EnumFacing attachedSide, int tier, int itemsPerSecond) {
+        super(definition, coverableView, attachedSide, tier, itemsPerSecond);
         this.transferMode = TransferMode.TRANSFER_ANY;
         this.itemFilterContainer.setMaxStackSize(1);
     }
@@ -37,9 +41,9 @@ public class CoverRoboticArm extends CoverConveyor {
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         if (conveyorMode == ConveyorMode.EXPORT) {
-            Textures.ARM_OVERLAY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+            Textures.ARM_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         } else {
-            Textures.ARM_OVERLAY_INVERTED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+            Textures.ARM_OVERLAY_INVERTED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         }
     }
 
@@ -51,16 +55,11 @@ public class CoverRoboticArm extends CoverConveyor {
         if (conveyorMode == ConveyorMode.IMPORT && myItemHandler instanceof ItemNetHandler && transferMode == TransferMode.KEEP_EXACT) {
             return 0;
         }
-        switch (transferMode) {
-            case TRANSFER_ANY:
-                return doTransferItemsAny(itemHandler, myItemHandler, maxTransferAmount);
-            case TRANSFER_EXACT:
-                return doTransferExact(itemHandler, myItemHandler, maxTransferAmount);
-            case KEEP_EXACT:
-                return doKeepExact(itemHandler, myItemHandler, maxTransferAmount);
-            default:
-                return 0;
-        }
+        return switch (transferMode) {
+            case TRANSFER_ANY -> doTransferItemsAny(itemHandler, myItemHandler, maxTransferAmount);
+            case TRANSFER_EXACT -> doTransferExact(itemHandler, myItemHandler, maxTransferAmount);
+            case KEEP_EXACT -> doKeepExact(itemHandler, myItemHandler, maxTransferAmount);
+        };
     }
 
     protected int doTransferExact(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
@@ -159,7 +158,7 @@ public class CoverRoboticArm extends CoverConveyor {
 
     public void setTransferMode(TransferMode transferMode) {
         this.transferMode = transferMode;
-        this.coverHolder.markDirty();
+        this.getCoverable().markDirty();
         this.itemFilterContainer.setMaxStackSize(transferMode.maxStackSize);
     }
 
@@ -213,11 +212,9 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferMode", transferMode.ordinal());
-
-        return tagCompound;
     }
 
     @Override

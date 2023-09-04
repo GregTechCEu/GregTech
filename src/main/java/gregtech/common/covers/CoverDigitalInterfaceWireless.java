@@ -6,6 +6,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.CoverDefinition2;
+import gregtech.api.cover2.CoverableView;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.FacingPos;
 import gregtech.client.renderer.texture.Textures;
@@ -22,12 +24,15 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class CoverDigitalInterfaceWireless extends CoverDigitalInterface{
+public class CoverDigitalInterfaceWireless extends CoverDigitalInterface {
+
     private BlockPos remote;
 
-    public CoverDigitalInterfaceWireless(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
+    public CoverDigitalInterfaceWireless(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
     }
 
     @Override
@@ -35,13 +40,11 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface{
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         if (this.remote != null) {
             tagCompound.setTag("cdiRemote", NBTUtil.createPosTag(this.remote));
         }
-
-        return tagCompound;
     }
 
     @Override
@@ -68,28 +71,28 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface{
     }
 
     @Override
-    public void onAttached(ItemStack itemStack, EntityPlayer player) {
+    public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         remote = CoverDigitalInterfaceWirelessPlaceBehaviour.getRemotePos(itemStack);
     }
 
     @Override
     public void update() {
         super.update();
-        if (remote != null && !isRemote() && coverHolder.getOffsetTimer() % 20 == 0) {
-            TileEntity te = coverHolder.getWorld().getTileEntity(remote);
-            if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
-                ((MetaTileEntityCentralMonitor) ((IGregTechTileEntity) te).getMetaTileEntity()).addRemoteCover(new FacingPos(coverHolder.getPos(), attachedSide));
+        if (remote != null && !isRemote() && getOffsetTimer() % 20 == 0) {
+            TileEntity te = getWorld().getTileEntity(remote);
+            if (te instanceof IGregTechTileEntity igtte && igtte.getMetaTileEntity() instanceof MetaTileEntityCentralMonitor monitor) {
+                monitor.addRemoteCover(new FacingPos(getPos(), getAttachedSide()));
             }
         }
     }
 
     @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
         return EnumActionResult.SUCCESS;
     }
 
     @Override
-    public ItemStack getPickItem() {
+    public @NotNull ItemStack getPickItem() {
         ItemStack drop = super.getPickItem();
         if (remote != null) {
             drop.setTagCompound(NBTUtil.createPosTag(remote));
@@ -99,6 +102,6 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface{
 
     @Override
     public void renderCover(CCRenderState ccRenderState, Matrix4 translation, IVertexOperation[] ops, Cuboid6 cuboid6, BlockRenderLayer blockRenderLayer) {
-        Textures.COVER_INTERFACE_WIRELESS.renderSided(this.attachedSide, cuboid6, ccRenderState, ops, translation);
+        Textures.COVER_INTERFACE_WIRELESS.renderSided(getAttachedSide(), cuboid6, ccRenderState, ops, translation);
     }
 }

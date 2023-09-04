@@ -199,7 +199,7 @@ public class PipeCoverableImplementation implements CoverHolder {
     }
 
     public void writeInitialSyncData(PacketBuffer buf) {
-        CoverSaveHandler.receiveInitialSyncData(buf, this);
+        CoverSaveHandler.writeInitialSyncData(buf, this);
     }
 
     public void readInitialSyncData(PacketBuffer buf) {
@@ -264,6 +264,7 @@ public class PipeCoverableImplementation implements CoverHolder {
         holder.markAsDirty();
     }
 
+    @Override
     public boolean isValid() {
         return holder.isValidTile();
     }

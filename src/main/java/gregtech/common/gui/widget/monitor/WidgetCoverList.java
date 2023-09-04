@@ -44,15 +44,15 @@ public class WidgetCoverList extends ScrollableListWidget {
         widgetMap = new HashMap<>();
         this.onSelected = onSelected;
         for (CoverDigitalInterface cover : covers) {
-            ItemStack itemStack = cover.coverHolder.getStackForm();
-            BlockPos pos = cover.coverHolder.getPos();
-            if (cover.coverHolder instanceof PipeCoverableImplementation) {
+            ItemStack itemStack = cover.getPickItem();
+            BlockPos pos = cover.getPos();
+            if (cover.getCoverable() instanceof PipeCoverableImplementation) {
                 itemStack = null;
-                pos = pos.offset(cover.attachedSide);
-                TileEntity tileEntity = cover.coverHolder.getWorld().getTileEntity(pos);
-                IBlockState state = cover.coverHolder.getWorld().getBlockState(pos);
+                pos = pos.offset(cover.getAttachedSide());
+                TileEntity tileEntity = cover.getWorld().getTileEntity(pos);
+                IBlockState state = cover.getWorld().getBlockState(pos);
                 if (tileEntity != null) {
-                    itemStack = tileEntity.getBlockType().getItem(cover.coverHolder.getWorld(), pos, state);
+                    itemStack = tileEntity.getBlockType().getItem(cover.getWorld(), pos, state);
                 }
                 if (itemStack == null) continue;
             }
@@ -62,8 +62,8 @@ public class WidgetCoverList extends ScrollableListWidget {
             widgetGroup.addWidget(new SlotWidget(itemStackHandler, 0, 0, 0, false, false));
             widgetGroup.addWidget(new LabelWidget(20, 5, String.format("(%d, %d, %d)", pos.getX(), pos.getY(), pos.getZ()), 0XFFFFFFFF));
             widgetMap.put(widgetGroup, cover);
-            if (widgetGroup.getSize().width + this.scrollPaneWidth > this.getSize().width)
-                this.setSize(new Size(widgetGroup.getSize().width + this.scrollPaneWidth, this.getSize().height));
+            if (widgetGroup.getSize().width + scrollPaneWidth > this.getSize().width)
+                this.setSize(new Size(widgetGroup.getSize().width + scrollPaneWidth, this.getSize().height));
             this.addWidget(widgetGroup);
             if (cover == bindCover) {
                 selected = widgetGroup;

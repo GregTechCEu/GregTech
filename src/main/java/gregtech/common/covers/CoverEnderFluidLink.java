@@ -7,10 +7,10 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.CoverBase;
+import gregtech.api.cover2.CoverDefinition2;
+import gregtech.api.cover2.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
@@ -30,35 +30,32 @@ import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
+public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITickable, IControllable {
 
     public static final int TRANSFER_RATE = 8000; // mB/t
     private static final Pattern COLOR_INPUT_PATTERN = Pattern.compile("[0-9a-fA-F]*");
 
-    protected CoverPump.PumpMode pumpMode;
-    private int color;
-    private UUID playerUUID;
-    private boolean isPrivate;
+    protected CoverPump.PumpMode pumpMode = CoverPump.PumpMode.IMPORT;
+    private int color = 0xFFFFFFFF;
+    private UUID playerUUID = null;
+    private boolean isPrivate = false;
     private boolean workingEnabled = true;
-    private boolean ioEnabled;
+    private boolean ioEnabled = false;
     private String tempColorStr;
     private boolean isColorTemp;
     private final FluidTankSwitchShim linkedTank;
     protected final FluidFilterContainer fluidFilter;
 
-    public CoverEnderFluidLink(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
-        pumpMode = CoverPump.PumpMode.IMPORT;
-        ioEnabled = false;
-        isPrivate = false;
-        playerUUID = null;
-        color = 0xFFFFFFFF;
+    protected CoverEnderFluidLink(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
         this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName(), null));
-        fluidFilter = new FluidFilterContainer(this);
+        this.fluidFilter = new FluidFilterContainer(this);
     }
 
     private String makeTankName() {
@@ -78,37 +75,37 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     @Override
-    public boolean canAttach() {
-        return this.coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide) != null;
+    public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
+        return coverable.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.ENDER_FLUID_LINK.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        Textures.ENDER_FLUID_LINK.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        if (!coverHolder.getWorld().isRemote) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+        if (!getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
         return EnumActionResult.SUCCESS;
     }
 
     @Override
-    public void onAttached(ItemStack itemStack, EntityPlayer player) {
-        super.onAttached(itemStack, player);
+    public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
+        super.onAttachment(coverableView, side, player, itemStack);
         if (player != null) {
             this.playerUUID = player.getUniqueID();
         }
     }
 
     @Override
-    public void onRemoved() {
+    public void onRemoval() {
         NonNullList<ItemStack> drops = NonNullList.create();
         MetaTileEntity.clearInventory(drops, fluidFilter.getFilterInventory());
         for (ItemStack itemStack : drops) {
-            Block.spawnAsEntity(coverHolder.getWorld(), coverHolder.getPos(), itemStack);
+            Block.spawnAsEntity(getWorld(), getPos(), itemStack);
         }
     }
 
@@ -120,7 +117,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     protected void transferFluids() {
-        IFluidHandler fluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide);
+        IFluidHandler fluidHandler = getCoverable().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide());
         if (fluidHandler == null) return;
         if (pumpMode == CoverPump.PumpMode.IMPORT) {
             GTTransferUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE, fluidFilter::testFluidStack);
@@ -131,7 +128,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
 
     public void setPumpMode(CoverPump.PumpMode pumpMode) {
         this.pumpMode = pumpMode;
-        coverHolder.markDirty();
+        markDirty();
     }
 
     public CoverPump.PumpMode getPumpMode() {
@@ -140,7 +137,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
 
     @Override
     public void openUI(EntityPlayerMP player) {
-        CoverBehaviorUIFactory.INSTANCE.openUI(this, player);
+        CoverWithUI.super.openUI(player);
         isColorTemp = false;
     }
 
@@ -198,11 +195,11 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
 
     public void updateTankLink() {
         this.linkedTank.changeTank(VirtualTankRegistry.getTankCreate(makeTankName(), getTankUUID()));
-        coverHolder.markDirty();
+        markDirty();
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("Frequency", color);
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
@@ -211,8 +208,6 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         tagCompound.setBoolean("Private", isPrivate);
         tagCompound.setString("PlacedUUID", playerUUID.toString());
         tagCompound.setTag("Filter", fluidFilter.serializeNBT());
-
-        return tagCompound;
     }
 
     @Override

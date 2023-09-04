@@ -7,6 +7,8 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.CoverDefinition2;
+import gregtech.api.cover2.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
@@ -23,6 +25,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 public class CoverDetectorItemAdvanced extends CoverDetectorItem implements CoverWithUI {
 
@@ -32,19 +35,18 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     private static final int DEFAULT_MIN = 64;
     private static final int DEFAULT_MAX = 512;
 
-    private int min, max;
+    private int min = DEFAULT_MIN;
+    private int max = DEFAULT_MAX;
     protected ItemFilterContainer itemFilter;
 
-    public CoverDetectorItemAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
+    public CoverDetectorItemAdvanced(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
         this.itemFilter = new ItemFilterContainer(this);
-        this.min = DEFAULT_MIN;
-        this.max = DEFAULT_MAX;
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.DETECTOR_ITEM_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        Textures.DETECTOR_ITEM_ADVANCED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override
@@ -114,8 +116,8 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     }
 
     @Override
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
-        if (!this.coverHolder.getWorld().isRemote) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+        if (!getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
         return EnumActionResult.SUCCESS;
@@ -123,12 +125,10 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
 
     @Override
     public void update() {
-        if (this.coverHolder.getOffsetTimer() % 20 != 0)
-            return;
+        if (getOffsetTimer() % 20 != 0) return;
 
-        IItemHandler itemHandler = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        if (itemHandler == null)
-            return;
+        IItemHandler itemHandler = getCoverable().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        if (itemHandler == null) return;
 
         int storedItems = 0;
 
@@ -141,17 +141,15 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("min", this.min);
         tagCompound.setInteger("max", this.max);
         tagCompound.setTag("filter", this.itemFilter.serializeNBT());
-
-        return tagCompound;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.min = tagCompound.getInteger("min");
         this.max = tagCompound.getInteger("max");
@@ -159,14 +157,14 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer packetBuffer) {
+    public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeInt(this.min);
         packetBuffer.writeInt(this.max);
     }
 
     @Override
-    public void readInitialSyncData(PacketBuffer packetBuffer) {
+    public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.min = packetBuffer.readInt();
         this.max = packetBuffer.readInt();

@@ -3,6 +3,8 @@ package gregtech.integration.opencomputers.drivers;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.Cover;
+import gregtech.api.cover2.CoverHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.covers.*;
 import gregtech.integration.opencomputers.InputValidator;
@@ -21,7 +23,7 @@ public class DriverICoverable extends DriverSidedTileEntity {
 
     @Override
     public Class<?> getTileEntityClass() {
-        return ICoverable.class;
+        return CoverHolder.class;
     }
 
     @Override
@@ -38,14 +40,14 @@ public class DriverICoverable extends DriverSidedTileEntity {
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof IGregTechTileEntity) {
             return new EnvironmentICoverable((IGregTechTileEntity) tileEntity,
-                    tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null));
+                    tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, null));
         }
         return null;
     }
 
-    public final static class EnvironmentICoverable extends EnvironmentMetaTileEntity<ICoverable> {
+    public final static class EnvironmentICoverable extends EnvironmentMetaTileEntity<CoverHolder> {
 
-        public EnvironmentICoverable(IGregTechTileEntity holder, ICoverable capability) {
+        public EnvironmentICoverable(IGregTechTileEntity holder, CoverHolder capability) {
             super(holder, capability, "gt_coverable");
         }
 
@@ -53,23 +55,23 @@ public class DriverICoverable extends DriverSidedTileEntity {
         public Object[] getCover(final Context context, final Arguments args) {
             int index = InputValidator.getInteger(args, 0, 0, 5);
             EnumFacing side = EnumFacing.VALUES[index];
-            CoverBehavior coverBehavior = tileEntity.getCoverAtSide(side);
-            if (coverBehavior instanceof CoverRoboticArm robotArm)
+            Cover cover = tileEntity.getCoverAtSide(side);
+            if (cover instanceof CoverRoboticArm robotArm)
                 return new Object[]{new ValueCoverRoboticArm(robotArm, side)};
-            if (coverBehavior instanceof CoverConveyor conveyor)
+            if (cover instanceof CoverConveyor conveyor)
                 return new Object[]{new ValueCoverConveyor(conveyor, side)};
-            if (coverBehavior instanceof CoverFluidRegulator regulator)
+            if (cover instanceof CoverFluidRegulator regulator)
                 return new Object[]{new ValueCoverFluidRegulator(regulator, side)};
-            if (coverBehavior instanceof CoverPump pump)
+            if (cover instanceof CoverPump pump)
                 return new Object[]{new ValueCoverPump(pump, side)};
-            if (coverBehavior instanceof CoverFluidFilter filter)
+            if (cover instanceof CoverFluidFilter filter)
                 return new Object[]{new ValueCoverFluidFilter(filter, side)};
-            if (coverBehavior instanceof CoverItemFilter filter)
+            if (cover instanceof CoverItemFilter filter)
                 return new Object[]{new ValueCoverItemFilter(filter, side)};
-            if (coverBehavior instanceof CoverEnderFluidLink efl)
+            if (cover instanceof CoverEnderFluidLink efl)
                 return new Object[]{new ValueCoverEnderFluidLink(efl, side)};
-            if (coverBehavior != null)
-                return new Object[]{new ValueCoverBehavior(coverBehavior, side)};
+            if (cover != null)
+                return new Object[]{new ValueCoverBehavior(cover, side)};
             return new Object[]{null};
         }
     }

@@ -2,8 +2,8 @@ package gregtech.integration.theoneprobe.provider;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.Cover;
+import gregtech.api.cover2.CoverHolder;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.*;
 import gregtech.common.covers.filter.*;
@@ -18,12 +18,12 @@ import net.minecraftforge.common.capabilities.Capability;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
+public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
 
     @Nonnull
     @Override
-    protected Capability<ICoverable> getCapability() {
-        return GregtechTileCapabilities.CAPABILITY_COVERABLE;
+    protected Capability<CoverHolder> getCapability() {
+        return GregtechTileCapabilities.CAPABILITY_COVER_HOLDER;
     }
 
     @Override
@@ -32,18 +32,18 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull ICoverable capability, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
-        CoverBehavior coverBehavior = capability.getCoverAtSide(data.getSideHit());
-        if (coverBehavior instanceof CoverConveyor) {
-            conveyorInfo(probeInfo, (CoverConveyor) coverBehavior);
-        } else if (coverBehavior instanceof CoverPump) {
-            pumpInfo(probeInfo, (CoverPump) coverBehavior);
-        } else if (coverBehavior instanceof CoverItemFilter) {
-            itemFilterInfo(probeInfo, (CoverItemFilter) coverBehavior);
-        } else if (coverBehavior instanceof CoverFluidFilter) {
-            fluidFilterInfo(probeInfo, (CoverFluidFilter) coverBehavior);
-        } else if (coverBehavior instanceof CoverEnderFluidLink) {
-            enderFluidLinkInfo(probeInfo, (CoverEnderFluidLink) coverBehavior);
+    protected void addProbeInfo(@Nonnull CoverHolder capability, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+        Cover cover = capability.getCoverAtSide(data.getSideHit());
+        if (cover instanceof CoverConveyor conveyor) {
+            conveyorInfo(probeInfo, conveyor);
+        } else if (cover instanceof CoverPump coverPump) {
+            pumpInfo(probeInfo, coverPump);
+        } else if (cover instanceof CoverItemFilter itemFilter) {
+            itemFilterInfo(probeInfo, itemFilter);
+        } else if (cover instanceof CoverFluidFilter fluidFilter) {
+            fluidFilterInfo(probeInfo, fluidFilter);
+        } else if (cover instanceof CoverEnderFluidLink enderFluidLink) {
+            enderFluidLinkInfo(probeInfo, enderFluidLink);
         }
     }
 
@@ -64,8 +64,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
         }
 
         ItemFilterContainer filter = conveyor.getItemFilterContainer();
-        if (conveyor instanceof CoverRoboticArm) {
-            CoverRoboticArm roboticArm = (CoverRoboticArm) conveyor;
+        if (conveyor instanceof CoverRoboticArm roboticArm) {
             transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, filter.getTransferStackSize(), filter.getFilterWrapper().getItemFilter() != null);
         }
         itemFilterText(probeInfo, filter.getFilterWrapper().getItemFilter());
@@ -81,8 +80,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
         String unit = " {*gregtech.top.unit.items*}";
 
         ItemFilterContainer container = voiding.getItemFilterContainer();
-        if (voiding instanceof CoverItemVoidingAdvanced) {
-            CoverItemVoidingAdvanced advanced = (CoverItemVoidingAdvanced) voiding;
+        if (voiding instanceof CoverItemVoidingAdvanced advanced) {
             VoidingMode mode = advanced.getVoidingMode();
             voidingText(probeInfo, mode, unit, container.getTransferStackSize(), container.getFilterWrapper().getItemFilter() != null);
         }
@@ -105,8 +103,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
         }
 
         FluidFilterContainer filter = pump.getFluidFilterContainer();
-        if (pump instanceof CoverFluidRegulator) {
-            CoverFluidRegulator regulator = (CoverFluidRegulator) pump;
+        if (pump instanceof CoverFluidRegulator regulator) {
             transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator.getTransferAmount(), filter.getFilterWrapper().getFluidFilter() != null);
         }
         fluidFilterText(probeInfo, filter.getFilterWrapper().getFluidFilter());
@@ -121,8 +118,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
     private static void fluidVoidingInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverFluidVoiding voiding) {
         String unit = voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? " {*gregtech.top.unit.fluid_buckets*}" : " {*gregtech.top.unit.fluid_milibuckets*}";
 
-        if (voiding instanceof CoverFluidVoidingAdvanced) {
-            CoverFluidVoidingAdvanced advanced = (CoverFluidVoidingAdvanced) voiding;
+        if (voiding instanceof CoverFluidVoidingAdvanced advanced) {
             VoidingMode mode = advanced.getVoidingMode();
             // do not display amount in overflow when a filter is present
             voidingText(probeInfo, mode, unit, voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? advanced.getTransferAmount() / 1000 : advanced.getTransferAmount(), voiding.getFluidFilterContainer().getFilterWrapper().getFluidFilter() != null);

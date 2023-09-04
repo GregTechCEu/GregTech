@@ -22,7 +22,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
+import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -102,8 +104,9 @@ public interface Cover {
      * @param coverableView the CoverableView this cover is attached to
      * @param side          the side this cover is attached to
      * @param player        the player attaching the cover
+     * @param itemStack     the item used to place the cover
      */
-    default void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player) {}
+    default void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {}
 
     /**
      * Called when the cover is removed
@@ -173,12 +176,16 @@ public interface Cover {
     /**
      * @return a list of ItemStacks to drop when removed
      */
-    @NotNull List<@NotNull ItemStack> getDrops();
+    default @NotNull @Unmodifiable List<@NotNull ItemStack> getDrops() {
+        return Collections.singletonList(getPickItem());
+    }
 
     /**
      * @return the ItemStack form of the Cover
      */
-    @NotNull ItemStack getPickItem();
+    default @NotNull ItemStack getPickItem() {
+        return getDefinition().getDropItemStack();
+    }
 
     /**
      * @return if the Cover can connect to redstone

@@ -51,15 +51,16 @@ public class CoverItemBehavior implements IItemBehaviour {
         if (!coverHolder.canPlaceCoverOnSide(coverSide)) return EnumActionResult.PASS;
         if (!cover.canAttach(coverHolder, side)) return EnumActionResult.PASS;
 
+        ItemStack itemStack = player.getHeldItem(hand);
+
         coverHolder.addCover(coverSide, cover);
-        cover.onAttachment(coverHolder, side, player);
+        cover.onAttachment(coverHolder, side, player, itemStack);
 
         AdvancementTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
 
         if (!player.isCreative()) {
-            ItemStack stack = player.getHeldItem(hand);
-            if (stack.isEmpty()) return EnumActionResult.FAIL;
-            stack.shrink(1);
+            if (itemStack.isEmpty()) return EnumActionResult.FAIL;
+            itemStack.shrink(1);
         }
 
         return EnumActionResult.SUCCESS;

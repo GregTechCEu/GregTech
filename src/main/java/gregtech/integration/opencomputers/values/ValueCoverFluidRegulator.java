@@ -1,6 +1,7 @@
 package gregtech.integration.opencomputers.values;
 
 import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover2.Cover;
 import gregtech.common.covers.CoverFluidRegulator;
 import gregtech.common.covers.TransferMode;
 import gregtech.integration.opencomputers.InputValidator;
@@ -16,14 +17,14 @@ public class ValueCoverFluidRegulator extends ValueCoverPump {
     }
 
     @Override
-    protected CoverFluidRegulator getCoverBehavior() {
-        CoverBehavior cover = super.getCoverBehavior();
+    protected CoverFluidRegulator getCover() {
+        Cover cover = super.getCover();
         return cover instanceof CoverFluidRegulator ? (CoverFluidRegulator) cover : null;
     }
 
     @Callback(doc = "function(mode:number) --  Sets transfer mode. (0:TRANSFER_ANY, 1:TRANSFER_EXACT, 2:KEEP_EXACT)")
     public Object[] setTransferMode(final Context context, final Arguments args) {
-        CoverFluidRegulator cover = getCoverBehavior();
+        CoverFluidRegulator cover = this.getCover();
         if (cover == null) {
             return NULL_COVER;
         }
@@ -35,7 +36,7 @@ public class ValueCoverFluidRegulator extends ValueCoverPump {
 
     @Callback(doc = "function():number --  Gets transfer mode. (0:TRANSFER_ANY, 1:TRANSFER_EXACT, 2:KEEP_EXACT)")
     public Object[] getTransferMode(final Context context, final Arguments args) {
-        CoverFluidRegulator cover = getCoverBehavior();
+        CoverFluidRegulator cover = this.getCover();
         if (cover == null) {
             return NULL_COVER;
         }

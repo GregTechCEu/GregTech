@@ -458,9 +458,9 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            CoverBehavior coverBehavior = getCoverFromPosSide(this.coverPos);
-            if (coverBehavior != null && coverBehavior.coverHolder != null) {
-                return coverBehavior.coverHolder.getCapability(capability, coverBehavior.attachedSide);
+            Cover cover = getCoverFromPosSide(this.coverPos);
+            if (cover != null) {
+                return cover.getCoverable().getCapability(capability, cover.getAttachedSide());
             }
         }
         return null;
@@ -546,7 +546,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                         if (coverPos == null) {
                             this.setMode(null, this.mode);
                         } else {
-                            this.setMode(new FacingPos(coverPos.coverHolder.getPos(), coverPos.attachedSide));
+                            this.setMode(new FacingPos(coverPos.getPos(), coverPos.getAttachedSide()));
                         }
                     }))
 
@@ -602,9 +602,9 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             if (flag) return true;
         }
         if (this.getWorld().isRemote) return true;
-        CoverDigitalInterface coverBehavior = getCoverFromPosSide(this.coverPos);
+        CoverDigitalInterface cover = getCoverFromPosSide(this.coverPos);
         if (isRight) {
-            if (coverBehavior != null && coverBehavior.isProxy() && coverBehavior.coverHolder != null && this.mode != CoverDigitalInterface.MODE.PROXY) {
+            if (cover != null && cover.isProxy() && this.mode != CoverDigitalInterface.MODE.PROXY) {
                 if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty() && this.plugin == null) {
                     if (1f / 16 < x && x < 4f / 16 && 1f / 16 < y && y < 4f / 16) {
                         this.setConfig(this.slot - 1, this.scale, this.frameColor);
@@ -614,13 +614,13 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                         return true;
                     }
                 }
-                if (coverBehavior.modeRightClick(playerIn, hand, this.mode, this.slot) == EnumActionResult.PASS) {
+                if (cover.modeRightClick(playerIn, hand, this.mode, this.slot) == EnumActionResult.PASS) {
                     if (!playerIn.isSneaking() && this.openGUIOnRightClick()) {
-                        TileEntity te = coverBehavior.getCoveredTE();
+                        TileEntity te = cover.getCoveredTE();
                         if (te != null) {
                             BlockPos pos = te.getPos();
                             IBlockState state = te.getWorld().getBlockState(pos);
-                            state.getBlock().onBlockActivated(coverBehavior.coverHolder.getWorld(), pos, state, playerIn, hand, coverBehavior.getCoveredFacing(), 0.5f, 0.5f, 0.5f);
+                            state.getBlock().onBlockActivated(cover.getWorld(), pos, state, playerIn, hand, cover.getCoveredFacing(), 0.5f, 0.5f, 0.5f);
                         }
                         return true;
                     } else {
@@ -630,8 +630,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                 return true;
             }
         } else {
-            if (coverBehavior != null && coverBehavior.isProxy() && coverBehavior.coverHolder != null && this.mode != CoverDigitalInterface.MODE.PROXY) {
-                return coverBehavior.modeLeftClick(playerIn, this.mode, this.slot);
+            if (cover != null && cover.isProxy() && this.mode != CoverDigitalInterface.MODE.PROXY) {
+                return cover.modeLeftClick(playerIn, this.mode, this.slot);
             }
         }
         return false;

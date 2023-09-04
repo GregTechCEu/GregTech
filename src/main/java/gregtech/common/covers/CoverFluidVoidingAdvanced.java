@@ -6,6 +6,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.CoverDefinition2;
+import gregtech.api.cover2.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
@@ -23,18 +25,18 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
-    protected VoidingMode voidingMode;
+    protected VoidingMode voidingMode = VoidingMode.VOID_ANY;
     protected int transferAmount = 0;
 
-    public CoverFluidVoidingAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
-        this.voidingMode = VoidingMode.VOID_ANY;
+    public CoverFluidVoidingAdvanced(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
     }
 
     @Override
@@ -44,16 +46,14 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     @Override
     protected void doTransferFluids() {
-        IFluidHandler myFluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide);
+        IFluidHandler myFluidHandler = getCoverable().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide());
         if (myFluidHandler == null) {
             return;
         }
         switch (voidingMode) {
-            case VOID_ANY:
-                GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
-                break;
-            case VOID_OVERFLOW:
-                voidOverflow(myFluidHandler, fluidFilter::testFluidStack, this.transferAmount);
+            case VOID_ANY ->
+                    GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
+            case VOID_OVERFLOW -> voidOverflow(myFluidHandler, fluidFilter::testFluidStack, this.transferAmount);
         }
     }
 
@@ -99,7 +99,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     private void setTransferAmount(int transferAmount) {
         this.transferAmount = transferAmount;
-        coverHolder.markDirty();
+        markDirty();
     }
 
     public int getTransferAmount() {
@@ -108,7 +108,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
     public void setVoidingMode(VoidingMode transferMode) {
         this.voidingMode = transferMode;
-        this.coverHolder.markDirty();
+        this.markDirty();
     }
 
     public VoidingMode getVoidingMode() {
@@ -204,21 +204,19 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.FLUID_VOIDING_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        Textures.FLUID_VOIDING_ADVANCED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("VoidingMode", voidingMode.ordinal());
         tagCompound.setInteger("TransferAmount", transferAmount);
-
-        return tagCompound;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.voidingMode = VoidingMode.values()[tagCompound.getInteger("VoidingMode")];
         this.transferAmount = tagCompound.getInteger("TransferAmount");

@@ -5,6 +5,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.cover2.CoverDefinition2;
+import gregtech.api.cover2.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
@@ -18,6 +20,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -26,25 +29,23 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
     protected VoidingMode voidingMode;
 
-    public CoverItemVoidingAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide);
+    public CoverItemVoidingAdvanced(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+                            @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide);
         this.voidingMode = VoidingMode.VOID_ANY;
         this.itemFilterContainer.setMaxStackSize(1);
     }
 
     @Override
     protected void doTransferItems() {
-        IItemHandler myItemHandler = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide);
+        IItemHandler myItemHandler = getCoverable().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getAttachedSide());
         if (myItemHandler == null) {
             return;
         }
 
         switch (voidingMode) {
-            case VOID_ANY:
-                voidAny(myItemHandler);
-                break;
-            case VOID_OVERFLOW:
-                voidOverflow(myItemHandler);
+            case VOID_ANY -> voidAny(myItemHandler);
+            case VOID_OVERFLOW -> voidOverflow(myItemHandler);
         }
     }
 
@@ -148,13 +149,13 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.ITEM_VOIDING_ADVANCED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        Textures.ITEM_VOIDING_ADVANCED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     public void setVoidingMode(VoidingMode voidingMode) {
         this.voidingMode = voidingMode;
         this.itemFilterContainer.setMaxStackSize(voidingMode.maxStackSize);
-        this.coverHolder.markDirty();
+        this.getCoverable().markDirty();
     }
 
     public VoidingMode getVoidingMode() {
@@ -162,11 +163,9 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("VoidMode", voidingMode.ordinal());
-
-        return tagCompound;
     }
 
     @Override

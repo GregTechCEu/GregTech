@@ -286,8 +286,7 @@ public class ToolEventHandlers {
 
     @SideOnly(Side.CLIENT)
     private static boolean shouldRenderGridOverlays(@Nonnull IBlockState state, TileEntity tile, ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
-        if (state.getBlock() instanceof BlockPipe) {
-            BlockPipe<?, ?, ?> pipe = (BlockPipe<?, ?, ?>) state.getBlock();
+        if (state.getBlock() instanceof BlockPipe<?, ?, ?> pipe) {
             if (isSneaking && mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass()) {
                 return true;
             } else {
@@ -298,21 +297,37 @@ public class ToolEventHandlers {
                         offToolClasses.stream().anyMatch(s -> pipe.isToolEffective(s, state))) return true;
 
                 BooleanSupplier hasCover = () -> tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getCoverableImplementation().hasAnyCover();
-                Predicate<CoverDefinition2> canCover = coverDef -> tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getCoverableImplementation().canPlaceCoverOnSide(EnumFacing.DOWN); //TODO find dir
+                Predicate<CoverDefinition2> canCover = coverDef -> {
+                    if (tile instanceof IPipeTile<?, ?> pipeTile) {
+                        for (EnumFacing facing : EnumFacing.VALUES) {
+                            if (pipeTile.getCoverableImplementation().canConnectRedstone(facing)) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                };
                 if (GTUtility.isCoverBehaviorItem(mainHand, hasCover, canCover) || GTUtility.isCoverBehaviorItem(offHand, hasCover, canCover)) {
                     return true;
                 }
             }
         }
 
-        if (tile instanceof IGregTechTileEntity) {
-            MetaTileEntity mte = ((IGregTechTileEntity) tile).getMetaTileEntity();
+        if (tile instanceof IGregTechTileEntity igtte) {
+            MetaTileEntity mte = igtte.getMetaTileEntity();
             if (mte != null && mte.canRenderMachineGrid(mainHand, offHand)) {
                 return true;
             }
         }
         CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, null);
-        return coverHolder != null && GTUtility.isCoverBehaviorItem(mainHand, coverHolder::hasAnyCover, coverDef -> coverHolder.canPlaceCoverOnSide(EnumFacing.DOWN)); //TODO find dir
+        return coverHolder != null && GTUtility.isCoverBehaviorItem(mainHand, coverHolder::hasAnyCover, coverDef -> {
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                if (coverHolder.canPlaceCoverOnSide(facing)) {
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     private static float rColour;
