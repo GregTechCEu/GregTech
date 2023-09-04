@@ -1,11 +1,9 @@
 package gregtech.common.covers.detector;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.cover2.CoverBase;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverableView;
+import gregtech.api.cover.CoverBase;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverableView;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -23,7 +21,7 @@ public abstract class CoverDetectorBase extends CoverBase {
     private boolean isInverted = false;
     private int redstoneSignalOutput = 0;
 
-    public CoverDetectorBase(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+    public CoverDetectorBase(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                              @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
     }

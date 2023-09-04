@@ -1,8 +1,8 @@
 package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover2.Cover;
-import gregtech.api.cover2.CoverHolder;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverHolder;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;

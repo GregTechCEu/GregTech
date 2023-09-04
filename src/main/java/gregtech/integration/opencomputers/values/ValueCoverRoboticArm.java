@@ -1,6 +1,5 @@
 package gregtech.integration.opencomputers.values;
 
-import gregtech.api.cover.CoverBehavior;
 import gregtech.common.covers.CoverRoboticArm;
 import gregtech.common.covers.TransferMode;
 import gregtech.integration.opencomputers.InputValidator;

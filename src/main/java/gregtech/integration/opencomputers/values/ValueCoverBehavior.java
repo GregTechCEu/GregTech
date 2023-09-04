@@ -1,10 +1,9 @@
 package gregtech.integration.opencomputers.values;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover2.Cover;
-import gregtech.api.cover2.CoverableView;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.integration.opencomputers.InputValidator;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;

@@ -6,10 +6,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.base.Preconditions;
+import gregtech.api.cover.CoverBase;
+import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover2.CoverBase;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverableView;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.storage.ICraftingStorage;
@@ -49,7 +49,7 @@ public class CoverCraftingTable extends CoverBase implements CoverWithUI, ITicka
     private CraftingRecipeLogic recipeLogic = null;
     private int itemsCrafted = 0;
 
-    public CoverCraftingTable(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+    public CoverCraftingTable(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
     }
 

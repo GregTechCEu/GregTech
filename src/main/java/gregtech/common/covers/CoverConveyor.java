@@ -10,16 +10,15 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.ItemHandlerDelegate;
+import gregtech.api.cover.CoverBase;
+import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover2.CoverBase;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverableView;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTTransferUtils;
-import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
@@ -65,7 +64,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     private CoverableItemHandlerWrapper itemHandlerWrapper;
     protected boolean isWorkingAllowed = true;
 
-    public CoverConveyor(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+    public CoverConveyor(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                          @NotNull EnumFacing attachedSide, int tier, int itemsPerSecond) {
         super(definition, coverableView, attachedSide);
         this.tier = tier;

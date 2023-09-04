@@ -2,7 +2,7 @@ package gregtech.common.covers;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.cover2.CoverDefinition2;
+import gregtech.api.cover.CoverDefinition;
 import gregtech.api.items.behavior.CoverItemBehavior;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.util.GTLog;
@@ -136,7 +136,7 @@ public final class CoverBehaviors {
      * @param behaviorCreator a function creating the cover behavior
      */
     public static void registerBehavior(@NotNull ResourceLocation coverId, @NotNull MetaValueItem placerItem,
-                                        @NotNull CoverDefinition2.CoverCreator behaviorCreator) {
+                                        @NotNull CoverDefinition.CoverCreator behaviorCreator) {
         placerItem.addComponents(new CoverItemBehavior(registerCover(coverId, placerItem, behaviorCreator)));
     }
 
@@ -148,10 +148,10 @@ public final class CoverBehaviors {
      * @param behaviorCreator a function creating the cover behavior
      * @return the registered cover definition
      */
-    public static @NotNull CoverDefinition2 registerCover(@NotNull ResourceLocation coverId, @NotNull MetaValueItem itemStack,
-                                                          @NotNull CoverDefinition2.CoverCreator behaviorCreator) {
-        CoverDefinition2 coverDefinition = new CoverDefinition2(coverId, behaviorCreator, itemStack.getStackForm());
-        GregTechAPI.COVER_REGISTRY_2.register(rollingId++, coverId, coverDefinition);
+    public static @NotNull CoverDefinition registerCover(@NotNull ResourceLocation coverId, @NotNull MetaValueItem itemStack,
+                                                         @NotNull CoverDefinition.CoverCreator behaviorCreator) {
+        CoverDefinition coverDefinition = new CoverDefinition(coverId, behaviorCreator, itemStack.getStackForm());
+        GregTechAPI.COVER_REGISTRY.register(rollingId++, coverId, coverDefinition);
         return coverDefinition;
     }
 }

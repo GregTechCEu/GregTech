@@ -6,11 +6,9 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.cover2.CoverBase;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverableView;
+import gregtech.api.cover.CoverBase;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
@@ -28,7 +26,7 @@ public class CoverSolarPanel extends CoverBase implements ITickable {
 
     private final long EUt;
 
-    public CoverSolarPanel(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+    public CoverSolarPanel(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                            @NotNull EnumFacing attachedSide, long EUt) {
         super(definition, coverableView, attachedSide);
         this.EUt = EUt;

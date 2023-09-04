@@ -1,4 +1,4 @@
-package gregtech.api.cover2;
+package gregtech.api.cover;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.RayTracer;

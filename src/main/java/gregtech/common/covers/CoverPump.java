@@ -11,10 +11,10 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
+import gregtech.api.cover.CoverBase;
+import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover2.CoverBase;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverableView;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
@@ -61,7 +61,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected FluidFilterContainer fluidFilter;
     protected BucketMode bucketMode = BucketMode.MILLI_BUCKET;
 
-    public CoverPump(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+    public CoverPump(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                      @NotNull EnumFacing attachedSide, int tier, int mbPerTick) {
         super(definition, coverableView, attachedSide);
         this.tier = tier;

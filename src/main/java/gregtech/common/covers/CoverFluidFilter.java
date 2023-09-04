@@ -6,12 +6,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.CoverBase;
+import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.cover2.CoverBase;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverableView;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
@@ -44,7 +42,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     protected FluidFilterMode filterMode;
     protected FluidHandlerFiltered fluidHandler;
 
-    public CoverFluidFilter(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+    public CoverFluidFilter(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                             @NotNull EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture, FluidFilter fluidFilter) {
         super(definition, coverableView, attachedSide);
         this.filterMode = FluidFilterMode.FILTER_FILL;

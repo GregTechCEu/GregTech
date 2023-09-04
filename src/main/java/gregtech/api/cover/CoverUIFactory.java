@@ -2,8 +2,6 @@ package gregtech.api.cover;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover2.Cover;
-import gregtech.api.cover2.CoverableView;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.util.GTUtility;

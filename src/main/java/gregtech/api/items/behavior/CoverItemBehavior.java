@@ -1,10 +1,10 @@
 package gregtech.api.items.behavior;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover2.Cover;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverHolder;
-import gregtech.api.cover2.CoverRayTracer;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverHolder;
+import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.core.advancement.AdvancementTriggers;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,12 +23,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CoverItemBehavior implements IItemBehaviour {
 
-    private final CoverDefinition2 definition;
+    private final CoverDefinition definition;
 
     /**
      * @param definition the Cover this item places
      */
-    public CoverItemBehavior(@NotNull CoverDefinition2 definition) {
+    public CoverItemBehavior(@NotNull CoverDefinition definition) {
         this.definition = definition;
     }
 
@@ -66,7 +66,7 @@ public class CoverItemBehavior implements IItemBehaviour {
         return EnumActionResult.SUCCESS;
     }
 
-    public @NotNull CoverDefinition2 getDefinition() {
+    public @NotNull CoverDefinition getDefinition() {
         return definition;
     }
 }

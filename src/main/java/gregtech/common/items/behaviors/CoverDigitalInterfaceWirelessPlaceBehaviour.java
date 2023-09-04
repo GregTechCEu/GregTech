@@ -1,7 +1,6 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.cover.CoverDefinition;
-import gregtech.api.cover2.CoverDefinition2;
 import gregtech.api.items.behavior.CoverItemBehavior;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
@@ -24,7 +23,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverItemBehavior {
-    public CoverDigitalInterfaceWirelessPlaceBehaviour(CoverDefinition2 coverDefinition) {
+    public CoverDigitalInterfaceWirelessPlaceBehaviour(CoverDefinition coverDefinition) {
         super(coverDefinition);
     }
 

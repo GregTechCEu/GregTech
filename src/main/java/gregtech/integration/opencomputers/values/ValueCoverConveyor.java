@@ -1,6 +1,6 @@
 package gregtech.integration.opencomputers.values;
 
-import gregtech.api.cover2.Cover;
+import gregtech.api.cover.Cover;
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.covers.CoverConveyor.ConveyorMode;
 import gregtech.integration.opencomputers.InputValidator;

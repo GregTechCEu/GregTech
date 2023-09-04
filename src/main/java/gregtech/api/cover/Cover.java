@@ -1,4 +1,4 @@
-package gregtech.api.cover2;
+package gregtech.api.cover;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -32,7 +32,7 @@ public interface Cover {
      */
     @NotNull CoverableView getCoverable();
 
-    @NotNull CoverDefinition2 getDefinition();
+    @NotNull CoverDefinition getDefinition();
 
     /**
      * @return the World containing this cover

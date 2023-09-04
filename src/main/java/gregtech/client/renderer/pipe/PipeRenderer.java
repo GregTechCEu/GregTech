@@ -15,7 +15,7 @@ import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import gregtech.api.cover2.CoverHolder;
+import gregtech.api.cover.CoverHolder;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.block.ItemBlockPipe;

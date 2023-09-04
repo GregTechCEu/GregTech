@@ -1,8 +1,8 @@
 package gregtech.api.pipenet.tile;
 
-import gregtech.api.cover2.Cover;
-import gregtech.api.cover2.CoverHolder;
-import gregtech.api.cover2.CoverSaveHandler;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverHolder;
+import gregtech.api.cover.CoverSaveHandler;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -88,7 +88,7 @@ public class PipeCoverableImplementation implements CoverHolder {
     }
 
     @Override
-    public final int getInputRedstoneSignal(EnumFacing side, boolean ignoreCover) {
+    public final int getInputRedstoneSignal(@NotNull EnumFacing side, boolean ignoreCover) {
         if (!ignoreCover && getCoverAtSide(side) != null) {
             return 0; //covers block input redstone signal for machine
         }
@@ -235,7 +235,7 @@ public class PipeCoverableImplementation implements CoverHolder {
     }
 
     public void readFromNBT(NBTTagCompound data) {
-        CoverSaveHandler.readCoverNBT(data, this);
+        CoverSaveHandler.readCoverNBT(data, this, covers::put);
     }
 
     @Override

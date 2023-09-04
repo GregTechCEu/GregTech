@@ -2,7 +2,7 @@ package gregtech.api.pipenet.tile;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover2.Cover;
+import gregtech.api.cover.Cover;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;

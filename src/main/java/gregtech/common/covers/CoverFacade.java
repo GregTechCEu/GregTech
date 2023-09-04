@@ -4,10 +4,10 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.cover.CoverBase;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.IFacadeCover;
-import gregtech.api.cover2.CoverBase;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverableView;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.common.items.behaviors.FacadeItem;
@@ -31,7 +31,7 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
     private ItemStack facadeStack = ItemStack.EMPTY;
     private IBlockState facadeState = Blocks.STONE.getDefaultState();
 
-    public CoverFacade(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+    public CoverFacade(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                        @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
     }

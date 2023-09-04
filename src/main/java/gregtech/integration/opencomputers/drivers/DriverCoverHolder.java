@@ -1,10 +1,8 @@
 package gregtech.integration.opencomputers.drivers;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.cover2.Cover;
-import gregtech.api.cover2.CoverHolder;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.covers.*;
 import gregtech.integration.opencomputers.InputValidator;
@@ -19,7 +17,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class DriverICoverable extends DriverSidedTileEntity {
+public class DriverCoverHolder extends DriverSidedTileEntity {
 
     @Override
     public Class<?> getTileEntityClass() {
@@ -30,7 +28,7 @@ public class DriverICoverable extends DriverSidedTileEntity {
     public boolean worksWith(World world, BlockPos pos, EnumFacing side) {
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof IGregTechTileEntity) {
-            return tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, side);
+            return tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, side);
         }
         return false;
     }

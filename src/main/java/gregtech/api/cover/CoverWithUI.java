@@ -1,6 +1,5 @@
 package gregtech.api.cover;
 
-import gregtech.api.cover2.Cover;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
 import net.minecraft.entity.player.EntityPlayer;

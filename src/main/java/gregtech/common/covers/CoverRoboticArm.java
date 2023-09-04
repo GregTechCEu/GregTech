@@ -4,9 +4,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverableView;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -31,7 +30,7 @@ public class CoverRoboticArm extends CoverConveyor {
     protected TransferMode transferMode;
     protected int itemsTransferBuffered;
 
-    public CoverRoboticArm(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+    public CoverRoboticArm(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                            @NotNull EnumFacing attachedSide, int tier, int itemsPerSecond) {
         super(definition, coverableView, attachedSide, tier, itemsPerSecond);
         this.transferMode = TransferMode.TRANSFER_ANY;

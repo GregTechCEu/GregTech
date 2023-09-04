@@ -6,8 +6,8 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverHolder;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverHolder;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -297,7 +297,7 @@ public class ToolEventHandlers {
                         offToolClasses.stream().anyMatch(s -> pipe.isToolEffective(s, state))) return true;
 
                 BooleanSupplier hasCover = () -> tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getCoverableImplementation().hasAnyCover();
-                Predicate<CoverDefinition2> canCover = coverDef -> {
+                Predicate<CoverDefinition> canCover = coverDef -> {
                     if (tile instanceof IPipeTile<?, ?> pipeTile) {
                         for (EnumFacing facing : EnumFacing.VALUES) {
                             if (pipeTile.getCoverableImplementation().canConnectRedstone(facing)) {

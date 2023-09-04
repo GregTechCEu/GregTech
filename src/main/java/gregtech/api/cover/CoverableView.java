@@ -1,4 +1,4 @@
-package gregtech.api.cover2;
+package gregtech.api.cover;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;

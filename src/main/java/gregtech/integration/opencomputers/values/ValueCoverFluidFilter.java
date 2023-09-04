@@ -1,7 +1,6 @@
 package gregtech.integration.opencomputers.values;
 
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover2.Cover;
+import gregtech.api.cover.Cover;
 import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.covers.FluidFilterMode;
 import gregtech.integration.opencomputers.InputValidator;

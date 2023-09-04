@@ -2,7 +2,7 @@ package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IPropertyFluidFilter;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.Cover;
 import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.AttributedFluid;

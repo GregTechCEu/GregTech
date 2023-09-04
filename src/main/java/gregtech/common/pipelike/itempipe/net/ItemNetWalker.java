@@ -1,6 +1,6 @@
 package gregtech.common.pipelike.itempipe.net;
 
-import gregtech.api.cover2.Cover;
+import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.GTUtility;

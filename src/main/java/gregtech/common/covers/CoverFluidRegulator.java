@@ -1,9 +1,8 @@
 package gregtech.common.covers;
 
 import com.google.common.math.IntMath;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverableView;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
@@ -43,7 +42,7 @@ public class CoverFluidRegulator extends CoverPump {
     protected TransferMode transferMode = TransferMode.TRANSFER_ANY;
     protected int transferAmount = 0;
 
-    public CoverFluidRegulator(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide, int tier, int mbPerTick) {
+    public CoverFluidRegulator(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide, int tier, int mbPerTick) {
         super(definition, coverableView, attachedSide, tier, mbPerTick);
         this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip, maxFluidTransferRate * 100);
     }

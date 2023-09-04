@@ -7,11 +7,7 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
-import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover2.Cover;
-import gregtech.api.cover2.CoverBase;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverableView;
+import gregtech.api.cover.*;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
@@ -36,7 +32,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     private ControllerMode controllerMode;
     private final ItemStackHandler displayInventory = new ItemStackHandler(1);
 
-    public CoverMachineController(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+    public CoverMachineController(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                   @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
         this.minRedstoneStrength = 1;

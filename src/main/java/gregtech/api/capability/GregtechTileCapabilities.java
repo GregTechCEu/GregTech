@@ -1,8 +1,7 @@
 package gregtech.api.capability;
 
 import gregtech.api.capability.impl.AbstractRecipeLogic;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.cover2.CoverHolder;
+import gregtech.api.cover.CoverHolder;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -11,9 +10,6 @@ public class GregtechTileCapabilities {
 
     @CapabilityInject(IWorkable.class)
     public static Capability<IWorkable> CAPABILITY_WORKABLE = null;
-
-    @CapabilityInject(ICoverable.class)
-    public static Capability<ICoverable> CAPABILITY_COVERABLE = null;
 
     @CapabilityInject(CoverHolder.class)
     public static Capability<CoverHolder> CAPABILITY_COVER_HOLDER = null;

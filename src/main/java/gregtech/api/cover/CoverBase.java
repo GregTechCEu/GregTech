@@ -1,4 +1,4 @@
-package gregtech.api.cover2;
+package gregtech.api.cover;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -16,11 +16,11 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class CoverBase implements Cover {
 
-    private final CoverDefinition2 definition;
+    private final CoverDefinition definition;
     private final CoverableView coverableView;
     private final EnumFacing attachedSide;
 
-    public CoverBase(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView,
+    public CoverBase(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                      @NotNull EnumFacing attachedSide) {
         this.definition = definition;
         this.coverableView = coverableView;
@@ -28,7 +28,7 @@ public abstract class CoverBase implements Cover {
     }
 
     @Override
-    public final @NotNull CoverDefinition2 getDefinition() {
+    public final @NotNull CoverDefinition getDefinition() {
         return this.definition;
     }
 

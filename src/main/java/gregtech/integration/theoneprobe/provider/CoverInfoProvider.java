@@ -2,8 +2,8 @@ package gregtech.integration.theoneprobe.provider;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover2.Cover;
-import gregtech.api.cover2.CoverHolder;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverHolder;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.*;
 import gregtech.common.covers.filter.*;

@@ -2,9 +2,8 @@ package gregtech.common.metatileentities.multi.electric.centralmonitor;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover2.Cover;
-import gregtech.api.cover2.CoverHolder;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverHolder;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;

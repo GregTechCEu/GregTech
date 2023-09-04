@@ -1,4 +1,4 @@
-package gregtech.api.cover2;
+package gregtech.api.cover;
 
 import gregtech.api.util.GTLog;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,6 +8,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.BiConsumer;
 
 public final class CoverSaveHandler {
 
@@ -25,7 +27,7 @@ public final class CoverSaveHandler {
         for (EnumFacing coverSide : EnumFacing.VALUES) {
             Cover cover = coverableView.getCoverAtSide(coverSide);
             if (cover != null) {
-                buf.writeVarInt(CoverDefinition2.getNetworkIdForCover(cover.getDefinition()));
+                buf.writeVarInt(CoverDefinition.getNetworkIdForCover(cover.getDefinition()));
                 cover.writeInitialSyncData(buf);
             } else {
                 // cover was not attached
@@ -44,7 +46,7 @@ public final class CoverSaveHandler {
         for (EnumFacing coverSide : EnumFacing.VALUES) {
             int id = buf.readVarInt();
             if (id != NO_COVER_ID) {
-                CoverDefinition2 definition = CoverDefinition2.getCoverByNetworkId(id);
+                CoverDefinition definition = CoverDefinition.getCoverByNetworkId(id);
                 if (definition == null) {
                     GTLog.logger.warn("Unable to find CoverDefinition for Network ID {} at position {}", id, coverHolder.getPos());
                 } else {
@@ -59,7 +61,7 @@ public final class CoverSaveHandler {
     /**
      * Write a cover's placement customData
      *
-     * @param coverHolder the CoverHolder to write cover placement data to
+     * @param coverHolder   the CoverHolder to write cover placement data to
      * @param discriminator the discriminator the CoverableView uses for the operation
      * @param side          the side the cover is attached to
      * @param cover         the cover
@@ -68,7 +70,7 @@ public final class CoverSaveHandler {
                                            @NotNull EnumFacing side, @NotNull Cover cover) {
         coverHolder.writeCustomData(discriminator, buf -> {
             buf.writeByte(side.getIndex());
-            buf.writeVarInt(CoverDefinition2.getNetworkIdForCover(cover.getDefinition()));
+            buf.writeVarInt(CoverDefinition.getNetworkIdForCover(cover.getDefinition()));
             cover.writeInitialSyncData(buf);
         });
     }
@@ -83,7 +85,7 @@ public final class CoverSaveHandler {
         //cover placement event
         EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
         int id = buf.readVarInt();
-        CoverDefinition2 coverDefinition = CoverDefinition2.getCoverByNetworkId(id);
+        CoverDefinition coverDefinition = CoverDefinition.getCoverByNetworkId(id);
         if (coverDefinition == null) {
             GTLog.logger.warn("Unable to find CoverDefinition for Network ID {} at position {}", id, coverHolder.getPos());
         } else {
@@ -120,24 +122,26 @@ public final class CoverSaveHandler {
     /**
      * Reads a CoverableView's covers from NBT
      *
-     * @param tagCompound the tag compound to read from
-     * @param coverHolder the CoverHolder to store the covers in
+     * @param tagCompound        the tag compound to read from
+     * @param coverHolder        the CoverHolder to store the covers in
+     * @param coverStoreFunction a function to directly store the cover field
      */
-    public static void readCoverNBT(@NotNull NBTTagCompound tagCompound, @NotNull CoverHolder coverHolder) {
+    public static void readCoverNBT(@NotNull NBTTagCompound tagCompound, @NotNull CoverHolder coverHolder,
+                                    @NotNull BiConsumer<EnumFacing, Cover> coverStoreFunction) {
         NBTTagList coversList = tagCompound.getTagList("Covers", Constants.NBT.TAG_COMPOUND);
         for (int index = 0; index < coversList.tagCount(); index++) {
             NBTTagCompound tag = coversList.getCompoundTagAt(index);
             if (tag.hasKey("CoverId", Constants.NBT.TAG_STRING)) {
                 EnumFacing coverSide = EnumFacing.VALUES[tag.getByte("Side")];
                 ResourceLocation coverLocation = new ResourceLocation(tag.getString("CoverId"));
-                CoverDefinition2 coverDefinition = CoverDefinition2.getCoverById(coverLocation);
+                CoverDefinition coverDefinition = CoverDefinition.getCoverById(coverLocation);
                 if (coverDefinition == null) {
                     GTLog.logger.warn("Unable to find CoverDefinition for ResourceLocation {} at position {}",
                             coverLocation, coverHolder.getPos());
                 } else {
                     Cover cover = coverDefinition.createCover(coverHolder, coverSide);
                     cover.readFromNBT(tag);
-                    coverHolder.addCover(coverSide, cover);
+                    coverStoreFunction.accept(coverSide, cover);
                 }
             }
         }

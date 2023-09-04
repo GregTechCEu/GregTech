@@ -5,12 +5,10 @@ import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
 import gregtech.api.block.BuiltInRenderBlock;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.cover.ICoverable.CoverSideData;
-import gregtech.api.cover.ICoverable.PrimaryBoxData;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverHolder;
+import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.cover.IFacadeCover;
-import gregtech.api.cover2.Cover;
-import gregtech.api.cover2.CoverHolder;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.IBlockAppearance;
@@ -270,10 +268,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (pipeTile == null) {
             return ItemStack.EMPTY;
         }
-        if (target instanceof CuboidRayTraceResult) {
-            CuboidRayTraceResult result = (CuboidRayTraceResult) target;
-            if (result.cuboid6.data instanceof CoverSideData) {
-                EnumFacing coverSide = ((CoverSideData) result.cuboid6.data).side;
+        if (target instanceof CuboidRayTraceResult result) {
+            if (result.cuboid6.data instanceof CoverRayTracer.CoverSideData coverSideData) {
+                EnumFacing coverSide = coverSideData.side;
                 Cover cover = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
                 return cover == null ? ItemStack.EMPTY : cover.getPickItem();
             }
@@ -324,17 +321,19 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             }
         }
 
-        EnumFacing coverSide = ICoverable.traceCoverSide(hit);
+        EnumFacing coverSide = CoverRayTracer.traceCoverSide(hit);
         if (coverSide == null) {
             return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
         }
 
-        if (!(hit.cuboid6.data instanceof CoverSideData)) {
+        if (!(hit.cuboid6.data instanceof CoverRayTracer.CoverSideData)) {
             switch (onPipeToolUsed(world, pos, itemStack, coverSide, pipeTile, entityPlayer, hand)) {
-                case SUCCESS:
+                case SUCCESS -> {
                     return true;
-                case FAIL:
+                }
+                case FAIL -> {
                     return false;
+                }
             }
         }
 
@@ -424,7 +423,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (pipeTile == null || rayTraceResult == null) {
             return;
         }
-        EnumFacing coverSide = ICoverable.traceCoverSide(rayTraceResult);
+        EnumFacing coverSide = CoverRayTracer.traceCoverSide(rayTraceResult);
         Cover cover = coverSide == null ? null : pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
 
         if (cover != null) {
@@ -574,7 +573,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
         // Always add normal collision so player doesn't "fall through" the cable/pipe when
         // a tool is put in hand, and will still be standing where they were before.
-        result.add(new IndexedCuboid6(new PrimaryBoxData(true), getSideBox(null, thickness)));
+        result.add(new IndexedCuboid6(new CoverRayTracer.PrimaryBoxData(true), getSideBox(null, thickness)));
         for (EnumFacing side : EnumFacing.VALUES) {
             if ((actualConnections & 1 << side.getIndex()) > 0) {
                 result.add(new IndexedCuboid6(new PipeConnectionData(side), getSideBox(side, thickness)));

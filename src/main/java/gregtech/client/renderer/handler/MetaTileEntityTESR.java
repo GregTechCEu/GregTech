@@ -2,7 +2,7 @@ package gregtech.client.renderer.handler;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.cover2.Cover;
+import gregtech.api.cover.Cover;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;

@@ -8,12 +8,10 @@ import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.*;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.CoverBase;
+import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.cover2.CoverBase;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.cover2.CoverableView;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
@@ -71,7 +69,7 @@ import java.util.UUID;
 
 public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaTileEntity, ITickable, CoverWithUI {
 
-    public CoverDigitalInterface(@NotNull CoverDefinition2 definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+    public CoverDigitalInterface(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
     }
 
