@@ -176,6 +176,7 @@ public class MetaBlocks {
     public static BlockColored METAL_SHEET;
     public static BlockColored LARGE_METAL_SHEET;
     public static BlockColored STUDS;
+    public static BlockPanelling PANELLING;
 
     public static final Map<Material, BlockCompressed> COMPRESSED = new Object2ObjectOpenHashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new Object2ObjectOpenHashMap<>();
@@ -339,6 +340,8 @@ public class MetaBlocks {
         STUDS = new BlockColored(net.minecraft.block.material.Material.CARPET, "studs", 1.5f, 2.5f, SoundType.CLOTH,
                 EnumDyeColor.BLACK);
         STUDS.setRegistryName("studs");
+        PANELLING = new BlockPanelling();
+        PANELLING.setRegistryName("panelling");
 
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME),
                 MetaBlocks::createFrameBlock);
@@ -471,6 +474,7 @@ public class MetaBlocks {
         registerItemModel(ASPHALT);
         registerItemModel(FISSION_CASING);
         registerItemModel(NUCLEAR_CASING);
+        registerItemModel(PANELLING);
         for (StoneVariantBlock block : STONE_BLOCKS.values())
             registerItemModel(block);
         registerItemModelWithOverride(RUBBER_LOG, ImmutableMap.of(BlockLog.LOG_AXIS, EnumAxis.Y));
