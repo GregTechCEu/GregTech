@@ -139,6 +139,10 @@ public class MetaBlocks {
 
     public static BlockBrittleCharcoal BRITTLE_CHARCOAL;
 
+    public static BlockMetalSheet METAL_SHEET;
+    public static BlockLargeMetalSheet LARGE_METAL_SHEET;
+    public static BlockStuds STUDS;
+
     public static final Map<Material, BlockCompressed> COMPRESSED = new Object2ObjectOpenHashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new Object2ObjectOpenHashMap<>();
     public static final Map<Material, BlockSurfaceRock> SURFACE_ROCK = new Object2ObjectOpenHashMap<>();
@@ -283,6 +287,13 @@ public class MetaBlocks {
 
         BRITTLE_CHARCOAL = new BlockBrittleCharcoal();
         BRITTLE_CHARCOAL.setRegistryName("brittle_charcoal");
+
+        METAL_SHEET = new BlockMetalSheet();
+        METAL_SHEET.setRegistryName("metal_sheet");
+        LARGE_METAL_SHEET = new BlockLargeMetalSheet();
+        LARGE_METAL_SHEET.setRegistryName("large_metal_sheet");
+        STUDS = new BlockStuds();
+        STUDS.setRegistryName("studs");
 
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
@@ -431,6 +442,10 @@ public class MetaBlocks {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(TREATED_WOOD_FENCE_GATE), 0,
                 new ModelResourceLocation(Objects.requireNonNull(TREATED_WOOD_FENCE_GATE.getRegistryName()), "inventory"));
         registerItemModel(BRITTLE_CHARCOAL);
+
+        registerItemModel(METAL_SHEET);
+        registerItemModel(LARGE_METAL_SHEET);
+        registerItemModel(STUDS);
 
         BOILER_FIREBOX_CASING.onModelRegister();
         WIRE_COIL.onModelRegister();

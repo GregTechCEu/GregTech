@@ -1,0 +1,109 @@
+{
+  "forge_marker" : 1,
+  "defaults": {
+    "model" : "minecraft:cube_all",
+    "textures" : {
+      "all" : "gregtech:blocks/decoration/large_metalsheet_white"
+    }
+  },
+  "variants" : {
+    "variant" : {
+      "white" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_white"
+        }
+      },
+      "orange" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_orange"
+        }
+      },
+      "magenta" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_magenta"
+        }
+      },
+      "light_blue" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_light_blue"
+        }
+      },
+      "yellow" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_yellow"
+        }
+      },
+      "lime" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_lime"
+        }
+      },
+      "pink" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_pink"
+        }
+      },
+      "gray" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_gray"
+        }
+      },
+      "light_gray" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_light_gray"
+        }
+      },
+      "cyan" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_cyan"
+        }
+      },
+      "purple" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_purple"
+        }
+      },
+      "blue" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_blue"
+        }
+      },
+      "brown" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_brown"
+        }
+      },
+      "green" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_green"
+        }
+      },
+      "red" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_red"
+        }
+      },
+      "black" : {
+        "model" : "minecraft:cube_all",
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/large_metalsheet_black"
+        }
+      }
+    }
+  }
+}

@@ -2432,6 +2432,58 @@ tile.warning_sign_1.causality_hazard.name=Non-Standard Causality Hazard Sign Blo
 tile.warning_sign_1.automated_defenses_hazard.name=Automated Defenses Hazard Sign Block
 tile.warning_sign_1.high_pressure_hazard.name=High Pressure Hazard Sign Block
 
+# Decorative Metal Sheets
+tile.metal_sheet.white.name=White Metal Sheet
+tile.metal_sheet.orange.name=Orange Metal Sheet
+tile.metal_sheet.magenta.name=Magenta Metal Sheet
+tile.metal_sheet.light_blue.name=Light Blue Metal Sheet
+tile.metal_sheet.yellow.name=Yellow Metal Sheet
+tile.metal_sheet.lime.name=Lime Metal Sheet
+tile.metal_sheet.pink.name=Pink Metal Sheet
+tile.metal_sheet.gray.name=Gray Metal Sheet
+tile.metal_sheet.light_gray.name=Light Gray Metal Sheet
+tile.metal_sheet.cyan.name=Cyan Metal Sheet
+tile.metal_sheet.purple.name=Purple Metal Sheet
+tile.metal_sheet.blue.name=Blue Metal Sheet
+tile.metal_sheet.brown.name=Brown Metal Sheet
+tile.metal_sheet.green.name=Green Metal Sheet
+tile.metal_sheet.red.name=Red Metal Sheet
+tile.metal_sheet.black.name=Black Metal Sheet
+
+tile.large_metal_sheet.white.name=White Large Metal Sheet
+tile.large_metal_sheet.orange.name=Orange Large Metal Sheet
+tile.large_metal_sheet.magenta.name=Magenta Large Metal Sheet
+tile.large_metal_sheet.light_blue.name=Light Blue Large Metal Sheet
+tile.large_metal_sheet.yellow.name=Yellow Large Metal Sheet
+tile.large_metal_sheet.lime.name=Lime Large Metal Sheet
+tile.large_metal_sheet.pink.name=Pink Large Metal Sheet
+tile.large_metal_sheet.gray.name=Gray Large Metal Sheet
+tile.large_metal_sheet.light_gray.name=Light Gray Large Metal Sheet
+tile.large_metal_sheet.cyan.name=Cyan Large Metal Sheet
+tile.large_metal_sheet.purple.name=Purple Large Metal Sheet
+tile.large_metal_sheet.blue.name=Blue Large Metal Sheet
+tile.large_metal_sheet.brown.name=Brown Large Metal Sheet
+tile.large_metal_sheet.green.name=Green Large Metal Sheet
+tile.large_metal_sheet.red.name=Red Large Metal Sheet
+tile.large_metal_sheet.black.name=Black Large Metal Sheet
+
+tile.studs.white.name=White Studs
+tile.studs.orange.name=Orange Studs
+tile.studs.magenta.name=Magenta Studs
+tile.studs.light_blue.name=Light Blue Studs
+tile.studs.yellow.name=Yellow Studs
+tile.studs.lime.name=Lime Studs
+tile.studs.pink.name=Pink Studs
+tile.studs.gray.name=Gray Studs
+tile.studs.light_gray.name=Light Gray Studs
+tile.studs.cyan.name=Cyan Studs
+tile.studs.purple.name=Purple Studs
+tile.studs.blue.name=Blue Studs
+tile.studs.brown.name=Brown Studs
+tile.studs.green.name=Green Studs
+tile.studs.red.name=Red Studs
+tile.studs.black.name=Black Studs
+
 # Lamps(ON)
 tile.gregtech_lamp.white.name=White Lamp
 tile.gregtech_lamp.orange.name=Orange Lamp
