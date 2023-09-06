@@ -19,8 +19,10 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.RenderSetup;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.shader.postprocessing.BloomEffect;
+import gregtech.client.shader.postprocessing.BloomType;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderBufferHelper;
 import gregtech.client.utils.RenderUtil;
@@ -228,7 +230,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         }
         super.updateFormedValid();
         if (recipeMapWorkable.isWorking() && color == null) {
-            if (recipeMapWorkable.getPreviousRecipe() != null && recipeMapWorkable.getPreviousRecipe().getFluidOutputs().size() > 0) {
+            if (recipeMapWorkable.getPreviousRecipe() != null && !recipeMapWorkable.getPreviousRecipe().getFluidOutputs().isEmpty()) {
                 int newColor = 0xFF000000 | recipeMapWorkable.getPreviousRecipe().getFluidOutputs().get(0).getFluid().getColor();
                 if (!Objects.equals(color, newColor)) {
                     color = newColor;
@@ -380,8 +382,9 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (color != null && MinecraftForgeClient.getRenderPass() == 0) {
             final int c = color;
-            BloomEffectUtil.requestCustomBloom(RENDER_HANDLER, (buffer) -> {
-                int color = RenderUtil.colorInterpolator(c, -1).apply(Eases.EaseQuadIn.getInterpolation(Math.abs((Math.abs(getOffsetTimer() % 50) + partialTicks) - 25) / 25));
+            BloomEffectUtil.scheduleBloomRender(FusionBloomSetup.INSTANCE, getBloomType(), buffer -> {
+                int color = RenderUtil.colorInterpolator(c, -1).apply(Eases.QUAD_IN.getInterpolation(
+                        Math.abs((Math.abs(getOffsetTimer() % 50) + partialTicks) - 25) / 25));
                 float a = (float) (color >> 24 & 255) / 255.0F;
                 float r = (float) (color >> 16 & 255) / 255.0F;
                 float g = (float) (color >> 8 & 255) / 255.0F;
@@ -417,18 +420,21 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         return true;
     }
 
-    static BloomEffectUtil.IBloomRenderFast RENDER_HANDLER = new BloomEffectUtil.IBloomRenderFast() {
-        @Override
-        public int customBloomStyle() {
-            return ConfigHolder.client.shader.fusionBloom.useShader ? ConfigHolder.client.shader.fusionBloom.bloomStyle : -1;
-        }
+    private static BloomType getBloomType() {
+        ConfigHolder.FusionBloom fusionBloom = ConfigHolder.client.shader.fusionBloom;
+        return BloomType.fromValue(fusionBloom.useShader ? fusionBloom.bloomStyle : -1);
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static final class FusionBloomSetup implements RenderSetup {
+
+        private static final FusionBloomSetup INSTANCE = new FusionBloomSetup();
 
         float lastBrightnessX;
         float lastBrightnessY;
 
         @Override
-        @SideOnly(Side.CLIENT)
-        public void preDraw(BufferBuilder buffer) {
+        public void preDraw(@Nonnull BufferBuilder buffer) {
             BloomEffect.strength = (float) ConfigHolder.client.shader.fusionBloom.strength;
             BloomEffect.baseBrightness = (float) ConfigHolder.client.shader.fusionBloom.baseBrightness;
             BloomEffect.highBrightnessThreshold = (float) ConfigHolder.client.shader.fusionBloom.highBrightnessThreshold;
@@ -443,10 +449,9 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         }
 
         @Override
-        @SideOnly(Side.CLIENT)
-        public void postDraw(BufferBuilder buffer) {
+        public void postDraw(@Nonnull BufferBuilder buffer) {
             GlStateManager.enableTexture2D();
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
         }
-    };
+    }
 }

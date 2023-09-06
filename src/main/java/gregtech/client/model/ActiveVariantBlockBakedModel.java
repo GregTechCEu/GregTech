@@ -84,15 +84,15 @@ public class ActiveVariantBlockBakedModel implements IBakedModel {
         // If bloom is disabled (either by model specific bloom config or the presence of O**ifine shaders)
         // it is rendered on CUTOUT layer instead.
         if (getBloomConfig()) {
-            return MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.BLOOM ?
+            return MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.getBloomLayer() ?
                     getBloomQuads(m, state, side, rand) :
                     m.getQuads(state, side, rand);
         } else {
-            if (MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.BLOOM) {
+            if (MinecraftForgeClient.getRenderLayer() == BloomEffectUtil.getBloomLayer()) {
                 return Collections.emptyList();
             } else if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.CUTOUT) {
                 List<BakedQuad> quads = new ArrayList<>(m.getQuads(state, side, rand));
-                ForgeHooksClient.setRenderLayer(BloomEffectUtil.BLOOM);
+                ForgeHooksClient.setRenderLayer(BloomEffectUtil.getBloomLayer());
                 quads.addAll(getBloomQuads(m, state, side, rand));
                 ForgeHooksClient.setRenderLayer(BlockRenderLayer.CUTOUT);
                 return quads;

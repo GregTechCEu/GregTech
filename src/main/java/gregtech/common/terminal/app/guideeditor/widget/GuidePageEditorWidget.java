@@ -189,7 +189,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                 int offsetU = widget.getPosition().y - target.getPosition().y;
                 int y1 = widget.getSelfPosition().y;
                 int y2 = target.getSelfPosition().y;
-                interpolator = new Interpolator(0, 1, 10, Eases.EaseLinear, value->{
+                interpolator = new Interpolator(0, 1, 10, Eases.LINEAR, value -> {
                     widget.setSelfPosition(new Position(widget.getSelfPosition().x, (int) (y1 - value.floatValue() * offsetU)));
                     target.setSelfPosition(new Position(target.getSelfPosition().x, (int) (y2 + value.floatValue() * offsetD)));
                     if (widget == selected) {
@@ -197,7 +197,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                     }
                     widget.setVisible(widget.getSelfPosition().y < scrollYOffset + getSize().height && widget.getSelfPosition().y + widget.getSize().height > 0);
                     target.setVisible(target.getSelfPosition().y < scrollYOffset + getSize().height && target.getSelfPosition().y + target.getSize().height > 0);
-                }, value->{
+                }, value -> {
                     interpolator = null;
                     stream.remove(widget);
                     stream.add(index - 1, widget);
@@ -222,7 +222,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                 int offsetU = target.getPosition().y - widget.getPosition().y;
                 int y1 = widget.getSelfPosition().y;
                 int y2 = target.getSelfPosition().y;
-                interpolator = new Interpolator(0, 1, 10, Eases.EaseLinear, value->{
+                interpolator = new Interpolator(0, 1, 10, Eases.LINEAR, value -> {
                     widget.setSelfPosition(new Position(widget.getSelfPosition().x, (int) (y1 + value.floatValue() * offsetD)));
                     target.setSelfPosition(new Position(target.getSelfPosition().x, (int) (y2 - value.floatValue() * offsetU)));
                     if (widget == selected) {
@@ -230,7 +230,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                     }
                     widget.setVisible(widget.getSelfPosition().y < getSize().height - xBarHeight && widget.getSelfPosition().y + widget.getSize().height > 0);
                     target.setVisible(target.getSelfPosition().y < getSize().height - xBarHeight && target.getSelfPosition().y + target.getSize().height > 0);
-                }, value->{
+                }, value -> {
                     interpolator = null;
                     stream.remove(widget);
                     stream.add(index + 1, widget);
@@ -316,7 +316,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
     protected boolean hookDrawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         int x = getPosition().x;
         int width = getSize().width;
-        if(title.isVisible()) {
+        if (title.isVisible()) {
             title.drawInBackground(mouseX, mouseY, partialTicks, context);
         }
         for (Widget widget : stream) {
@@ -354,7 +354,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                     selected.getPosition().y - 20,
                     0xffff0000, true);
         }
-        if(toolButtons.isVisible()) {
+        if (toolButtons.isVisible()) {
             customPositionSizeWidget.drawInBackground(mouseX, mouseY, partialTicks, context);
             toolButtons.drawInBackground(mouseX, mouseY, partialTicks, context);
         }

@@ -197,6 +197,7 @@ public class BlockLamp extends Block {
         ModelLoader.setCustomStateMapper(this, b -> models);
     }
 
+    @Nonnull
     @SideOnly(Side.CLIENT)
     protected LampModelType getModelType() {
         return LampModelType.LAMP;

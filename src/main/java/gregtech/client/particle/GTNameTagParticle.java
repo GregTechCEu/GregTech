@@ -1,36 +1,48 @@
 package gregtech.client.particle;
 
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.math.Vec3d;
 
-@SideOnly(Side.CLIENT)
-public class GTNameTagParticle extends GTParticle{
-    private static final FontRenderer FONT_RENDERER = Minecraft.getMinecraft().fontRenderer;
-    public String name;
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
-    public GTNameTagParticle(World worldIn, double posXIn, double posYIn, double posZIn, String name) {
-        super(worldIn, posXIn, posYIn, posZIn);
-        this.setMotionless(true);
-        this.setImmortal();
+public class GTNameTagParticle extends GTParticle {
+
+    private final MetaTileEntityHolder metaTileEntityHolder;
+
+    public GTNameTagParticle(@Nonnull MetaTileEntityHolder metaTileEntityHolder, double posX, double posY, double posZ) {
+        super(posX, posY, posZ);
+        this.metaTileEntityHolder = Objects.requireNonNull(metaTileEntityHolder);
         this.setRenderRange(64);
-        this.name = name;
     }
 
     @Override
-    public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-        float rotationYaw = entityIn.prevRotationYaw + (entityIn.rotationYaw - entityIn.prevRotationYaw) * partialTicks;
-        float rotationPitch = entityIn.prevRotationPitch + (entityIn.rotationPitch - entityIn.prevRotationPitch) * partialTicks;
+    public void onUpdate() {
+        if (metaTileEntityHolder.isInvalid() ||
+                !metaTileEntityHolder.getWorld().isBlockLoaded(metaTileEntityHolder.getPos(), false) ||
+                !metaTileEntityHolder.hasCustomName()) {
+            setExpired();
+        }
+    }
+
+    @Override
+    public void renderParticle(@Nonnull BufferBuilder buffer, @Nonnull Entity renderViewEntity, float partialTicks,
+                               double cameraX, double cameraY, double cameraZ, @Nonnull Vec3d cameraViewDir,
+                               float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        String name = this.metaTileEntityHolder.getName();
+        if (name.isEmpty()) return;
+
+        float rotationYaw = renderViewEntity.prevRotationYaw + (renderViewEntity.rotationYaw - renderViewEntity.prevRotationYaw) * partialTicks;
+        float rotationPitch = renderViewEntity.prevRotationPitch + (renderViewEntity.rotationPitch - renderViewEntity.prevRotationPitch) * partialTicks;
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(posX -interpPosX, posY - interpPosY, posZ - interpPosZ);
+        GlStateManager.translate(posX - cameraX, posY - cameraY, posZ - cameraZ);
         GlStateManager.glNormal3f(0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(-rotationYaw, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(rotationPitch, 1.0F, 0.0F, 0.0F);
@@ -38,7 +50,7 @@ public class GTNameTagParticle extends GTParticle{
         GlStateManager.depthMask(false);
 
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        int width = FONT_RENDERER.getStringWidth(name) / 2;
+        int width = Minecraft.getMinecraft().fontRenderer.getStringWidth(name) / 2;
         GlStateManager.disableTexture2D();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -51,8 +63,18 @@ public class GTNameTagParticle extends GTParticle{
         GlStateManager.enableTexture2D();
         GlStateManager.depthMask(true);
 
-        FONT_RENDERER.drawString(name, -width, 0, -1);
+        Minecraft.getMinecraft().fontRenderer.drawString(name, -width, 0, -1);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
+    }
+
+    @Override
+    public String toString() {
+        return "GTNameTagParticle{" +
+                "metaTileEntityHolder=" + metaTileEntityHolder +
+                ", posX=" + posX +
+                ", posY=" + posY +
+                ", posZ=" + posZ +
+                '}';
     }
 }

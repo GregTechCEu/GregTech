@@ -257,7 +257,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
 
     /**
      * @return double array of length 2, with index 0 being the average time and index 1 the worst time, in ns.
-     *         If there is no tick time, it will return null.
+     * If there is no tick time, it will return null.
      */
     public double[] getTimeStatistics() {
         if (timeStatistics.length > 0) {
@@ -269,7 +269,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                     worstTickTime = tickTime;
                 }
             }
-            return new double[] { averageTickTime, worstTickTime };
+            return new double[]{averageTickTime, worstTickTime};
         }
         return null;
     }
@@ -435,15 +435,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             if (world.isRemote) {
                 if (hasCustomName()) {
                     if (nameTagParticle == null) {
-                        nameTagParticle = new GTNameTagParticle(world, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, getName());
-                        nameTagParticle.setOnUpdate(p -> {
-                            if (isInvalid() || !world.isBlockLoaded(pos, false)) {
-                                p.setExpired();
-                            }
-                        });
+                        nameTagParticle = new GTNameTagParticle(this, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
                         GTParticleManager.INSTANCE.addEffect(nameTagParticle);
-                    } else {
-                        nameTagParticle.name = getName();
                     }
                 } else {
                     if (nameTagParticle != null) {

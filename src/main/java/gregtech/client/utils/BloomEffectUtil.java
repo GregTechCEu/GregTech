@@ -1,11 +1,12 @@
 package gregtech.client.utils;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import gregtech.client.renderer.ICustomRenderFast;
+import com.github.bsideup.jabel.Desugar;
+import gregtech.client.renderer.RenderSetup;
 import gregtech.client.shader.Shaders;
 import gregtech.client.shader.postprocessing.BloomEffect;
+import gregtech.client.shader.postprocessing.BloomType;
 import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -18,11 +19,16 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
@@ -30,16 +36,53 @@ import static org.lwjgl.opengl.GL11.GL_LINEAR;
 @SideOnly(Side.CLIENT)
 public class BloomEffectUtil {
 
-    public static BlockRenderLayer BLOOM;
-    private static Framebuffer BLOOM_FBO;
-    private static Map<IBloomRenderFast, List<Consumer<BufferBuilder>>> RENDER_FAST;
+    private static final Map<BloomRenderSetup, List<Consumer<BufferBuilder>>> SCHEDULED_BLOOM_RENDERS = new Object2ObjectOpenHashMap<>();
 
-    public static BlockRenderLayer getRealBloomLayer(){
-        return Shaders.isOptiFineShaderPackLoaded() ? BlockRenderLayer.CUTOUT : BLOOM;
+    private static BlockRenderLayer bloom;
+    private static Framebuffer bloomFBO;
+
+    /**
+     * @return {@link BlockRenderLayer} instance for the bloom render layer.
+     */
+    @Nonnull
+    public static BlockRenderLayer getBloomLayer() {
+        return Objects.requireNonNull(bloom, "Bloom effect is not initialized yet");
     }
 
+    /**
+     * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if
+     * bloom layer is disabled (due to presence of Optifine etc.)
+     */
+    @Nonnull
+    public static BlockRenderLayer getRealBloomLayer() {
+        return Shaders.isOptiFineShaderPackLoaded() ? BlockRenderLayer.CUTOUT : bloom;
+    }
+
+    /**
+     * @return bloom framebuffer object
+     */
+    @Nullable
+    public static Framebuffer getBloomFBO() {
+        return bloomFBO;
+    }
+
+    /**
+     * Schedule a custom bloom render function for next world render. This render call gets processed only once; all
+     * scheduled render callbacks are cleared once they have been processed.
+     *
+     * @param setup Render setup, if exists
+     * @param bloomType Type of the bloom
+     * @param render The function to be called on next world render
+     */
+    public static void scheduleBloomRender(@Nullable RenderSetup setup,
+                                           @Nonnull BloomType bloomType,
+                                           @NotNull Consumer<BufferBuilder> render) {
+        SCHEDULED_BLOOM_RENDERS.computeIfAbsent(new BloomRenderSetup(setup, bloomType), x -> new ArrayList<>()).add(render);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static void init() {
-        BLOOM = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[]{String.class}, "Bloom");
+        bloom = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[]{String.class}, "Bloom");
         if (Loader.isModLoaded("nothirium")) {
             try {
                 //Nothirium hard copies the BlockRenderLayer enum into a ChunkRenderPass enum. Add our BLOOM layer to that too.
@@ -52,84 +95,93 @@ public class BloomEffectUtil {
                 throw new RuntimeException(e);
             }
         }
-        RENDER_FAST = Maps.newHashMap();
     }
 
+    // Calls injected via ASM
+    @SuppressWarnings("unused")
     public static void initBloomRenderLayer(BufferBuilder[] worldRenderers) {
-        worldRenderers[BLOOM.ordinal()] = new BufferBuilder(131072);
+        worldRenderers[bloom.ordinal()] = new BufferBuilder(131072);
     }
 
-    public static int renderBloomBlockLayer(RenderGlobal renderglobal, BlockRenderLayer blockRenderLayer, double partialTicks, int pass, Entity entity) {
+    // Calls injected via ASM
+    @SuppressWarnings("unused")
+    public static int renderBloomBlockLayer(RenderGlobal renderGlobal,
+                                            BlockRenderLayer blockRenderLayer, // 70% sure it's translucent uh yeah
+                                            double partialTicks,
+                                            int pass,
+                                            Entity entity) {
         Minecraft mc = Minecraft.getMinecraft();
         mc.profiler.endStartSection("BTLayer");
+
         if (Shaders.isOptiFineShaderPackLoaded()) {
-            int result =  renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
-            RENDER_FAST.clear();
+            int result = renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
+            SCHEDULED_BLOOM_RENDERS.clear();
             return result;
-        } else if (!ConfigHolder.client.shader.emissiveTexturesBloom) {
+        }
+
+        if (!ConfigHolder.client.shader.emissiveTexturesBloom) {
             GlStateManager.depthMask(true);
-            renderglobal.renderBlockLayer(BloomEffectUtil.BLOOM, partialTicks, pass, entity);
+            renderGlobal.renderBlockLayer(BloomEffectUtil.bloom, partialTicks, pass, entity);
 
             // render fast
-            if (!RENDER_FAST.isEmpty()) {
+            if (!SCHEDULED_BLOOM_RENDERS.isEmpty()) {
                 BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-                RENDER_FAST.forEach((handler, list)->{
-                    handler.preDraw(buffer);
-                    list.forEach(consumer->consumer.accept(buffer));
-                    handler.postDraw(buffer);
-                });
-                RENDER_FAST.clear();
+                for (var e : SCHEDULED_BLOOM_RENDERS.entrySet()) {
+                    draw(buffer, e.getKey(), e.getValue());
+                }
+                SCHEDULED_BLOOM_RENDERS.clear();
             }
             GlStateManager.depthMask(false);
-            return renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
+            return renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
         }
 
         Framebuffer fbo = mc.getFramebuffer();
 
-        if (BLOOM_FBO == null || BLOOM_FBO.framebufferWidth != fbo.framebufferWidth || BLOOM_FBO.framebufferHeight != fbo.framebufferHeight || (fbo.isStencilEnabled() && !BLOOM_FBO.isStencilEnabled())) {
-            if (BLOOM_FBO == null) {
-                BLOOM_FBO = new Framebuffer(fbo.framebufferWidth, fbo.framebufferHeight, false);
-                BLOOM_FBO.setFramebufferColor(0, 0, 0, 0);
+        if (bloomFBO==null ||
+                bloomFBO.framebufferWidth!=fbo.framebufferWidth ||
+                bloomFBO.framebufferHeight!=fbo.framebufferHeight ||
+                (fbo.isStencilEnabled() && !bloomFBO.isStencilEnabled())) {
+            if (bloomFBO==null) {
+                bloomFBO = new Framebuffer(fbo.framebufferWidth, fbo.framebufferHeight, false);
+                bloomFBO.setFramebufferColor(0, 0, 0, 0);
             } else {
-                BLOOM_FBO.createBindFramebuffer(fbo.framebufferWidth, fbo.framebufferHeight);
+                bloomFBO.createBindFramebuffer(fbo.framebufferWidth, fbo.framebufferHeight);
             }
-            if (fbo.isStencilEnabled() && !BLOOM_FBO.isStencilEnabled()) {
-                BLOOM_FBO.enableStencil();
+
+            if (fbo.isStencilEnabled() && !bloomFBO.isStencilEnabled()) {
+                bloomFBO.enableStencil();
             }
+
             if (DepthTextureUtil.isLastBind() && DepthTextureUtil.isUseDefaultFBO()) {
-                RenderUtil.hookDepthTexture(BLOOM_FBO, DepthTextureUtil.framebufferDepthTexture);
+                RenderUtil.hookDepthTexture(bloomFBO, DepthTextureUtil.framebufferDepthTexture);
             } else {
-                RenderUtil.hookDepthBuffer(BLOOM_FBO, fbo.depthBuffer);
+                RenderUtil.hookDepthBuffer(bloomFBO, fbo.depthBuffer);
             }
-            BLOOM_FBO.setFramebufferFilter(GL_LINEAR);
+
+            bloomFBO.setFramebufferFilter(GL_LINEAR);
         }
 
-
-
         GlStateManager.depthMask(true);
-
         fbo.bindFramebuffer(true);
 
         // render fast
-        if (!RENDER_FAST.isEmpty()) {
+        if (!SCHEDULED_BLOOM_RENDERS.isEmpty()) {
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-            RENDER_FAST.forEach((handler, list)->{
-                handler.preDraw(buffer);
-                list.forEach(consumer->consumer.accept(buffer));
-                handler.postDraw(buffer);
-            });
+            for (var entry : SCHEDULED_BLOOM_RENDERS.entrySet()) {
+                draw(buffer, entry.getKey(), entry.getValue());
+            }
         }
 
         // render to BLOOM BUFFER
-        BLOOM_FBO.framebufferClear();
-        BLOOM_FBO.bindFramebuffer(false);
+        bloomFBO.framebufferClear();
+        bloomFBO.bindFramebuffer(false);
 
-        renderglobal.renderBlockLayer(BloomEffectUtil.BLOOM, partialTicks, pass, entity);
+        renderGlobal.renderBlockLayer(BloomEffectUtil.bloom, partialTicks, pass, entity);
 
         GlStateManager.depthMask(false);
 
         // fast render bloom layer to main fbo
-        BLOOM_FBO.bindFramebufferTexture();
+        bloomFBO.bindFramebufferTexture();
         Shaders.renderFullImageInFBO(fbo, Shaders.IMAGE_F, null);
 
         // reset transparent layer render state and render
@@ -138,14 +190,14 @@ public class BloomEffectUtil {
         mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         GlStateManager.shadeModel(7425);
 
-        int result = renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
+        int result = renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
 
         mc.profiler.endStartSection("bloom");
 
         // blend bloom + transparent
         fbo.bindFramebufferTexture();
         GlStateManager.blendFunc(GL11.GL_DST_ALPHA, GL11.GL_ZERO);
-        Shaders.renderFullImageInFBO(BLOOM_FBO, Shaders.IMAGE_F, null);
+        Shaders.renderFullImageInFBO(bloomFBO, Shaders.IMAGE_F, null);
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         // render bloom effect to fbo
@@ -155,19 +207,14 @@ public class BloomEffectUtil {
         BloomEffect.lowBrightnessThreshold = (float) ConfigHolder.client.shader.lowBrightnessThreshold;
         BloomEffect.step = (float) ConfigHolder.client.shader.step;
         switch (ConfigHolder.client.shader.bloomStyle) {
-            case 0:
-                BloomEffect.renderLOG(BLOOM_FBO, fbo);
-                break;
-            case 1:
-                BloomEffect.renderUnity(BLOOM_FBO, fbo);
-                break;
-            case 2:
-                BloomEffect.renderUnreal(BLOOM_FBO, fbo);
-                break;
-            default:
+            case 0 -> BloomEffect.renderLOG(bloomFBO, fbo);
+            case 1 -> BloomEffect.renderUnity(bloomFBO, fbo);
+            case 2 -> BloomEffect.renderUnreal(bloomFBO, fbo);
+            default -> {
                 GlStateManager.depthMask(false);
                 GlStateManager.disableBlend();
                 return result;
+            }
         }
 
         GlStateManager.depthMask(false);
@@ -176,22 +223,21 @@ public class BloomEffectUtil {
         GlStateManager.disableBlend();
         Shaders.renderFullImageInFBO(fbo, Shaders.IMAGE_F, null);
 
-
-
         //********** render custom bloom ************
 
         // render fast
-        if (!RENDER_FAST.isEmpty()) {
+        if (!SCHEDULED_BLOOM_RENDERS.isEmpty()) {
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-            RENDER_FAST.forEach((handler, list)->{
+            for (var e : SCHEDULED_BLOOM_RENDERS.entrySet()) {
+                BloomRenderSetup handler = e.getKey();
+                List<Consumer<BufferBuilder>> list = e.getValue();
+
                 GlStateManager.depthMask(true);
 
-                BLOOM_FBO.framebufferClear();
-                BLOOM_FBO.bindFramebuffer(true);
+                bloomFBO.framebufferClear();
+                bloomFBO.bindFramebuffer(true);
 
-                handler.preDraw(buffer);
-                list.forEach(consumer->consumer.accept(buffer));
-                handler.postDraw(buffer);
+                draw(buffer, handler, list);
 
                 GlStateManager.depthMask(false);
 
@@ -199,57 +245,43 @@ public class BloomEffectUtil {
                 fbo.bindFramebufferTexture();
                 GlStateManager.enableBlend();
                 GlStateManager.blendFunc(GL11.GL_DST_ALPHA, GL11.GL_ZERO);
-                Shaders.renderFullImageInFBO(BLOOM_FBO, Shaders.IMAGE_F, null);
+                Shaders.renderFullImageInFBO(bloomFBO, Shaders.IMAGE_F, null);
                 GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-                switch (handler.customBloomStyle()) {
-                    case 0:
-                        BloomEffect.renderLOG(BLOOM_FBO, fbo);
-                        break;
-                    case 1:
-                        BloomEffect.renderUnity(BLOOM_FBO, fbo);
-                        break;
-                    case 2:
-                        BloomEffect.renderUnreal(BLOOM_FBO, fbo);
-                        break;
-                    default:
+                switch (handler.bloomType) {
+                    case GAUSSIAN -> BloomEffect.renderLOG(bloomFBO, fbo);
+                    case UNITY -> BloomEffect.renderUnity(bloomFBO, fbo);
+                    case UNREAL -> BloomEffect.renderUnreal(bloomFBO, fbo);
+                    default -> {
                         GlStateManager.disableBlend();
-                        return;
+                        continue;
+                    }
                 }
 
                 // render bloom blend result to fbo
                 GlStateManager.disableBlend();
                 Shaders.renderFullImageInFBO(fbo, Shaders.IMAGE_F, null);
-            });
-            RENDER_FAST.clear();
+            }
+            SCHEDULED_BLOOM_RENDERS.clear();
         }
 
         return result;
     }
 
-    public static Framebuffer getBloomFBO() {
-        return BLOOM_FBO;
+    private static void draw(@Nonnull BufferBuilder buffer,
+                             @Nonnull BloomRenderSetup handler,
+                             @Nonnull List<Consumer<BufferBuilder>> renderers) {
+        if (handler.renderSetup!=null) {
+            handler.renderSetup.preDraw(buffer);
+        }
+        for (Consumer<BufferBuilder> renderer : renderers) {
+            renderer.accept(buffer);
+        }
+        if (handler.renderSetup!=null) {
+            handler.renderSetup.postDraw(buffer);
+        }
     }
 
-    public static void requestCustomBloom(IBloomRenderFast handler, Consumer<BufferBuilder> render) {
-        RENDER_FAST.computeIfAbsent(handler, (x)->Lists.newLinkedList()).add(render);
-    }
-
-    public interface IBloomRenderFast extends ICustomRenderFast {
-
-        /**
-         * Custom Bloom Style.
-         *
-         * @return
-         * 0 - Simple Gaussian Blur Bloom
-         * <p>
-         *  1 - Unity Bloom
-         * </p>
-         * <p>
-         * 2 - Unreal Bloom
-         * </p>
-         */
-         int customBloomStyle();
-
-    }
+    @Desugar
+    private record BloomRenderSetup(@Nullable RenderSetup renderSetup, @Nonnull BloomType bloomType) {}
 }

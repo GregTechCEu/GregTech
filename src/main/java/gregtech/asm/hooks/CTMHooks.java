@@ -21,8 +21,8 @@ public class CTMHooks {
     public static boolean checkLayerWithOptiFine(boolean flag, byte layers, BlockRenderLayer layer) {
         if (Shaders.isOptiFineShaderPackLoaded()) {
             if (flag) {
-                if (layer == BloomEffectUtil.BLOOM) return false;
-            } else if (((layers >> BloomEffectUtil.BLOOM.ordinal()) & 1) == 1 && layer == BloomEffectUtil.getRealBloomLayer()) {
+                if (layer == BloomEffectUtil.getBloomLayer()) return false;
+            } else if (((layers >> BloomEffectUtil.getBloomLayer().ordinal()) & 1) == 1 && layer == BloomEffectUtil.getRealBloomLayer()) {
                 return true;
             }
         }
@@ -31,12 +31,12 @@ public class CTMHooks {
 
     public static List<BakedQuad> getQuadsWithOptiFine(List<BakedQuad> ret, BlockRenderLayer layer, IBakedModel bakedModel, IBlockState state, EnumFacing side, long rand) {
         if (Shaders.isOptiFineShaderPackLoaded() && CTMHooks.ENABLE.get() == null) {
-            if (layer == BloomEffectUtil.BLOOM) {
+            if (layer == BloomEffectUtil.getBloomLayer()) {
                 return Collections.emptyList();
             } else if (layer == BloomEffectUtil.getRealBloomLayer()) {
                 CTMHooks.ENABLE.set(true);
                 List<BakedQuad> result = new ArrayList<>(ret);
-                ForgeHooksClient.setRenderLayer(BloomEffectUtil.BLOOM);
+                ForgeHooksClient.setRenderLayer(BloomEffectUtil.getBloomLayer());
                 result.addAll(bakedModel.getQuads(state, side, rand));
                 ForgeHooksClient.setRenderLayer(layer);
                 CTMHooks.ENABLE.set(null);

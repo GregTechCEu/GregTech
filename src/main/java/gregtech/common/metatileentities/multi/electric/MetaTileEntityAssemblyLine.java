@@ -253,17 +253,18 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                         .add(0.5, 0, 0.5);
                 Vector3 endPos = startPos.copy().subtract(0, 1, 0);
 
-                beamParticles[i][0] = createALParticles(getWorld(), startPos, endPos);
+                beamParticles[i][0] = createALParticles(startPos, endPos);
 
                 pos.setPos(getPos());
                 startPos = new Vector3().add(
                                 pos.move(getFrontFacing().rotateY().getOpposite(), i).move(getFrontFacing().getOpposite(), 2))
                         .add(0.5, 0, 0.5);
                 endPos = startPos.copy().subtract(0, 1, 0);
-                beamParticles[i][1] = createALParticles(getWorld(), startPos, endPos);
+                beamParticles[i][1] = createALParticles(startPos, endPos);
 
                 // Don't forget to add particles
-                GTParticleManager.INSTANCE.addEffect(beamParticles[i][0], beamParticles[i][1]);
+                GTParticleManager.INSTANCE.addEffect(beamParticles[i][0]);
+                GTParticleManager.INSTANCE.addEffect(beamParticles[i][1]);
 
             } else if (i >= beamCount && particle != null) {
                 particle.setExpired();
@@ -275,8 +276,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Nonnull
-    private GTLaserBeamParticle createALParticles(World world, Vector3 startPos, Vector3 endPos) {
-        GTLaserBeamParticle particle = new GTLaserBeamParticle(world, startPos, endPos)
+    private GTLaserBeamParticle createALParticles(Vector3 startPos, Vector3 endPos) {
+        return new GTLaserBeamParticle(this, startPos, endPos)
                 .setBody(LASER_LOCATION)
                 .setBeamHeight(0.125f)
                 // Try commenting or adjusting on the next four lines to see what happens
@@ -284,14 +285,6 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .setHead(LASER_HEAD_LOCATION)
                 .setHeadWidth(0.1f)
                 .setEmit(0.2f);
-
-        particle.setOnUpdate(p -> {
-            if (!isValid() || !getWorld().isBlockLoaded(getPos(), false) || getWorld().getTileEntity(getPos()) != this.getHolder()) {
-                p.setExpired();
-            }
-        });
-
-        return particle;
     }
 
     @Override
