@@ -56,7 +56,7 @@
           "all" : "gregtech:blocks/decoration/large_metalsheet_gray"
         }
       },
-      "light_gray" : {
+      "silver" : {
         "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/large_metalsheet_light_gray"

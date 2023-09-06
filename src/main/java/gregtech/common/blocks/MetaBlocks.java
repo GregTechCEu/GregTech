@@ -139,9 +139,9 @@ public class MetaBlocks {
 
     public static BlockBrittleCharcoal BRITTLE_CHARCOAL;
 
-    public static BlockMetalSheet METAL_SHEET;
-    public static BlockLargeMetalSheet LARGE_METAL_SHEET;
-    public static BlockStuds STUDS;
+    public static BlockColored METAL_SHEET;
+    public static BlockColored LARGE_METAL_SHEET;
+    public static BlockColored STUDS;
 
     public static final Map<Material, BlockCompressed> COMPRESSED = new Object2ObjectOpenHashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new Object2ObjectOpenHashMap<>();
@@ -288,11 +288,11 @@ public class MetaBlocks {
         BRITTLE_CHARCOAL = new BlockBrittleCharcoal();
         BRITTLE_CHARCOAL.setRegistryName("brittle_charcoal");
 
-        METAL_SHEET = new BlockMetalSheet();
+        METAL_SHEET = new BlockColored(net.minecraft.block.material.Material.IRON, "metal_sheet", 2.0f, 5.0f, SoundType.METAL, EnumDyeColor.WHITE);
         METAL_SHEET.setRegistryName("metal_sheet");
-        LARGE_METAL_SHEET = new BlockLargeMetalSheet();
+        LARGE_METAL_SHEET = new BlockColored(net.minecraft.block.material.Material.IRON, "large_metal_sheet", 2.0f, 5.0f, SoundType.METAL, EnumDyeColor.WHITE);
         LARGE_METAL_SHEET.setRegistryName("large_metal_sheet");
-        STUDS = new BlockStuds();
+        STUDS = new BlockColored(net.minecraft.block.material.Material.CARPET, "studs", 1.5f, 2.5f, SoundType.CLOTH, EnumDyeColor.BLACK);
         STUDS.setRegistryName("studs");
 
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
@@ -544,7 +544,7 @@ public class MetaBlocks {
         ItemColors itemColors = Minecraft.getMinecraft().getItemColors();
 
         blockColors.registerBlockColorHandler((s, w, p, i) ->
-                        s.getValue(BlockColored.COLOR).colorValue,
+                        s.getValue(net.minecraft.block.BlockColored.COLOR).colorValue,
                 FOAM, REINFORCED_FOAM, PETRIFIED_FOAM, REINFORCED_PETRIFIED_FOAM);
 
         final int rubberLeavesColor = 0x98de4b;
