@@ -85,7 +85,7 @@ public final class OreGlobParser {
                 case '?' -> setCurrentToken(ANY_CHAR, start, 1);
                 case '$' -> {
                     if (!first) {
-                        error(OreGlobMessages.compileError_unexpectedCompilationFlag(), start, 1);
+                        error(OreGlobMessages.compileErrorUnexpectedCompilationFlag(), start, 1);
                     }
                     gatherFlags(first);
                     first = false;
@@ -114,7 +114,7 @@ public final class OreGlobParser {
     }
 
     private String getTokenSection() {
-        return this.tokenType == EOF ? OreGlobMessages.compile_eof() :
+        return this.tokenType == EOF ? OreGlobMessages.compileEOF() :
                 this.input.substring(this.tokenStart, this.tokenStart + this.tokenLength);
     }
 
@@ -127,7 +127,7 @@ public final class OreGlobParser {
                 case '\\' -> {
                     c = readNextChar();
                     if (c == CHAR_EOF) {
-                        error(OreGlobMessages.compileError_eofAfterEscape(), i, 1);
+                        error(OreGlobMessages.compileErrorEOFAfterEscape(), i, 1);
                         return stb.toString();
                     }
                 }
@@ -137,7 +137,7 @@ public final class OreGlobParser {
                 }
             }
             if (c > 0xFFFF) {
-                error(OreGlobMessages.compileError_invalidChar(c), i, 1);
+                error(OreGlobMessages.compileErrorInvalidChar(c), i, 1);
                 c = '?';
             }
             stb.appendCodePoint(c);
@@ -153,7 +153,7 @@ public final class OreGlobParser {
                 case '\\' -> {
                     c = readNextChar();
                     if (c == CHAR_EOF) {
-                        error(OreGlobMessages.compileError_eofAfterEscape(), i, 1);
+                        error(OreGlobMessages.compileErrorEOFAfterEscape(), i, 1);
                     } else if (add) {
                         addFlag(c, i);
                         flagsAdded = true;
@@ -170,7 +170,7 @@ public final class OreGlobParser {
                 }
             }
             if (!flagsAdded && add) {
-                error(OreGlobMessages.compileError_emptyCompilationFlag(), i, 1);
+                error(OreGlobMessages.compileErrorEmptyCompilationFlag(), i, 1);
             }
             return;
         }
@@ -180,12 +180,12 @@ public final class OreGlobParser {
         switch (flag) {
             case 'c', 'C' -> {
                 if (this.caseSensitive) {
-                    warn(OreGlobMessages.compileError_redundantCompilationFlag("c"), index, 1);
+                    warn(OreGlobMessages.compileErrorRedundantCompilationFlag("c"), index, 1);
                 } else {
                     this.caseSensitive = true;
                 }
             }
-            default -> warn(OreGlobMessages.compileError_unknownCompilationFlag(
+            default -> warn(OreGlobMessages.compileErrorUnknownCompilationFlag(
                     new StringBuilder().appendCodePoint(flag).toString()
             ), index, 1);
         }
@@ -202,7 +202,7 @@ public final class OreGlobParser {
         if (tokenType != EOF) {
             OreGlobNode expr = or();
             if (tokenType != EOF) { // likely caused by program error, not user issue
-                error(OreGlobMessages.compileError_unexpectedTokenAfterEOF(getTokenSection()));
+                error(OreGlobMessages.compileErrorUnexpectedTokenAfterEOF(getTokenSection()));
             }
             if (!error) {
                 return new OreGlobCompileResult(new NodeOreGlob(expr), this.reports);
@@ -268,12 +268,12 @@ public final class OreGlobParser {
                     case RPAR -> advance();
                     case EOF -> {}
                     // likely caused by program error, not user issue
-                    default -> error(OreGlobMessages.compileError_unexpectedToken(getTokenSection()));
+                    default -> error(OreGlobMessages.compileErrorUnexpectedToken(getTokenSection()));
                 }
             }
         } else {
             if (not && nested) {
-                warn(OreGlobMessages.compileWarn_nestedNegation());
+                warn(OreGlobMessages.compileWarnNestedNegation());
             }
             root = primary();
         }
@@ -283,7 +283,7 @@ public final class OreGlobParser {
                 int tokenStart = this.tokenStart;
                 OreGlobNode node = not(nested || not);
                 if (OreGlobNodes.isNegatedMatch(root) && OreGlobNodes.isNegatedMatch(node)) {
-                    warn(OreGlobMessages.compileWarn_consecutiveNegation(), tokenStart, tokenStart + tokenLength - tokenStart);
+                    warn(OreGlobMessages.compileWarnConsecutiveNegation(), tokenStart, tokenStart + tokenLength - tokenStart);
                 }
                 root = OreGlobNodes.append(root, node);
             }
@@ -328,11 +328,11 @@ public final class OreGlobParser {
             case ANY -> nOrMore(0, true);
             case ANY_CHAR -> nOrMore(1, false);
             case EOF -> {
-                error(OreGlobMessages.compileError_unexpectedEOF());
+                error(OreGlobMessages.compileErrorUnexpectedEOF());
                 yield OreGlobNodes.error();
             }
             default -> {
-                error(OreGlobMessages.compileError_unexpectedToken(getTokenSection()));
+                error(OreGlobMessages.compileErrorUnexpectedToken(getTokenSection()));
                 advance();
                 yield OreGlobNodes.error();
             }

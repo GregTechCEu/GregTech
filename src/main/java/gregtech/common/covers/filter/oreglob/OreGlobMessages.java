@@ -84,64 +84,64 @@ public class OreGlobMessages {
     // <error>ERROR!</error>
     public static final String PREVIEW_ERROR = PREVIEW_PREFIX + "error";
 
-    public static String compile_eof() {
+    public static String compileEOF() {
         // ** End of line **
         return LocalizationUtils.format(COMPILE_PREFIX + "eof");
     }
 
-    public static String compileError_unexpectedEOF() {
+    public static String compileErrorUnexpectedEOF() {
         // Unexpected end of expression
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "unexpected_eof");
     }
 
-    public static String compileError_unexpectedToken(String token) {
+    public static String compileErrorUnexpectedToken(String token) {
         // Unexpected token '%s'
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "unexpected_token", token);
     }
 
-    public static String compileError_unexpectedTokenAfterEOF(String token) {
+    public static String compileErrorUnexpectedTokenAfterEOF(String token) {
         // Unexpected token '%s' after end of expression
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "unexpected_token_after_eof", token);
     }
 
-    public static String compileError_unexpectedCompilationFlag() {
+    public static String compileErrorUnexpectedCompilationFlag() {
         // Compilation flags in the middle of expression
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "unexpected_compilation_flag");
     }
 
-    public static String compileError_emptyCompilationFlag() {
+    public static String compileErrorEmptyCompilationFlag() {
         // No compilation flags given
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "empty_compilation_flag");
     }
 
-    public static String compileError_unknownCompilationFlag(String flag) {
+    public static String compileErrorUnknownCompilationFlag(String flag) {
         // Unknown compilation flag '%s'
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "unknown_compilation_flag", flag);
     }
 
-    public static String compileError_redundantCompilationFlag(String flag) {
+    public static String compileErrorRedundantCompilationFlag(String flag) {
         // Compilation flag '%s' written twice
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "redundant_compilation_flag", flag);
     }
 
-    public static String compileError_eofAfterEscape() {
+    public static String compileErrorEOFAfterEscape() {
         // End of file after escape character ('\\')
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "eof_after_escape");
     }
 
-    public static String compileError_invalidChar(int codepoint) {
+    public static String compileErrorInvalidChar(int codepoint) {
         // Invalid character U+%s('%s')
         return LocalizationUtils.format(COMPILE_ERROR_PREFIX + "invalid_char",
                 Integer.toHexString(codepoint).toUpperCase(Locale.ROOT),
                 new StringBuilder().appendCodePoint(codepoint).toString());
     }
 
-    public static String compileWarn_nestedNegation() {
+    public static String compileWarnNestedNegation() {
         // Nested negations can be unintuitive. Consider using groups ( () ) to eliminate ambiguity.
         return LocalizationUtils.format(COMPILE_WARN_PREFIX + "nested_negation");
     }
 
-    public static String compileWarn_consecutiveNegation() {
+    public static String compileWarnConsecutiveNegation() {
         // Consecutive negations can be unintuitive. Please check if the evaluation result is desirable.
         return LocalizationUtils.format(COMPILE_WARN_PREFIX + "consecutive_negation");
     }
