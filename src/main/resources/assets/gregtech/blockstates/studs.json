@@ -1,105 +1,86 @@
 {
   "forge_marker" : 1,
   "defaults": {
-    "model" : "minecraft:cube_all",
-    "textures" : {
-      "all" : "gregtech:blocks/decoration/studs_white"
-    }
+    "model" : "minecraft:cube_all"
   },
   "variants" : {
     "variant" : {
       "white" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_white"
         }
       },
       "orange" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_orange"
         }
       },
       "magenta" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_magenta"
         }
       },
       "light_blue" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_light_blue"
         }
       },
       "yellow" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_yellow"
         }
       },
       "lime" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_lime"
         }
       },
       "pink" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_pink"
         }
       },
       "gray" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_gray"
         }
       },
       "silver" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_light_gray"
         }
       },
       "cyan" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_cyan"
         }
       },
       "purple" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_purple"
         }
       },
       "blue" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_blue"
         }
       },
       "brown" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_brown"
         }
       },
       "green" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_green"
         }
       },
       "red" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_red"
         }
       },
       "black" : {
-        "model" : "minecraft:cube_all",
         "textures" : {
           "all" : "gregtech:blocks/decoration/studs_black"
         }
