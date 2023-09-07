@@ -9,8 +9,8 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockNuclearCasing;
+import gregtech.common.blocks.BlockPanelling;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -39,11 +39,11 @@ public class MetaTileEntitySpentFuelPool extends RecipeMapMultiblockController {
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start(FRONT, UP, RIGHT)
-                .aisle("CCCCCCCCC", "CCCCSCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC")
-                .aisle("CCCCCCCCC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC")
-                .aisle("CCCCCCCCC", "CWRRRRRWC", "CWRRRRRWC", "CWRRRRRWC", "CWRRRRRWC", "CWRRRRRWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC").setRepeatable(1, 13)
-                .aisle("CCCCCCCCC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC", "CWWWWWWWC")
-                .aisle("CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC", "CCCCCCCCC")
+                .aisle("CSCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC")
+                .aisle("CCCCCCCCCC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC")
+                .aisle("CCCCCCCCCC", "CWRRRRRRWC", "CWRRRRRRWC", "CWRRRRRRWC", "CWRRRRRRWC", "CWRRRRRRWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC").setRepeatable(1, 10)
+                .aisle("CCCCCCCCCC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC")
+                .aisle("CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC")
                 .where('S', selfPredicate())
                 .where('C', states(getCasingState()))
                 .where('W', states(getWaterState()).or(states(getFlowingWaterState())))
@@ -67,7 +67,7 @@ public class MetaTileEntitySpentFuelPool extends RecipeMapMultiblockController {
     }
 
     private IBlockState getCasingState() {
-        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STAINLESS_CLEAN);
+        return MetaBlocks.PANELLING.getState(BlockPanelling.PanellingType.WHITE);
     }
 
     private IBlockState getWaterState() {
