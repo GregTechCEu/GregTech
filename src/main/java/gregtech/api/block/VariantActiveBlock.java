@@ -88,15 +88,16 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         return false;
     }
 
+    @Nonnull
     @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
     }
 
     @Override
-    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+    public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
         return layer == getRenderLayer() ||
-                layer == (isBloomEnabled(getState(state)) ? BloomEffectUtil.getRealBloomLayer() : BlockRenderLayer.CUTOUT);
+                layer == BloomEffectUtil.getEffectiveBloomLayer(isBloomEnabled(getState(state)));
     }
 
     @Nonnull
@@ -123,8 +124,9 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         return new ExtendedBlockState(this, new IProperty[]{VARIANT, ACTIVE_DEPRECATED}, new IUnlistedProperty[]{ACTIVE});
     }
 
+    @Nonnull
     @Override
-    public IExtendedBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public IExtendedBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
         IExtendedBlockState ext = ((IExtendedBlockState) state)
                 .withProperty(ACTIVE, Minecraft.getMinecraft().world != null &&
                         isBlockActive(Minecraft.getMinecraft().world.provider.getDimension(), pos));

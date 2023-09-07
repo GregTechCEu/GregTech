@@ -51,8 +51,8 @@ public class CustomTextureModel implements IModel {
     }
 
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        boolean flag = (layers < 0 && state.getBlock().getRenderLayer() == layer) || ((layers >> layer.ordinal()) & 1) == 1;
-        return CTMHooks.checkLayerWithOptiFine(flag, layers, layer);
+        boolean canRenderInLayer = (layers < 0 && state.getBlock().getRenderLayer() == layer) || ((layers >> layer.ordinal()) & 1) == 1;
+        return CTMHooks.checkLayerWithOptiFine(canRenderInLayer, layers, layer);
     }
 
     @Override

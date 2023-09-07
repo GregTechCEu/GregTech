@@ -35,7 +35,7 @@ public class EmissiveOreBakedModel extends OreBakedModel {
             return quads;
         } else if (layer == BlockRenderLayer.CUTOUT_MIPPED) {
             return getBaseModel().getQuads(null, side, 0);
-        } else if (layer == BloomEffectUtil.getRealBloomLayer()) {
+        } else if (layer == BloomEffectUtil.getEffectiveBloomLayer()) {
             return getOverlayQuads(side, rand);
         } else {
             return Collections.emptyList();

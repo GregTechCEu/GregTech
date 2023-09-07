@@ -34,7 +34,7 @@ public class FireboxActiveRenderer extends SidedCubeRenderer {
                 TextureAtlasSprite emissiveSprite = spritesEmissive.get(overlayFace);
                 if (emissiveSprite != null && facing != frontFacing && facing != EnumFacing.UP && facing != EnumFacing.DOWN) {
                     Textures.renderFace(renderState, translation, ArrayUtils.add(pipeline, new LightMapOperation(240, 240)), facing, bounds, emissiveSprite,
-                            ConfigHolder.client.machinesEmissiveTextures ? BloomEffectUtil.getRealBloomLayer() : BlockRenderLayer.CUTOUT_MIPPED);
+                            BloomEffectUtil.getEffectiveBloomLayer(ConfigHolder.client.machinesEmissiveTextures, BlockRenderLayer.CUTOUT_MIPPED));
                 }
             }
         }

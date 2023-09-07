@@ -19,6 +19,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
@@ -38,6 +39,12 @@ public class BloomEffectUtil {
 
     private static final Map<BloomRenderSetup, List<Consumer<BufferBuilder>>> SCHEDULED_BLOOM_RENDERS = new Object2ObjectOpenHashMap<>();
 
+    /**
+     * @deprecated use {@link #getBloomLayer()}
+     */
+    @Deprecated
+    public static BlockRenderLayer BLOOM;
+
     private static BlockRenderLayer bloom;
     private static Framebuffer bloomFBO;
 
@@ -50,12 +57,73 @@ public class BloomEffectUtil {
     }
 
     /**
-     * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if
-     * bloom layer is disabled (due to presence of Optifine etc.)
+     * @deprecated renamed for clarity; use {@link #getEffectiveBloomLayer()}.
      */
     @Nonnull
+    @Deprecated
     public static BlockRenderLayer getRealBloomLayer() {
-        return Shaders.isOptiFineShaderPackLoaded() ? BlockRenderLayer.CUTOUT : bloom;
+        return getEffectiveBloomLayer();
+    }
+
+    /**
+     * Get "effective bloom layer", i.e. the actual render layer that emissive textures get rendered. Effective bloom
+     * layers can be changed depending on external factors, such as presence of Optifine. If the actual bloom layer is
+     * disabled, {@link BlockRenderLayer#CUTOUT} is returned instead.
+     *
+     * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if
+     * bloom layer is disabled
+     * @see #getEffectiveBloomLayer(BlockRenderLayer)
+     */
+    @Nonnull
+    public static BlockRenderLayer getEffectiveBloomLayer() {
+        return getEffectiveBloomLayer(BlockRenderLayer.CUTOUT);
+    }
+
+    /**
+     * Get "effective bloom layer", i.e. the actual render layer that emissive textures get rendered. Effective bloom
+     * layers can be changed depending on external factors, such as presence of Optifine. If the actual bloom layer is
+     * disabled, the fallback layer specified is returned instead.
+     *
+     * @param fallback Block render layer to be returned when bloom layer is disabled
+     * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@code fallback} if bloom layer is
+     * disabled
+     * @see #getEffectiveBloomLayer(boolean, BlockRenderLayer)
+     */
+    @Contract("null -> _; !null -> !null")
+    public static BlockRenderLayer getEffectiveBloomLayer(BlockRenderLayer fallback) {
+        return Shaders.isOptiFineShaderPackLoaded() ? fallback : bloom;
+    }
+
+    /**
+     * Get "effective bloom layer", i.e. the actual render layer that emissive textures get rendered. Effective bloom
+     * layers can be changed depending on external factors, such as presence of Optifine. If the actual bloom layer is
+     * disabled, {@link BlockRenderLayer#CUTOUT} is returned instead.
+     *
+     * @param isBloomActive Whether bloom layer should be active. If this value is {@code false}, {@code fallback} layer
+     *                      will be returned. Has no effect if Optifine is present.
+     * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if
+     * bloom layer is disabled
+     * @see #getEffectiveBloomLayer(boolean, BlockRenderLayer)
+     */
+    @Nonnull
+    public static BlockRenderLayer getEffectiveBloomLayer(boolean isBloomActive) {
+        return getEffectiveBloomLayer(isBloomActive, BlockRenderLayer.CUTOUT);
+    }
+
+    /**
+     * Get "effective bloom layer", i.e. the actual render layer that emissive textures get rendered. Effective bloom
+     * layers can be changed depending on external factors, such as presence of Optifine. If the actual bloom layer is
+     * disabled, the fallback layer specified is returned instead.
+     *
+     * @param isBloomActive Whether bloom layer should be active. If this value is {@code false}, {@code fallback} layer
+     *                      will be returned. Has no effect if Optifine is present.
+     * @param fallback      Block render layer to be returned when bloom layer is disabled
+     * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@code fallback} if bloom layer is
+     * disabled
+     */
+    @Contract("_, null -> _; _, !null -> !null")
+    public static BlockRenderLayer getEffectiveBloomLayer(boolean isBloomActive, BlockRenderLayer fallback) {
+        return Shaders.isOptiFineShaderPackLoaded() || !isBloomActive ? fallback : bloom;
     }
 
     /**
@@ -70,9 +138,9 @@ public class BloomEffectUtil {
      * Schedule a custom bloom render function for next world render. This render call gets processed only once; all
      * scheduled render callbacks are cleared once they have been processed.
      *
-     * @param setup Render setup, if exists
+     * @param setup     Render setup, if exists
      * @param bloomType Type of the bloom
-     * @param render The function to be called on next world render
+     * @param render    The function to be called on next world render
      */
     public static void scheduleBloomRender(@Nullable RenderSetup setup,
                                            @Nonnull BloomType bloomType,
@@ -83,6 +151,7 @@ public class BloomEffectUtil {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static void init() {
         bloom = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[]{String.class}, "Bloom");
+        BLOOM = bloom;
         if (Loader.isModLoaded("nothirium")) {
             try {
                 //Nothirium hard copies the BlockRenderLayer enum into a ChunkRenderPass enum. Add our BLOOM layer to that too.
@@ -137,11 +206,11 @@ public class BloomEffectUtil {
 
         Framebuffer fbo = mc.getFramebuffer();
 
-        if (bloomFBO==null ||
-                bloomFBO.framebufferWidth!=fbo.framebufferWidth ||
-                bloomFBO.framebufferHeight!=fbo.framebufferHeight ||
+        if (bloomFBO == null ||
+                bloomFBO.framebufferWidth != fbo.framebufferWidth ||
+                bloomFBO.framebufferHeight != fbo.framebufferHeight ||
                 (fbo.isStencilEnabled() && !bloomFBO.isStencilEnabled())) {
-            if (bloomFBO==null) {
+            if (bloomFBO == null) {
                 bloomFBO = new Framebuffer(fbo.framebufferWidth, fbo.framebufferHeight, false);
                 bloomFBO.setFramebufferColor(0, 0, 0, 0);
             } else {
@@ -271,13 +340,13 @@ public class BloomEffectUtil {
     private static void draw(@Nonnull BufferBuilder buffer,
                              @Nonnull BloomRenderSetup handler,
                              @Nonnull List<Consumer<BufferBuilder>> renderers) {
-        if (handler.renderSetup!=null) {
+        if (handler.renderSetup != null) {
             handler.renderSetup.preDraw(buffer);
         }
         for (Consumer<BufferBuilder> renderer : renderers) {
             renderer.accept(buffer);
         }
-        if (handler.renderSetup!=null) {
+        if (handler.renderSetup != null) {
             handler.renderSetup.postDraw(buffer);
         }
     }
