@@ -1,7 +1,8 @@
 package gregtech.api.unification.material;
 
-import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.GregTechAPI;
 import gregtech.api.util.GTUtility;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -13,9 +14,19 @@ import javax.annotation.Nonnull;
  */
 public final class MarkerMaterial extends Material {
 
-    public MarkerMaterial(@Nonnull String name) {
+    private MarkerMaterial(@Nonnull String name) {
         super(GTUtility.gregtechId(name));
-        OreDictUnifier.registerMarkerMaterial(this);
+    }
+
+    /**
+     * Create a new MarkerMaterial
+     *
+     * @param name the name of the MarkerMaterial
+     * @return the new MarkerMaterial
+     */
+    public static @NotNull MarkerMaterial create(@NotNull String name) {
+        MarkerMaterial markerMaterial = new MarkerMaterial(name);
+        return GregTechAPI.markerMaterialRegistry.registerMarkerMaterial(markerMaterial);
     }
 
     @Override
