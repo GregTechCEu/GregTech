@@ -4,7 +4,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
@@ -38,8 +37,6 @@ public class OreDictUnifier {
 
     private OreDictUnifier() {}
 
-    //simple version of material registry for marker materials
-    private static final Map<String, MarkerMaterial> markerMaterialRegistry = new Object2ObjectOpenHashMap<>();
     private static final Map<ItemAndMetadata, ItemMaterialInfo> materialUnificationInfo = new Object2ObjectOpenHashMap<>();
     private static final Map<ItemAndMetadata, UnificationEntry> stackUnificationInfo = new Object2ObjectOpenHashMap<>();
     private static final Map<UnificationEntry, ArrayList<ItemAndMetadata>> stackUnificationItems = new Object2ObjectOpenHashMap<>();
@@ -66,13 +63,6 @@ public class OreDictUnifier {
     public static Comparator<ItemStack> getItemStackComparator() {
         Comparator<ItemAndMetadata> comparator = getSimpleItemStackComparator();
         return (first, second) -> comparator.compare(new ItemAndMetadata(first), new ItemAndMetadata(second));
-    }
-
-    public static void registerMarkerMaterial(MarkerMaterial markerMaterial) {
-        if (markerMaterialRegistry.containsKey(markerMaterial.toString())) {
-            throw new IllegalArgumentException(("Marker material with id " + markerMaterial + " is already registered!"));
-        }
-        markerMaterialRegistry.put(markerMaterial.toString(), markerMaterial);
     }
 
     public static void registerOre(ItemStack itemStack, ItemMaterialInfo materialInfo) {
@@ -149,8 +139,8 @@ public class OreDictUnifier {
                     String underscoreName = GTUtility.toLowerCaseUnderscore(possibleMaterialName); //basaltic_mineral_sand
                     Material possibleMaterial = registry.getObject(underscoreName); //Materials.BasalticSand
                     if (possibleMaterial == null) {
-                        //if we didn't found real material, try using marker material registry
-                        possibleMaterial = markerMaterialRegistry.get(underscoreName);
+                        //if we didn't find real material, try using marker material registry
+                        possibleMaterial = GregTechAPI.markerMaterialRegistry.getMarkerMaterial(underscoreName);
                     }
                     if (maybePrefix != null && possibleMaterial != null) {
                         orePrefix = maybePrefix;

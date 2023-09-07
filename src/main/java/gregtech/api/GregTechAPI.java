@@ -16,6 +16,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.registry.IMaterialRegistryManager;
+import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.BaseCreativeTab;
@@ -55,6 +56,8 @@ public class GregTechAPI {
     public static ISoundManager soundManager;
     /** Will be available at the Construction stage */
     public static IMaterialRegistryManager materialManager;
+    /** Will be available at the Pre-Initialization stage */
+    public static MarkerMaterialRegistry markerMaterialRegistry;
 
     /** Will be available at the Pre-Initialization stage */
     private static boolean highTier;
