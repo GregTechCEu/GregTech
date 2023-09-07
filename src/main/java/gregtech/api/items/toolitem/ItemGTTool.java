@@ -72,7 +72,7 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     }
 
     @Override
-    public String getId() {
+    public String getToolId() {
         return id;
     }
 
