@@ -1,7 +1,7 @@
 package gregtech.client.utils;
 
 import com.github.bsideup.jabel.Desugar;
-import gregtech.client.renderer.RenderSetup;
+import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.shader.Shaders;
 import gregtech.client.shader.postprocessing.BloomEffect;
 import gregtech.client.shader.postprocessing.BloomType;
@@ -141,7 +141,7 @@ public class BloomEffectUtil {
      * @param bloomType Type of the bloom
      * @param render    The function to be called on next world render
      */
-    public static void scheduleBloomRender(@Nullable RenderSetup setup,
+    public static void scheduleBloomRender(@Nullable IRenderSetup setup,
                                            @Nonnull BloomType bloomType,
                                            @Nonnull Consumer<BufferBuilder> render) {
         SCHEDULED_BLOOM_RENDERS.computeIfAbsent(new BloomRenderSetup(setup, bloomType), x -> new ArrayList<>()).add(render);
@@ -351,5 +351,5 @@ public class BloomEffectUtil {
     }
 
     @Desugar
-    private record BloomRenderSetup(@Nullable RenderSetup renderSetup, @Nonnull BloomType bloomType) {}
+    private record BloomRenderSetup(@Nullable IRenderSetup renderSetup, @Nonnull BloomType bloomType) {}
 }

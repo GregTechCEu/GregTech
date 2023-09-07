@@ -1,7 +1,7 @@
 package gregtech.client.particle;
 
 import gregtech.api.util.GTLog;
-import gregtech.client.renderer.RenderSetup;
+import gregtech.client.renderer.IRenderSetup;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -35,8 +35,8 @@ public class GTParticleManager {
     @Nullable
     private static World currentWorld = null;
 
-    private final Map<RenderSetup, ArrayDeque<GTParticle>> depthEnabledParticles = new Object2ObjectLinkedOpenHashMap<>();
-    private final Map<RenderSetup, ArrayDeque<GTParticle>> depthDisabledParticles = new Object2ObjectLinkedOpenHashMap<>();
+    private final Map<IRenderSetup, ArrayDeque<GTParticle>> depthEnabledParticles = new Object2ObjectLinkedOpenHashMap<>();
+    private final Map<IRenderSetup, ArrayDeque<GTParticle>> depthDisabledParticles = new Object2ObjectLinkedOpenHashMap<>();
 
     private final List<GTParticle> newParticleQueue = new ArrayList<>();
 
@@ -66,10 +66,10 @@ public class GTParticleManager {
         }
     }
 
-    private void updateQueue(Map<RenderSetup, ArrayDeque<GTParticle>> renderQueue) {
+    private void updateQueue(Map<IRenderSetup, ArrayDeque<GTParticle>> renderQueue) {
         var entryIterator = renderQueue.entrySet().iterator();
         while (entryIterator.hasNext()) {
-            Map.Entry<RenderSetup, ArrayDeque<GTParticle>> entry = entryIterator.next();
+            Map.Entry<IRenderSetup, ArrayDeque<GTParticle>> entry = entryIterator.next();
             ArrayDeque<GTParticle> particles = entry.getValue();
 
             Iterator<GTParticle> iterator = particles.iterator();
@@ -152,13 +152,13 @@ public class GTParticleManager {
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
     }
 
-    private static void renderGlParticlesInLayer(@Nonnull Map<RenderSetup, ArrayDeque<GTParticle>> renderQueue,
+    private static void renderGlParticlesInLayer(@Nonnull Map<IRenderSetup, ArrayDeque<GTParticle>> renderQueue,
                                                  @Nonnull Tessellator tessellator, @Nonnull Entity renderViewEntity,
                                                  float partialTicks, double cameraX, double cameraY, double cameraZ,
                                                  @Nonnull Vec3d cameraViewDir, float rotationX, float rotationZ,
                                                  float rotationYZ, float rotationXY, float rotationXZ) {
         for (var e : renderQueue.entrySet()) {
-            RenderSetup handler = e.getKey();
+            IRenderSetup handler = e.getKey();
             ArrayDeque<GTParticle> particles = e.getValue();
             if (particles.isEmpty()) continue;
             BufferBuilder buffer = tessellator.getBuffer();
@@ -214,7 +214,7 @@ public class GTParticleManager {
         }
     }
 
-    private static int count(Map<RenderSetup, ArrayDeque<GTParticle>> renderQueue) {
+    private static int count(Map<IRenderSetup, ArrayDeque<GTParticle>> renderQueue) {
         int g = 0;
         for (Deque<GTParticle> queue : renderQueue.values()) {
             g += queue.size();

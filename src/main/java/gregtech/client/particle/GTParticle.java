@@ -1,6 +1,6 @@
 package gregtech.client.particle;
 
-import gregtech.client.renderer.RenderSetup;
+import gregtech.client.renderer.IRenderSetup;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 
 /**
  * A custom particle implementation with framework for more advanced rendering capabilities.<p/>
- * GTParticle instances are managed by {@link GTParticleManager}. GTParticle instances with same {@link RenderSetup}s
+ * GTParticle instances are managed by {@link GTParticleManager}. GTParticle instances with same {@link IRenderSetup}s
  * will be drawn together as a batch.
  */
 @SideOnly(Side.CLIENT)
@@ -93,8 +93,8 @@ public abstract class GTParticle {
 
     /**
      * Render the particle. If this particle has non-null {@link #getRenderSetup()} associated, this method will be
-     * called between a {@link RenderSetup#preDraw(BufferBuilder)} call and a
-     * {@link RenderSetup#postDraw(BufferBuilder)} call.
+     * called between a {@link IRenderSetup#preDraw(BufferBuilder)} call and a
+     * {@link IRenderSetup#postDraw(BufferBuilder)} call.
      *
      * @param buffer           Buffer builder
      * @param renderViewEntity Render view entity
@@ -118,7 +118,7 @@ public abstract class GTParticle {
      * @return Render setup for this particle, if exists
      */
     @Nullable
-    public RenderSetup getRenderSetup() {
+    public IRenderSetup getRenderSetup() {
         return null;
     }
 }

@@ -2,7 +2,7 @@ package gregtech.client.particle;
 
 import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GTValues;
-import gregtech.client.renderer.RenderSetup;
+import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.shader.postprocessing.BloomEffect;
 import gregtech.client.shader.postprocessing.BloomType;
 import gregtech.client.utils.BloomEffectUtil;
@@ -262,7 +262,7 @@ public class GTOverheatParticle extends GTParticle {
         return BloomType.fromValue(heatEffectBloom.useShader ? heatEffectBloom.bloomStyle : -1);
     }
 
-    private static final RenderSetup SETUP = new RenderSetup() {
+    private static final IRenderSetup SETUP = new IRenderSetup() {
 
         float lastBrightnessX;
         float lastBrightnessY;

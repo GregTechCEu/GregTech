@@ -2,7 +2,7 @@ package gregtech.client.particle;
 
 import codechicken.lib.vec.Vector3;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.client.renderer.RenderSetup;
+import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.renderer.fx.LaserBeamRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -172,7 +172,7 @@ public class GTLaserBeamParticle extends GTParticle {
 
     @Nullable
     @Override
-    public RenderSetup getRenderSetup() {
+    public IRenderSetup getRenderSetup() {
         return SETUP;
     }
 
@@ -194,7 +194,7 @@ public class GTLaserBeamParticle extends GTParticle {
                 '}';
     }
 
-    private static final RenderSetup SETUP = new RenderSetup() {
+    private static final IRenderSetup SETUP = new IRenderSetup() {
 
         float lastBrightnessX;
         float lastBrightnessY;

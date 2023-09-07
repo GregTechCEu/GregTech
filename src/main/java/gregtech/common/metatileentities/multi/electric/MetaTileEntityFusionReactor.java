@@ -19,7 +19,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.RenderSetup;
+import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.shader.postprocessing.BloomEffect;
 import gregtech.client.shader.postprocessing.BloomType;
@@ -426,7 +426,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     }
 
     @SideOnly(Side.CLIENT)
-    private static final class FusionBloomSetup implements RenderSetup {
+    private static final class FusionBloomSetup implements IRenderSetup {
 
         private static final FusionBloomSetup INSTANCE = new FusionBloomSetup();
 

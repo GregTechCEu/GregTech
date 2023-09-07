@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
  * Providing proper equality checks and hashes is recommended for non-singleton render setup implementations.
  */
 @SideOnly(Side.CLIENT)
-public interface RenderSetup {
+public interface IRenderSetup {
 
     /**
      * Run any pre render gl code here.
