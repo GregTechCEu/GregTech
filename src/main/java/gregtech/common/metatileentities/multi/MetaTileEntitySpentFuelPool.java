@@ -39,17 +39,17 @@ public class MetaTileEntitySpentFuelPool extends RecipeMapMultiblockController {
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start(FRONT, UP, RIGHT)
-                .aisle("CSIIIIIIIC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC")
-                .aisle("CCCCCCCCCC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC")
+                .aisle("CIIIIIIIIC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC")
+                .aisle("SCCCCCCCCC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC")
                 .aisle("CCCCCCCCCC", "CWRRRRRRWC", "CWRRRRRRWC", "CWRRRRRRWC", "CWRRRRRRWC", "CWRRRRRRWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC").setRepeatable(1, 10)
                 .aisle("CCCCCCCCCC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC", "CWWWWWWWWC")
                 .aisle("COOOOOOOOC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC", "CCCCCCCCCC")
                 .where('S', selfPredicate())
-                .where('C', states(getCasingState()))
-                .where('W', states(getWaterState()).or(states(getFlowingWaterState())))
+                .where('C', blocks(MetaBlocks.PANELLING))
+                .where('W', blocks(Blocks.WATER).or(blocks(Blocks.FLOWING_WATER)))
                 .where('R', states(getRodState()))
-                .where('I', states(getCasingState()).or(autoAbilities(true, false, true, false, true, false, false)))
-                .where('O', states(getCasingState()).or(autoAbilities(false, false, false, true, false, true, false)))
+                .where('I', blocks(MetaBlocks.PANELLING).or(autoAbilities(true, false, true, false, true, false, false)))
+                .where('O', blocks(MetaBlocks.PANELLING).or(autoAbilities(false, false, false, true, false, true, false)))
                 .build();
     }
 
@@ -66,17 +66,5 @@ public class MetaTileEntitySpentFuelPool extends RecipeMapMultiblockController {
 
     private IBlockState getRodState() {
         return MetaBlocks.NUCLEAR_CASING.getState(BlockNuclearCasing.NuclearCasingType.SPENT_FUEL_CASING);
-    }
-
-    private IBlockState getCasingState() {
-        return MetaBlocks.PANELLING.getState(BlockPanelling.PanellingType.WHITE);
-    }
-
-    private IBlockState getWaterState() {
-        return Blocks.WATER.getDefaultState();
-    }
-
-    private IBlockState getFlowingWaterState() {
-        return Blocks.FLOWING_WATER.getDefaultState();
     }
 }
