@@ -16,7 +16,6 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.ConfigHolder;
 import gregtech.common.crafting.ToolHeadReplaceRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
@@ -296,7 +295,7 @@ public class ToolRecipeHandler {
             ItemStack powerUnitStack = powerUnitItems.get(tier).getStackForm();
             IElectricItem powerUnit = powerUnitStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
             ItemStack tool = toolItem.get(material, 0, powerUnit.getMaxCharge());
-            ModHandler.addShapedEnergyTransferRecipe(String.format("%s_%s", toolItem.getId(), material),
+            ModHandler.addShapedEnergyTransferRecipe(String.format("%s_%s", toolItem.getToolId(), material),
                     tool,
                     Ingredient.fromStacks(powerUnitStack), true, true,
                     "wHd", " U ",
@@ -307,10 +306,10 @@ public class ToolRecipeHandler {
 
     public static void addToolRecipe(@Nonnull Material material, @Nonnull IGTTool tool, boolean mirrored, Object... recipe) {
         if (mirrored) {
-            ModHandler.addMirroredShapedRecipe(String.format("%s_%s", tool.getId(), material),
+            ModHandler.addMirroredShapedRecipe(String.format("%s_%s", tool.getToolId(), material),
                     tool.get(material), recipe);
         } else {
-            ModHandler.addShapedRecipe(String.format("%s_%s", tool.getId(), material),
+            ModHandler.addShapedRecipe(String.format("%s_%s", tool.getToolId(), material),
                     tool.get(material), recipe);
         }
     }

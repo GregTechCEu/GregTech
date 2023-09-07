@@ -70,7 +70,7 @@ public class ItemGTSword extends ItemSword implements IGTTool {
     }
 
     @Override
-    public String getId() {
+    public String getToolId() {
         return id;
     }
 

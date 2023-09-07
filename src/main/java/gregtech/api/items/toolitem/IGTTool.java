@@ -100,7 +100,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     /**
      * @return the name of the tool
      */
-    String getId();
+    String getToolId();
 
     boolean isElectric();
 
@@ -721,7 +721,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         toolStats.getBehaviors().forEach(behavior -> behavior.addInformation(stack, world, tooltip, flag));
 
         // unique tooltip
-        String uniqueTooltip = "item.gt.tool." + getId() + ".tooltip";
+        String uniqueTooltip = "item.gt.tool." + getToolId() + ".tooltip";
         if (I18n.hasKey(uniqueTooltip)) {
             tooltip.add("");
             tooltip.add(I18n.format(uniqueTooltip));
@@ -820,7 +820,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     @SideOnly(Side.CLIENT)
     default String getModelPath() {
-        return getDomain() + ":" + "tools/" + getId();
+        return getDomain() + ":" + "tools/" + getToolId();
     }
 
     @SideOnly(Side.CLIENT)
