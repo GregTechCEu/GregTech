@@ -20,7 +20,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
@@ -144,7 +143,7 @@ public class BloomEffectUtil {
      */
     public static void scheduleBloomRender(@Nullable RenderSetup setup,
                                            @Nonnull BloomType bloomType,
-                                           @NotNull Consumer<BufferBuilder> render) {
+                                           @Nonnull Consumer<BufferBuilder> render) {
         SCHEDULED_BLOOM_RENDERS.computeIfAbsent(new BloomRenderSetup(setup, bloomType), x -> new ArrayList<>()).add(render);
     }
 
