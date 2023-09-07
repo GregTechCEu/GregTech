@@ -27,7 +27,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.ArrayUtils;
@@ -37,6 +36,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Function;
 
+import static gregtech.api.GTValues.MAX;
+import static gregtech.api.GTValues.V;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_IO_SPEED;
 
 public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEnergyContainer {
@@ -55,7 +56,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     private boolean doExplosion = false;
 
     public MetaTileEntityCreativeEnergy() {
-        super(new ResourceLocation(GTValues.MODID, "infinite_energy"));
+        super(GTUtility.gregtechId("infinite_energy"));
     }
 
     @Override
@@ -124,7 +125,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                 amps = 0;
                 setTier = 0;
             } else {
-                voltage = GTValues.V[14];
+                voltage = V[MAX];
                 amps = Integer.MAX_VALUE;
                 setTier = 14;
             }

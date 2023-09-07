@@ -40,13 +40,15 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(ICoverable.class);
         registerCapabilityWithNoDefault(IControllable.class);
         registerCapabilityWithNoDefault(IActiveOutputSide.class);
-        registerCapabilityWithNoDefault(IFuelable.class);
         registerCapabilityWithNoDefault(IMultiblockController.class);
         registerCapabilityWithNoDefault(IMaintenance.class);
         registerCapabilityWithNoDefault(IMultipleRecipeMaps.class);
         registerCapabilityWithNoDefault(AbstractRecipeLogic.class);
+        registerCapabilityWithNoDefault(IDataAccessHatch.class);
+        registerCapabilityWithNoDefault(IOpticalComputationProvider.class);
         registerCapabilityWithNoDefault(HardwareProvider.class);
         registerCapabilityWithNoDefault(ConverterTrait.class);
+        registerCapabilityWithNoDefault(ILaserContainer.class);
 
         //internal capabilities
         CapabilityManager.INSTANCE.register(GTWorldGenCapability.class, GTWorldGenCapability.STORAGE, GTWorldGenCapability.FACTORY);

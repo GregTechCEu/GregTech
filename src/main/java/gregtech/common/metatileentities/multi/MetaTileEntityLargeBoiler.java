@@ -6,7 +6,11 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.BoilerRecipeLogic;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.Widget.ClickData;
+import gregtech.api.gui.widgets.ClickButtonWidget;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -27,17 +31,18 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
 import static net.minecraft.util.text.TextFormatting.*;
 
@@ -102,21 +107,27 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
                     AQUA.toString() + getThrottle() + "%");
             withHoverTextTranslate(throttleText, "gregtech.multiblock.large_boiler.throttle.tooltip");
             textList.add(throttleText);
-
-            ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.large_boiler.throttle_modify");
-            buttonText.appendText(" ");
-            buttonText.appendSibling(withButton(new TextComponentString("[-]"), "sub"));
-            buttonText.appendText(" ");
-            buttonText.appendSibling(withButton(new TextComponentString("[+]"), "add"));
-            textList.add(buttonText);
         }
     }
 
     @Override
-    protected void handleDisplayClick(String componentData, ClickData clickData) {
-        super.handleDisplayClick(componentData, clickData);
-        int result = componentData.equals("add") ? 5 : -5;
-        this.throttlePercentage = MathHelper.clamp(throttlePercentage + result, 25, 100);
+    protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
+        WidgetGroup group = new WidgetGroup(x, y, width, height);
+        group.addWidget(new ClickButtonWidget(0, 0, 9, 18, "", this::decrementThrottle)
+                .setButtonTexture(GuiTextures.BUTTON_THROTTLE_MINUS)
+                .setTooltipText("gregtech.multiblock.large_boiler.throttle_decrement"));
+        group.addWidget(new ClickButtonWidget(9, 0, 9, 18, "", this::incrementThrottle)
+                .setButtonTexture(GuiTextures.BUTTON_THROTTLE_PLUS)
+                .setTooltipText("gregtech.multiblock.large_boiler.throttle_increment"));
+        return group;
+    }
+
+    private void incrementThrottle(ClickData clickData) {
+        this.throttlePercentage = MathHelper.clamp(throttlePercentage + 5, 25, 100);
+    }
+
+    private void decrementThrottle(ClickData clickData) {
+        this.throttlePercentage = MathHelper.clamp(throttlePercentage - 5, 25, 100);
     }
 
     @Override
@@ -161,6 +172,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
         this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive(), recipeLogic.isWorkingEnabled());
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {
@@ -171,6 +183,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
         return isStructureFormed() && (((MetaTileEntity) sourcePart).getPos().getY() < getPos().getY());
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (sourcePart != null && isFireboxPart(sourcePart)) {

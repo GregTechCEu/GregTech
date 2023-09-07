@@ -290,8 +290,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
         MetaTileEntity metaTileEntity = tileEntities.get() == null ? getMetaTileEntity(world, pos) : tileEntities.get();
         if (metaTileEntity == null) return;
-        if (!metaTileEntity.shouldDropWhenDestroyed())
-            return;
+        if (!metaTileEntity.shouldDropWhenDestroyed()) return;
         ItemStack itemStack = metaTileEntity.getStackForm();
         NBTTagCompound tagCompound = new NBTTagCompound();
         metaTileEntity.writeItemStackData(tagCompound);
@@ -368,12 +367,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         }
     }
 
-    @Override
-    public int getComparatorInputOverride(@Nonnull IBlockState blockState, @Nonnull World worldIn, @Nonnull BlockPos pos) {
-        MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
-        return metaTileEntity == null ? 0 : metaTileEntity.getComparatorValue();
-    }
-
     protected final ThreadLocal<MetaTileEntity> tileEntities = new ThreadLocal<>();
 
     @Override
@@ -381,11 +374,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         tileEntities.set(te == null ? tileEntities.get() : ((IGregTechTileEntity) te).getMetaTileEntity());
         super.harvestBlock(worldIn, player, pos, state, te, stack);
         tileEntities.set(null);
-    }
-
-    @Override
-    public boolean hasComparatorInputOverride(@Nonnull IBlockState state) {
-        return true;
     }
 
     @Nullable
@@ -425,14 +413,14 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Override
     public int getLightValue(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        //why mc is so fucking retarded to call this method on fucking NEIGHBOUR BLOCKS!
+        // since it is called on neighbor blocks
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         return metaTileEntity == null ? 0 : metaTileEntity.getLightValue();
     }
 
     @Override
     public int getLightOpacity(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        //why mc is so fucking retarded to call this method on fucking NEIGHBOUR BLOCKS!
+        // since it is called on neighbor blocks
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         return metaTileEntity == null ? 0 : metaTileEntity.getLightOpacity();
     }

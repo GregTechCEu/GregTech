@@ -31,20 +31,15 @@ dependencies {
 
     implementation "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.684"
     implementation rfg.deobf("curse.maven:ctm-267602:2915363") // CTM 1.0.2.31
-
-    // use a local jar for GroovyScript to avoid a bug from Mixin and ForgeGradle,
-    // causing crashes at run-time when deobfuscated
-    implementation files("libs/groovyscript-0.4.0.jar")
-    //implementation rfg.deobf("curse.maven:groovyscript-687577:4487379") // GRS 0.4.6
-
-    compileOnlyApi rfg.deobf("curse.maven:ae2-extended-life-570458:4402048") // AE2UEL 0.55.6
-    // ae2 is a transitive dependency for MTE, so it's also needed at test-time
-    testImplementation rfg.deobf("curse.maven:ae2-extended-life-570458:4402048")
+    implementation rfg.deobf("curse.maven:groovyscript-687577:4687204") // GRS 0.6.0
+    implementation rfg.deobf("curse.maven:ae2-extended-life-570458:4402048") // AE2UEL 0.55.6
 
     compileOnlyApi rfg.deobf("curse.maven:opencomputers-223008:4526246") // OpenComputers 1.8.0+9833087
     compileOnlyApi "curse.maven:journeymap-32274:2916002" // Journeymap 5.7.1
     compileOnlyApi "curse.maven:voxelmap-225179:3029445" // VoxelMap 1.9.28
     compileOnlyApi "curse.maven:xaeros-263420:4516832" // Xaero's Minimap 23.4.1
+    compileOnlyApi rfg.deobf("curse.maven:hwyla-253449:2568751") // HWYLA 1.8.26-B41
+    compileOnlyApi rfg.deobf("curse.maven:baubles-227083:2518667") // Baubles 1.5.2
 }
 
 minecraft {

@@ -1,18 +1,17 @@
 package gregtech.api.capability.impl;
 
 import gregtech.Bootstrap;
-import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,14 +32,10 @@ public class AbstractRecipeLogicTest {
         World world = DummyWorld.INSTANCE;
 
         // Create an empty recipe map to work with
-        RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("chemical_reactor",
-                0,
+        RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("test_reactor",
                 2,
-                0,
                 2,
-                0,
                 3,
-                0,
                 2,
                 new SimpleRecipeBuilder().EUt(30),
                 false);
@@ -48,7 +43,7 @@ public class AbstractRecipeLogicTest {
         MetaTileEntity at =
                 MetaTileEntities.registerMetaTileEntity(190,
                         new SimpleMachineMetaTileEntity(
-                                new ResourceLocation(GTValues.MODID, "chemical_reactor.lv"),
+                                GTUtility.gregtechId("chemical_reactor.lv"),
                                 map,
                                 null,
                                 1, false));

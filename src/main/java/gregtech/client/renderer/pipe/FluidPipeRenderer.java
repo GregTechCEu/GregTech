@@ -1,18 +1,16 @@
 package gregtech.client.renderer.pipe;
 
 import codechicken.lib.vec.uv.IconTransformation;
-import gregtech.api.GTValues;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.EnumMap;
@@ -24,7 +22,7 @@ public class FluidPipeRenderer extends PipeRenderer {
     private final EnumMap<FluidPipeType, TextureAtlasSprite> pipeTexturesWood = new EnumMap<>(FluidPipeType.class);
 
     private FluidPipeRenderer() {
-        super("gt_fluid_pipe", new ResourceLocation(GTValues.MODID, "fluid_pipe"));
+        super("gt_fluid_pipe", GTUtility.gregtechId("fluid_pipe"));
     }
 
     @Override

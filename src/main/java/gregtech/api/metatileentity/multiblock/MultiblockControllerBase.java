@@ -101,6 +101,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Nonnull
     protected abstract BlockPattern createStructurePattern();
 
+    @SideOnly(Side.CLIENT)
     public abstract ICubeRenderer getBaseTexture(IMultiblockPart sourcePart);
 
     public boolean shouldRenderOverlay(IMultiblockPart sourcePart) {
@@ -112,6 +113,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      *
      * @return The overlay to render on the Multiblock Controller
      */
+    @SideOnly(Side.CLIENT)
     @Nonnull
     protected ICubeRenderer getFrontOverlay() {
         return Textures.MULTIBLOCK_WORKABLE_OVERLAY;
@@ -215,6 +217,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         getBaseTexture(null).render(renderState, translation, ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(getBaseTexture(null).getParticleSprite(), getPaintingColorForRendering());

@@ -39,23 +39,23 @@ public class RecipeMapCrackerUnit<R extends RecipeBuilder<R>> extends RecipeMap<
         addSlot(builder, 52, 24 + yOffset + 19 + 18, 0, importItems, importFluids, true, false);
         addSlot(builder, 34, 24 + yOffset + 19 + 18, 1, importItems, importFluids, true, false);
 
-        Pair<DoubleSupplier, DoubleSupplier> suppliers = createPairedSupplier(200, 41);
+        Pair<DoubleSupplier, DoubleSupplier> suppliers = createPairedSupplier(200, 41, 0.5);
         builder.widget(new RecipeProgressWidget(suppliers.getLeft(), 42, 24 + yOffset + 18, 21, 19, GuiTextures.PROGRESS_BAR_CRACKING_INPUT, ProgressWidget.MoveType.VERTICAL, this));
         builder.widget(new RecipeProgressWidget(suppliers.getRight(), 78, 23 + yOffset, 20, 20, progressBarTexture, moveType, this));
         return builder;
     }
 
-    public static Pair<DoubleSupplier, DoubleSupplier> createPairedSupplier(int ticksPerCycle, int width) {
+    public static Pair<DoubleSupplier, DoubleSupplier> createPairedSupplier(int ticksPerCycle, int width, double splitPoint) {
         AtomicDouble tracker = new AtomicDouble(0.0);
         DoubleSupplier supplier1 = new ProgressWidget.TimedProgressSupplier(ticksPerCycle, width, false) {
             @Override
             public double getAsDouble() {
                 double val = super.getAsDouble();
                 tracker.set(val);
-                return val >= 0.5 ? 1.0 : val * 2;
+                return val >= splitPoint ? 1.0 : (1.0 / splitPoint) * val;
             }
         };
-        DoubleSupplier supplier2 = () -> tracker.get() >= 0.5 ? (tracker.get() - 0.5) * 2 : 0;
+        DoubleSupplier supplier2 = () -> tracker.get() >= splitPoint ? (1.0 / (1 - splitPoint)) * (tracker.get() - splitPoint) : 0;
         return Pair.of(supplier1, supplier2);
     }
 }

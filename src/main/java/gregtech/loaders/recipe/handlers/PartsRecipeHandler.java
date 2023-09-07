@@ -117,6 +117,14 @@ public class PartsRecipeHandler {
                 .circuitMeta(1)
                 .buildAndRegister();
 
+        RecipeMaps.BENDER_RECIPES.recipeBuilder()
+                .input(ingot, material)
+                .output(foilPrefix, material, 4)
+                .duration((int) material.getMass())
+                .EUt(24)
+                .circuitMeta(10)
+                .buildAndRegister();
+
         if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(ingot, material)

@@ -34,6 +34,8 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -94,11 +96,12 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSE_STURDY);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return tier == 0
                 ? Textures.ROBUST_TUNGSTENSTEEL_CASING
-                : Textures.ROBUST_HSSE_CASING;
+                : Textures.STURDY_HSSE_CASING;
     }
 
     @Override
@@ -109,6 +112,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
@@ -130,6 +134,11 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @Override
     public String[] getBlacklist() {
         return ConfigHolder.machines.processingArrayBlacklist;
+    }
+
+    @Override
+    public SoundEvent getBreakdownSound() {
+        return GTSoundEvents.BREAKDOWN_MECHANICAL;
     }
 
     @Override
@@ -169,6 +178,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
     @SuppressWarnings("InnerClassMayBeStatic")
     protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
+
+        private static final ICleanroomProvider DUMMY_CLEANROOM = DummyCleanroom.createForAllTypes();
 
         ItemStack currentMachineStack = ItemStack.EMPTY;
         MetaTileEntity mte = null;
@@ -261,12 +272,15 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 holder.setWorld(this.metaTileEntity.getWorld());
 
                 // Set the cleanroom of the MTEs to the PA's cleanroom reference
-                ICleanroomProvider cleanroom = controller.getCleanroom();
-                if (cleanroom != null && mte instanceof ICleanroomReceiver) {
-                    ((ICleanroomReceiver) mte).setCleanroom(cleanroom);
+                if (mte instanceof ICleanroomReceiver receiver) {
+                    if (ConfigHolder.machines.cleanMultiblocks) {
+                        receiver.setCleanroom(DUMMY_CLEANROOM);
+                    } else {
+                        ICleanroomProvider provider = controller.getCleanroom();
+                        if (provider != null) receiver.setCleanroom(provider);
+                    }
                 }
             }
-
 
             //Find the voltage tier of the machine.
             this.machineTier = mte instanceof ITieredMetaTileEntity ? ((ITieredMetaTileEntity) mte).getTier() : 0;

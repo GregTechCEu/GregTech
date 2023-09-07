@@ -24,7 +24,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
@@ -51,14 +50,6 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityDiode(metaTileEntityId, getTier());
-    }
-
-    @Override
-    public int getActualComparatorValue() {
-        long energyStored = energyContainer.getEnergyStored();
-        long energyCapacity = energyContainer.getEnergyCapacity();
-        float f = energyCapacity == 0L ? 0.0f : energyStored / (energyCapacity * 1.0f);
-        return MathHelper.floor(f * 14.0f) + (energyStored > 0 ? 1 : 0);
     }
 
     @Override

@@ -1,0 +1,25 @@
+{
+  "forge_marker" : 1,
+  "defaults" : {
+    "model" : "minecraft:cube_all",
+    "textures" : {
+      "all" : "gregtech:blocks/pipe/ld_item_pipe/block"
+    }
+  },
+  "variants" : {
+    "normal" : [
+      {
+        "textures" : {
+          "all" : "gregtech:blocks/pipe/ld_item_pipe/block"
+        }
+      }
+    ],
+    "inventory" : [
+      {
+        "textures" : {
+          "all" : "gregtech:blocks/pipe/ld_item_pipe/block"
+        }
+      }
+    ]
+  }
+}

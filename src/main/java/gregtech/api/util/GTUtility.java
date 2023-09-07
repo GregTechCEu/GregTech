@@ -33,6 +33,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -43,6 +44,8 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -50,7 +53,6 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
@@ -60,8 +62,6 @@ import java.util.function.Predicate;
 import static gregtech.api.GTValues.V;
 
 public class GTUtility {
-
-    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
     public static <T> String[] mapToString(T[] array, Function<T, String> mapper) {
         String[] result = new String[array.length];
@@ -91,6 +91,16 @@ public class GTUtility {
     }
 
     public static int convertRGBtoOpaqueRGBA_MC(int colorValue, int opacity) {
+        return opacity << 24 | colorValue;
+    }
+
+    public static int convertRGBtoARGB(int colorValue) {
+        return convertRGBtoARGB(colorValue, 0xFF);
+    }
+
+    public static int convertRGBtoARGB(int colorValue, int opacity) {
+        // preserve existing opacity if present
+        if (((colorValue >> 24) & 0xFF) != 0) return colorValue;
         return opacity << 24 | colorValue;
     }
 
@@ -356,15 +366,15 @@ public class GTUtility {
      * modifications in list will reflect on fluid handler and wise-versa
      */
     public static List<FluidStack> fluidHandlerToList(IMultipleTankHandler fluidInputs) {
-        List<IFluidTank> backedList = fluidInputs.getFluidTanks();
+        List<IMultipleTankHandler.MultiFluidTankEntry> backedList = fluidInputs.getFluidTanks();
         return new AbstractList<FluidStack>() {
             @Override
             public FluidStack set(int index, FluidStack element) {
-                IFluidTank fluidTank = backedList.get(index);
+                IFluidTank fluidTank = backedList.get(index).getDelegate();
                 FluidStack oldStack = fluidTank.getFluid();
-                if (!(fluidTank instanceof FluidTank))
-                    return oldStack;
-                ((FluidTank) backedList.get(index)).setFluid(element);
+                if (fluidTank instanceof FluidTank) {
+                    ((FluidTank) fluidTank).setFluid(element);
+                }
                 return oldStack;
             }
 
@@ -405,6 +415,8 @@ public class GTUtility {
 
     /**
      * @deprecated Ambiguous naming; use either {@link #copy(ItemStack)} or {@link #copyFirst(ItemStack...)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @Nonnull
@@ -483,6 +495,8 @@ public class GTUtility {
 
     /**
      * @deprecated Use {@link #copy(int, ItemStack)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Deprecated
     @Nonnull
@@ -654,12 +668,24 @@ public class GTUtility {
         return result.toString();
     }
 
+    /**
+     * @deprecated Use {@link TextFormattingUtil#formatNumbers(long)} instead.
+     *
+     * </p> This class was deprecated in 2.7 and will be removed in 2.8
+     */
+    @Deprecated
     public static String formatNumbers(long number) {
-        return NUMBER_FORMAT.format(number);
+        return TextFormattingUtil.formatNumbers(number);
     }
 
+    /**
+     * @deprecated Use {@link TextFormattingUtil#formatNumbers(double)} instead.
+     *
+     * </p> This class was deprecated in 2.7 and will be removed in 2.8
+     */
+    @Deprecated
     public static String formatNumbers(double number) {
-        return NUMBER_FORMAT.format(number);
+        return TextFormattingUtil.formatNumbers(number);
     }
 
     public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
@@ -745,6 +771,8 @@ public class GTUtility {
      * @param stack the stack to retrieve from
      * @return all the sub-items of an ItemStack
      * @deprecated Use {@link #getAllSubItems(Item)}
+     *
+     * </p> This method was deprecated in 2.6 and will be removed in 2.8
      */
     @Nonnull
     @Deprecated
@@ -775,5 +803,35 @@ public class GTUtility {
         Set<ItemStack> set = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingItemDamageCount());
         set.addAll(subItems);
         return set;
+    }
+
+    /**
+     * Get fluidstack from a container.
+     *
+     * @param ingredient the fluidstack or fluid container item
+     * @return the fluidstack in container
+     */
+    @Nullable
+    public static FluidStack getFluidFromContainer(Object ingredient) {
+        if (ingredient instanceof FluidStack) {
+            return (FluidStack) ingredient;
+        } else if (ingredient instanceof ItemStack) {
+            ItemStack itemStack = (ItemStack) ingredient;
+            IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            if (fluidHandler != null)
+                return fluidHandler.drain(Integer.MAX_VALUE, false);
+        }
+        return null;
+    }
+
+    /**
+     * Create a new {@link ResourceLocation} with {@link GTValues#MODID} as the namespace and a specified path
+     *
+     * @param path the path in the location
+     * @return the new location
+     */
+    @Nonnull
+    public static ResourceLocation gregtechId(@Nonnull String path) {
+        return new ResourceLocation(GTValues.MODID, path);
     }
 }

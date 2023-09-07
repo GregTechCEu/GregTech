@@ -16,7 +16,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.particle.GTNameTagParticle;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.core.network.packets.PacketRecoverMTE;
@@ -61,7 +61,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     @SideOnly(Side.CLIENT)
     private GTNameTagParticle nameTagParticle;
 
-    private final int[] timeStatistics = new int[20];
+    public static final int TRACKED_TICKS = 20;
+    private final int[] timeStatistics = new int[TRACKED_TICKS];
     private int timeStatisticsIndex = 0;
     private int lagWarningCount = 0;
     protected static final DecimalFormat tricorderFormat = new DecimalFormat("#.#########");
@@ -231,32 +232,46 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             }
         }
         if (logLevel > 1) {
-            if (timeStatistics.length > 0) {
-                double averageTickTime = 0;
-                double worstTickTime = 0;
-                for (int tickTime : timeStatistics) {
-                    averageTickTime += tickTime;
-                    if (tickTime > worstTickTime) {
-                        worstTickTime = tickTime;
-                    }
-                    // Uncomment this line to print out tick-by-tick times.
-                    // list.add(new TextComponentTranslation("tickTime " + tickTime));
-                }
+            double[] timeStats = getTimeStatistics();
+            if (timeStats != null) {
+                double averageTickTime = timeStats[0];
+                double worstTickTime = timeStats[1];
+
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_cpu_load",
-                        new TextComponentTranslation(GTUtility.formatNumbers(averageTickTime / timeStatistics.length)).setStyle(new Style().setColor(TextFormatting.YELLOW)),
-                        new TextComponentTranslation(GTUtility.formatNumbers(timeStatistics.length)).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                        new TextComponentTranslation(GTUtility.formatNumbers(worstTickTime)).setStyle(new Style().setColor(TextFormatting.RED))
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(averageTickTime / timeStatistics.length)).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(timeStatistics.length)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(worstTickTime)).setStyle(new Style().setColor(TextFormatting.RED))
                 ));
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_cpu_load_seconds", tricorderFormat.format(worstTickTime / 1000000000)));
             }
+
             if (lagWarningCount > 0) {
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_lag_count",
-                        new TextComponentTranslation(GTUtility.formatNumbers(lagWarningCount)).setStyle(new Style().setColor(TextFormatting.RED)),
-                        new TextComponentTranslation(GTUtility.formatNumbers(100_000_000L)).setStyle(new Style().setColor(TextFormatting.RED))
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(lagWarningCount)).setStyle(new Style().setColor(TextFormatting.RED)),
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(100_000_000L)).setStyle(new Style().setColor(TextFormatting.RED))
                 ));
             }
         }
         return list;
+    }
+
+    /**
+     * @return double array of length 2, with index 0 being the average time and index 1 the worst time, in ns.
+     *         If there is no tick time, it will return null.
+     */
+    public double[] getTimeStatistics() {
+        if (timeStatistics.length > 0) {
+            double averageTickTime = 0;
+            double worstTickTime = 0;
+            for (int tickTime : timeStatistics) {
+                averageTickTime += tickTime;
+                if (tickTime > worstTickTime) {
+                    worstTickTime = tickTime;
+                }
+            }
+            return new double[] { averageTickTime, worstTickTime };
+        }
+        return null;
     }
 
     @Override
@@ -320,9 +335,12 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         return getPos();
     }
 
+    @SuppressWarnings("ConstantConditions") // yes this CAN actually be null
     @Override
     public void markAsDirty() {
-        markDirty();
+        if (getWorld() != null && getPos() != null) {
+            getWorld().markChunkDirty(getPos(), this);
+        }
     }
 
     @Override
@@ -460,6 +478,10 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     @Override
     @Method(modid = GTValues.MODID_APPENG)
     public IGridNode getGridNode(@Nonnull AEPartLocation part) {
+        // Forbid it connects the faces it shouldn't connect.
+        if (this.getCableConnectionType(part) == AECableType.NONE) {
+            return null;
+        }
         AENetworkProxy proxy = getProxy();
         return proxy == null ? null : proxy.getNode();
     }

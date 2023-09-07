@@ -31,12 +31,12 @@ public class PredicateConfigUtils {
                 if (!parsedValue.isPresent()) {
                     throw new IllegalArgumentException("Couldn't parse property " + property.getName() + " value " + valueElement);
                 }
-                //fuck java
+                // idk what this is
                 @SuppressWarnings("UnnecessaryLocalVariable")
-                IProperty areYouFuckingSerious = property;
-                Comparable fuckJava = (Comparable) parsedValue.get();
+                IProperty propertyVar = property;
+                Comparable comparableVar = (Comparable) parsedValue.get();
                 //noinspection unchecked
-                blockState = blockState.withProperty(areYouFuckingSerious, fuckJava);
+                blockState = blockState.withProperty(propertyVar, comparableVar);
             }
         }
         return blockState;

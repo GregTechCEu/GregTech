@@ -7,6 +7,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
+import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
@@ -16,7 +17,6 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
@@ -51,7 +51,7 @@ import java.util.function.Function;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide {
+public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide, IGhostSlotConfigurable {
 
     private final boolean hasFrontFacing;
 
@@ -376,14 +376,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         }
     }
 
-    /**
-     * Set ghost circuit config to given value. If the provided config value is outside of valid config range
-     * (0~32), then the circuit is set to empty.
-     * <p>
-     * If the machine does not have circuit inventory, this method does nothing.
-     *
-     * @param config New config value
-     */
+    @Override
     public void setGhostCircuitConfig(int config) {
         if (this.circuitInventory == null || this.circuitInventory.getCircuitValue() == config) {
             return;
@@ -485,23 +478,14 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             if (this.circuitInventory != null) {
                 SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62 + yOffset)
                         .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
-                builder.widget(getCircuitSlotTooltip(circuitSlot)).widget(logo)
-                        .widget(new ClickButtonWidget(115, 62 + yOffset, 9, 9, "",
-                                click -> circuitInventory.addCircuitValue(click.isShiftClick ? 5 : 1))
-                                .setShouldClientCallback(true)
-                                .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS)
-                                .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() < IntCircuitIngredient.CIRCUIT_MAX))
-                        .widget(new ClickButtonWidget(115, 71 + yOffset, 9, 9, "",
-                                click -> circuitInventory.addCircuitValue(click.isShiftClick ? -5 : -1))
-                                .setShouldClientCallback(true)
-                                .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_MINUS)
-                                .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() > IntCircuitIngredient.CIRCUIT_MIN));
+                builder.widget(circuitSlot.setConsumer(this::getCircuitSlotTooltip)).widget(logo);
             }
         }
         return builder;
     }
 
-    protected boolean hasGhostCircuitInventory() {
+    @Override
+    public boolean hasGhostCircuitInventory() {
         return true;
     }
 
@@ -511,8 +495,15 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     }
 
     // Method provided to override
-    protected SlotWidget getCircuitSlotTooltip(SlotWidget widget) {
-        return widget.setTooltipText("gregtech.gui.configurator_slot.tooltip");
+    protected void getCircuitSlotTooltip(SlotWidget widget) {
+        String configString;
+        if (circuitInventory == null) {
+            configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
+        } else {
+            configString = String.valueOf(circuitInventory.getCircuitValue());
+        }
+
+        widget.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
     }
 
     @Override

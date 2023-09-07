@@ -17,6 +17,8 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
     QUADRUPLE("quadruple", 0.95f, 2, OrePrefix.pipeQuadrupleFluid, true, 4),
     NONUPLE("nonuple", 0.95f, 2, OrePrefix.pipeNonupleFluid, true, 9);
 
+    public static final FluidPipeType[] VALUES = values();
+
     public final String name;
     public final float thickness;
     public final int capacityMultiplier;

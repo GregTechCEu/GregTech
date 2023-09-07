@@ -6,11 +6,9 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.capability.impl.FilteredFluidHandler;
-import gregtech.api.capability.impl.ThermalFluidHandlerItemStack;
-import gregtech.api.fluids.MaterialFluid;
-import gregtech.api.fluids.fluidType.FluidType;
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.capability.impl.GTFluidHandlerItemStack;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -31,12 +29,10 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
@@ -64,9 +60,6 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         super(metaTileEntityId);
         this.tankSize = tankSize;
         this.material = material;
-        if (!this.material.hasProperty(PropertyKey.FLUID_PIPE)) {
-            throw new IllegalArgumentException(String.format("Material %s requires FluidPipePropety for Drums", material));
-        }
         initializeInventory();
     }
 
@@ -78,15 +71,6 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     public int getLightOpacity() {
         return 1;
-    }
-
-    @Override
-    public int getActualComparatorValue() {
-        FluidTank fluidTank = this.fluidTank;
-        int fluidAmount = fluidTank.getFluidAmount();
-        int maxCapacity = fluidTank.getCapacity();
-        float f = fluidAmount / (maxCapacity * 1.0f);
-        return MathHelper.floor(f * 14.0f) + (fluidAmount > 0 ? 1 : 0);
     }
 
     @Override
@@ -106,26 +90,13 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     protected void initializeInventory() {
+        if (this.material == null) return; // call before field initialization, should be called later with fields set
         super.initializeInventory();
-        this.fluidTank = new FilteredFluidHandler(tankSize)
-                .setFillPredicate(stack -> {
-                    if (stack == null || stack.getFluid() == null) return false;
-
-                    Fluid fluid = stack.getFluid();
-                    FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
-                    if (fluid.getTemperature() > pipeProperties.getMaxFluidTemperature()) return false;
-                    // fluids less than 120K are cryogenic
-                    if (fluid.getTemperature() < 120 && !pipeProperties.isCryoProof()) return false;
-                    if (fluid.isGaseous() && !pipeProperties.isGasProof()) return false;
-
-                    if (fluid instanceof MaterialFluid) {
-                        FluidType fluidType = ((MaterialFluid) fluid).getFluidType();
-                        if (fluidType == FluidTypes.ACID && !pipeProperties.isAcidProof()) return false;
-                        return fluidType != FluidTypes.PLASMA || pipeProperties.isPlasmaProof();
-                    }
-                    return true;
-                });
-        this.fluidInventory = fluidTank;
+        IPropertyFluidFilter filter = this.material.getProperty(PropertyKey.FLUID_PIPE);
+        if (filter == null) {
+            throw new IllegalArgumentException(String.format("Material %s requires FluidPipePropety for Drums", material));
+        }
+        this.fluidInventory = this.fluidTank = new FilteredFluidHandler(tankSize).setFilter(filter);
     }
 
     @Override
@@ -150,13 +121,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public ICapabilityProvider initItemStackCapabilities(ItemStack itemStack) {
-        FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
-        return new ThermalFluidHandlerItemStack(itemStack, tankSize,
-                pipeProperties.getMaxFluidTemperature(),
-                pipeProperties.isGasProof(),
-                pipeProperties.isAcidProof(),
-                pipeProperties.isCryoProof(),
-                pipeProperties.isPlasmaProof());
+        return new GTFluidHandlerItemStack(itemStack, tankSize).setFilter(this.fluidTank.getFilter());
     }
 
     @Override
@@ -240,7 +205,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        if(ModHandler.isMaterialWood(material)) {
+        if (ModHandler.isMaterialWood(material)) {
             return Pair.of(Textures.WOODEN_DRUM.getParticleTexture(), getPaintingColorForRendering());
         } else {
             int color = ColourRGBA.multiply(
@@ -253,7 +218,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if(ModHandler.isMaterialWood(material)) {
+        if (ModHandler.isMaterialWood(material)) {
             ColourMultiplier multiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             Textures.WOODEN_DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier), getFrontFacing());
         } else {
@@ -332,5 +297,4 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     protected boolean shouldSerializeInventories() {
         return false;
     }
-
 }

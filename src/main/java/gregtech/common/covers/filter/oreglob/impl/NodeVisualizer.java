@@ -100,7 +100,7 @@ class NodeVisualizer implements NodeVisitor {
             }
             case XOR -> {
                 appendNodeXML(visualizer, not ? OreGlobMessages.PREVIEW_XNOR : OreGlobMessages.PREVIEW_XOR);
-                // Needs to do special shit because the cursed nature of XOR makes it
+                // Needs to do special things because the cursed nature of XOR makes it
                 // impossible to display them in neat, organized fashion
                 for (int i = 0; i < nodes.size() - 1; i++) {
                     visualizer.newLine(indents + i);

@@ -1,6 +1,6 @@
 {
   "tick.forge_hammer": {
-    "subtitle" : "Hammer smashes",
+    "subtitle" : "gregtech.subtitle.tick.forge_hammer",
     "category": "block",
     "sounds": [
       {
@@ -10,7 +10,7 @@
     ]
   },
   "tick.macerator": {
-    "subtitle" : "Items macerating",
+    "subtitle" : "gregtech.subtitle.tick.macerator",
     "category": "block",
     "sounds": [
       {
@@ -20,7 +20,7 @@
     ]
   },
   "tick.chemical_reactor": {
-    "subtitle" : "Chemicals reacting",
+    "subtitle" : "gregtech.subtitle.tick.chemical_reactor",
     "category": "block",
     "sounds": [
       {
@@ -30,7 +30,7 @@
     ]
   },
   "tick.assembler": {
-    "subtitle" : "Items assembling",
+    "subtitle" : "gregtech.subtitle.tick.assembler",
     "category": "block",
     "sounds": [
       {
@@ -40,7 +40,7 @@
     ]
   },
   "tick.centrifuge": {
-    "subtitle" : "Items separating",
+    "subtitle" : "gregtech.subtitle.tick.centrifuge",
     "category": "block",
     "sounds": [
       {
@@ -50,7 +50,7 @@
     ]
   },
   "tick.compressor": {
-    "subtitle" : "Items compressing",
+    "subtitle" : "gregtech.subtitle.tick.compressor",
     "category": "block",
     "sounds": [
       {
@@ -60,7 +60,7 @@
     ]
   },
   "tick.electrolyzer": {
-    "subtitle" : "Elements electrolyzing",
+    "subtitle" : "gregtech.subtitle.tick.electrolyzer",
     "category": "block",
     "sounds": [
       {
@@ -70,7 +70,7 @@
     ]
   },
   "tick.mixer": {
-    "subtitle" : "Dusts mixing",
+    "subtitle" : "gregtech.subtitle.tick.mixer",
     "category": "block",
     "sounds": [
       {
@@ -80,7 +80,7 @@
     ]
   },
   "tick.replicator": {
-    "subtitle" : "Items replicating",
+    "subtitle" : "gregtech.subtitle.tick.replicator",
     "category": "block",
     "sounds": [
       {
@@ -90,7 +90,7 @@
     ]
   },
   "tick.arc": {
-    "subtitle" : "Electricity arcing",
+    "subtitle" : "gregtech.subtitle.tick.arc",
     "category": "block",
     "sounds": [
       {
@@ -100,7 +100,7 @@
     ]
   },
   "tick.boiler": {
-    "subtitle" : "Liquid boiling",
+    "subtitle" : "gregtech.subtitle.tick.boiler",
     "category": "block",
     "sounds": [
       {
@@ -110,7 +110,7 @@
     ]
   },
   "tick.furnace": {
-    "subtitle" : "Furnace smelting",
+    "subtitle" : "gregtech.subtitle.tick.furnace",
     "category": "block",
     "sounds": [
       {
@@ -120,7 +120,7 @@
     ]
   },
   "tick.cooling": {
-    "subtitle" : "Ingot cooling",
+    "subtitle" : "gregtech.subtitle.tick.cooling",
     "category": "block",
     "sounds": [
       {
@@ -130,7 +130,7 @@
     ]
   },
   "tick.fire": {
-    "subtitle" : "Fire burning",
+    "subtitle" : "gregtech.subtitle.tick.fire",
     "category": "block",
     "sounds": [
       {
@@ -140,7 +140,7 @@
     ]
   },
   "tick.bath": {
-    "subtitle" : "Items bathing",
+    "subtitle" : "gregtech.subtitle.tick.bath",
     "category": "block",
     "sounds": [
       {
@@ -150,7 +150,7 @@
     ]
   },
   "tick.motor": {
-    "subtitle" : "Motor turning",
+    "subtitle" : "gregtech.subtitle.tick.motor",
     "category": "block",
     "sounds": [
       {
@@ -160,7 +160,7 @@
     ]
   },
   "tick.cut": {
-    "subtitle" : "Blocks cutting",
+    "subtitle" : "gregtech.subtitle.tick.cut",
     "category": "block",
     "sounds": [
       {
@@ -170,7 +170,7 @@
     ]
   },
   "tick.turbine": {
-    "subtitle" : "Turbine spinning",
+    "subtitle" : "gregtech.subtitle.tick.turbine",
     "category": "block",
     "sounds": [
       {
@@ -180,7 +180,7 @@
     ]
   },
   "tick.combustion": {
-    "subtitle" : "Fuel combusting",
+    "subtitle" : "gregtech.subtitle.tick.combustion",
     "category": "block",
     "sounds": [
       {
@@ -190,7 +190,7 @@
     ]
   },
   "tick.miner": {
-    "subtitle" : "Miner drilling",
+    "subtitle" : "gregtech.subtitle.tick.miner",
     "category": "block",
     "sounds": [
       {
@@ -208,8 +208,18 @@
       }
     ]
   },
+  "tick.computation": {
+    "subtitle" : "gregtech.subtitle.tick.computation",
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:computation",
+        "stream": false
+      }
+    ]
+  },
   "use.wrench": {
-    "subtitle" : "Wrench turns",
+    "subtitle" : "gregtech.subtitle.use.wrench",
     "category": "block",
     "sounds": [
       {
@@ -219,7 +229,7 @@
     ]
   },
   "use.soft_hammer": {
-    "subtitle" : "Block smacked",
+    "subtitle" : "gregtech.subtitle.use.soft_hammer",
     "category": "block",
     "sounds": [
       {
@@ -229,7 +239,7 @@
     ]
   },
   "use.drill": {
-    "subtitle" : "Blocks drilled",
+    "subtitle" : "gregtech.subtitle.use.drill",
     "category": "block",
     "sounds": [
       {
@@ -239,7 +249,7 @@
     ]
   },
   "use.plunger": {
-    "subtitle" : "Fluid evacuated",
+    "subtitle" : "gregtech.subtitle.use.plunger",
     "category": "block",
     "sounds": [
       {
@@ -249,7 +259,7 @@
     ]
   },
   "use.file": {
-    "subtitle" : "Ingot filed",
+    "subtitle" : "gregtech.subtitle.use.file",
     "category": "block",
     "sounds": [
       {
@@ -259,7 +269,7 @@
     ]
   },
   "use.saw": {
-    "subtitle" : "Wood sawing",
+    "subtitle" : "gregtech.subtitle.use.saw",
     "category": "block",
     "sounds": [
       {
@@ -269,7 +279,7 @@
     ]
   },
   "use.screwdriver": {
-    "subtitle" : "Screws turning",
+    "subtitle" : "gregtech.subtitle.use.screwdriver",
     "category": "block",
     "sounds": [
       {
@@ -279,7 +289,7 @@
     ]
   },
   "use.chainsaw": {
-    "subtitle" : "Chainsaw growls",
+    "subtitle" : "gregtech.subtitle.use.chainsaw",
     "category": "block",
     "sounds": [
       {
@@ -289,7 +299,7 @@
     ]
   },
   "use.wirecutter": {
-    "subtitle" : "Wires snip",
+    "subtitle" : "gregtech.subtitle.use.wirecutter",
     "category": "block",
     "sounds": [
       {
@@ -299,7 +309,7 @@
     ]
   },
   "use.spray_can": {
-    "subtitle" : "Paint sprays",
+    "subtitle" : "gregtech.subtitle.use.spray_can",
     "category": "block",
     "sounds": [
       {
@@ -309,7 +319,7 @@
     ]
   },
   "use.tricorder": {
-    "subtitle" : "Beep beep",
+    "subtitle" : "gregtech.subtitle.use.tricorder",
     "category": "block",
     "sounds": [
       {
@@ -319,7 +329,7 @@
     ]
   },
   "use.mortar": {
-    "subtitle" : "Grinding",
+    "subtitle" : "gregtech.subtitle.use.mortar",
     "category": "block",
     "sounds": [
       {
@@ -329,7 +339,7 @@
     ]
   },
   "record.sus": {
-    "subtitle" : "Sus",
+    "subtitle" : "gregtech.subtitle.record.sus",
     "category": "block",
     "sounds": [
       {
@@ -339,7 +349,7 @@
     ]
   },
   "entity.portal_opening": {
-    "subtitle" : "Portal opens",
+    "subtitle" : "gregtech.subtitle.entity.portal_opening",
     "category": "block",
       "sounds": [
         {
@@ -349,12 +359,32 @@
       ]
     },
   "entity.portal_closing": {
-    "subtitle" : "Portal closes",
+    "subtitle" : "gregtech.subtitle.entity.portal_closing",
     "category": "block",
     "sounds": [
       {
         "name": "gregtech:portal_closing",
         "stream": false
+      }
+    ]
+  },
+  "maintenance.electrical": {
+    "subtitle" : "gregtech.subtitle.maintenance.electrical",
+    "category" : "block",
+    "sounds" : [
+      {
+        "name" : "gregtech:breakdown_electric",
+        "stream" : false
+      }
+    ]
+  },
+  "maintenance.mechanical": {
+    "subtitle" : "gregtech.subtitle.maintenance.mechanical",
+    "category" : "block",
+    "sounds" : [
+      {
+        "name" : "gregtech:breakdown_mechanical",
+        "stream" : false
       }
     ]
   }

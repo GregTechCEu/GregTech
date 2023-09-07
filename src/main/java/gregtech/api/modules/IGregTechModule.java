@@ -31,10 +31,16 @@ public interface IGregTechModule {
     default void loadComplete(FMLLoadCompleteEvent event) {
     }
 
+    default void serverAboutToStart(FMLServerAboutToStartEvent event) {
+    }
+
     default void serverStarting(FMLServerStartingEvent event) {
     }
 
     default void serverStarted(FMLServerStartedEvent event) {
+    }
+
+    default void serverStopping(FMLServerStoppingEvent event) {
     }
 
     default void serverStopped(FMLServerStoppedEvent event) {

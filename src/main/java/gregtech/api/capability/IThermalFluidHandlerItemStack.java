@@ -6,20 +6,24 @@ import gregtech.api.fluids.fluidType.FluidTypes;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nullable;
+
 /**
  * Interface for FluidHandlerItemStacks which handle GT's unique fluid mechanics
+ *
  * @see FluidType
  * @see FluidTypes
  * @see MaterialFluid
+ * @deprecated use {@link IPropertyFluidFilter}
  */
+@Deprecated
 public interface IThermalFluidHandlerItemStack {
 
     /**
-     *
      * @param stack the {@link FluidStack} to check
      * @return whether the FluidStack can be used to fill this fluid container
      */
-    default boolean canFillFluidType(FluidStack stack) {
+    default boolean canFillFluidType(@Nullable FluidStack stack) {
         if (stack == null || stack.getFluid() == null) return false;
 
         Fluid fluid = stack.getFluid();
@@ -51,23 +55,20 @@ public interface IThermalFluidHandlerItemStack {
     boolean isGasProof();
 
     /**
-     * @see FluidTypes
-     *
      * @return true if this fluid container allows acids, otherwise false
+     * @see FluidTypes
      */
     boolean isAcidProof();
 
     /**
-     * @see FluidTypes
-     *
      * @return true if this fluid container allows cryogenics, otherwise false
+     * @see FluidTypes
      */
     boolean isCryoProof();
 
     /**
-     * @see FluidTypes
-     *
      * @return true if this fluid container allows plasmas, otherwise false
+     * @see FluidTypes
      */
     boolean isPlasmaProof();
 }

@@ -53,8 +53,8 @@ public final class GTStringUtils {
                 id = "block" + ((BlockCompressed) block).getGtMaterial(stack).toCamelCaseString();
             } else if (block instanceof BlockFrame) {
                 id = "frame" + ((BlockFrame) block).getGtMaterial(stack).toCamelCaseString();
-            } else if (block instanceof BlockMaterialPipe) {
-                id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
+            } else if (block instanceof BlockMaterialPipe blockMaterialPipe) {
+                id = blockMaterialPipe.getPrefix().name + blockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
             }
 
             if (id != null) {
@@ -63,6 +63,18 @@ public final class GTStringUtils {
         }
         //noinspection ConstantConditions
         return stack.getItem().getRegistryName().toString() + " * " + stack.getCount() + " (Meta " + stack.getItemDamage() + ")";
+    }
+
+    /**
+     * Better implementation of {@link ItemStack#toString()} which respects the stack-aware
+     * {@link net.minecraft.item.Item#getTranslationKey(ItemStack)} method.
+     *
+     * @param stack the stack to convert
+     * @return the string form of the stack
+     */
+    @Nonnull
+    public static String itemStackToString(@Nonnull ItemStack stack) {
+        return stack.getCount() + "x" + stack.getItem().getTranslationKey(stack) + "@" + stack.getItemDamage();
     }
 
     /**
