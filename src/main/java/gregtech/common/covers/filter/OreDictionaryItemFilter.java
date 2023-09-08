@@ -85,35 +85,29 @@ public class OreDictionaryItemFilter extends ItemFilter {
                     String t = h.getOriginalText();
                     for (int i = 0; i < t.length(); i++) {
                         switch (t.charAt(i)) {
-                            case '|': case '&': case '^': case '(': case ')':
-                                h.format(i, TextFormatting.GOLD);
-                                break;
-                            case '*': case '?':
-                                h.format(i, TextFormatting.GREEN);
-                                break;
-                            case '!':
-                                h.format(i, TextFormatting.RED);
-                                break;
-                            case '\\':
-                                h.format(i++, TextFormatting.YELLOW);
-                                break;
-                            case '$': {
+                            case '|', '&', '^', '(', ')' -> h.format(i, TextFormatting.GOLD);
+                            case '*', '?' -> h.format(i, TextFormatting.GREEN);
+                            case '!' -> h.format(i, TextFormatting.RED);
+                            case '\\' -> h.format(i++, TextFormatting.YELLOW);
+                            case '$' -> {
                                 h.format(i, TextFormatting.DARK_GREEN);
                                 for (; i < t.length(); i++) {
                                     switch (t.charAt(i)) {
-                                        case ' ': case '\t': case '\n': case '\r':
-                                            break;
-                                        case '\\':
+                                        case ' ', '\t', '\n', '\r' -> {}
+                                        case '\\' -> {
                                             i++;
-                                        default:
                                             continue;
+                                        }
+                                        default -> {
+                                            continue;
+                                        }
                                     }
                                     break;
                                 }
-                                break;
                             }
-                            default:
+                            default -> {
                                 continue;
+                            }
                         }
                         h.format(i + 1, TextFormatting.RESET);
                     }

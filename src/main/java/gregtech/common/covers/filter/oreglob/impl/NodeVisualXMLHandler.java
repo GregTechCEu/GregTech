@@ -4,7 +4,6 @@ import gregtech.api.util.oreglob.OreGlobTextBuilder;
 import gregtech.api.util.oreglob.VisualizationHint;
 import net.minecraft.util.text.TextFormatting;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.annotation.Nonnull;
@@ -25,7 +24,7 @@ final class NodeVisualXMLHandler extends DefaultHandler {
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
         switch (qName) {
             case "text" -> pushFormatting(VisualizationHint.TEXT);
             case "node" -> pushFormatting(VisualizationHint.NODE);
