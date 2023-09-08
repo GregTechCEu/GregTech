@@ -2,7 +2,6 @@ package gregtech.common.covers.filter.oreglob.impl;
 
 import gregtech.api.util.GTLog;
 import gregtech.api.util.LocalizationUtils;
-import gregtech.common.covers.filter.oreglob.OreGlobMessages;
 import gregtech.api.util.oreglob.OreGlobTextBuilder;
 import gregtech.common.covers.filter.oreglob.node.BranchType;
 import gregtech.common.covers.filter.oreglob.node.NodeVisitor;

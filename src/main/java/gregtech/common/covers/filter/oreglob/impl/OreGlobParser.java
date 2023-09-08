@@ -2,7 +2,6 @@ package gregtech.common.covers.filter.oreglob.impl;
 
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.api.util.oreglob.OreGlobCompileResult.Report;
-import gregtech.common.covers.filter.oreglob.OreGlobMessages;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
 
