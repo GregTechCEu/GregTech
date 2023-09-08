@@ -3,7 +3,7 @@ package gregtech.common.covers.filter.oreglob.impl;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.common.covers.filter.oreglob.OreGlobMessages;
-import gregtech.api.util.oreglob.OreGlobVisualizer;
+import gregtech.api.util.oreglob.OreGlobTextBuilder;
 import gregtech.common.covers.filter.oreglob.node.BranchType;
 import gregtech.common.covers.filter.oreglob.node.NodeVisitor;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
@@ -22,14 +22,14 @@ class NodeVisualizer implements NodeVisitor {
 
     private static boolean xmlParserErrorReported;
 
-    private final OreGlobVisualizer visualizer;
+    private final OreGlobTextBuilder visualizer;
     private final int indents;
 
-    NodeVisualizer(OreGlobVisualizer visualizer) {
+    NodeVisualizer(OreGlobTextBuilder visualizer) {
         this(visualizer, 0);
     }
 
-    NodeVisualizer(OreGlobVisualizer visualizer, int indents) {
+    NodeVisualizer(OreGlobTextBuilder visualizer, int indents) {
         this.visualizer = visualizer;
         this.indents = indents;
     }
@@ -144,23 +144,23 @@ class NodeVisualizer implements NodeVisitor {
         error(this.visualizer);
     }
 
-    public static void everything(OreGlobVisualizer visualizer) {
+    public static void everything(OreGlobTextBuilder visualizer) {
         appendNodeXML(visualizer, OreGlobMessages.PREVIEW_EVERYTHING);
     }
 
-    public static void impossible(OreGlobVisualizer visualizer) {
+    public static void impossible(OreGlobTextBuilder visualizer) {
         appendNodeXML(visualizer, OreGlobMessages.PREVIEW_IMPOSSIBLE);
     }
 
-    public static void nonempty(OreGlobVisualizer visualizer) {
+    public static void nonempty(OreGlobTextBuilder visualizer) {
         appendNodeXML(visualizer, OreGlobMessages.PREVIEW_NONEMPTY);
     }
 
-    public static void empty(OreGlobVisualizer visualizer) {
+    public static void empty(OreGlobTextBuilder visualizer) {
         appendNodeXML(visualizer, OreGlobMessages.PREVIEW_EMPTY);
     }
 
-    public static void error(OreGlobVisualizer visualizer) {
+    public static void error(OreGlobTextBuilder visualizer) {
         appendNodeXML(visualizer, OreGlobMessages.PREVIEW_ERROR);
     }
 
@@ -171,7 +171,7 @@ class NodeVisualizer implements NodeVisitor {
     // scheme defined by visualizer. Visualization hint is expressed using
     // tags, and the inner contents of tags are appended to the builder
     // with appropriate formatting applied.
-    private static void appendNodeXML(OreGlobVisualizer visualizer, String key, Object... args) {
+    private static void appendNodeXML(OreGlobTextBuilder visualizer, String key, Object... args) {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(false);
         factory.setXIncludeAware(false);
@@ -200,7 +200,7 @@ class NodeVisualizer implements NodeVisitor {
             // no-op
         }
         // fallback: just append localization result
-        visualizer.getBuilder().append(LocalizationUtils.format(key, args));
+        visualizer.getStringBuilder().append(LocalizationUtils.format(key, args));
     }
 
     @Nullable

@@ -1,6 +1,6 @@
 package gregtech.common.covers.filter.oreglob.impl;
 
-import gregtech.api.util.oreglob.OreGlobVisualizer;
+import gregtech.api.util.oreglob.OreGlobTextBuilder;
 import gregtech.api.util.oreglob.VisualizationHint;
 import net.minecraft.util.text.TextFormatting;
 import org.xml.sax.Attributes;
@@ -14,14 +14,14 @@ import java.util.List;
 
 final class NodeVisualXMLHandler extends DefaultHandler {
 
-    private final OreGlobVisualizer visualizer;
+    private final OreGlobTextBuilder builder;
     private final List<Formatting> formatStack = new ArrayList<>();
     private boolean start;
     @Nullable
     private Formatting lastAppliedFormatting;
 
-    NodeVisualXMLHandler(@Nonnull OreGlobVisualizer visualizer) {
-        this.visualizer = visualizer;
+    NodeVisualXMLHandler(@Nonnull OreGlobTextBuilder builder) {
+        this.builder = builder;
     }
 
     @Override
@@ -61,12 +61,12 @@ final class NodeVisualXMLHandler extends DefaultHandler {
     @Override
     public void characters(char[] ch, int start, int length) {
         applyFormatting();
-        this.visualizer.getBuilder().append(ch, start, length);
+        this.builder.getStringBuilder().append(ch, start, length);
     }
 
     @Override
     public void ignorableWhitespace(char[] ch, int start, int length) {
-        this.visualizer.getBuilder().append(ch, start, length); // respect whitespaces
+        this.builder.getStringBuilder().append(ch, start, length); // respect whitespaces
     }
 
     @Nullable
@@ -77,7 +77,7 @@ final class NodeVisualXMLHandler extends DefaultHandler {
     private void pushFormatting(@Nonnull VisualizationHint hint) {
         Formatting prev = getActiveFormatting();
 
-        TextFormatting color = this.visualizer.getColor(hint);
+        TextFormatting color = this.builder.getFormatting().getFormat(hint);
         this.formatStack.add(new Formatting(hint,
                 color != null ? color : prev != null ? prev.format : null));
     }
@@ -100,9 +100,9 @@ final class NodeVisualXMLHandler extends DefaultHandler {
             return; // same formatting, no need to update
         }
         if (formatting != null) {
-            formatting.apply(this.visualizer.getBuilder());
+            formatting.apply(this.builder.getStringBuilder());
         } else {
-            this.visualizer.getBuilder().append(TextFormatting.RESET);
+            this.builder.getStringBuilder().append(TextFormatting.RESET);
         }
         this.lastAppliedFormatting = formatting;
     }
@@ -110,7 +110,7 @@ final class NodeVisualXMLHandler extends DefaultHandler {
     private void appendXmlError(@Nonnull String text) {
         pushFormatting(VisualizationHint.ERROR);
         applyFormatting();
-        this.visualizer.getBuilder().append("** ").append(text).append(" **");
+        this.builder.getStringBuilder().append("** ").append(text).append(" **");
         popFormatting(VisualizationHint.ERROR);
     }
 

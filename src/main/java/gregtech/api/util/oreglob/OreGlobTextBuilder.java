@@ -1,28 +1,28 @@
 package gregtech.api.util.oreglob;
 
-import net.minecraft.util.text.TextFormatting;
-
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * Visualizer accepts text components from OreGlob implementation to create text representation.
+ * Builder for OreGlob instance visualization.
  */
-public abstract class OreGlobVisualizer {
+public class OreGlobTextBuilder {
 
     private final List<String> finishedLines = new ArrayList<>();
     private final StringBuilder builder = new StringBuilder();
+    private final OreGlobTextFormatting formatting;
     private final String indent;
 
-    public OreGlobVisualizer() {
-        this("  ");
+    public OreGlobTextBuilder(@Nonnull OreGlobTextFormatting formatting) {
+        this(formatting, "  ");
     }
 
-    public OreGlobVisualizer(@Nonnull String indent) {
-        this.indent = indent;
+    public OreGlobTextBuilder(@Nonnull OreGlobTextFormatting formatting, @Nonnull String indent) {
+        this.formatting = Objects.requireNonNull(formatting, "formatting == null");
+        this.indent = Objects.requireNonNull(indent, "indent == null");
     }
 
     public void newLine(int indents) {
@@ -35,7 +35,7 @@ public abstract class OreGlobVisualizer {
     }
 
     @Nonnull
-    public StringBuilder getBuilder() {
+    public StringBuilder getStringBuilder() {
         return this.builder;
     }
 
@@ -44,12 +44,15 @@ public abstract class OreGlobVisualizer {
         this.builder.delete(0, this.builder.length());
     }
 
-    @Nullable
-    public abstract TextFormatting getColor(@Nonnull VisualizationHint hint);
+    @Nonnull
+    public OreGlobTextFormatting getFormatting() {
+        return formatting;
+    }
 
     @Nonnull
     public List<String> getLines() {
         finishLine();
         return Collections.unmodifiableList(finishedLines);
     }
+
 }

@@ -2,8 +2,10 @@ package gregtech.common.covers.filter.oreglob.impl;
 
 import com.google.common.annotations.VisibleForTesting;
 import gregtech.api.util.oreglob.OreGlob;
-import gregtech.api.util.oreglob.OreGlobVisualizer;
+import gregtech.api.util.oreglob.OreGlobTextBuilder;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
+
+import javax.annotation.Nonnull;
 
 /**
  * Node-based implementation of oreglob.
@@ -12,7 +14,7 @@ public final class NodeOreGlob extends OreGlob {
 
     private final OreGlobNode root;
 
-    public NodeOreGlob(OreGlobNode root) {
+    public NodeOreGlob(@Nonnull OreGlobNode root) {
         this.root = root;
     }
 
@@ -21,14 +23,15 @@ public final class NodeOreGlob extends OreGlob {
         return root;
     }
 
+    @Nonnull
     @Override
-    public <V extends OreGlobVisualizer> V visualize(V visualizer) {
+    public <V extends OreGlobTextBuilder> V visualize(@Nonnull V visualizer) {
         new NodeVisualizer(visualizer).visit(this.root);
         return visualizer;
     }
 
     @Override
-    public boolean matches(String input) {
+    public boolean matches(@Nonnull String input) {
         return new NodeInterpreter(input).evaluate(this.root).isMatch();
     }
 }
