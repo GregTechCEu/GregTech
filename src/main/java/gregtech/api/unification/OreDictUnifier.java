@@ -14,7 +14,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -249,15 +248,6 @@ public class OreDictUnifier {
         if (itemStack.isEmpty()) return null;
         UnificationEntry entry = getOrWildcard(stackUnificationInfo, new ItemAndMetadata(itemStack));
         return entry != null ? entry.orePrefix : null;
-    }
-
-    /**
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    @Nullable
-    public static OrePrefix getPrefix(Block block) {
-        return getPrefix(new ItemStack(block));
     }
 
     @Nullable

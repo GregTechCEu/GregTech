@@ -30,7 +30,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
-import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -150,16 +149,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
                 .addMaintenanceProblemLines(getMaintenanceProblems());
-    }
-
-    /**
-     * Used for when you want a Multiblock to have extra info in the text, but not put that info after
-     * the working status, progress percent, etc.
-     * @deprecated Deemed no longer necessary, simply override {@link MultiblockWithDisplayBase#addDisplayText}. Will be removed in 2.8.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.8")
-    protected void addExtraDisplayInfo(List<ITextComponent> textList) {
     }
 
     @Override

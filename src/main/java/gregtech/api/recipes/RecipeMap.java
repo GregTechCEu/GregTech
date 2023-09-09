@@ -114,21 +114,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private RecipeMap<?> smallRecipeMap;
 
     /**
-     * Create and register new instance of RecipeMap with specified properties.
-     *
-     * @deprecated Use {@link RecipeMap#RecipeMap(String, int, int, int, int, R, boolean)}
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @SuppressWarnings("unused")
-    @Deprecated
-    public RecipeMap(@Nonnull String unlocalizedName, int minInputs, @Nonnegative int maxInputs, int minOutputs,
-                     @Nonnegative int maxOutputs, int minFluidInputs, @Nonnegative int maxFluidInputs, int minFluidOutputs,
-                     @Nonnegative int maxFluidOutputs, @Nonnull R defaultRecipeBuilder, boolean isHidden) {
-        this(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipeBuilder, isHidden);
-    }
-
-    /**
      * Create and register new instance of RecipeMap with specified properties. All
      * maximum I/O size for item and fluids will be able to be modified.
      *
@@ -1343,17 +1328,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return new CTRecipeBuilder(recipeBuilder());
     }
 
-    /**
-     * @deprecated this value is no longer implemented
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    @ZenGetter("minInputs")
-    public int getMinInputs() {
-        return 0;
-    }
-
     @ZenGetter("maxInputs")
     public int getMaxInputs() {
         return maxInputs;
@@ -1366,17 +1340,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         } else {
             throw new UnsupportedOperationException("Cannot change max item input amount for " + getUnlocalizedName());
         }
-    }
-
-    /**
-     * @deprecated this value is no longer used
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    @ZenGetter("minOutputs")
-    public int getMinOutputs() {
-        return 0;
     }
 
     @ZenGetter("maxOutputs")
@@ -1393,17 +1356,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
     }
 
-    /**
-     * @deprecated this value is no longer used
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    @ZenGetter("minFluidInputs")
-    public int getMinFluidInputs() {
-        return 0;
-    }
-
     @ZenGetter("maxFluidInputs")
     public int getMaxFluidInputs() {
         return maxFluidInputs;
@@ -1416,17 +1368,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         } else {
             throw new UnsupportedOperationException("Cannot change max fluid input amount for " + getUnlocalizedName());
         }
-    }
-
-    /**
-     * @deprecated this value is no longer used
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    @ZenGetter("minFluidOutputs")
-    public int getMinFluidOutputs() {
-        return 0;
     }
 
     @ZenGetter("maxFluidOutputs")

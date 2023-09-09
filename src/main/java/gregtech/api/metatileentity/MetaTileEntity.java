@@ -92,6 +92,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
 
+    public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
+    public static final String TAG_KEY_MUFFLED = "Muffled";
+
     public final ResourceLocation metaTileEntityId;
     IGregTechTileEntity holder;
 
@@ -114,7 +117,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     private final int[] sidedRedstoneOutput = new int[6];
     private final int[] sidedRedstoneInput = new int[6];
     private int cachedLightValue;
-    protected boolean isFragile = false;
 
     private boolean wasExploded = false;
 
@@ -287,9 +289,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @param itemStack itemstack of itemblock
      */
     public void initFromItemStackData(NBTTagCompound itemStack) {
-        if (itemStack.hasKey(TAG_KEY_FRAGILE)) {
-            setFragile(itemStack.getBoolean(TAG_KEY_FRAGILE));
-        }
     }
 
     /**
@@ -899,7 +898,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             entry.getValue().writeInitialData(buf);
         }
         CoverIO.writeCoverSyncData(buf, this);
-        buf.writeBoolean(isFragile);
         buf.writeBoolean(muffled);
     }
 
@@ -919,7 +917,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             } else trait.receiveInitialData(buf);
         }
         CoverIO.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
-        this.isFragile = buf.readBoolean();
         this.muffled = buf.readBoolean();
     }
 
@@ -970,9 +967,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (coverBehavior != null) {
                 coverBehavior.readUpdateData(internalId, buf);
             }
-        } else if (dataId == UPDATE_IS_FRAGILE) {
-            this.isFragile = buf.readBoolean();
-            scheduleRenderUpdate();
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
             this.muffled = buf.readBoolean();
             if (muffled) {
@@ -1165,15 +1159,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return ConfigHolder.client.defaultPaintingColor;
     }
 
-    public void setFragile(boolean fragile) {
-        this.isFragile = fragile;
-        if (getWorld() != null && !getWorld().isRemote) {
-            notifyBlockUpdate();
-            markDirty();
-            writeCustomData(UPDATE_IS_FRAGILE, buf -> buf.writeBoolean(fragile));
-        }
-    }
-
     public boolean isValidFrontFacing(EnumFacing facing) {
         if (this.hasFrontFacing() && getFrontFacing() == facing) return false;
         return facing != EnumFacing.UP && facing != EnumFacing.DOWN;
@@ -1212,7 +1197,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
         CoverIO.writeCoverNBT(data, (side) -> coverBehaviors[side.getIndex()]);
 
-        data.setBoolean(TAG_KEY_FRAGILE, isFragile);
         data.setBoolean(TAG_KEY_MUFFLED, muffled);
         return data;
     }
@@ -1239,7 +1223,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
         CoverIO.readCoverNBT(data, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
 
-        this.isFragile = data.getBoolean(TAG_KEY_FRAGILE);
         this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
     }
 
@@ -1348,12 +1331,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return notifiedFluidOutputList;
     }
 
-    public boolean isFragile() {
-        return isFragile;
-    }
-
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean shouldDropWhenDestroyed() {
-        return !wasExploded() && !isFragile();
+        return !wasExploded();
     }
 
     public float getBlockHardness() {

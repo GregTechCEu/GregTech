@@ -11,7 +11,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
 
 public class FilteredFluidStats implements IItemComponent, IItemCapabilityProvider {
 
@@ -19,13 +18,6 @@ public class FilteredFluidStats implements IItemComponent, IItemCapabilityProvid
     public final boolean allowPartialFill;
     @Nullable
     public final IFilter<FluidStack> filter;
-
-    @Deprecated
-    public FilteredFluidStats(int capacity, boolean allowPartialFill, Function<FluidStack, Boolean> fillPredicate) {
-        this.capacity = capacity;
-        this.allowPartialFill = allowPartialFill;
-        this.filter = fillPredicate::apply;
-    }
 
     public FilteredFluidStats(int capacity, boolean allowPartialFill, @Nullable IFilter<FluidStack> filter) {
         this.capacity = capacity;

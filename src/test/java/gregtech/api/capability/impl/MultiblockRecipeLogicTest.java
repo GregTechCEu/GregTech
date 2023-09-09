@@ -49,15 +49,11 @@ public class MultiblockRecipeLogicTest {
 
         World world = DummyWorld.INSTANCE;
 
-        // Create an empty recipe map to work with
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("blast_furnace",
-                1,
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("test_recipemap",
+                3,
                 3,
                 1,
-                2,
-                0,
-                1,
-                0,
                 1,
                 new BlastRecipeBuilder().EUt(32),
                 false);
@@ -286,15 +282,11 @@ public class MultiblockRecipeLogicTest {
 
         World world = DummyWorld.INSTANCE;
 
-        // Create an empty recipe map to work with
-        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("blast_furnace",
-                1,
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("test_recipemap_2",
+                3,
                 3,
                 1,
-                2,
-                0,
-                1,
-                0,
                 1,
                 new BlastRecipeBuilder().EUt(32),
                 false);
