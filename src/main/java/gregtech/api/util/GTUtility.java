@@ -414,19 +414,6 @@ public class GTUtility {
     }
 
     /**
-     * @deprecated Ambiguous naming; use either {@link #copy(ItemStack)} or {@link #copyFirst(ItemStack...)}
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    @Nonnull
-    public static ItemStack copy(@Nonnull ItemStack... stacks) {
-        for (ItemStack stack : stacks)
-            if (!stack.isEmpty()) return stack.copy();
-        return ItemStack.EMPTY;
-    }
-
-    /**
      * Copies the ItemStack.
      *
      * @param stack item stack for copying
@@ -491,17 +478,6 @@ public class GTUtility {
             }
         }
         return ItemStack.EMPTY;
-    }
-
-    /**
-     * @deprecated Use {@link #copy(int, ItemStack)}
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    @Nonnull
-    public static ItemStack copyAmount(int amount, @Nonnull ItemStack stack) {
-        return copy(amount, stack);
     }
 
     public static int getExplosionPower(long voltage) {
@@ -668,26 +644,6 @@ public class GTUtility {
         return result.toString();
     }
 
-    /**
-     * @deprecated Use {@link TextFormattingUtil#formatNumbers(long)} instead.
-     *
-     * </p> This class was deprecated in 2.7 and will be removed in 2.8
-     */
-    @Deprecated
-    public static String formatNumbers(long number) {
-        return TextFormattingUtil.formatNumbers(number);
-    }
-
-    /**
-     * @deprecated Use {@link TextFormattingUtil#formatNumbers(double)} instead.
-     *
-     * </p> This class was deprecated in 2.7 and will be removed in 2.8
-     */
-    @Deprecated
-    public static String formatNumbers(double number) {
-        return TextFormattingUtil.formatNumbers(number);
-    }
-
     public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
         if (world == null || pos == null) return null;
         TileEntity te = world.getTileEntity(pos);
@@ -765,21 +721,6 @@ public class GTUtility {
             return true;
         }
         return false;
-    }
-
-    /**
-     * @param stack the stack to retrieve from
-     * @return all the sub-items of an ItemStack
-     * @deprecated Use {@link #getAllSubItems(Item)}
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Nonnull
-    @Deprecated
-    public static Set<ItemStack> getAllSubItems(@Nonnull ItemStack stack) {
-        //match subtypes only on wildcard damage value items
-        if (stack.getItemDamage() != GTValues.W) return Collections.singleton(stack);
-        return getAllSubItems(stack.getItem());
     }
 
     /**

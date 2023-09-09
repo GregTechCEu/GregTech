@@ -30,7 +30,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
-import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -146,8 +145,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatNumbers(maxVoltage), voltageName));
             }
 
-            addExtraDisplayInfo(textList);
-
             if (!recipeMapWorkable.isWorkingEnabled()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
 
@@ -174,16 +171,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         if (isStructureFormed() && recipeMapWorkable.isHasNotEnoughEnergy()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy"));
         }
-    }
-
-    /**
-     * Used for when you want a Multiblock to have extra info in the text, but not put that info after
-     * the working status, progress percent, etc.
-     * @deprecated Deemed no longer necessary, simply override {@link MultiblockWithDisplayBase#addDisplayText}. Will be removed in 2.8.
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.8")
-    protected void addExtraDisplayInfo(List<ITextComponent> textList) {
     }
 
     @Override
