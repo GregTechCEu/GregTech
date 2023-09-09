@@ -1,9 +1,14 @@
 package gregtech.loaders.dungeon;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTStringUtils;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootEntryItem;
@@ -14,68 +19,60 @@ import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
-public class ChestGenHooks {
+public final class ChestGenHooks {
 
-    private static final HashMap<ResourceLocation, ArrayList<LootEntryItem>> lootEntryItems = new HashMap<>();
-    private static final HashMap<ResourceLocation, RandomValueRange> rollVals = new HashMap<>();
-
+    private static final Map<ResourceLocation, List<GTLootEntryItem>> lootEntryItems = new Object2ObjectOpenHashMap<>();
+    private static final Map<ResourceLocation, RandomValueRange> rollValues = new Object2ObjectOpenHashMap<>();
 
     private static final LootCondition[] NO_CONDITIONS = new LootCondition[0];
 
-    private ChestGenHooks() {
-    }
+    private ChestGenHooks() {}
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(ChestGenHooks.class);
     }
 
     @SubscribeEvent
-    public static void onWorldLoad(LootTableLoadEvent event) {
+    public static void onWorldLoad(@NotNull LootTableLoadEvent event) {
         LootPool mainPool = event.getTable().getPool("main");
-        if (mainPool != null && lootEntryItems.containsKey(event.getName())) {
-            List<LootEntryItem> entryItems = lootEntryItems.get(event.getName());
-            for (LootEntryItem entry : entryItems) {
+        //noinspection ConstantValue
+        if (mainPool == null) return;
+
+        ResourceLocation name = event.getName();
+        if (lootEntryItems.containsKey(name)) {
+            List<GTLootEntryItem> entryItems = lootEntryItems.get(name);
+            for (GTLootEntryItem entry : entryItems) {
+                if (ConfigHolder.misc.debug) {
+                    GTLog.logger.info("adding {} to lootTable {}", entry, name);
+                }
+
                 try {
-                    if (ConfigHolder.misc.debug) {
-                        GTLog.logger.info("adding {} to lootTable", entry.getEntryName());
-                    }
                     mainPool.addEntry(entry);
-                } catch (java.lang.RuntimeException e) {
-                    GTLog.logger.error("Couldn't add {} to lootTable", entry.getEntryName());
+                } catch (RuntimeException e) {
+                    GTLog.logger.error("Couldn't add {} to lootTable {}: {}", entry, name, e.getMessage());
                 }
             }
         }
-        if (mainPool != null && rollVals.containsKey(event.getName())) {
-            RandomValueRange rangeAdd = rollVals.get(event.getName());
+
+        if (rollValues.containsKey(event.getName())) {
+            RandomValueRange rangeAdd = rollValues.get(event.getName());
             RandomValueRange range = mainPool.getRolls();
             mainPool.setRolls(new RandomValueRange(range.getMin() + rangeAdd.getMin(), range.getMax() + rangeAdd.getMax()));
         }
     }
 
-    public static void addItem(ResourceLocation lootTable, ItemStack item, int minAmount, int maxAmount, int weight) {
-        LootEntryItem itemEntry = new LootEntryItem(item.getItem(), weight, 1, new LootFunction[]{
-                new LootFunction(NO_CONDITIONS) {
-                    @Nonnull
-                    @Override
-                    public ItemStack apply(@Nonnull ItemStack stack, @Nonnull Random rand, @Nonnull LootContext context) {
-                        stack.setItemDamage(item.getItemDamage());
-                        stack.setTagCompound(item.getTagCompound());
-
-                        int count = minAmount + rand.nextInt(maxAmount - minAmount + 1);
-                        count = Math.min(count, item.getMaxStackSize());
-
-                        stack.setCount(count);
-                        return stack;
-                    }
-                }
-        }, NO_CONDITIONS, "#gregtech:loot_" + item.hashCode());
+    public static void addItem(@NotNull ResourceLocation lootTable, @NotNull ItemStack stack, int minAmount, int maxAmount, int weight) {
+        RandomWeightLootFunction lootFunction = new RandomWeightLootFunction(stack, minAmount, maxAmount);
+        String modid = Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace();
+        String entryName = createEntryName(stack, modid, weight, lootFunction);
+        GTLootEntryItem itemEntry = new GTLootEntryItem(stack, weight, lootFunction, entryName);
         if (lootEntryItems.containsKey(lootTable)) {
             lootEntryItems.get(lootTable).add(itemEntry);
         } else {
@@ -84,8 +81,70 @@ public class ChestGenHooks {
     }
 
     public static void addRolls(ResourceLocation tableLocation, int minAdd, int maxAdd) {
-        rollVals.put(tableLocation, new RandomValueRange(minAdd, maxAdd));
+        rollValues.put(tableLocation, new RandomValueRange(minAdd, maxAdd));
     }
 
+    private static final ItemStackHashStrategy HASH_STRATEGY = ItemStackHashStrategy.comparingAllButCount();
 
+    private static @NotNull String createEntryName(@NotNull ItemStack stack, @NotNull String modid, int weight,
+                                                   @NotNull RandomWeightLootFunction function) {
+        int hashCode = Objects.hash(HASH_STRATEGY.hashCode(stack), modid, weight, function.getMinAmount(), function.getMaxAmount());
+        return String.format("#%s:loot_%s", modid, hashCode);
+    }
+
+    private static class GTLootEntryItem extends LootEntryItem {
+
+        private final ItemStack stack;
+
+        public GTLootEntryItem(@NotNull ItemStack stack, int weight, LootFunction lootFunction, @NotNull String entryName) {
+            super(stack.getItem(), weight, 1, new LootFunction[]{lootFunction}, NO_CONDITIONS, entryName);
+            this.stack = stack;
+        }
+
+        @Override
+        public @NotNull String toString() {
+            return "GTLootEntryItem{name=" + getEntryName() + ", stack=" + GTStringUtils.itemStackToString(stack) + '}';
+        }
+    }
+
+    private static class RandomWeightLootFunction extends LootFunction {
+
+        private final ItemStack stack;
+        private final int minAmount;
+        private final int maxAmount;
+
+        public RandomWeightLootFunction(@NotNull ItemStack stack, int minAmount, int maxAmount) {
+            super(NO_CONDITIONS);
+            Preconditions.checkArgument(minAmount <= maxAmount, "minAmount must be <= maxAmount");
+            this.stack = stack;
+            this.minAmount = minAmount;
+            this.maxAmount = maxAmount;
+        }
+
+        public int getMinAmount() {
+            return minAmount;
+        }
+
+        public int getMaxAmount() {
+            return maxAmount;
+        }
+
+        @Override
+        public @NotNull ItemStack apply(@NotNull ItemStack itemStack, @NotNull Random rand, @NotNull LootContext context) {
+            itemStack.setItemDamage(stack.getItemDamage());
+            NBTTagCompound tagCompound = stack.getTagCompound();
+            if (tagCompound != null) {
+                itemStack.setTagCompound(tagCompound.copy());
+            }
+
+            if (minAmount == maxAmount) {
+                itemStack.setCount(1);
+                return itemStack;
+            }
+
+            int count = Math.min(minAmount + rand.nextInt(maxAmount - minAmount + 1), stack.getMaxStackSize());
+            itemStack.setCount(count);
+            return itemStack;
+        }
+    }
 }
