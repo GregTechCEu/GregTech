@@ -33,7 +33,7 @@ public abstract class CoverBase implements Cover {
     }
 
     @Override
-    public final @NotNull CoverableView getCoverable() {
+    public final @NotNull CoverableView getCoverableView() {
         return this.coverableView;
     }
 
@@ -49,7 +49,7 @@ public abstract class CoverBase implements Cover {
         TextureAtlasSprite casingSide = getPlateSprite();
         for (EnumFacing coverPlateSide : EnumFacing.VALUES) {
             boolean isAttachedSide = getAttachedSide().getAxis() == coverPlateSide.getAxis();
-            if (isAttachedSide || !getCoverable().hasCover(coverPlateSide)) {
+            if (isAttachedSide || !getCoverableView().hasCover(coverPlateSide)) {
                 Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide, BlockRenderLayer.CUTOUT_MIPPED);
             }
         }

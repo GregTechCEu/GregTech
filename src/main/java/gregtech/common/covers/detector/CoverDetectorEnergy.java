@@ -36,7 +36,7 @@ public class CoverDetectorEnergy extends CoverDetectorBase implements ITickable 
     public void update() {
         if (getOffsetTimer() % 20 != 0) return;
 
-        IEnergyContainer energyContainer = getCoverable().getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
+        IEnergyContainer energyContainer = getCoverableView().getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
         if (energyContainer != null) {
             long storedEnergy = energyContainer.getEnergyStored();
             long energyCapacity = energyContainer.getEnergyCapacity();

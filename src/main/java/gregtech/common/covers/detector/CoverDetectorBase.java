@@ -37,7 +37,7 @@ public abstract class CoverDetectorBase extends CoverBase {
     private void toggleInvertedWithNotification() {
         setInverted(!isInverted());
 
-        CoverableView coverable = getCoverable();
+        CoverableView coverable = getCoverableView();
         if (!coverable.getWorld().isRemote) {
             coverable.writeCoverData(this, UPDATE_INVERTED, b -> b.writeBoolean(isInverted()));
             coverable.notifyBlockUpdate();
@@ -47,8 +47,8 @@ public abstract class CoverDetectorBase extends CoverBase {
 
     public final void setRedstoneSignalOutput(int redstoneSignalOutput) {
         this.redstoneSignalOutput = redstoneSignalOutput;
-        getCoverable().notifyBlockUpdate();
-        getCoverable().markDirty();
+        getCoverableView().notifyBlockUpdate();
+        getCoverableView().markDirty();
     }
 
     @Override

@@ -105,7 +105,7 @@ public class CoverCraftingTable extends CoverBase implements CoverWithUI, ITicka
     }
 
     private CraftingRecipeLogic getRecipeLogic() {
-        Preconditions.checkState(getCoverable().getWorld() != null, "getRecipeResolver called too early");
+        Preconditions.checkState(getCoverableView().getWorld() != null, "getRecipeResolver called too early");
         return recipeLogic;
     }
 

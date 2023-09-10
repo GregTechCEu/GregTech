@@ -138,7 +138,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         BlockPos pos = getPos().offset(getAttachedSide());
         TileEntity tileEntity = getWorld().getTileEntity(pos);
         IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide().getOpposite());
-        IFluidHandler myFluidHandler = getCoverable().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide());
+        IFluidHandler myFluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide());
         if (fluidHandler == null || myFluidHandler == null) {
             return 0;
         }

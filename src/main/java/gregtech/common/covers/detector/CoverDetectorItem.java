@@ -35,7 +35,7 @@ public class CoverDetectorItem extends CoverDetectorBase implements ITickable {
     public void update() {
         if (getOffsetTimer() % 20 != 0) return;
 
-        IItemHandler itemHandler = getCoverable().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        IItemHandler itemHandler = getCoverableView().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         if (itemHandler == null) return;
 
         int storedItems = 0;

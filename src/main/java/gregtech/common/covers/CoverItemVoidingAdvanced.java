@@ -37,7 +37,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
     @Override
     protected void doTransferItems() {
-        IItemHandler myItemHandler = getCoverable().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getAttachedSide());
+        IItemHandler myItemHandler = getCoverableView().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getAttachedSide());
         if (myItemHandler == null) {
             return;
         }
@@ -154,7 +154,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     public void setVoidingMode(VoidingMode voidingMode) {
         this.voidingMode = voidingMode;
         this.itemFilterContainer.setMaxStackSize(voidingMode.maxStackSize);
-        this.getCoverable().markDirty();
+        this.getCoverableView().markDirty();
     }
 
     public VoidingMode getVoidingMode() {

@@ -34,7 +34,7 @@ public class CoverDetectorActivity extends CoverDetectorBase implements ITickabl
     public void update() {
         if (getOffsetTimer() % 20 != 0) return;
 
-        IWorkable workable = getCoverable().getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null);
+        IWorkable workable = getCoverableView().getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null);
         if (workable == null) return;
 
         if (isInverted()) setRedstoneSignalOutput(workable.isActive() && workable.isWorkingEnabled() ? 0 : 15);

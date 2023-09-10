@@ -58,17 +58,14 @@ public interface CoverableView extends ICapabilityProvider {
      * @param side the side to check
      * @return if there is a cover at the side
      */
-    boolean hasCover(@NotNull EnumFacing side);
+    default boolean hasCover(@NotNull EnumFacing side) {
+        return getCoverAtSide(side) != null;
+    }
 
     /**
      * @return if there is any cover attached
      */
-    default boolean hasAnyCover() {
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            if (hasCover(facing)) return true;
-        }
-        return false;
-    }
+    boolean hasAnyCover();
 
     /**
      * @param side the side to get the redstone from

@@ -36,7 +36,7 @@ public class CoverInfiniteWater extends CoverBase implements ITickable {
     @Override
     public void update() {
         if (!getWorld().isRemote && getOffsetTimer() % 20 == 0) {
-            IFluidHandler fluidHandler = getCoverable().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide());
+            IFluidHandler fluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide());
             if (fluidHandler != null) {
                 fluidHandler.fill(new FluidStack(FluidRegistry.WATER, 16000), true);
             }

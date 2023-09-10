@@ -40,13 +40,13 @@ public class CoverItemVoiding extends CoverConveyor {
 
     @Override
     public void update() {
-        if (isWorkingAllowed && getCoverable().getOffsetTimer() % 20 == 0) {
+        if (isWorkingAllowed && getCoverableView().getOffsetTimer() % 20 == 0) {
             doTransferItems();
         }
     }
 
     protected void doTransferItems() {
-        IItemHandler myItemHandler = getCoverable().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getAttachedSide());
+        IItemHandler myItemHandler = getCoverableView().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getAttachedSide());
         if (myItemHandler == null) {
             return;
         }

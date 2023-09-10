@@ -459,7 +459,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             Cover cover = getCoverFromPosSide(this.coverPos);
             if (cover != null) {
-                return cover.getCoverable().getCapability(capability, cover.getAttachedSide());
+                return cover.getCoverableView().getCapability(capability, cover.getAttachedSide());
             }
         }
         return null;

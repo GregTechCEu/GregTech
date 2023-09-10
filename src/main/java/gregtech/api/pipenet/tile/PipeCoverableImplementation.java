@@ -145,11 +145,6 @@ public class PipeCoverableImplementation implements CoverHolder {
     }
 
     @Override
-    public boolean hasCover(@NotNull EnumFacing side) {
-        return false;
-    }
-
-    @Override
     public boolean canPlaceCoverOnSide(EnumFacing side) {
         return holder.canPlaceCoverOnSide(side);
     }
@@ -257,6 +252,11 @@ public class PipeCoverableImplementation implements CoverHolder {
     @Override
     public Cover getCoverAtSide(@NotNull EnumFacing side) {
         return covers.get(side);
+    }
+
+    @Override
+    public boolean hasAnyCover() {
+        return !covers.isEmpty();
     }
 
     @Override

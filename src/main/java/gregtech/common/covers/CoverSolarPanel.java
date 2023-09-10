@@ -44,7 +44,7 @@ public class CoverSolarPanel extends CoverBase implements ITickable {
 
     @Override
     public void update() {
-        CoverableView coverable = getCoverable();
+        CoverableView coverable = getCoverableView();
         World world = coverable.getWorld();
         BlockPos blockPos = coverable.getPos();
         if (GTUtility.canSeeSunClearly(world, blockPos)) {

@@ -178,7 +178,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     }
 
     public @Nullable TileEntity getCoveredTE() {
-        if (this.getCoverable() instanceof MetaTileEntity metaTileEntity) {
+        if (this.getCoverableView() instanceof MetaTileEntity metaTileEntity) {
             return (TileEntity) metaTileEntity.getHolder();
         }
         return null;
@@ -307,7 +307,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
             if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
                 if (rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
                     int maxSlotLimit = Integer.MAX_VALUE;
-                    if(this.getCoverable() instanceof MetaTileEntity metaTileEntity) {
+                    if(this.getCoverableView() instanceof MetaTileEntity metaTileEntity) {
                         maxSlotLimit = this.mode == MODE.ITEM ? metaTileEntity.getImportItems().getSlots() :
                                 metaTileEntity.getImportFluids().getTanks();
                     }
@@ -691,7 +691,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     public IFluidHandler getFluidCapability() {
         TileEntity te = getCoveredTE();
         IFluidHandler capability = te == null ? null : te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getCoveredFacing());
-        if (capability == null && this.getCoverable() instanceof MultiblockControllerBase controllerBase) {
+        if (capability == null && this.getCoverableView() instanceof MultiblockControllerBase controllerBase) {
             List<IFluidTank> input = controllerBase.getAbilities(MultiblockAbility.IMPORT_FLUIDS);
             List<IFluidTank> output = controllerBase.getAbilities(MultiblockAbility.EXPORT_FLUIDS);
             List<IFluidTank> list = new ArrayList<>();
@@ -709,7 +709,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     public IItemHandler getItemCapability() {
         TileEntity te = getCoveredTE();
         IItemHandler capability = te == null ? null : te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getCoveredFacing());
-        if (capability == null && this.getCoverable() instanceof MultiblockControllerBase controllerBase) {
+        if (capability == null && this.getCoverableView() instanceof MultiblockControllerBase controllerBase) {
             List<IItemHandlerModifiable> input = controllerBase.getAbilities(MultiblockAbility.IMPORT_ITEMS);
             List<IItemHandlerModifiable> output = controllerBase.getAbilities(MultiblockAbility.EXPORT_ITEMS);
             List<IItemHandlerModifiable> list = new ArrayList<>();
@@ -727,7 +727,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     public IEnergyContainer getEnergyCapability() {
         TileEntity te = getCoveredTE();
         IEnergyContainer capability = te == null ? null : te.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, getCoveredFacing());
-        if (capability == null && this.getCoverable() instanceof MultiblockControllerBase controllerBase) {
+        if (capability == null && this.getCoverableView() instanceof MultiblockControllerBase controllerBase) {
             List<IEnergyContainer> input = controllerBase.getAbilities(MultiblockAbility.INPUT_ENERGY);
             List<IEnergyContainer> output = controllerBase.getAbilities(MultiblockAbility.OUTPUT_ENERGY);
             List<IEnergyContainer> list = new ArrayList<>();

@@ -157,7 +157,7 @@ public class CoverRoboticArm extends CoverConveyor {
 
     public void setTransferMode(TransferMode transferMode) {
         this.transferMode = transferMode;
-        this.getCoverable().markDirty();
+        this.getCoverableView().markDirty();
         this.itemFilterContainer.setMaxStackSize(transferMode.maxStackSize);
     }
 

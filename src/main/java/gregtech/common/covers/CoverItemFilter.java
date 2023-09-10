@@ -55,7 +55,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     public void setFilterMode(ItemFilterMode filterMode) {
         this.filterMode = filterMode;
-        getCoverable().markDirty();
+        getCoverableView().markDirty();
     }
 
     public ItemFilterMode getFilterMode() {

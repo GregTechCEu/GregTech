@@ -30,7 +30,7 @@ public interface Cover {
     /**
      * @return the CoverableView containing this cover
      */
-    @NotNull CoverableView getCoverable();
+    @NotNull CoverableView getCoverableView();
 
     @NotNull CoverDefinition getDefinition();
 
@@ -38,42 +38,42 @@ public interface Cover {
      * @return the World containing this cover
      */
     default @UnknownNullability World getWorld() {
-        return getCoverable().getWorld();
+        return getCoverableView().getWorld();
     }
 
     /**
      * @return the pos of this cover
      */
     default @UnknownNullability BlockPos getPos() {
-        return getCoverable().getPos();
+        return getCoverableView().getPos();
     }
 
     /**
      * Mark the CoverableView as needing to be saved to the chunk
      */
     default void markDirty() {
-        getCoverable().markDirty();
+        getCoverableView().markDirty();
     }
 
     /**
      * Notify block updates for the CoverableView
      */
     default void notifyBlockUpdate() {
-        getCoverable().notifyBlockUpdate();
+        getCoverableView().notifyBlockUpdate();
     }
 
     /**
      * Schedule the CoverableView to update rendering
      */
     default void scheduleRenderUpdate() {
-        getCoverable().scheduleRenderUpdate();
+        getCoverableView().scheduleRenderUpdate();
     }
 
     /**
      * @return tick timer value with a random offset of [0,20]
      */
     default long getOffsetTimer() {
-        return getCoverable().getOffsetTimer();
+        return getCoverableView().getOffsetTimer();
     }
 
     default void update() {}
@@ -248,7 +248,7 @@ public interface Cover {
     default void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {}
 
     default void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> buf) {
-        getCoverable().writeCoverData(this, discriminator, buf);
+        getCoverableView().writeCoverData(this, discriminator, buf);
     }
 
     default void readCustomData(int discriminator, @NotNull PacketBuffer buf) {}

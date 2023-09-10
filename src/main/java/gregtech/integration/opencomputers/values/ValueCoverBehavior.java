@@ -77,7 +77,7 @@ public class ValueCoverBehavior extends AbstractValue {
             return NULL_COVER;
         }
 
-        return new Object[]{cover.getCoverable().getInputRedstoneSignal(cover.getAttachedSide(), true)};
+        return new Object[]{cover.getCoverableView().getInputRedstoneSignal(cover.getAttachedSide(), true)};
     }
 
     @Override

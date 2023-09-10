@@ -54,7 +54,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     public void setFilterMode(FluidFilterMode filterMode) {
         this.filterMode = filterMode;
-        this.getCoverable().markDirty();
+        this.getCoverableView().markDirty();
     }
 
     public FluidFilterMode getFilterMode() {

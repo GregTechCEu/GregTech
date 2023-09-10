@@ -119,7 +119,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     public void update() {
         if (getOffsetTimer() % 20 != 0) return;
 
-        IFluidHandler fluidHandler = getCoverable().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+        IFluidHandler fluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
         if (fluidHandler == null) return;
 
         IFluidTankProperties[] tankProperties = fluidHandler.getTankProperties();

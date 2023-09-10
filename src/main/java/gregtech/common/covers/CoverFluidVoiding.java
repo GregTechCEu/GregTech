@@ -47,7 +47,7 @@ public class CoverFluidVoiding extends CoverPump {
     }
 
     protected void doTransferFluids() {
-        IFluidHandler myFluidHandler = getCoverable().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide());
+        IFluidHandler myFluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide());
         if (myFluidHandler == null) {
             return;
         }

@@ -15,16 +15,16 @@ public interface CoverWithUI extends Cover, IUIHolder {
 
     @Override
     default boolean isValid() {
-        return getCoverable().isValid();
+        return getCoverableView().isValid();
     }
 
     @Override
     default boolean isRemote() {
-        return getCoverable().getWorld().isRemote;
+        return getCoverableView().getWorld().isRemote;
     }
 
     @Override
     default void markAsDirty() {
-        getCoverable().markDirty();
+        getCoverableView().markDirty();
     }
 }

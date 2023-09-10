@@ -29,7 +29,7 @@ public class CoverDetectorActivityAdvanced extends CoverDetectorActivity {
     public void update() {
         if (getOffsetTimer() % 20 != 0) return;
 
-        IWorkable workable = getCoverable().getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null);
+        IWorkable workable = getCoverableView().getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null);
         if (workable == null) return;
 
         if (workable.getMaxProgress() == 0) return;

@@ -46,7 +46,7 @@ public class WidgetCoverList extends ScrollableListWidget {
         for (CoverDigitalInterface cover : covers) {
             ItemStack itemStack = cover.getPickItem();
             BlockPos pos = cover.getPos();
-            if (cover.getCoverable() instanceof PipeCoverableImplementation) {
+            if (cover.getCoverableView() instanceof PipeCoverableImplementation) {
                 itemStack = null;
                 pos = pos.offset(cover.getAttachedSide());
                 TileEntity tileEntity = cover.getWorld().getTileEntity(pos);

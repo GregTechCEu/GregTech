@@ -62,7 +62,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     public void update() {
         if (getOffsetTimer() % 20 != 0) return;
 
-        IEnergyContainer energyContainer = getCoverable().getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
+        IEnergyContainer energyContainer = getCoverableView().getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
         if (energyContainer != null) {
             if (usePercent) {
                 if (energyContainer.getEnergyCapacity() > 0) {

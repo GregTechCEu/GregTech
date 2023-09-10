@@ -38,7 +38,7 @@ public class CoverDetectorMaintenance extends CoverDetectorBase implements ITick
             return;
         }
 
-        IMaintenance maintenance = (IMaintenance) getCoverable();
+        IMaintenance maintenance = (IMaintenance) getCoverableView();
         int signal = getRedstoneSignalOutput();
         boolean shouldSignal = isInverted() != maintenance.hasMaintenanceProblems();
         if (shouldSignal && signal != 15) {

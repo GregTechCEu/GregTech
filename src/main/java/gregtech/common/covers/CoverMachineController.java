@@ -55,13 +55,13 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     public void setMinRedstoneStrength(int minRedstoneStrength) {
         this.minRedstoneStrength = minRedstoneStrength;
         updateRedstoneStatus();
-        getCoverable().markDirty();
+        getCoverableView().markDirty();
     }
 
     public void setInverted(boolean inverted) {
         isInverted = inverted;
         updateRedstoneStatus();
-        getCoverable().markDirty();
+        getCoverableView().markDirty();
     }
 
     public void setControllerMode(ControllerMode controllerMode) {
@@ -69,11 +69,11 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         this.controllerMode = controllerMode;
         updateRedstoneStatus();
         updateDisplayInventory();
-        getCoverable().markDirty();
+        getCoverableView().markDirty();
     }
 
     private void cycleNextControllerMode() {
-        List<ControllerMode> allowedModes = getAllowedModes(getCoverable(), getAttachedSide());
+        List<ControllerMode> allowedModes = getAllowedModes(getCoverableView(), getAttachedSide());
         int nextIndex = allowedModes.indexOf(controllerMode) + 1;
         if (!allowedModes.isEmpty()) {
             setControllerMode(allowedModes.get(nextIndex % allowedModes.size()));
@@ -106,7 +106,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
 
     @Override
     public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
-        if (!getCoverable().getWorld().isRemote) {
+        if (!getCoverableView().getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
         return EnumActionResult.SUCCESS;
@@ -133,7 +133,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     @Override
     public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
-        this.controllerMode = getAllowedModes(getCoverable(), getAttachedSide()).iterator().next();
+        this.controllerMode = getAllowedModes(getCoverableView(), getAttachedSide()).iterator().next();
         updateRedstoneStatus();
     }
 
@@ -162,7 +162,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         EnumFacing controlledSide = getControllerMode().side;
         ItemStack resultStack = ItemStack.EMPTY;
         if (controlledSide != null) {
-            Cover cover = getCoverable().getCoverAtSide(controlledSide);
+            Cover cover = getCoverableView().getCoverAtSide(controlledSide);
             if (cover != null) {
                 resultStack = cover.getDefinition().getDropItemStack();
             }
@@ -173,9 +173,9 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     private @Nullable IControllable getControllable() {
         EnumFacing side = controllerMode.side;
         if (side == null) {
-            return getCoverable().getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, getAttachedSide());
+            return getCoverableView().getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, getAttachedSide());
         } else {
-            Cover cover = getCoverable().getCoverAtSide(side);
+            Cover cover = getCoverableView().getCoverAtSide(side);
             if (cover == null) {
                 return null;
             }
@@ -198,7 +198,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     }
 
     private boolean shouldAllowWorking() {
-        boolean shouldAllowWorking = getCoverable().getInputRedstoneSignal(getAttachedSide(), true) < minRedstoneStrength;
+        boolean shouldAllowWorking = getCoverableView().getInputRedstoneSignal(getAttachedSide(), true) < minRedstoneStrength;
         //noinspection SimplifiableConditionalExpression
         return isInverted ? !shouldAllowWorking : shouldAllowWorking;
     }
@@ -207,7 +207,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         boolean otherAllow = true;
         CoverMachineController cover;
         EnumFacing attachedSide = getAttachedSide();
-        CoverableView coverable = getCoverable();
+        CoverableView coverable = getCoverableView();
         for (EnumFacing side : EnumFacing.values()) {
             if (side != attachedSide && coverable.getCoverAtSide(side) instanceof CoverMachineController machineController) {
                 cover = machineController;
