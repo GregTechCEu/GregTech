@@ -11,7 +11,6 @@ import gregtech.api.util.TextFormattingUtil;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -51,7 +50,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
     @Nonnull
     @Override
-    public @NotNull ParallelLogicType getParallelLogicType() {
+    public ParallelLogicType getParallelLogicType() {
         return ParallelLogicType.MULTIPLY; //TODO APPEND_FLUIDS
     }
 

@@ -5,7 +5,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
@@ -18,7 +17,7 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
 
     @Nonnull
     @Override
-    public @NotNull ParallelLogicType getParallelLogicType() {
+    public ParallelLogicType getParallelLogicType() {
         return ParallelLogicType.MULTIPLY; //TODO APPEND_FLUIDS
     }
 

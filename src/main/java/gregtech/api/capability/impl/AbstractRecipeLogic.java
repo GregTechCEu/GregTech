@@ -27,7 +27,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -479,7 +478,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     @Override
     @Nonnull
-    public @NotNull ParallelLogicType getParallelLogicType() {
+    public ParallelLogicType getParallelLogicType() {
         return ParallelLogicType.MULTIPLY;
     }
 

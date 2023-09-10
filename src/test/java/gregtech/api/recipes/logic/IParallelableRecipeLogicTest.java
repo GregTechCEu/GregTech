@@ -806,19 +806,13 @@ public class IParallelableRecipeLogicTest {
         }
 
         @Override
-        public void setParallelRecipesPerformed(int amount) {
-
-        }
+        public void setParallelRecipesPerformed(int amount) {}
 
         @Override
-        public void invalidateInputs() {
-
-        }
+        public void invalidateInputs() {}
 
         @Override
-        public void invalidateOutputs() {
-
-        }
+        public void invalidateOutputs() {}
 
         @Override
         public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
