@@ -4159,6 +4159,9 @@ gregtech.machine.item_collector.ev.name=Advanced Item Collector III
 gregtech.machine.item_collector.gui.collect_range=Collect in %s blocks
 gregtech.machine.item_collector.tooltip=Collects Items around itself when given a Redstone signal
 
+gregtech.machine.alarm.name=Alarm
+gregtech.machine.alarm.tooltip=Plays a Sound when given a Redstone signal
+
 #Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Better than Storage Drawers
 gregtech.machine.super_chest.lv.name=Super Chest I

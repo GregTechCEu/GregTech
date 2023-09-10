@@ -148,4 +148,6 @@ public class GregtechDataCodes {
     public static final String FUSION_REACTOR_ENERGY_CONTAINER_TRAIT = "EnergyContainerInternal";
     public static final String BATTERY_BUFFER_ENERGY_CONTAINER_TRAIT = "BatteryEnergyContainer";
 
+    // Alarm
+    public static final int UPDATE_SOUND = 1;
 }
