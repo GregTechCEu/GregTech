@@ -27,6 +27,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -205,6 +206,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @return the current RecipeMap of the logic
      */
+    @Override
     @Nullable
     public RecipeMap<?> getRecipeMap() {
         return this.recipeMap;
@@ -277,6 +279,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * Invalidate the current state of input inventory contents
      */
+    @Override
     public void invalidateInputs() {
         this.invalidInputsForRecipes = true;
     }
@@ -284,6 +287,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * Invalidate the current state of output inventory contents
      */
+    @Override
     public void invalidateOutputs() {
         this.isOutputsFull = true;
     }
@@ -293,6 +297,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @param amount the amount to set
      */
+    @Override
     public void setParallelRecipesPerformed(int amount) {
         this.parallelRecipesPerformed = amount;
     }
@@ -437,7 +442,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         // Pass in the trimmed recipe to the parallel logic
         recipe = findParallelRecipe(
-                this,
                 recipe,
                 getInputInventory(),
                 getInputTank(),
@@ -473,8 +477,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * @return the parallel logic type to use for recipes
      */
+    @Override
     @Nonnull
-    public Enum<ParallelLogicType> getParallelLogicType() {
+    public @NotNull ParallelLogicType getParallelLogicType() {
         return ParallelLogicType.MULTIPLY;
     }
 

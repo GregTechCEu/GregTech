@@ -3,6 +3,7 @@ package gregtech.api.capability.impl;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.recipes.RecipeBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -21,7 +22,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
 
     @Nonnull
     @Override
-    public ParallelLogicType getParallelLogicType() {
+    public @NotNull ParallelLogicType getParallelLogicType() {
         return ParallelLogicType.APPEND_ITEMS;
     }
 

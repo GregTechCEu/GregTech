@@ -27,6 +27,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -151,7 +152,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
         @Nonnull
         @Override
-        public ParallelLogicType getParallelLogicType() {
+        public @NotNull ParallelLogicType getParallelLogicType() {
             return ParallelLogicType.APPEND_ITEMS;
         }
 
