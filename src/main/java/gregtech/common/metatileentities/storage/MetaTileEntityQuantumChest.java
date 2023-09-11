@@ -599,7 +599,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                         // fill the export slot as much as possible
                         ItemStack insertedStackCopy = insertedStack.copy();
                         insertedStackCopy.setCount(amountCanInsertIntoExport);
-                        MetaTileEntityQuantumChest.this.exportItems.insertItem(0, insertedStackCopy, simulate);
+                        getExportItems().insertItem(0, insertedStackCopy, false);
                     }
                     return insertedStack;
 
