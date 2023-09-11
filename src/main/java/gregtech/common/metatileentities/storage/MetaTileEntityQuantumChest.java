@@ -613,10 +613,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             if (virtualizedAmount < maxVirtualAmount) {
                 remainingStack = insertedStack.copy();
                 remainingStack.setCount(insertedStack.getCount() - virtualizedAmount);
-
-                if (voiding && virtualizedAmount == 0) {
-                    return ItemStack.EMPTY;
-                }
             }
 
             if (!simulate) {
@@ -647,7 +643,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 }
             }
 
-            return remainingStack;
+            if (voiding && itemsStoredInside == maxStoredItems) {
+                return ItemStack.EMPTY;
+            } else {
+                return remainingStack;
+            }
         }
     }
 
