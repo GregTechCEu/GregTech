@@ -147,6 +147,16 @@ public class ModuleManager implements IModuleManager {
         }
     }
 
+    public void onServerAboutToStart(FMLServerAboutToStartEvent event) {
+        currentStage = ModuleStage.SERVER_ABOUT_TO_START;
+        for (IGregTechModule module : loadedModules) {
+            currentContainer = containers.get(getContainerID(module));
+            module.getLogger().debug("Server-about-to-start start");
+            module.serverAboutToStart(event);
+            module.getLogger().debug("Server-about-to-start complete");
+        }
+    }
+
     public void onServerStarting(FMLServerStartingEvent event) {
         currentStage = ModuleStage.SERVER_STARTING;
         for (IGregTechModule module : loadedModules) {
@@ -164,6 +174,13 @@ public class ModuleManager implements IModuleManager {
             module.getLogger().debug("Server-started start");
             module.serverStarted(event);
             module.getLogger().debug("Server-started complete");
+        }
+    }
+
+    public void onServerStopping(FMLServerStoppingEvent event) {
+        for (IGregTechModule module : loadedModules) {
+            currentContainer = containers.get(getContainerID(module));
+            module.serverStopping(event);
         }
     }
 

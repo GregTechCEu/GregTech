@@ -17,7 +17,6 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
@@ -479,17 +478,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             if (this.circuitInventory != null) {
                 SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62 + yOffset)
                         .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
-                builder.widget(getCircuitSlotTooltip(circuitSlot)).widget(logo)
-                        .widget(new ClickButtonWidget(115, 62 + yOffset, 9, 9, "",
-                                click -> circuitInventory.addCircuitValue(click.isShiftClick ? 5 : 1))
-                                .setShouldClientCallback(true)
-                                .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS)
-                                .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() < IntCircuitIngredient.CIRCUIT_MAX))
-                        .widget(new ClickButtonWidget(115, 71 + yOffset, 9, 9, "",
-                                click -> circuitInventory.addCircuitValue(click.isShiftClick ? -5 : -1))
-                                .setShouldClientCallback(true)
-                                .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_MINUS)
-                                .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() > IntCircuitIngredient.CIRCUIT_MIN));
+                builder.widget(circuitSlot.setConsumer(this::getCircuitSlotTooltip)).widget(logo);
             }
         }
         return builder;
@@ -506,8 +495,15 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     }
 
     // Method provided to override
-    protected SlotWidget getCircuitSlotTooltip(SlotWidget widget) {
-        return widget.setTooltipText("gregtech.gui.configurator_slot.tooltip");
+    protected void getCircuitSlotTooltip(SlotWidget widget) {
+        String configString;
+        if (circuitInventory == null) {
+            configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
+        } else {
+            configString = String.valueOf(circuitInventory.getCircuitValue());
+        }
+
+        widget.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
     }
 
     @Override

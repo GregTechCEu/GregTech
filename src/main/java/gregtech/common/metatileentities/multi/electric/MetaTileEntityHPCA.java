@@ -35,7 +35,10 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
@@ -46,7 +49,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOpticalComputationProvider, IControllable {
 
@@ -260,6 +266,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         return shapeInfo;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (sourcePart == null) {
@@ -268,6 +275,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         return Textures.COMPUTER_CASING; // multiblock parts
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     protected @NotNull ICubeRenderer getFrontOverlay() {
         return Textures.HPCA_OVERLAY;

@@ -63,9 +63,9 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
                 this.frontFaceFree = checkFrontFaceFree();
         }
 
-        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) getController();
-        if (getWorld().isRemote && controller != null && controller.isActive())
+        if (getWorld().isRemote && getController() instanceof MultiblockWithDisplayBase controller && controller.isActive()) {
             pollutionParticles();
+        }
     }
 
     @Override

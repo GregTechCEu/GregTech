@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.List;
 import java.util.Objects;
 
 public abstract class RecipeProperty<T> {
@@ -21,6 +22,10 @@ public abstract class RecipeProperty<T> {
     @SideOnly(Side.CLIENT)
     public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value, int mouseX, int mouseY) {
         drawInfo(minecraft, x, y, color, value);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void getTooltipStrings(List<String> tooltip, int mouseX, int mouseY, Object value) {
     }
 
     public int getInfoHeight(Object value) {

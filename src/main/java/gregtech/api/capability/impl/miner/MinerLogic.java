@@ -28,6 +28,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
@@ -469,12 +471,18 @@ public class MinerLogic {
     /**
      * renders the pipe beneath the miner
      */
+    @SideOnly(Side.CLIENT)
     public void renderPipe(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.PIPE_IN_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
         for (int i = 0; i < this.pipeLength; i++) {
             translation.translate(0.0, -1.0, 0.0);
-            PIPE_TEXTURE.render(renderState, translation, pipeline, IMiner.PIPE_CUBOID);
+            getPipeTexture().render(renderState, translation, pipeline, IMiner.PIPE_CUBOID);
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected ICubeRenderer getPipeTexture() {
+        return PIPE_TEXTURE;
     }
 
     /**
@@ -689,7 +697,7 @@ public class MinerLogic {
             this.isWorkingEnabled = isWorkingEnabled;
             metaTileEntity.markDirty();
             if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
-                if (!isWorkingEnabled && checkCanMine()) resetArea();
+                if (!isWorkingEnabled) resetArea();
 
                 this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(isWorkingEnabled));
             }

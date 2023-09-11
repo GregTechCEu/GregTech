@@ -200,7 +200,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart im
 
     @Override
     public void registerAbilities(List<IFluidTank> list) {
-        list.add(new InaccessibleInfiniteTank(this.internalBuffer, this.getController()));
+        list.add(new InaccessibleInfiniteTank(this, this.internalBuffer, this.getController()));
     }
 
     @Override
@@ -214,8 +214,10 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart im
     private static class InaccessibleInfiniteTank implements IFluidTank, INotifiableHandler {
         private final IItemList<IAEFluidStack> internalBuffer;
         private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
+        private final MetaTileEntity holder;
 
-        public InaccessibleInfiniteTank(IItemList<IAEFluidStack> internalBuffer, MetaTileEntity mte) {
+        public InaccessibleInfiniteTank(MetaTileEntity holder, IItemList<IAEFluidStack> internalBuffer, MetaTileEntity mte) {
+            this.holder = holder;
             this.internalBuffer = internalBuffer;
             this.notifiableEntities.add(mte);
         }
@@ -248,6 +250,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart im
             }
             if (doFill) {
                 this.internalBuffer.add(AEFluidStack.fromFluidStack(resource));
+                holder.markDirty();
             }
             this.trigger();
             return resource.amount;

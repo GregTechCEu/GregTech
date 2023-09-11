@@ -34,7 +34,8 @@ public class LDPipeProvider implements IProbeInfoProvider {
                 if (network == null) {
                     probeInfo.text(TextStyleClass.ERROR + "{*gregtech.top.ld_pipe_no_network*}");
                 } else {
-                    if (network.getEndpointAmount() == 2) {
+                    ILDEndpoint other = endpoint.getLink();
+                    if (other != null) {
                         probeInfo.text(TextStyleClass.OK + "{*gregtech.top.ld_pipe_connected*}");
                         probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.ld_pipe_length*} " +
                                 TextStyleClass.INFOIMP + network.getTotalSize());
@@ -42,22 +43,19 @@ public class LDPipeProvider implements IProbeInfoProvider {
                         addIOText(probeInfo, endpoint);
 
                         if (entityPlayer.isSneaking()) {
-                            ILDEndpoint other = endpoint.getLink();
-                            if (other != null) {
-                                BlockPos otherPos = other.getPos();
-                                String prefix = null;
-                                if (other.isInput()) {
-                                    prefix = "{*gregtech.top.ld_pipe_input_endpoint*}";
-                                } else if (other.isOutput()) {
-                                    prefix = "{*gregtech.top.ld_pipe_output_endpoint*}";
-                                }
+                            BlockPos otherPos = other.getPos();
+                            String prefix = null;
+                            if (other.isInput()) {
+                                prefix = "{*gregtech.top.ld_pipe_input_endpoint*}";
+                            } else if (other.isOutput()) {
+                                prefix = "{*gregtech.top.ld_pipe_output_endpoint*}";
+                            }
 
-                                if (prefix != null) {
-                                    probeInfo.text(TextStyleClass.INFO + prefix +
-                                            TextStyleClass.INFO + " x: " + TextStyleClass.OK + otherPos.getX() +
-                                            TextStyleClass.INFO + " y: " + TextStyleClass.OK + otherPos.getY() +
-                                            TextStyleClass.INFO + " z: " + TextStyleClass.OK + otherPos.getZ());
-                                }
+                            if (prefix != null) {
+                                probeInfo.text(TextStyleClass.INFO + prefix +
+                                        TextStyleClass.INFO + " x: " + TextStyleClass.OK + otherPos.getX() +
+                                        TextStyleClass.INFO + " y: " + TextStyleClass.OK + otherPos.getY() +
+                                        TextStyleClass.INFO + " z: " + TextStyleClass.OK + otherPos.getZ());
                             }
                         }
                     } else {

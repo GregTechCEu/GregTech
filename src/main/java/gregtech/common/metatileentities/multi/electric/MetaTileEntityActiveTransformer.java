@@ -33,6 +33,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -119,8 +121,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     }
 
     private TraceabilityPredicate getHatchPredicates() {
-        return abilities(MultiblockAbility.INPUT_ENERGY).setMaxGlobalLimited(3, 1)
-                .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setMaxGlobalLimited(3, 1))
+        return abilities(MultiblockAbility.INPUT_ENERGY).setPreviewCount(2)
+                .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setPreviewCount(2))
                 .or(abilities(MultiblockAbility.INPUT_LASER).setMaxGlobalLimited(1))
                 .or(abilities(MultiblockAbility.OUTPUT_LASER).setMaxGlobalLimited(1))
                 // Disallow the config maintenance hatch because that would probably break the conservation of energy
@@ -128,6 +130,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
                         MetaTileEntities.AUTO_MAINTENANCE_HATCH, MetaTileEntities.CLEANING_MAINTENANCE_HATCH).setExactLimit(1));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.HIGH_POWER_CASING;
@@ -137,6 +140,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.HIGH_POWER_CASING);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     protected @NotNull ICubeRenderer getFrontOverlay() {
         return Textures.DATA_BANK_OVERLAY;

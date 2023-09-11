@@ -35,7 +35,7 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
     private final boolean isTransmitter;
 
     public MetaTileEntityOpticalDataHatch(ResourceLocation metaTileEntityId, boolean isTransmitter) {
-        super(metaTileEntityId, GTValues.ZPM, false);
+        super(metaTileEntityId, GTValues.LuV, false);
         this.isTransmitter = isTransmitter;
     }
 

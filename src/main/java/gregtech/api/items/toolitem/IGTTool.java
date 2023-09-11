@@ -156,7 +156,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
 
         // Durability formula we are working with:
-        // Final Durability = (material durability * material durability multiplier) + (tool definition durability * definition durability multiplier)
+        // Final Durability = (material durability * material durability multiplier) + (tool definition durability * definition durability multiplier) - 1
+        // Subtracts 1 internally since Minecraft treats "0" as a valid durability, but we don't want to display this.
 
         int durability = toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
 
@@ -167,7 +168,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             durability += toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack);
         }
 
-        toolTag.setInteger(MAX_DURABILITY_KEY, durability);
+        toolTag.setInteger(MAX_DURABILITY_KEY, durability - 1);
         toolTag.setInteger(DURABILITY_KEY, 0);
         if (toolProperty.getUnbreakable()) {
             stackCompound.setBoolean(UNBREAKABLE_KEY, true);
@@ -667,12 +668,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         // durability info
         if (!tagCompound.getBoolean(UNBREAKABLE_KEY)) {
-            int damageRemaining = tool.getTotalMaxDurability(stack) - stack.getItemDamage();
+            // Plus 1 to match vanilla behavior where tools can still be used once at zero durability. We want to not show this
+            int damageRemaining = tool.getTotalMaxDurability(stack) - stack.getItemDamage() + 1;
             if (toolStats.isSuitableForCrafting(stack)) {
                 tooltip.add(I18n.format("item.gt.tool.tooltip.crafting_uses", TextFormattingUtil.formatNumbers(damageRemaining / Math.max(1, toolStats.getToolDamagePerCraft(stack)))));
             }
 
-            // Plus 1 to match vanilla behavior where tools can still be used once at zero durability
             tooltip.add(I18n.format("item.gt.tool.tooltip.general_uses", TextFormattingUtil.formatNumbers(damageRemaining)));
         }
 
@@ -741,17 +742,19 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 Material material = getToolMaterial(stack);
 
                 Collection<String> repairItems = new ArrayList<>();
-                if (ModHandler.isMaterialWood(material)) {
-                    repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
-                } else {
+                if (!ModHandler.isMaterialWood(material)) {
                     if (material.hasProperty(PropertyKey.INGOT)) {
-                        repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                        repairItems.add(OrePrefix.ingot.getLocalNameForItem(material));
                     } else if (material.hasProperty(PropertyKey.GEM)) {
-                        repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
+                        repairItems.add(OrePrefix.gem.getLocalNameForItem(material));
                     }
+                }
+                if (!OreDictUnifier.get(OrePrefix.plate, material).isEmpty()) {
                     repairItems.add(OrePrefix.plate.getLocalNameForItem(material));
                 }
-                tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", String.join(", ", repairItems)));
+                if (!repairItems.isEmpty()) {
+                    tooltip.add(I18n.format("item.gt.tool.tooltip.repair_material", String.join(", ", repairItems)));
+                }
             } else {
                 tooltip.add(I18n.format("item.gt.tool.tooltip.repair_info"));
             }

@@ -21,8 +21,6 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
     private final MultiFluidTankEntry[] fluidTanks;
     private final boolean allowSameFluidFill;
 
-    private IFluidTankProperties[] fluidTankProperties;
-
     public FluidTankList(boolean allowSameFluidFill, IFluidTank... fluidTanks) {
         ArrayList<MultiFluidTankEntry> list = new ArrayList<>();
         for (IFluidTank tank : fluidTanks) list.add(wrapIntoEntry(tank));
@@ -68,14 +66,11 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
     @Nonnull
     @Override
     public IFluidTankProperties[] getTankProperties() {
-        if (fluidTankProperties == null) {
-            ArrayList<IFluidTankProperties> propertiesList = new ArrayList<>();
-            for (MultiFluidTankEntry fluidTank : fluidTanks) {
-                Collections.addAll(propertiesList, fluidTank.getTankProperties());
-            }
-            this.fluidTankProperties = propertiesList.toArray(new IFluidTankProperties[0]);
+        ArrayList<IFluidTankProperties> propertiesList = new ArrayList<>();
+        for (MultiFluidTankEntry fluidTank : fluidTanks) {
+            Collections.addAll(propertiesList, fluidTank.getTankProperties());
         }
-        return fluidTankProperties;
+        return propertiesList.toArray(new IFluidTankProperties[0]);
     }
 
     @Override

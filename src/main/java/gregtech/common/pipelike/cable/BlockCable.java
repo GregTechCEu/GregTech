@@ -79,6 +79,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         return insulation.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     public PipeRenderer getPipeRenderer() {

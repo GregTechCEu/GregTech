@@ -85,6 +85,7 @@ public class OrganicChemistryMaterials {
 
         GlycerylTrinitrate = new Material.Builder(1009, gregtechId("glyceryl_trinitrate"))
                 .fluid()
+                .color(0x04443C, false)
                 .flags(FLAMMABLE, EXPLOSIVE)
                 .components(Carbon, 3, Hydrogen, 5, Nitrogen, 3, Oxygen, 9)
                 .build();
@@ -156,7 +157,7 @@ public class OrganicChemistryMaterials {
 
         Epichlorohydrin = new Material.Builder(1019, gregtechId("epichlorohydrin"))
                 .fluid()
-                .color(0x712400)
+                .color(0x640C04, false)
                 .components(Carbon, 3, Hydrogen, 5, Chlorine, 1, Oxygen, 1)
                 .build();
 
@@ -290,7 +291,7 @@ public class OrganicChemistryMaterials {
 
         DinitrogenTetroxide = new Material.Builder(1039, gregtechId("dinitrogen_tetroxide"))
                 .fluid(FluidTypes.GAS)
-                .color(0x004184)
+                .color(0x570C02)
                 .components(Nitrogen, 2, Oxygen, 4)
                 .build();
 
@@ -387,12 +388,14 @@ public class OrganicChemistryMaterials {
 
         Ethanol = new Material.Builder(1054, gregtechId("ethanol"))
                 .fluid()
+                .color(0xFC4C04, false)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1)
                 .build();
 
         Toluene = new Material.Builder(1055, gregtechId("toluene"))
                 .fluid()
+                .color(0x712400, false)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 7, Hydrogen, 8)
                 .build();

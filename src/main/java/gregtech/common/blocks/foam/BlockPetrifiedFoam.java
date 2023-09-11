@@ -16,9 +16,9 @@ public class BlockPetrifiedFoam extends BlockColored {
     public BlockPetrifiedFoam(boolean isReinforced) {
         super(Material.ROCK);
         setTranslationKey(isReinforced ? "gt.reinforced_stone" : "gt.petrified_foam");
-        setSoundType(SoundType.SNOW);
-        setResistance(isReinforced ? 4.0f : 16.0f);
-        setHardness(isReinforced ? 1.0f : 4.0f);
+        setSoundType(isReinforced ? SoundType.STONE : SoundType.SNOW);
+        setResistance(isReinforced ? 16.0f : 4.0f);
+        setHardness(isReinforced ? 4.0f : 1.0f);
         setHarvestLevel(ToolClasses.PICKAXE, isReinforced ? 2 : 1);
     }
 

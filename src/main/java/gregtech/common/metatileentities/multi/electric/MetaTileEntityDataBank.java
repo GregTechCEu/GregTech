@@ -187,6 +187,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.HIGH_POWER_CASING);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (sourcePart instanceof IDataAccessHatch) {
@@ -212,6 +213,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
         getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(), this.isWorkingEnabled());
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {
@@ -235,7 +237,8 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.3"));
-        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.4", GTValues.VA[GTValues.EV], GTValues.VA[GTValues.LuV]));
+        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.4", GTValues.VA[GTValues.EV]));
+        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.5", GTValues.VA[GTValues.LuV]));
     }
 
     @Override

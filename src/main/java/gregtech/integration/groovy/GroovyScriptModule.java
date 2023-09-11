@@ -91,16 +91,20 @@ public class GroovyScriptModule extends IntegrationSubmodule {
         return true;
     }
 
+    @Nullable
     public static ItemStack getMetaItem(String name) {
         String[] resultName = splitObjectName(name);
-        Map<String, ItemStack> map = metaItems.get(resultName[0] + ':' + resultName[1]);
-
-        ItemStack item;
-        if ((item = map.get(resultName[1])) != null) {
-            return item.copy();
+        Map<String, ItemStack> map = metaItems.get(resultName[0]);
+        if (map != null) {
+            ItemStack stack = map.get(resultName[1]);
+            if (stack != null) {
+                return stack.copy();
+            }
         }
-        if ((item = getMetaTileEntityItem(resultName)) != null) {
-            return item.copy();
+
+        ItemStack stack = getMetaTileEntityItem(resultName);
+        if (stack != null) {
+            return stack.copy();
         }
         return null;
     }
@@ -131,52 +135,52 @@ public class GroovyScriptModule extends IntegrationSubmodule {
             Map<String, ItemStack> map = metaItems.computeIfAbsent(modid, (k) -> new Object2ObjectOpenHashMap<>());
             String name = "block" + entry.getKey().toCamelCaseString();
             ItemStack stack = entry.getValue().getItem(entry.getKey());
-            map.put(modid + ':' + name, stack);
+            map.put(name, stack);
         }
         for (Map.Entry<Material, BlockFrame> entry : MetaBlocks.FRAMES.entrySet()) {
             String modid = entry.getKey().getModid();
             Map<String, ItemStack> map = metaItems.computeIfAbsent(modid, (k) -> new Object2ObjectOpenHashMap<>());
             String name = "frame" + entry.getKey().toCamelCaseString();
             ItemStack stack = entry.getValue().getItem(entry.getKey());
-            map.put(modid + ':' + name, stack);
+            map.put(name, stack);
         }
 
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             String modid = registry.getModid();
-            Map<String, ItemStack> map = new Object2ObjectOpenHashMap<>();
+            Map<String, ItemStack> map = metaItems.computeIfAbsent(modid, (k) -> new Object2ObjectOpenHashMap<>());
 
             for (BlockCable cable : MetaBlocks.CABLES.get(modid)) {
                 for (Material material : cable.getEnabledMaterials()) {
                     String name = cable.getPrefix().name + material.toCamelCaseString();
                     ItemStack stack = cable.getItem(material);
-                    map.put(modid + ':' + name, stack);
+                    map.put(name, stack);
                 }
             }
             for (BlockItemPipe pipe : MetaBlocks.ITEM_PIPES.get(modid)) {
                 for (Material material : pipe.getEnabledMaterials()) {
                     String name = pipe.getPrefix().name + material.toCamelCaseString();
                     ItemStack stack = pipe.getItem(material);
-                    map.put(modid + ':' + name, stack);
+                    map.put(name, stack);
                 }
             }
             for (BlockFluidPipe pipe : MetaBlocks.FLUID_PIPES.get(modid)) {
                 for (Material material : pipe.getEnabledMaterials()) {
                     String name = pipe.getPrefix().name + material.toCamelCaseString();
                     ItemStack stack = pipe.getItem(material);
-                    map.put(modid + ':' + name, stack);
+                    map.put(name, stack);
                 }
             }
             metaItems.put(modid, map);
         }
 
         for (MetaItem<?> item : MetaItem.getMetaItems()) {
-            Map<String, ItemStack> map = new Object2ObjectOpenHashMap<>();
+            Map<String, ItemStack> map = metaItems.computeIfAbsent(Objects.requireNonNull(item.getRegistryName()).getNamespace(),
+                    (k) -> new Object2ObjectOpenHashMap<>());
             for (MetaItem<?>.MetaValueItem entry : item.getAllItems()) {
                 if (!entry.unlocalizedName.equals("meta_item")) {
                     map.put(entry.unlocalizedName, entry.getStackForm());
                 }
             }
-            metaItems.put(Objects.requireNonNull(item.getRegistryName()).getNamespace(), map);
         }
     }
 

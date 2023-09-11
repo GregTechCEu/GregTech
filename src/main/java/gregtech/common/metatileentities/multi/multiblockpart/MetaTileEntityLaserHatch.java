@@ -26,6 +26,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -35,9 +37,9 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
     private LaserHatchWrapper wrapper;
 
     public MetaTileEntityLaserHatch(ResourceLocation metaTileEntityId, boolean isOutput) {
-        super(metaTileEntityId, GTValues.ZPM);
+        super(metaTileEntityId, GTValues.LuV);
         this.isOutput = isOutput;
-        this.wrapper = new LaserHatchWrapper(this, null, isOutput);
+        this.wrapper = new LaserHatchWrapper(this, null);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
     @Override
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
-        this.wrapper = new LaserHatchWrapper(this, null, isOutput);
+        this.wrapper = new LaserHatchWrapper(this, null);
     }
 
     private void calculateLaserContainer(MultiblockControllerBase controllerBase) {
@@ -67,10 +69,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
         TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(side));
         EnumFacing oppositeSide = side.getOpposite();
         if (tileEntity != null && tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide)) {
-            ILaserContainer laserContainer = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide);
-            if (laserContainer != null && !laserContainer.inputsEnergy(oppositeSide)) {
-                return laserContainer;
-            }
+            return tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide);
         }
         return null;
     }
@@ -134,78 +133,47 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
 
         @Nullable
         private Supplier<ILaserContainer> bufferSupplier;
-        private final boolean isOutput;
 
         /**
          * Create a new MTE trait.
          *
          * @param metaTileEntity the MTE to reference, and add the trait to
          */
-        public LaserHatchWrapper(@NotNull MetaTileEntity metaTileEntity, @Nullable Supplier<ILaserContainer> bufferSupplier, boolean isOutput) {
+        public LaserHatchWrapper(@NotNull MetaTileEntity metaTileEntity, @Nullable Supplier<ILaserContainer> bufferSupplier) {
             super(metaTileEntity);
             this.bufferSupplier = bufferSupplier;
-            this.isOutput = isOutput;
         }
 
         @Override
-        public long acceptEnergy(EnumFacing side, long amount) {
+        public long changeEnergy(long amount, @Nonnull Collection<ILaserContainer> seen) {
+            seen.add(this);
             ILaserContainer buffer = getBuffer();
-            if (buffer == null) {
-                return 0;
-            } else if (amount > 0 && (side == null || inputsEnergy(side))) {
-                return buffer.acceptEnergy(side, amount);
-            } else if (amount < 0 && (side == null || outputsEnergy(side))) {
-                return buffer.acceptEnergy(side, amount);
-            }
-            return 0;
-        }
-
-        @Override
-        public long changeEnergy(long amount) {
-            ILaserContainer buffer = getBuffer();
-            if (buffer == null) {
+            if (buffer == null || seen.contains(buffer)) {
                 return 0;
             } else {
-                return buffer.changeEnergy(amount);
+                return buffer.changeEnergy(amount, seen);
             }
         }
 
         @Override
-        public boolean inputsEnergy(EnumFacing side) {
+        public long getEnergyStored(@Nonnull Collection<ILaserContainer> seen) {
+            seen.add(this);
             ILaserContainer buffer = getBuffer();
-            if (buffer == null) {
-                return false;
-            } else {
-                return !outputsEnergy(side) && buffer.inputsEnergy(side) && !isOutput;
-            }
-        }
-
-        @Override
-        public boolean outputsEnergy(EnumFacing side) {
-            ILaserContainer buffer = getBuffer();
-            if (buffer == null) {
-                return false;
-            } else {
-                return buffer.outputsEnergy(side) && isOutput;
-            }
-        }
-        @Override
-        public long getEnergyStored() {
-            ILaserContainer buffer = getBuffer();
-            if (buffer == null) {
+            if (buffer == null || seen.contains(buffer)) {
                 return 0;
             } else {
-                return buffer.getEnergyStored();
+                return buffer.getEnergyStored(seen);
             }
         }
 
         @Override
-        public long getEnergyCapacity() {
+        public long getEnergyCapacity(@Nonnull Collection<ILaserContainer> seen) {
+            seen.add(this);
             ILaserContainer buffer = getBuffer();
-            if (buffer == null) {
+            if (buffer == null || seen.contains(buffer)) {
                 return 0;
             } else {
-                return buffer.getEnergyCapacity();
+                return buffer.getEnergyCapacity(seen);
             }
         }
 

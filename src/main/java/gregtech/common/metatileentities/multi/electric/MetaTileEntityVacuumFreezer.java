@@ -15,6 +15,8 @@ import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -40,6 +42,7 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
                 .build();
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.FROST_PROOF_CASING;
@@ -54,6 +57,7 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
         return GTSoundEvents.BREAKDOWN_ELECTRICAL;
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {

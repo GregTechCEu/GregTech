@@ -148,6 +148,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return metaTileEntity.getExportFluids();
     }
 
+    /**
+     * @return true if energy is consumed by this Recipe Logic, otherwise false
+     */
+    public boolean consumesEnergy() {
+        return true;
+    }
+
     @Nonnull
     @Override
     public final String getName() {
@@ -619,16 +626,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     @Nonnull
     protected int[] calculateOverclock(@Nonnull Recipe recipe) {
-        // invert EU for overclocking calculations (so it increases in the positive direction)
-        boolean negativeEU = recipe.getEUt() < 0;
-
         // perform the actual overclocking
-        int[] overclockResult = performOverclocking(recipe);
-
-        // make the EU negative after it has been made further away from 0
-        if (negativeEU) overclockResult[0] *= -1;
-
-        return overclockResult;
+        return performOverclocking(recipe);
     }
 
     /**
@@ -811,6 +810,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     public int getRecipeEUt() {
         return recipeEUt;
+    }
+
+    /**
+     * @return the current recipe's EU/t for TOP/Waila/Tricorder
+     */
+    public int getInfoProviderEUt() {
+        return getRecipeEUt();
     }
 
     /**

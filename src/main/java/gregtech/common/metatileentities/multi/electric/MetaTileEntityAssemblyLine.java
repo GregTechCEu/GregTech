@@ -33,6 +33,8 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -45,6 +47,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Function;
 
@@ -107,11 +110,14 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     @Nonnull
     protected static TraceabilityPredicate fluidInputPredicate() {
-        // block multi-fluid hatches
-        return metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.IMPORT_FLUIDS).stream()
-                .filter(mte -> !(mte instanceof MetaTileEntityMultiFluidHatch))
-                .toArray(MetaTileEntity[]::new))
-                .setMaxGlobalLimited(4);
+        // block multi-fluid hatches if ordered fluids is enabled
+        if (ConfigHolder.machines.orderedFluidAssembly) {
+            return metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.IMPORT_FLUIDS).stream()
+                    .filter(mte -> !(mte instanceof MetaTileEntityMultiFluidHatch))
+                    .toArray(MetaTileEntity[]::new))
+                    .setMaxGlobalLimited(4);
+        }
+        return abilities(MultiblockAbility.IMPORT_FLUIDS);
     }
 
     @Nonnull
@@ -138,6 +144,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.SOLID_STEEL_CASING;
@@ -337,5 +344,16 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             if (hatch.isRecipeAvailable(recipe)) return true;
         }
         return false;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+        if (ConfigHolder.machines.orderedAssembly && ConfigHolder.machines.orderedFluidAssembly) {
+            tooltip.add(I18n.format("gregtech.machine.assembly_line.tooltip_ordered_both"));
+        } else if (ConfigHolder.machines.orderedAssembly) {
+            tooltip.add(I18n.format("gregtech.machine.assembly_line.tooltip_ordered_items"));
+        } else if (ConfigHolder.machines.orderedFluidAssembly) {
+            tooltip.add(I18n.format("gregtech.machine.assembly_line.tooltip_ordered_fluids"));
+        }
     }
 }

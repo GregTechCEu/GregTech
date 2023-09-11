@@ -453,6 +453,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         return null;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart iMultiblockPart) {
         return Textures.SOLID_STEEL_CASING;

@@ -64,6 +64,7 @@ public class MachineRecipeLoader {
         MiscRecipeLoader.init();
         BatteryRecipes.init();
         CircuitRecipes.init();
+        ComputerRecipes.init();
         WoodRecipeLoader.registerRecipes();
 
         registerDecompositionRecipes();
@@ -1051,6 +1052,9 @@ public class MachineRecipeLoader {
 
         //Jetpacks
         ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(), SEMIFLUID_JETPACK.getStackForm());
+
+        // ClipBoard
+        ModHandler.addShapelessNBTClearingRecipe("clipboard_nbt", CLIPBOARD.getStackForm(), CLIPBOARD.getStackForm());
 
     }
 

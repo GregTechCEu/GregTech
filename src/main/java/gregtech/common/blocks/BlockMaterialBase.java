@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.Block;
@@ -10,6 +11,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -90,5 +92,23 @@ public abstract class BlockMaterialBase extends Block {
     @SuppressWarnings("deprecation")
     public MapColor getMapColor(@Nonnull IBlockState state, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
         return getMaterial(state).getMaterialMapColor();
+    }
+
+    @Override
+    public int getFlammability(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+        Material material = getGtMaterial(world.getBlockState(pos));
+        if (material.hasFlag(MaterialFlags.FLAMMABLE)) {
+            return 20; // flammability of things like Wood Planks
+        }
+        return super.getFlammability(world, pos, face);
+    }
+
+    @Override
+    public int getFireSpreadSpeed(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+        Material material = getGtMaterial(world.getBlockState(pos));
+        if (material.hasFlag(MaterialFlags.FLAMMABLE)) {
+            return 5; // encouragement of things like Wood Planks
+        }
+        return super.getFireSpreadSpeed(world, pos, face);
     }
 }

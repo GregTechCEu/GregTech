@@ -163,15 +163,15 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
                 ));
             }
             // multi amp recipes: change 0 ? 0 : 1 to 0 ? 0 : amperage
-            if (workable.getRecipeEUt() > 0) {
+            if (workable.consumesEnergy()) {
                 list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getRecipeEUt())).setStyle(new Style().setColor(TextFormatting.RED)),
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt())).setStyle(new Style().setColor(TextFormatting.RED)),
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
                 ));
             } else {
                 list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getRecipeEUt() * -1)).setStyle(new Style().setColor(TextFormatting.RED)),
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt())).setStyle(new Style().setColor(TextFormatting.RED)),
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
                 ));
             }
         }

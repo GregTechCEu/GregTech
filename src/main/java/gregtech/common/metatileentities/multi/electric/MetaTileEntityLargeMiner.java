@@ -50,6 +50,8 @@ import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +88,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.material = material;
         this.tier = tier;
         this.drillingFluidConsumePerTick = drillingFluidConsumePerTick;
-        this.minerLogic = new MultiblockMinerLogic(this, fortune, speed, maximumChunkDiameter * CHUNK_LENGTH / 2, getBaseTexture(null), RecipeMaps.MACERATOR_RECIPES);
+        this.minerLogic = new MultiblockMinerLogic(this, fortune, speed, maximumChunkDiameter * CHUNK_LENGTH / 2, RecipeMaps.MACERATOR_RECIPES);
     }
 
     @Override
@@ -152,6 +154,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         return false;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
@@ -286,6 +289,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         return frames(Materials.Steel);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (this.material.equals(Materials.Titanium))
@@ -330,6 +334,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.minerLogic.receiveCustomData(dataId, buf);
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {

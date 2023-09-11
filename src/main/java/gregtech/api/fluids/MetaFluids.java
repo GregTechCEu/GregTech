@@ -19,6 +19,7 @@ import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.common.blocks.MetaBlocks;
+import io.github.drmanganese.topaddons.reference.Colors;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -27,6 +28,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -113,6 +115,7 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.Helium, FluidTypes.PLASMA);
         setMaterialFluidTexture(Materials.Helium3, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.Fluorine, FluidTypes.GAS);
+        setMaterialFluidTexture(Materials.Krypton, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.TitaniumTetrachloride, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Steam, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.OilHeavy, FluidTypes.LIQUID);
@@ -128,10 +131,18 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.LightFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.HeavyFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.LPG, FluidTypes.GAS);
+        setMaterialFluidTexture(Materials.LightlySteamCrackedNaphtha, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.SeverelySteamCrackedNaphtha, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.LightlyHydroCrackedNaphtha, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.SeverelyHydroCrackedNaphtha, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.LightlySteamCrackedLightFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.SeverelySteamCrackedLightFuel, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.LightlyHydroCrackedLightFuel, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.SeverelyHydroCrackedLightFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.LightlySteamCrackedHeavyFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.SeverelySteamCrackedHeavyFuel, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.LightlyHydroCrackedHeavyFuel, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.SeverelyHydroCrackedHeavyFuel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Chlorine, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.CetaneBoostedDiesel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.SodiumPersulfate, FluidTypes.LIQUID);
@@ -159,6 +170,8 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.UUMatter, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Toluene, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.LiquidAir, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.Epichlorohydrin, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.Glass, FluidTypes.LIQUID);
     }
 
     /**
@@ -237,6 +250,7 @@ public class MetaFluids {
             if (material.hasFluidColor()) {
                 fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
             } else {
+                // set color to 0xFFFFFFFF to preserve fluid texture
                 fluid.setColor(0xFFFFFFFF);
             }
 
@@ -244,6 +258,8 @@ public class MetaFluids {
             FluidType.setFluidProperties(fluidType, fluid);
 
             if (material.hasFlag(MaterialFlags.STICKY)) fluid.setViscosity(2000);
+
+            registerFluidModCompat(fluidName, material, fluid);
 
             ((MaterialFluid) fluid).registerFluidTooltip();
             FluidRegistry.registerFluid(fluid);
@@ -265,6 +281,12 @@ public class MetaFluids {
 
         fluidToMaterialMappings.put(fluid.getName(), material);
         return fluid;
+    }
+
+    private static void registerFluidModCompat(@Nonnull String fluidName, @Nonnull Material material, @Nonnull Fluid fluid) {
+        if (!material.hasFluidColor() && Loader.isModLoaded(GTValues.MODID_TOP_ADDONS)) {
+            Colors.FLUID_NAME_COLOR_MAP.put(fluidName, GTUtility.convertRGBtoARGB(material.getMaterialRGB()));
+        }
     }
 
     /**

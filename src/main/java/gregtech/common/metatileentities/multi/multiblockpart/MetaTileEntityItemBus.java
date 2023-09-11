@@ -12,7 +12,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -20,7 +19,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTHashMaps;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -121,7 +119,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
             }
             // Only attempt to auto collapse the inventory contents once the bus has been notified
             if (isAutoCollapse()) {
-                IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : this.getImportItems());
+                // Exclude the ghost circuit inventory from the auto collapse, so it does not extract any ghost circuits from the slot
+                IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : super.getImportItems());
                 if (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) : this.getNotifiedItemInputList().contains(inventory)) {
                     collapseInventorySlotContents(inventory);
                 }
@@ -226,6 +225,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS) {
             this.autoCollapse = buf.readBoolean();
+        } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+            this.workingEnabled = buf.readBoolean();
         }
     }
 
@@ -273,17 +274,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
 
             SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, circuitX, circuitY)
                     .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
-            builder.widget(getCircuitSlotTooltip(circuitSlot))
-                    .widget(new ClickButtonWidget(circuitX - 9, circuitY, 9, 9, "",
-                            click -> circuitInventory.addCircuitValue(click.isShiftClick ? 5 : 1))
-                            .setShouldClientCallback(true)
-                            .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS)
-                            .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() < IntCircuitIngredient.CIRCUIT_MAX))
-                    .widget(new ClickButtonWidget(circuitX - 9, circuitY + 9, 9, 9, "",
-                            click -> circuitInventory.addCircuitValue(click.isShiftClick ? -5 : -1))
-                            .setShouldClientCallback(true)
-                            .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_MINUS)
-                            .setDisplayFunction(() -> circuitInventory.hasCircuitValue() && circuitInventory.getCircuitValue() > IntCircuitIngredient.CIRCUIT_MIN));
+            builder.widget(getCircuitSlotTooltip(circuitSlot));
         }
 
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, inventoryStartX, inventoryStartY);
@@ -372,6 +363,13 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     public void setAutoCollapse(boolean inverted) {
         autoCollapse = inverted;
         if (!getWorld().isRemote) {
+            if (autoCollapse) {
+                if (isExportHatch) {
+                    addNotifiedOutput(this.getExportItems());
+                } else {
+                    addNotifiedInput(super.getImportItems());
+                }
+            }
             writeCustomData(GregtechDataCodes.TOGGLE_COLLAPSE_ITEMS, packetBuffer -> packetBuffer.writeBoolean(autoCollapse));
             notifyBlockUpdate();
             markDirty();

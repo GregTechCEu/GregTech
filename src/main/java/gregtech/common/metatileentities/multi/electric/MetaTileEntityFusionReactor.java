@@ -164,6 +164,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         return shapeInfos;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (this.recipeMapWorkable.isActive()) {
@@ -287,6 +288,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         tooltip.add(I18n.format("gregtech.machine.fusion_reactor.overclocking"));
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {

@@ -62,19 +62,21 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
                     ItemStack toMerge = slotReference.getStack();
                     int crafts = this.slotReference.getStack().getCount();
                     if (isLeftClick) {
-                        //limit shift click to one stack at a time
-                        int totalCrafts = 0;
-                        int maxCrafts = this.slotReference.getStack().getMaxStackSize() / this.slotReference.getStack().getCount();
-                        for (int i = 0; i < maxCrafts; i++) {
-                            if (canMergeToInv(playerInventory, toMerge, crafts) && recipeResolver.performRecipe(gui.entityPlayer)) {
-                                this.recipeResolver.refreshOutputSlot();
-                                recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
-                                totalCrafts += crafts;
+                        if (crafts != 0) {
+                            //limit shift click to one stack at a time
+                            int totalCrafts = 0;
+                            int maxCrafts = toMerge.getMaxStackSize() / crafts;
+                            for (int i = 0; i < maxCrafts; i++) {
+                                if (canMergeToInv(playerInventory, toMerge, crafts) && recipeResolver.performRecipe(gui.entityPlayer)) {
+                                    this.recipeResolver.refreshOutputSlot();
+                                    recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
+                                    totalCrafts += crafts;
+                                }
                             }
+                            ItemStack toAdd = this.slotReference.getStack().copy();
+                            toAdd.setCount(totalCrafts);
+                            player.inventory.addItemStackToInventory(toAdd);
                         }
-                        ItemStack toAdd = this.slotReference.getStack().copy();
-                        toAdd.setCount(totalCrafts);
-                        player.inventory.addItemStackToInventory(toAdd);
                     } else if (isRightClick) {
                         int totalCrafts = 0;
                         while (canMergeToInv(playerInventory, toMerge, crafts) && recipeResolver.performRecipe(gui.entityPlayer)) {

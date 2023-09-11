@@ -278,6 +278,8 @@ public class CoreModule implements IGregTechModule {
                 if (saveData == null) {
                     saveData = new BedrockFluidVeinSaveData(BedrockFluidVeinSaveData.dataName);
                     world.setData(BedrockFluidVeinSaveData.dataName, saveData);
+                    // the save data does not yet exist, use the latest version number
+                    BedrockFluidVeinHandler.saveDataVersion = BedrockFluidVeinHandler.MAX_FLUID_SAVE_DATA_VERSION;
                 }
                 BedrockFluidVeinSaveData.setInstance(saveData);
             }

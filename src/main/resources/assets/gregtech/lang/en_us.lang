@@ -57,6 +57,7 @@ gregtech.top.working_disabled=Working Disabled
 
 gregtech.top.energy_consumption=Using
 gregtech.top.energy_production=Producing
+gregtech.top.of=of
 
 gregtech.top.transform_up=Step Up
 gregtech.top.transform_down=Step Down
@@ -100,7 +101,7 @@ gregtech.top.ld_pipe_length=Length:
 gregtech.top.ld_pipe_input=Input
 gregtech.top.ld_pipe_output=Output
 gregtech.top.ld_pipe_input_endpoint=Input Endpoint:
-gregtech.top.ld_pipe_output_endpoint=Other Endpoint:
+gregtech.top.ld_pipe_output_endpoint=Output Endpoint:
 
 gregtech.waila.energy_stored=Energy: %d EU / %d EU
 gregtech.waila.progress_idle=Idle
@@ -150,7 +151,7 @@ metaitem.electric.discharge_mode.tooltip=Use while sneaking to toggle discharge 
 
 metaitem.dust.tooltip.purify=Throw into Cauldron to get clean Dust
 metaitem.crushed.tooltip.purify=Throw into Cauldron to get Purified Ore
-metaitem.int_circuit.configuration=Configuration: %,d
+metaitem.int_circuit.configuration=§aConfigured Value: §f%d§7
 metaitem.credit.copper.name=Copper Credit
 metaitem.credit.copper.tooltip=0.125 Credits
 metaitem.credit.cupronickel.name=Cupronickel Credit
@@ -4603,6 +4604,9 @@ gregtech.machine.large_boiler.titanium.name=Large Titanium Boiler
 gregtech.machine.large_boiler.tungstensteel.name=Large Tungstensteel Boiler
 
 gregtech.machine.assembly_line.name=Assembly Line
+gregtech.machine.assembly_line.tooltip_ordered_items=§fItems§7 must be in the correct order to run.
+gregtech.machine.assembly_line.tooltip_ordered_fluids=§Fluids§7 must be in the correct order to run.
+gregtech.machine.assembly_line.tooltip_ordered_both=§fItems§7 and §fFluids§7 must be in the correct order to run.
 gregtech.machine.fusion_reactor.luv.name=Fusion Reactor Computer Mark 1
 gregtech.machine.fusion_reactor.zpm.name=Fusion Reactor Computer Mark 2
 gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3
@@ -4670,7 +4674,8 @@ gregtech.machine.data_bank.name=Data Bank
 gregtech.machine.data_bank.tooltip.1=Your Personal NAS
 gregtech.machine.data_bank.tooltip.2=Bulk Data Storage. Transfer with Optical Cables.
 gregtech.machine.data_bank.tooltip.3=Data Banks can be chained together.
-gregtech.machine.data_bank.tooltip.4=Uses %sEU/t per Data Hatch and %sEU/t when chained.
+gregtech.machine.data_bank.tooltip.4=Uses §f%s EU/t§7 per Data Hatch normally.
+gregtech.machine.data_bank.tooltip.5=Uses §f%s EU/t§7 per Data Hatch when chained.
 gregtech.multiblock.data_bank.description=The Data Bank is a multiblock structure used for sharing Assembly Line Research Data between multiple Assembly Lines. Additionally, it enables Assembly Lines to read more complex research data on Data Modules.
 
 gregtech.machine.power_substation.name=Power Substation
@@ -4989,7 +4994,7 @@ gregtech.machine.passthrough_hatch_fluid.tooltip=Sends Fluids from one Side to t
 
 gregtech.machine.data_access_hatch.name=Data Access Hatch
 gregtech.machine.data_access_hatch.tooltip.1=Data Access for Multiblocks
-gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Sticks
+gregtech.machine.data_access_hatch.tooltip.2=Adds §a%s§7 slots for Data Items
 gregtech.machine.data_access_hatch.advanced.name=Advanced Data Access Hatch
 gregtech.machine.data_access_hatch.creative.name=Creative Data Access Hatch
 
@@ -5005,10 +5010,10 @@ gregtech.machine.research_station.object_holder.name=Object Holder
 gregtech.machine.research_station.object_holder.tooltip=Advanced Holding Mechanism for Research Station
 
 gregtech.machine.laser_hatch.source.name=Laser Source Hatch
-gregtech.machine.laser_hatch.source.tooltip1=Receiving power from distance
+gregtech.machine.laser_hatch.source.tooltip1=Transmitting power at distance
 gregtech.machine.laser_hatch.source.tooltip2=§cLaser Cables must be in a straight line!§7
 gregtech.machine.laser_hatch.target.name=Laser Target Hatch
-gregtech.machine.laser_hatch.target.tooltip1=Transmitting power at distance
+gregtech.machine.laser_hatch.target.tooltip1=Receiving power from distance
 gregtech.machine.laser_hatch.target.tooltip2=§cLaser Cables must be in a straight line!§7
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
@@ -5016,8 +5021,8 @@ gregtech.machine.fluid_tank.fluid=Contains %s L of %s
 
 gregtech.machine.me_export_fluid_hatch.name=ME Output Hatch
 gregtech.machine.me_export_item_bus.name=ME Output Bus
-gregtech.machine.me_import_fluid_hatch.name=ME Input Hatch
-gregtech.machine.me_import_item_bus.name=ME Input Bus
+gregtech.machine.me_import_fluid_hatch.name=ME Stocking Input Hatch
+gregtech.machine.me_import_item_bus.name=ME Stocking Input Bus
 gregtech.machine.me.fluid_export.tooltip=Stores fluid directly into ME network.
 gregtech.machine.me.item_export.tooltip=Stores item directly into ME network.
 gregtech.machine.me.fluid_import.tooltip=Fetch fluids from ME network automatically.
@@ -5128,7 +5133,8 @@ gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
 gregtech.gui.charger_slot.tooltip=§fCharger Slot§r/n§7Draws power from %s batteries§r/n§7Charges %s tools and batteries
-gregtech.gui.configurator_slot.tooltip=§fProgrammed Circuit Slot§r/n/n§7Left-Click to add ghost programmed circuit/n§7Right-Click to remove ghost programmed circuit/n/n§7Left-Click with a §6Programmed Circuit§7 in hand to/n§7set this slot's config to its value./n/n§7Hold Shift when clicking buttons to change by 5.§r
+gregtech.gui.configurator_slot.tooltip=§fProgrammed Circuit Slot§r/n§aConfigured Value: §f%d§7/n/n§7LMB/RMB/Scroll to cycle through the list/n§7Shift-right-click to clear
+gregtech.gui.configurator_slot.no_value=None
 gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
 gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
 gregtech.gui.fluid_voiding.tooltip.enabled=Excess Fluid Voiding Enabled
@@ -5363,9 +5369,10 @@ gregtech.command.hand.tool_stats=Tool Stats Class: %s
 gregtech.command.hand.not_a_player=This command is only usable by a player.
 gregtech.command.hand.no_item=You must hold something in main hand or off hand before executing this command.
 gregtech.command.recipecheck.usage=Usage: /gregtech recipecheck
-gregtech.command.recipecheck.begin=Starting recipe conflict check...
+gregtech.command.recipecheck.begin=Starting recipe issue check...
 gregtech.command.recipecheck.end=Recipe conflict check found %d possible conflicts. Check the server log for more info
 gregtech.command.recipecheck.end_no_conflicts=No recipe conflicts found!
+gregtech.command.recipecheck.end_empty_inputs=Recipe check found %d recipes with empty inputs and %d empty oredicts. Check the server log for more info
 gregtech.command.copy.copied_and_click=copied to clipboard. Click to copy again
 gregtech.command.copy.click_to_copy=Click to copy
 gregtech.command.copy.copied_start=Copied [

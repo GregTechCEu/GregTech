@@ -217,6 +217,7 @@ public class TextFieldWidget2 extends Widget {
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
             focused = true;
+            gui.getModularUIGui().setFocused(true);
             if (onFocus != null) {
                 onFocus.accept(this);
             }
@@ -438,6 +439,7 @@ public class TextFieldWidget2 extends Widget {
         setText(t);
         setter.accept(t);
         focused = false;
+        gui.getModularUIGui().setFocused(false);
         writeClientAction(-1, buf -> buf.writeString(t));
     }
 

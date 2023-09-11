@@ -125,8 +125,9 @@ public class GregtechDataCodes {
     // Creative Energy
     public static final int UPDATE_IO_SPEED = 1;
 
-    // Quantum Chest
+    // Quantum Chest/Tank
     public static final int UPDATE_ITEM_COUNT = 14;
+    public static final int UPDATE_FLUID_AMOUNT = 14;
 
     // Detector Covers
     public static final int UPDATE_INVERTED = 100;

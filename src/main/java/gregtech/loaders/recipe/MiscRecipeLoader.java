@@ -251,6 +251,7 @@ public class MiscRecipeLoader {
                 .inputs(ELECTRIC_MOTOR_LuV.getStackForm(2))
                 .input(screw, HSSS, 8)
                 .outputs(QUANTUM_CHESTPLATE_ADVANCED.getStackForm())
+                .research(GRAVITATION_ENGINE.getStackForm())
                 .buildAndRegister();
 
 

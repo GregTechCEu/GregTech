@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.event.*;
                 + "after:forestry;"
                 + "after:jei@[4.15.0,);"
                 + "after:crafttweaker@[4.1.20,);"
-                + "after:groovyscript@[0.4.0,);"
+                + "after:groovyscript@[0.6.0,);"
                 + "after:theoneprobe;"
                 + "after:hwyla;")
 public class GregTechMod {
@@ -76,6 +76,11 @@ public class GregTechMod {
     }
 
     @EventHandler
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        moduleManager.onServerAboutToStart(event);
+    }
+
+    @EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
         moduleManager.onServerStarting(event);
     }
@@ -83,6 +88,11 @@ public class GregTechMod {
     @EventHandler
     public void serverStarted(FMLServerStartedEvent event) {
         moduleManager.onServerStarted(event);
+    }
+
+    @EventHandler
+    public void serverStopping(FMLServerStoppingEvent event) {
+        moduleManager.onServerStopping(event);
     }
 
     @EventHandler

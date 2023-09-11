@@ -74,6 +74,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -114,9 +115,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     private final int[] sidedRedstoneOutput = new int[6];
     private final int[] sidedRedstoneInput = new int[6];
-    private int cachedComparatorValue;
     private int cachedLightValue;
     protected boolean isFragile = false;
+
+    private boolean wasExploded = false;
 
     private final CoverBehavior[] coverBehaviors = new CoverBehavior[6];
     protected List<IItemHandlerModifiable> notifiedItemOutputList = new ArrayList<>();
@@ -157,6 +159,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return holder == null ? null : holder.pos();
     }
 
+    @Override
     public void markDirty() {
         if (holder != null) {
             holder.markAsDirty();
@@ -666,7 +669,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void onLoad() {
-        this.cachedComparatorValue = getActualComparatorValue();
         for (EnumFacing side : EnumFacing.VALUES) {
             this.sidedRedstoneInput[side.getIndex()] = GTUtility.getRedstonePower(getWorld(), getPos(), side);
         }
@@ -727,6 +729,11 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         }
     }
 
+    /**
+     * @deprecated Will be removed in 2.9. Comparators no longer supported for MetaTileEntities, as cover are interactions favored.
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public int getActualComparatorValue() {
         return 0;
     }
@@ -735,22 +742,17 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return 0;
     }
 
+    /**
+     * @deprecated Will be removed in 2.9.
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public final int getComparatorValue() {
-        return cachedComparatorValue;
+        return 0;
     }
 
     public final int getLightValue() {
         return cachedLightValue;
-    }
-
-    private void updateComparatorValue() {
-        int newComparatorValue = getActualComparatorValue();
-        if (cachedComparatorValue != newComparatorValue) {
-            this.cachedComparatorValue = newComparatorValue;
-            if (getWorld() != null && !getWorld().isRemote) {
-                notifyBlockUpdate();
-            }
-        }
     }
 
     private void updateLightValue() {
@@ -774,9 +776,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
                 if (coverBehavior instanceof ITickable) {
                     ((ITickable) coverBehavior).update();
                 }
-            }
-            if (getOffsetTimer() % 5 == 0L) {
-                updateComparatorValue();
             }
         } else {
             updateSound();
@@ -1128,7 +1127,6 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         this.sidedRedstoneOutput[side.getIndex()] = strength;
         if (getWorld() != null && !getWorld().isRemote && getCoverAtSide(side) == null) {
             notifyBlockUpdate();
-            markDirty();
         }
     }
 
@@ -1352,7 +1350,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public boolean shouldDropWhenDestroyed() {
-        return !isFragile();
+        return !wasExploded() && !isFragile();
     }
 
     public float getBlockHardness() {
@@ -1447,9 +1445,24 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     public void doExplosion(float explosionPower) {
+        setExploded();
         getWorld().setBlockToAir(getPos());
         getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
                 explosionPower, ConfigHolder.machines.doesExplosionDamagesTerrain);
+    }
+
+    /**
+     * Mark the MTE as having been blown up by an explosion
+     */
+    protected final void setExploded() {
+        this.wasExploded = true;
+    }
+
+    /**
+     * @return if the MTE was blown up by an explosion
+     */
+    protected final boolean wasExploded() {
+        return this.wasExploded;
     }
 
     public void setOnFire(double additionalFireChance) {

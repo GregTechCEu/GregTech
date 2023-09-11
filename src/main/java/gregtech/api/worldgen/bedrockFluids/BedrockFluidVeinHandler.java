@@ -2,10 +2,11 @@ package gregtech.api.worldgen.bedrockFluids;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.core.network.packets.PacketFluidVeinList;
+import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.XSTR;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
+import gregtech.core.network.packets.PacketFluidVeinList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -28,6 +29,16 @@ public class BedrockFluidVeinHandler {
     private final static Map<Integer, HashMap<Integer, Integer>> totalWeightMap = new HashMap<>();
     public static HashMap<ChunkPosDimension, FluidVeinWorldEntry> veinCache = new HashMap<>();
 
+    /**
+     * 1: Original version
+     * <br>
+     * 2: Fixed interpretation of coordinates around axes
+     */
+    public static int saveDataVersion;
+
+
+    public static final int MAX_FLUID_SAVE_DATA_VERSION = 2;
+
     public static final int VEIN_CHUNK_SIZE = 8; // veins are 8x8 chunk squares
 
     public static final int MAXIMUM_VEIN_OPERATIONS = 100_000;
@@ -45,13 +56,13 @@ public class BedrockFluidVeinHandler {
         if (world.isRemote)
             return null;
 
-        ChunkPosDimension coords = new ChunkPosDimension(world.provider.getDimension(), chunkX / VEIN_CHUNK_SIZE, chunkZ / VEIN_CHUNK_SIZE);
+        ChunkPosDimension coords = new ChunkPosDimension(world.provider.getDimension(), getVeinCoord(chunkX), getVeinCoord(chunkZ));
 
         FluidVeinWorldEntry worldEntry = veinCache.get(coords);
         if (worldEntry == null) {
             BedrockFluidDepositDefinition definition = null;
 
-            int query = world.getChunk(chunkX / VEIN_CHUNK_SIZE, chunkZ / VEIN_CHUNK_SIZE).getRandomWithSeed(90210).nextInt();
+            int query = world.getChunk(getVeinCoord(chunkX), getVeinCoord(chunkZ)).getRandomWithSeed(90210).nextInt();
 
             Biome biome = world.getBiomeForCoordsBody(new BlockPos(chunkX << 4, 64, chunkZ << 4));
             int totalWeight = getTotalWeight(world.provider, biome);
@@ -231,6 +242,13 @@ public class BedrockFluidVeinHandler {
         }
     }
 
+    public static int getVeinCoord(int chunkCoord) {
+        if (saveDataVersion >= 2) {
+            return Math.floorDiv(chunkCoord, VEIN_CHUNK_SIZE);
+        }
+        return chunkCoord / VEIN_CHUNK_SIZE;
+    }
+
     public static class FluidVeinWorldEntry {
         private BedrockFluidDepositDefinition vein;
         private int fluidYield;
@@ -286,7 +304,8 @@ public class BedrockFluidVeinHandler {
             if (tag.hasKey("vein")) {
                 String s = tag.getString("vein");
                 for (BedrockFluidDepositDefinition definition : veinList.keySet()) {
-                    if (s.equalsIgnoreCase(definition.getDepositName()))
+                    // old save data can have deposit names with native separators, get rid of those
+                    if (FileUtility.nativeSepToSlash(s).equalsIgnoreCase(definition.getDepositName()))
                         info.vein = definition;
                 }
             }
