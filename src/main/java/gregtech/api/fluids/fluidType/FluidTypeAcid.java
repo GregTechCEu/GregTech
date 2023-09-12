@@ -1,6 +1,6 @@
 package gregtech.api.fluids.fluidType;
 
-import gregtech.api.util.LocalizationUtils;
+import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,9 +20,7 @@ public class FluidTypeAcid extends FluidTypeLiquid {
     }
 
     @Override
-    public List<String> getAdditionalTooltips() {
-        List<String> tooltips = super.getAdditionalTooltips();
-        tooltips.add(LocalizationUtils.format("gregtech.fluid.type_acid.tooltip"));
-        return tooltips;
+    public void addAdditionalTooltips(List<String> tooltip) {
+        tooltip.add(I18n.format("gregtech.fluid.type_acid.tooltip"));
     }
 }
