@@ -11,7 +11,6 @@ import stanhebben.zenscript.annotations.ZenMethod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,9 +89,7 @@ public abstract class FluidType {
     @ZenGetter
     public abstract String getUnlocalizedTooltip();
 
-    @ZenGetter
-    public List<String> getAdditionalTooltips() {
-        return new ArrayList<>();
+    public void addAdditionalTooltips(List<String> tooltip) {
     }
 
     @Nullable
