@@ -17,14 +17,12 @@ import gregtech.api.unification.material.properties.PlasmaProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.LocalizationUtils;
 import gregtech.common.blocks.MetaBlocks;
 import io.github.drmanganese.topaddons.reference.Colors;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -33,8 +31,6 @@ import net.minecraftforge.fml.common.Loader;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,8 +55,8 @@ public class MetaFluids {
 
     public static void init() {
         // handle vanilla fluids
-        handleNonMaterialFluids(Materials.Water, FluidRegistry.WATER);
-        handleNonMaterialFluids(Materials.Lava, FluidRegistry.LAVA);
+        handleNonMaterialFluids(Materials.Water, FluidRegistry.WATER, FluidTypes.LIQUID);
+        handleNonMaterialFluids(Materials.Lava, FluidRegistry.LAVA, FluidTypes.LIQUID);
 
         // alternative names for forestry fluids
         addAlternativeNames();
@@ -87,17 +83,10 @@ public class MetaFluids {
         }
     }
 
-    public static void handleNonMaterialFluids(@Nonnull Material material, @Nonnull Fluid fluid) {
+    public static void handleNonMaterialFluids(@Nonnull Material material, @Nonnull Fluid fluid, @Nonnull FluidType type) {
         material.getProperty(PropertyKey.FLUID).setFluid(fluid);
         material.getProperty(PropertyKey.FLUID).setFluidTemperature(fluid.getTemperature());
-        List<String> tooltip = new ArrayList<>();
-        if (!material.getChemicalFormula().isEmpty()) {
-            tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
-        }
-        tooltip.add(LocalizationUtils.format("gregtech.fluid.temperature", material.getProperty(PropertyKey.FLUID).getFluidTemperature()));
-        tooltip.add(LocalizationUtils.format(material.getProperty(PropertyKey.FLUID).getFluidType().getUnlocalizedTooltip()));
-        tooltip.addAll(material.getProperty(PropertyKey.FLUID).getFluidType().getAdditionalTooltips());
-        FluidTooltipUtil.registerTooltip(fluid, tooltip);
+        FluidTooltipUtil.registerTooltip(fluid, material, type);
     }
 
     private static void addAlternativeNames() {
