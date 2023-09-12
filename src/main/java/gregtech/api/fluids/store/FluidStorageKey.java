@@ -3,15 +3,20 @@ package gregtech.api.fluids.store;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.PropertyKey;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import static gregtech.api.util.GTUtility.gregtechId;
 
 public final class FluidStorageKey {
+
+    private static final Map<ResourceLocation, FluidStorageKey> keys = new Object2ObjectOpenHashMap<>();
 
     public static final FluidStorageKey LIQUID = new FluidStorageKey(gregtechId("liquid"),
             MaterialIconType.liquid,
@@ -39,6 +44,10 @@ public final class FluidStorageKey {
         this.registryNameOperator = registryNameOperator;
         this.translationKeyFunction = translationKeyFunction;
         this.hashCode = resourceLocation.hashCode();
+        if (keys.containsKey(resourceLocation)) {
+            throw new IllegalArgumentException("Cannot create duplicate keys");
+        }
+        keys.put(resourceLocation, this);
     }
 
     public @NotNull ResourceLocation getResourceLocation() {
@@ -62,6 +71,10 @@ public final class FluidStorageKey {
      */
     public @NotNull String getTranslationKeyFor(@NotNull Material material) {
         return this.translationKeyFunction.apply(material);
+    }
+
+    public static @Nullable FluidStorageKey getByName(@NotNull ResourceLocation location) {
+        return keys.get(location);
     }
 
     @Override

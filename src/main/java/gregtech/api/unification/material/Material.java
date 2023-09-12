@@ -801,9 +801,7 @@ public class Material implements Comparable<Material> {
          * <ul>
          * <li> {@link GemProperty}, it will default to {@link MaterialIconSet#GEM_VERTICAL}
          * <li> {@link IngotProperty} or {@link DustProperty}, it will default to {@link MaterialIconSet#DULL}
-         * <li> {@link FluidProperty}, it will default to either {@link MaterialIconSet#FLUID}
-         *      or {@link MaterialIconSet#GAS}, depending on the {@link FluidType}
-         * <li> {@link PlasmaProperty}, it will default to {@link MaterialIconSet#FLUID}
+         * <li> {@link FluidProperty}, it will default to {@link MaterialIconSet#FLUID}
          * </ul>
          * Default will be determined by first-found Property in this order, unless specified.
          *
@@ -1061,7 +1059,7 @@ public class Material implements Comparable<Material> {
          * <p>
          * Default: - GEM_VERTICAL if it has GemProperty.
          * - DULL if has DustProperty or IngotProperty.
-         * - FLUID or GAS if only has FluidProperty or PlasmaProperty, depending on {@link FluidType}.
+         * - FLUID if only has FluidProperty.
          */
         private MaterialIconSet iconSet;
 
@@ -1097,12 +1095,10 @@ public class Material implements Comparable<Material> {
                 } else if (p.hasProperty(PropertyKey.DUST) || p.hasProperty(PropertyKey.INGOT) || p.hasProperty(PropertyKey.POLYMER)) {
                     iconSet = MaterialIconSet.DULL;
                 } else if (p.hasProperty(PropertyKey.FLUID)) {
-                    if (p.getProperty(PropertyKey.FLUID).isGas()) {
-                        iconSet = MaterialIconSet.GAS;
-                    } else iconSet = MaterialIconSet.FLUID;
-                } else if (p.hasProperty(PropertyKey.PLASMA))
                     iconSet = MaterialIconSet.FLUID;
-                else iconSet = MaterialIconSet.DULL;
+                } else {
+                    iconSet = MaterialIconSet.DULL;
+                }
             }
 
             // Verify MaterialRGB

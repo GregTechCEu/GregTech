@@ -6,6 +6,7 @@ import crafttweaker.api.enchantments.IEnchantment;
 import crafttweaker.api.liquid.ILiquidDefinition;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
+import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
@@ -57,25 +58,7 @@ public class MaterialExpansion {
     @ZenGetter
     public static boolean isGaseous(Material m) {
         FluidProperty prop = m.getProperty(PropertyKey.FLUID);
-        return prop != null && prop.isGas();
-    }
-
-    @ZenMethod
-    public static void setFluidTemperature(Material m, int fluidTemperature) {
-        if (checkFrozen("set fluid temperature")) return;
-        FluidProperty prop = m.getProperty(PropertyKey.FLUID);
-        if (prop != null) {
-            prop.setFluidTemperature(fluidTemperature);
-        } else logError(m, "set temperature", "Fluid");
-    }
-
-    @ZenGetter("fluidTemperature") // todo is this allowed here?
-    public static int fluidTemperature(Material m) {
-        FluidProperty prop = m.getProperty(PropertyKey.FLUID);
-        if (prop != null) {
-            return prop.getFluidTemperature();
-        } else logError(m, "get temperature", "Fluid");
-        return 0;
+        return prop != null && prop.getStorage().get(FluidStorageKey.GAS) != null;
     }
 
     // TODO May need to move this to Material
@@ -84,7 +67,7 @@ public class MaterialExpansion {
     public static ILiquidDefinition getFluid(Material m) {
         FluidProperty prop = m.getProperty(PropertyKey.FLUID);
         if (prop != null) {
-            return CraftTweakerMC.getILiquidDefinition(prop.getFluid());
+            return CraftTweakerMC.getILiquidDefinition(m.getFluid());
         } else logError(m, "get a Fluid", "Fluid");
         return null;
     }
@@ -127,21 +110,6 @@ public class MaterialExpansion {
         if (prop != null) {
             prop.setBurnTime(burnTime);
         } else logError(m, "set the burn time", "Dust");
-    }
-
-    ////////////////////////////////////
-    //         Ingot Property         //
-    ////////////////////////////////////
-
-    // Plasma Property
-    @ZenGetter("plasma")
-    @net.minecraftforge.fml.common.Optional.Method(modid = GTValues.MODID_CT)
-    public static ILiquidDefinition getPlasma(Material m) {
-        PlasmaProperty prop = m.getProperty(PropertyKey.PLASMA);
-        if (prop != null) {
-            return CraftTweakerMC.getILiquidDefinition(prop.getPlasma());
-        } else logError(m, "get a Plasma", "Plasma");
-        return null;
     }
 
     ///////////////////////////////////

@@ -3,7 +3,9 @@ package gregtech.integration.crafttweaker.material;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.enchantments.IEnchantment;
 import gregtech.api.GTValues;
-import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.fluids.FluidState;
+import gregtech.api.fluids.builder.FluidBuilder;
+import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
@@ -20,7 +22,7 @@ import stanhebben.zenscript.annotations.ZenConstructor;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import static gregtech.integration.crafttweaker.material.CTMaterialHelpers.validateComponentList;
-import static gregtech.integration.crafttweaker.material.CTMaterialHelpers.validateFluidTypeNoPlasma;
+import static gregtech.integration.crafttweaker.material.CTMaterialHelpers.validateFluidState;
 
 @ZenClass("mods.gregtech.material.MaterialBuilder")
 @ZenRegister
@@ -43,19 +45,17 @@ public class CTMaterialBuilder {
 
     @ZenMethod
     public CTMaterialBuilder fluid() {
-        backingBuilder.fluid(validateFluidTypeNoPlasma(null), false);
+        backingBuilder.fluid();
         return this;
     }
 
     @ZenMethod
     public CTMaterialBuilder fluid(@Optional String type, @Optional boolean hasBlock) {
-        backingBuilder.fluid(validateFluidTypeNoPlasma(type), hasBlock);
-        return this;
-    }
-
-    @ZenMethod
-    public CTMaterialBuilder fluid(@Optional FluidType type, @Optional boolean hasBlock) {
-        backingBuilder.fluid(validateFluidTypeNoPlasma(type == null ? null : type.getName()), hasBlock);
+        FluidState state = validateFluidState(type);
+        FluidStorageKey key = state == FluidState.GAS ? FluidStorageKey.GAS : state == FluidState.PLASMA ? FluidStorageKey.PLASMA : FluidStorageKey.LIQUID;
+        FluidBuilder builder = new FluidBuilder().state(state);
+        if (hasBlock) builder.block();
+        backingBuilder.fluid(key, builder);
         return this;
     }
 

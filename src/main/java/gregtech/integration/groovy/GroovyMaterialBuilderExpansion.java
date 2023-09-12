@@ -1,26 +1,27 @@
 package gregtech.integration.groovy;
 
-import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.fluids.builder.FluidBuilder;
+import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.BlastProperty;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static gregtech.api.util.GTUtility.gregtechId;
+
 public class GroovyMaterialBuilderExpansion {
 
-    public static Material.Builder fluid(Material.Builder builder, String raw) {
-        return fluid(builder, raw, false);
-    }
-
-    public static Material.Builder fluid(Material.Builder builder, String raw, boolean hasBlock) {
-        FluidType fluidType = FluidType.getByName(raw);
-        if (GroovyScriptModule.validateNonNull(fluidType, () -> "Can't find fluid type for " + raw + " in material builder")) {
-            return builder.fluid(fluidType, hasBlock);
+    public static Material.Builder fluid(Material.Builder builder, String raw, FluidBuilder fluidBuilder) {
+        FluidStorageKey key = FluidStorageKey.getByName(new ResourceLocation(raw));
+        if (key == null) key = FluidStorageKey.getByName(gregtechId(raw));
+        if (GroovyScriptModule.validateNonNull(key, () -> "Can't find fluid type for " + raw + " in material builder")) {
+            return builder.fluid(key, fluidBuilder);
         }
         return builder;
     }

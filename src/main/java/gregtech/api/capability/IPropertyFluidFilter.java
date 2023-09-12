@@ -4,8 +4,6 @@ import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
-import gregtech.api.fluids.fluidType.FluidType;
-import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.client.utils.TooltipHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fluids.Fluid;
@@ -23,8 +21,8 @@ import static gregtech.api.fluids.FluidConstants.CRYOGENIC_FLUID_THRESHOLD;
  * Fluid filter based on fluid properties; i.e. temperature, fluid state, and various material flags such as acid
  * and plasma.
  *
- * @see FluidType
- * @see FluidTypes
+ * @see FluidAttribute
+ * @see gregtech.api.fluids.attribute.FluidAttributes
  * @see AttributedFluid
  */
 public interface IPropertyFluidFilter extends IFilter<FluidStack> {
@@ -134,13 +132,11 @@ public interface IPropertyFluidFilter extends IFilter<FluidStack> {
 
     /**
      * @return whether this filter allows cryogenic fluids
-     * @see FluidTypes
      */
     boolean isCryoProof();
 
     /**
      * @return whether this filter allows plasmas
-     * @see FluidTypes
      */
     boolean isPlasmaProof();
 }
