@@ -1,7 +1,6 @@
 package gregtech.api.worldgen.populator;
 
 import com.google.gson.JsonObject;
-import gregtech.api.fluids.MetaFluids;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -20,8 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.IFluidBlock;
 
 import java.util.Collection;
@@ -53,17 +50,13 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
     private static Set<Material> findUndergroundMaterials(Collection<IBlockState> generatedBlocks) {
         Set<Material> result = new HashSet<>();
         for (IBlockState blockState : generatedBlocks) {
-            Material resultMaterial;
-            if (blockState.getBlock() instanceof IFluidBlock || blockState.getBlock() instanceof BlockLiquid) {
-                Fluid fluid = FluidRegistry.lookupFluidForBlock(blockState.getBlock());
-                resultMaterial = fluid == null ? null : MetaFluids.getMaterialFromFluid(fluid);
-            } else {
+            Material resultMaterial = null;
+            if (!(blockState.getBlock() instanceof IFluidBlock) && !(blockState.getBlock() instanceof BlockLiquid)) {
                 ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().damageDropped(blockState));
                 UnificationEntry entry = OreDictUnifier.getUnificationEntry(itemStack);
-                if (entry != null && entry.material != null && entry.material.hasProperty(PropertyKey.ORE))
+                if (entry != null && entry.material != null && entry.material.hasProperty(PropertyKey.ORE)) {
                     resultMaterial = entry.material;
-                else
-                    resultMaterial = null;
+                }
             }
             if (resultMaterial != null) {
                 result.add(resultMaterial);

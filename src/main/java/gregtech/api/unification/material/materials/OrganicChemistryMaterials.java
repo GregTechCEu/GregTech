@@ -1,6 +1,8 @@
 package gregtech.api.unification.material.materials;
 
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.attribute.FluidAttributes;
+import gregtech.api.fluids.builder.FluidBuilder;
+import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.material.Material;
 
 import static gregtech.api.unification.material.Materials.*;
@@ -22,7 +24,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Nitrobenzene = new Material.Builder(1001, gregtechId("nitrobenzene"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0x704936)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 6, Hydrogen, 5, Nitrogen, 1, Oxygen, 2)
@@ -84,8 +86,8 @@ public class OrganicChemistryMaterials {
                 .build();
 
         GlycerylTrinitrate = new Material.Builder(1009, gregtechId("glyceryl_trinitrate"))
-                .fluid()
-                .color(0x04443C, false)
+                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .color(0x04443C)
                 .flags(FLAMMABLE, EXPLOSIVE)
                 .components(Carbon, 3, Hydrogen, 5, Nitrogen, 3, Oxygen, 9)
                 .build();
@@ -150,19 +152,19 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Methane = new Material.Builder(1018, gregtechId("methane"))
-                .fluid(FluidTypes.GAS)
-                .color(0xFF0078).iconSet(GAS)
+                .gas()
+                .color(0xFF0078)
                 .components(Carbon, 1, Hydrogen, 4)
                 .build();
 
         Epichlorohydrin = new Material.Builder(1019, gregtechId("epichlorohydrin"))
-                .fluid()
-                .color(0x640C04, false)
+                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .color(0x640C04)
                 .components(Carbon, 3, Hydrogen, 5, Chlorine, 1, Oxygen, 1)
                 .build();
 
         Monochloramine = new Material.Builder(1020, gregtechId("monochloramine"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0x3F9F80)
                 .components(Nitrogen, 1, Hydrogen, 2, Chlorine, 1)
                 .build();
@@ -174,21 +176,21 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Cumene = new Material.Builder(1022, gregtechId("cumene"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0x552200)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 9, Hydrogen, 12)
                 .build();
 
         Tetrafluoroethylene = new Material.Builder(1023, gregtechId("tetrafluoroethylene"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0x7D7D7D)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Fluorine, 4)
                 .build();
 
         Chloromethane = new Material.Builder(1024, gregtechId("chloromethane"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0xC82CA0)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 1, Hydrogen, 3, Chlorine, 1)
@@ -208,33 +210,33 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Propane = new Material.Builder(1027, gregtechId("propane"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0xFAE250)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 3, Hydrogen, 8)
                 .build();
 
         Propene = new Material.Builder(1028, gregtechId("propene"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0xFFDD55)
                 .components(Carbon, 3, Hydrogen, 6)
                 .build();
 
         Ethane = new Material.Builder(1029, gregtechId("ethane"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0xC8C8FF)
                 .components(Carbon, 2, Hydrogen, 6)
                 .build();
 
         Butene = new Material.Builder(1030, gregtechId("butene"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0xCF5005)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 4, Hydrogen, 8)
                 .build();
 
         Butane = new Material.Builder(1031, gregtechId("butane"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0xB6371E)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 4, Hydrogen, 10)
@@ -276,7 +278,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Dimethylamine = new Material.Builder(1037, gregtechId("dimethylamine"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0x554469)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 7, Nitrogen, 1)
@@ -290,13 +292,13 @@ public class OrganicChemistryMaterials {
                 .build();
 
         DinitrogenTetroxide = new Material.Builder(1039, gregtechId("dinitrogen_tetroxide"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0x570C02)
                 .components(Nitrogen, 2, Oxygen, 4)
                 .build();
 
         Dimethyldichlorosilane = new Material.Builder(1040, gregtechId("dimethyldichlorosilane"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0x441650)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 6, Chlorine, 2, Silicon, 1)
@@ -310,7 +312,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Butadiene = new Material.Builder(1042, gregtechId("butadiene"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0xB55A10)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 4, Hydrogen, 6)
@@ -324,7 +326,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         AceticAcid = new Material.Builder(1044, gregtechId("acetic_acid"))
-                .fluid(FluidTypes.ACID)
+                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xC8B4A0)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 4, Oxygen, 2)
@@ -345,14 +347,14 @@ public class OrganicChemistryMaterials {
                 .build();
 
         VinylChloride = new Material.Builder(1047, gregtechId("vinyl_chloride"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0xE1F0F0)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 3, Chlorine, 1)
                 .build();
 
         Ethylene = new Material.Builder(1048, gregtechId("ethylene"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0xE1E1E1)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 4)
@@ -387,15 +389,15 @@ public class OrganicChemistryMaterials {
         // FREE ID 1053
 
         Ethanol = new Material.Builder(1054, gregtechId("ethanol"))
-                .fluid()
-                .color(0xFC4C04, false)
+                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .color(0xFC4C04)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1)
                 .build();
 
         Toluene = new Material.Builder(1055, gregtechId("toluene"))
-                .fluid()
-                .color(0x712400, false)
+                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .color(0x712400)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 7, Hydrogen, 8)
                 .build();
@@ -408,7 +410,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         PhthalicAcid = new Material.Builder(1057, gregtechId("phthalic_acid"))
-                .fluid(FluidTypes.ACID)
+                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xD1D1D1)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 8, Hydrogen, 6, Oxygen, 4)
@@ -495,7 +497,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         NitrosylChloride = new Material.Builder(1070, gregtechId("nitrosyl_chloride"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .flags(FLAMMABLE)
                 .color(0xF3F100)
                 .components(Nitrogen, 1, Oxygen, 1, Chlorine, 1)

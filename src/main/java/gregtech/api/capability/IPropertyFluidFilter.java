@@ -2,7 +2,6 @@ package gregtech.api.capability;
 
 import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
-import gregtech.api.fluids.MaterialFluid;
 import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.fluidType.FluidType;
@@ -26,7 +25,7 @@ import static gregtech.api.fluids.FluidConstants.CRYOGENIC_FLUID_THRESHOLD;
  *
  * @see FluidType
  * @see FluidTypes
- * @see MaterialFluid
+ * @see AttributedFluid
  */
 public interface IPropertyFluidFilter extends IFilter<FluidStack> {
 
@@ -120,14 +119,14 @@ public interface IPropertyFluidFilter extends IFilter<FluidStack> {
     }
 
     /**
-     * This is always checked, regardless of the contained fluid being a {@link MaterialFluid} or not
+     * This is always checked, regardless of the contained fluid being a {@link AttributedFluid} or not
      *
      * @return the maximum allowed temperature for a fluid
      */
     int getMaxFluidTemperature();
 
     /**
-     * This is always checked, regardless of the contained fluid being a {@link MaterialFluid} or not
+     * This is always checked, regardless of the contained fluid being a {@link AttributedFluid} or not
      *
      * @return whether this filter allows gases
      */

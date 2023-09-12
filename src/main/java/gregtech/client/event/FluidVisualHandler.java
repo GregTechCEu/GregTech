@@ -1,8 +1,7 @@
 package gregtech.client.event;
 
 import gregtech.api.GTValues;
-import gregtech.api.fluids.MaterialFluidBlock;
-import gregtech.api.unification.material.Material;
+import gregtech.api.fluids.GTFluidBlock;
 import gregtech.api.util.GTUtility;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -46,8 +45,8 @@ public class FluidVisualHandler {
 
     @SubscribeEvent
     public static void onFOVModifier(@Nonnull EntityViewRenderEvent.FOVModifier event) {
-        if (event.getState().getBlock() instanceof MaterialFluidBlock &&
-                ((MaterialFluidBlock) event.getState().getBlock()).isSticky) {
+        if (event.getState().getBlock() instanceof GTFluidBlock &&
+                ((GTFluidBlock) event.getState().getBlock()).isSticky) {
             event.setFOV(event.getFOV() * 60.0F / 70.0F);
         }
     }
@@ -62,12 +61,11 @@ public class FluidVisualHandler {
         final BlockPos blockpos = new BlockPos(player.posX, player.posY + player.getEyeHeight(), player.posZ);
         final Block block = player.world.getBlockState(blockpos).getBlock();
 
-        if (block instanceof MaterialFluidBlock) {
-            final MaterialFluidBlock fluidBlock = (MaterialFluidBlock) block;
-            final Material material = fluidBlock.getGTMaterial();
-            float r = ((material.getMaterialRGB() >> 16) & 0xFF) / 255.0F;
-            float g = ((material.getMaterialRGB() >> 8) & 0xFF) / 255.0F;
-            float b = (material.getMaterialRGB() & 0xFF) / 255.0F;
+        if (block instanceof GTFluidBlock fluidBlock) {
+            int color = fluidBlock.getFluid().getColor();
+            float r = ((color >> 16) & 0xFF) / 255.0F;
+            float g = ((color >> 8) & 0xFF) / 255.0F;
+            float b = (color & 0xFF) / 255.0F;
 
             Minecraft.getMinecraft().getTextureManager().bindTexture(SUBMERGED_FLUID_OVERLAY);
             Tessellator tessellator = Tessellator.getInstance();
@@ -99,13 +97,12 @@ public class FluidVisualHandler {
 
     @SubscribeEvent
     public static void onFogColor(@Nonnull EntityViewRenderEvent.FogColors event) {
-        if (!(event.getState().getBlock() instanceof MaterialFluidBlock)) return;
+        if (!(event.getState().getBlock() instanceof GTFluidBlock fluidBlock)) return;
 
-        final MaterialFluidBlock fluidBlock = (MaterialFluidBlock) event.getState().getBlock();
-        final Material material = fluidBlock.getGTMaterial();
-        float r = ((material.getMaterialRGB() >> 16) & 0xFF) / 255.0F;
-        float g = ((material.getMaterialRGB() >> 8) & 0xFF) / 255.0F;
-        float b = (material.getMaterialRGB() & 0xFF) / 255.0F;
+        int color = fluidBlock.getFluid().getColor();
+        float r = ((color >> 16) & 0xFF) / 255.0F;
+        float g = ((color >> 8) & 0xFF) / 255.0F;
+        float b = (color & 0xFF) / 255.0F;
 
         // the following is from net.minecraft.client.renderer.EntityRenderer.updateFogColor()
         // because the forge event is fired after the fog color calculation is done
@@ -198,7 +195,7 @@ public class FluidVisualHandler {
 
     @SubscribeEvent
     public static void onFogDensity(@Nonnull EntityViewRenderEvent.FogDensity event) {
-        if (!(event.getState().getBlock() instanceof MaterialFluidBlock)) return;
+        if (!(event.getState().getBlock() instanceof GTFluidBlock)) return;
 
         final EntityRenderer renderer = event.getRenderer();
         final Entity entity = event.getEntity();

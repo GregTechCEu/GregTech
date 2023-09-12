@@ -2,7 +2,7 @@ package gregtech;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.fluids.MetaFluids;
+import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
@@ -70,7 +70,7 @@ public final class Bootstrap {
         managerInternal.freezeRegistries();
 
         OrePrefix.runMaterialHandlers();
-        MetaFluids.init();
+        GTFluidRegistration.INSTANCE.init();
         MetaItems.init();
         bootstrapped = true;
     }

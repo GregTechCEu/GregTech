@@ -2,6 +2,7 @@ package gregtech.api.fluids.store;
 
 import gregtech.api.fluids.builder.FluidBuilder;
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.GTLog;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraftforge.fluids.Fluid;
 import org.jetbrains.annotations.ApiStatus;
@@ -47,7 +48,7 @@ public final class FluidStorage {
     @ApiStatus.Internal
     public void register(@NotNull Material material) {
         for (var entry : toRegister.entrySet()) {
-            store(entry.getKey(), entry.getValue().build(material.getModid(), material, entry.getKey()));
+            storeWithLogging(entry.getKey(), entry.getValue().build(material.getModid(), material, entry.getKey()), material);
         }
         toRegister.clear();
     }
@@ -61,13 +62,24 @@ public final class FluidStorage {
     }
 
     /**
+     * @see #store(FluidStorageKey, Fluid)
+     */
+    private void storeWithLogging(@NotNull FluidStorageKey key, @NotNull Fluid fluid, @NotNull Material material) {
+        if (map.containsKey(key)) {
+            GTLog.logger.error("{} already has an associated fluid for material {}", material);
+            return;
+        }
+        map.put(key, fluid);
+    }
+
+    /**
      * @param key the key to associate with the fluid
      * @param fluid the fluid to associate with the key
      * @throws IllegalArgumentException if a key is already associated with another fluid
      */
     public void store(@NotNull FluidStorageKey key, @NotNull Fluid fluid) {
         if (map.containsKey(key)) {
-            throw new IllegalArgumentException("FluidStorageKey " + key + " already has an associated fluid");
+            throw new IllegalArgumentException(key + " already has an associated fluid");
         }
         map.put(key, fluid);
     }

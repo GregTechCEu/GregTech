@@ -2,9 +2,7 @@ package gregtech.api.fluids.builder;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
-import gregtech.api.fluids.FluidState;
-import gregtech.api.fluids.GTFluid;
-import gregtech.api.fluids.GTFluidRegistration;
+import gregtech.api.fluids.*;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.material.Material;
@@ -16,7 +14,6 @@ import gregtech.api.util.GTUtility;
 import io.github.drmanganese.topaddons.reference.Colors;
 import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.Loader;
 import org.jetbrains.annotations.NotNull;
@@ -209,11 +206,20 @@ public class FluidBuilder {
     }
 
     /**
+     * Mark this fluid as having a custom still texture
+     * @return this
+     */
+    public @NotNull FluidBuilder customStill() {
+        return textures(true);
+    }
+
+    /**
      * @param hasCustomStill if the fluid has a custom still texture
      * @return this
      */
     public @NotNull FluidBuilder textures(boolean hasCustomStill) {
         this.hasCustomStill = hasCustomStill;
+        this.isColorEnabled = false;
         return this;
     }
 
@@ -225,6 +231,7 @@ public class FluidBuilder {
     public @NotNull FluidBuilder textures(boolean hasCustomStill, boolean hasCustomFlowing) {
         this.hasCustomStill = hasCustomStill;
         this.hasCustomFlowing = hasCustomFlowing;
+        this.isColorEnabled = false;
         return this;
     }
 
@@ -292,8 +299,15 @@ public class FluidBuilder {
         FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createGTFluidTooltip(fluid));
 
         if (hasFluidBlock) {
-            MaterialLiquid materialLiquid = new MaterialLiquid(GTUtility.getMapColor(color));
-            BlockFluidClassic block = new BlockFluidClassic(fluid, materialLiquid);
+            GTFluidBlock block;
+            if (material == null) {
+                MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color), false);
+                block = new GTFluidBlock(fluid, materialLiquid, false, false, false);
+            } else {
+                MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color), material.hasFlag(MaterialFlags.STICKY));
+                block = new GTFluidBlock(fluid, materialLiquid, material);
+            }
+            block.setRegistryName("fluid." + name);
             GTFluidRegistration.INSTANCE.registerFluidBlock(block);
         }
 

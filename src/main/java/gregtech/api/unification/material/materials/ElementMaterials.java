@@ -1,7 +1,9 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.FluidState;
+import gregtech.api.fluids.builder.FluidBuilder;
+import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
@@ -54,8 +56,8 @@ public class ElementMaterials {
                 .build();
 
         Argon = new Material.Builder(5, gregtechId("argon"))
-                .fluid(FluidTypes.GAS).plasma()
-                .color(0x00FF00).iconSet(GAS)
+                .gas().plasma()
+                .color(0x00FF00)
                 .element(Elements.Ar)
                 .build();
 
@@ -151,8 +153,8 @@ public class ElementMaterials {
                 .build();
 
         Chlorine = new Material.Builder(21, gregtechId("chlorine"))
-                .fluid(FluidTypes.GAS)
-                .color(0x2D8C8C, false)
+                .fluid(FluidStorageKey.GAS, new FluidBuilder().state(FluidState.GAS).customStill())
+                .color(0x2D8C8C)
                 .element(Elements.Cl)
                 .build();
 
@@ -206,8 +208,8 @@ public class ElementMaterials {
                 .build();
 
         Deuterium = new Material.Builder(28, gregtechId("deuterium"))
-                .fluid(FluidTypes.GAS)
-                .color(0xFCFC84, false)
+                .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
+                .color(0xFCFC84)
                 .element(Elements.D)
                 .build();
 
@@ -254,8 +256,8 @@ public class ElementMaterials {
                 .build();
 
         Fluorine = new Material.Builder(36, gregtechId("fluorine"))
-                .fluid(FluidTypes.GAS)
-                .color(0x6EA7DC, false)
+                .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
+                .color(0x6EA7DC)
                 .element(Elements.F)
                 .build();
 
@@ -309,20 +311,21 @@ public class ElementMaterials {
                 .build();
 
         Hydrogen = new Material.Builder(45, gregtechId("hydrogen"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0x0000B5)
                 .element(Elements.H)
                 .build();
 
         Helium = new Material.Builder(46, gregtechId("helium"))
-                .fluid(FluidTypes.GAS).plasma()
-                .color(0xFCFC94, false)
+                .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
+                .fluid(FluidStorageKey.PLASMA, new FluidBuilder().customStill())
+                .color(0xFCFC94)
                 .element(Elements.He)
                 .build();
 
         Helium3 = new Material.Builder(47, gregtechId("helium_3"))
-                .fluid(FluidTypes.GAS)
-                .color(0xFCFCCC, false)
+                .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
+                .color(0xFCFCCC)
                 .element(Elements.He3)
                 .build();
 
@@ -362,8 +365,8 @@ public class ElementMaterials {
                 .build();
 
         Krypton = new Material.Builder(52, gregtechId("krypton"))
-                .fluid(FluidTypes.GAS)
-                .color(0x80FF80, false).iconSet(GAS)
+                .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
+                .color(0x80FF80)
                 .element(Elements.Kr)
                 .build();
 
@@ -465,8 +468,8 @@ public class ElementMaterials {
                 .build();
 
         Neon = new Material.Builder(67, gregtechId("neon"))
-                .fluid(FluidTypes.GAS)
-                .color(0xFAB4B4).iconSet(GAS)
+                .gas()
+                .color(0xFAB4B4)
                 .element(Elements.Ne)
                 .build();
 
@@ -498,8 +501,8 @@ public class ElementMaterials {
                 .build();
 
         Nitrogen = new Material.Builder(72, gregtechId("nitrogen"))
-                .fluid(FluidTypes.GAS).plasma()
-                .color(0x00BFC1).iconSet(GAS)
+                .gas().plasma()
+                .color(0x00BFC1)
                 .element(Elements.N)
                 .build();
 
@@ -526,7 +529,7 @@ public class ElementMaterials {
                 .build();
 
         Oxygen = new Material.Builder(76, gregtechId("oxygen"))
-                .fluid(FluidTypes.GAS).plasma()
+                .gas().plasma()
                 .color(0x4CC3FF)
                 .element(Elements.O)
                 .build();
@@ -598,7 +601,7 @@ public class ElementMaterials {
                 .build();
 
         Radon = new Material.Builder(87, gregtechId("radon"))
-                .fluid(FluidTypes.GAS)
+                .gas()
                 .color(0xFF39FF)
                 .element(Elements.Rn)
                 .build();
@@ -750,7 +753,7 @@ public class ElementMaterials {
                 .build();
 
         Tin = new Material.Builder(112, gregtechId("tin"))
-                .ingot(1).fluid(FluidTypes.LIQUID).ore()
+                .ingot(1).fluid().ore()
                 .color(0xDCDCDC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SPRING, GENERATE_SPRING_SMALL,
                         GENERATE_FINE_WIRE, GENERATE_DOUBLE_PLATE)
@@ -773,8 +776,8 @@ public class ElementMaterials {
                 .build();
 
         Tritium = new Material.Builder(114, gregtechId("tritium"))
-                .fluid(FluidTypes.GAS)
-                .color(0xFC5C5C, false)
+                .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
+                .color(0xFC5C5C)
                 .iconSet(METALLIC)
                 .element(Elements.T)
                 .build();
@@ -815,8 +818,8 @@ public class ElementMaterials {
                 .build();
 
         Xenon = new Material.Builder(119, gregtechId("xenon"))
-                .fluid(FluidTypes.GAS)
-                .color(0x00FFFF).iconSet(GAS)
+                .gas()
+                .color(0x00FFFF)
                 .element(Elements.Xe)
                 .build();
 
@@ -846,8 +849,10 @@ public class ElementMaterials {
                 .build();
 
         Naquadah = new Material.Builder(124, gregtechId("naquadah"))
-                .ingot(4).fluid().ore()
-                .color(0x323232, false).iconSet(METALLIC)
+                .ingot(4)
+                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .ore()
+                .color(0x323232).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_SPRING, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Nq)
                 .rotorStats(6.0f, 4.0f, 1280)
@@ -857,16 +862,18 @@ public class ElementMaterials {
                 .build();
 
         NaquadahEnriched = new Material.Builder(125, gregtechId("naquadah_enriched"))
-                .ingot(4).fluid()
-                .color(0x3C3C3C, false).iconSet(METALLIC)
+                .ingot(4)
+                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .color(0x3C3C3C).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Nq1)
                 .blastTemp(7000, GasTier.HIGH, VA[IV], 1000)
                 .build();
 
         Naquadria = new Material.Builder(126, gregtechId("naquadria"))
-                .ingot(3).fluid()
-                .color(0x1E1E1E, false).iconSet(SHINY)
+                .ingot(3)
+                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .color(0x1E1E1E).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FOIL, GENERATE_GEAR, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW)
                 .element(Elements.Nq2)
                 .blastTemp(9000, GasTier.HIGH, VA[ZPM], 1200)

@@ -5,6 +5,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFire;
+import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,19 +20,18 @@ import net.minecraftforge.fluids.Fluid;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class MaterialFluidBlock extends BlockFluidClassic {
+public class GTFluidBlock extends BlockFluidClassic {
 
-    private final Material gtMaterial;
     public final boolean isFlammable;
     public final boolean isExplosive;
     public final boolean isSticky;
 
-    public MaterialFluidBlock(@Nonnull Fluid fluid, @Nonnull GTFluidMaterial material, @Nonnull Material gtMaterial) {
+    public GTFluidBlock(@Nonnull Fluid fluid, @Nonnull MaterialLiquid material, boolean isFlammable,
+                        boolean isExplosive, boolean isSticky) {
         super(fluid, material);
-        this.gtMaterial = gtMaterial;
-        this.isFlammable = gtMaterial.hasFlag(MaterialFlags.FLAMMABLE);
-        this.isExplosive = gtMaterial.hasFlag(MaterialFlags.EXPLOSIVE);
-        this.isSticky = gtMaterial.hasFlag(MaterialFlags.STICKY);
+        this.isFlammable = isFlammable;
+        this.isExplosive = isExplosive;
+        this.isSticky = isSticky;
 
         boolean displaces = fluid.getDensity() > 1000; // water density
         this.displacements.put(Blocks.WATER, displaces);
@@ -39,6 +39,11 @@ public class MaterialFluidBlock extends BlockFluidClassic {
         displaces = fluid.getDensity() > 3000; // lava density
         this.displacements.put(Blocks.LAVA, displaces);
         this.displacements.put(Blocks.FLOWING_LAVA, displaces);
+    }
+
+    public GTFluidBlock(@Nonnull Fluid fluid, @Nonnull MaterialLiquid material, @Nonnull Material gtMaterial) {
+        this(fluid, material, gtMaterial.hasFlag(MaterialFlags.FLAMMABLE),
+                gtMaterial.hasFlag(MaterialFlags.EXPLOSIVE), gtMaterial.hasFlag(MaterialFlags.STICKY));
     }
 
     @Nullable
@@ -98,10 +103,5 @@ public class MaterialFluidBlock extends BlockFluidClassic {
             return false;
         }
         return super.displaceIfPossible(world, pos);
-    }
-
-    @Nonnull
-    public Material getGTMaterial() {
-        return this.gtMaterial;
     }
 }

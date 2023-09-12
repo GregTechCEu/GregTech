@@ -25,6 +25,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.ApiStatus;
 import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nonnull;
@@ -253,11 +254,6 @@ public class Material implements Comparable<Material> {
     @ZenGetter("materialRGB")
     public int getMaterialRGB() {
         return materialInfo.color;
-    }
-
-    @ZenGetter("hasFluidColor")
-    public boolean hasFluidColor() {
-        return materialInfo.hasFluidColor;
     }
 
     public void setMaterialIconSet(MaterialIconSet materialIconSet) {
@@ -511,13 +507,16 @@ public class Material implements Comparable<Material> {
          *
          * @param type The {@link FluidType} of this Material, either Fluid or Gas.
          * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
+         *
+         * @deprecated {@link #fluid(FluidStorageKey, FluidBuilder)}
          */
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
         @Deprecated
         public Builder fluid(FluidType type) {
             if (type == FluidTypes.LIQUID) return fluid();
             if (type == FluidTypes.GAS) return fluid(FluidStorageKey.GAS, FluidState.GAS);
             if (type == FluidTypes.PLASMA) return fluid(FluidStorageKey.PLASMA, FluidState.PLASMA);
-            if (type == FluidTypes.ACID) return fluid(FluidStorageKey.LIQUID, new FluidBuilder().attributes(FluidAttributes.ACID));
+            if (type == FluidTypes.ACID) return fluid(FluidStorageKey.LIQUID, new FluidBuilder().attribute(FluidAttributes.ACID));
             throw new IllegalStateException("unable to handle fluidtype");
         }
 
@@ -527,21 +526,29 @@ public class Material implements Comparable<Material> {
          * @param type     The {@link FluidType} of this Material.
          * @param hasBlock If true, create a Fluid Block for this Material.
          * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
+         *
+         * @deprecated {@link #fluid(FluidStorageKey, FluidBuilder)}
          */
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
         @Deprecated
         public Builder fluid(FluidType type, boolean hasBlock) {
             return fluid(type);
         }
 
         /**
-         * Add a {@link PlasmaProperty} to this Material.<br>
-         * Is not required to have a {@link FluidProperty}, and will not automatically apply one.
-         *
-         * @throws IllegalArgumentException If a {@link PlasmaProperty} has already been added to this Material.
+         * Add a plasma for this material.
+         * @see #fluid(FluidStorageKey, FluidState)
          */
-        @Deprecated
         public Builder plasma() {
             return fluid(FluidStorageKey.PLASMA, FluidState.PLASMA);
+        }
+
+        /**
+         * Add a gas for this material.
+         * @see #fluid(FluidStorageKey, FluidState)
+         */
+        public Builder gas() {
+            return fluid(FluidStorageKey.GAS, FluidState.GAS);
         }
 
         /**
@@ -764,7 +771,7 @@ public class Material implements Comparable<Material> {
          * @param color The RGB-formatted Color.
          */
         public Builder color(int color) {
-            color(color, true);
+            this.materialInfo.color = color;
             return this;
         }
 
@@ -775,11 +782,12 @@ public class Material implements Comparable<Material> {
          *
          * @param color         The RGB-formatted Color.
          * @param hasFluidColor Whether the fluid should be colored or not.
+         * @deprecated {@link #color(int)}
          */
+        @Deprecated
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
         public Builder color(int color, boolean hasFluidColor) {
-            this.materialInfo.color = color;
-            this.materialInfo.hasFluidColor = hasFluidColor;
-            return this;
+            return color(color);
         }
 
         public Builder colorAverage() {
@@ -1047,13 +1055,6 @@ public class Material implements Comparable<Material> {
          * Default: 0xFFFFFF if no Components, otherwise it will be the average of Components.
          */
         private int color = -1;
-
-        /**
-         * The color of this Material.
-         * <p>
-         * Default: 0xFFFFFF if no Components, otherwise it will be the average of Components.
-         */
-        private boolean hasFluidColor = true;
 
         /**
          * The IconSet of this Material.
