@@ -2,6 +2,7 @@ package gregtech.client;
 
 import codechicken.lib.texture.TextureUtils;
 import gregtech.api.GTValues;
+import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.fluids.MetaFluids;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.IGTTool;
@@ -85,6 +86,7 @@ public class ClientProxy extends CommonProxy {
         MetaEntities.initRenderers();
         MetaFluids.initIconFluidSprites();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
+        TextureUtils.addIconRegister(GTFluidRegistration.INSTANCE::registerSprites);
     }
 
     @Override

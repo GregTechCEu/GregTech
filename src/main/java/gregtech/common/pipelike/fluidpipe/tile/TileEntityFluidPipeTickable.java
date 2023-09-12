@@ -1,10 +1,11 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.cover.CoverBehavior;
-import gregtech.api.fluids.MaterialFluid;
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.FluidConstants;
+import gregtech.api.fluids.FluidState;
+import gregtech.api.fluids.attribute.AttributedFluid;
+import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
@@ -198,17 +199,28 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
         boolean burning = prop.getMaxFluidTemperature() < fluid.getTemperature(stack);
         boolean leaking = !prop.isGasProof() && fluid.isGaseous(stack);
-        boolean shattering = !prop.isCryoProof() && fluid.getTemperature() < IPropertyFluidFilter.CRYOGENIC_TEMPERATURE_THRESHOLD;
+        boolean shattering = !prop.isCryoProof() && fluid.getTemperature() < FluidConstants.CRYOGENIC_FLUID_THRESHOLD;
         boolean corroding = false;
         boolean melting = false;
 
-        if (fluid instanceof MaterialFluid materialFluid) {
-            corroding = !prop.isAcidProof() && materialFluid.getFluidType().equals(FluidTypes.ACID);
-            melting = !prop.isPlasmaProof() && materialFluid.getFluidType().equals(FluidTypes.PLASMA);
+        if (fluid instanceof AttributedFluid attributedFluid) {
+            FluidState state = attributedFluid.getState();
+            if (!prop.canContain(state)) {
+                leaking = state == FluidState.GAS;
+                melting = state == FluidState.PLASMA;
+            }
 
             // carrying plasmas which are too hot when plasma proof does not burn pipes
-            if (burning && prop.isPlasmaProof() && materialFluid.getFluidType().equals(FluidTypes.PLASMA))
+            if (burning && prop.canContain(FluidState.PLASMA)) {
                 burning = false;
+            }
+
+            for (FluidAttribute attribute : attributedFluid.getAttributes()) {
+                if (!prop.canContain(attribute)) {
+                    // corrodes if the pipe can't handle the attribute, even it's not an acid
+                    corroding = true;
+                }
+            }
         }
 
         if (burning || leaking || corroding || shattering || melting) {

@@ -383,7 +383,7 @@ public abstract class ParallelLogic {
             int available = 0;
             // For every fluid gathered from the fluid inputs.
             for (Map.Entry<FluidKey, Integer> inputFluid : countFluid.entrySet()) {
-                // Strip the Non-consumable tags here, as FluidKey compares the tags, which causes finding matching fluids
+                // Strip the Non-consumable tags here, as FluidStorageKey compares the tags, which causes finding matching fluids
                 // in the input tanks to fail, because there is nothing in those hatches with a non-consumable tag
                 if (notConsumableFluid.getKey().equals(inputFluid.getKey())) {
                     available = inputFluid.getValue();

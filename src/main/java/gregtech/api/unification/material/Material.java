@@ -4,8 +4,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GregTechAPI;
+import gregtech.api.fluids.FluidState;
+import gregtech.api.fluids.attribute.FluidAttributes;
+import gregtech.api.fluids.builder.FluidBuilder;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.info.MaterialFlag;
@@ -14,7 +18,6 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
@@ -183,21 +186,48 @@ public class Material implements Comparable<Material> {
         }
     }
 
+    /**
+     * Retrieves a fluid from the material.
+     * Attempts to retrieve with {@link FluidStorageKey#LIQUID} and {@link FluidStorageKey#GAS}.
+     * @return the fluid
+     * @see #getFluid(FluidStorageKey)
+     */
     public Fluid getFluid() {
+        Fluid fluid = getFluid(FluidStorageKey.LIQUID);
+        if (fluid != null) return fluid;
+        return getFluid(FluidStorageKey.GAS);
+    }
+
+    /**
+     * @param key the key for the fluid
+     * @return the fluid corresponding with the key
+     */
+    public Fluid getFluid(@Nonnull FluidStorageKey key) {
         FluidProperty prop = getProperty(PropertyKey.FLUID);
         if (prop == null) {
             throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a Fluid!");
         }
 
-        Fluid fluid = prop.getFluid();
-        if (fluid == null)
-            GTLog.logger.warn("Material {} Fluid was null!", this);
-
-        return fluid;
+        return prop.getStorage().get(key);
     }
 
+    /**
+     * @param amount the amount the FluidStack should have
+     * @return a FluidStack with the fluid and amount
+     * @see #getFluid(FluidStorageKey, int)
+     */
     public FluidStack getFluid(int amount) {
         return new FluidStack(getFluid(), amount);
+    }
+
+    /**
+     *
+     * @param key the key for the fluid
+     * @param amount the amount the FluidStack should have
+     * @return a FluidStack with the fluid and amount
+     */
+    public FluidStack getFluid(@Nonnull FluidStorageKey key, int amount) {
+        return new FluidStack(getFluid(key), amount);
     }
 
     public int getBlockHarvestLevel() {
@@ -297,8 +327,7 @@ public class Material implements Comparable<Material> {
     }
 
     public FluidStack getPlasma(int amount) {
-        PlasmaProperty prop = properties.getProperty(PropertyKey.PLASMA);
-        return prop == null ? null : prop.getPlasma(amount);
+        return getFluid(FluidStorageKey.PLASMA, amount);
     }
 
     //TODO clean up the name-related methods
@@ -446,12 +475,33 @@ public class Material implements Comparable<Material> {
 
         /**
          * Add a {@link FluidProperty} to this Material.<br>
-         * Will be created as a {@link FluidTypes#LIQUID}, without a Fluid Block.
-         *
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
+         * Will be created as a {@link FluidStorageKey#LIQUID}, with standard {@link FluidBuilder} defaults.
+         * <p>
+         * Can be called multiple times to add multiple fluids.
          */
         public Builder fluid() {
+            return fluid(FluidStorageKey.LIQUID, new FluidBuilder());
+        }
+
+        /**
+         * Add a {@link FluidProperty} to this Material.<br>
+         * Will be created with the specified state a with standard {@link FluidBuilder} defaults.
+         * <p>
+         * Can be called multiple times to add multiple fluids.
+         */
+        public Builder fluid(@Nonnull FluidStorageKey key, @Nonnull FluidState state) {
+            return fluid(key, new FluidBuilder().state(state));
+        }
+
+        /**
+         * Add a {@link FluidProperty} to this Material.<br>
+         * <p>
+         * Can be called multiple times to add multiple fluids.
+         */
+        public Builder fluid(@Nonnull FluidStorageKey key, @Nonnull FluidBuilder builder) {
             properties.ensureSet(PropertyKey.FLUID);
+            FluidProperty property = properties.getProperty(PropertyKey.FLUID);
+            property.getStorage().queue(key, builder);
             return this;
         }
 
@@ -462,8 +512,13 @@ public class Material implements Comparable<Material> {
          * @param type The {@link FluidType} of this Material, either Fluid or Gas.
          * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
          */
+        @Deprecated
         public Builder fluid(FluidType type) {
-            return fluid(type, false);
+            if (type == FluidTypes.LIQUID) return fluid();
+            if (type == FluidTypes.GAS) return fluid(FluidStorageKey.GAS, FluidState.GAS);
+            if (type == FluidTypes.PLASMA) return fluid(FluidStorageKey.PLASMA, FluidState.PLASMA);
+            if (type == FluidTypes.ACID) return fluid(FluidStorageKey.LIQUID, new FluidBuilder().attributes(FluidAttributes.ACID));
+            throw new IllegalStateException("unable to handle fluidtype");
         }
 
         /**
@@ -473,9 +528,9 @@ public class Material implements Comparable<Material> {
          * @param hasBlock If true, create a Fluid Block for this Material.
          * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
          */
+        @Deprecated
         public Builder fluid(FluidType type, boolean hasBlock) {
-            properties.setProperty(PropertyKey.FLUID, new FluidProperty(type, hasBlock));
-            return this;
+            return fluid(type);
         }
 
         /**
@@ -484,9 +539,9 @@ public class Material implements Comparable<Material> {
          *
          * @throws IllegalArgumentException If a {@link PlasmaProperty} has already been added to this Material.
          */
+        @Deprecated
         public Builder plasma() {
-            properties.ensureSet(PropertyKey.PLASMA);
-            return this;
+            return fluid(FluidStorageKey.PLASMA, FluidState.PLASMA);
         }
 
         /**
@@ -669,7 +724,7 @@ public class Material implements Comparable<Material> {
          */
         public Builder polymer() {
             properties.ensureSet(PropertyKey.POLYMER);
-            return this;
+            return fluid();
         }
 
         /**
@@ -688,8 +743,7 @@ public class Material implements Comparable<Material> {
             if (prop == null) dust(harvestLevel, 0);
             else if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
             properties.ensureSet(PropertyKey.POLYMER);
-            properties.ensureSet(PropertyKey.FLUID);
-            return this;
+            return fluid();
         }
 
         public Builder burnTime(int burnTime) {

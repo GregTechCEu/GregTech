@@ -1,6 +1,7 @@
 package gregtech.integration.crafttweaker.material;
 
 import crafttweaker.annotations.ZenRegister;
+import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
@@ -126,7 +127,7 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.FLUID_PIPE).setMaxFluidTemperature(maxFluidTemperature);
             m.getProperty(PropertyKey.FLUID_PIPE).setThroughput(throughput);
             m.getProperty(PropertyKey.FLUID_PIPE).setGasProof(gasProof);
-            m.getProperty(PropertyKey.FLUID_PIPE).setAcidProof(acidProof);
+            m.getProperty(PropertyKey.FLUID_PIPE).setCanContain(FluidAttributes.ACID, acidProof);
             m.getProperty(PropertyKey.FLUID_PIPE).setCryoProof(cryoProof);
             m.getProperty(PropertyKey.FLUID_PIPE).setPlasmaProof(plasmaProof);
         } else {

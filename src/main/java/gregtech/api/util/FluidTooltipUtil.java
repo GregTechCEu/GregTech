@@ -1,5 +1,6 @@
 package gregtech.api.util;
 
+import gregtech.api.fluids.GTFluid;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Supplier;
+
+import static gregtech.api.fluids.FluidConstants.CRYOGENIC_FLUID_THRESHOLD;
 
 public class FluidTooltipUtil {
 
@@ -103,13 +106,35 @@ public class FluidTooltipUtil {
             if (isPlasma) {
                 tooltip.add(I18n.format(FluidTypes.PLASMA.getUnlocalizedTooltip()));
             } else {
-                tooltip.add(I18n.format(property.getFluidType().getUnlocalizedTooltip()));
+//                tooltip.add(I18n.format(property.getFluidType().getUnlocalizedTooltip()));
             }
-            property.getFluidType().addAdditionalTooltips(tooltip);
+//            property.getFluidType().addAdditionalTooltips(tooltip);
             if (temperature < 120) {
                 // fluids colder than 120K are cryogenic
                 tooltip.add(I18n.format("gregtech.fluid.temperature.cryogenic"));
             }
+            return tooltip;
+        };
+    }
+
+    public static Supplier<List<String>> createGTFluidTooltip(GTFluid fluid) {
+        return () -> {
+            List<String> tooltip = new ArrayList<>();
+            if (fluid instanceof GTFluid.GTMaterialFluid materialFluid) {
+                Material material = materialFluid.getMaterial();
+                if (!material.getChemicalFormula().isEmpty()) {
+                    tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
+                }
+            }
+
+            tooltip.add(I18n.format("gregtech.fluid.temperature", fluid.getTemperature()));
+            tooltip.add(I18n.format(fluid.getState().getTranslationKey()));
+            fluid.getAttributes().forEach(a -> a.appendFluidTooltips(tooltip));
+
+            if (fluid.getTemperature() < CRYOGENIC_FLUID_THRESHOLD) {
+                tooltip.add(I18n.format("gregtech.fluid.temperature.cryogenic"));
+            }
+
             return tooltip;
         };
     }

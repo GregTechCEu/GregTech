@@ -69,9 +69,9 @@ public class MetaFluids {
 
             if (fluidProperty != null && fluidProperty.getFluid() == null) {
                 int temperature = Math.max(material.getBlastTemperature(), fluidProperty.getFluidTemperature());
-                Fluid fluid = registerFluid(material, fluidProperty.getFluidType(), temperature, fluidProperty.hasBlock());
-                fluidProperty.setFluid(fluid);
-                fluidProperty.setFluidTemperature(fluid.getTemperature(), fluid.getTemperature() >= 0);
+//                Fluid fluid = registerFluid(material, fluidProperty.getFluidType(), temperature, fluidProperty.hasBlock());
+//                fluidProperty.setFluid(fluid);
+//                fluidProperty.setFluidTemperature(fluid.getTemperature(), fluid.getTemperature() >= 0);
             }
 
             PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
