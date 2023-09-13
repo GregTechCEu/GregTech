@@ -163,12 +163,7 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
-        LiquidOxygen = new Material.Builder(270, gregtechId("liquid_oxygen"))
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(85))
-                .color(0x6688DD)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Oxygen, 1)
-                .build();
+        // FREE ID 270
 
         Coal = new Material.Builder(271, gregtechId("coal"))
                 .gem(1, 1600).ore(2, 1) //default coal burn time in vanilla
@@ -1488,11 +1483,6 @@ public class FirstDegreeMaterials {
                 .components(Calcium, 2, Niobium, 2, Oxygen, 7)
                 .build();
 
-        LiquidHelium = new Material.Builder(450, gregtechId("liquid_helium"))
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(4))
-                .color(0xFCFF90)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Helium, 1)
-                .build();
+        // FREE ID 450
     }
 }

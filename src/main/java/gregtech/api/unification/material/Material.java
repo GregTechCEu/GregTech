@@ -189,13 +189,26 @@ public class Material implements Comparable<Material> {
 
     /**
      * Retrieves a fluid from the material.
-     * Attempts to retrieve with {@link FluidStorageKey#LIQUID} and {@link FluidStorageKey#GAS}.
+     * Attempts to retrieve with {@link FluidProperty#getPrimaryKey()}, {@link FluidStorageKey#LIQUID} and
+     * {@link FluidStorageKey#GAS}.
      * @return the fluid
      * @see #getFluid(FluidStorageKey)
      */
     public Fluid getFluid() {
-        Fluid fluid = getFluid(FluidStorageKey.LIQUID);
+        FluidProperty prop = getProperty(PropertyKey.FLUID);
+        if (prop == null) {
+            throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a Fluid!");
+        }
+
+        FluidStorageKey key = prop.getPrimaryKey();
+        Fluid fluid = null;
+
+        if (key != null) fluid = prop.getStorage().get(key);
         if (fluid != null) return fluid;
+
+        fluid = getFluid(FluidStorageKey.LIQUID);
+        if (fluid != null) return fluid;
+
         return getFluid(FluidStorageKey.GAS);
     }
 

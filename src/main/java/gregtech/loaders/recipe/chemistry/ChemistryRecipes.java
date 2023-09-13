@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.api.fluids.store.FluidStorageKey;
 import net.minecraft.init.Items;
 
 import static gregtech.api.GTValues.*;
@@ -65,12 +66,12 @@ public class ChemistryRecipes {
 
         VACUUM_RECIPES.recipeBuilder()
                 .fluidInputs(Oxygen.getFluid(1000))
-                .fluidOutputs(LiquidOxygen.getFluid(1000))
+                .fluidOutputs(Oxygen.getFluid(FluidStorageKey.LIQUID, 1000))
                 .duration(240).EUt(VA[EV]).buildAndRegister();
 
         VACUUM_RECIPES.recipeBuilder()
                 .fluidInputs(Helium.getFluid(1000))
-                .fluidOutputs(LiquidHelium.getFluid(1000))
+                .fluidOutputs(Helium.getFluid(FluidStorageKey.LIQUID, 1000))
                 .duration(240).EUt(VA[EV]).buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder()

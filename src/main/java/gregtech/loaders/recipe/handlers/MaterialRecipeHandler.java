@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.handlers;
 
+import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
@@ -203,7 +204,7 @@ public class MaterialRecipeHandler {
             } else {
                 RecipeMaps.VACUUM_RECIPES.recipeBuilder()
                         .input(ingotHot, material)
-                        .fluidInputs(Materials.LiquidHelium.getFluid(500))
+                        .fluidInputs(Materials.Helium.getFluid(FluidStorageKey.LIQUID, 500))
                         .output(ingot, material)
                         .fluidOutputs(Materials.Helium.getFluid(250))
                         .duration((int) material.getMass() * 3)

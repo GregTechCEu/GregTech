@@ -7,6 +7,7 @@ import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 
 import static gregtech.api.GTValues.*;
@@ -324,9 +325,14 @@ public class ElementMaterials {
         Helium = new Material.Builder(46, gregtechId("helium"))
                 .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
                 .fluid(FluidStorageKey.PLASMA, new FluidBuilder().customStill())
+                .fluid(FluidStorageKey.LIQUID, new FluidBuilder()
+                        .temperature(4)
+                        .color(0xFCFF90)
+                        .name("liquid_helium"))
                 .color(0xFCFC94)
                 .element(Elements.He)
                 .build();
+        Helium.getProperty(PropertyKey.FLUID).setPrimaryKey(FluidStorageKey.GAS);
 
         Helium3 = new Material.Builder(47, gregtechId("helium_3"))
                 .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
@@ -541,10 +547,16 @@ public class ElementMaterials {
                 .build();
 
         Oxygen = new Material.Builder(76, gregtechId("oxygen"))
-                .gas().plasma()
+                .gas()
+                .fluid(FluidStorageKey.LIQUID, new FluidBuilder()
+                        .temperature(85)
+                        .color(0x6688DD)
+                        .name("liquid_oxygen"))
+                .plasma()
                 .color(0x4CC3FF)
                 .element(Elements.O)
                 .build();
+        Oxygen.getProperty(PropertyKey.FLUID).setPrimaryKey(FluidStorageKey.GAS);
 
         Palladium = new Material.Builder(77, gregtechId("palladium"))
                 .ingot().fluid().ore()
