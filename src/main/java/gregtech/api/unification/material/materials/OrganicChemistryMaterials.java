@@ -2,7 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.builder.FluidBuilder;
-import gregtech.api.fluids.store.FluidStorageKey;
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
 
 import static gregtech.api.unification.material.Materials.*;
@@ -17,7 +17,7 @@ public class OrganicChemistryMaterials {
     public static void register() {
         SiliconeRubber = new Material.Builder(1000, gregtechId("silicone_rubber"))
                 .polymer()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(900))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(900))
                 .color(0xDCDCDC)
                 .flags(GENERATE_GEAR, GENERATE_RING, GENERATE_FOIL)
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1, Silicon, 1)
@@ -46,7 +46,7 @@ public class OrganicChemistryMaterials {
 
         StyreneButadieneRubber = new Material.Builder(1004, gregtechId("styrene_butadiene_rubber"))
                 .polymer()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1000))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1000))
                 .color(0x211A18).iconSet(SHINY)
                 .flags(GENERATE_FOIL, GENERATE_RING)
                 .components(Carbon, 20, Hydrogen, 26)
@@ -62,7 +62,7 @@ public class OrganicChemistryMaterials {
 
         ReinforcedEpoxyResin = new Material.Builder(1006, gregtechId("reinforced_epoxy_resin"))
                 .polymer()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(600))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(600))
                 .color(0xA07A10)
                 .flags(STD_METAL)
                 .components(Carbon, 6, Hydrogen, 4, Oxygen, 1)
@@ -70,7 +70,7 @@ public class OrganicChemistryMaterials {
 
         PolyvinylChloride = new Material.Builder(1007, gregtechId("polyvinyl_chloride"))
                 .polymer()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(373))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(373))
                 .color(0xD7E6E6)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .components(Carbon, 2, Hydrogen, 3, Chlorine, 1)
@@ -79,14 +79,14 @@ public class OrganicChemistryMaterials {
 
         PolyphenyleneSulfide = new Material.Builder(1008, gregtechId("polyphenylene_sulfide"))
                 .polymer()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(500))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(500))
                 .color(0xAA8800)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .components(Carbon, 6, Hydrogen, 4, Sulfur, 1)
                 .build();
 
         GlycerylTrinitrate = new Material.Builder(1009, gregtechId("glyceryl_trinitrate"))
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().customStill())
                 .color(0x04443C)
                 .flags(FLAMMABLE, EXPLOSIVE)
                 .components(Carbon, 3, Hydrogen, 5, Nitrogen, 3, Oxygen, 9)
@@ -94,7 +94,7 @@ public class OrganicChemistryMaterials {
 
         Polybenzimidazole = new Material.Builder(1010, gregtechId("polybenzimidazole"))
                 .polymer()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1450))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1450))
                 .color(0x2D2D2D)
                 .flags(EXCLUDE_BLOCK_CRAFTING_RECIPES, GENERATE_FOIL)
                 .components(Carbon, 20, Hydrogen, 12, Nitrogen, 4)
@@ -110,7 +110,7 @@ public class OrganicChemistryMaterials {
 
         Polyethylene = new Material.Builder(1012, gregtechId("plastic")) //todo add polyethylene oredicts
                 .polymer(1)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(408))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(408))
                 .color(0xC8C8C8)
                 .flags(GENERATE_FOIL)
                 .components(Carbon, 2, Hydrogen, 4)
@@ -119,7 +119,7 @@ public class OrganicChemistryMaterials {
 
         Epoxy = new Material.Builder(1013, gregtechId("epoxy"))
                 .polymer(1)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(400))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(400))
                 .color(0xC88C14)
                 .flags(STD_METAL)
                 .components(Carbon, 21, Hydrogen, 25, Chlorine, 1, Oxygen, 5)
@@ -129,7 +129,7 @@ public class OrganicChemistryMaterials {
 
         Polycaprolactam = new Material.Builder(1015, gregtechId("polycaprolactam"))
                 .polymer(1)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(493))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(493))
                 .color(0x323232)
                 .flags(STD_METAL, GENERATE_FOIL)
                 .components(Carbon, 6, Hydrogen, 11, Nitrogen, 1, Oxygen, 1)
@@ -137,7 +137,7 @@ public class OrganicChemistryMaterials {
 
         Polytetrafluoroethylene = new Material.Builder(1016, gregtechId("polytetrafluoroethylene"))
                 .polymer(1)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(600))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(600))
                 .color(0x646464)
                 .flags(STD_METAL, GENERATE_FRAME, GENERATE_FOIL)
                 .components(Carbon, 2, Fluorine, 4)
@@ -152,13 +152,14 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Methane = new Material.Builder(1018, gregtechId("methane"))
-                .gas()
+                .fluid(FluidStorageKeys.GAS, new FluidBuilder()
+                        .translation("gregtech.fluid.gas_generic"))
                 .color(0xFF0078)
                 .components(Carbon, 1, Hydrogen, 4)
                 .build();
 
         Epichlorohydrin = new Material.Builder(1019, gregtechId("epichlorohydrin"))
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().customStill())
                 .color(0x640C04)
                 .components(Carbon, 3, Hydrogen, 5, Chlorine, 1, Oxygen, 1)
                 .build();
@@ -326,7 +327,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         AceticAcid = new Material.Builder(1044, gregtechId("acetic_acid"))
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().attribute(FluidAttributes.ACID))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xC8B4A0)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 4, Oxygen, 2)
@@ -389,14 +390,14 @@ public class OrganicChemistryMaterials {
         // FREE ID 1053
 
         Ethanol = new Material.Builder(1054, gregtechId("ethanol"))
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().customStill())
                 .color(0xFC4C04)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1)
                 .build();
 
         Toluene = new Material.Builder(1055, gregtechId("toluene"))
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().customStill())
                 .color(0x712400)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 7, Hydrogen, 8)
@@ -410,7 +411,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         PhthalicAcid = new Material.Builder(1057, gregtechId("phthalic_acid"))
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().attribute(FluidAttributes.ACID))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().attribute(FluidAttributes.ACID))
                 .color(0xD1D1D1)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 8, Hydrogen, 6, Oxygen, 4)
@@ -484,7 +485,7 @@ public class OrganicChemistryMaterials {
 
         Rubber = new Material.Builder(1068, gregtechId("rubber"))
                 .polymer(0)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(400))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(400))
                 .color(0x000000).iconSet(SHINY)
                 .flags(GENERATE_GEAR, GENERATE_RING, GENERATE_FOIL, GENERATE_BOLT_SCREW)
                 .components(Carbon, 5, Hydrogen, 8)

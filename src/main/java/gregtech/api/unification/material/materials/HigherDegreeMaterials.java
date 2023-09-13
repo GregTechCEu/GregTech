@@ -2,7 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
 import gregtech.api.fluids.builder.FluidBuilder;
-import gregtech.api.fluids.store.FluidStorageKey;
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.ToolProperty;
@@ -96,7 +96,7 @@ public class HigherDegreeMaterials {
 
         RedAlloy = new Material.Builder(2517, gregtechId("red_alloy"))
                 .ingot(0)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1400))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1400))
                 .color(0xC80000)
                 .flags(STD_METAL, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
                 .components(Copper, 1, Redstone, 4)
@@ -169,7 +169,7 @@ public class HigherDegreeMaterials {
 
         BlueAlloy = new Material.Builder(2527, gregtechId("blue_alloy"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1400))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1400))
                 .color(0x64B4FF).iconSet(DULL)
                 .flags(GENERATE_PLATE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
                 .components(Electrotine, 4, Silver, 1)

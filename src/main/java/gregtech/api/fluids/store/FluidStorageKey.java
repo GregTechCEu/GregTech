@@ -2,7 +2,6 @@ package gregtech.api.fluids.store;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
-import gregtech.api.unification.material.properties.PropertyKey;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -12,23 +11,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-import static gregtech.api.util.GTUtility.gregtechId;
-
 public final class FluidStorageKey {
 
     private static final Map<ResourceLocation, FluidStorageKey> keys = new Object2ObjectOpenHashMap<>();
-
-    public static final FluidStorageKey LIQUID = new FluidStorageKey(gregtechId("liquid"),
-            MaterialIconType.liquid,
-            UnaryOperator.identity(),
-            m -> m.hasProperty(PropertyKey.DUST) ? "gregtech.fluid.liquid_generic" : "gregtech.fluid.generic");
-    public static final FluidStorageKey GAS = new FluidStorageKey(gregtechId("gas"),
-            MaterialIconType.gas,
-            UnaryOperator.identity(),
-            m -> m.hasProperty(PropertyKey.DUST) ? "gregtech.fluid.gas_generic" : "gregtech.fluid.generic");
-    public static final FluidStorageKey PLASMA = new FluidStorageKey(gregtechId("plasma"),
-            MaterialIconType.plasma,
-            s -> "plasma." + s, m -> "gregtech.fluid.plasma");
 
     private final ResourceLocation resourceLocation;
     private final MaterialIconType iconType;
@@ -48,6 +33,10 @@ public final class FluidStorageKey {
             throw new IllegalArgumentException("Cannot create duplicate keys");
         }
         keys.put(resourceLocation, this);
+    }
+
+    public static @Nullable FluidStorageKey getByName(@NotNull ResourceLocation location) {
+        return keys.get(location);
     }
 
     public @NotNull ResourceLocation getResourceLocation() {
@@ -71,10 +60,6 @@ public final class FluidStorageKey {
      */
     public @NotNull String getTranslationKeyFor(@NotNull Material material) {
         return this.translationKeyFunction.apply(material);
-    }
-
-    public static @Nullable FluidStorageKey getByName(@NotNull ResourceLocation location) {
-        return keys.get(location);
     }
 
     @Override

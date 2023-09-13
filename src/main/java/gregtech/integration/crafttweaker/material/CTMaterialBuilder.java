@@ -6,6 +6,7 @@ import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.builder.FluidBuilder;
 import gregtech.api.fluids.store.FluidStorageKey;
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
@@ -52,7 +53,7 @@ public class CTMaterialBuilder {
     @ZenMethod
     public CTMaterialBuilder fluid(@Optional String type, @Optional boolean hasBlock) {
         FluidState state = validateFluidState(type);
-        FluidStorageKey key = state == FluidState.GAS ? FluidStorageKey.GAS : state == FluidState.PLASMA ? FluidStorageKey.PLASMA : FluidStorageKey.LIQUID;
+        FluidStorageKey key = state == FluidState.GAS ? FluidStorageKeys.GAS : state == FluidState.PLASMA ? FluidStorageKeys.PLASMA : FluidStorageKeys.LIQUID;
         FluidBuilder builder = new FluidBuilder().state(state);
         if (hasBlock) builder.block();
         backingBuilder.fluid(key, builder);

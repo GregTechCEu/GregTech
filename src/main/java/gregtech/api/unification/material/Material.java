@@ -10,6 +10,7 @@ import gregtech.api.fluids.builder.FluidBuilder;
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.fluids.store.FluidStorageKey;
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.info.MaterialFlag;
@@ -189,8 +190,8 @@ public class Material implements Comparable<Material> {
 
     /**
      * Retrieves a fluid from the material.
-     * Attempts to retrieve with {@link FluidProperty#getPrimaryKey()}, {@link FluidStorageKey#LIQUID} and
-     * {@link FluidStorageKey#GAS}.
+     * Attempts to retrieve with {@link FluidProperty#getPrimaryKey()}, {@link FluidStorageKeys#LIQUID} and
+     * {@link FluidStorageKeys#GAS}.
      * @return the fluid
      * @see #getFluid(FluidStorageKey)
      */
@@ -206,10 +207,10 @@ public class Material implements Comparable<Material> {
         if (key != null) fluid = prop.getStorage().get(key);
         if (fluid != null) return fluid;
 
-        fluid = getFluid(FluidStorageKey.LIQUID);
+        fluid = getFluid(FluidStorageKeys.LIQUID);
         if (fluid != null) return fluid;
 
-        return getFluid(FluidStorageKey.GAS);
+        return getFluid(FluidStorageKeys.GAS);
     }
 
     /**
@@ -336,7 +337,7 @@ public class Material implements Comparable<Material> {
     }
 
     public FluidStack getPlasma(int amount) {
-        return getFluid(FluidStorageKey.PLASMA, amount);
+        return getFluid(FluidStorageKeys.PLASMA, amount);
     }
 
     //TODO clean up the name-related methods
@@ -484,12 +485,12 @@ public class Material implements Comparable<Material> {
 
         /**
          * Add a {@link FluidProperty} to this Material.<br>
-         * Will be created as a {@link FluidStorageKey#LIQUID}, with standard {@link FluidBuilder} defaults.
+         * Will be created as a {@link FluidStorageKeys#LIQUID}, with standard {@link FluidBuilder} defaults.
          * <p>
          * Can be called multiple times to add multiple fluids.
          */
         public Builder fluid() {
-            return fluid(FluidStorageKey.LIQUID, new FluidBuilder());
+            return fluid(FluidStorageKeys.LIQUID, new FluidBuilder());
         }
 
         /**
@@ -527,9 +528,9 @@ public class Material implements Comparable<Material> {
         @Deprecated
         public Builder fluid(FluidType type) {
             if (type == FluidTypes.LIQUID) return fluid();
-            if (type == FluidTypes.GAS) return fluid(FluidStorageKey.GAS, FluidState.GAS);
-            if (type == FluidTypes.PLASMA) return fluid(FluidStorageKey.PLASMA, FluidState.PLASMA);
-            if (type == FluidTypes.ACID) return fluid(FluidStorageKey.LIQUID, new FluidBuilder().attribute(FluidAttributes.ACID));
+            if (type == FluidTypes.GAS) return fluid(FluidStorageKeys.GAS, FluidState.GAS);
+            if (type == FluidTypes.PLASMA) return fluid(FluidStorageKeys.PLASMA, FluidState.PLASMA);
+            if (type == FluidTypes.ACID) return fluid(FluidStorageKeys.LIQUID, new FluidBuilder().attribute(FluidAttributes.ACID));
             throw new IllegalStateException("unable to handle fluidtype");
         }
 
@@ -553,7 +554,7 @@ public class Material implements Comparable<Material> {
          * @see #fluid(FluidStorageKey, FluidState)
          */
         public Builder plasma() {
-            return fluid(FluidStorageKey.PLASMA, FluidState.PLASMA);
+            return fluid(FluidStorageKeys.PLASMA, FluidState.PLASMA);
         }
 
         /**
@@ -561,7 +562,7 @@ public class Material implements Comparable<Material> {
          * @see #fluid(FluidStorageKey, FluidState)
          */
         public Builder gas() {
-            return fluid(FluidStorageKey.GAS, FluidState.GAS);
+            return fluid(FluidStorageKeys.GAS, FluidState.GAS);
         }
 
         /**

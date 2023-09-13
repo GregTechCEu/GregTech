@@ -6,7 +6,7 @@ import crafttweaker.api.enchantments.IEnchantment;
 import crafttweaker.api.liquid.ILiquidDefinition;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
-import gregtech.api.fluids.store.FluidStorageKey;
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
@@ -58,7 +58,7 @@ public class MaterialExpansion {
     @ZenGetter
     public static boolean isGaseous(Material m) {
         FluidProperty prop = m.getProperty(PropertyKey.FLUID);
-        return prop != null && prop.getStorage().get(FluidStorageKey.GAS) != null;
+        return prop != null && prop.getStorage().get(FluidStorageKeys.GAS) != null;
     }
 
     // TODO May need to move this to Material

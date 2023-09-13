@@ -5,7 +5,7 @@ import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.builder.FluidBuilder;
 import gregtech.api.fluids.store.FluidStorage;
-import gregtech.api.fluids.store.FluidStorageKey;
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.*;
 import stanhebben.zenscript.annotations.Optional;
@@ -137,7 +137,7 @@ public class MaterialPropertyExpansion {
         if (checkFrozen("add a Fluid to a material")) return;
         if (!m.hasProperty(PropertyKey.FLUID)) {
             FluidProperty property = new FluidProperty();
-            property.getStorage().queue(FluidStorageKey.LIQUID, new FluidBuilder());
+            property.getStorage().queue(FluidStorageKeys.LIQUID, new FluidBuilder());
             m.setProperty(PropertyKey.FLUID, property);
         }
     }
@@ -151,13 +151,13 @@ public class MaterialPropertyExpansion {
             FluidBuilder builder = new FluidBuilder();
             if (hasBlock) builder.block();
             switch (type) {
-                case LIQUID -> storage.queue(FluidStorageKey.LIQUID, builder);
-                case GAS -> storage.queue(FluidStorageKey.GAS, builder.state(FluidState.GAS));
-                case PLASMA -> storage.queue(FluidStorageKey.PLASMA, builder.state(FluidState.PLASMA));
+                case LIQUID -> storage.queue(FluidStorageKeys.LIQUID, builder);
+                case GAS -> storage.queue(FluidStorageKeys.GAS, builder.state(FluidState.GAS));
+                case PLASMA -> storage.queue(FluidStorageKeys.PLASMA, builder.state(FluidState.PLASMA));
             }
         } else {
             FluidProperty property = new FluidProperty();
-            property.getStorage().queue(FluidStorageKey.LIQUID, new FluidBuilder());
+            property.getStorage().queue(FluidStorageKeys.LIQUID, new FluidBuilder());
             m.setProperty(PropertyKey.FLUID, property);
         }
     }
@@ -201,7 +201,7 @@ public class MaterialPropertyExpansion {
         if (checkFrozen("add a Plasma to a material")) return;
         if (!m.hasProperty(PropertyKey.FLUID)) {
             FluidProperty property = new FluidProperty();
-            property.getStorage().queue(FluidStorageKey.PLASMA, new FluidBuilder().state(FluidState.PLASMA));
+            property.getStorage().queue(FluidStorageKeys.PLASMA, new FluidBuilder().state(FluidState.PLASMA));
             m.setProperty(PropertyKey.FLUID, property);
         }
     }

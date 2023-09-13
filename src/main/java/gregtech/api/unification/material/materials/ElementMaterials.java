@@ -3,7 +3,7 @@ package gregtech.api.unification.material.materials;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.builder.FluidBuilder;
-import gregtech.api.fluids.store.FluidStorageKey;
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
@@ -26,7 +26,7 @@ public class ElementMaterials {
 
         Aluminium = new Material.Builder(2, gregtechId("aluminium"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(933))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(933))
                 .ore()
                 .color(0x80C8F0)
                 .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME, GENERATE_SPRING,
@@ -42,7 +42,7 @@ public class ElementMaterials {
 
         Americium = new Material.Builder(3, gregtechId("americium"))
                 .ingot(3)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1449))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1449))
                 .color(0x287869).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Am)
@@ -51,7 +51,7 @@ public class ElementMaterials {
 
         Antimony = new Material.Builder(4, gregtechId("antimony"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(904))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(904))
                 .color(0xDCDCF0).iconSet(SHINY)
                 .flags(MORTAR_GRINDABLE)
                 .element(Elements.Sb)
@@ -65,7 +65,9 @@ public class ElementMaterials {
 
         Arsenic = new Material.Builder(6, gregtechId("arsenic"))
                 .dust()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(887))
+                .fluid(FluidStorageKeys.GAS, new FluidBuilder()
+                        .state(FluidState.GAS)
+                        .temperature(887))
                 .color(0x676756)
                 .element(Elements.As)
                 .build();
@@ -88,7 +90,7 @@ public class ElementMaterials {
 
         Beryllium = new Material.Builder(10, gregtechId("beryllium"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1560))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1560))
                 .ore()
                 .color(0x64B464).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_DOUBLE_PLATE)
@@ -97,7 +99,7 @@ public class ElementMaterials {
 
         Bismuth = new Material.Builder(11, gregtechId("bismuth"))
                 .ingot(1)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(545))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(545))
                 .color(0x64A0A0).iconSet(METALLIC)
                 .element(Elements.Bi)
                 .build();
@@ -137,7 +139,7 @@ public class ElementMaterials {
 
         Carbon = new Material.Builder(18, gregtechId("carbon"))
                 .dust()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(4600))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(4600))
                 .color(0x141414)
                 .element(Elements.C)
                 .build();
@@ -150,20 +152,20 @@ public class ElementMaterials {
 
         Cerium = new Material.Builder(20, gregtechId("cerium"))
                 .dust()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1068))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1068))
                 .color(0x87917D).iconSet(METALLIC)
                 .element(Elements.Ce)
                 .build();
 
         Chlorine = new Material.Builder(21, gregtechId("chlorine"))
-                .fluid(FluidStorageKey.GAS, new FluidBuilder().state(FluidState.GAS).customStill())
+                .fluid(FluidStorageKeys.GAS, new FluidBuilder().state(FluidState.GAS).customStill())
                 .color(0x2D8C8C)
                 .element(Elements.Cl)
                 .build();
 
         Chrome = new Material.Builder(22, gregtechId("chrome"))
                 .ingot(3)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(2180))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(2180))
                 .color(0xEAC4D8).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_ROTOR, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Cr)
@@ -174,7 +176,7 @@ public class ElementMaterials {
 
         Cobalt = new Material.Builder(23, gregtechId("cobalt"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1768))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1768))
                 .ore() // leave for TiCon ore processing
                 .color(0x5050FA).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FINE_WIRE)
@@ -190,7 +192,7 @@ public class ElementMaterials {
 
         Copper = new Material.Builder(25, gregtechId("copper"))
                 .ingot(1)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1358))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1358))
                 .ore()
                 .color(0xFF6400).iconSet(SHINY)
                 .flags(EXT_METAL, MORTAR_GRINDABLE, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE,
@@ -213,7 +215,7 @@ public class ElementMaterials {
                 .build();
 
         Deuterium = new Material.Builder(28, gregtechId("deuterium"))
-                .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.GAS, new FluidBuilder().customStill())
                 .color(0xFCFC84)
                 .element(Elements.D)
                 .build();
@@ -240,7 +242,7 @@ public class ElementMaterials {
 
         Europium = new Material.Builder(33, gregtechId("europium"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1099))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1099))
                 .color(0x20FFFF).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_LONG_ROD, GENERATE_FINE_WIRE, GENERATE_SPRING, GENERATE_FOIL, GENERATE_FRAME,
                         GENERATE_DOUBLE_PLATE)
@@ -261,7 +263,7 @@ public class ElementMaterials {
                 .build();
 
         Fluorine = new Material.Builder(36, gregtechId("fluorine"))
-                .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.GAS, new FluidBuilder().customStill())
                 .color(0x6EA7DC)
                 .element(Elements.F)
                 .build();
@@ -278,7 +280,7 @@ public class ElementMaterials {
 
         Gallium = new Material.Builder(39, gregtechId("gallium"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(303))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(303))
                 .color(0xDCDCFF).iconSet(SHINY)
                 .flags(STD_METAL, GENERATE_FOIL)
                 .element(Elements.Ga)
@@ -291,7 +293,7 @@ public class ElementMaterials {
 
         Gold = new Material.Builder(41, gregtechId("gold"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1337))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1337))
                 .ore()
                 .color(0xFFE650).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_RING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
@@ -323,26 +325,29 @@ public class ElementMaterials {
                 .build();
 
         Helium = new Material.Builder(46, gregtechId("helium"))
-                .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
-                .fluid(FluidStorageKey.PLASMA, new FluidBuilder().customStill())
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder()
+                .fluid(FluidStorageKeys.GAS, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.PLASMA, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder()
                         .temperature(4)
                         .color(0xFCFF90)
-                        .name("liquid_helium"))
+                        .name("liquid_helium")
+                        .translation("gregtech.fluid.liquid_generic"))
                 .color(0xFCFC94)
                 .element(Elements.He)
                 .build();
-        Helium.getProperty(PropertyKey.FLUID).setPrimaryKey(FluidStorageKey.GAS);
+        Helium.getProperty(PropertyKey.FLUID).setPrimaryKey(FluidStorageKeys.GAS);
 
         Helium3 = new Material.Builder(47, gregtechId("helium_3"))
-                .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.GAS, new FluidBuilder()
+                        .customStill()
+                        .translation("gregtech.fluid.generic"))
                 .color(0xFCFCCC)
                 .element(Elements.He3)
                 .build();
 
         Indium = new Material.Builder(48, gregtechId("indium"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(430))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(430))
                 .color(0x400080).iconSet(SHINY)
                 .element(Elements.In)
                 .build();
@@ -354,7 +359,7 @@ public class ElementMaterials {
 
         Iridium = new Material.Builder(50, gregtechId("iridium"))
                 .ingot(3)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(2719))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(2719))
                 .color(0xA1E4E4).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
                 .element(Elements.Ir)
@@ -365,7 +370,7 @@ public class ElementMaterials {
 
         Iron = new Material.Builder(51, gregtechId("iron"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1811))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1811))
                 .plasma()
                 .ore()
                 .color(0xC8C8C8).iconSet(METALLIC)
@@ -378,14 +383,16 @@ public class ElementMaterials {
                 .build();
 
         Krypton = new Material.Builder(52, gregtechId("krypton"))
-                .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.GAS, new FluidBuilder()
+                        .customStill()
+                        .translation("gregtech.fluid.generic"))
                 .color(0x80FF80)
                 .element(Elements.Kr)
                 .build();
 
         Lanthanum = new Material.Builder(53, gregtechId("lanthanum"))
                 .dust()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1193))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1193))
                 .color(0x5D7575).iconSet(METALLIC)
                 .element(Elements.La)
                 .build();
@@ -397,7 +404,7 @@ public class ElementMaterials {
 
         Lead = new Material.Builder(55, gregtechId("lead"))
                 .ingot(1)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(600))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(600))
                 .ore()
                 .color(0x8C648C)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SPRING, GENERATE_SPRING_SMALL,
@@ -409,7 +416,7 @@ public class ElementMaterials {
 
         Lithium = new Material.Builder(56, gregtechId("lithium"))
                 .dust()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(454))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(454))
                 .ore()
                 .color(0xBDC7DB)
                 .element(Elements.Li)
@@ -422,14 +429,14 @@ public class ElementMaterials {
 
         Lutetium = new Material.Builder(58, gregtechId("lutetium"))
                 .dust()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1925))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1925))
                 .color(0x00AAFF).iconSet(METALLIC)
                 .element(Elements.Lu)
                 .build();
 
         Magnesium = new Material.Builder(59, gregtechId("magnesium"))
                 .dust()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(923))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(923))
                 .color(0xFFC8C8).iconSet(METALLIC)
                 .element(Elements.Mg)
                 .build();
@@ -441,7 +448,7 @@ public class ElementMaterials {
 
         Manganese = new Material.Builder(61, gregtechId("manganese"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1519))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1519))
                 .color(0xCDE1B9)
                 .flags(STD_METAL, GENERATE_FOIL, GENERATE_BOLT_SCREW)
                 .element(Elements.Mn)
@@ -461,7 +468,7 @@ public class ElementMaterials {
 
         Molybdenum = new Material.Builder(64, gregtechId("molybdenum"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(2896))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(2896))
                 .ore()
                 .color(0xB4B4DC).iconSet(SHINY)
                 .element(Elements.Mo)
@@ -496,7 +503,7 @@ public class ElementMaterials {
 
         Nickel = new Material.Builder(69, gregtechId("nickel"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1728))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1728))
                 .plasma()
                 .ore()
                 .color(0xC8C8FA).iconSet(METALLIC)
@@ -536,7 +543,7 @@ public class ElementMaterials {
 
         Osmium = new Material.Builder(75, gregtechId("osmium"))
                 .ingot(4)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(3306))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(3306))
                 .color(0x3232FF).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Os)
@@ -548,15 +555,16 @@ public class ElementMaterials {
 
         Oxygen = new Material.Builder(76, gregtechId("oxygen"))
                 .gas()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder()
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder()
                         .temperature(85)
                         .color(0x6688DD)
-                        .name("liquid_oxygen"))
+                        .name("liquid_oxygen")
+                        .translation("gregtech.fluid.liquid_generic"))
                 .plasma()
                 .color(0x4CC3FF)
                 .element(Elements.O)
                 .build();
-        Oxygen.getProperty(PropertyKey.FLUID).setPrimaryKey(FluidStorageKey.GAS);
+        Oxygen.getProperty(PropertyKey.FLUID).setPrimaryKey(FluidStorageKeys.GAS);
 
         Palladium = new Material.Builder(77, gregtechId("palladium"))
                 .ingot().fluid().ore()
@@ -579,7 +587,7 @@ public class ElementMaterials {
 
         Platinum = new Material.Builder(80, gregtechId("platinum"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(2041))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(2041))
                 .ore()
                 .color(0xFFFFC8).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_RING, GENERATE_DOUBLE_PLATE)
@@ -590,7 +598,7 @@ public class ElementMaterials {
 
         Plutonium239 = new Material.Builder(81, gregtechId("plutonium"))
                 .ingot(3)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(913))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(913))
                 .ore(true)
                 .color(0xF03232).iconSet(METALLIC)
                 .element(Elements.Pu239)
@@ -598,7 +606,7 @@ public class ElementMaterials {
 
         Plutonium241 = new Material.Builder(82, gregtechId("plutonium_241"))
                 .ingot(3)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(913))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(913))
                 .color(0xFA4646).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Pu241)
@@ -606,7 +614,7 @@ public class ElementMaterials {
 
         Potassium = new Material.Builder(83, gregtechId("potassium"))
                 .dust(1)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(337))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(337))
                 .color(0xBEDCFF).iconSet(METALLIC)
                 .element(Elements.K)
                 .build();
@@ -675,7 +683,7 @@ public class ElementMaterials {
 
         Samarium = new Material.Builder(95, gregtechId("samarium"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1345))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1345))
                 .color(0xFFFFCC).iconSet(METALLIC)
                 .flags(GENERATE_LONG_ROD)
                 .element(Elements.Sm)
@@ -707,7 +715,7 @@ public class ElementMaterials {
 
         Silver = new Material.Builder(100, gregtechId("silver"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1235))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1235))
                 .ore()
                 .color(0xDCDCFF).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING)
@@ -735,7 +743,7 @@ public class ElementMaterials {
 
         Tantalum = new Material.Builder(104, gregtechId("tantalum"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(3290))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(3290))
                 .color(0x69B7FF).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Ta)
@@ -763,7 +771,7 @@ public class ElementMaterials {
 
         Thorium = new Material.Builder(109, gregtechId("thorium"))
                 .ingot()
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(2023))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(2023))
                 .ore()
                 .color(0x001E00).iconSet(SHINY)
                 .flags(STD_METAL, GENERATE_ROD)
@@ -782,7 +790,7 @@ public class ElementMaterials {
 
         Tin = new Material.Builder(112, gregtechId("tin"))
                 .ingot(1)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(505))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(505))
                 .ore()
                 .color(0xDCDCDC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SPRING, GENERATE_SPRING_SMALL,
@@ -805,7 +813,7 @@ public class ElementMaterials {
                 .build();
 
         Tritium = new Material.Builder(114, gregtechId("tritium"))
-                .fluid(FluidStorageKey.GAS, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.GAS, new FluidBuilder().customStill())
                 .color(0xFC5C5C)
                 .iconSet(METALLIC)
                 .element(Elements.T)
@@ -813,7 +821,7 @@ public class ElementMaterials {
 
         Tungsten = new Material.Builder(115, gregtechId("tungsten"))
                 .ingot(3)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(3695))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(3695))
                 .color(0x323232).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .element(Elements.W)
@@ -825,7 +833,7 @@ public class ElementMaterials {
 
         Uranium238 = new Material.Builder(116, gregtechId("uranium"))
                 .ingot(3)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1405))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1405))
                 .color(0x32F032).iconSet(METALLIC)
                 .flags(EXT_METAL)
                 .element(Elements.U238)
@@ -833,7 +841,7 @@ public class ElementMaterials {
 
         Uranium235 = new Material.Builder(117, gregtechId("uranium_235"))
                 .ingot(3)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(1405))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(1405))
                 .color(0x46FA46).iconSet(SHINY)
                 .flags(EXT_METAL)
                 .element(Elements.U235)
@@ -866,7 +874,7 @@ public class ElementMaterials {
 
         Zinc = new Material.Builder(122, gregtechId("zinc"))
                 .ingot(1)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(693))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(693))
                 .color(0xEBEBFA).iconSet(METALLIC)
                 .flags(STD_METAL, MORTAR_GRINDABLE, GENERATE_FOIL, GENERATE_RING, GENERATE_FINE_WIRE)
                 .element(Elements.Zn)
@@ -879,7 +887,7 @@ public class ElementMaterials {
 
         Naquadah = new Material.Builder(124, gregtechId("naquadah"))
                 .ingot(4)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().customStill())
                 .ore()
                 .color(0x323232).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_SPRING, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW, GENERATE_DOUBLE_PLATE)
@@ -892,7 +900,7 @@ public class ElementMaterials {
 
         NaquadahEnriched = new Material.Builder(125, gregtechId("naquadah_enriched"))
                 .ingot(4)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().customStill())
                 .color(0x3C3C3C).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Nq1)
@@ -901,7 +909,7 @@ public class ElementMaterials {
 
         Naquadria = new Material.Builder(126, gregtechId("naquadria"))
                 .ingot(3)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().customStill())
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().customStill())
                 .color(0x1E1E1E).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FOIL, GENERATE_GEAR, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW)
                 .element(Elements.Nq2)
@@ -910,7 +918,7 @@ public class ElementMaterials {
 
         Neutronium = new Material.Builder(127, gregtechId("neutronium"))
                 .ingot(6)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(100_000))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(100_000))
                 .color(0xFAFAFA)
                 .flags(EXT_METAL, GENERATE_BOLT_SCREW, GENERATE_FRAME, GENERATE_GEAR, GENERATE_LONG_ROD, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Nt)
@@ -922,7 +930,7 @@ public class ElementMaterials {
 
         Tritanium = new Material.Builder(128, gregtechId("tritanium"))
                 .ingot(6)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(25_000))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(25_000))
                 .color(0x600000).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING, GENERATE_SMALL_GEAR, GENERATE_ROUND, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .element(Elements.Tr)
@@ -932,7 +940,7 @@ public class ElementMaterials {
 
         Duranium = new Material.Builder(129, gregtechId("duranium"))
                 .ingot(5)
-                .fluid(FluidStorageKey.LIQUID, new FluidBuilder().temperature(7500))
+                .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(7500))
                 .color(0x4BAFAF).iconSet(BRIGHT)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Dr)
