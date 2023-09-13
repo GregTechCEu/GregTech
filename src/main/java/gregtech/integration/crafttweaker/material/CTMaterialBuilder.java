@@ -225,12 +225,6 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder fluidTemp(int temp) {
-        backingBuilder.fluidTemp(temp);
-        return this;
-    }
-
-    @ZenMethod
     public CTMaterialBuilder cableProperties(long voltage, int amperage, int loss, @Optional boolean isSuperCon) {
         backingBuilder.cableProperties(voltage, amperage, loss, isSuperCon);
         return this;

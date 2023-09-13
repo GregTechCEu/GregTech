@@ -731,7 +731,7 @@ public class Material implements Comparable<Material> {
          */
         public Builder polymer() {
             properties.ensureSet(PropertyKey.POLYMER);
-            return fluid();
+            return this;
         }
 
         /**
@@ -750,7 +750,7 @@ public class Material implements Comparable<Material> {
             if (prop == null) dust(harvestLevel, 0);
             else if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
             properties.ensureSet(PropertyKey.POLYMER);
-            return fluid();
+            return this;
         }
 
         public Builder burnTime(int burnTime) {
@@ -921,12 +921,6 @@ public class Material implements Comparable<Material> {
 
         public Builder ore(int oreMultiplier, int byproductMultiplier, boolean emissive) {
             properties.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier, emissive));
-            return this;
-        }
-
-        public Builder fluidTemp(int temp) {
-            properties.ensureSet(PropertyKey.FLUID);
-            properties.getProperty(PropertyKey.FLUID).setFluidTemperature(temp);
             return this;
         }
 

@@ -5,8 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class FluidProperty implements IMaterialProperty {
 
-    public static final int BASE_TEMP = 293; // Room Temperature
-
     private final FluidStorage storage = new FluidStorage();
 
     public FluidProperty() {}
@@ -14,10 +12,6 @@ public class FluidProperty implements IMaterialProperty {
     //TODO merge with FluidProp directly
     public @NotNull FluidStorage getStorage() {
         return this.storage;
-    }
-
-    @Deprecated
-    public void setFluidTemperature(int fluidTemperature) {
     }
 
     @Deprecated
