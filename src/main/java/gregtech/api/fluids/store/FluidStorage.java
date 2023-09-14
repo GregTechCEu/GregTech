@@ -14,7 +14,9 @@ import java.util.Map;
 public final class FluidStorage {
 
     private final Map<FluidStorageKey, Fluid> map = new Object2ObjectOpenHashMap<>();
-    private final Map<FluidStorageKey, FluidBuilder> toRegister = new Object2ObjectOpenHashMap<>();
+    private Map<FluidStorageKey, FluidBuilder> toRegister = new Object2ObjectOpenHashMap<>();
+
+    private boolean registered = false;
 
     public FluidStorage() {}
 
@@ -24,8 +26,11 @@ public final class FluidStorage {
      * @param key the key corresponding with the fluid
      * @param builder the FluidBuilder to build
      */
-    @ApiStatus.Internal
-    public void queue(@NotNull FluidStorageKey key, @NotNull FluidBuilder builder) {
+    public void enqueueRegistration(@NotNull FluidStorageKey key, @NotNull FluidBuilder builder) {
+        if (registered) {
+            throw new IllegalStateException("Cannot enqueue a builder after registration");
+        }
+
         if (toRegister.containsKey(key)) {
             throw new IllegalArgumentException("FluidStorageKey " + key + " is already queued");
         }
@@ -37,6 +42,9 @@ public final class FluidStorage {
      * @return the fluid builder queued to be registered
      */
     public @Nullable FluidBuilder getQueuedBuilder(@NotNull FluidStorageKey key) {
+        if (registered) {
+            throw new IllegalArgumentException("FluidStorage has already been registered");
+        }
         return toRegister.get(key);
     }
 
@@ -46,11 +54,16 @@ public final class FluidStorage {
      * @param material the material the fluid is based off of
      */
     @ApiStatus.Internal
-    public void register(@NotNull Material material) {
+    public void registerFluids(@NotNull Material material) {
+        if (registered) {
+            throw new IllegalStateException("FluidStorage has already been registered");
+        }
+
         for (var entry : toRegister.entrySet()) {
             storeWithLogging(entry.getKey(), entry.getValue().build(material.getModid(), material, entry.getKey()), material);
         }
-        toRegister.clear();
+        toRegister = null;
+        registered = true;
     }
 
     /**

@@ -10,9 +10,10 @@ import gregtech.common.blocks.MetaBlocks;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.BlockFluidClassic;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,40 +24,9 @@ public class GTFluidRegistration {
 
     public static final GTFluidRegistration INSTANCE = new GTFluidRegistration();
 
-    private static final Collection<ResourceLocation> fluidSprites = new ObjectOpenHashSet<>();
+    private static Collection<ResourceLocation> fluidSprites = new ObjectOpenHashSet<>();
 
     private static @Nullable BiMap<String, Fluid> MASTER_FLUID_REFERENCE;
-
-    public void init() {
-        for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
-            FluidProperty property = material.getProperty(PropertyKey.FLUID);
-            if (property != null) {
-                property.getStorage().register(material);
-            }
-        }
-    }
-
-    public void registerSprites(TextureMap textureMap) {
-        for (ResourceLocation spriteLocation : fluidSprites) {
-            textureMap.registerSprite(spriteLocation);
-        }
-    }
-
-    public void registerFluid(@NotNull Fluid fluid, @NotNull String modid, boolean hasBucket) {
-        fluidSprites.add(fluid.getStill());
-        fluidSprites.add(fluid.getFlowing());
-
-        FluidRegistry.registerFluid(fluid);
-        fixFluidRegistryName(fluid, modid);
-
-        if (hasBucket) {
-            FluidRegistry.addBucketForFluid(fluid);
-        }
-    }
-
-    public void registerFluidBlock(@NotNull BlockFluidClassic block) {
-        MetaBlocks.FLUID_BLOCKS.add(block);
-    }
 
     /**
      * Fixes all registered fluids being under the gregtech modid
@@ -78,5 +48,57 @@ public class GTFluidRegistration {
             }
         }
         MASTER_FLUID_REFERENCE.inverse().put(fluid, modid + ':' + fluid.getName());
+    }
+
+    @ApiStatus.Internal
+    public void register() {
+        for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
+            FluidProperty property = material.getProperty(PropertyKey.FLUID);
+            if (property != null) {
+                property.getStorage().registerFluids(material);
+            }
+        }
+    }
+
+    @ApiStatus.Internal
+    public void registerSprites(@NotNull TextureMap textureMap) {
+        if (fluidSprites == null) {
+            throw new IllegalStateException("Cannot register fluid sprites twice");
+        } else {
+            for (ResourceLocation spriteLocation : fluidSprites) {
+                textureMap.registerSprite(spriteLocation);
+            }
+            fluidSprites = null;
+        }
+    }
+
+    /**
+     * Register a fluid.
+     *
+     * @param fluid          the fluid to register
+     * @param modid          the modid which owns the fluid
+     * @param generateBucket if a universal bucket entry should be generated
+     */
+    public void registerFluid(@NotNull Fluid fluid, @NotNull String modid, boolean generateBucket) {
+        fluidSprites.add(fluid.getStill());
+        fluidSprites.add(fluid.getFlowing());
+
+        FluidRegistry.registerFluid(fluid);
+        fixFluidRegistryName(fluid, modid);
+
+        if (generateBucket) {
+            FluidRegistry.addBucketForFluid(fluid);
+        }
+    }
+
+    /**
+     * Register a fluid block.
+     * <p>
+     * Requires using {@link BlockFluidBase#setRegistryName} before calling.
+     *
+     * @param block the fluid block to register
+     */
+    public void registerFluidBlock(@NotNull BlockFluidBase block) {
+        MetaBlocks.FLUID_BLOCKS.add(block);
     }
 }

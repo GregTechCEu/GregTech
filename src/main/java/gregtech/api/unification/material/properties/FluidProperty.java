@@ -30,7 +30,6 @@ public class FluidProperty implements IMaterialProperty {
         this.primaryKey = primaryKey;
     }
 
-    @Deprecated
     @Override
     public void verifyProperty(MaterialProperties properties) {}
 }

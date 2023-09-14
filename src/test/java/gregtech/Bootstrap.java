@@ -70,7 +70,7 @@ public final class Bootstrap {
         managerInternal.freezeRegistries();
 
         OrePrefix.runMaterialHandlers();
-        GTFluidRegistration.INSTANCE.init();
+        GTFluidRegistration.INSTANCE.register();
         MetaItems.init();
         bootstrapped = true;
     }

@@ -1,6 +1,5 @@
 package gregtech.api.capability;
 
-import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
@@ -26,15 +25,6 @@ import static gregtech.api.fluids.FluidConstants.CRYOGENIC_FLUID_THRESHOLD;
  * @see AttributedFluid
  */
 public interface IPropertyFluidFilter extends IFilter<FluidStack> {
-
-    /**
-     * Minimum temperature of the fluid in kelvin before it starts being considered 'cryogenic'; if a fluid has lower
-     * temperature than this, it's considered cryogenic.
-     *
-     * @deprecated {@link FluidConstants#CRYOGENIC_FLUID_THRESHOLD}
-     */
-    @Deprecated
-    int CRYOGENIC_TEMPERATURE_THRESHOLD = CRYOGENIC_FLUID_THRESHOLD;
 
     @Override
     default boolean test(@Nonnull FluidStack stack) {

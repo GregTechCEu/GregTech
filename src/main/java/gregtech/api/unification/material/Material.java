@@ -23,7 +23,6 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.ApiStatus;
 import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nonnull;
@@ -508,7 +507,7 @@ public class Material implements Comparable<Material> {
         public Builder fluid(@Nonnull FluidStorageKey key, @Nonnull FluidBuilder builder) {
             properties.ensureSet(PropertyKey.FLUID);
             FluidProperty property = properties.getProperty(PropertyKey.FLUID);
-            property.getStorage().queue(key, builder);
+            property.getStorage().enqueueRegistration(key, builder);
             return this;
         }
 
@@ -750,21 +749,6 @@ public class Material implements Comparable<Material> {
         public Builder color(int color) {
             this.materialInfo.color = color;
             return this;
-        }
-
-        /**
-         * Set the Color of this Material.<br>
-         * Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called, where
-         * it will be a weighted average of the components of the Material.
-         *
-         * @param color         The RGB-formatted Color.
-         * @param hasFluidColor Whether the fluid should be colored or not.
-         * @deprecated {@link #color(int)}
-         */
-        @Deprecated
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        public Builder color(int color, boolean hasFluidColor) {
-            return color(color);
         }
 
         public Builder colorAverage() {

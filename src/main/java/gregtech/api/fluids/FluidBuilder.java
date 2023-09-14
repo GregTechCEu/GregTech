@@ -306,7 +306,7 @@ public class FluidBuilder {
                 MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color), material.hasFlag(MaterialFlags.STICKY));
                 block = new GTFluidBlock(fluid, materialLiquid, material);
             }
-            block.setRegistryName("fluid." + name);
+            block.setRegistryName(modid, "fluid." + name);
             GTFluidRegistration.INSTANCE.registerFluidBlock(block);
         }
 
