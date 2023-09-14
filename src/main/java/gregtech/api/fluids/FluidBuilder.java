@@ -1,8 +1,7 @@
-package gregtech.api.fluids.builder;
+package gregtech.api.fluids;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
-import gregtech.api.fluids.*;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.material.Material;

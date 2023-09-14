@@ -4,11 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GregTechAPI;
+import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidState;
-import gregtech.api.fluids.attribute.FluidAttributes;
-import gregtech.api.fluids.builder.FluidBuilder;
-import gregtech.api.fluids.fluidType.FluidType;
-import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.Element;
@@ -513,40 +510,6 @@ public class Material implements Comparable<Material> {
             FluidProperty property = properties.getProperty(PropertyKey.FLUID);
             property.getStorage().queue(key, builder);
             return this;
-        }
-
-        /**
-         * Add a {@link FluidProperty} to this Material.<br>
-         * Will be created without a Fluid Block.
-         *
-         * @param type The {@link FluidType} of this Material, either Fluid or Gas.
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
-         *
-         * @deprecated {@link #fluid(FluidStorageKey, FluidBuilder)}
-         */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder fluid(FluidType type) {
-            if (type == FluidTypes.LIQUID) return fluid();
-            if (type == FluidTypes.GAS) return fluid(FluidStorageKeys.GAS, FluidState.GAS);
-            if (type == FluidTypes.PLASMA) return fluid(FluidStorageKeys.PLASMA, FluidState.PLASMA);
-            if (type == FluidTypes.ACID) return fluid(FluidStorageKeys.LIQUID, new FluidBuilder().attribute(FluidAttributes.ACID));
-            throw new IllegalStateException("unable to handle fluidtype");
-        }
-
-        /**
-         * Add a {@link FluidProperty} to this Material.
-         *
-         * @param type     The {@link FluidType} of this Material.
-         * @param hasBlock If true, create a Fluid Block for this Material.
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
-         *
-         * @deprecated {@link #fluid(FluidStorageKey, FluidBuilder)}
-         */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder fluid(FluidType type, boolean hasBlock) {
-            return fluid(type);
         }
 
         /**

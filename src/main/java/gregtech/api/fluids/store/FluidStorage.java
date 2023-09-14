@@ -1,6 +1,6 @@
 package gregtech.api.fluids.store;
 
-import gregtech.api.fluids.builder.FluidBuilder;
+import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTLog;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;

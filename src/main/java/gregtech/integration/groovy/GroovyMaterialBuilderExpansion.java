@@ -1,6 +1,6 @@
 package gregtech.integration.groovy;
 
-import gregtech.api.fluids.builder.FluidBuilder;
+import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
