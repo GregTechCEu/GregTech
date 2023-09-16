@@ -76,7 +76,9 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        List<IEnergyContainer> inputEnergy = getAbilities(MultiblockAbility.INPUT_ENERGY);
+        List<IEnergyContainer> inputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
+        inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
+
         List<IEnergyContainer> outputEnergy = getAbilities(MultiblockAbility.OUTPUT_ENERGY);
         List<ILaserContainer> inputLaser = getAbilities(MultiblockAbility.INPUT_LASER);
         List<ILaserContainer> outputLaser = getAbilities(MultiblockAbility.OUTPUT_LASER);
@@ -87,7 +89,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
             return;
         }
 
-        if (outputEnergy.size() == 0 && inputEnergy.size() == 0) {
+        if (outputEnergy.isEmpty() && inputEnergy.isEmpty()) {
             return;
         }
 
@@ -121,7 +123,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     }
 
     private TraceabilityPredicate getHatchPredicates() {
-        return abilities(MultiblockAbility.INPUT_ENERGY).setPreviewCount(2)
+        return abilities(MultiblockAbility.INPUT_ENERGY).setPreviewCount(1)
+                .or(abilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY).setPreviewCount(1))
                 .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setPreviewCount(2))
                 .or(abilities(MultiblockAbility.INPUT_LASER).setMaxGlobalLimited(1))
                 .or(abilities(MultiblockAbility.OUTPUT_LASER).setMaxGlobalLimited(1))
