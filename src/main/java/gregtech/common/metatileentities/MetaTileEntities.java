@@ -238,6 +238,7 @@ public class MetaTileEntities {
     public static MetaTileEntityCoolantExportHatch COOLANT_OUTPUT;
     public static MetaTileEntityControlRodPort CONTROL_ROD;
     public static MetaTileEntitySpentFuelPool SPENT_FUEL_POOL;
+    public static MetaTileEntityGasCentrifuge GAS_CENTRIFUGE;
     public static MetaTileEntityDataBank DATA_BANK;
     public static MetaTileEntityResearchStation RESEARCH_STATION;
     public static MetaTileEntityHPCA HIGH_PERFORMANCE_COMPUTING_ARRAY;
@@ -552,6 +553,7 @@ public class MetaTileEntities {
         FISSION_REACTOR = registerMetaTileEntity(1043, new MetaTileEntityFissionReactor(gregtechId("fission_reactor")));
         SPENT_FUEL_POOL = registerMetaTileEntity(1044, new MetaTileEntitySpentFuelPool(gregtechId("spent_fuel_pool")));
         HEAT_EXCHANGER = registerMetaTileEntity(1045, new MetaTileEntityHeatExchanger(gregtechId("heat_exchanger")));
+        GAS_CENTRIFUGE = registerMetaTileEntity(1046, new MetaTileEntityGasCentrifuge(gregtechId("gas_centrifuge")));
 
         // MISC MTE's START: IDs 1150-2000
 
