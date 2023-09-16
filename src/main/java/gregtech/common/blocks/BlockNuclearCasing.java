@@ -18,7 +18,6 @@ public class BlockNuclearCasing extends VariantActiveBlock<BlockNuclearCasing.Nu
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
         setDefaultState(getState(NuclearCasingType.SPENT_FUEL_CASING));
-        setLightLevel(0.5f);
     }
 
     public enum NuclearCasingType implements IStringSerializable, IStateHarvestLevel {
