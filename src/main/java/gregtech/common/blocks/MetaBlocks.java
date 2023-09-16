@@ -442,7 +442,6 @@ public class MetaBlocks {
         registerItemModel(BATTERY_BLOCK);
         registerItemModel(ASPHALT);
         registerItemModel(FISSION_CASING);
-        registerItemModel(NUCLEAR_CASING);
         registerItemModel(GAS_CENTRIFUGE_CASING);
         registerItemModel(PANELLING);
         for (StoneVariantBlock block : STONE_BLOCKS.values())
@@ -481,6 +480,7 @@ public class MetaBlocks {
         FUSION_CASING.onModelRegister();
         MULTIBLOCK_CASING.onModelRegister();
         TRANSPARENT_CASING.onModelRegister();
+        NUCLEAR_CASING.onModelRegister();
 
         for (BlockLamp lamp : LAMPS.values()) lamp.onModelRegister();
         for (BlockLamp lamp : BORDERLESS_LAMPS.values()) lamp.onModelRegister();
