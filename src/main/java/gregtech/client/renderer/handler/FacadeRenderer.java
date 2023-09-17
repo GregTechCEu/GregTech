@@ -53,7 +53,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Mostly based on and (copied from) ThermalDynamics with minor tweaks
- * https://github.com/CoFH/ThermalDynamics/
+ * <p/>
+ * <a href="https://github.com/CoFH/ThermalDynamics/">Link</a>
  */
 @SideOnly(Side.CLIENT)
 public class FacadeRenderer implements IItemRenderer {
