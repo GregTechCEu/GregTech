@@ -89,8 +89,8 @@ public class NaquadahRecipes {
                 .fluidInputs(EnrichedNaquadahWaste.getFluid(2000))
                 .output(dustSmall, BariumSulfide, 2)
                 .fluidOutputs(SulfuricAcid.getFluid(500))
-                .fluidOutputs(EnrichedNaquadahSolution.getFluid(300))
-                .fluidOutputs(NaquadriaSolution.getFluid(200))
+                .fluidOutputs(EnrichedNaquadahSolution.getFluid(350))
+                .fluidOutputs(NaquadriaSolution.getFluid(150))
                 .buildAndRegister();
 
 
@@ -127,8 +127,8 @@ public class NaquadahRecipes {
                 .fluidInputs(NaquadriaWaste.getFluid(2000))
                 .output(dustSmall, GalliumSulfide, 2)
                 .fluidOutputs(SulfuricAcid.getFluid(500))
-                .fluidOutputs(NaquadriaSolution.getFluid(300))
-                .fluidOutputs(EnrichedNaquadahSolution.getFluid(200))
+                .fluidOutputs(NaquadriaSolution.getFluid(350))
+                .fluidOutputs(EnrichedNaquadahSolution.getFluid(150))
                 .buildAndRegister();
 
 
