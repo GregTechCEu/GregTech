@@ -9,11 +9,12 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -52,7 +53,7 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
             fluidHandlers[i] = new FilteredFluidHandler(TANK_SIZE);
         }
         fluidInventory = fluidTankList = new FluidTankList(false, fluidHandlers);
-        itemInventory = itemStackHandler = new ItemStackHandler((int)Math.pow(tier + 2, 2));
+        itemInventory = itemStackHandler = new GTItemStackHandler(this, ((int)Math.pow(tier + 2, 2)));
     }
 
     @Override

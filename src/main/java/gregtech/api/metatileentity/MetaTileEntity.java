@@ -25,6 +25,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverIO;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -71,7 +72,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
@@ -381,11 +381,11 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     }
 
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(0);
+        return new GTItemStackHandler(this, 0);
     }
 
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(0);
+        return new GTItemStackHandler(this, 0);
     }
 
     protected FluidTankList createImportFluidHandler() {

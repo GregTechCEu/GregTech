@@ -15,6 +15,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
@@ -58,7 +59,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         this.inventorySize = (tier + 1) * (tier + 1);
         this.energyPerTick = GTValues.V[tier - 1];
         this.minerLogic = new MinerLogic(this, fortune, speed, maximumRadius, Textures.SOLID_STEEL_CASING);
-        this.chargerInventory = new ItemStackHandler(1);
+        this.chargerInventory = new GTItemStackHandler(this, 1);
         initializeInventory();
     }
 
@@ -69,12 +70,12 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(0, this, false);
+        return new NotifiableItemStackHandler(this, 0, this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(inventorySize, this, true);
+        return new NotifiableItemStackHandler(this, inventorySize, this, true);
     }
 
     @Override
