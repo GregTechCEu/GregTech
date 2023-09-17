@@ -203,7 +203,7 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.min_length", pipeType.getMinLength()));
         }
         if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant()) {
-            tooltip.add("gregtech.universal.tooltip.terrain_resist");
+            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
         }
     }
 
