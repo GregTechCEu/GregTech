@@ -331,7 +331,7 @@ public class FacadeRenderer implements IItemRenderer {
         }
     }
 
-    public static List<CCQuad> fromArray(List<BakedQuad> bakedQuads) {
+    private static List<CCQuad> fromArray(List<BakedQuad> bakedQuads) {
         List<CCQuad> quads = new ArrayList<>();
         for (BakedQuad quad : bakedQuads) {
             quads.add(new FixedCCQuad(quad));
