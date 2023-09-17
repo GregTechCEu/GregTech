@@ -138,7 +138,7 @@ public final class ChestGenHooks {
             }
 
             if (minAmount == maxAmount) {
-                itemStack.setCount(1);
+                itemStack.setCount(minAmount);
                 return itemStack;
             }
 
