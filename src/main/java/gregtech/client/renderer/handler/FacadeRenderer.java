@@ -48,7 +48,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -126,8 +125,8 @@ public class FacadeRenderer implements IItemRenderer {
             state = state.getBlock().getExtendedState(state, coverAccess, pos);
         } catch (Exception ignored) {
         }
-        long posRand = net.minecraft.util.math.MathHelper.getPositionRandom(pos);
-        List<BakedQuad> bakedQuads = new LinkedList<>(model.getQuads(state, null, posRand));
+        long posRand = MathHelper.getPositionRandom(pos);
+        List<BakedQuad> bakedQuads = new ArrayList<>(model.getQuads(state, null, posRand));
 
         for (EnumFacing face2 : EnumFacing.VALUES) {
             bakedQuads.addAll(model.getQuads(state, face2, posRand));
@@ -174,7 +173,7 @@ public class FacadeRenderer implements IItemRenderer {
     }
 
     public static List<CCQuad> applyItemTint(List<CCQuad> quads, ItemStack stack) {
-        List<CCQuad> retQuads = new LinkedList<>();
+        List<CCQuad> retQuads = new ArrayList<>();
         for (CCQuad quad : quads) {
             int colour = -1;
 
@@ -229,7 +228,7 @@ public class FacadeRenderer implements IItemRenderer {
         double[][] quadPos = new double[4][3];
         boolean[] flat = new boolean[3];
         int verticesPerFace = 4;
-        List<CCQuad> finalQuads = new LinkedList<>();
+        List<CCQuad> finalQuads = new ArrayList<>();
 
         for (CCQuad quad : quads) {
 
@@ -332,7 +331,7 @@ public class FacadeRenderer implements IItemRenderer {
     }
 
     public static List<CCQuad> fromArray(List<BakedQuad> bakedQuads) {
-        List<CCQuad> quads = new LinkedList<>();
+        List<CCQuad> quads = new ArrayList<>();
         for (BakedQuad quad : bakedQuads) {
             quads.add(new FixedCCQuad(quad));
         }
