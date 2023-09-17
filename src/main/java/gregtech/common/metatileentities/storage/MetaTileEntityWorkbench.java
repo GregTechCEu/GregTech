@@ -13,6 +13,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.TabGroup.TabLocation;
 import gregtech.api.gui.widgets.tab.ItemTabInfo;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.storage.ICraftingStorage;
@@ -49,7 +50,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class MetaTileEntityWorkbench extends MetaTileEntity implements ICraftingStorage {
-    private final ItemStackHandler internalInventory = new ItemStackHandler(18);
+    private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18);
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
 

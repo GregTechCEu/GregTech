@@ -242,26 +242,18 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
 
     private static class ExportOnlyAEItemList extends NotifiableItemStackHandler {
 
-        private final MetaTileEntity holder;
         ExportOnlyAEItem[] inventory;
 
 
         public ExportOnlyAEItemList(MetaTileEntity holder, int slots, MetaTileEntity entityToNotify) {
-            super(slots, entityToNotify, false);
+            super(holder, slots, entityToNotify, false);
             this.inventory = new ExportOnlyAEItem[CONFIG_SIZE];
             for (int i = 0; i < CONFIG_SIZE; i ++) {
                 this.inventory[i] = new ExportOnlyAEItem(null, null);
             }
-            this.holder = holder;
             for (ExportOnlyAEItem slot : this.inventory) {
                 slot.trigger = this::onContentsChanged;
             }
-        }
-
-        @Override
-        public void onContentsChanged(int slot) {
-            super.onContentsChanged(slot);
-            this.holder.markDirty();
         }
 
         @Override
