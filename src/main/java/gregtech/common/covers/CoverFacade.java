@@ -4,10 +4,12 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.IFacadeCover;
+import gregtech.api.util.GTLog;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.common.items.behaviors.FacadeItem;
@@ -26,6 +28,9 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.util.Objects;
+
 public class CoverFacade extends CoverBase implements IFacadeCover {
 
     private ItemStack facadeStack = ItemStack.EMPTY;
@@ -38,6 +43,7 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
 
     public void setFacadeStack(ItemStack facadeStack) {
         this.facadeStack = facadeStack.copy();
+        writeCustomData(GregtechDataCodes.UPDATE_FACADE_STACK, buf -> buf.writeItemStack(this.facadeStack));
         updateFacadeState();
     }
 
@@ -107,6 +113,22 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
     }
 
     @Override
+    public void readCustomData(int discriminator, @NotNull PacketBuffer buf) {
+        super.readCustomData(discriminator, buf);
+        if (discriminator == GregtechDataCodes.UPDATE_FACADE_STACK) {
+            try {
+                this.facadeStack = buf.readItemStack();
+            } catch (IOException e) {
+                GTLog.logger.error("Error reading facade stack from network", e);
+                this.facadeStack = new ItemStack(Objects.requireNonNull(Blocks.STONE));
+                return;
+            }
+            updateFacadeState();
+            scheduleRenderUpdate();
+        }
+    }
+
+    @Override
     public boolean canPipePassThrough() {
         return true;
     }
@@ -126,6 +148,5 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
     }
 
     @Override
-    public void renderCoverPlate(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-    }
+    public void renderCoverPlate(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {}
 }
