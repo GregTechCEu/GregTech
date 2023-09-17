@@ -9,6 +9,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -35,7 +36,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -236,7 +236,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(getInventorySize());
+        return new GTItemStackHandler(this, getInventorySize());
     }
 
     @Override

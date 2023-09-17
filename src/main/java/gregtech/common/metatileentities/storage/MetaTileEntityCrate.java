@@ -7,6 +7,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -66,7 +67,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.inventory = new ItemStackHandler(inventorySize);
+        this.inventory = new GTItemStackHandler(this, inventorySize);
         this.itemInventory = inventory;
     }
 

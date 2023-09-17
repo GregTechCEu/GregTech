@@ -68,7 +68,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         if (isCreative) return super.createImportItemHandler();
-        return new NotifiableItemStackHandler(getInventorySize(), getController(), false) {
+        return new NotifiableItemStackHandler(this, getInventorySize(), getController(), false) {
             @Override
             public void onContentsChanged(int slot) {
                 super.onContentsChanged(slot);

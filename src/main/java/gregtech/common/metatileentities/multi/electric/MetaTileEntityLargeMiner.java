@@ -16,6 +16,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -53,7 +54,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -121,7 +121,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     private void resetTileAbilities() {
         this.inputFluidInventory = new FluidTankList(true);
-        this.outputInventory = new ItemStackHandler(0);
+        this.outputInventory = new GTItemStackHandler(this, 0);
         this.energyContainer = new EnergyContainerList(Lists.newArrayList());
     }
 
