@@ -408,6 +408,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 return EnumActionResult.SUCCESS;
             }
             entityPlayer.swingArm(hand);
+            return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.PASS;
     }
