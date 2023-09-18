@@ -1,0 +1,90 @@
+{
+  "forge_marker" : 1,
+  "defaults": {
+    "model" : "minecraft:cube_all"
+  },
+  "variants" : {
+    "variant" : {
+      "white" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_white"
+        }
+      },
+      "orange" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_orange"
+        }
+      },
+      "magenta" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_magenta"
+        }
+      },
+      "light_blue" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_light_blue"
+        }
+      },
+      "yellow" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_yellow"
+        }
+      },
+      "lime" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_lime"
+        }
+      },
+      "pink" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_pink"
+        }
+      },
+      "gray" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_gray"
+        }
+      },
+      "silver" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_light_gray"
+        }
+      },
+      "cyan" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_cyan"
+        }
+      },
+      "purple" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_purple"
+        }
+      },
+      "blue" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_blue"
+        }
+      },
+      "brown" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_brown"
+        }
+      },
+      "green" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_green"
+        }
+      },
+      "red" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_red"
+        }
+      },
+      "black" : {
+        "textures" : {
+          "all" : "gregtech:blocks/decoration/metalsheet_black"
+        }
+      }
+    }
+  }
+}
