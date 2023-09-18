@@ -339,7 +339,11 @@ public class FacadeRenderer implements IItemRenderer {
         return quads;
     }
 
+    /**
+     * Fixes incorrect arithmetic operation in {@link CCQuad#pipe(IVertexConsumer)}.
+     */
     private static class FixedCCQuad extends CCQuad {
+
         public FixedCCQuad(BakedQuad quad) {
             super(quad);
         }
@@ -373,6 +377,7 @@ public class FacadeRenderer implements IItemRenderer {
                                 UV uv = vertices[v].uv;
                                 consumer.put(e, (float) uv.u, (float) uv.v, 0, 1);
                             } else {
+                                // fix
                                 int brightness = lightMaps[v];
                                 consumer.put(e, ((float) (brightness & 0xFFFF) / 0xFFFF) * 2, ((float) (brightness >> 16 & 0xFFFF) / 0xFFFF) * 2, 0, 1);
                             }
