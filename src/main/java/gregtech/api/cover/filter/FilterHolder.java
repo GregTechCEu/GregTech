@@ -3,11 +3,9 @@ package gregtech.api.cover.filter;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
-import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
@@ -60,13 +58,11 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                 .child(new ItemSlot()
                         .slot(new ModularSlot(this.filterInventory, this.filterSlotIndex)
                                 .filter(item -> getFilterOf(item) != null)
-                                .changeListener(stack -> {
+                                .changeListener((stack, onlyAmountChanged, client) -> {
                                     checkFilter(stack);
-                                    if (NetworkUtils.isClient(syncManager.getPlayer())) {
+                                    if (client) {
                                         openFilterConfigButton.setEnabled(hasFilter());
-                                        if (!hasFilter()) {
-                                            filterPanelSyncHandler.closePanel();
-                                        } else if (filterPanelSyncHandler.isPanelOpen()) {
+                                        if (!hasFilter() || filterPanelSyncHandler.isPanelOpen()) {
                                             filterPanelSyncHandler.closePanel();
                                         } else {
                                             filterPanelSyncHandler.openPanel();
@@ -75,12 +71,12 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                                 }))
                         .pos(62, 0))
                 .child(openFilterConfigButton
-                        .syncHandler(new InteractionSyncHandler()
-                                .setOnMousePressed(mouseData -> {
-                                    if (hasFilter() && !NetworkUtils.isClient(syncManager.getPlayer()) && !filterPanelSyncHandler.isPanelOpen()) {
-                                        filterPanelSyncHandler.openPanel();
-                                    }
-                                }))
+                        .onMousePressed(mouseButton -> {
+                            if (hasFilter() && !filterPanelSyncHandler.isPanelOpen()) {
+                                filterPanelSyncHandler.openPanel();
+                            }
+                            return true;
+                        })
                         .overlay(IKey.lang("cover.filter.settings_open.label"))
                         .pos(82, 0)
                         .size(80, 18));
@@ -111,6 +107,7 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                 .padding(5)
                 .child(IKey.lang("cover.filter.settings.label").asWidget().pos(5, 5));
         panel.child(new ButtonWidget<>()
+                        .overlay(IKey.str("x"))
                         .onMousePressed(mouseButton -> {
                             filterPanelSyncHandler.closePanel();
                             return true;

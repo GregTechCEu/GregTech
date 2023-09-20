@@ -606,8 +606,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                                 })))
                 .child(IKey.lang("monitor.gui.title.plugin").asWidget().pos(7, y += 20))
                 .child(new ItemSlot().slot(SyncHandlers.itemSlot(this.inventory, 0)
-                                .changeListener(stack -> {
-                                    if (this.getWorld() != null && !this.getWorld().isRemote) {
+                                .changeListener((stack, onlyAmountChanged, client) -> {
+                                    if (!onlyAmountChanged && !client) {
                                         setPluginItem(this.inventory.getStackInSlot(0));
                                     }
                                 })
