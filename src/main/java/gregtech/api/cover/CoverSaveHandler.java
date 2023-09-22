@@ -13,8 +13,6 @@ import java.util.function.BiConsumer;
 
 public final class CoverSaveHandler {
 
-    public static final int NO_COVER_ID = -1;
-
     private CoverSaveHandler() {}
 
     /**
@@ -24,15 +22,24 @@ public final class CoverSaveHandler {
      * @param coverableView the CoverableView containing the covers
      */
     public static void writeInitialSyncData(@NotNull PacketBuffer buf, @NotNull CoverableView coverableView) {
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            Cover cover = coverableView.getCoverAtSide(coverSide);
+        Cover[] covers = new Cover[EnumFacing.VALUES.length];
+        int count = 0;
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            Cover cover = coverableView.getCoverAtSide(facing);
             if (cover != null) {
-                buf.writeVarInt(CoverDefinition.getNetworkIdForCover(cover.getDefinition()));
-                cover.writeInitialSyncData(buf);
-            } else {
-                // cover was not attached
-                buf.writeVarInt(NO_COVER_ID);
+                covers[count++] = cover;
             }
+        }
+
+        // need to write count so the reader knows not to do anything for covers
+        buf.writeByte(count);
+        if (count == 0) return;
+
+        for (int i = 0; i < count; i++) {
+            Cover cover = covers[i];
+            buf.writeByte(cover.getAttachedSide().ordinal());
+            buf.writeVarInt(CoverDefinition.getNetworkIdForCover(cover.getDefinition()));
+            cover.writeInitialSyncData(buf);
         }
     }
 
@@ -43,17 +50,20 @@ public final class CoverSaveHandler {
      * @param coverHolder the CoverHolder containing the covers
      */
     public static void receiveInitialSyncData(@NotNull PacketBuffer buf, @NotNull CoverHolder coverHolder) {
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
+        final int count = buf.readByte();
+        if (count == 0) return;
+
+        for (int i = 0; i < count; i++) {
+            EnumFacing facing = EnumFacing.VALUES[buf.readByte()];
             int id = buf.readVarInt();
-            if (id != NO_COVER_ID) {
-                CoverDefinition definition = CoverDefinition.getCoverByNetworkId(id);
-                if (definition == null) {
-                    GTLog.logger.warn("Unable to find CoverDefinition for Network ID {} at position {}", id, coverHolder.getPos());
-                } else {
-                    Cover cover = definition.createCover(coverHolder, coverSide);
-                    cover.readInitialSyncData(buf);
-                    coverHolder.addCover(coverSide, cover);
-                }
+            CoverDefinition definition = CoverDefinition.getCoverByNetworkId(id);
+
+            if (definition == null) {
+                GTLog.logger.warn("Unable to find CoverDefinition for Network ID {} at position {}", id, coverHolder.getPos());
+            } else {
+                Cover cover = definition.createCover(coverHolder, facing);
+                cover.readInitialSyncData(buf);
+                coverHolder.addCover(facing, cover);
             }
         }
     }
@@ -109,7 +119,7 @@ public final class CoverSaveHandler {
             Cover cover = coverableView.getCoverAtSide(coverSide);
             if (cover != null) {
                 NBTTagCompound tag = new NBTTagCompound();
-                ResourceLocation coverId = cover.getDefinition().getCoverId();
+                ResourceLocation coverId = cover.getDefinition().getResourceLocation();
                 tag.setString("CoverId", coverId.toString());
                 tag.setByte("Side", (byte) coverSide.getIndex());
                 cover.writeToNBT(tag);

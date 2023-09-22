@@ -9,12 +9,13 @@ import org.jetbrains.annotations.Nullable;
 
 public final class CoverDefinition {
 
-    private final ResourceLocation coverId;
+    private final ResourceLocation resourceLocation;
     private final CoverCreator coverCreator;
     private final ItemStack dropItemStack;
 
-    public CoverDefinition(@NotNull ResourceLocation coverId, @NotNull CoverCreator coverCreator, @NotNull ItemStack dropItemStack) {
-        this.coverId = coverId;
+    public CoverDefinition(@NotNull ResourceLocation resourceLocation, @NotNull CoverCreator coverCreator,
+                           @NotNull ItemStack dropItemStack) {
+        this.resourceLocation = resourceLocation;
         this.coverCreator = coverCreator;
         this.dropItemStack = dropItemStack.copy();
     }
@@ -45,8 +46,8 @@ public final class CoverDefinition {
         return GregTechAPI.COVER_REGISTRY.getIDForObject(definition);
     }
 
-    public @NotNull ResourceLocation getCoverId() {
-        return coverId;
+    public @NotNull ResourceLocation getResourceLocation() {
+        return resourceLocation;
     }
 
     public @NotNull ItemStack getDropItemStack() {

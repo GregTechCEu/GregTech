@@ -12,9 +12,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -148,5 +150,10 @@ public interface CoverHolder extends CoverableView {
                 }
             }
         }
+    }
+
+    @Override
+    default boolean hasCapability(@NotNull Capability<?> capability, @Nullable EnumFacing facing) {
+        return getCapability(capability, facing) != null;
     }
 }

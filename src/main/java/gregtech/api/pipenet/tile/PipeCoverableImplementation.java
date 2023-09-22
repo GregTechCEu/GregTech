@@ -51,17 +51,21 @@ public class PipeCoverableImplementation implements CoverHolder {
             newHolderTile.getCoverableImplementation().addCover(side, cover);
             return;
         }
-        this.covers.put(side, cover);
-        CoverSaveHandler.writeCoverPlacement(this, COVER_ATTACHED_PIPE, side, cover);
-        if (cover.shouldAutoConnectToPipes()) {
-            holder.setConnection(side, true, false);
+
+        if (!this.covers.containsKey(side)) {
+            this.covers.put(side, cover);
+            CoverSaveHandler.writeCoverPlacement(this, COVER_ATTACHED_PIPE, side, cover);
+            if (cover.shouldAutoConnectToPipes()) {
+                holder.setConnection(side, true, false);
+            }
+
+            holder.notifyBlockUpdate();
+            holder.markAsDirty();
         }
-        holder.notifyBlockUpdate();
-        holder.markAsDirty();
     }
 
     @Override
-    public final void removeCover(EnumFacing side) {
+    public final void removeCover(@NotNull EnumFacing side) {
         Cover cover = getCoverAtSide(side);
         if (cover == null) return;
 
@@ -145,7 +149,7 @@ public class PipeCoverableImplementation implements CoverHolder {
     }
 
     @Override
-    public boolean canPlaceCoverOnSide(EnumFacing side) {
+    public boolean canPlaceCoverOnSide(@NotNull EnumFacing side) {
         return holder.canPlaceCoverOnSide(side);
     }
 
@@ -267,11 +271,6 @@ public class PipeCoverableImplementation implements CoverHolder {
     @Override
     public boolean isValid() {
         return holder.isValidTile();
-    }
-
-    @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        return getCapability(capability, facing) != null;
     }
 
     @Override

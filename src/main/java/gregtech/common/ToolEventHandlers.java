@@ -300,7 +300,7 @@ public class ToolEventHandlers {
                 Predicate<CoverDefinition> canCover = coverDef -> {
                     if (tile instanceof IPipeTile<?, ?> pipeTile) {
                         for (EnumFacing facing : EnumFacing.VALUES) {
-                            if (pipeTile.getCoverableImplementation().canConnectRedstone(facing)) {
+                            if (pipeTile.getCoverableImplementation().canPlaceCoverOnSide(facing)) {
                                 return true;
                             }
                         }

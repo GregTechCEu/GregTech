@@ -106,7 +106,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void setConveyorMode(ConveyorMode conveyorMode) {
         this.conveyorMode = conveyorMode;
         writeCustomData(GregtechDataCodes.UPDATE_COVER_MODE, buf -> buf.writeEnumValue(conveyorMode));
-        getCoverableView().markDirty();
+        markDirty();
     }
 
     public ConveyorMode getConveyorMode() {
@@ -119,7 +119,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     public void setDistributionMode(DistributionMode distributionMode) {
         this.distributionMode = distributionMode;
-        getCoverableView().markDirty();
+        markDirty();
     }
 
     public ManualImportExportMode getManualImportExportMode() {
@@ -128,7 +128,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     protected void setManualImportExportMode(ManualImportExportMode manualImportExportMode) {
         this.manualImportExportMode = manualImportExportMode;
-        getCoverableView().markDirty();
+        markDirty();
     }
 
     public ItemFilterContainer getItemFilterContainer() {

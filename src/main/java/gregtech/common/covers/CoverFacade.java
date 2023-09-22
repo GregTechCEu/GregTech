@@ -41,7 +41,7 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
         super(definition, coverableView, attachedSide);
     }
 
-    public void setFacadeStack(ItemStack facadeStack) {
+    public void setFacadeStack(@NotNull ItemStack facadeStack) {
         this.facadeStack = facadeStack.copy();
         writeCustomData(GregtechDataCodes.UPDATE_FACADE_STACK, buf -> buf.writeItemStack(this.facadeStack));
         updateFacadeState();
@@ -59,7 +59,8 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline,
+                            @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         BlockRenderLayer oldLayer = MinecraftForgeClient.getRenderLayer();
         ForgeHooksClient.setRenderLayer(layer);
         FacadeRenderer.renderBlockCover(renderState, translation, getCoverableView().getWorld(), getCoverableView().getPos(), getAttachedSide().getIndex(), facadeState, plateBox, layer);
@@ -67,7 +68,7 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
     }
 
     @Override
-    public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
+    public boolean canRenderInLayer(@NotNull BlockRenderLayer renderLayer) {
         return true;
     }
 

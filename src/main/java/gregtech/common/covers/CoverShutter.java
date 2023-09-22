@@ -17,6 +17,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,6 +61,21 @@ public class CoverShutter extends CoverBase implements IControllable {
     @Override
     public boolean shouldAutoConnectToPipes() {
         return false;
+    }
+
+    @Override
+    public boolean canPipePassThrough() {
+        return !isWorkingAllowed;
+    }
+
+    @Override
+    public @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+        this.isWorkingAllowed = !this.isWorkingAllowed;
+        if (!playerIn.world.isRemote) {
+            playerIn.sendMessage(new TextComponentTranslation(isWorkingEnabled() ?
+                    "cover.shutter.message.enabled" : "cover.shutter.message.disabled"));
+        }
+        return EnumActionResult.SUCCESS;
     }
 
     @Override

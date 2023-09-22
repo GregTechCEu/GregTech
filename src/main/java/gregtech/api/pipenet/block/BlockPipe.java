@@ -236,7 +236,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return pipeTile == null ? 0 : pipeTile.getCoverableImplementation().getOutputRedstoneSignal(side.getOpposite());
     }
 
-    public void updateActiveNodeStatus(World worldIn, BlockPos pos, IPipeTile<PipeType, NodeDataType> pipeTile) {
+    public void updateActiveNodeStatus(@Nonnull World worldIn, BlockPos pos, IPipeTile<PipeType, NodeDataType> pipeTile) {
+        if (worldIn.isRemote) return;
+
         PipeNet<NodeDataType> pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
         if (pipeNet != null && pipeTile != null) {
             int activeConnections = pipeTile.getConnections(); //remove blocked connections

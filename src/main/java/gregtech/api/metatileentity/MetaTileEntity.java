@@ -591,9 +591,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @Override
     public void addCover(@NotNull EnumFacing side, @NotNull Cover cover) {
-        if (covers.containsKey(side)) {
-            GTLog.logger.warn("CoverHolder already has Cover {} at side {}.", cover, side);
-        } else {
+        if (!covers.containsKey(side)) {
             covers.put(side, cover);
             CoverSaveHandler.writeCoverPlacement(this, COVER_ATTACHED_MTE, side, cover);
             notifyBlockUpdate();
@@ -958,12 +956,6 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             return cover.getCapability(capability, originalCapability);
         }
         return originalCapability;
-    }
-
-
-    @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        return getCapability(capability, facing) != null;
     }
 
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
