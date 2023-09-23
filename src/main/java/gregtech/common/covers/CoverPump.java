@@ -5,6 +5,9 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.manager.GuiCreationContext;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.google.common.math.IntMath;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -21,6 +24,7 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
+import gregtech.common.covers.filter.fluid.FluidFilterHolder;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,6 +43,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,7 +61,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     protected int fluidLeftToTransferLastSecond;
     private CoverableFluidHandlerWrapper fluidHandlerWrapper;
     protected boolean isWorkingAllowed = true;
-    protected FluidFilterContainer fluidFilter;
+    protected final FluidFilterHolder filterHolder;
     protected BucketMode bucketMode;
 
     public CoverPump(ICoverable coverHolder, EnumFacing attachedSide, int tier, int mbPerTick) {
@@ -68,7 +73,12 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.pumpMode = PumpMode.EXPORT;
         this.distributionMode = DistributionMode.INSERT_FIRST;
         this.bucketMode = BucketMode.MILLI_BUCKET;
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip);
+        this.filterHolder = createFilterHolder();
+    }
+
+    @NotNull
+    protected FluidFilterHolder createFilterHolder() {
+        return new FluidFilterHolder(this, this::shouldShowTip);
     }
 
     protected boolean shouldShowTip() {
@@ -119,8 +129,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         coverHolder.markDirty();
     }
 
-    public FluidFilterContainer getFluidFilterContainer() {
-        return fluidFilter;
+    public FluidFilterHolder getFilterHolder() {
+        return filterHolder;
     }
 
     @Override
@@ -147,15 +157,15 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
     protected int doTransferFluidsInternal(IFluidHandler myFluidHandler, IFluidHandler fluidHandler, int transferLimit) {
         if (pumpMode == PumpMode.IMPORT) {
-            return GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit, fluidFilter::testFluidStack);
+            return GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit, this::checkInputFluid);
         } else if (pumpMode == PumpMode.EXPORT) {
-            return GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit, fluidFilter::testFluidStack);
+            return GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit, this::checkInputFluid);
         }
         return 0;
     }
 
     protected boolean checkInputFluid(FluidStack fluidStack) {
-        return fluidFilter.testFluidStack(fluidStack);
+        return this.filterHolder.test(fluidStack);
     }
 
     protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
@@ -209,12 +219,17 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
                 ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
                 .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
-        this.fluidFilter.initUI(88, primaryGroup::addWidget);
+        //this.fluidFilter.initUI(88, primaryGroup::addWidget);
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 184 + 82)
                 .widget(primaryGroup)
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 184);
         return buildUI(builder, player);
+    }
+
+    @Override
+    public ModularPanel buildUI(GuiCreationContext creationContext, GuiSyncManager syncManager, boolean isClient) {
+        return CoverWithUI.super.buildUI(creationContext, syncManager, isClient);
     }
 
     public static Function<String, String> getTextFieldValidator(IntSupplier maxSupplier) {
@@ -282,7 +297,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     @Override
     public void onRemoved() {
         NonNullList<ItemStack> drops = NonNullList.create();
-        MetaTileEntity.clearInventory(drops, fluidFilter.getFilterInventory());
+        MetaTileEntity.clearInventory(drops, this.filterHolder.getFilterInventory());
         for (ItemStack itemStack : drops) {
             Block.spawnAsEntity(coverHolder.getWorld(), coverHolder.getPos(), itemStack);
         }
@@ -333,7 +348,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
-        tagCompound.setTag("Filter", fluidFilter.serializeNBT());
+        tagCompound.setTag("Filter", this.filterHolder.serializeNBT());
 
         return tagCompound;
     }
@@ -346,7 +361,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
-        this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
+        this.filterHolder.deserializeNBT(tagCompound.getCompoundTag("Filter"));
     }
 
     @Override

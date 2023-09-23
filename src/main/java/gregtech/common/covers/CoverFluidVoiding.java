@@ -11,11 +11,10 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.covers.filter.FluidFilterContainer;
+import gregtech.common.covers.filter.fluid.FluidFilterHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
@@ -27,6 +26,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.jetbrains.annotations.NotNull;
 
 public class CoverFluidVoiding extends CoverPump {
 
@@ -35,7 +35,11 @@ public class CoverFluidVoiding extends CoverPump {
     public CoverFluidVoiding(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide, 0, Integer.MAX_VALUE);
         this.isWorkingAllowed = false;
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip, Integer.MAX_VALUE);
+    }
+
+    @Override
+    protected @NotNull FluidFilterHolder createFilterHolder() {
+        return new FluidFilterHolder(this, this::shouldShowTip, Integer.MAX_VALUE);
     }
 
     @Override
@@ -51,7 +55,7 @@ public class CoverFluidVoiding extends CoverPump {
         if (myFluidHandler == null) {
             return;
         }
-        GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
+        GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, this::checkInputFluid);
     }
 
     @Override
@@ -64,7 +68,7 @@ public class CoverFluidVoiding extends CoverPump {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
 
-        this.fluidFilter.initUI(20, primaryGroup::addWidget);
+        //this.fluidFilter.initUI(20, primaryGroup::addWidget);
 
         primaryGroup.addWidget(new CycleButtonWidget(10, 92, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
                 "cover.voiding.label.disabled", "cover.voiding.label.enabled")
@@ -106,7 +110,7 @@ public class CoverFluidVoiding extends CoverPump {
         return defaultValue;
     }
 
-    class NullFluidTank extends FluidTank {
+    protected class NullFluidTank extends FluidTank {
 
         public NullFluidTank() {
             super(Integer.MAX_VALUE);
@@ -114,7 +118,7 @@ public class CoverFluidVoiding extends CoverPump {
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
-            if (fluidFilter.testFluidStack(resource)) {
+            if (checkInputFluid(resource)) {
                 return resource.amount;
             }
             return 0;

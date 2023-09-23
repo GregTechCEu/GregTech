@@ -566,6 +566,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                                 .addTooltip(0, IKey.lang(DistributionMode.values()[0].localeDescription))
                                 .addTooltip(1, IKey.lang(DistributionMode.values()[1].localeDescription))
                                 .addTooltip(2, IKey.lang(DistributionMode.values()[2].localeDescription))
+                                .setEnabledIf(widget -> hasItemPipeNeighbour())
                                 .size(80, 12))
                         .pos(89, 18)
                         .size(80, 48));
@@ -573,6 +574,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         filterUI.flex().pos(7, 66);
         panel.child(filterUI);
         return panel;
+    }
+
+    private boolean hasItemPipeNeighbour() {
+        return coverHolder.getWorld().getTileEntity(coverHolder.getPos()) instanceof TileEntityItemPipe ||
+                coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide)) instanceof TileEntityItemPipe;
     }
 
     @Override

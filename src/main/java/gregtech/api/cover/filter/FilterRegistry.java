@@ -1,6 +1,7 @@
 package gregtech.api.cover.filter;
 
 import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.common.covers.filter.fluid.SimpleFluidFilter;
 import gregtech.common.covers.filter.item.SimpleItemFilter;
 import gregtech.common.items.MetaItems;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
@@ -16,7 +17,7 @@ public class FilterRegistry {
         register(MetaItems.ITEM_FILTER.getStackForm(), SimpleItemFilter::new);
         //register(MetaItems.ORE_DICTIONARY_FILTER.getStackForm(), OreDictFilter::new);
         //register(MetaItems.SMART_FILTER.getStackForm(), SmartFilter::new);
-        //register(MetaItems.FLUID_FILTER.getStackForm(), SimpleFluidFilter::new);
+        register(MetaItems.FLUID_FILTER.getStackForm(), SimpleFluidFilter::new);
     }
 
     private static final Map<ItemStack, Supplier<Filter<?>>> REGISTRY = new Object2ObjectOpenCustomHashMap<>(ItemStackHashStrategy.builder()

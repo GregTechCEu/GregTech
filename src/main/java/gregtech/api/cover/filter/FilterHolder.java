@@ -19,8 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerializable<NBTTagCompound> {
 
@@ -142,16 +141,17 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
         }
     }
 
-    public void onFilterChanged() {
+    public void onFilterChanged(@Nullable F oldFilter, @Nullable F newFilter) {
     }
 
     public void setCurrentFilter(@Nullable F currentFilter) {
         if (this.currentFilter != currentFilter) {
+            F oldFilter = this.currentFilter;
             this.currentFilter = currentFilter;
             if (this.currentFilter != null) {
                 this.currentFilter.setDirtyNotifiable(dirtyNotifiable);
             }
-            onFilterChanged();
+            onFilterChanged(oldFilter, this.currentFilter);
         }
     }
 

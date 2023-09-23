@@ -1,23 +1,39 @@
 package gregtech.common.covers.filter.fluid;
 
-import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.widget.Widget;
 import gregtech.api.cover.filter.Filter;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import java.util.function.Consumer;
+import java.util.function.BooleanSupplier;
 
 public abstract class FluidFilter extends Filter<FluidStack> {
 
-    public abstract IWidget createFilterUI(EntityPlayer player, Consumer<IWidget> controlsAmountHandler);
+    private BooleanSupplier shouldShowTip = () -> false;
+    private int maxSize = 1000;
+
+    public abstract void configureFilterTanks(int amount);
+
+    public abstract void setMaxConfigurableFluidSize(int maxSize);
+
+    public abstract int getFluidTransferLimit(FluidStack fluidStack);
 
     @Override
-    public @NotNull IWidget createFilterUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-        return new Widget<>();
+    public int getTransferLimit(Object object, int globalTransferLimit) {
+        return getFluidTransferLimit((FluidStack) object);
+    }
+
+    public void setShouldShowTip(BooleanSupplier shouldShowTip) {
+        this.shouldShowTip = shouldShowTip != null ? shouldShowTip : () -> false;
+    }
+
+    public boolean shouldShowTip() {
+        return this.shouldShowTip.getAsBoolean();
+    }
+
+    public void setMaxSize(int maxSize) {
+        this.maxSize = maxSize;
+    }
+
+    public int getMaxSize() {
+        return maxSize;
     }
 }

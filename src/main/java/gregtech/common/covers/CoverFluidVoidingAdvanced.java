@@ -1,6 +1,5 @@
 package gregtech.common.covers;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -15,9 +14,7 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -50,10 +47,10 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         }
         switch (voidingMode) {
             case VOID_ANY:
-                GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
+                GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, this::checkInputFluid);
                 break;
             case VOID_OVERFLOW:
-                voidOverflow(myFluidHandler, fluidFilter::testFluidStack, this.transferAmount);
+                voidOverflow(myFluidHandler, this::checkInputFluid, this.transferAmount);
         }
     }
 
@@ -72,10 +69,10 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
             FluidStack sourceFluid = tankProperties.getContents();
-            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && voidingMode == VoidingMode.VOID_OVERFLOW) {
-                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(sourceFluid);
+            if (this.filterHolder.getCurrentFilter() != null && voidingMode == VoidingMode.VOID_OVERFLOW) {
+                keepAmount = this.filterHolder.getCurrentFilter().getFluidTransferLimit(sourceFluid);
             }
-            if (sourceFluid == null || sourceFluid.amount == 0 || !getFluidFilterContainer().testFluidStack(sourceFluid, true)) continue;
+            if (sourceFluid == null || sourceFluid.amount == 0 || !this.filterHolder.test(sourceFluid, true)) continue;
             sourceFluid.amount = sourceFluid.amount - keepAmount;
             sourceHandler.drain(sourceFluid, true);
         }
@@ -116,7 +113,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     }
 
     private boolean shouldDisplayAmountSlider() {
-        if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null) {
+        if (this.filterHolder.hasFilter()) {
             return false;
         }
 
@@ -157,9 +154,9 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         return buildUI(builder, player);
     }
 
-    public void initFilterUI(int y, Consumer<Widget> widgetGroup){
+    public void initFilterUI(int y, Consumer<Widget> widgetGroup) {
         widgetGroup.accept(new LabelWidget(10, y, "cover.pump.fluid_filter.title"));
-        widgetGroup.accept(new SlotWidget(fluidFilter.getFilterInventory(), 0, 10, y + 15)
+        widgetGroup.accept(new SlotWidget(this.filterHolder.getFilterInventory(), 0, 10, y + 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
         ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
@@ -199,8 +196,8 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
         widgetGroup.accept(stackSizeGroup);
 
-        this.fluidFilter.getFilterWrapper().initUI(y + 15, widgetGroup);
-        this.fluidFilter.getFilterWrapper().blacklistUI(y + 15, widgetGroup, () -> voidingMode != VoidingMode.VOID_OVERFLOW);
+        //this.fluidFilter.getFilterWrapper().initUI(y + 15, widgetGroup);
+        //this.fluidFilter.getFilterWrapper().blacklistUI(y + 15, widgetGroup, () -> voidingMode != VoidingMode.VOID_OVERFLOW);
     }
 
     @Override
