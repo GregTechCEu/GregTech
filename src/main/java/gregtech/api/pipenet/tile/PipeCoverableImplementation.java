@@ -51,17 +51,18 @@ public class PipeCoverableImplementation implements CoverHolder {
             newHolderTile.getCoverableImplementation().addCover(side, cover);
             return;
         }
-
-        if (!this.covers.containsKey(side)) {
-            this.covers.put(side, cover);
+        // we checked before if the side already has a cover
+        this.covers.put(side, cover);
+        if (!getWorld().isRemote) {
+            // do not sync or handle logic on client side
             CoverSaveHandler.writeCoverPlacement(this, COVER_ATTACHED_PIPE, side, cover);
             if (cover.shouldAutoConnectToPipes()) {
                 holder.setConnection(side, true, false);
             }
-
-            holder.notifyBlockUpdate();
-            holder.markAsDirty();
         }
+
+        holder.notifyBlockUpdate();
+        holder.markAsDirty();
     }
 
     @Override
@@ -261,6 +262,10 @@ public class PipeCoverableImplementation implements CoverHolder {
     @Override
     public boolean hasAnyCover() {
         return !covers.isEmpty();
+    }
+
+    public int getCoverCount() {
+        return this.covers.size();
     }
 
     @Override
