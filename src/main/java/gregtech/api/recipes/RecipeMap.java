@@ -1019,7 +1019,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
             // left branches are always either empty or contain recipes.
             // If there's a recipe present, the addition is finished for this ingredient
-            if (r.left().isPresent() ) {
+            if (r.left().isPresent()) {
                 if (r.left().get() == recipe) {
                     // Cannot return here, since each ingredient to add is a separate path to the recipe
                     continue;
