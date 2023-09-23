@@ -55,7 +55,9 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
     @Override
     public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
-        setFacadeStack(FacadeItem.getFacadeStack(itemStack));
+        // do not sync here
+        this.facadeStack = FacadeItem.getFacadeStack(itemStack);
+        updateFacadeState();
     }
 
     @Override

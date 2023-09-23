@@ -98,6 +98,7 @@ public interface Cover {
 
     /**
      * Called when the cover is first attached on the Server Side.
+     * Do NOT sync custom data to client here. It will overwrite the attach cover packet!
      *
      * @param coverableView the CoverableView this cover is attached to
      * @param side          the side this cover is attached to
