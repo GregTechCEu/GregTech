@@ -1,5 +1,6 @@
 package gregtech.api.recipes;
 
+import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
@@ -976,6 +977,18 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                                     CraftTweakerAPI.logError("Could not identify exact duplicate/conflict.");
                                 }
                             }
+                            if (recipe.isGroovyRecipe()) {
+                                GroovyLog log = GroovyLog.get();
+                                log.warn("Recipe duplicate or conflict found in RecipeMap {} and was not added. See next lines for details", this.unlocalizedName);
+
+                                log.warn("Attempted to add Recipe: {}", recipe.toString());
+
+                                if (v.left().isPresent()) {
+                                    log.warn("Which conflicts with: {}", v.left().get().toString());
+                                } else {
+                                    log.warn("Could not find exact duplicate/conflict.");
+                                }
+                            }
                             if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment()) {
                                 GTLog.logger.warn("Recipe duplicate or conflict found in RecipeMap {} and was not added. See next lines for details", this.unlocalizedName);
 
@@ -1006,8 +1019,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
             // left branches are always either empty or contain recipes.
             // If there's a recipe present, the addition is finished for this ingredient
-            // Cannot return here, since each ingredient to add is a separate path to the recipe
-            if (r.left().isPresent()) continue;
+            if (r.left().isPresent() ) {
+                if (r.left().get() == recipe) {
+                    // Cannot return here, since each ingredient to add is a separate path to the recipe
+                    continue;
+                } else {
+                    // exit if a different recipe is already present for this path
+                    return false;
+                }
+            }
 
             // recursive part: apply the addition for the next ingredient in the list, for the right branch.
             // the right branch only contains ingredients, or is empty when the left branch is present

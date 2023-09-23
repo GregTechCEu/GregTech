@@ -363,6 +363,7 @@ public class Recipe {
                 .append("EUt", EUt)
                 .append("hidden", hidden)
                 .append("CTRecipe", isCTRecipe)
+                .append("GSRecipe", groovyRecipe)
                 .toString();
     }
 
