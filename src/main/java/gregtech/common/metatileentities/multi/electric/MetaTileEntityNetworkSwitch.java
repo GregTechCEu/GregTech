@@ -6,6 +6,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IOpticalComputationHatch;
 import gregtech.api.capability.IOpticalComputationProvider;
+import gregtech.api.capability.IOpticalComputationReceiver;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -80,13 +81,13 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     @Override
     public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
-        return isActive() && !hasNotEnoughEnergy ? computationHandler.requestCWUt(cwut, simulate) : 0;
+        return isActive() && !hasNotEnoughEnergy ? computationHandler.requestCWUt(cwut, simulate, seen) : 0;
     }
 
     @Override
     public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
-        return isStructureFormed() ? computationHandler.getMaxCWUt() : 0;
+        return isStructureFormed() ? computationHandler.getMaxCWUt(seen) : 0;
     }
 
     // allows chaining Network Switches together
@@ -167,7 +168,7 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     }
 
     /** Handles computation load across multiple receivers and to multiple transmitters. */
-    private static class MultipleComputationHandler {
+    private static class MultipleComputationHandler implements IOpticalComputationProvider, IOpticalComputationReceiver {
 
         // providers in the NS provide distributable computation to the NS
         private final Set<IOpticalComputationHatch> providers = new ObjectOpenHashSet<>();
@@ -189,12 +190,14 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
             EUt = 0;
         }
 
-        private int requestCWUt(int cwut, boolean simulate) {
+        @Override
+        public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
+            // The max CWU/t that this Network Switch can provide, combining all its inputs.
+            seen.add(this);
             int allocatedCWUt = 0;
-            Collection<IOpticalComputationProvider> seen = new ArrayList<>();
             for (var provider : providers) {
                 if (!provider.canBridge()) continue;
-                int allocated = provider.requestCWUt(cwut, simulate, seen);
+                int allocated = provider.requestCWUt(cwut, simulate);
                 allocatedCWUt += allocated;
                 cwut -= allocated;
                 if (cwut == 0) break;
@@ -202,14 +205,28 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
             return allocatedCWUt;
         }
 
-        /** The max CWU/t that this Network Switch can provide, combining all its inputs. */
-        private int getMaxCWUt() {
+        public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
+            // The max CWU/t that this Network Switch can provide, combining all its inputs.
+            seen.add(this);
+            Collection<IOpticalComputationProvider> bridgeSeen = new ArrayList<>(seen);
             int maximumCWUt = 0;
             for (var provider : providers) {
-                if (!provider.canBridge()) continue;
-                maximumCWUt += provider.getMaxCWUt();
+                if (!provider.canBridge(bridgeSeen)) continue;
+                maximumCWUt += provider.getMaxCWUt(seen);
             }
             return maximumCWUt;
+        }
+
+        @Override
+        public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
+            if (seen.contains(this)) return false;
+            seen.add(this);
+            for (var provider : providers) {
+                if (provider.canBridge(seen)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /** The EU/t cost of this Network Switch given the attached providers and transmitters. */
@@ -219,12 +236,18 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
 
         /** Test if any of the provider hatches do not allow bridging */
         private boolean hasNonBridgingConnections() {
+            Collection<IOpticalComputationProvider> seen = new ArrayList<>();
             for (var provider : providers) {
-                if (!provider.canBridge()) {
+                if (!provider.canBridge(seen)) {
                     return true;
                 }
             }
             return false;
+        }
+
+        @Override
+        public IOpticalComputationProvider getComputationProvider() {
+            return this;
         }
     }
 }
