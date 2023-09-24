@@ -149,7 +149,7 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         if (isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.max", computationHandler.getMaxCWUt()));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.max", computationHandler.getMaxCWUtForDisplay()));
             if (computationHandler.hasNonBridgingConnections()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.computation.non_bridging")
                         .setStyle(new Style().setColor(TextFormatting.RED)
@@ -192,12 +192,14 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
 
         @Override
         public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
+            if (seen.contains(this)) return 0;
             // The max CWU/t that this Network Switch can provide, combining all its inputs.
             seen.add(this);
+            Collection<IOpticalComputationProvider> bridgeSeen = new ArrayList<>(seen);
             int allocatedCWUt = 0;
             for (var provider : providers) {
-                if (!provider.canBridge()) continue;
-                int allocated = provider.requestCWUt(cwut, simulate);
+                if (!provider.canBridge(bridgeSeen)) continue;
+                int allocated = provider.requestCWUt(cwut, simulate, seen);
                 allocatedCWUt += allocated;
                 cwut -= allocated;
                 if (cwut == 0) break;
@@ -205,7 +207,21 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
             return allocatedCWUt;
         }
 
+        public int getMaxCWUtForDisplay() {
+            Collection<IOpticalComputationProvider> seen = new ArrayList<>();
+            // The max CWU/t that this Network Switch can provide, combining all its inputs.
+            seen.add(this);
+            Collection<IOpticalComputationProvider> bridgeSeen = new ArrayList<>(seen);
+            int maximumCWUt = 0;
+            for (var provider : providers) {
+                if (!provider.canBridge(bridgeSeen)) continue;
+                maximumCWUt += provider.getMaxCWUt(seen);
+            }
+            return maximumCWUt;
+        }
+
         public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
+            if (seen.contains(this)) return 0;
             // The max CWU/t that this Network Switch can provide, combining all its inputs.
             seen.add(this);
             Collection<IOpticalComputationProvider> bridgeSeen = new ArrayList<>(seen);
