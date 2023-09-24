@@ -109,6 +109,11 @@ public class RecipePropertyStorage implements IRecipePropertyStorage {
     }
 
     @Override
+    public Set<RecipeProperty<?>> getPropertyTypes() {
+        return recipeProperties.keySet();
+    }
+
+    @Override
     public Object getRawRecipePropertyValue(String key) {
         RecipeProperty<?> recipeProperty = getRecipePropertyValue(key);
         if (recipeProperty != null) {
