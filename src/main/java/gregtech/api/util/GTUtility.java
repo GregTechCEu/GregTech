@@ -6,6 +6,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -17,12 +18,16 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
+import gregtech.core.advancement.AdvancementTriggers;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
@@ -31,13 +36,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.Constants;
@@ -606,7 +610,11 @@ public class GTUtility {
         return new ItemStack(state.getBlock(), amount, state.getBlock().getMetaFromState(state));
     }
 
-    public static boolean isOre(ItemStack item) {
+    /**
+     * @deprecated use {@link BlockUtility#isOre(IBlockState)} or check it yourself
+     */
+    @Deprecated
+    public static boolean isOre(@Nonnull ItemStack item) {
         OrePrefix orePrefix = OreDictUnifier.getPrefix(item);
         return orePrefix != null && orePrefix.name().startsWith("ore");
     }
@@ -749,6 +757,53 @@ public class GTUtility {
 
     public static boolean isBlockSnowLayer(@Nonnull IBlockState blockState) {
         return blockState.getBlock() == Blocks.SNOW_LAYER && blockState.getValue(BlockSnow.LAYERS) == 1;
+    }
+
+    /**
+     * Try to vent. Also does venting things (spawning particles, playing sounds, damaging entities etc.) on success.
+     *
+     * @param world         World
+     * @param machinePos    Position of the machine
+     * @param ventingSide   Venting side
+     * @param ventingDamage Damage to be applied on entities in the venting block; default value is {@code 6} for
+     *                      regular steam machines, and {@code 12} for high-pressure steam machines.
+     * @param spawnParticle Whether to spawn particles or not
+     * @param playSound     Whether to play sounds or not
+     * @return {@code true} if vented
+     */
+    public static boolean tryVenting(@Nonnull World world, @Nonnull BlockPos machinePos,
+                                     @Nonnull EnumFacing ventingSide, float ventingDamage,
+                                     boolean spawnParticle, boolean playSound) {
+        BlockPos ventingPos = machinePos.offset(ventingSide);
+        IBlockState ventingState = world.getBlockState(ventingPos);
+        if (ventingState.getCollisionBoundingBox(world, ventingPos) == Block.NULL_AABB ||
+                tryBreakSnowLayer(world, ventingPos, ventingState, false)) {
+            if (ventingDamage > 0) {
+                for (EntityLivingBase entity : world.getEntitiesWithinAABB(EntityLivingBase.class,
+                        new AxisAlignedBB(ventingPos), EntitySelectors.CAN_AI_TARGET)) {
+                    entity.attackEntityFrom(DamageSources.getHeatDamage(), ventingDamage);
+                    if (entity instanceof EntityPlayerMP player) {
+                        AdvancementTriggers.STEAM_VENT_DEATH.trigger(player);
+                    }
+                }
+            }
+            double posX = machinePos.getX() + 0.5 + ventingSide.getXOffset() * 0.6;
+            double posY = machinePos.getY() + 0.5 + ventingSide.getYOffset() * 0.6;
+            double posZ = machinePos.getZ() + 0.5 + ventingSide.getZOffset() * 0.6;
+
+            if (spawnParticle && world instanceof WorldServer worldServer) {
+                worldServer.spawnParticle(EnumParticleTypes.CLOUD, posX, posY, posZ,
+                        7 + world.rand.nextInt(3),
+                        ventingSide.getXOffset() / 2.0,
+                        ventingSide.getYOffset() / 2.0,
+                        ventingSide.getZOffset() / 2.0, 0.1);
+            }
+            if (playSound) {
+                world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**

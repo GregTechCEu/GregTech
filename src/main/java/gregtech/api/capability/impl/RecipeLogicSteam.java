@@ -3,27 +3,14 @@ package gregtech.api.capability.impl;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IVentable;
-import gregtech.api.damagesources.DamageSources;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import gregtech.core.advancement.AdvancementTriggers;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nonnull;
@@ -124,43 +111,13 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
 
     @Override
     public void tryDoVenting() {
-        BlockPos machinePos = metaTileEntity.getPos();
-        EnumFacing ventingSide = getVentingSide();
-        BlockPos ventingBlockPos = machinePos.offset(ventingSide);
-        IBlockState blockOnPos = metaTileEntity.getWorld().getBlockState(ventingBlockPos);
-        if (blockOnPos.getCollisionBoundingBox(metaTileEntity.getWorld(), ventingBlockPos) == Block.NULL_AABB) {
-            performVentingAnimation(ventingBlockPos, machinePos);
-        } else if (GTUtility.tryBreakSnowLayer(metaTileEntity.getWorld(), ventingBlockPos, blockOnPos, false)) {
-            performVentingAnimation(ventingBlockPos, machinePos);
-        } else if (!ventingStuck) {
+        if (GTUtility.tryVenting(metaTileEntity.getWorld(), metaTileEntity.getPos(), getVentingSide(),
+                this.isHighPressure ? 12 : 6, true,
+                ConfigHolder.machines.machineSounds && !this.metaTileEntity.isMuffled())) {
+            setNeedsVenting(false);
+        } else {
             setVentingStuck(true);
         }
-    }
-
-    private void performVentingAnimation(BlockPos ventingBlockPos, BlockPos machinePos) {
-        metaTileEntity.getWorld()
-                .getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(ventingBlockPos), EntitySelectors.CAN_AI_TARGET)
-                .forEach(entity -> {
-                    entity.attackEntityFrom(DamageSources.getHeatDamage(), this.isHighPressure ? 12.0f : 6.0f);
-                    if (entity instanceof EntityPlayerMP) {
-                        AdvancementTriggers.STEAM_VENT_DEATH.trigger((EntityPlayerMP) entity);
-                    }
-                });
-        WorldServer world = (WorldServer) metaTileEntity.getWorld();
-        double posX = machinePos.getX() + 0.5 + ventingSide.getXOffset() * 0.6;
-        double posY = machinePos.getY() + 0.5 + ventingSide.getYOffset() * 0.6;
-        double posZ = machinePos.getZ() + 0.5 + ventingSide.getZOffset() * 0.6;
-
-        world.spawnParticle(EnumParticleTypes.CLOUD, posX, posY, posZ,
-                7 + world.rand.nextInt(3),
-                ventingSide.getXOffset() / 2.0,
-                ventingSide.getYOffset() / 2.0,
-                ventingSide.getZOffset() / 2.0, 0.1);
-        if (ConfigHolder.machines.machineSounds && !metaTileEntity.isMuffled()){
-            world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
-        }
-        setNeedsVenting(false);
-
     }
 
     @Override

@@ -1,17 +1,17 @@
-package gregtech.common.metatileentities.steam;
+package gregtech.common.metatileentities.miner;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IVentable;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
-import gregtech.api.capability.impl.miner.MinerLogic;
-import gregtech.api.capability.impl.miner.SteamMinerLogic;
-import gregtech.api.damagesources.DamageSources;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
@@ -20,28 +20,23 @@ import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.ConfigHolder;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -61,21 +56,20 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
 
     private final int inventorySize;
     private final int energyPerTick;
-    private boolean isInventoryFull = false;
 
-    private final MinerLogic minerLogic;
+    private final SteamMinerLogic minerLogic;
 
-    public SteamMiner(ResourceLocation metaTileEntityId, int speed, int maximumRadius, int fortune) {
+    public SteamMiner(ResourceLocation metaTileEntityId, int workFrequency, int maximumRadius) {
         super(metaTileEntityId);
         this.inventorySize = 4;
         this.energyPerTick = 16;
-        this.minerLogic = new SteamMinerLogic(this, fortune, speed, maximumRadius, Textures.BRONZE_PLATED_BRICKS);
+        this.minerLogic = new SteamMinerLogic(this, workFrequency, maximumRadius);
         initializeInventory();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new SteamMiner(metaTileEntityId, this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius(), this.minerLogic.getFortune());
+        return new SteamMiner(metaTileEntityId, this.minerLogic.getWorkFrequency(), this.minerLogic.getMaximumDiameter());
     }
 
     @Override
@@ -101,8 +95,9 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         for (EnumFacing renderSide : EnumFacing.HORIZONTALS) {
             if (renderSide == getFrontFacing()) {
                 Textures.PIPE_OUT_OVERLAY.renderSided(renderSide, renderState, translation, pipeline);
-            } else
+            } else {
                 Textures.STEAM_MINER_OVERLAY.renderSided(renderSide, renderState, translation, coloredPipeline);
+            }
         }
         Textures.STEAM_VENT_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         Textures.PIPE_IN_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
@@ -129,45 +124,33 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
                 .label(6, 6, getMetaFullName());
         builder.widget(new AdvancedTextWidget(10, 19, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(84));
-        builder.widget(new AdvancedTextWidget(70, 19, this::addDisplayText2, 0xFFFFFF)
+        builder.widget(new AdvancedTextWidget(70, 19, this.minerLogic::addLastMinedBlock, 0xFFFFFF)
                 .setMaxWidthLimit(84));
 
 
         return builder.build(getHolder(), entityPlayer);
     }
 
-    void addDisplayText(List<ITextComponent> textList) {
-        int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
-        if (this.minerLogic.isDone())
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
-        else if (this.minerLogic.isWorking())
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
-        else if (!this.isWorkingEnabled())
-            textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-        if (this.isInventoryFull)
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
-        if (ventingStuck)
-            textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.vent").setStyle(new Style().setColor(TextFormatting.RED)));
-        else if (!drainEnergy(true))
-            textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.steam").setStyle(new Style().setColor(TextFormatting.RED)));
-    }
-
-    void addDisplayText2(List<ITextComponent> textList) {
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
+    private void addDisplayText(List<ITextComponent> textList) {
+        this.minerLogic.addMinerArea(textList);
+        this.minerLogic.addMinerWorkStatus(textList);
+        this.minerLogic.addInventoryStatus(textList);
+        if (this.ventingStuck) {
+            textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.vent")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
+        } else if (!drainMiningResources(true)) {
+            textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.steam")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
+        }
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick_steam", energyPerTick)
-                + TextFormatting.GRAY + ", " + I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getSpeed() / 20));
-        int maxArea = getWorkingArea(minerLogic.getMaximumRadius());
-        tooltip.add(I18n.format("gregtech.universal.tooltip.working_area", maxArea, maxArea));
+                + TextFormatting.GRAY + ", " +
+                I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getWorkFrequency() / 20));
+        int maxDiameter = minerLogic.getMaximumDiameter();
+        tooltip.add(I18n.format("gregtech.universal.tooltip.working_area", maxDiameter, maxDiameter));
     }
 
     @Override
@@ -178,7 +161,8 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         super.addToolUsages(stack, world, tooltip, advanced);
     }
 
-    public boolean drainEnergy(boolean simulate) {
+    @Override
+    public boolean drainMiningResources(boolean simulate) {
         int resultSteam = importFluids.getTankAt(0).getFluidAmount() - energyPerTick;
         if (!ventingStuck && resultSteam >= 0L && resultSteam <= importFluids.getTankAt(0).getCapacity()) {
             if (!simulate)
@@ -189,17 +173,18 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
+    public ICubeRenderer getPipeTexture() {
+        return Textures.BRONZE_PLATED_BRICKS;
+    }
+
+    @Override
     public void update() {
         super.update();
-        this.minerLogic.performMining();
+        this.minerLogic.update();
         if (!getWorld().isRemote) {
             if (getOffsetTimer() % 5 == 0)
                 pushItemsIntoNearbyHandlers(getFrontFacing());
-
-            if (this.minerLogic.wasActiveAndNeedsUpdate()) {
-                this.minerLogic.setWasActiveAndNeedsUpdate(false);
-                this.minerLogic.setActive(false);
-            }
         }
     }
 
@@ -246,29 +231,10 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         this.minerLogic.receiveCustomData(dataId, buf);
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(Textures.STEAM_CASING_BRONZE.getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.TOP), getPaintingColorForRendering());
-    }
-
-    public void setVentingStuck(boolean ventingStuck) {
-        this.ventingStuck = ventingStuck;
-        if (!this.getWorld().isRemote) {
-            this.markDirty();
-            this.writeCustomData(GregtechDataCodes.VENTING_STUCK, (buf) -> buf.writeBoolean(ventingStuck));
-        }
-    }
-
-    @Override
-    public void setNeedsVenting(boolean needsVenting) {
-        this.needsVenting = needsVenting;
-        if (!needsVenting && this.ventingStuck)
-            this.setVentingStuck(false);
-
-        if (!this.getWorld().isRemote) {
-            this.markDirty();
-            this.writeCustomData(GregtechDataCodes.NEEDS_VENTING, (buf) -> buf.writeBoolean(needsVenting));
-        }
     }
 
     @Override
@@ -277,16 +243,6 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
         return super.getCapability(capability, side);
-    }
-
-    @Override
-    public boolean isInventoryFull() {
-        return isInventoryFull;
-    }
-
-    @Override
-    public void setInventoryFull(boolean isFull) {
-        this.isInventoryFull = isFull;
     }
 
     @Override
@@ -304,25 +260,23 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         return this.needsVenting;
     }
 
+    public void setVentingStuck(boolean ventingStuck) {
+        if (this.ventingStuck == ventingStuck) return;
+        this.ventingStuck = ventingStuck;
+        if (!this.getWorld().isRemote) {
+            this.markDirty();
+            this.writeCustomData(GregtechDataCodes.VENTING_STUCK, (buf) -> buf.writeBoolean(ventingStuck));
+        }
+    }
+
     @Override
     public void tryDoVenting() {
-        BlockPos machinePos = this.getPos();
-        EnumFacing ventingSide = EnumFacing.UP;
-        BlockPos ventingBlockPos = machinePos.offset(ventingSide);
-        IBlockState blockOnPos = this.getWorld().getBlockState(ventingBlockPos);
-        if (blockOnPos.getCollisionBoundingBox(this.getWorld(), ventingBlockPos) == Block.NULL_AABB) {
-            this.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(ventingBlockPos), EntitySelectors.CAN_AI_TARGET).forEach((entity) -> entity.attackEntityFrom(DamageSources.getHeatDamage(), 6.0F));
-            WorldServer world = (WorldServer) this.getWorld();
-            double posX = (double) machinePos.getX() + 0.5D + (double) ventingSide.getXOffset() * 0.6D;
-            double posY = (double) machinePos.getY() + 0.5D + (double) ventingSide.getYOffset() * 0.6D;
-            double posZ = (double) machinePos.getZ() + 0.5D + (double) ventingSide.getZOffset() * 0.6D;
-            world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ, 7 + world.rand.nextInt(3), (double) ventingSide.getXOffset() / 2.0D, (double) ventingSide.getYOffset() / 2.0D, (double) ventingSide.getZOffset() / 2.0D, 0.1D);
-            if (ConfigHolder.machines.machineSounds && !this.isMuffled()) {
-                world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
-            }
-            this.setNeedsVenting(false);
-        } else if (!this.ventingStuck) {
-            this.setVentingStuck(true);
+        if (GTUtility.tryVenting(getWorld(), getPos(), EnumFacing.UP,
+                6, true,
+                ConfigHolder.machines.machineSounds && !this.isMuffled())) {
+            setNeedsVenting(false);
+        } else {
+            setVentingStuck(true);
         }
     }
 
@@ -331,10 +285,22 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         return ventingStuck;
     }
 
+    @Override
+    public void setNeedsVenting(boolean needsVenting) {
+        this.needsVenting = needsVenting;
+        if (!needsVenting && this.ventingStuck)
+            this.setVentingStuck(false);
+
+        if (!this.getWorld().isRemote) {
+            this.markDirty();
+            this.writeCustomData(GregtechDataCodes.NEEDS_VENTING, (buf) -> buf.writeBoolean(needsVenting));
+        }
+    }
+
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        int workingArea = getWorkingArea(this.minerLogic.getCurrentRadius());
-        return Collections.singletonList(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
+        int diameter = this.minerLogic.getCurrentDiameter();
+        return Collections.singletonList(new TextComponentTranslation("gregtech.machine.miner.working_area", diameter, diameter));
     }
 }
