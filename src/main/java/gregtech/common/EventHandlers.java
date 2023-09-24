@@ -5,6 +5,7 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.longdist.LongDistanceNetwork;
+import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTUtility;
@@ -79,9 +80,14 @@ public class EventHandlers {
 
     @SubscribeEvent
     public static void onPlayerInteractionRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getWorld().getTileEntity(event.getPos()) instanceof IGregTechTileEntity) {
+        // fix sneaking with shields not allowing tool interactions with GT machines
+        TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
+        if (tileEntity instanceof IGregTechTileEntity) {
+            event.setUseBlock(Event.Result.ALLOW);
+        } else if (tileEntity instanceof IPipeTile<?,?>) {
             event.setUseBlock(Event.Result.ALLOW);
         }
+
         ItemStack stack = event.getItemStack();
         if (!stack.isEmpty() && stack.getItem() == Items.FLINT_AND_STEEL) {
             if (!event.getWorld().isRemote
