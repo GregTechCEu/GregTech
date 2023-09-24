@@ -67,6 +67,7 @@ public class GregtechDataCodes {
     public static final int COVER_REMOVED_PIPE = assignId();
     public static final int PIPE_OPTICAL_ACTIVE = assignId();
     public static final int PIPE_LASER_ACTIVE = assignId();
+    public static final int CABLE_TEMPERATURE = assignId();
 
     // Multiblock implementation update codes
     public static final int SYNC_CONTROLLER = assignId();
@@ -110,7 +111,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_FAKE_GUI_DETECT = assignId();
 
     // Digital Interface
-    public static final int UPDATE_MODE = assignId();
+    public static final int UPDATE_COVER_MODE = assignId();
     public static final int UPDATE_FLUID = assignId();
     public static final int UPDATE_ITEM = assignId();
     public static final int UPDATE_ENERGY = assignId();
