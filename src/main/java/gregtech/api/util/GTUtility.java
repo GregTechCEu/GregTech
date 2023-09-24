@@ -706,7 +706,7 @@ public class GTUtility {
     }
 
     public static boolean isBlockSnowLayer(@Nonnull IBlockState blockState) {
-        return blockState.getBlock() == Blocks.SNOW_LAYER && blockState.getValue(BlockSnow.LAYERS) == 1;
+        return blockState.getBlock() == Blocks.SNOW_LAYER;
     }
 
     /**
@@ -716,7 +716,13 @@ public class GTUtility {
      */
     public static boolean tryBreakSnowLayer(World world, BlockPos pos, @Nonnull IBlockState blockState, boolean playSound) {
         if (isBlockSnowLayer(blockState)) {
-            world.destroyBlock(pos, false);
+            int layers = blockState.getValue(BlockSnow.LAYERS);
+            if (layers == 1) {
+                world.destroyBlock(pos, false);
+            } else {
+                world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, layers - 1));
+            }
+
             if (playSound) {
                 world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
             }
