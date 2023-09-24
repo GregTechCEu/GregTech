@@ -126,7 +126,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
             this.mode = mode;
             this.slot = slot;
             this.spin = spin;
-            writeUpdateData(GregtechDataCodes.UPDATE_MODE, packetBuffer -> {
+            writeUpdateData(GregtechDataCodes.UPDATE_COVER_MODE, packetBuffer -> {
                 packetBuffer.writeByte(mode.ordinal());
                 packetBuffer.writeInt(slot);
                 packetBuffer.writeByte(spin.getIndex());
@@ -778,7 +778,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     @Override
     public void readUpdateData(int id, PacketBuffer packetBuffer) {
         super.readUpdateData(id, packetBuffer);
-        if (id == GregtechDataCodes.UPDATE_MODE) { // set mode
+        if (id == GregtechDataCodes.UPDATE_COVER_MODE) { // set mode
             setMode(MODE.VALUES[packetBuffer.readByte()], packetBuffer.readInt(), EnumFacing.byIndex(packetBuffer.readByte()));
         } else if (id == GregtechDataCodes.UPDATE_FLUID) { // sync fluids
             readFluids(packetBuffer);

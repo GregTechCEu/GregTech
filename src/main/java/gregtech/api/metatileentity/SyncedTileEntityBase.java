@@ -1,10 +1,9 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.block.BlockStateTileEntity;
+import gregtech.api.network.PacketDataList;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,13 +25,30 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
 
     public abstract void receiveCustomData(int discriminator, PacketBuffer buf);
 
-    protected final Int2ObjectMap<byte[]> updates = new Int2ObjectArrayMap<>(5);
+    private final PacketDataList updates = new PacketDataList();
 
     public void writeCustomData(int discriminator, Consumer<PacketBuffer> dataWriter) {
         ByteBuf backedBuffer = Unpooled.buffer();
         dataWriter.accept(new PacketBuffer(backedBuffer));
         byte[] updateData = Arrays.copyOfRange(backedBuffer.array(), 0, backedBuffer.writerIndex());
-        updates.put(discriminator, updateData);
+        this.updates.add(discriminator, updateData);
+        if (this.updates.size() == 1) notifyWorld(); // if the data is not empty we already notified the world
+    }
+
+    /**
+     * Adds all data packets from another synced tile entity. Useful when the old tile is replaced with a new one.
+     *
+     * @param syncedTileEntityBase other synced tile entity
+     */
+    public void addPacketsFrom(SyncedTileEntityBase syncedTileEntityBase) {
+        if (this == syncedTileEntityBase || syncedTileEntityBase.updates.isEmpty()) return;
+        boolean wasEmpty = this.updates.isEmpty();
+        this.updates.addAll(syncedTileEntityBase.updates);
+        syncedTileEntityBase.updates.clear();
+        if (wasEmpty) notifyWorld(); // if the data is not empty we already notified the world
+    }
+
+    private void notifyWorld() {
         @SuppressWarnings("deprecation")
         IBlockState blockState = getBlockType().getStateFromMeta(getBlockMetadata());
         world.notifyBlockUpdate(getPos(), blockState, blockState, 0);
@@ -44,14 +60,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
             return null;
         }
         NBTTagCompound updateTag = new NBTTagCompound();
-        NBTTagList listTag = new NBTTagList();
-        for (Int2ObjectMap.Entry<byte[]> entry : updates.int2ObjectEntrySet()) {
-            NBTTagCompound entryTag = new NBTTagCompound();
-            entryTag.setByteArray(Integer.toString(entry.getIntKey()), entry.getValue());
-            listTag.appendTag(entryTag);
-        }
-        updateTag.setTag("d", listTag);
-        this.updates.clear();
+        updateTag.setTag("d", this.updates.dumpToNbt());
         return new SPacketUpdateTileEntity(getPos(), 0, updateTag);
     }
 

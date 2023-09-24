@@ -6,6 +6,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.ItemHandlerDelegate;
@@ -100,7 +101,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     public void setConveyorMode(ConveyorMode conveyorMode) {
         this.conveyorMode = conveyorMode;
-        writeUpdateData(1, buf -> buf.writeEnumValue(conveyorMode));
+        writeUpdateData(GregtechDataCodes.UPDATE_COVER_MODE, buf -> buf.writeEnumValue(conveyorMode));
         coverHolder.markDirty();
     }
 
@@ -521,7 +522,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public void readUpdateData(int id, PacketBuffer packetBuffer) {
         super.readUpdateData(id, packetBuffer);
-        if (id == 1) {
+        if (id == GregtechDataCodes.UPDATE_COVER_MODE) {
             this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
             coverHolder.scheduleRenderUpdate();
         }
