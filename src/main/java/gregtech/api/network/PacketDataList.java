@@ -28,7 +28,7 @@ public class PacketDataList {
     private void ensureSize(int s) {
         if (this.discriminators.length < s) {
             int n = this.discriminators.length;
-            int newCapacity = n * (s / n + 1);
+            int newCapacity = Math.max(n + 2, s); // there are rarely more than 2 elements in the list
             int[] temp = new int[newCapacity];
             byte[][] temp2 = new byte[newCapacity][];
             System.arraycopy(this.discriminators, 0, temp, 0, n);
