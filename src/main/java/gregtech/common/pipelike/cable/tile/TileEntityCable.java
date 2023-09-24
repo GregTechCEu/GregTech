@@ -3,7 +3,6 @@ package gregtech.common.pipelike.cable.tile;
 import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -37,6 +36,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+
+import static gregtech.api.capability.GregtechDataCodes.CABLE_TEMPERATURE;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONNECTIONS;
 
 public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties> implements IDataInfoProvider {
 
@@ -186,7 +188,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         this.temperature = temperature;
         world.checkLight(pos);
         if (!world.isRemote) {
-            writeCustomData(100, buf -> buf.writeVarInt(temperature));
+            writeCustomData(CABLE_TEMPERATURE, buf -> buf.writeVarInt(temperature));
         } else {
             if (temperature <= getDefaultTemp()) {
                 if (isParticleAlive())
@@ -295,11 +297,11 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     @Override
     public void receiveCustomData(int discriminator, PacketBuffer buf) {
-        if (discriminator == 100) {
+        if (discriminator == CABLE_TEMPERATURE) {
             setTemperature(buf.readVarInt());
         } else {
             super.receiveCustomData(discriminator, buf);
-            if (isParticleAlive() && discriminator == GregtechDataCodes.UPDATE_CONNECTIONS) {
+            if (isParticleAlive() && discriminator == UPDATE_CONNECTIONS) {
                 particle.updatePipeBoxes(getPipeBoxes());
             }
         }

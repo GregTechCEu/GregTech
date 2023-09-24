@@ -7,6 +7,7 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.math.IntMath;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
@@ -91,7 +92,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
     public void setPumpMode(PumpMode pumpMode) {
         this.pumpMode = pumpMode;
-        writeUpdateData(1, buf -> buf.writeEnumValue(pumpMode));
+        writeUpdateData(GregtechDataCodes.UPDATE_COVER_MODE, buf -> buf.writeEnumValue(pumpMode));
         coverHolder.markDirty();
     }
 
@@ -251,7 +252,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     @Override
     public void readUpdateData(int id, PacketBuffer packetBuffer) {
         super.readUpdateData(id, packetBuffer);
-        if (id == 1) {
+        if (id == GregtechDataCodes.UPDATE_COVER_MODE) {
             this.pumpMode = packetBuffer.readEnumValue(PumpMode.class);
             coverHolder.scheduleRenderUpdate();
         }

@@ -58,8 +58,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.pipeType = tileEntity.getPipeType();
         this.paintingColor = tileEntity.getPaintingColor();
         this.connections = tileEntity.getConnections();
-        if (tileEntity instanceof TileEntityPipeBase pipeBase) {
-            this.updates.putAll(pipeBase.updates);
+        if (tileEntity instanceof SyncedTileEntityBase pipeBase) {
+            addPacketsFrom(pipeBase);
         }
         tileEntity.getCoverableImplementation().transferDataTo(coverableImplementation);
         setFrameMaterial(tileEntity.getFrameMaterial());
