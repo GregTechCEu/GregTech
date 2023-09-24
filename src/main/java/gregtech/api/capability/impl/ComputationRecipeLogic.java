@@ -16,12 +16,20 @@ import org.jetbrains.annotations.NotNull;
 public class ComputationRecipeLogic extends MultiblockRecipeLogic {
 
     private final ComputationType type;
+    /*
+     * Whether recipe duration should be treated as a total CWU value (so, incremented by the CWU/t used each tick),
+     * or normally (increase by 1 for each successful draw of CWU/t). If this value is true, the logic will attempt
+     * to draw as much CWU/t as possible to try and accelerate the computation process, and CWU/t is treated as a
+     * minimum value instead of a static cost.
+     */
+    private final boolean isDurationTotalCWU;
     private int recipeCWUt;
     private boolean hasNotEnoughComputation;
 
-    public ComputationRecipeLogic(RecipeMapMultiblockController metaTileEntity, ComputationType type) {
+    public ComputationRecipeLogic(RecipeMapMultiblockController metaTileEntity, ComputationType type, boolean isDurationTotalCWU) {
         super(metaTileEntity);
         this.type = type;
+        this.isDurationTotalCWU = isDurationTotalCWU;
         if (!(metaTileEntity instanceof IOpticalComputationReceiver)) {
             throw new IllegalArgumentException("MetaTileEntity must be instanceof IOpticalComputationReceiver");
         }
@@ -63,12 +71,20 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
             drawEnergy(recipeEUt, false);
 
             IOpticalComputationProvider provider = getComputationProvider();
-            int availableCWUt = provider.requestCWUt(recipeCWUt, true);
+            int availableCWUt = provider.requestCWUt(Integer.MAX_VALUE, true);
             if (availableCWUt >= recipeCWUt) {
                 // carry on as normal
                 this.hasNotEnoughComputation = false;
-                provider.requestCWUt(recipeCWUt, false);
-                if (++progressTime > maxProgressTime) {
+                if (isDurationTotalCWU) {
+                    // draw as much CWU as possible, and increase progress by this amount
+                    int drawnCWU = provider.requestCWUt(availableCWUt, false);
+                    progressTime += drawnCWU;
+                } else {
+                    // draw only the recipe CWU/t, and increase progress by 1
+                    provider.requestCWUt(recipeCWUt, false);
+                    progressTime++;
+                }
+                if (progressTime > maxProgressTime) {
                     completeRecipe();
                 }
             } else {
