@@ -1,7 +1,5 @@
 package gregtech.api.capability;
 
-import io.netty.buffer.ByteBuf;
-
 public class GregtechDataCodes {
 
     private static int nextId = 0;
