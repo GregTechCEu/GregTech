@@ -1,15 +1,17 @@
-package gregtech.api.util;
+package gregtech.common.pipelike.cable.tile;
 
 import net.minecraft.world.World;
 
 public class PerTickLongCounter {
 
     private final long defaultValue;
-
     private long lastUpdatedWorldTime;
-
     private long lastValue;
     private long currentValue;
+
+    public PerTickLongCounter() {
+        this(0);
+    }
 
     public PerTickLongCounter(long defaultValue) {
         this.defaultValue = defaultValue;
@@ -18,6 +20,7 @@ public class PerTickLongCounter {
     }
 
     private void checkValueState(World world) {
+        if (world == null) return;
         long currentWorldTime = world.getTotalWorldTime();
         if (currentWorldTime != lastUpdatedWorldTime) {
             if (currentWorldTime == lastUpdatedWorldTime + 1) {
