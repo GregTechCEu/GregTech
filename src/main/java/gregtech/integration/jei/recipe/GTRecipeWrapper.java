@@ -154,13 +154,13 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
         // Default entries
         var properties = recipe.getPropertyTypes();
-        if (properties.isEmpty() || properties.stream().allMatch(RecipeProperty::showTotalEU)) {
+        if (properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideTotalEU)) {
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, 0x111111);
         } else yPosition -= LINE_HEIGHT;
-        if (properties.isEmpty() || properties.stream().allMatch(RecipeProperty::showEUt)) {
+        if (properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideEUt)) {
             minecraft.fontRenderer.drawString(I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]), 0, yPosition += LINE_HEIGHT, 0x111111);
         } else yPosition -= LINE_HEIGHT;
-        if (properties.isEmpty() || properties.stream().allMatch(RecipeProperty::showDuration)) {
+        if (properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideDuration)) {
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", TextFormattingUtil.formatNumbers(recipe.getDuration() / 20d)), 0, yPosition += LINE_HEIGHT, 0x111111);
         } else yPosition -= LINE_HEIGHT;
 

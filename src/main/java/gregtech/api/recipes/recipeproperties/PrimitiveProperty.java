@@ -26,12 +26,12 @@ public class PrimitiveProperty extends RecipeProperty<Boolean> {
     }
 
     @Override
-    public boolean showTotalEU() {
-        return false;
+    public boolean hideTotalEU() {
+        return true;
     }
 
     @Override
-    public boolean showEUt() {
-        return false;
+    public boolean hideEUt() {
+        return true;
     }
 }

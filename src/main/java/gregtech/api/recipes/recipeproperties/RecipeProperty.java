@@ -54,24 +54,24 @@ public abstract class RecipeProperty<T> {
     }
 
     /**
-     * Whether to show the Total EU tooltip for the recipe in JEI.
+     * Whether to hide the Total EU tooltip for the recipe in JEI.
      */
-    public boolean showTotalEU() {
-        return true;
+    public boolean hideTotalEU() {
+        return false;
     }
 
     /**
-     * Whether to show the EU/t tooltip for the recipe in JEI.
+     * Whether to hide the EU/t tooltip for the recipe in JEI.
      */
-    public boolean showEUt() {
-        return true;
+    public boolean hideEUt() {
+        return false;
     }
 
     /**
-     * Whether to show the Duration tooltip for the recipe in JEI.
+     * Whether to hide the Duration tooltip for the recipe in JEI.
      */
-    public boolean showDuration() {
-        return true;
+    public boolean hideDuration() {
+        return false;
     }
 
     @Override
