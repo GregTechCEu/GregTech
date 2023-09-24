@@ -25,13 +25,30 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
 
     public abstract void receiveCustomData(int discriminator, PacketBuffer buf);
 
-    protected final PacketDataList updates = new PacketDataList();
+    private final PacketDataList updates = new PacketDataList();
 
     public void writeCustomData(int discriminator, Consumer<PacketBuffer> dataWriter) {
         ByteBuf backedBuffer = Unpooled.buffer();
         dataWriter.accept(new PacketBuffer(backedBuffer));
         byte[] updateData = Arrays.copyOfRange(backedBuffer.array(), 0, backedBuffer.writerIndex());
         this.updates.add(discriminator, updateData);
+        if (this.updates.size() == 1) notifyWorld(); // if the data is not empty we already notified the world
+    }
+
+    /**
+     * Adds all data packets from another synced tile entity. Useful when the old tile is replaced with a new one.
+     *
+     * @param syncedTileEntityBase other synced tile entity
+     */
+    public void addPacketsFrom(SyncedTileEntityBase syncedTileEntityBase) {
+        if (this == syncedTileEntityBase || syncedTileEntityBase.updates.isEmpty()) return;
+        boolean wasEmpty = this.updates.isEmpty();
+        this.updates.addAll(syncedTileEntityBase.updates);
+        syncedTileEntityBase.updates.clear();
+        if (wasEmpty) notifyWorld(); // if the data is not empty we already notified the world
+    }
+
+    private void notifyWorld() {
         @SuppressWarnings("deprecation")
         IBlockState blockState = getBlockType().getStateFromMeta(getBlockMetadata());
         world.notifyBlockUpdate(getPos(), blockState, blockState, 0);

@@ -44,7 +44,7 @@ public class PacketDataList {
         }
     }
 
-    public int getSize() {
+    public int size() {
         return size;
     }
 
