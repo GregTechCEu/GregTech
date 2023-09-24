@@ -1,7 +1,8 @@
-package gregtech.api.util;
+package gregtech.api.network;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An optimised data structure backed by two arrays.
@@ -19,11 +20,17 @@ public class PacketDataList {
         this.data = new byte[4][];
     }
 
+    /**
+     * Resizes the arrays to fit the required elements.
+     *
+     * @param s minimum size
+     */
     private void ensureSize(int s) {
         if (this.discriminators.length < s) {
             int n = this.discriminators.length;
-            int[] temp = new int[n + n];
-            byte[][] temp2 = new byte[n + n][];
+            int newCapacity = n * (s / n + 1);
+            int[] temp = new int[newCapacity];
+            byte[][] temp2 = new byte[newCapacity][];
             System.arraycopy(this.discriminators, 0, temp, 0, n);
             System.arraycopy(this.data, 0, temp2, 0, n);
             this.discriminators = temp;
@@ -31,6 +38,12 @@ public class PacketDataList {
         }
     }
 
+    /**
+     * Adds a discriminator - data pair to the list
+     *
+     * @param discriminator data id
+     * @param data          data
+     */
     public void add(int discriminator, byte[] data) {
         ensureSize(this.size + 1);
         this.discriminators[this.size] = discriminator;
@@ -38,20 +51,36 @@ public class PacketDataList {
         this.size++;
     }
 
+    /**
+     * Adds all discriminator - data pairs from another list.
+     * This does not check if the other list is empty or the same list.
+     *
+     * @param dataList other data list
+     */
     public void addAll(PacketDataList dataList) {
-        for (int i = 0; i < dataList.size; i++) {
-            add(dataList.discriminators[i], dataList.data[i]);
-        }
+        ensureSize(this.size + dataList.size);
+        System.arraycopy(dataList.discriminators, 0, this.discriminators, this.size, dataList.size);
+        System.arraycopy(dataList.data, 0, this.data, this.size, dataList.size);
+        this.size += dataList.size;
     }
 
+    /**
+     * @return amount of data packets
+     */
     public int size() {
         return size;
     }
 
+    /**
+     * @return true if there are no data packets
+     */
     public boolean isEmpty() {
         return size == 0;
     }
 
+    /**
+     * remove all data packets
+     */
     public void clear() {
         for (int i = 0; i < this.size; i++) {
             this.data[i] = null;
@@ -59,6 +88,13 @@ public class PacketDataList {
         this.size = 0;
     }
 
+    /**
+     * Writes all discriminator - data pairs to a nbt list.
+     * Also removes all data packets from this list.
+     *
+     * @return nbt list with discriminators and data
+     */
+    @NotNull
     public NBTTagList dumpToNbt() {
         NBTTagList listTag = new NBTTagList();
         for (int i = 0; i < this.size; i++) {

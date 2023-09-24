@@ -1,7 +1,7 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.block.BlockStateTileEntity;
-import gregtech.api.util.PacketDataList;
+import gregtech.api.network.PacketDataList;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.state.IBlockState;
