@@ -26,13 +26,17 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MinerLogic {
@@ -77,9 +81,9 @@ public class MinerLogic {
      * Creates the general logic for all in-world ore block miners
      *
      * @param metaTileEntity the {@link MetaTileEntity} this logic belongs to
-     * @param fortune the fortune amount to apply when mining ores
-     * @param speed the speed in ticks per block mined
-     * @param maximumRadius the maximum radius (square shaped) the miner can mine in
+     * @param fortune        the fortune amount to apply when mining ores
+     * @param speed          the speed in ticks per block mined
+     * @param maximumRadius  the maximum radius (square shaped) the miner can mine in
      */
     public MinerLogic(@Nonnull MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture) {
         this.metaTileEntity = metaTileEntity;
@@ -96,19 +100,18 @@ public class MinerLogic {
         String[] blockDescription = StringUtils.split(ConfigHolder.machines.replaceMinedBlocksWith, ":");
         Block replacementBlock;
 
-        if(blockDescription.length == 2) {
+        if (blockDescription.length == 2) {
             replacementBlock = Block.getBlockFromName(ConfigHolder.machines.replaceMinedBlocksWith);
-        }
-        else {
+        } else {
             replacementBlock = Block.getBlockFromName(String.format("%s:%s", blockDescription[0], blockDescription[1]));
         }
-        if(replacementBlock == null) {
+        if (replacementBlock == null) {
             GTLog.logger.error("Miner Config Replacement block was null, replacing with Cobblestone");
             return Blocks.COBBLESTONE.getDefaultState();
         }
 
         // check for meta
-        if(blockDescription.length > 2 && !blockDescription[2].isEmpty()) {
+        if (blockDescription.length > 2 && !blockDescription[2].isEmpty()) {
             return replacementBlock.getDefaultState().getBlock().getStateFromMeta(Integer.parseInt(blockDescription[2]));
         }
 
@@ -164,7 +167,7 @@ public class MinerLogic {
             IBlockState blockState = metaTileEntity.getWorld().getBlockState(blocksToMine.getFirst());
 
             // check to make sure the ore is still there,
-            while(!GTUtility.isOre(GTUtility.toItem(blockState))) {
+            while (!GTUtility.isOre(GTUtility.toItem(blockState))) {
                 blocksToMine.removeFirst();
                 if (blocksToMine.isEmpty()) break;
                 blockState = metaTileEntity.getWorld().getBlockState(blocksToMine.getFirst());
@@ -198,7 +201,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return true if the miner is able to mine, else false
      */
     protected boolean checkCanMine() {
@@ -235,10 +237,11 @@ public class MinerLogic {
 
     /**
      * called to handle mining small ores
-     * @param blockDrops the List of items to fill after the operation
-     * @param world the {@link WorldServer} the miner is in
+     *
+     * @param blockDrops  the List of items to fill after the operation
+     * @param world       the {@link WorldServer} the miner is in
      * @param blockToMine the {@link BlockPos} of the block being mined
-     * @param blockState the {@link IBlockState} of the block being mined
+     * @param blockState  the {@link IBlockState} of the block being mined
      */
     protected void getSmallOreBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
         /*small ores
@@ -251,10 +254,11 @@ public class MinerLogic {
 
     /**
      * called to handle mining regular ores and blocks
-     * @param blockDrops the List of items to fill after the operation
-     * @param world the {@link WorldServer} the miner is in
+     *
+     * @param blockDrops  the List of items to fill after the operation
+     * @param world       the {@link WorldServer} the miner is in
      * @param blockToMine the {@link BlockPos} of the block being mined
-     * @param blockState the {@link IBlockState} of the block being mined
+     * @param blockState  the {@link IBlockState} of the block being mined
      */
     protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, @Nonnull IBlockState blockState) {
         blockState.getBlock().getDrops(blockDrops, world, blockToMine, blockState, 0); // regular ores do not get fortune applied
@@ -265,7 +269,7 @@ public class MinerLogic {
      * marks the inventory as full if the items cannot fit, and not full if it previously was full and items could fit
      *
      * @param blockDrops the List of items to insert
-     * @param world the {@link WorldServer} the miner is in
+     * @param world      the {@link WorldServer} the miner is in
      */
     private void mineAndInsertItems(NonNullList<ItemStack> blockDrops, WorldServer world) {
         // If the block's drops can fit in the inventory, move the previously mined position to the block
@@ -292,7 +296,7 @@ public class MinerLogic {
     /**
      * This method designates the starting position for mining blocks
      *
-     * @param pos the {@link BlockPos} of the miner itself
+     * @param pos           the {@link BlockPos} of the miner itself
      * @param currentRadius the currently set mining radius
      */
     public void initPos(@Nonnull BlockPos pos, int currentRadius) {
@@ -310,6 +314,7 @@ public class MinerLogic {
 
     /**
      * Checks if the current coordinates are invalid
+     *
      * @param x the x coordinate
      * @param y the y coordinate
      * @param z the z coordinate
@@ -336,17 +341,19 @@ public class MinerLogic {
         this.isDone = false;
         blocksToMine.clear();
         checkBlocksToMine();
+        resetPipeLength();
     }
 
     /**
      * Gets the blocks to mine
+     *
      * @return a {@link LinkedList} of {@link BlockPos} for each ore to mine
      */
     private LinkedList<BlockPos> getBlocksToMine() {
         LinkedList<BlockPos> blocks = new LinkedList<>();
 
         // determine how many blocks to retrieve this time
-        double quotient = getQuotient(GTUtility.getMeanTickTime(metaTileEntity.getWorld()));
+        double quotient = getQuotient(getMeanTickTime(metaTileEntity.getWorld()));
         int calcAmount = quotient < 1 ? 1 : (int) (Math.min(quotient, Short.MAX_VALUE));
         int calculated = 0;
 
@@ -386,7 +393,30 @@ public class MinerLogic {
     }
 
     /**
+     * @param values to find the mean of
+     * @return the mean value
+     */
+    private static long mean(@Nonnull long[] values) {
+        if (values.length == 0L)
+            return 0L;
+
+        long sum = 0L;
+        for (long v : values)
+            sum += v;
+        return sum / values.length;
+    }
+
+    /**
+     * @param world the {@link World} to get the average tick time of
+     * @return the mean tick time
+     */
+    private static double getMeanTickTime(@Nonnull World world) {
+        return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
+    }
+
+    /**
      * gets the quotient for determining the amount of blocks to mine
+     *
      * @param base is a value used for calculation, intended to be the mean tick time of the world the miner is in
      * @return the quotient
      */
@@ -396,11 +426,12 @@ public class MinerLogic {
 
     /**
      * Applies a fortune hammer to block drops based on a tier value, intended for small ores
-     * @param blockState the block being mined
-     * @param drops where the drops are stored to
+     *
+     * @param blockState   the block being mined
+     * @param drops        where the drops are stored to
      * @param fortuneLevel the level of fortune used
-     * @param map the recipemap from which to get the drops
-     * @param tier the tier at which the operation is performed, used for calculating the chanced output boost
+     * @param map          the recipemap from which to get the drops
+     * @param tier         the tier at which the operation is performed, used for calculating the chanced output boost
      */
     protected static void applyTieredHammerNoRandomDrops(@Nonnull IBlockState blockState, List<ItemStack> drops, int fortuneLevel, @Nonnull RecipeMap<?> map, int tier) {
         ItemStack itemStack = GTUtility.toItem(blockState);
@@ -429,14 +460,29 @@ public class MinerLogic {
     }
 
     /**
+     * Resets the pipe length to zero
+     */
+    private void resetPipeLength() {
+        this.pipeLength = 0;
+        this.metaTileEntity.writeCustomData(GregtechDataCodes.PUMP_HEAD_LEVEL, b -> b.writeInt(pipeLength));
+        this.metaTileEntity.markDirty();
+    }
+
+    /**
      * renders the pipe beneath the miner
      */
+    @SideOnly(Side.CLIENT)
     public void renderPipe(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.PIPE_IN_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
         for (int i = 0; i < this.pipeLength; i++) {
             translation.translate(0.0, -1.0, 0.0);
-            PIPE_TEXTURE.render(renderState, translation, pipeline, IMiner.PIPE_CUBOID);
+            getPipeTexture().render(renderState, translation, pipeline, IMiner.PIPE_CUBOID);
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected ICubeRenderer getPipeTexture() {
+        return PIPE_TEXTURE;
     }
 
     /**
@@ -526,7 +572,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the current x value
      */
     public AtomicInteger getX() {
@@ -534,7 +579,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the current y value
      */
     public AtomicInteger getY() {
@@ -542,7 +586,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the current z value
      */
     public AtomicInteger getZ() {
@@ -550,7 +593,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the previously mined x value
      */
     public AtomicInteger getMineX() {
@@ -558,7 +600,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the previously mined y value
      */
     public AtomicInteger getMineY() {
@@ -566,7 +607,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the previously mined z value
      */
     public AtomicInteger getMineZ() {
@@ -574,7 +614,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the starting x value
      */
     public AtomicInteger getStartX() {
@@ -582,7 +621,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the starting y value
      */
     public AtomicInteger getStartY() {
@@ -590,7 +628,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the starting z value
      */
     public AtomicInteger getStartZ() {
@@ -598,7 +635,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the pipe y value
      */
     public AtomicInteger getPipeY() {
@@ -606,7 +642,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the miner's maximum radius
      */
     public int getMaximumRadius() {
@@ -614,7 +649,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the miner's current radius
      */
     public int getCurrentRadius() {
@@ -622,7 +656,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @param currentRadius the radius to set the miner to use
      */
     public void setCurrentRadius(int currentRadius) {
@@ -630,7 +663,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return true if the miner is finished working
      */
     public boolean isDone() {
@@ -638,7 +670,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return true if the miner is active
      */
     public boolean isActive() {
@@ -646,7 +677,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @param isActive the new state of the miner's activity: true to change to active, else false
      */
     public void setActive(boolean isActive) {
@@ -660,7 +690,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @param isWorkingEnabled the new state of the miner's ability to work: true to change to enabled, else false
      */
     public void setWorkingEnabled(boolean isWorkingEnabled) {
@@ -668,13 +697,14 @@ public class MinerLogic {
             this.isWorkingEnabled = isWorkingEnabled;
             metaTileEntity.markDirty();
             if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
+                if (!isWorkingEnabled) resetArea();
+
                 this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(isWorkingEnabled));
             }
         }
     }
 
     /**
-     *
      * @return whether working is enabled for the logic
      */
     public boolean isWorkingEnabled() {
@@ -682,7 +712,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return whether the miner is currently working
      */
     public boolean isWorking() {
@@ -690,7 +719,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return whether the miner was active and needs an update
      */
     public boolean wasActiveAndNeedsUpdate() {
@@ -707,7 +735,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the miner's fortune level
      */
     public int getFortune() {
@@ -715,7 +742,6 @@ public class MinerLogic {
     }
 
     /**
-     *
      * @return the miner's speed in ticks
      */
     public int getSpeed() {

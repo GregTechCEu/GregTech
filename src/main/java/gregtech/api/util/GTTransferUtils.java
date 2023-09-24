@@ -1,7 +1,6 @@
 package gregtech.api.util;
 
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.recipes.FluidKey;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -17,7 +16,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 public class GTTransferUtils {
@@ -148,18 +146,18 @@ public class GTTransferUtils {
                                                   List<FluidStack> fluidStacks) {
         if (simulate) {
             OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(fluidHandler);
-            Map<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
-            for (Map.Entry<FluidKey, Integer> entry : fluidKeyMap.entrySet()) {
-                int amountToInsert = entry.getValue();
-                int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountToInsert);
-                if (inserted != amountToInsert) {
+            for (FluidStack fluidStack : fluidStacks) {
+                int inserted = overlayedFluidHandler.insertFluid(fluidStack, fluidStack.amount);
+                if (inserted != fluidStack.amount) {
                     return false;
                 }
             }
             return true;
         }
 
-        fluidStacks.forEach(fluidStack -> fluidHandler.fill(fluidStack, true));
+        for (FluidStack fluidStack : fluidStacks) {
+            fluidHandler.fill(fluidStack, true);
+        }
         return true;
     }
 
@@ -181,8 +179,7 @@ public class GTTransferUtils {
             ItemStack slotStack = handler.getStackInSlot(i);
             if (slotStack.isEmpty()) {
                 emptySlots.add(i);
-            }
-            if (ItemHandlerHelper.canItemStacksStack(stack, slotStack)) {
+            } else if (ItemHandlerHelper.canItemStacksStack(stack, slotStack)) {
                 stack = handler.insertItem(i, stack, simulate);
                 if (stack.isEmpty()) {
                     return ItemStack.EMPTY;
@@ -217,12 +214,6 @@ public class GTTransferUtils {
             }
         }
         return stack;
-    }
-
-    public static boolean areStackable(FluidStack stack, FluidStack stack2) {
-        return stack != null && stack.amount > 0 &&
-                stack2 != null && stack2.amount > 0 &&
-                stack.isFluidEqual(stack2);
     }
 
     // TODO try to remove this one day

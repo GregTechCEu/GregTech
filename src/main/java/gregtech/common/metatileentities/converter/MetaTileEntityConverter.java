@@ -166,7 +166,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
-            return converterTrait.isFeToEu() == (side == frontFacing) ?
+            return side != (!converterTrait.isFeToEu() ? frontFacing : null) ?
                     GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(converterTrait.getEnergyEUContainer()) : null;
         }
         if (capability == CapabilityEnergy.ENERGY) {

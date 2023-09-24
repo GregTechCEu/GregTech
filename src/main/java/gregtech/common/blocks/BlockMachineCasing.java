@@ -17,6 +17,9 @@ import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Locale;
+
+import static gregtech.api.GTValues.VOLTAGE_NAMES;
 
 @ParametersAreNonnullByDefault
 public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineCasingType> {
@@ -48,21 +51,21 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
     public enum MachineCasingType implements IStringSerializable {
 
         //Voltage-tiered casings
-        ULV(makeName(GTValues.VOLTAGE_NAMES[0])),
-        LV(makeName(GTValues.VOLTAGE_NAMES[1])),
-        MV(makeName(GTValues.VOLTAGE_NAMES[2])),
-        HV(makeName(GTValues.VOLTAGE_NAMES[3])),
-        EV(makeName(GTValues.VOLTAGE_NAMES[4])),
-        IV(makeName(GTValues.VOLTAGE_NAMES[5])),
-        LuV(makeName(GTValues.VOLTAGE_NAMES[6])),
-        ZPM(makeName(GTValues.VOLTAGE_NAMES[7])),
-        UV(makeName(GTValues.VOLTAGE_NAMES[8])),
-        UHV(makeName(GTValues.VOLTAGE_NAMES[9])),
-        UEV(makeName(GTValues.VOLTAGE_NAMES[10])),
-        UIV(makeName(GTValues.VOLTAGE_NAMES[11])),
-        UXV(makeName(GTValues.VOLTAGE_NAMES[12])),
-        OpV(makeName(GTValues.VOLTAGE_NAMES[13])),
-        MAX(makeName(GTValues.VOLTAGE_NAMES[14]));
+        ULV(makeName(VOLTAGE_NAMES[GTValues.ULV])),
+        LV(makeName(VOLTAGE_NAMES[GTValues.LV])),
+        MV(makeName(VOLTAGE_NAMES[GTValues.MV])),
+        HV(makeName(VOLTAGE_NAMES[GTValues.HV])),
+        EV(makeName(VOLTAGE_NAMES[GTValues.EV])),
+        IV(makeName(VOLTAGE_NAMES[GTValues.IV])),
+        LuV(makeName(VOLTAGE_NAMES[GTValues.LuV])),
+        ZPM(makeName(VOLTAGE_NAMES[GTValues.ZPM])),
+        UV(makeName(VOLTAGE_NAMES[GTValues.UV])),
+        UHV(makeName(VOLTAGE_NAMES[GTValues.UHV])),
+        UEV(makeName(VOLTAGE_NAMES[GTValues.UEV])),
+        UIV(makeName(VOLTAGE_NAMES[GTValues.UIV])),
+        UXV(makeName(VOLTAGE_NAMES[GTValues.UXV])),
+        OpV(makeName(VOLTAGE_NAMES[GTValues.OpV])),
+        MAX(makeName(VOLTAGE_NAMES[GTValues.MAX]));
 
         private final String name;
 
@@ -77,7 +80,7 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
         }
 
         private static String makeName(String voltageName) {
-            return String.join("_", voltageName.toLowerCase().split(" "));
+            return voltageName.toLowerCase(Locale.ROOT).replace(' ', '_');
         }
     }
 }

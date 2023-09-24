@@ -4,8 +4,8 @@ import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import gregtech.api.GTValues;
 import gregtech.api.gui.resources.ResourceHelper;
+import gregtech.api.util.GTUtility;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
@@ -152,10 +152,8 @@ public class MaterialIconType {
             return cache.get(this, iconSet);
         }
 
-        if (!iconSet.isRootIconset &&
-                FMLCommonHandler.instance().getSidedDelegate() != null && // Test environment check
-                FMLCommonHandler.instance().getSide().isClient()) {
-            ResourceLocation fullLocation = new ResourceLocation(GTValues.MODID, String.format(fullPath, iconSet.name, this.name));
+        if (!iconSet.isRootIconset && FMLCommonHandler.instance().getSide().isClient()) {
+            ResourceLocation fullLocation = GTUtility.gregtechId(String.format(fullPath, iconSet.name, this.name));
             if (!ResourceHelper.doResourcepacksHaveResource(fullLocation)) {
                 ResourceLocation iconSetPath = recurseIconsetPath(iconSet.parentIconset, cache, fullPath, path);
                 cache.put(this, iconSet, iconSetPath);
@@ -163,7 +161,7 @@ public class MaterialIconType {
             }
         }
 
-        ResourceLocation iconSetPath = new ResourceLocation(GTValues.MODID, String.format(path, iconSet.name, this.name));
+        ResourceLocation iconSetPath = GTUtility.gregtechId(String.format(path, iconSet.name, this.name));
         cache.put(this, iconSet, iconSetPath);
         return iconSetPath;
     }

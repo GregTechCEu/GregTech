@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.steam;
 
-
 import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -21,6 +20,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,8 +30,6 @@ import java.util.List;
 public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController {
 
     private static final int MAX_PARALLELS = 8;
-
-    private boolean isActive;
 
     public MetaTileEntitySteamOven(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.FURNACE_RECIPES, CONVERSION_RATE);
@@ -74,6 +73,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         return isStructureFormed() && (((MetaTileEntity) sourcePart).getPos().getY() < getPos().getY());
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (ConfigHolder.machines.steelSteamMultiblocks) {
@@ -90,6 +90,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {

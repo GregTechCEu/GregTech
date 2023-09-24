@@ -1,6 +1,6 @@
 package gregtech.api.worldgen.generator;
 
-import gregtech.api.GTValues;
+import gregtech.api.util.GTUtility;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -60,7 +60,7 @@ public class GTWorldGenCapability {
     @CapabilityInject(GTWorldGenCapability.class)
     public static Capability<GTWorldGenCapability> CAPABILITY;
 
-    private static final ResourceLocation CAPABILITY_ID = new ResourceLocation(GTValues.MODID, "worldgen");
+    private static final ResourceLocation CAPABILITY_ID = GTUtility.gregtechId("worldgen");
 
     public static final Callable<GTWorldGenCapability> FACTORY = GTWorldGenCapability::new;
 

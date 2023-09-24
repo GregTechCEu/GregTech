@@ -12,8 +12,10 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.WireProperties;
+import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.CableRenderer;
+import gregtech.client.renderer.pipe.PipeRenderer;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
@@ -48,8 +50,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
 
     private final Map<Material, WireProperties> enabledMaterials = new TreeMap<>();
 
-    public BlockCable(Insulation cableType) {
-        super(cableType);
+    public BlockCable(Insulation cableType, MaterialRegistry registry) {
+        super(cableType, registry);
         setCreativeTab(GregTechAPI.TAB_GREGTECH_CABLES);
         setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
     }
@@ -57,7 +59,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     public void addCableMaterial(Material material, WireProperties wireProperties) {
         Preconditions.checkNotNull(material, "material was null");
         Preconditions.checkNotNull(wireProperties, "material %s wireProperties was null", material);
-        Preconditions.checkArgument(GregTechAPI.MATERIAL_REGISTRY.getNameForObject(material) != null, "material %s is not registered", material);
+        Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null, "material %s is not registered", material);
         if (!pipeType.orePrefix.isIgnored(material)) {
             this.enabledMaterials.put(material, wireProperties);
         }
@@ -75,6 +77,13 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     @Override
     protected WireProperties createProperties(Insulation insulation, Material material) {
         return insulation.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Nonnull
+    @Override
+    public PipeRenderer getPipeRenderer() {
+        return CableRenderer.INSTANCE;
     }
 
     @Override

@@ -1,48 +1,58 @@
 package gregtech.api.util;
 
-import com.google.common.base.CaseFormat;
 import net.minecraft.item.EnumDyeColor;
 
-import java.awt.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import javax.annotation.Nonnull;
 
 public class DyeUtil {
 
     /**
      * Determines dye color nearest to specified RGB color
      */
+    @Nonnull
     public static EnumDyeColor determineDyeColor(int rgbColor) {
-        Color c = new Color(rgbColor);
+        int r1 = rgbColor >> 16 & 0xFF;
+        int g1 = rgbColor >> 8 & 0xFF;
+        int b1 = rgbColor & 0xFF;
 
-        Map<Double, EnumDyeColor> distances = new HashMap<>();
+        int minDistance = Integer.MAX_VALUE;
+        EnumDyeColor dye = EnumDyeColor.WHITE;
+
         for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
-            Color c2 = new Color(dyeColor.colorValue);
+            int rd = r1 - (dyeColor.colorValue >> 16 & 0xFF);
+            int gd = g1 - (dyeColor.colorValue >> 8 & 0xFF);
+            int bd = b1 - (dyeColor.colorValue & 0xFF);
 
-            double distance = (c.getRed() - c2.getRed()) * (c.getRed() - c2.getRed())
-                    + (c.getGreen() - c2.getGreen()) * (c.getGreen() - c2.getGreen())
-                    + (c.getBlue() - c2.getBlue()) * (c.getBlue() - c2.getBlue());
-
-            distances.put(distance, dyeColor);
+            int distance = rd * rd + gd * gd + bd * bd;
+            if (distance < minDistance) {
+                minDistance = distance;
+                dye = dyeColor;
+            }
         }
 
-        double min = Collections.min(distances.keySet());
-        return distances.get(min);
+        return dye;
     }
 
-    public static String getColorName(EnumDyeColor dyeColor) {
-        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, dyeColor.getName());
-    }
-
-    public static String getOredictColorName(EnumDyeColor dyeColor) {
-        String colorName;
-
-        if (dyeColor == EnumDyeColor.SILVER)
-            colorName = "LightGray";
-        else
-            colorName = getColorName(dyeColor);
-
-        return "dye" + colorName;
+    @Nonnull
+    public static String getOredictColorName(@Nonnull EnumDyeColor dyeColor) {
+        switch (dyeColor) {
+            case WHITE: return "dyeWhite";
+            case ORANGE: return "dyeOrange";
+            case MAGENTA: return "dyeMagenta";
+            case LIGHT_BLUE: return "dyeLightBlue";
+            case YELLOW: return "dyeYellow";
+            case LIME: return "dyeLime";
+            case PINK: return "dyePink";
+            case GRAY: return "dyeGray";
+            case SILVER: return "dyeLightGray";
+            case CYAN: return "dyeCyan";
+            case PURPLE: return "dyePurple";
+            case BLUE: return "dyeBlue";
+            case BROWN: return "dyeBrown";
+            case GREEN: return "dyeGreen";
+            case RED: return "dyeRed";
+            case BLACK: return "dyeBlack";
+            default: throw new IllegalStateException("Unreachable");
+        }
     }
 }

@@ -6,7 +6,6 @@ import gregtech.api.gui.widgets.SimpleTextWidget;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Position;
-import gregtech.api.util.TwoDimensionalRayTracer;
 import gregtech.common.terminal.app.game.pong.widget.BallWidget;
 import gregtech.common.terminal.app.game.pong.widget.PaddleWidget;
 import org.lwjgl.input.Keyboard;
@@ -33,7 +32,7 @@ public class PongApp extends AbstractApplication {
 
     @Override
     public AbstractApplication initApp() {
-        if(isClient) {
+        if (isClient) {
             paddles = new ArrayList<>();
             solidObjects = new ArrayList<>();
             this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));

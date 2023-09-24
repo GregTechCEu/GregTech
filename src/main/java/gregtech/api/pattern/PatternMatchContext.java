@@ -1,7 +1,10 @@
 package gregtech.api.pattern;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -55,4 +58,8 @@ public class PatternMatchContext {
         return result;
     }
 
+    @NotNull
+    public Set<Map.Entry<String, Object>> entrySet() {
+        return data.entrySet();
+    }
 }

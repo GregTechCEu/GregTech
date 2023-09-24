@@ -7,6 +7,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -24,7 +25,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -67,13 +67,8 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.inventory = new ItemStackHandler(inventorySize);
+        this.inventory = new GTItemStackHandler(this, inventorySize);
         this.itemInventory = inventory;
-    }
-
-    @Override
-    public int getActualComparatorValue() {
-        return ItemHandlerHelper.calcRedstoneFromInventory(inventory);
     }
 
     @Override

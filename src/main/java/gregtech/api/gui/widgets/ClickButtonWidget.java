@@ -6,7 +6,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
@@ -74,7 +74,7 @@ public class ClickButtonWidget extends Widget {
 
     @Override
     public boolean isActive() {
-         return super.isActive() && shouldDisplay.get();
+        return super.isActive() && shouldDisplay.get();
     }
 
     @Override
@@ -99,7 +99,7 @@ public class ClickButtonWidget extends Widget {
     public void drawInForeground(int mouseX, int mouseY) {
         super.drawInForeground(mouseX, mouseY);
         if (tooltipText != null && isMouseOverElement(mouseX, mouseY)) {
-            List<String> hoverList = Arrays.asList(GTUtility.getForwardNewLineRegex().split(I18n.format(tooltipText, tooltipArgs)));
+            List<String> hoverList = Arrays.asList(LocalizationUtils.formatLines(tooltipText, tooltipArgs));
             drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
         }
     }
@@ -118,7 +118,7 @@ public class ClickButtonWidget extends Widget {
         ClickData clickData = new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown());
         writeClientAction(1, clickData::writeToBuf);
         if (shouldClientCallback) {
-           onPressCallback.accept(new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown(), true));
+            onPressCallback.accept(new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown(), true));
         }
         playButtonClickSound();
     }

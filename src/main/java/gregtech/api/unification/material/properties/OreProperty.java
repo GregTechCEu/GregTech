@@ -1,14 +1,17 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.unification.material.Material;
+import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-public class OreProperty implements IMaterialProperty<OreProperty> {
+public class OreProperty implements IMaterialProperty {
 
     /**
      * List of Ore byproducts.
@@ -155,12 +158,48 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
         return this.separatedInto;
     }
 
-    public void setOreByProducts(Material... materials) {
+    /**
+     * Set the ore byproducts for this property
+     *
+     * @param materials the materials to use as byproducts
+     */
+    public void setOreByProducts(@Nonnull Material... materials) {
+        setOreByProducts(Arrays.asList(materials));
+    }
+
+    /**
+     * Set the ore byproducts for this property
+     *
+     * @param materials the materials to use as byproducts
+     */
+    public void setOreByProducts(@Nonnull Collection<Material> materials) {
+        this.oreByProducts.clear();
+        this.oreByProducts.addAll(materials);
+    }
+
+    /**
+     * Add ore byproducts to this property
+     *
+     * @param materials the materials to add as byproducts
+     */
+    public void addOreByProducts(@Nonnull Material... materials) {
         this.oreByProducts.addAll(Arrays.asList(materials));
     }
 
     public List<Material> getOreByProducts() {
         return this.oreByProducts;
+    }
+
+    @Nullable
+    public final Material getOreByProduct(int index) {
+        if (this.oreByProducts.isEmpty()) return null;
+        return this.oreByProducts.get(MathHelper.clamp(index, 0, this.oreByProducts.size() - 1));
+    }
+
+    @Nonnull
+    public final Material getOreByProduct(int index, @Nonnull Material fallback) {
+        Material material = getOreByProduct(index);
+        return material != null ? material : fallback;
     }
 
     @Override

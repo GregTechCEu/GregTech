@@ -54,6 +54,7 @@ import static gregtech.api.capability.GregtechDataCodes.STRUCTURE_FORMED;
 
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
 
+    @Nullable
     public BlockPattern structurePattern;
 
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
@@ -100,6 +101,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Nonnull
     protected abstract BlockPattern createStructurePattern();
 
+    @SideOnly(Side.CLIENT)
     public abstract ICubeRenderer getBaseTexture(IMultiblockPart sourcePart);
 
     public boolean shouldRenderOverlay(IMultiblockPart sourcePart) {
@@ -111,6 +113,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      *
      * @return The overlay to render on the Multiblock Controller
      */
+    @SideOnly(Side.CLIENT)
     @Nonnull
     protected ICubeRenderer getFrontOverlay() {
         return Textures.MULTIBLOCK_WORKABLE_OVERLAY;
@@ -143,8 +146,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId), getCandidates(metaTileEntities));
     }
 
-    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities){
-        return ()->Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
+    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
+        return () -> Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
             // TODO
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
@@ -174,7 +177,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }, getCandidates(allowedStates));
     }
 
-    /** Use this predicate for Frames in your Multiblock. Allows for Framed Pipes as well as normal Frame blocks. */
+    /**
+     * Use this predicate for Frames in your Multiblock. Allows for Framed Pipes as well as normal Frame blocks.
+     */
     public static TraceabilityPredicate frames(Material... frameMaterials) {
         return states(Arrays.stream(frameMaterials).map(m -> MetaBlocks.FRAMES.get(m).getBlock(m)).toArray(IBlockState[]::new))
                 .or(new TraceabilityPredicate(blockWorldState -> {
@@ -212,6 +217,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         getBaseTexture(null).render(renderState, translation, ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(getBaseTexture(null).getParticleSprite(), getPaintingColorForRendering());
@@ -249,6 +255,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             Map<MultiblockAbility<Object>, List<Object>> abilities = new HashMap<>();
             for (IMultiblockPart multiblockPart : parts) {
                 if (multiblockPart instanceof IMultiblockAbilityPart) {
+                    @SuppressWarnings("unchecked")
                     IMultiblockAbilityPart<Object> abilityPart = (IMultiblockAbilityPart<Object>) multiblockPart;
                     List<Object> abilityInstancesList = abilities.computeIfAbsent(abilityPart.getAbility(), k -> new ArrayList<>());
                     abilityPart.registerAbilities(abilityInstancesList);
@@ -391,7 +398,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             for (int i = 0; i < repetitionStack.size(); i++) {
                 repetition[i] = repetitionStack.get(i);
             }
-            pages.add(new MultiblockShapeInfo(this.structurePattern.getPreview(repetition)));
+            pages.add(new MultiblockShapeInfo(Objects.requireNonNull(this.structurePattern).getPreview(repetition)));
         } else {
             for (int i = aisleRepetitions[repetitionStack.size()][0]; i <= aisleRepetitions[repetitionStack.size()][1]; i++) {
                 repetitionStack.push(i);

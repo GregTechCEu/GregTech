@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -10,11 +9,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-
-import static gregtech.api.util.GTUtility.copyInventoryItems;
 
 public class CraftingRecipeMemory {
 
@@ -36,39 +30,45 @@ public class CraftingRecipeMemory {
         return memorizedRecipes[index];
     }
 
-    private boolean isNullOrUnlockedRecipe(int index) {
-        return memorizedRecipes[index] == null ||
-                !memorizedRecipes[index].recipeLocked;
-    }
-
-    private void insertRecipe(MemorizedRecipe insertedRecipe, int startIndex) {
-        MemorizedRecipe currentRecipe = memorizedRecipes[startIndex];
+    @Nullable
+    private MemorizedRecipe offsetRecipe(int startIndex) {
+        MemorizedRecipe previousRecipe = memorizedRecipes[startIndex];
         for (int i = startIndex + 1; i < memorizedRecipes.length; i++) {
             MemorizedRecipe recipe = memorizedRecipes[i];
             if (recipe != null && recipe.recipeLocked) continue;
-            memorizedRecipes[i] = currentRecipe;
-            currentRecipe = recipe;
+            memorizedRecipes[i] = previousRecipe;
+            if (recipe == null) return null;
+            previousRecipe = recipe;
         }
-        memorizedRecipes[startIndex] = insertedRecipe;
+        return previousRecipe;
     }
 
-    private MemorizedRecipe findOrCreateRecipe(ItemStack itemStack) {
-        Optional<MemorizedRecipe> result = Arrays.stream(memorizedRecipes)
-                .filter(Objects::nonNull)
-                .filter(recipe -> ItemStack.areItemStacksEqual(recipe.recipeResult, itemStack))
-                .findFirst();
-        return result.orElseGet(() -> {
-            MemorizedRecipe recipe = new MemorizedRecipe();
-            recipe.recipeResult = itemStack.copy();
-            int firstFreeIndex = GTUtility.indices(memorizedRecipes)
-                    .filter(this::isNullOrUnlockedRecipe)
-                    .findFirst().orElse(-1);
-            if (firstFreeIndex == -1) {
-                return null;
+    @Nullable
+    private MemorizedRecipe findOrCreateRecipe(ItemStack resultItemStack) {
+        // search preexisting recipe with identical recipe result
+        for (MemorizedRecipe memorizedRecipe : memorizedRecipes) {
+            if (memorizedRecipe != null && ItemStack.areItemStacksEqual(memorizedRecipe.recipeResult, resultItemStack)) {
+                return memorizedRecipe;
             }
-            insertRecipe(recipe, firstFreeIndex);
-            return recipe;
-        });
+        }
+        // put new memorized recipe into array
+        for (int i = 0; i < memorizedRecipes.length; i++) {
+            MemorizedRecipe memorizedRecipe;
+            if (memorizedRecipes[i] == null) {
+                memorizedRecipe = new MemorizedRecipe();
+            } else if (memorizedRecipes[i].recipeLocked) {
+                continue;
+            } else {
+                memorizedRecipe = offsetRecipe(i);
+                if (memorizedRecipe == null) {
+                    memorizedRecipe = new MemorizedRecipe();
+                }
+            }
+            memorizedRecipe.initialize(resultItemStack);
+            memorizedRecipes[i] = memorizedRecipe;
+            return memorizedRecipe;
+        }
+        return null;
     }
 
     public void notifyRecipePerformed(IItemHandler craftingGrid, ItemStack resultStack) {
@@ -104,14 +104,20 @@ public class CraftingRecipeMemory {
         }
     }
 
+    private static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest) {
+        for (int i = 0; i < src.getSlots(); i++) {
+            ItemStack itemStack = src.getStackInSlot(i);
+            dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
+        }
+    }
+
     public static class MemorizedRecipe {
         private final ItemStackHandler craftingMatrix = new ItemStackHandler(9);
         private ItemStack recipeResult;
         private boolean recipeLocked = false;
         private int timesUsed = 0;
 
-        private MemorizedRecipe() {
-        }
+        private MemorizedRecipe() {}
 
         private NBTTagCompound serializeNBT() {
             NBTTagCompound result = new NBTTagCompound();
@@ -129,6 +135,15 @@ public class CraftingRecipeMemory {
             recipe.recipeLocked = tagCompound.getBoolean("Locked");
             recipe.timesUsed = tagCompound.getInteger("TimesUsed");
             return recipe;
+        }
+
+        private void initialize(ItemStack recipeResult) {
+            this.recipeResult = recipeResult.copy();
+            for (int i = 0; i < this.craftingMatrix.getSlots(); i++) {
+                this.craftingMatrix.setStackInSlot(i, ItemStack.EMPTY);
+            }
+            this.recipeLocked = false;
+            this.timesUsed = 0;
         }
 
         private void updateCraftingMatrix(IItemHandler craftingGrid) {
@@ -150,5 +165,4 @@ public class CraftingRecipeMemory {
             this.recipeLocked = recipeLocked;
         }
     }
-
 }

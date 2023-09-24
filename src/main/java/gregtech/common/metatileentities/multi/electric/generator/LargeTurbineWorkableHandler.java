@@ -91,7 +91,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
             // Null check fluid here, since it can return null on first join into world or first form
             FluidStack inputFluid = getInputFluidStack();
-            if(inputFluid == null || getInputFluidStack().amount < recipeFluidStack.amount * parallel) {
+            if (inputFluid == null || getInputFluidStack().amount < recipeFluidStack.amount * parallel) {
                 return false;
             }
 
@@ -123,7 +123,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         FuelMultiblockController controller = (FuelMultiblockController) this.metaTileEntity;
         List<IFluidHandler> tanks = controller.getNotifiedFluidInputList();
         for (IFluidTank tank : controller.getAbilities(MultiblockAbility.IMPORT_FLUIDS)) {
-            tanks.add((FluidTank) tank);
+            tanks.add((IFluidHandler) tank);
         }
     }
 }

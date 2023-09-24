@@ -5,7 +5,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.function.BooleanConsumer;
 import gregtech.api.util.oreglob.OreGlob;
@@ -182,8 +182,7 @@ public abstract class OreFilterTestSlot extends WidgetGroup {
                     break;
                 case INVALID:
                 default:
-                    list = Arrays.asList(GTUtility.getForwardNewLineRegex()
-                            .split(I18n.format("cover.ore_dictionary_filter.test_slot.info")));
+                    list = Arrays.asList(LocalizationUtils.formatLines("cover.ore_dictionary_filter.test_slot.info"));
                     break;
             }
             drawHoveringText(ItemStack.EMPTY, list, 300, mouseX, mouseY);

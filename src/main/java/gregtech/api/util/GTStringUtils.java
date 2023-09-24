@@ -27,9 +27,9 @@ public final class GTStringUtils {
             MetaItem<?> metaItem = (MetaItem<?>) stack.getItem();
             MetaItem<?>.MetaValueItem metaValueItem = metaItem.getItem(stack);
             if (metaValueItem == null) {
-                if (metaItem instanceof MetaPrefixItem) {
-                    Material material = MetaPrefixItem.getMaterial(stack);
-                    OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
+                if (metaItem instanceof MetaPrefixItem metaPrefixItem) {
+                    Material material = metaPrefixItem.getMaterial(stack);
+                    OrePrefix orePrefix = metaPrefixItem.getOrePrefix();
                     return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material + " * " + stack.getCount();
                 }
             } else {
@@ -50,11 +50,11 @@ public final class GTStringUtils {
             Block block = Block.getBlockFromItem(stack.getItem());
             String id = null;
             if (block instanceof BlockCompressed) {
-                id = "block" + ((BlockCompressed) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+                id = "block" + ((BlockCompressed) block).getGtMaterial(stack).toCamelCaseString();
             } else if (block instanceof BlockFrame) {
-                id = "frame" + ((BlockFrame) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
-            } else if (block instanceof BlockMaterialPipe) {
-                id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + BlockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
+                id = "frame" + ((BlockFrame) block).getGtMaterial(stack).toCamelCaseString();
+            } else if (block instanceof BlockMaterialPipe blockMaterialPipe) {
+                id = blockMaterialPipe.getPrefix().name + blockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
             }
 
             if (id != null) {
@@ -63,6 +63,18 @@ public final class GTStringUtils {
         }
         //noinspection ConstantConditions
         return stack.getItem().getRegistryName().toString() + " * " + stack.getCount() + " (Meta " + stack.getItemDamage() + ")";
+    }
+
+    /**
+     * Better implementation of {@link ItemStack#toString()} which respects the stack-aware
+     * {@link net.minecraft.item.Item#getTranslationKey(ItemStack)} method.
+     *
+     * @param stack the stack to convert
+     * @return the string form of the stack
+     */
+    @Nonnull
+    public static String itemStackToString(@Nonnull ItemStack stack) {
+        return stack.getCount() + "x" + stack.getItem().getTranslationKey(stack) + "@" + stack.getItemDamage();
     }
 
     /**
@@ -87,7 +99,7 @@ public final class GTStringUtils {
      *
      * @param stringToDraw The String to draw
      * @param fontRenderer An instance of the MC FontRenderer
-     * @param maxLength The maximum width of the String
+     * @param maxLength    The maximum width of the String
      */
     public static void drawCenteredStringWithCutoff(String stringToDraw, FontRenderer fontRenderer, int maxLength) {
 

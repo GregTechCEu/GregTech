@@ -10,7 +10,6 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.MetaTileEntities;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -76,10 +75,10 @@ public class OreByProduct implements IRecipeWrapper {
         int byproductMultiplier = property.getByProductMultiplier();
         currentSlot = 0;
         Material[] byproducts = new Material[]{
-                GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class),
-                GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class),
-                GTUtility.selectItemInList(2, material, property.getOreByProducts(), Material.class),
-                GTUtility.selectItemInList(3, material, property.getOreByProducts(), Material.class)
+                property.getOreByProduct(0, material),
+                property.getOreByProduct(1, material),
+                property.getOreByProduct(2, material),
+                property.getOreByProduct(3, material)
         };
 
         // "INPUTS"

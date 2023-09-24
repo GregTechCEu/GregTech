@@ -18,6 +18,8 @@ public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
     RESTRICTIVE_LARGE("large_restrictive", 0.75f, OrePrefix.pipeLargeRestrictive, 2f, 75f),
     RESTRICTIVE_HUGE("huge_restrictive", 0.875f, OrePrefix.pipeHugeRestrictive, 4f, 50f);
 
+    public static final ItemPipeType[] VALUES = values();
+
     public final String name;
     private final float thickness;
     private final float rateMultiplier;

@@ -9,6 +9,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -405,7 +406,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.inventory = new ItemStackHandler() {
+        this.inventory = new GTItemStackHandler(this) {
             @Override
             public int getSlotLimit(int slot) {
                 return 1;
@@ -762,6 +763,11 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
     @Override
     public boolean showToolUsages() {
+        return false;
+    }
+
+    @Override
+    public boolean hasFrontFacing() {
         return false;
     }
 }

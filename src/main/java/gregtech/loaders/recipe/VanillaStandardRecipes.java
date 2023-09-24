@@ -717,7 +717,7 @@ public class VanillaStandardRecipes {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.Gold, 2)
                 .outputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE, 1))
-                .circuitMeta(2).duration(100).EUt(4).buildAndRegister();
+                .circuitMeta(3).duration(100).EUt(4).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.Iron, 2)
@@ -845,11 +845,13 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.IRON_TRAPDOOR))
                 .duration(100).EUt(16).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.Iron, 6)
-                .circuitMeta(6)
-                .outputs(new ItemStack(Items.IRON_DOOR))
-                .duration(100).EUt(16).buildAndRegister();
+        if (!ConfigHolder.recipes.hardAdvancedIronRecipes) {
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.plate, Materials.Iron, 6)
+                    .circuitMeta(6)
+                    .outputs(new ItemStack(Items.IRON_DOOR, 3))
+                    .duration(100).EUt(16).buildAndRegister();
+        }
     }
 
     /**

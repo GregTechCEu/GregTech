@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.medium_voltage.42_kanthal_coil.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.medium_voltage.42_kanthal_coil.name"
+    },
+    "icon": {
+      "item": "gregtech:wire_coil",
+      "data": 1
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:wire_coil",
+            "data": 1
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:medium_voltage/31_mv_energy_hatch"
+}

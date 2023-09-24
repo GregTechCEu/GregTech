@@ -8,6 +8,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -59,7 +60,8 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             int coilTier = coilType.ordinal();
             lines.add(I18n.format("tile.wire_coil.tooltip_smelter"));
             lines.add(I18n.format("tile.wire_coil.tooltip_parallel_smelter", coilType.level * 32));
-            lines.add(I18n.format("tile.wire_coil.tooltip_energy_smelter", Math.max(1, 16 / coilType.energyDiscount)));
+            int EUt = MetaTileEntityMultiSmelter.getEUtForParallel(MetaTileEntityMultiSmelter.getMaxParallel(coilType.getLevel()), coilType.getEnergyDiscount());
+            lines.add(I18n.format("tile.wire_coil.tooltip_energy_smelter", EUt));
             lines.add(I18n.format("tile.wire_coil.tooltip_pyro"));
             lines.add(I18n.format("tile.wire_coil.tooltip_speed_pyro", coilTier == 0 ? 75 : 50 * (coilTier + 1)));
             lines.add(I18n.format("tile.wire_coil.tooltip_cracking"));

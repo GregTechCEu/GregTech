@@ -15,6 +15,7 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -63,8 +64,8 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     private boolean isSafeUnlocked = false;
 
     private long unlockComponentsSeed = 0L;
-    private final ItemStackHandler unlockComponents = new ItemStackHandler(2);
-    private final ItemStackHandler unlockInventory = new ItemStackHandler(2) {
+    private final ItemStackHandler unlockComponents = new GTItemStackHandler(this, 2);
+    private final ItemStackHandler unlockInventory = new GTItemStackHandler(this, 2) {
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
@@ -76,7 +77,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
             stack.setCount(maxAmount);
             int addAmount = super.insertItem(slot, stack, simulate).getCount();
             int totalAmount = remainder + addAmount;
-            return totalAmount == 0 ? ItemStack.EMPTY : GTUtility.copyAmount(totalAmount, stack);
+            return totalAmount == 0 ? ItemStack.EMPTY : GTUtility.copy(totalAmount, stack);
         }
 
         @Override
@@ -85,7 +86,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
             recheckUnlockItemsAndUnlock();
         }
     };
-    private final ItemStackHandler safeLootInventory = new ItemStackHandler(27);
+    private final ItemStackHandler safeLootInventory = new GTItemStackHandler(this, 27);
     private float doorAngle = 0.0f;
     private float prevDoorAngle = 0.0f;
 
@@ -227,7 +228,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     private void generateChestContents() {
-        ResourceLocation lootTableLocation = new ResourceLocation(GTValues.MODID, "chests/abandoned_safe_" + unlockComponentTier);
+        ResourceLocation lootTableLocation = GTUtility.gregtechId("chests/abandoned_safe_" + unlockComponentTier);
         WorldServer worldServer = (WorldServer) getWorld();
         LootTable lootTable = worldServer.getLootTableManager().getLootTableFromLocation(lootTableLocation);
         LootContext lootContext = new LootContext.Builder(worldServer).build();

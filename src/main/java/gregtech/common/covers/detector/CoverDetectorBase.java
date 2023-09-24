@@ -90,4 +90,42 @@ public abstract class CoverDetectorBase extends CoverBehavior {
 
         return EnumActionResult.SUCCESS;
     }
+
+    /**
+     * Returns parsed result of {@code value} as long, or {@code fallbackValue} if the parse fails.
+     *
+     * @param value         String to parse
+     * @param minValue      Minimum value
+     * @param maxValue      Maximum value
+     * @param fallbackValue Fallback value to be used in case of parse failure.
+     * @return Capped value of either parsed result or {@code fallbackValue}
+     */
+    protected static long parseCapped(String value, long minValue, long maxValue, long fallbackValue) {
+        long parsedValue;
+        try {
+            parsedValue = Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            parsedValue = fallbackValue;
+        }
+        return Math.min(Math.max(parsedValue, minValue), maxValue);
+    }
+
+    /**
+     * Returns parsed result of {@code value} as int, or {@code fallbackValue} if the parse fails.
+     *
+     * @param value         String to parse
+     * @param minValue      Minimum value
+     * @param maxValue      Maximum value
+     * @param fallbackValue Fallback value to be used in case of parse failure.
+     * @return Capped value of either parsed result or {@code fallbackValue}
+     */
+    protected static int parseCapped(String value, int minValue, int maxValue, int fallbackValue) {
+        int parsedValue;
+        try {
+            parsedValue = Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            parsedValue = fallbackValue;
+        }
+        return Math.min(Math.max(parsedValue, minValue), maxValue);
+    }
 }

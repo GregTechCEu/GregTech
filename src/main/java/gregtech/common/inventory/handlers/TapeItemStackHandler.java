@@ -1,15 +1,16 @@
 package gregtech.common.inventory.handlers;
 
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class TapeItemStackHandler extends ItemStackHandler {
+public class TapeItemStackHandler extends GTItemStackHandler {
 
-    public TapeItemStackHandler(int size) {
-        super(size);
+    public TapeItemStackHandler(MetaTileEntity metaTileEntity, int size) {
+        super(metaTileEntity, size);
     }
 
     @Override

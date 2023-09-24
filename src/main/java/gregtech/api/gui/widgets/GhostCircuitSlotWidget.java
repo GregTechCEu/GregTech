@@ -2,10 +2,13 @@ package gregtech.api.gui.widgets;
 
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ClickType;
+import gregtech.api.util.LocalizationUtils;
+import gregtech.client.utils.TooltipHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -25,37 +28,75 @@ public class GhostCircuitSlotWidget extends SlotWidget {
     }
 
     @Override
+    public void drawInForeground(int mouseX, int mouseY) {
+        if (isMouseOverElement(mouseX, mouseY)) {
+            if (tooltipText == null && consumer != null) consumer.accept(this);
+            List<String> hoverList = Arrays.asList(LocalizationUtils.formatLines(tooltipText, tooltipArgs));
+            drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
+        }
+    }
+
+    @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY) && gui != null) {
-            if (button == 0 && !this.circuitInventory.hasCircuitValue()) {
-                this.circuitInventory.setCircuitValue(0);
-                writeClientAction(SET_TO_ZERO, buf -> {});
-            } else if (button == 1 && this.circuitInventory.hasCircuitValue()) {
+            if (button == 0 && TooltipHelper.isShiftDown()) {
+                // open popup on shift-left-click
+                // todo add this one day
+            } else if (button == 0) {
+                // increment on left-click
+                int newValue = getNextValue(true);
+                this.circuitInventory.setCircuitValue(newValue);
+                writeClientAction(SET_TO_N, buf -> buf.writeVarInt(newValue));
+
+            } else if (button == 1 && TooltipHelper.isShiftDown()) {
+                // clear on shift-right-click
                 this.circuitInventory.setCircuitValue(GhostCircuitItemStackHandler.NO_CONFIG);
                 writeClientAction(SET_TO_EMPTY, buf -> {});
-            } else {
-                this.gui.getModularUIGui().superMouseClicked(mouseX, mouseY, button);
+            } else if (button == 1) {
+                // decrement on right-click
+                int newValue = getNextValue(false);
+                this.circuitInventory.setCircuitValue(newValue);
+                writeClientAction(SET_TO_N, buf -> buf.writeVarInt(newValue));
             }
+            if (consumer != null) consumer.accept(this);
             return true;
         }
         return false;
     }
 
+    private int getNextValue(boolean increment) {
+        if (increment) {
+            // if at max, loop around to no circuit
+            if (this.circuitInventory.getCircuitValue() == IntCircuitIngredient.CIRCUIT_MAX) {
+                return GhostCircuitItemStackHandler.NO_CONFIG;
+            }
+            // if at no circuit, skip 0 and return 1
+            if (!this.circuitInventory.hasCircuitValue()) {
+                return 1;
+            }
+            // normal case: increment by 1
+            return this.circuitInventory.getCircuitValue() + 1;
+        } else {
+            // if at no circuit, loop around to max
+            if (!this.circuitInventory.hasCircuitValue()) {
+                return IntCircuitIngredient.CIRCUIT_MAX;
+            }
+            // if at 1, skip 0 and return no circuit
+            if (this.circuitInventory.getCircuitValue() == 1) {
+                return GhostCircuitItemStackHandler.NO_CONFIG;
+            }
+            // normal case: decrement by 1
+            return this.circuitInventory.getCircuitValue() - 1;
+        }
+    }
+
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         if (isMouseOverElement(mouseX, mouseY) && gui != null) {
-            if (this.circuitInventory.hasCircuitValue()) {
-                int dir = wheelDelta >= 0 ? 1 : -1;
-                int prevValue = this.circuitInventory.getCircuitValue();
-                this.circuitInventory.addCircuitValue(dir * (isShiftDown() ? 5 : 1));
-
-                int newValue = this.circuitInventory.getCircuitValue();
-                if (prevValue != newValue) {
-                    writeClientAction(SET_TO_N, buf -> buf.writeVarInt(newValue));
-                }
-            } else {
-                super.mouseWheelMove(mouseX, mouseY, wheelDelta);
-            }
+            int newValue = getNextValue(wheelDelta >= 0);
+            this.circuitInventory.setCircuitValue(newValue);
+            writeClientAction(SET_TO_N, buf -> buf.writeVarInt(newValue));
+            if (consumer != null) consumer.accept(this);
             return true;
         }
         return false;
@@ -64,18 +105,6 @@ public class GhostCircuitSlotWidget extends SlotWidget {
     @Override
     public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
         return false;
-    }
-
-    @Override
-    public ItemStack slotClick(int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        ItemStack stackHeld = player.inventory.getItemStack();
-
-        if (IntCircuitIngredient.isIntegratedCircuit(stackHeld)) {
-            this.circuitInventory.setCircuitValueFromStack(stackHeld);
-            return this.circuitInventory.getStackInSlot(0).copy();
-        }
-
-        return ItemStack.EMPTY;
     }
 
     @Override

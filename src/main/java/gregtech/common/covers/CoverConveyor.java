@@ -5,8 +5,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -24,6 +22,8 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
@@ -326,10 +326,10 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     protected static class TypeItemInfo {
         public final ItemStack itemStack;
         public final Object filterSlot;
-        public final TIntList slots;
+        public final IntList slots;
         public int totalCount;
 
-        public TypeItemInfo(ItemStack itemStack, Object filterSlot, TIntList slots, int totalCount) {
+        public TypeItemInfo(ItemStack itemStack, Object filterSlot, IntList slots, int totalCount) {
             this.itemStack = itemStack;
             this.filterSlot = filterSlot;
             this.slots = slots;
@@ -362,7 +362,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                 continue;
             }
             if (!result.containsKey(itemStack)) {
-                TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), transferSlotIndex, new TIntArrayList(), 0);
+                TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), transferSlotIndex, new IntArrayList(), 0);
                 itemInfo.totalCount += itemStack.getCount();
                 itemInfo.slots.add(srcIndex);
                 result.put(itemStack.copy(), itemInfo);

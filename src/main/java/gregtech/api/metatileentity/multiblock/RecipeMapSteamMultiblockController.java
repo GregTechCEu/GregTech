@@ -10,6 +10,8 @@ import gregtech.api.capability.impl.SteamMultiblockRecipeLogic;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.IndicatorImageWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
@@ -25,7 +27,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.List;
 
@@ -91,8 +92,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     }
 
     private void resetTileAbilities() {
-        this.inputInventory = new ItemStackHandler(0);
-        this.outputInventory = new ItemStackHandler(0);
+        this.inputInventory = new GTItemStackHandler(this, 0);
+        this.outputInventory = new GTItemStackHandler(this, 0);
         this.steamFluidTank = new FluidTankList(true);
     }
 
@@ -119,7 +120,13 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
             } else {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
             }
+        }
+    }
 
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
             if (recipeMapWorkable.isHasNotEnoughEnergy()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.steam.low_steam").setStyle(new Style().setColor(TextFormatting.RED)));
             }
@@ -174,14 +181,17 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks), 176, 216);
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks), 176, 208);
         builder.shouldColor(false);
-        builder.image(7, 4, 162, 121, GuiTextures.DISPLAY_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks));
-        builder.label(11, 9, getMetaFullName(), 0xFFFFFF);
-        builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(156)
+        builder.image(4, 4, 168, 117, GuiTextures.DISPLAY_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks));
+        builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
+        builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
+                .setMaxWidthLimit(162)
                 .setClickHandler(this::handleDisplayClick));
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks), 7, 134);
+        builder.widget(new IndicatorImageWidget(152, 101, 17, 17, getLogo())
+                .setWarningStatus(getWarningLogo(), this::addWarningText)
+                .setErrorStatus(getErrorLogo(), this::addErrorText));
+        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks), 7, 125);
         return builder;
     }
 }

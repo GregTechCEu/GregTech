@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.*;
+import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
@@ -18,7 +19,6 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.recipes.ModHandler;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
@@ -80,17 +80,16 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
 
     @Override
     public FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, new FilteredFluidHandler(16000)
-                .setFillPredicate(ModHandler::isSteam));
+        return new FluidTankList(false, new FilteredFluidHandler(16000).setFilter(CommonFluidFilters.STEAM));
     }
 
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(0, this, false);
+        return new NotifiableItemStackHandler(this, 0, this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(inventorySize, this, true);
+        return new NotifiableItemStackHandler(this, inventorySize, this, true);
     }
 
     @Override
@@ -318,7 +317,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
             double posY = (double) machinePos.getY() + 0.5D + (double) ventingSide.getYOffset() * 0.6D;
             double posZ = (double) machinePos.getZ() + 0.5D + (double) ventingSide.getZOffset() * 0.6D;
             world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ, 7 + world.rand.nextInt(3), (double) ventingSide.getXOffset() / 2.0D, (double) ventingSide.getYOffset() / 2.0D, (double) ventingSide.getZOffset() / 2.0D, 0.1D);
-            if (ConfigHolder.machines.machineSounds && !this.isMuffled()){
+            if (ConfigHolder.machines.machineSounds && !this.isMuffled()) {
                 world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
             }
             this.setNeedsVenting(false);

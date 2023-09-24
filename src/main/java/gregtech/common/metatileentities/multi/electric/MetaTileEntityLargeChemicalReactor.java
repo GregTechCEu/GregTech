@@ -19,12 +19,16 @@ import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,7 +58,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
                 .where('S', selfPredicate())
                 .where('X', casing.or(abilities))
                 .where('P', states(getPipeCasingState()))
-                .where('C', states(MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL)).setMinGlobalLimited(1).setMaxGlobalLimited(1)
+                .where('C', heatingCoils().setMinGlobalLimited(1).setMaxGlobalLimited(1)
                         .or(abilities)
                         .or(casing))
                 .build();
@@ -108,6 +112,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     }
 
 
+    @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.INERT_PTFE_CASING;
@@ -122,11 +127,17 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     }
 
     @Override
+    public SoundEvent getBreakdownSound() {
+        return GTSoundEvents.BREAKDOWN_ELECTRICAL;
+    }
+
+    @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(TooltipHelper.RAINBOW_SLOW + I18n.format("gregtech.machine.perfect_oc"));
     }
 
+    @SideOnly(Side.CLIENT)
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {

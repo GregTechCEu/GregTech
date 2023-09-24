@@ -4,7 +4,6 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.GregTechAPI;
@@ -21,7 +20,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.client.renderer.texture.custom.ClipboardRenderer;
 import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
@@ -64,11 +62,19 @@ import static gregtech.client.renderer.texture.Textures.CLIPBOARD_RENDERER;
 import static gregtech.common.items.MetaItems.CLIPBOARD;
 
 public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRenderMetaTileEntity {
-    private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(2.75 / 16.0, 0.0, 0.0, 13.25 / 16.0, 1.0, 0.4 / 16.0);
+    private static final AxisAlignedBB CLIPBOARD_AABB_NORTH = new AxisAlignedBB(2.75 / 16.0, 0, 0, 13.25 / 16.0, 16 / 16.0, 0.4 / 16.0);
+    private static final AxisAlignedBB CLIPBOARD_AABB_SOUTH = new AxisAlignedBB(13.25 / 16.0, 0, 16 / 16.0, 2.75 / 16.0, 16 / 16.0, 15.6 / 16.0);
+    private static final AxisAlignedBB CLIPBOARD_AABB_WEST = new AxisAlignedBB(0, 0, 13.25 / 16.0, 0.4 / 16.0, 16 / 16.0, 2.75 / 16.0);
+    private static final AxisAlignedBB CLIPBOARD_AABB_EAST = new AxisAlignedBB(16 / 16.0, 0, 2.75 / 16.0, 15.6 / 16.0, 16 / 16.0, 13.25 / 16.0);
+
+    private static final AxisAlignedBB PAGE_AABB_NORTH = new AxisAlignedBB(3 / 16.0, 0.25 / 16.0, 0.25 / 16.0, 13 / 16.0, 14.25 / 16.0, 0.3 / 16.0);
+    private static final AxisAlignedBB PAGE_AABB_SOUTH = new AxisAlignedBB(13 / 16.0, 0.25 / 16.0, 15.75 / 16.0, 3 / 16.0, 14.25 / 16.0, 15.7 / 16.0);
+    private static final AxisAlignedBB PAGE_AABB_WEST = new AxisAlignedBB(0.25 / 16.0, 0.25 / 16.0, 13 / 16.0, 0.3 / 16.0, 14.25 / 16.0, 3 / 16.0);
+    private static final AxisAlignedBB PAGE_AABB_EAST = new AxisAlignedBB(15.75 / 16.0, 0.25 / 16.0, 3 / 16.0, 15.7 / 16.0, 14.25 / 16.0, 13 / 16.0);
+
     public static final float scale = 1;
     public FakeModularGui guiCache;
     public FakeModularUIContainerClipboard guiContainerCache;
-    private static final Cuboid6 pageBox = new Cuboid6(3 / 16.0, 0.25 / 16.0, 0.25 / 16.0, 13 / 16.0, 14.25 / 16.0, 0.3 / 16.0);
     private static final NBTBase NO_CLIPBOARD_SIG = new NBTTagInt(0);
     private boolean didSetFacing = false;
 
@@ -176,7 +182,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.itemInventory = new InaccessibleItemStackHandler();
+        this.itemInventory = new InaccessibleItemStackHandler(this);
     }
 
     public ItemStack getClipboard() {
@@ -270,11 +276,39 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public void addCollisionBoundingBox(List<IndexedCuboid6> collisionList) {
-        collisionList.add(new IndexedCuboid6(null, GTUtility.rotateAroundYAxis(CLIPBOARD_AABB, EnumFacing.NORTH, this.getFrontFacing())));
+        AxisAlignedBB aabb;
+        switch (this.getFrontFacing()) {
+            case SOUTH:
+                aabb = CLIPBOARD_AABB_SOUTH;
+                break;
+            case WEST:
+                aabb = CLIPBOARD_AABB_WEST;
+                break;
+            case EAST:
+                aabb = CLIPBOARD_AABB_EAST;
+                break;
+            default:
+                aabb = CLIPBOARD_AABB_NORTH;
+        }
+        collisionList.add(new IndexedCuboid6(null, aabb));
     }
 
     public IndexedCuboid6 getPageCuboid() {
-        return new IndexedCuboid6(null, GTUtility.rotateAroundYAxis(pageBox.aabb(), EnumFacing.NORTH, this.getFrontFacing()));
+        AxisAlignedBB aabb;
+        switch (this.getFrontFacing()) {
+            case SOUTH:
+                aabb = PAGE_AABB_SOUTH;
+                break;
+            case WEST:
+                aabb = PAGE_AABB_WEST;
+                break;
+            case EAST:
+                aabb = PAGE_AABB_EAST;
+                break;
+            default:
+                aabb = PAGE_AABB_NORTH;
+        }
+        return new IndexedCuboid6(null, aabb);
     }
 
     @Override

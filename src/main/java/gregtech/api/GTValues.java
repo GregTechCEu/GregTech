@@ -1,7 +1,7 @@
 package gregtech.api;
 
-import gregtech.GregTechVersion;
 import gregtech.api.util.XSTR;
+import gregtech.common.ConfigHolder;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.oredict.OreDictionary;
@@ -16,14 +16,6 @@ import static net.minecraft.util.text.TextFormatting.*;
  * Made for static imports, this Class is just a Helper.
  */
 public class GTValues {
-
-    /**
-     * Version String for use in addon mods' @Mod(dependencies = "...") block.
-     *
-     * @deprecated use {@link gregtech.GTInternalTags#VERSION}
-     */
-    @Deprecated
-    public static final String MOD_VERSION_DEP = "required-after:gregtech@[" + GregTechVersion.DEP_VERSION + ",);";
 
     /**
      * <p/>
@@ -58,13 +50,22 @@ public class GTValues {
     /**
      * The Voltage Tiers. Use this Array instead of the old named Voltage Variables
      */
-    public static final long[] V = new long[]{8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, 2097152, 8388608, 33554432, 134217728, 536870912, Integer.MAX_VALUE};
+    public static final long[] V = {8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, 2097152, 8388608, 33554432, 134217728, 536870912, Integer.MAX_VALUE};
 
+    /**
+     * The Voltage Tiers divided by 2.
+     */
+    public static final int[] VH = {4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216, 67108864, 268435456, 1073741824};
 
     /**
      * The Voltage Tiers adjusted for cable loss. Use this for recipe EU/t to avoid full-amp recipes
      */
-    public static final int[] VA = new int[]{7, 30, 120, 480, 1920, 7680, 30720, 122880, 491520, 1966080, 7864320, 31457280, 125829120, 503316480, 2013265920};
+    public static final int[] VA = {7, 30, 120, 480, 1920, 7680, 30720, 122880, 491520, 1966080, 7864320, 31457280, 125829120, 503316480, 2013265920};
+
+    /**
+     * The Voltage Tiers adjusted for cable loss, divided by 2.
+     */
+    public static final int[] VHA = {7, 16, 60, 240, 960, 3840, 15360, 61440, 245760, 983040, 3932160, 15728640, 62914560, 251658240, 1006632960};
 
     public static final int ULV = 0;
     public static final int LV = 1;
@@ -126,7 +127,15 @@ public class GTValues {
             MODID_APPENG = "appliedenergistics2",
             MODID_JEI = "jei",
             MODID_GROOVYSCRIPT = "groovyscript",
-            MODID_NC = "nuclearcraft";
+            MODID_NC = "nuclearcraft",
+            MODID_IE = "immersiveengineering",
+            MODID_OC = "opencomputers",
+            MODID_JOURNEYMAP = "journeymap",
+            MODID_VOXELMAP = "voxelmap",
+            MODID_XAERO_MINIMAP = "xaerominimap",
+            MODID_HWYLA = "hwyla",
+            MODID_BAUBLES = "baubles",
+            MODID_TOP_ADDONS = "topaddons";
 
     private static Boolean isClient;
 
@@ -150,11 +159,11 @@ public class GTValues {
 
     public static Supplier<Boolean> FOOLS = () -> {
         String[] yearMonthDay = LocalDate.now().toString().split("-");
-        return yearMonthDay[1].equals("04") && yearMonthDay[2].equals("01");
+        return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("04") && yearMonthDay[2].equals("01");
     };
 
     public static Supplier<Boolean> XMAS = () -> {
         String[] yearMonthDay = LocalDate.now().toString().split("-");
-        return yearMonthDay[1].equals("12") && (yearMonthDay[2].equals("24") || yearMonthDay[2].equals("25"));
+        return ConfigHolder.misc.specialEvents && yearMonthDay[1].equals("12") && (yearMonthDay[2].equals("24") || yearMonthDay[2].equals("25"));
     };
 }

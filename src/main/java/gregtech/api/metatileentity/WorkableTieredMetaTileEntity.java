@@ -5,10 +5,11 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.*;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -21,7 +22,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -92,14 +92,14 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        if (workable == null) return new ItemStackHandler(0);
-        return new NotifiableItemStackHandler(workable.getRecipeMap().getMaxInputs(), this, false);
+        if (workable == null) return new GTItemStackHandler(this, 0);
+        return new NotifiableItemStackHandler(this, workable.getRecipeMap().getMaxInputs(), this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        if (workable == null) return new ItemStackHandler(0);
-        return new NotifiableItemStackHandler(workable.getRecipeMap().getMaxOutputs(), this, true);
+        if (workable == null) return new GTItemStackHandler(this, 0);
+        return new NotifiableItemStackHandler(this, workable.getRecipeMap().getMaxOutputs(), this, true);
     }
 
     @Override
@@ -152,26 +152,26 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
 
         if (workable != null) {
             list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
-                    new TextComponentTranslation(GTUtility.formatNumbers(workable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                    new TextComponentTranslation(GTUtility.formatNumbers(workable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
             ));
 
             if (energyContainer != null) {
                 list.add(new TextComponentTranslation("behavior.tricorder.workable_stored_energy",
-                        new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                        new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
                 ));
             }
             // multi amp recipes: change 0 ? 0 : 1 to 0 ? 0 : amperage
-            if (workable.getRecipeEUt() > 0) {
+            if (workable.consumesEnergy()) {
                 list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
-                        new TextComponentTranslation(GTUtility.formatNumbers(workable.getRecipeEUt())).setStyle(new Style().setColor(TextFormatting.RED)),
-                        new TextComponentTranslation(GTUtility.formatNumbers(workable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt())).setStyle(new Style().setColor(TextFormatting.RED)),
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
                 ));
             } else {
                 list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
-                        new TextComponentTranslation(GTUtility.formatNumbers(workable.getRecipeEUt() * -1)).setStyle(new Style().setColor(TextFormatting.RED)),
-                        new TextComponentTranslation(GTUtility.formatNumbers(workable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt())).setStyle(new Style().setColor(TextFormatting.RED)),
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
                 ));
             }
         }

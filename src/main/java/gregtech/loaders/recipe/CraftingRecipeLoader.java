@@ -40,14 +40,6 @@ public class CraftingRecipeLoader {
         ToolRecipeHandler.registerPowerUnitRecipes();
         ToolRecipeHandler.registerCustomToolRecipes();
 
-        ModHandler.addShapedRecipe("small_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeSmallFluid, Materials.Wood), "sWr", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
-        ModHandler.addShapedRecipe("normal_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Wood), "WWW", "s r", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
-        ModHandler.addShapedRecipe("large_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeLargeFluid, Materials.Wood), "WWW", "s r", "WWW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
-
-        ModHandler.addShapedRecipe("small_treated_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeSmallFluid, Materials.TreatedWood), "sWr", 'W', new UnificationEntry(OrePrefix.plank, Materials.TreatedWood));
-        ModHandler.addShapedRecipe("normal_treated_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.TreatedWood), "WWW", "s r", 'W', new UnificationEntry(OrePrefix.plank, Materials.TreatedWood));
-        ModHandler.addShapedRecipe("large_treated_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeLargeFluid, Materials.TreatedWood), "WWW", "s r", "WWW", 'W', new UnificationEntry(OrePrefix.plank, Materials.TreatedWood));
-
         ModHandler.addShapelessRecipe("integrated_circuit", IntCircuitIngredient.getIntegratedCircuit(0), new UnificationEntry(OrePrefix.circuit, Tier.LV));
 
         ModHandler.addShapedRecipe("item_filter", ITEM_FILTER.getStackForm(), "XXX", "XYX", "XXX", 'X', new UnificationEntry(OrePrefix.foil, Materials.Zinc), 'Y', new UnificationEntry(OrePrefix.plate, Materials.Steel));
@@ -91,7 +83,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("nano_saber", NANO_SABER.getStackForm(), "PIC", "PIC", "XEX", 'P', new UnificationEntry(OrePrefix.plate, Materials.Platinum), 'I', new UnificationEntry(OrePrefix.plate, Ruridit), 'C', CARBON_FIBER_PLATE.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, Tier.EV), 'E', ENERGIUM_CRYSTAL.getStackForm());
 
         ModHandler.addShapedRecipe("solar_panel_basic", COVER_SOLAR_PANEL.getStackForm(), "WGW", "CPC", 'W', SILICON_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.LV), 'P', CARBON_FIBER_PLATE.getStackForm());
-        ModHandler.addShapedRecipe("solar_panel_ulv", COVER_SOLAR_PANEL_ULV.getStackForm(), "WGW", "CAC", "P P", 'W', GLOWSTONE_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.HV), 'P', OreDictUnifier.get(OrePrefix.plate, GalliumArsenide), 'A', OreDictUnifier.get(OrePrefix.wireGtQuadruple, Graphene));
+        ModHandler.addShapedRecipe("solar_panel_ulv", COVER_SOLAR_PANEL_ULV.getStackForm(), "WGW", "CAC", "P P", 'W', PHOSPHORUS_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.HV), 'P', OreDictUnifier.get(OrePrefix.plate, GalliumArsenide), 'A', OreDictUnifier.get(OrePrefix.wireGtQuadruple, Graphene));
         ModHandler.addShapedRecipe("solar_panel_lv", COVER_SOLAR_PANEL_LV.getStackForm(), "WGW", "CAC", "P P", 'W', NAQUADAH_WAFER.getStackForm(), 'G', MetaBlocks.TRANSPARENT_CASING.getItemVariant(
                 BlockGlassCasing.CasingType.TEMPERED_GLASS), 'C', new UnificationEntry(OrePrefix.circuit, Tier.LuV), 'P', OreDictUnifier.get(OrePrefix.plate, IndiumGalliumPhosphide), 'A', OreDictUnifier.get(OrePrefix.wireGtHex, Graphene));
 

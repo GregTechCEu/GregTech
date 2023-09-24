@@ -2,13 +2,14 @@ package gregtech.api.items.metaitem;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableList;
-import gnu.trove.map.hash.TIntObjectHashMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.SmallDigits;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
@@ -54,7 +55,7 @@ public class MetaOreDictItem extends StandardMetaItem {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerModels() {
-        TIntObjectHashMap<ModelResourceLocation> alreadyRegistered = new TIntObjectHashMap<>();
+        Int2ObjectMap<ModelResourceLocation> alreadyRegistered = new Int2ObjectOpenHashMap<>();
         for (Map.Entry<Short, OreDictValueItem> metaItem : ITEMS.entrySet()) {
             OrePrefix prefix = metaItem.getValue().orePrefix;
             MaterialIconSet materialIconSet = metaItem.getValue().materialIconSet;

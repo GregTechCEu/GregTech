@@ -7,6 +7,7 @@ import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -24,7 +25,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -66,7 +66,7 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
     protected void initializeInventory() {
         super.initializeInventory();
         this.fluidInventory = new FluidTankList(false);
-        this.itemInventory = new ItemStackHandler(0);
+        this.itemInventory = new GTItemStackHandler(this, 0);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
         this.fluidInventory = new FluidTankList(false);
-        this.itemInventory = new ItemStackHandler(0);
+        this.itemInventory = new GTItemStackHandler(this, 0);
     }
 
     @Override
