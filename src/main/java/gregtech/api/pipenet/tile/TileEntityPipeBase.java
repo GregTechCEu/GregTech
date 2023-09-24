@@ -59,7 +59,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.paintingColor = tileEntity.getPaintingColor();
         this.connections = tileEntity.getConnections();
         if (tileEntity instanceof TileEntityPipeBase pipeBase) {
-            this.updates.putAll(pipeBase.updates);
+            this.updates.addAll(pipeBase.updates);
         }
         tileEntity.getCoverableImplementation().transferDataTo(coverableImplementation);
         setFrameMaterial(tileEntity.getFrameMaterial());
@@ -429,8 +429,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         } else if (discriminator == UPDATE_CONNECTIONS) {
             this.connections = buf.readVarInt();
             scheduleChunkForRenderUpdate();
-        } else if (discriminator == SYNC_COVER_IMPLEMENTATION) {
-            this.coverableImplementation.readCustomData(buf.readVarInt(), buf);
         } else if (discriminator == UPDATE_PIPE_TYPE) {
             readPipeProperties(buf);
             scheduleChunkForRenderUpdate();
@@ -446,15 +444,14 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
                 this.frameMaterial = null;
             }
             scheduleChunkForRenderUpdate();
+        } else {
+            this.coverableImplementation.readCustomData(discriminator, buf);
         }
     }
 
     @Override
     public void writeCoverCustomData(int id, Consumer<PacketBuffer> writer) {
-        writeCustomData(SYNC_COVER_IMPLEMENTATION, buffer -> {
-            buffer.writeVarInt(id);
-            writer.accept(buffer);
-        });
+        writeCustomData(id, writer);
     }
 
     @Override
