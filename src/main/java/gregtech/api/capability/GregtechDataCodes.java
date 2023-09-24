@@ -1,139 +1,147 @@
 package gregtech.api.capability;
 
+import io.netty.buffer.ByteBuf;
+
 public class GregtechDataCodes {
 
-    // MTE implementation update codes
-    public static final int INITIALIZE_MTE = -1;
-    public static final int UPDATE_FRONT_FACING = -2;
-    public static final int UPDATE_PAINTING_COLOR = -3;
-    public static final int SYNC_MTE_TRAITS = -4;
-    public static final int COVER_ATTACHED_MTE = -5;
-    public static final int COVER_REMOVED_MTE = -6;
-    public static final int UPDATE_COVER_DATA_MTE = -7;
-    public static final int UPDATE_SOUND_MUFFLED = -9;
+    private static int nextId = 0;
 
-    public static final int UPDATE_OUTPUT_FACING = 100;
-    public static final int UPDATE_AUTO_OUTPUT_ITEMS = 101;
-    public static final int UPDATE_AUTO_OUTPUT_FLUIDS = 102;
+    public static int assignId() {
+        return nextId++;
+    }
+
+    // MTE implementation update codes
+    public static final int INITIALIZE_MTE = assignId();
+    public static final int UPDATE_FRONT_FACING = assignId();
+    public static final int UPDATE_PAINTING_COLOR = assignId();
+    public static final int SYNC_MTE_TRAITS = assignId();
+    public static final int COVER_ATTACHED_MTE = assignId();
+    public static final int COVER_REMOVED_MTE = assignId();
+    public static final int UPDATE_COVER_DATA_MTE = assignId();
+    public static final int UPDATE_SOUND_MUFFLED = assignId();
+
+    public static final int UPDATE_OUTPUT_FACING = assignId();
+    public static final int UPDATE_AUTO_OUTPUT_ITEMS = assignId();
+    public static final int UPDATE_AUTO_OUTPUT_FLUIDS = assignId();
 
     // Drum
-    public static final int UPDATE_AUTO_OUTPUT = 560;
+    public static final int UPDATE_AUTO_OUTPUT = assignId();
 
     // Safe
-    public static final int UPDATE_LOCKED_STATE = 8;
-    public static final int UPDATE_CONTENTS_SEED = 9;
+    public static final int UPDATE_LOCKED_STATE = assignId();
+    public static final int UPDATE_CONTENTS_SEED = assignId();
 
     // Steam Machines
-    public static final int NEEDS_VENTING = 2;
-    public static final int VENTING_SIDE = 3;
-    public static final int VENTING_STUCK = 4;
-    public static final int BOILER_HEAT = 15;
-    public static final int BOILER_LAST_TICK_STEAM = 16;
+    public static final int NEEDS_VENTING = assignId();
+    public static final int VENTING_SIDE = assignId();
+    public static final int VENTING_STUCK = assignId();
+    public static final int BOILER_HEAT = assignId();
+    public static final int BOILER_LAST_TICK_STEAM = assignId();
 
     // Misc TEs (Transformer, World Accelerator)
-    public static final int SYNC_TILE_MODE = 500;
+    public static final int SYNC_TILE_MODE = assignId();
 
     // Clipboard
-    public static final int CREATE_FAKE_UI = 1;
-    public static final int MOUSE_POSITION = 2;
-    public static final int INIT_CLIPBOARD_NBT = 3;
+    public static final int CREATE_FAKE_UI = assignId();
+    public static final int MOUSE_POSITION = assignId();
+    public static final int INIT_CLIPBOARD_NBT = assignId();
 
-    public static final int UPDATE_UI = 10; // 10-36
+    public static final int UPDATE_UI = assignId(); // 10-36
     // Pump
-    public static final int PUMP_HEAD_LEVEL = 200;
+    public static final int PUMP_HEAD_LEVEL = assignId();
 
     // Item Collector, Magic Energy Absorber, Large Boiler, Steam Oven
-    public static final int IS_WORKING = 100;
+    public static final int IS_WORKING = assignId();
 
     // Adjustable Transformer, Adjustable Energy Hatch, Diode
-    public static final int AMP_INDEX = 101;
+    public static final int AMP_INDEX = assignId();
 
     // Pipe implementation update codes
-    public static final int UPDATE_INSULATION_COLOR = -1;
-    public static final int UPDATE_CONNECTIONS = -2;
-    public static final int SYNC_COVER_IMPLEMENTATION = -3;
-    public static final int UPDATE_PIPE_TYPE = -4;
-    public static final int UPDATE_PIPE_MATERIAL = -5;
-    public static final int UPDATE_BLOCKED_CONNECTIONS = -6;
-    public static final int UPDATE_FRAME_MATERIAL = -7;
-    public static final int UPDATE_COVER_DATA_PIPE = 0;
-    public static final int COVER_ATTACHED_PIPE = 1;
-    public static final int COVER_REMOVED_PIPE = 2;
-    public static final int PIPE_OPTICAL_ACTIVE = 3;
-    public static final int PIPE_LASER_ACTIVE = 4;
+    public static final int UPDATE_INSULATION_COLOR = assignId();
+    public static final int UPDATE_CONNECTIONS = assignId();
+    public static final int SYNC_COVER_IMPLEMENTATION = assignId();
+    public static final int UPDATE_PIPE_TYPE = assignId();
+    public static final int UPDATE_PIPE_MATERIAL = assignId();
+    public static final int UPDATE_BLOCKED_CONNECTIONS = assignId();
+    public static final int UPDATE_FRAME_MATERIAL = assignId();
+    public static final int UPDATE_COVER_DATA_PIPE = assignId();
+    public static final int COVER_ATTACHED_PIPE = assignId();
+    public static final int COVER_REMOVED_PIPE = assignId();
+    public static final int PIPE_OPTICAL_ACTIVE = assignId();
+    public static final int PIPE_LASER_ACTIVE = assignId();
 
     // Multiblock implementation update codes
-    public static final int SYNC_CONTROLLER = 100;
-    public static final int IS_ROTOR_LOOPING = 200;
-    public static final int FRONT_FACE_FREE = 201;
-    public static final int UPDATE_ROTOR_COLOR = 201;
-    public static final int UPDATE_STRUCTURE_SIZE = 202;
-    public static final int STRUCTURE_FORMED = 400;
-    public static final int VARIANT_RENDER_UPDATE = 410;
-    public static final int IS_TAPED = 550;
-    public static final int STORE_MAINTENANCE = 551;
-    public static final int STORE_TAPED = 552;
-    public static final int RECIPE_MAP_INDEX = 553;
-    public static final int IS_FRONT_FACE_FREE = 554;
-    public static final int MAINTENANCE_MULTIPLIER = 555;
+    public static final int SYNC_CONTROLLER = assignId();
+    public static final int IS_ROTOR_LOOPING = assignId();
+    public static final int FRONT_FACE_FREE = assignId();
+    public static final int UPDATE_ROTOR_COLOR = assignId();
+    public static final int UPDATE_STRUCTURE_SIZE = assignId();
+    public static final int STRUCTURE_FORMED = assignId();
+    public static final int VARIANT_RENDER_UPDATE = assignId();
+    public static final int IS_TAPED = assignId();
+    public static final int STORE_MAINTENANCE = assignId();
+    public static final int STORE_TAPED = assignId();
+    public static final int RECIPE_MAP_INDEX = assignId();
+    public static final int IS_FRONT_FACE_FREE = assignId();
+    public static final int MAINTENANCE_MULTIPLIER = assignId();
 
     // Item Bus Item Stack Auto Collapsing
-    public static final int TOGGLE_COLLAPSE_ITEMS = 600;
+    public static final int TOGGLE_COLLAPSE_ITEMS = assignId();
 
     // Fusion Reactor
-    public static final int UPDATE_COLOR = 371;
+    public static final int UPDATE_COLOR = assignId();
 
     // Assembly Line
-    public static final int UPDATE_PARTICLE = 371;
+    public static final int UPDATE_PARTICLE = assignId();
 
     // Central Monitor
-    public static final int UPDATE_ALL = 1;
-    public static final int UPDATE_COVERS = 2;
-    public static final int UPDATE_HEIGHT = 3;
-    public static final int UPDATE_ACTIVE = 4;
-    public static final int UPDATE_PLUGIN_ITEM = 3;
+    public static final int UPDATE_ALL = assignId();
+    public static final int UPDATE_COVERS = assignId();
+    public static final int UPDATE_HEIGHT = assignId();
+    public static final int UPDATE_ACTIVE = assignId();
+    public static final int UPDATE_PLUGIN_ITEM = assignId();
 
     // Central Monitor Plugin
-    public static final int UPDATE_PLUGIN_DATA = 2;
-    public static final int UPDATE_PLUGIN_CONFIG = 0;
-    public static final int ACTION_PLUGIN_CONFIG = 0;
-    public static final int UPDATE_PLUGIN_CLICK = -2;
-    public static final int UPDATE_ADVANCED_VALID_POS = 1;
-    public static final int UPDATE_FAKE_GUI = 1;
-    public static final int ACTION_FAKE_GUI = 1;
-    public static final int UPDATE_FAKE_GUI_DETECT = -1;
+    public static final int UPDATE_PLUGIN_DATA = assignId();
+    public static final int UPDATE_PLUGIN_CONFIG = assignId();
+    public static final int ACTION_PLUGIN_CONFIG = assignId();
+    public static final int UPDATE_PLUGIN_CLICK = assignId();
+    public static final int UPDATE_ADVANCED_VALID_POS = assignId();
+    public static final int UPDATE_FAKE_GUI = assignId();
+    public static final int ACTION_FAKE_GUI = assignId();
+    public static final int UPDATE_FAKE_GUI_DETECT = assignId();
 
     // Digital Interface
-    public static final int UPDATE_MODE = 1;
-    public static final int UPDATE_FLUID = 2;
-    public static final int UPDATE_ITEM = 3;
-    public static final int UPDATE_ENERGY = 4;
-    public static final int UPDATE_ENERGY_PER = 5;
-    public static final int UPDATE_MACHINE = 6;
+    public static final int UPDATE_MODE = assignId();
+    public static final int UPDATE_FLUID = assignId();
+    public static final int UPDATE_ITEM = assignId();
+    public static final int UPDATE_ENERGY = assignId();
+    public static final int UPDATE_ENERGY_PER = assignId();
+    public static final int UPDATE_MACHINE = assignId();
 
     // Phantom Tanks
-    public static final int REMOVE_PHANTOM_FLUID_TYPE = 10;
-    public static final int CHANGE_PHANTOM_FLUID = 11;
-    public static final int SET_PHANTOM_FLUID = 12;
-    public static final int LOAD_PHANTOM_FLUID_STACK_FROM_NBT = 13;
+    public static final int REMOVE_PHANTOM_FLUID_TYPE = assignId();
+    public static final int CHANGE_PHANTOM_FLUID = assignId();
+    public static final int SET_PHANTOM_FLUID = assignId();
+    public static final int LOAD_PHANTOM_FLUID_STACK_FROM_NBT = assignId();
 
     // Recipe Logic
-    public static final int WORKABLE_ACTIVE = 1;
-    public static final int WORKING_ENABLED = 5;
+    public static final int WORKABLE_ACTIVE = assignId();
+    public static final int WORKING_ENABLED = assignId();
 
     // Creative Energy
-    public static final int UPDATE_IO_SPEED = 1;
+    public static final int UPDATE_IO_SPEED = assignId();
 
     // Quantum Chest/Tank
-    public static final int UPDATE_ITEM_COUNT = 14;
-    public static final int UPDATE_FLUID_AMOUNT = 14;
+    public static final int UPDATE_ITEM_COUNT = assignId();
+    public static final int UPDATE_FLUID_AMOUNT = assignId();
 
     // Detector Covers
-    public static final int UPDATE_INVERTED = 100;
+    public static final int UPDATE_INVERTED = assignId();
 
     // HPCA / Research Station
-    public static final int DAMAGE_STATE = 222;
-    public static final int LOCK_OBJECT_HOLDER = 223;
+    public static final int DAMAGE_STATE = assignId();
+    public static final int LOCK_OBJECT_HOLDER = assignId();
 
     // NBT Keys
 
