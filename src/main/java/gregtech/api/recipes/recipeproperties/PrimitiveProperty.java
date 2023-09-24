@@ -24,4 +24,14 @@ public class PrimitiveProperty extends RecipeProperty<Boolean> {
     @Override
     public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value) {
     }
+
+    @Override
+    public boolean hideTotalEU() {
+        return true;
+    }
+
+    @Override
+    public boolean hideEUt() {
+        return true;
+    }
 }
