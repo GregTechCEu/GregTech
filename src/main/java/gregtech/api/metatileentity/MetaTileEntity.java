@@ -1062,10 +1062,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     private <T> void transferToNearby(Capability<T> capability, BiConsumer<T, T> transfer, EnumFacing... allowedFaces) {
-        PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
         for (EnumFacing nearbyFacing : allowedFaces) {
-            blockPos.setPos(getPos()).move(nearbyFacing);
-            TileEntity tileEntity = getWorld().getTileEntity(blockPos);
+            TileEntity tileEntity = getNeighbor(nearbyFacing);
             if (tileEntity == null) {
                 continue;
             }
@@ -1077,7 +1075,6 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             }
             transfer.accept(thisCap, otherCap);
         }
-        blockPos.release();
     }
 
     public final int getOutputRedstoneSignal(@Nullable EnumFacing side) {
