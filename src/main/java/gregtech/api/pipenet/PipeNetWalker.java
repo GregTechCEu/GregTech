@@ -22,7 +22,7 @@ import java.util.*;
  */
 public abstract class PipeNetWalker<T extends IPipeTile<?, ?>> {
 
-    private PipeNetWalker<T> root;
+    protected PipeNetWalker<T> root;
     private final World world;
     private Set<T> walked;
     private final List<EnumFacing> nextPipeFacings = new ArrayList<>(5);
