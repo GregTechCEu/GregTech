@@ -58,21 +58,21 @@ public class EnergyNetHandler implements IEnergyContainer {
         }
 
         long amperesUsed = 0L;
-        for (RoutePath path : net.getNetData(cable.getPos())) {
+        for (EnergyRoutePath path : net.getNetData(cable.getPos())) {
             if (path.getMaxLoss() >= voltage) {
                 // Will lose all the energy with this path, so don't use it
                 continue;
             }
 
-            if (GTUtility.arePosEqual(cable.getPos(), path.getPipePos()) && side == path.getFaceToHandler()) {
+            if (GTUtility.arePosEqual(cable.getPos(), path.getTargetPipePos()) && side == path.getTargetFacing()) {
                 // Do not insert into source handler
                 continue;
             }
 
-            IEnergyContainer dest = path.getHandler(cable.getWorld());
+            IEnergyContainer dest = path.getHandler();
             if (dest == null) continue;
 
-            EnumFacing facing = path.getFaceToHandler().getOpposite();
+            EnumFacing facing = path.getTargetFacing().getOpposite();
             if (!dest.inputsEnergy(facing) || dest.getEnergyCanBeInserted() <= 0) continue;
 
             long pathVoltage = voltage - path.getMaxLoss();
