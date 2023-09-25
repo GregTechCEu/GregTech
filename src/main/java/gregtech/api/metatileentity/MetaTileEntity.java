@@ -73,9 +73,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -177,6 +177,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return holder == null ? 0L : holder.getOffsetTimer();
     }
 
+    @Nullable
+    public TileEntity getNeighbor(EnumFacing facing) {
+        return holder != null ? holder.getNeighbor(facing) : null;
+    }
+
     @Override
     public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter) {
         if (holder != null) {
@@ -188,7 +193,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
     }
 
     /**
@@ -215,7 +220,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
     }
 
-    /** Override this to completely remove the "Tool Info" tooltip section */
+    /**
+     * Override this to completely remove the "Tool Info" tooltip section
+     */
     public boolean showToolUsages() {
         return true;
     }
@@ -364,7 +371,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *
      * @param trait trait object to add
      */
-    void addMetaTileEntityTrait(@Nonnull MTETrait trait) {
+    void addMetaTileEntityTrait(@NotNull MTETrait trait) {
         this.mteTraits.put(trait.getName(), trait);
         this.mteTraitByNetworkId.put(trait.getNetworkID(), trait);
     }
@@ -376,7 +383,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * @return the trait associated with the name
      */
     @Nullable
-    public final MTETrait getMTETrait(@Nonnull String name) {
+    public final MTETrait getMTETrait(@NotNull String name) {
         return this.mteTraits.get(name);
     }
 
@@ -470,7 +477,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *
      * @return true if something happened, so tools will get damaged and animations will be played
      */
-    public final boolean onToolClick(EntityPlayer playerIn, @Nonnull Set<String> toolClasses, EnumHand hand, CuboidRayTraceResult hitResult) {
+    public final boolean onToolClick(EntityPlayer playerIn, @NotNull Set<String> toolClasses, EnumHand hand, CuboidRayTraceResult hitResult) {
         // the side hit from the machine grid
         EnumFacing gridSideHit = CoverRayTracer.determineGridSideHit(hitResult);
         Cover cover = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
@@ -1449,7 +1456,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return true;
     }
 
-    public boolean canRenderMachineGrid(@Nonnull ItemStack mainHandStack, @Nonnull ItemStack offHandStack) {
+    @Override
+    public boolean canRenderMachineGrid(@NotNull ItemStack mainHandStack, @NotNull ItemStack offHandStack) {
         final String[] tools = {ToolClasses.WRENCH, ToolClasses.SCREWDRIVER};
         return ToolHelper.isTool(mainHandStack, tools) ||
                 ToolHelper.isTool(offHandStack, tools);
@@ -1469,9 +1477,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Method(modid = GTValues.MODID_APPENG)
-    public AECableType getCableConnectionType(@Nonnull AEPartLocation part) {
+    public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
         return AECableType.NONE;
     }
 
