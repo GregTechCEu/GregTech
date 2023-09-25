@@ -4,7 +4,6 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -24,10 +23,5 @@ public class RecipeMapCokeOven<R extends RecipeBuilder<R>> extends RecipeMap<R> 
         addSlot(builder, 106, 10, 0, exportItems, null, false, true);
         addSlot(builder, 106, 28, 0, null, exportFluids, true, true);
         return builder;
-    }
-
-    @Override
-    public int getPropertyListHeight(Recipe recipe) {
-        return 4;
     }
 }

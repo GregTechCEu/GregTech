@@ -5149,7 +5149,8 @@ gregtech.recipe.cleanroom=Requires %s
 gregtech.recipe.cleanroom.display_name=Cleanroom
 gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
 gregtech.recipe.research=Requires Research
-gregtech.recipe.computation_per_tick=Computation: %,d CWU/t
+gregtech.recipe.computation_per_tick=Min Computation: %,d CWU/t
+gregtech.recipe.total_computation=Computation: %,d
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).

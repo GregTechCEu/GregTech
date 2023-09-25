@@ -5,6 +5,7 @@ import gregtech.api.capability.IOpticalComputationReceiver;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.recipeproperties.ComputationProperty;
+import gregtech.api.recipes.recipeproperties.TotalComputationProperty;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,14 +23,13 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
      * to draw as much CWU/t as possible to try and accelerate the computation process, and CWU/t is treated as a
      * minimum value instead of a static cost.
      */
-    private final boolean isDurationTotalCWU;
+    private boolean isDurationTotalCWU;
     private int recipeCWUt;
     private boolean hasNotEnoughComputation;
 
-    public ComputationRecipeLogic(RecipeMapMultiblockController metaTileEntity, ComputationType type, boolean isDurationTotalCWU) {
+    public ComputationRecipeLogic(RecipeMapMultiblockController metaTileEntity, ComputationType type) {
         super(metaTileEntity);
         this.type = type;
-        this.isDurationTotalCWU = isDurationTotalCWU;
         if (!(metaTileEntity instanceof IOpticalComputationReceiver)) {
             throw new IllegalArgumentException("MetaTileEntity must be instanceof IOpticalComputationReceiver");
         }
@@ -58,6 +58,7 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
     protected void setupRecipe(Recipe recipe) {
         super.setupRecipe(recipe);
         this.recipeCWUt = recipe.getProperty(ComputationProperty.getInstance(), 0);
+        this.isDurationTotalCWU = recipe.hasProperty(TotalComputationProperty.getInstance());
     }
 
     @Override
@@ -107,6 +108,7 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
     protected void completeRecipe() {
         super.completeRecipe();
         this.recipeCWUt = 0;
+        this.isDurationTotalCWU = false;
         this.hasNotEnoughComputation = false;
     }
 

@@ -238,7 +238,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     private static class ResearchStationRecipeLogic extends ComputationRecipeLogic {
 
         public ResearchStationRecipeLogic(MetaTileEntityResearchStation metaTileEntity) {
-            super(metaTileEntity, ComputationType.SPORADIC, true);
+            super(metaTileEntity, ComputationType.SPORADIC);
         }
 
         @NotNull
