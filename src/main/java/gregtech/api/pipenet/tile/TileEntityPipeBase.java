@@ -210,7 +210,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             if (isConnected(side) == connected) {
                 return;
             }
-            TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
+            TileEntity tile = getNeighbor(side);
             // block connections if Pipe Types do not match
             if (connected &&
                     tile instanceof IPipeTile pipeTile &&

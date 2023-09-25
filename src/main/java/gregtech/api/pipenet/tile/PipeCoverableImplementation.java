@@ -9,15 +9,17 @@ import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -252,6 +254,16 @@ public class PipeCoverableImplementation implements CoverHolder {
     @Override
     public BlockPos getPos() {
         return holder.getPipePos();
+    }
+
+    @Override
+    public TileEntity getTileEntityHere() {
+        return holder instanceof TileEntity te ? te : getWorld().getTileEntity(getPos());
+    }
+
+    @Override
+    public @Nullable TileEntity getNeighbor(EnumFacing facing) {
+        return holder.getNeighbor(facing);
     }
 
     @Override

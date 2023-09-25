@@ -164,14 +164,13 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
             int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
             if (currentTick != lastTick) { // Prevent other tick accelerators from accelerating us
                 World world = getWorld();
-                BlockPos currentPos = getPos();
+                final BlockPos currentPos = getPos();
                 lastTick = currentTick;
                 if (isTEMode()) {
                     energyContainer.removeEnergy(energyPerTick);
                     for (EnumFacing neighbourFace : EnumFacing.VALUES) {
-                        TileEntity neighbourTile = world.getTileEntity(currentPos.offset(neighbourFace));
-                        if (neighbourTile instanceof ITickable && !neighbourTile.isInvalid() && considerTile(neighbourTile)) {
-                            ITickable neighbourTickTile = (ITickable) neighbourTile;
+                        TileEntity neighbourTile = getNeighbor(neighbourFace);
+                        if (neighbourTile instanceof ITickable neighbourTickTile && !neighbourTile.isInvalid() && considerTile(neighbourTile)) {
                             for (int i = 0; i < speed; i++) {
                                 neighbourTickTile.update();
                             }

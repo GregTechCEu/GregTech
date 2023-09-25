@@ -362,7 +362,7 @@ public class GTUtility {
         }
         if (difZ != 0) {
             if (difZ != 1 && difZ != -1) return null;
-            return difZ > 0 ? EnumFacing.NORTH : EnumFacing.SOUTH;
+            return difZ > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH;
         }
         return null;
     }

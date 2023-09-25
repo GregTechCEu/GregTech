@@ -560,7 +560,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (cover != null && !cover.canPipePassThrough()) {
             return false;
         }
-        TileEntity other = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
+        TileEntity other = selfTile.getNeighbor(facing);
         if (other instanceof IPipeTile) {
             cover = ((IPipeTile<?, ?>) other).getCoverableImplementation().getCoverAtSide(facing.getOpposite());
             if (cover != null && !cover.canPipePassThrough())
@@ -586,7 +586,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (pipeType == null) {
             return Collections.emptyList();
         }
-        int actualConnections = getPipeTileEntity(world, pos).getVisualConnections();
+        int actualConnections = pipeTile.getVisualConnections();
         float thickness = pipeType.getThickness();
         List<IndexedCuboid6> result = new ArrayList<>();
         CoverHolder coverHolder = pipeTile.getCoverableImplementation();

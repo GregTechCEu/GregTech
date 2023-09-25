@@ -199,7 +199,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
             long amperesUsed = 0;
             for (EnumFacing side : EnumFacing.VALUES) {
                 if (!outputsEnergy(side)) continue;
-                TileEntity tileEntity = metaTileEntity.getWorld().getTileEntity(metaTileEntity.getPos().offset(side));
+                TileEntity tileEntity = metaTileEntity.getNeighbor(side);
                 EnumFacing oppositeSide = side.getOpposite();
                 if (tileEntity != null && tileEntity.hasCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, oppositeSide)) {
                     IEnergyContainer energyContainer = tileEntity.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, oppositeSide);

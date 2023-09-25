@@ -67,7 +67,7 @@ public class MetaTileEntityLDItemEndpoint extends MetaTileEntityLongDistanceEndp
             ILDEndpoint endpoint = getLink();
             if (endpoint != null) {
                 EnumFacing outputFacing = endpoint.getOutputFacing();
-                TileEntity te = getWorld().getTileEntity(endpoint.getPos().offset(outputFacing));
+                TileEntity te = endpoint.getNeighbor(outputFacing);
                 if (te != null) {
                     T t = te.getCapability(capability, outputFacing.getOpposite());
                     if (t != null) {
