@@ -3,6 +3,7 @@ package gregtech.api.pipenet.tile;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
+import gregtech.api.metatileentity.NeighborCacheTileEntityBase;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
@@ -30,7 +31,7 @@ import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> extends SyncedTileEntityBase implements IPipeTile<PipeType, NodeDataType> {
+public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> extends NeighborCacheTileEntityBase implements IPipeTile<PipeType, NodeDataType> {
 
     protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
     protected int paintingColor = -1;

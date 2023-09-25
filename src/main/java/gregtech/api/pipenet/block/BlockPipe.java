@@ -46,6 +46,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -187,18 +188,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
         if (pipeTile != null) {
             pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
+            EnumFacing facing = GTUtility.getFacingToNeighbor(pos, fromPos);
+            if (facing == null) return;
+            pipeTile.onNeighborChanged(facing);
             if (!ConfigHolder.machines.gt6StylePipesCables) {
-                EnumFacing facing = null;
-                for (EnumFacing facing1 : EnumFacing.values()) {
-                    if (GTUtility.arePosEqual(fromPos, pos.offset(facing1))) {
-                        facing = facing1;
-                        break;
-                    }
-                }
-                if (facing == null) {
-                    //not our neighbor
-                    return;
-                }
                 boolean open = pipeTile.isConnected(facing);
                 boolean canConnect = pipeTile.getCoverableImplementation().getCoverAtSide(facing) != null || canConnect(pipeTile, facing);
                 if (!open && canConnect && state.getBlock() != blockIn)
@@ -206,6 +199,17 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 if (open && !canConnect)
                     pipeTile.setConnection(facing, false, false);
                 updateActiveNodeStatus(worldIn, pos, pipeTile);
+            }
+        }
+    }
+
+    @Override
+    public void onNeighborChange(@NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull BlockPos neighbor) {
+        IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(world, pos);
+        if (pipeTile != null) {
+            EnumFacing facing = GTUtility.getFacingToNeighbor(pos, neighbor);
+            if (facing != null) {
+                pipeTile.onNeighborChanged(facing);
             }
         }
     }

@@ -4,12 +4,13 @@ import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.unification.material.Material;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> {
@@ -17,6 +18,11 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     World getPipeWorld();
 
     BlockPos getPipePos();
+
+    @Nullable
+    TileEntity getNeighbor(EnumFacing facing);
+
+    void onNeighborChanged(EnumFacing facing);
 
     default long getTickTimer() {
         return getPipeWorld().getTotalWorldTime();
