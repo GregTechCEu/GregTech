@@ -35,7 +35,7 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
 
     public BlockOpticalPipe(@Nonnull OpticalPipeType pipeType) {
         this.pipeType = pipeType;
-        this.properties = new OpticalPipeProperties();
+        this.properties = OpticalPipeProperties.INSTANCE;
         setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
     }
@@ -82,7 +82,7 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
 
     @Override
     protected OpticalPipeProperties getFallbackType() {
-        return new OpticalPipeProperties();
+        return OpticalPipeProperties.INSTANCE;
     }
 
     @Override
