@@ -13,6 +13,10 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase {
     private final TileEntity[] neighbors = new TileEntity[6];
     private boolean neighborsInvalidated = false;
 
+    public NeighborCacheTileEntityBase() {
+        invalidateNeighbors();
+    }
+
     protected void invalidateNeighbors() {
         if (!this.neighborsInvalidated) {
             Arrays.fill(this.neighbors, this);
