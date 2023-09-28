@@ -34,8 +34,8 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
     private static final int DEFAULT_MIN = 64;
     private static final int DEFAULT_MAX = 512;
 
-    private int min = DEFAULT_MIN;
-    private int max = DEFAULT_MAX;
+    private int min = DEFAULT_MIN, max = DEFAULT_MAX, outputAmount;
+    private boolean isLatched = false;
     protected ItemFilterContainer itemFilter;
 
     public CoverDetectorItemAdvanced(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
@@ -77,6 +77,10 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
                 "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
                 .setTooltipHoverString("cover.advanced_item_detector.invert_tooltip")
         );
+        group.addWidget(new CycleButtonWidget(98 - 4, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
+                "cover.machine_controller.normal", "cover.generic.advanced_detector.latched")
+                .setTooltipHoverString("cover.generic.advanced_detector.latch_tooltip")
+        );
 
         this.itemFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
 
@@ -112,6 +116,14 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
             parsedValue = DEFAULT_MAX;
         }
         max = Math.max(min + 1, parsedValue);
+    }
+
+    private void setLatched(boolean isLatched) {
+        this.isLatched = isLatched;
+    }
+
+    public boolean isLatched() {
+        return this.isLatched;
     }
 
     @Override

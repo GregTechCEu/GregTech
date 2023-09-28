@@ -36,8 +36,8 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     private static final int DEFAULT_MIN = 1000; // 1 Bucket
     private static final int DEFAULT_MAX = 16000; // 16 Buckets
 
-    private int min = DEFAULT_MIN;
-    private int max = DEFAULT_MAX;
+    private int min, max, outputAmount;
+    private boolean isLatched = false;
 
     protected FluidFilterContainer fluidFilter;
 
@@ -90,6 +90,10 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                 "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
                 .setTooltipHoverString("cover.advanced_fluid_detector.invert_tooltip")
         );
+        group.addWidget(new CycleButtonWidget(98 - 4, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
+                "cover.machine_controller.normal", "cover.generic.advanced_detector.latched")
+                .setTooltipHoverString("cover.generic.advanced_detector.latch_tooltip")
+        );
 
         this.fluidFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
 
@@ -115,6 +119,14 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         this.max = CoverDetectorBase.parseCapped(val, min + 1, Integer.MAX_VALUE, DEFAULT_MAX);
     }
 
+    private void setLatched(boolean isLatched) {
+        this.isLatched = isLatched;
+    }
+
+    public boolean isLatched() {
+        return this.isLatched;
+    }
+
     @Override
     public void update() {
         if (getOffsetTimer() % 20 != 0) return;
@@ -132,7 +144,13 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
                 storedFluid += contents.amount;
         }
 
-        setRedstoneSignalOutput(RedstoneUtil.computeRedstoneBetweenValues(storedFluid, max, min, this.isInverted()));
+        if (isLatched) {
+            outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(storedFluid, max, min, isInverted(), outputAmount);
+        } else {
+            outputAmount = RedstoneUtil.computeRedstoneBetweenValues(storedFluid, max, min, isInverted());
+        }
+
+        setRedstoneSignalOutput(outputAmount);
     }
 
     @Override
