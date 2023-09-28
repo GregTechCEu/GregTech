@@ -36,7 +36,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     private static final int DEFAULT_MIN = 1000; // 1 Bucket
     private static final int DEFAULT_MAX = 16000; // 16 Buckets
 
-    private int min, max, outputAmount;
+    private int min = DEFAULT_MIN, max = DEFAULT_MAX, outputAmount;
     private boolean isLatched = false;
 
     protected FluidFilterContainer fluidFilter;
@@ -85,9 +85,9 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         );
 
         // invert logic button
-        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.invert_label"));
+        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.generic.advanced_detector.invert_label"));
         group.addWidget(new CycleButtonWidget(98 - 4, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
-                "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
+                "cover.machine_controller.normal", "cover.machine_controller.inverted")
                 .setTooltipHoverString("cover.advanced_fluid_detector.invert_tooltip")
         );
         group.addWidget(new CycleButtonWidget(98 - 4, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
