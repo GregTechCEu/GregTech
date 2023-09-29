@@ -4,7 +4,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.*;
-import gregtech.api.capability.impl.ActiveTransformerWrapper;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -43,16 +42,18 @@ import java.util.List;
 public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase implements IControllable {
 
     private boolean isWorkingEnabled = true;
-    private IEnergyContainer energyOutputContainer;
-    private ActiveTransformerWrapper wrapper;
-    private ILaserContainer laserInContainer;
+    private IEnergyContainer energyOutput;
+    private IEnergyContainer energyInput;
+    private final List<ILaserContainer> laserOutput;
+    private final List<ILaserContainer> laserInput;
     private boolean isActive = true;
 
     public MetaTileEntityActiveTransformer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-        this.energyOutputContainer = new EnergyContainerList(new ArrayList<>());
-        this.wrapper = null;
-        this.laserInContainer = null;
+        this.energyOutput = new EnergyContainerList(new ArrayList<>());
+        this.energyInput = new EnergyContainerList(new ArrayList<>());
+        this.laserOutput = new ArrayList<>();
+        this.laserInput = new ArrayList<>();
     }
 
     @Override
@@ -62,52 +63,59 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
 
     @Override
     protected void updateFormedValid() {
-        setActive(true);
-        if (wrapper == null || this.energyOutputContainer.getEnergyCapacity() == 0) {
-            return;
-        }
-
         if (isWorkingEnabled()) {
-            wrapper.removeEnergy(energyOutputContainer.addEnergy(wrapper.getEnergyStored()));
+            long canDrain = energyInput.getEnergyStored();
+            long totalDrained = 0;
+
+            for (ILaserContainer laserContainer: laserInput) {
+                canDrain += laserContainer.getEnergyStored();
+            }
+
+            long drained = energyOutput.changeEnergy(canDrain);
+            canDrain -= drained;
+            totalDrained += drained;
+            for (ILaserContainer laserContainer: laserOutput) {
+                long laserDrained = laserContainer.changeEnergy(canDrain);
+                canDrain -= laserDrained;
+                totalDrained += laserDrained;
+            }
+
+                totalDrained += energyInput.removeEnergy(totalDrained);
+            for (ILaserContainer laserContainer: laserInput) {
+                totalDrained += laserContainer.removeEnergy(totalDrained);
+            }
+
         }
     }
 
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        List<IEnergyContainer> inputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
+        List<IEnergyContainer> energyInput = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
+        energyInput.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
 
-        List<IEnergyContainer> outputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
-        outputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
+        List<IEnergyContainer> energyOutput = new ArrayList<>(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
+        energyOutput.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
 
-        List<ILaserContainer> inputLaser = getAbilities(MultiblockAbility.INPUT_LASER);
-        List<ILaserContainer> outputLaser = getAbilities(MultiblockAbility.OUTPUT_LASER);
+        this.laserInput.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
+        this.laserOutput.addAll(getAbilities(MultiblockAbility.OUTPUT_LASER));
 
         // Invalidate the structure if there is not at least one output and one input
-        if (inputEnergy.size() + inputLaser.size() == 0 || outputEnergy.size() + outputLaser.size() == 0) {
+        if (energyInput.size() + laserInput.size() == 0 || energyOutput.size() + energyInput.size() == 0) {
             this.invalidateStructure();
-            return;
         }
 
-        if (outputEnergy.isEmpty() && inputEnergy.isEmpty()) {
-            return;
-        }
-
-        energyOutputContainer = new EnergyContainerList(outputEnergy);
-        if (inputLaser.size() == 1) {
-            laserInContainer = inputLaser.get(0);
-        }
-
-        wrapper = new ActiveTransformerWrapper(new EnergyContainerList(inputEnergy), laserInContainer);
+        this.energyInput = new EnergyContainerList(energyInput);
+        this.energyOutput = new EnergyContainerList(energyOutput);
     }
 
     @Override
     public void invalidateStructure() {
         super.invalidateStructure();
-        this.energyOutputContainer = new EnergyContainerList(new ArrayList<>());
-        this.wrapper = null;
-        this.laserInContainer = null;
+        this.energyOutput = new EnergyContainerList(new ArrayList<>());
+        this.energyInput = new EnergyContainerList(new ArrayList<>());
+        this.laserOutput.clear();
+        this.laserInput.clear();
         setActive(false);
     }
 
@@ -256,14 +264,5 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         tooltip.add(I18n.format("gregtech.machine.active_transformer.tooltip2"));
         tooltip.add(I18n.format("gregtech.machine.active_transformer.tooltip3")
                 + TooltipHelper.RAINBOW_SLOW + I18n.format("gregtech.machine.active_transformer.tooltip3.5"));
-    }
-
-    public ILaserContainer getWrapper() {
-        if (wrapper != null) {
-            return wrapper;
-        } else if (isStructureFormed() && getAbilities(MultiblockAbility.INPUT_LASER).size() == 1) {
-            return getAbilities(MultiblockAbility.INPUT_LASER).get(0);
-        }
-        return null;
     }
 }

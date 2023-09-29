@@ -1,29 +1,9 @@
 package gregtech.api.capability;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
-
 public interface ILaserContainer {
 
     /**
-     * This method accepts energy, and stores it in the container
-     * If passed a {@code seen} context, you must use {@link #changeEnergy(long, Collection)} to prevent
-     * infinite recursion
-     *
-     * @param amount amount of energy to add/remove to the container
-     * @return amount of energy actually accepted
-     */
-    default long changeEnergy(long amount) {
-        Collection<ILaserContainer> list = new ArrayList<>();
-        list.add(this);
-        return changeEnergy(amount, list);
-    }
-
-    /**
      * Removes specified amount of energy from this container
-     * If passed a {@code seen} context, you must use {@link #removeEnergy(long, Collection)} to prevent
-     * infinite recursion
      *
      * @param amount amount of energy to remove
      * @return amount of energy removed
@@ -33,59 +13,26 @@ public interface ILaserContainer {
     }
 
     /**
-     * Removes specified amount of energy from this container
-     *
-     * @param amount amount of energy to remove
-     * @param seen   the containers already checked
-     * @return amount of energy removed
-     */
-    default long removeEnergy(long amount, @Nonnull Collection<ILaserContainer> seen) {
-        return changeEnergy(-amount, seen);
-    }
-
-    /**
      * This method accepts energy, and stores it in the container
      *
      * @param amount amount of energy to add/remove to the container
-     * @param seen   the containers already checked
      * @return amount of energy actually accepted
      */
-    long changeEnergy(long amount, @Nonnull Collection<ILaserContainer> seen);
+    long changeEnergy(long amount);
 
 
     /**
-     * If passed a {@code seen} context, you must use {@link #getEnergyStored(Collection)} to prevent
-     * infinite recursion
-     *
-     * @return amount of currently stored energy
+     * @return amount of currently stored energy in this
      */
-    default long getEnergyStored() {
-        Collection<ILaserContainer> list = new ArrayList<>();
-        list.add(this);
-        return getEnergyStored(list);
-    }
+    long getEnergyStored();
 
     /**
-     * If passed a {@code seen} context, you must use {@link #getEnergyCapacity(Collection)} to prevent;
-     * infinite recursion
-     *
-     * @return maximum amount of energy that can be stored
+     * @return maximum amount of energy that can be stored in this
      */
-    default long getEnergyCapacity() {
-        Collection<ILaserContainer> list = new ArrayList<>();
-        list.add(this);
-        return getEnergyCapacity(list);
-    }
+    long getEnergyCapacity();
 
     /**
-     * @param seen the containers already checked
-     * @return amount of currently stored energy
+     * @return maximum amount of energy that can be added or removed per tick
      */
-    long getEnergyStored(@Nonnull Collection<ILaserContainer> seen);
-
-    /**
-     * @param seen the containers already checked
-     * @return maximum amount of energy that can be stored
-     */
-    long getEnergyCapacity(@Nonnull Collection<ILaserContainer> seen);
+    long getMaxThroughput();
 }

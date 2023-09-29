@@ -6,7 +6,6 @@ import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.BlockGlassCasing;
-import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.*;
@@ -281,6 +280,7 @@ public class ComputerRecipes {
                 .output(ACTIVE_TRANSFORMER)
                 .duration(300).EUt(VA[LuV]).buildAndRegister();
 
+/*      TODO UPSATUPDATE
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[LuV])
                 .input(lens, Diamond)
@@ -297,7 +297,7 @@ public class ComputerRecipes {
                 .input(wireGtSingle, IndiumTinBariumTitaniumCuprate, 2)
                 .output(LASER_INPUT_HATCH)
                 .circuitMeta(2)
-                .duration(300).EUt(VA[IV]).buildAndRegister();
+                .duration(300).EUt(VA[IV]).buildAndRegister();*/
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.LAMINATED_GLASS))

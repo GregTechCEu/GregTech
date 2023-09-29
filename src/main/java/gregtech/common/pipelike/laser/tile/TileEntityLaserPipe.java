@@ -19,9 +19,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
-import java.util.Collection;
 import java.util.EnumMap;
 
 public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, LaserPipeProperties> {
@@ -181,17 +179,22 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
 
     private static class DefaultLaserContainer implements ILaserContainer {
         @Override
-        public long changeEnergy(long amount, @Nonnull Collection<ILaserContainer> seen) {
+        public long changeEnergy(long amount) {
             return 0;
         }
 
         @Override
-        public long getEnergyStored(@Nonnull Collection<ILaserContainer> seen) {
+        public long getEnergyStored() {
             return 0;
         }
 
         @Override
-        public long getEnergyCapacity(@Nonnull Collection<ILaserContainer> seen) {
+        public long getEnergyCapacity() {
+            return 0;
+        }
+
+        @Override
+        public long getMaxThroughput() {
             return 0;
         }
     }

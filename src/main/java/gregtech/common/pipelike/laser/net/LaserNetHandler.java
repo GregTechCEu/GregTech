@@ -7,7 +7,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
 
 public class LaserNetHandler implements ILaserContainer {
     private LaserPipeNet net;
@@ -27,21 +26,21 @@ public class LaserNetHandler implements ILaserContainer {
     }
 
     @Override
-    public long changeEnergy(long amount, @Nonnull Collection<ILaserContainer> seen) {
-        ILaserContainer handler = getInnerContainer(seen);
+    public long changeEnergy(long amount) {
+        ILaserContainer handler = getInnerContainer();
         if (handler == null) return 0;
-        return handler.changeEnergy(amount, seen);
+        return handler.changeEnergy(amount);
     }
 
     @Override
-    public long getEnergyStored(@Nonnull Collection<ILaserContainer> seen) {
-        ILaserContainer handler = getInnerContainer(seen);
+    public long getEnergyStored() {
+        ILaserContainer handler = getInnerContainer();
         if (handler == null) return 0;
-        return handler.getEnergyStored(seen);
+        return handler.getEnergyStored();
     }
 
     @Nullable
-    private ILaserContainer getInnerContainer(@Nonnull Collection<ILaserContainer> seen) {
+    private ILaserContainer getInnerContainer() {
         if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
             return null;
         }
@@ -51,18 +50,21 @@ public class LaserNetHandler implements ILaserContainer {
             return null;
         }
 
-        ILaserContainer handler = data.getHandler(world);
-        if (seen.contains(handler)) {
-            return null;
-        }
-        return handler;
+        return data.getHandler(world);
     }
 
     @Override
-    public long getEnergyCapacity(@Nonnull Collection<ILaserContainer> seen) {
-        ILaserContainer handler = getInnerContainer(seen);
+    public long getEnergyCapacity() {
+        ILaserContainer handler = getInnerContainer();
         if (handler == null) return 0;
-        return handler.getEnergyCapacity(seen);
+        return handler.getEnergyCapacity();
+    }
+
+    @Override
+    public long getMaxThroughput() {
+        ILaserContainer handler = getInnerContainer();
+        if (handler == null) return 0;
+        return handler.getMaxThroughput();
     }
 
     public LaserPipeNet getNet() {
