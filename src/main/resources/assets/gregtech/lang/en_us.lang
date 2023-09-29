@@ -1272,8 +1272,9 @@ cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
 cover.generic.advanced_detector.latched=Latched
-cover.generic.advanced_detector.latch_tooltip=Change the redstone behavior to behave as a §fRS-Latch§7 instead of the default behavior.
+cover.generic.advanced_detector.latch_tooltip=Change the redstone behavior to behave as a RS-Latch instead of the default behavior.
 cover.generic.advanced_detector.invert_label=Inverted:
+cover.generic.advanced_detector.invert_tooltip=Toggle to invert the redstone logic/n§7By default, values less than the minimum output 0; /n§7values higher than the maximum output 15; /n§7values between min and max output between 0 and 15
 
 cover.advanced_energy_detector.label=Advanced Energy Detector
 cover.advanced_energy_detector.min=Minimum:
@@ -1287,7 +1288,6 @@ cover.advanced_energy_detector.mode_eu=Discrete EU
 cover.advanced_energy_detector.mode_percent=Percentage
 
 cover.advanced_fluid_detector.label=Advanced Fluid Detector
-cover.advanced_fluid_detector.invert_tooltip=Toggle to invert the redstone logic/nBy default, redstone stops emitting when less than the minimum L of fluid, and starts emitting when greater than the min L of fluid up to the set maximum
 cover.advanced_fluid_detector.max=Maximum Fluid:
 cover.advanced_fluid_detector.min=Minimum Fluid:
 cover.advanced_item_detector.label=Advanced Item Detector
