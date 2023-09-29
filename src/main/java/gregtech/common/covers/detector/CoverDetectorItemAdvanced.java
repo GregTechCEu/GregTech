@@ -72,19 +72,20 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         );
 
         // invert logic button
-        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.generic.advanced_detector.invert_label"));
-        group.addWidget(new CycleButtonWidget(98 - 4, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
+        // group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.generic.advanced_detector.invert_label"));
+        group.addWidget(new CycleButtonWidget(10, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
                 "cover.machine_controller.normal", "cover.machine_controller.inverted")
                 .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip")
         );
-        group.addWidget(new CycleButtonWidget(98 - 4, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
-                "cover.machine_controller.normal", "cover.generic.advanced_detector.latched")
+        // group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING), "cover.generic.advanced_detector.latch_label"));
+        group.addWidget(new CycleButtonWidget(94, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
+                "cover.generic.advanced_detector.continuous", "cover.generic.advanced_detector.latched")
                 .setTooltipHoverString("cover.generic.advanced_detector.latch_tooltip")
         );
 
         this.itemFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
 
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 188 + 82)
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 188 + 4 * (SIZE + PADDING))
                 .widget(group)
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 188)
                 .build(this, player);

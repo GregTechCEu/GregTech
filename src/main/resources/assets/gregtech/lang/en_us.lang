@@ -1272,9 +1272,11 @@ cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
 cover.generic.advanced_detector.latched=Latched
-cover.generic.advanced_detector.latch_tooltip=Change the redstone behavior to behave as a RS-Latch instead of the default behavior.
-cover.generic.advanced_detector.invert_label=Inverted:
-cover.generic.advanced_detector.invert_tooltip=Toggle to invert the redstone logic/n§7By default, values less than the minimum output 0; /n§7values higher than the maximum output 15; /n§7values between min and max output between 0 and 15
+cover.generic.advanced_detector.continuous=Continuous
+cover.generic.advanced_detector.latch_tooltip=Change the redstone behavior of this Cover. /n§eContinuous§7 - Default; values less than the minimum output 0; values higher than the maximum output 15; values between min and max output between 0 and 15 /n§eLatched§7 - output 15 until above max, then output 0 until below min
+cover.generic.advanced_detector.invert_label=Redstone Output:
+cover.generic.advanced_detector.latch_label=Behavior:
+cover.generic.advanced_detector.invert_tooltip=Toggle to invert the redstone logic
 
 cover.advanced_energy_detector.label=Advanced Energy Detector
 cover.advanced_energy_detector.min=Minimum:
