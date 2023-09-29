@@ -22,7 +22,6 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -79,7 +78,9 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         List<IEnergyContainer> inputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
         inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
 
-        List<IEnergyContainer> outputEnergy = getAbilities(MultiblockAbility.OUTPUT_ENERGY);
+        List<IEnergyContainer> outputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
+        outputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
+
         List<ILaserContainer> inputLaser = getAbilities(MultiblockAbility.INPUT_LASER);
         List<ILaserContainer> outputLaser = getAbilities(MultiblockAbility.OUTPUT_LASER);
 
@@ -123,14 +124,18 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     }
 
     private TraceabilityPredicate getHatchPredicates() {
+        // preview could be revised
         return abilities(MultiblockAbility.INPUT_ENERGY).setPreviewCount(1)
                 .or(abilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY).setPreviewCount(1))
+                .or(abilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY).setPreviewCount(1))
                 .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setPreviewCount(2))
-                .or(abilities(MultiblockAbility.INPUT_LASER).setMaxGlobalLimited(1))
-                .or(abilities(MultiblockAbility.OUTPUT_LASER).setMaxGlobalLimited(1))
-                // Disallow the config maintenance hatch because that would probably break the conservation of energy
-                .or(metaTileEntities(MetaTileEntities.MAINTENANCE_HATCH,
-                        MetaTileEntities.AUTO_MAINTENANCE_HATCH, MetaTileEntities.CLEANING_MAINTENANCE_HATCH).setExactLimit(1));
+                .or(abilities(MultiblockAbility.INPUT_LASER).setPreviewCount(1))
+                .or(abilities(MultiblockAbility.OUTPUT_LASER).setPreviewCount(1));
+    }
+
+    @Override
+    public boolean hasMaintenanceMechanics() {
+        return false;
     }
 
     @SideOnly(Side.CLIENT)
