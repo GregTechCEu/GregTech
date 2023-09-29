@@ -163,6 +163,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("min", this.min);
         tagCompound.setInteger("max", this.max);
+        tagCompound.setBoolean("isLatched", this.isLatched);
         tagCompound.setTag("filter", this.itemFilter.serializeNBT());
     }
 
@@ -171,6 +172,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         super.readFromNBT(tagCompound);
         this.min = tagCompound.getInteger("min");
         this.max = tagCompound.getInteger("max");
+        this.isLatched = tagCompound.getBoolean("isLatched");
         this.itemFilter.deserializeNBT(tagCompound.getCompoundTag("filter"));
     }
 
@@ -179,6 +181,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeInt(this.min);
         packetBuffer.writeInt(this.max);
+        packetBuffer.writeBoolean(this.isLatched);
     }
 
     @Override
@@ -186,5 +189,6 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         super.readInitialSyncData(packetBuffer);
         this.min = packetBuffer.readInt();
         this.max = packetBuffer.readInt();
+        this.isLatched = packetBuffer.readBoolean();
     }
 }

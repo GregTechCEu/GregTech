@@ -85,19 +85,19 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         );
 
         // invert logic button
-        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.generic.advanced_detector.invert_label"));
-        group.addWidget(new CycleButtonWidget(98 - 4, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
+//        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.generic.advanced_detector.invert_label"));
+        group.addWidget(new CycleButtonWidget(10, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
                 "cover.machine_controller.normal", "cover.machine_controller.inverted")
                 .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip")
         );
-        group.addWidget(new CycleButtonWidget(98 - 4, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
-                "cover.machine_controller.normal", "cover.generic.advanced_detector.latched")
+        group.addWidget(new CycleButtonWidget(94, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
+                "cover.generic.advanced_detector.continuous", "cover.generic.advanced_detector.latched")
                 .setTooltipHoverString("cover.generic.advanced_detector.latch_tooltip")
         );
 
         this.fluidFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
 
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 164 + 82)
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 164 + 4 * (SIZE + PADDING))
                 .widget(group)
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 164)
                 .build(this, player);
@@ -158,6 +158,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("min", this.min);
         tagCompound.setInteger("max", this.max);
+        tagCompound.setBoolean("isLatched", this.isLatched);
         tagCompound.setTag("filter", this.fluidFilter.serializeNBT());
     }
 
@@ -166,6 +167,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         super.readFromNBT(tagCompound);
         this.min = tagCompound.getInteger("min");
         this.max = tagCompound.getInteger("max");
+        this.isLatched = tagCompound.getBoolean("isLatched");
         this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("filter"));
     }
 
@@ -174,6 +176,7 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeInt(this.min);
         packetBuffer.writeInt(this.max);
+        packetBuffer.writeBoolean(this.isLatched);
     }
 
     @Override
@@ -181,5 +184,6 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         super.readInitialSyncData(packetBuffer);
         this.min = packetBuffer.readInt();
         this.max = packetBuffer.readInt();
+        this.isLatched = packetBuffer.readBoolean();
     }
 }
