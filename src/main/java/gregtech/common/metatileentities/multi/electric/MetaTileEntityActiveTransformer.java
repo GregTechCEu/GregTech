@@ -65,26 +65,22 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     protected void updateFormedValid() {
         if (isWorkingEnabled()) {
             long canDrain = energyInput.getEnergyStored();
-            long totalDrained = 0;
 
-            for (ILaserContainer laserContainer: laserInput) {
+            for (ILaserContainer laserContainer : laserInput) {
                 canDrain += laserContainer.getEnergyStored();
             }
 
-            long drained = energyOutput.changeEnergy(canDrain);
-            canDrain -= drained;
-            totalDrained += drained;
-            for (ILaserContainer laserContainer: laserOutput) {
-                long laserDrained = laserContainer.changeEnergy(canDrain);
-                canDrain -= laserDrained;
-                totalDrained += laserDrained;
+            long totalDrained = energyOutput.changeEnergy(canDrain);
+            for (ILaserContainer laserContainer : laserOutput) {
+                totalDrained += laserContainer.changeEnergy(canDrain - totalDrained);
             }
 
-                totalDrained += energyInput.removeEnergy(totalDrained);
-            for (ILaserContainer laserContainer: laserInput) {
+            setActive(totalDrained != 0);
+
+            totalDrained += energyInput.removeEnergy(totalDrained);
+            for (ILaserContainer laserContainer : laserInput) {
                 totalDrained += laserContainer.removeEnergy(totalDrained);
             }
-
         }
     }
 
@@ -195,7 +191,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
 
     @Override
     public boolean isActive() {
-        return super.isActive() && this.isActive && getNumMaintenanceProblems() == 0;
+        return super.isActive() && this.isActive;
     }
 
     public void setActive(boolean active) {
