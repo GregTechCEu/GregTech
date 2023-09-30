@@ -94,14 +94,14 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         List<IEnergyContainer> energyInput = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
         energyInput.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
 
-        List<IEnergyContainer> energyOutput = new ArrayList<>(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
+        List<IEnergyContainer> energyOutput = new ArrayList<>(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
         energyOutput.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
 
         this.laserInput.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
         this.laserOutput.addAll(getAbilities(MultiblockAbility.OUTPUT_LASER));
 
         // Invalidate the structure if there is not at least one output and one input
-        if (energyInput.size() + laserInput.size() == 0 || energyOutput.size() + energyInput.size() == 0) {
+        if (energyInput.size() + laserInput.size() == 0 || energyOutput.size() + laserOutput.size() == 0) {
             this.invalidateStructure();
         }
 
@@ -134,9 +134,9 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     private TraceabilityPredicate getHatchPredicates() {
         // preview could be revised
         return abilities(MultiblockAbility.INPUT_ENERGY).setPreviewCount(1)
-                .or(abilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY).setPreviewCount(1))
-                .or(abilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY).setPreviewCount(1))
                 .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setPreviewCount(2))
+                .or(abilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY).setPreviewCount(1))
+                .or(abilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY).setPreviewCount(1))
                 .or(abilities(MultiblockAbility.INPUT_LASER).setPreviewCount(1))
                 .or(abilities(MultiblockAbility.OUTPUT_LASER).setPreviewCount(1));
     }
