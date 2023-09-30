@@ -35,4 +35,14 @@ public interface ILaserContainer {
      * @return maximum amount of energy that can be added or removed per tick
      */
     long getMaxThroughput();
+
+    /**
+     * @return if the container is an input (target) container
+     */
+    boolean isOutput();
+
+    /**
+     * @return if the container is an input (target) container
+     */
+    boolean isInput();
 }

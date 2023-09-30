@@ -25,20 +25,6 @@ public class LaserNetHandler implements ILaserContainer {
         this.net = net;
     }
 
-    @Override
-    public long changeEnergy(long amount) {
-        ILaserContainer handler = getInnerContainer();
-        if (handler == null) return 0;
-        return handler.changeEnergy(amount);
-    }
-
-    @Override
-    public long getEnergyStored() {
-        ILaserContainer handler = getInnerContainer();
-        if (handler == null) return 0;
-        return handler.getEnergyStored();
-    }
-
     @Nullable
     private ILaserContainer getInnerContainer() {
         if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
@@ -54,6 +40,20 @@ public class LaserNetHandler implements ILaserContainer {
     }
 
     @Override
+    public long changeEnergy(long amount) {
+        ILaserContainer handler = getInnerContainer();
+        if (handler == null) return 0;
+        return handler.changeEnergy(amount);
+    }
+
+    @Override
+    public long getEnergyStored() {
+        ILaserContainer handler = getInnerContainer();
+        if (handler == null) return 0;
+        return handler.getEnergyStored();
+    }
+
+    @Override
     public long getEnergyCapacity() {
         ILaserContainer handler = getInnerContainer();
         if (handler == null) return 0;
@@ -65,6 +65,20 @@ public class LaserNetHandler implements ILaserContainer {
         ILaserContainer handler = getInnerContainer();
         if (handler == null) return 0;
         return handler.getMaxThroughput();
+    }
+
+    @Override
+    public boolean isOutput() {
+        ILaserContainer handler = getInnerContainer();
+        if (handler == null) return false;
+        return handler.isOutput();
+    }
+
+    @Override
+    public boolean isInput() {
+        ILaserContainer handler = getInnerContainer();
+        if (handler == null) return false;
+        return handler.isInput();
     }
 
     public LaserPipeNet getNet() {

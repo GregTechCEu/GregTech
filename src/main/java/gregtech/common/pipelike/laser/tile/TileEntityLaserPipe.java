@@ -197,5 +197,15 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         public long getMaxThroughput() {
             return 0;
         }
+
+        @Override
+        public boolean isOutput() {
+            return false;
+        }
+
+        @Override
+        public boolean isInput() {
+            return false;
+        }
     }
 }

@@ -25,6 +25,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static gregtech.api.GTValues.V;
+import static gregtech.api.GTValues.VN;
+
 public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<ILaserContainer>, IDataInfoProvider {
 
     private final boolean isOutput;
@@ -37,9 +40,8 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
         this.isOutput = isOutput;
         this.tier = tier;
         this.amperage = amperage;
-        this.buffer = new LaserContainerHandler(this, tier, amperage);
+        this.buffer = new LaserContainerHandler(this, tier, amperage, isOutput);
     }
-
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
@@ -85,13 +87,17 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.machine.laser_hatch.tooltip1"));
+        tooltip.add(I18n.format("gregtech.machine.laser_hatch.tooltip2"));
+
         if (isOutput) {
-            tooltip.add(I18n.format("gregtech.machine.laser_hatch.source.tooltip1"));
-            tooltip.add(I18n.format("gregtech.machine.laser_hatch.source.tooltip2"));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", V[tier], VN[tier]));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", amperage));
         } else {
-            tooltip.add(I18n.format("gregtech.machine.laser_hatch.target.tooltip1"));
-            tooltip.add(I18n.format("gregtech.machine.laser_hatch.target.tooltip2"));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", V[tier], VN[tier]));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", amperage));
         }
+        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", buffer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.universal.disabled"));
     }
 
