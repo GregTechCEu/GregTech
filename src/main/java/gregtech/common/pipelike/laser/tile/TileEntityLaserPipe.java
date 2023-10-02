@@ -178,8 +178,19 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     }
 
     private static class DefaultLaserContainer implements ILaserContainer {
+
         @Override
-        public long changeEnergy(long amount) {
+        public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+            return 0;
+        }
+
+        @Override
+        public boolean inputsEnergy(EnumFacing side) {
+            return false;
+        }
+
+        @Override
+        public long changeEnergy(long differenceAmount) {
             return 0;
         }
 
@@ -194,18 +205,13 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         }
 
         @Override
-        public long getMaxThroughput() {
+        public long getInputAmperage() {
             return 0;
         }
 
         @Override
-        public boolean isOutput() {
-            return false;
-        }
-
-        @Override
-        public boolean isInput() {
-            return false;
+        public long getInputVoltage() {
+            return 0;
         }
     }
 }

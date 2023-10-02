@@ -3,7 +3,10 @@ package gregtech.common.metatileentities.multi.electric;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -42,18 +45,14 @@ import java.util.List;
 public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase implements IControllable {
 
     private boolean isWorkingEnabled = true;
-    private IEnergyContainer energyOutput;
-    private IEnergyContainer energyInput;
-    private final List<ILaserContainer> laserOutput;
-    private final List<ILaserContainer> laserInput;
+    private IEnergyContainer powerOutput;
+    private IEnergyContainer powerInput;
     private boolean isActive = true;
 
     public MetaTileEntityActiveTransformer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-        this.energyOutput = new EnergyContainerList(new ArrayList<>());
-        this.energyInput = new EnergyContainerList(new ArrayList<>());
-        this.laserOutput = new ArrayList<>();
-        this.laserInput = new ArrayList<>();
+        this.powerOutput = new EnergyContainerList(new ArrayList<>());
+        this.powerInput = new EnergyContainerList(new ArrayList<>());
     }
 
     @Override
@@ -64,54 +63,39 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     @Override
     protected void updateFormedValid() {
         if (isWorkingEnabled()) {
-            long canDrain = energyInput.getEnergyStored();
-
-            for (ILaserContainer laserContainer : laserInput) {
-                canDrain += laserContainer.getEnergyStored();
-            }
-
-            long totalDrained = energyOutput.changeEnergy(canDrain);
-            for (ILaserContainer laserContainer : laserOutput) {
-                totalDrained += laserContainer.changeEnergy(canDrain - totalDrained);
-            }
-
+            long canDrain = powerInput.getEnergyStored();
+            long totalDrained = powerOutput.changeEnergy(canDrain);
             setActive(totalDrained != 0);
-
-            totalDrained += energyInput.removeEnergy(totalDrained);
-            for (ILaserContainer laserContainer : laserInput) {
-                totalDrained += laserContainer.removeEnergy(totalDrained);
-            }
+            powerInput.removeEnergy(totalDrained);
         }
     }
 
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        List<IEnergyContainer> energyInput = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        energyInput.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
+        List<IEnergyContainer> powerInput = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
+        powerInput.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
 
-        List<IEnergyContainer> energyOutput = new ArrayList<>(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
-        energyOutput.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
+        List<IEnergyContainer> powerOutput = new ArrayList<>(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
+        powerOutput.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
 
-        this.laserInput.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
-        this.laserOutput.addAll(getAbilities(MultiblockAbility.OUTPUT_LASER));
+        powerInput.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
+        powerOutput.addAll(getAbilities(MultiblockAbility.OUTPUT_LASER));
 
         // Invalidate the structure if there is not at least one output and one input
-        if (energyInput.size() + laserInput.size() == 0 || energyOutput.size() + laserOutput.size() == 0) {
+        if (powerInput.isEmpty() || powerOutput.isEmpty()) {
             this.invalidateStructure();
         }
 
-        this.energyInput = new EnergyContainerList(energyInput);
-        this.energyOutput = new EnergyContainerList(energyOutput);
+        this.powerInput = new EnergyContainerList(powerInput);
+        this.powerOutput = new EnergyContainerList(powerOutput);
     }
 
     @Override
     public void invalidateStructure() {
         super.invalidateStructure();
-        this.energyOutput = new EnergyContainerList(new ArrayList<>());
-        this.energyInput = new EnergyContainerList(new ArrayList<>());
-        this.laserOutput.clear();
-        this.laserInput.clear();
+        this.powerOutput = new EnergyContainerList(new ArrayList<>());
+        this.powerInput = new EnergyContainerList(new ArrayList<>());
         setActive(false);
     }
 

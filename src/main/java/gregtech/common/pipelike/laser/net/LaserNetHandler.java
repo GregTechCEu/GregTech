@@ -27,7 +27,7 @@ public class LaserNetHandler implements ILaserContainer {
 
     @Nullable
     private ILaserContainer getInnerContainer() {
-        if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
+        if (net == null || pipe == null || pipe.isInvalid() || (facing == null || pipe.isFaceBlocked(facing))) {
             return null;
         }
 
@@ -37,6 +37,27 @@ public class LaserNetHandler implements ILaserContainer {
         }
 
         return data.getHandler(world);
+    }
+
+    @Override
+    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+        ILaserContainer handler = getInnerContainer();
+        if (handler == null) return 0;
+        return handler.acceptEnergyFromNetwork(side, voltage, amperage);
+    }
+
+    @Override
+    public boolean inputsEnergy(EnumFacing side) {
+        ILaserContainer handler = getInnerContainer();
+        if (handler == null) return false;
+        return handler.inputsEnergy(side);
+    }
+
+    @Override
+    public boolean outputsEnergy(EnumFacing side) {
+        ILaserContainer handler = getInnerContainer();
+        if (handler == null) return false;
+        return handler.outputsEnergy(side);
     }
 
     @Override
@@ -61,24 +82,13 @@ public class LaserNetHandler implements ILaserContainer {
     }
 
     @Override
-    public long getMaxThroughput() {
-        ILaserContainer handler = getInnerContainer();
-        if (handler == null) return 0;
-        return handler.getMaxThroughput();
+    public long getInputAmperage() {
+        return 0;
     }
 
     @Override
-    public boolean isOutput() {
-        ILaserContainer handler = getInnerContainer();
-        if (handler == null) return false;
-        return handler.isOutput();
-    }
-
-    @Override
-    public boolean isInput() {
-        ILaserContainer handler = getInnerContainer();
-        if (handler == null) return false;
-        return handler.isInput();
+    public long getInputVoltage() {
+        return 0;
     }
 
     public LaserPipeNet getNet() {

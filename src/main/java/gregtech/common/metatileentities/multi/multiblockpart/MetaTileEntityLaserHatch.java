@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.capability.impl.LaserContainerHandler;
 import gregtech.api.gui.ModularUI;
@@ -15,10 +16,12 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +43,12 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
         this.isOutput = isOutput;
         this.tier = tier;
         this.amperage = amperage;
-        this.buffer = new LaserContainerHandler(this, tier, amperage, isOutput);
+        if (isOutput) {
+            this.buffer = LaserContainerHandler.emitterContainer(this, GTValues.V[tier] * 64L * amperage, GTValues.V[tier], amperage);
+            ((LaserContainerHandler) this.buffer).setSideOutputCondition(s -> s == getFrontFacing());
+        } else {
+            this.buffer = LaserContainerHandler.receiverContainer(this, GTValues.V[tier] * 16L * amperage, GTValues.V[tier], amperage);
+        }
     }
 
     @Override
@@ -105,5 +113,10 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
     @Override
     public List<ITextComponent> getDataInfo() {
         return Collections.singletonList(new TextComponentString(String.format("%d/%d EU", this.buffer.getEnergyStored(), this.buffer.getEnergyCapacity())));
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        return super.getCapability(capability, side);
     }
 }
