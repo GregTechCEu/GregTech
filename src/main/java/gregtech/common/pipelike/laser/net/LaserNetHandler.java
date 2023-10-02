@@ -94,4 +94,9 @@ public class LaserNetHandler implements ILaserContainer {
     public LaserPipeNet getNet() {
         return net;
     }
+
+    @Override
+    public boolean isOneProbeHidden() {
+        return true;
+    }
 }

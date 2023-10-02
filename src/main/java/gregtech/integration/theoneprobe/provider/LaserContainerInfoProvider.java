@@ -10,11 +10,18 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+
 public class LaserContainerInfoProvider extends CapabilityInfoProvider<ILaserContainer> {
     @NotNull
     @Override
     protected Capability<ILaserContainer> getCapability() {
         return GregtechTileCapabilities.CAPABILITY_LASER;
+    }
+
+    @Override
+    protected boolean allowDisplaying(@Nonnull ILaserContainer capability) {
+        return !capability.isOneProbeHidden();
     }
 
     @Override
