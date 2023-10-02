@@ -65,7 +65,6 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         if (isWorkingEnabled()) {
             long canDrain = powerInput.getEnergyStored();
             long totalDrained = powerOutput.changeEnergy(canDrain);
-            setActive(totalDrained != 0);
             powerInput.removeEnergy(totalDrained);
         }
     }
@@ -175,7 +174,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
 
     @Override
     public boolean isActive() {
-        return super.isActive() && this.isActive;
+        return super.isActive() && this.isWorkingEnabled;
     }
 
     public void setActive(boolean active) {
