@@ -21,8 +21,7 @@
  */
 dependencies {
     // Hard Dependencies
-    api files("libs/modularui-2.2.2-dev.jar")
-    sourcesElements files("libs/modularui-2.2.2-sources.jar")
+    implementation files("libs/modularui-2.2.2-dev.jar")
     //implementation 'curse.maven:modularui-624243:4779301-sources-4779302'
 
     // the CCL deobf jar uses very old MCP mappings, making it error at runtime in runClient/runServer

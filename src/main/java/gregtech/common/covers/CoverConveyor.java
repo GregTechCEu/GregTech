@@ -519,7 +519,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         return new Row().height(16).coverChildrenWidth()
                 .child(new ItemDrawable(item).asWidget().size(16).marginRight(4))
                 .child(IKey.str(item.getDisplayName()).asWidget().heightRel(1f))
-                .pos(7, 7);
+                .pos(4, 4);
     }
 
     public ParentWidget<?> settingsRow() {
@@ -539,12 +539,14 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         syncManager.syncValue("manual_io_mode", manualIoModeValue);
         syncManager.syncValue("distribution_mode", distributionModeValue);
 
-        ModularPanel panel = GTGuis.createPanel("conveyor", 176, 202);
+        boolean hasPipeNeighbor = hasItemPipeNeighbour();
+
+        ModularPanel panel = GTGuis.createPanel("conveyor", 176, hasPipeNeighbor ? 202 : 184);
         panel.child(getTitleWidget())
                 .bindPlayerInventory()
                 .child(new Column()
-                        .widthRel(1f).margin(10, 0)
-                        .top(27).bottom(7)
+                        .widthRel(1f).margin(7, 0)
+                        .top(22).coverChildrenHeight()
                         .child(settingsRow()
                                 .child(new ToggleButton().size(16).left(0)
                                         .overlay(gregtech.api.newgui.GuiTextures.EXPORT)
@@ -552,36 +554,42 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                                 .child(new ToggleButton().size(16).left(18)
                                         .overlay(gregtech.api.newgui.GuiTextures.IMPORT)
                                         .value(boolValueOf(ioModeValue, ConveyorMode.IMPORT)))
-                                .child(IKey.str("Import/Export").asWidget().height(16).left(60)))
+                                .child(IKey.lang("cover.conveyor.mode.import_export").asWidget().height(16).left(60)))
                         .child(settingsRow()
                                 .child(new ToggleButton().size(16).left(0)
+                                        .addTooltipLine(IKey.lang(ManualImportExportMode.DISABLED.localeDescription))
                                         .overlay(gregtech.api.newgui.GuiTextures.CROSS)
                                         .value(boolValueOf(manualIoModeValue, ManualImportExportMode.DISABLED)))
                                 .child(new ToggleButton().size(16).left(18)
+                                        .addTooltipLine(IKey.lang(ManualImportExportMode.FILTERED.localeDescription))
                                         .overlay(gregtech.api.newgui.GuiTextures.FILTERED)
                                         .value(boolValueOf(manualIoModeValue, ManualImportExportMode.FILTERED)))
                                 .child(new ToggleButton().size(16).left(36)
+                                        .addTooltipLine(IKey.lang(ManualImportExportMode.UNFILTERED.localeDescription))
                                         .overlay(gregtech.api.newgui.GuiTextures.UNFILTERED)
                                         .value(boolValueOf(manualIoModeValue, ManualImportExportMode.UNFILTERED)))
-                                .child(IKey.str("Manual IO Mode").asWidget().height(16).left(60)))
-                        .child(settingsRow()
+                                .child(IKey.lang("cover.universal.manual_import_export.mode").asWidget().height(16).left(60)))
+                        .childIf(hasPipeNeighbor, settingsRow()
                                 .child(new ToggleButton().size(16).left(0)
+                                        .addTooltipLine(IKey.lang(DistributionMode.INSERT_FIRST.localeDescription))
                                         .overlay(gregtech.api.newgui.GuiTextures.FIRST_INSERT)
                                         .value(boolValueOf(distributionModeValue, DistributionMode.INSERT_FIRST)))
                                 .child(new ToggleButton().size(16).left(18)
+                                        .addTooltipLine(IKey.lang(DistributionMode.ROUND_ROBIN_PRIO.localeDescription))
                                         .overlay(gregtech.api.newgui.GuiTextures.ROUND_ROBIN)
                                         .value(boolValueOf(distributionModeValue, DistributionMode.ROUND_ROBIN_PRIO)))
                                 .child(new ToggleButton().size(16).left(36)
+                                        .addTooltipLine(IKey.lang(DistributionMode.ROUND_ROBIN_GLOBAL.localeDescription))
                                         .overlay(gregtech.api.newgui.GuiTextures.ROUND_ROBIN_GLOBAL)
                                         .value(boolValueOf(distributionModeValue, DistributionMode.ROUND_ROBIN_GLOBAL)))
-                                .child(IKey.str("Distribution Mode").asWidget().height(16).left(60)))
+                                .child(IKey.lang("cover.conveyor.distribution_mode").asWidget().height(16).left(60)))
                         .child(settingsRow().height(12)
                                 .child(new TextFieldWidget()
                                         .value(new IntSyncValue(() -> transferRate, this::setTransferRate))
                                         .setNumbers(1, maxItemTransferRate)
                                         .setTextAlignment(Alignment.Center)
-                                        .size(56, 12))
-                                .child(IKey.str("Items/tick").asWidget().height(12).left(60)))
+                                        .size(52, 12))
+                                .child(IKey.lang("cover.conveyor.transfer_rate").asWidget().height(12).left(60)))
                         .child(this.filterHolder.createFilterUI(panel, creationContext, syncManager)
                                 .flexBuilder(flex -> flex.widthRel(1f).marginBottom(2))));
         /*panel.child(IKey.format(getUITitle(), GTValues.VN[tier]).asWidget().pos(6, 6))

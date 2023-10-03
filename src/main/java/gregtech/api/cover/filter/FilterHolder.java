@@ -56,6 +56,7 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                 .child(IKey.lang("cover.filter.label").asWidget().height(18).left(0))
                 .child(new ItemSlot()
                         .slot(new ModularSlot(this.filterInventory, this.filterSlotIndex)
+                                .singletonSlotGroup()
                                 .filter(item -> getFilterOf(item) != null)
                                 .changeListener((stack, onlyAmountChanged, client, init) -> {
                                     checkFilter(stack);
@@ -78,7 +79,7 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                         })
                         .overlay(IKey.lang("cover.filter.settings_open.label"))
                         .pos(80, 0)
-                        .size(79, 18));
+                        .size(82, 18));
     }
 
     public ModularPanel buildFilterPanel(ModularPanel mainPanel, GuiSyncManager syncManager, FilterPanelSyncHandler filterPanelSyncHandler) {
@@ -88,12 +89,7 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                     .background(GuiTextures.BACKGROUND)
                     .child(IKey.lang("An Error occurred!").color(Color.RED.normal).asWidget()
                             .size(130, 20))
-                    .child(new ButtonWidget<>()
-                            .onMousePressed(mouseButton -> {
-                                filterPanelSyncHandler.closePanel();
-                                return true;
-                            })
-                            .pos(73, 4));
+                    .child(ButtonWidget.panelCloseButton(filterPanelSyncHandler));
         }
 
         IWidget filterUI = this.currentFilter.createFilterUI(mainPanel, syncManager);
@@ -105,15 +101,8 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                 .rightRel(1f)
                 .padding(5)
                 .child(IKey.lang("cover.filter.settings.label").asWidget().pos(5, 5));
-        panel.child(new ButtonWidget<>()
-                        .overlay(GuiTextures.CROSS)
-                        .onMousePressed(mouseButton -> {
-                            filterPanelSyncHandler.closePanel();
-                            return true;
-                        }).top(5).right(5).size(10))
+        panel.child(ButtonWidget.panelCloseButton(filterPanelSyncHandler))
                 .child(filterUI);
-        //int height = filterUI.getSize().height > 0 ? filterUI.getSize().height + 25 : 90;
-        //int width = filterUI.getSize().width > 0 ? filterUI.getSize().width + 10 : 150;
         return panel;
     }
 
