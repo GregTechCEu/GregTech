@@ -17,7 +17,6 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
@@ -29,7 +28,6 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -81,14 +79,14 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         CoverableView coverable = getCoverableView();
         coverable.markDirty();
 
-        if (coverable.getWorld() != null && coverable.getWorld().isRemote) {
+        if (getWorld() != null && getWorld().isRemote) {
             // tile at cover holder pos
-            TileEntity te = coverable.getWorld().getTileEntity(coverable.getPos());
+            TileEntity te = getWorld().getTileEntity(getPos());
             if (te instanceof TileEntityItemPipe) {
                 ((TileEntityItemPipe) te).resetTransferred();
             }
             // tile neighbour to holder pos at attached side
-            te = coverable.getWorld().getTileEntity(coverable.getPos().offset(getAttachedSide()));
+            te = getWorld().getTileEntity(getPos().offset(getAttachedSide()));
             if (te instanceof TileEntityItemPipe) {
                 ((TileEntityItemPipe) te).resetTransferred();
             }
@@ -141,7 +139,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         long timer = coverable.getOffsetTimer();
         if (timer % 5 == 0 && isWorkingAllowed && itemsLeftToTransferLastSecond > 0) {
             EnumFacing side = getAttachedSide();
-            TileEntity tileEntity = coverable.getWorld().getTileEntity(coverable.getPos().offset(side));
+            TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(side));
             IItemHandler itemHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
             IItemHandler myItemHandler = coverable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
             if (itemHandler != null && myItemHandler != null) {
@@ -420,12 +418,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     @Override
     public void onRemoval() {
-        NonNullList<ItemStack> drops = NonNullList.create();
-        MetaTileEntity.clearInventory(drops, itemFilterContainer.getFilterInventory());
-        CoverableView coverable = getCoverableView();
-        for (ItemStack itemStack : drops) {
-            Block.spawnAsEntity(coverable.getWorld(), coverable.getPos(), itemStack);
-        }
+        dropInventoryContents(itemFilterContainer.getFilterInventory());
     }
 
     @Override
@@ -499,9 +492,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
                 .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
-        CoverableView coverable = getCoverableView();
-        if (coverable.getWorld().getTileEntity(coverable.getPos()) instanceof TileEntityItemPipe ||
-                coverable.getWorld().getTileEntity(coverable.getPos().offset(getAttachedSide())) instanceof TileEntityItemPipe) {
+        if (getWorld().getTileEntity(getPos()) instanceof TileEntityItemPipe ||
+                getWorld().getTileEntity(getPos().offset(getAttachedSide())) instanceof TileEntityItemPipe) {
             final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
                     () -> distributionMode.ordinal(),
                     val -> setDistributionMode(DistributionMode.values()[val]))

@@ -14,13 +14,11 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -102,11 +100,7 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
 
     @Override
     public void onRemoval() {
-        NonNullList<ItemStack> drops = NonNullList.create();
-        MetaTileEntity.clearInventory(drops, fluidFilter.getFilterInventory());
-        for (ItemStack itemStack : drops) {
-            Block.spawnAsEntity(getWorld(), getPos(), itemStack);
-        }
+        dropInventoryContents(fluidFilter.getFilterInventory());
     }
 
     @Override

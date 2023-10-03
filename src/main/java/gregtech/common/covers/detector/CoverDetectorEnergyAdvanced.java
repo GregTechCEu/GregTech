@@ -52,7 +52,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
 
     @Override
     public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
-        if (!this.getWorld().isRemote) {
+        if (!getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
         return EnumActionResult.SUCCESS;

@@ -16,7 +16,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTLog;
 import gregtech.client.utils.RenderUtil;
@@ -121,19 +121,18 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
     public CoverDigitalInterface getCoverFromPosSide(FacingPos posFacing) {
         if (posFacing == null) return null;
-        CoverHolder mte = null;
+        CoverHolder coverHolder = null;
         IGregTechTileEntity holder = getHolderFromPos(posFacing.getPos());
         if (holder == null) {
             TileEntity te = this.getWorld() == null ? null : this.getWorld().getTileEntity(posFacing.getPos());
-            if (te instanceof TileEntityPipeBase) {
-                //TODO
-//                mte = ((TileEntityPipeBase<?, ?>) te).getCoverableImplementation();
+            if (te instanceof IPipeTile<?, ?> pipeTile) {
+                coverHolder = pipeTile.getCoverableImplementation();
             }
         } else {
-            mte = holder.getMetaTileEntity();
+            coverHolder = holder.getMetaTileEntity();
         }
-        if (mte != null) {
-            Cover cover = mte.getCoverAtSide(posFacing.getFacing());
+        if (coverHolder != null) {
+            Cover cover = coverHolder.getCoverAtSide(posFacing.getFacing());
             if (cover instanceof CoverDigitalInterface digitalInterface) {
                 return digitalInterface;
             }

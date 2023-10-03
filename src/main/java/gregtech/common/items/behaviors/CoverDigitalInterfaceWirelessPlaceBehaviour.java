@@ -46,7 +46,7 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverItemBehavi
 
     @Override
     public void onUpdate(ItemStack itemStack, Entity entity) {
-        if (entity.world.isRemote && entity instanceof EntityPlayer) {
+        if (entity.world.isRemote && entity instanceof EntityLivingBase) {
             ItemStack held = ((EntityLivingBase) entity).getHeldItemMainhand();
             if (held == itemStack) {
                 BlockPos pos = getRemotePos(itemStack);

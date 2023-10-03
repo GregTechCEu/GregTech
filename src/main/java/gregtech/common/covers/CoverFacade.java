@@ -55,9 +55,7 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
     @Override
     public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
-        // do not sync here
-        this.facadeStack = FacadeItem.getFacadeStack(itemStack);
-        updateFacadeState();
+        setFacadeStack(FacadeItem.getFacadeStack(itemStack));
     }
 
     @Override
@@ -127,7 +125,6 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
                 return;
             }
             updateFacadeState();
-            scheduleRenderUpdate();
         }
     }
 
@@ -138,6 +135,10 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
 
     private void updateFacadeState() {
         this.facadeState = FacadeHelper.lookupBlockForItem(facadeStack);
+        // called during world load, where world can be null
+        if (getWorld() != null && !getWorld().isRemote) {
+            scheduleRenderUpdate();
+        }
     }
 
     @Override

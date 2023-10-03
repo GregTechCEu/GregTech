@@ -11,14 +11,14 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.client.renderer.texture.Textures;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -47,11 +47,7 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
 
     @Override
     public void onRemoval() {
-        NonNullList<ItemStack> drops = NonNullList.create();
-        MetaTileEntity.clearInventory(drops, storageHandler);
-        for (ItemStack itemStack : drops) {
-            Block.spawnAsEntity(getWorld(), getPos(), itemStack);
-        }
+        dropInventoryContents(storageHandler);
     }
 
     @Override
