@@ -540,8 +540,6 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         syncManager.syncValue("distribution_mode", distributionModeValue);
 
         ModularPanel panel = GTGuis.createPanel("conveyor", 176, 202);
-        IWidget filterUI = this.filterHolder.createFilterUI(panel, creationContext, syncManager);
-        filterUI.flex().widthRel(1f).marginBottom(2);
         panel.child(getTitleWidget())
                 .bindPlayerInventory()
                 .child(new Column()
@@ -584,7 +582,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                                         .setTextAlignment(Alignment.Center)
                                         .size(56, 12))
                                 .child(IKey.str("Items/tick").asWidget().height(12).left(60)))
-                        .child(filterUI));
+                        .child(this.filterHolder.createFilterUI(panel, creationContext, syncManager)
+                                .flexBuilder(flex -> flex.widthRel(1f).marginBottom(2))));
         /*panel.child(IKey.format(getUITitle(), GTValues.VN[tier]).asWidget().pos(6, 6))
                 .bindPlayerInventory()
                 .child(new Column()

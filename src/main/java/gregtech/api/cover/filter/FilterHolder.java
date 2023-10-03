@@ -29,7 +29,7 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
     private FilterMode mode = FilterMode.BOTH;
     protected final IItemHandlerModifiable filterInventory;
     protected final int filterSlotIndex;
-    private boolean saveFilterInventory = false;
+    private final boolean saveFilterInventory;
 
     protected FilterHolder(IDirtyNotifiable dirtyNotifiable) {
         this(new ItemStackHandler() {
@@ -38,13 +38,13 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                 return 1;
             }
         }, 0, dirtyNotifiable);
-        this.saveFilterInventory = true;
     }
 
     protected FilterHolder(IItemHandlerModifiable filterInventory, int filterSlotIndex, IDirtyNotifiable dirtyNotifiable) {
         this.filterInventory = filterInventory;
         this.filterSlotIndex = filterSlotIndex;
         this.dirtyNotifiable = dirtyNotifiable;
+        this.saveFilterInventory = filterInventory instanceof INBTSerializable<?>;
     }
 
     public IWidget createFilterUI(ModularPanel mainPanel, GuiCreationContext creationContext, GuiSyncManager syncManager) {
@@ -57,9 +57,9 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                 .child(new ItemSlot()
                         .slot(new ModularSlot(this.filterInventory, this.filterSlotIndex)
                                 .filter(item -> getFilterOf(item) != null)
-                                .changeListener((stack, onlyAmountChanged, client) -> {
+                                .changeListener((stack, onlyAmountChanged, client, init) -> {
                                     checkFilter(stack);
-                                    if (client) {
+                                    if (!init && client) {
                                         openFilterConfigButton.setEnabled(hasFilter());
                                         if (!hasFilter() || filterPanelSyncHandler.isPanelOpen()) {
                                             filterPanelSyncHandler.closePanel();
@@ -106,7 +106,7 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                 .padding(5)
                 .child(IKey.lang("cover.filter.settings.label").asWidget().pos(5, 5));
         panel.child(new ButtonWidget<>()
-                        .overlay(IKey.str("x"))
+                        .overlay(GuiTextures.CROSS)
                         .onMousePressed(mouseButton -> {
                             filterPanelSyncHandler.closePanel();
                             return true;
@@ -194,7 +194,7 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
             nbt.setTag("Filter", filterInventory);
         }
         if (saveFilterInventory) {
-            nbt.setTag("FilterInventory", ((ItemStackHandler) filterInventory).serializeNBT());
+            nbt.setTag("FilterInventory", ((INBTSerializable<NBTTagCompound>) filterInventory).serializeNBT());
         }
         return nbt;
     }
@@ -203,7 +203,7 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
     public void deserializeNBT(NBTTagCompound nbt) {
         this.mode = FilterMode.values()[nbt.getByte("Mode")];
         if (saveFilterInventory) {
-            ((ItemStackHandler) filterInventory).deserializeNBT(nbt.getCompoundTag("FilterInventory"));
+            ((INBTSerializable<NBTTagCompound>) filterInventory).deserializeNBT(nbt.getCompoundTag("FilterInventory"));
         }
         if (currentFilter == null) {
             checkFilter(filterInventory.getStackInSlot(filterSlotIndex));
