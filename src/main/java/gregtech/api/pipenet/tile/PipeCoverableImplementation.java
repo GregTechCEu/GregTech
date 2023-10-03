@@ -154,6 +154,11 @@ public class PipeCoverableImplementation implements CoverHolder {
         return holder.canPlaceCoverOnSide(side);
     }
 
+    @Override
+    public final boolean acceptsCovers() {
+        return covers.size() < EnumFacing.VALUES.length;
+    }
+
     public boolean canConnectRedstone(@Nullable EnumFacing side) {
         //so far null side means either upwards or downwards redstone wire connection
         //so check both top cover and bottom cover
@@ -262,10 +267,6 @@ public class PipeCoverableImplementation implements CoverHolder {
     @Override
     public boolean hasAnyCover() {
         return !covers.isEmpty();
-    }
-
-    public int getCoverCount() {
-        return this.covers.size();
     }
 
     @Override

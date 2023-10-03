@@ -41,6 +41,11 @@ public interface CoverHolder extends CoverableView {
     boolean canPlaceCoverOnSide(@NotNull EnumFacing side);
 
     /**
+     * @return if it is possible to attach any cover at all
+     */
+    boolean acceptsCovers();
+
+    /**
      * Should call {@link #dropCover(EnumFacing)}.
      *
      * @param side the side to remove a cover from

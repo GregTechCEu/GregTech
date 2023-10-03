@@ -7,7 +7,6 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.common.pipelike.optical.net.WorldOpticalPipeNet;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
@@ -21,7 +20,6 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -129,14 +127,6 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
         }
         ItemStack stack = player.getHeldItemMainhand();
         return stack != ItemStack.EMPTY && stack.getItem() instanceof ItemBlockOpticalPipe;
-    }
-
-    @Override
-    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
-        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER) ||
-                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
-                        coverDef -> getPipeTileEntity(world, pos).getCoverableImplementation()
-                                .canPlaceCoverOnSide(EnumFacing.DOWN)); //TODO figure out dir
     }
 
     @Override

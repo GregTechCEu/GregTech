@@ -292,23 +292,26 @@ public class ToolEventHandlers {
             } else {
                 Set<String> mainToolClasses = mainHand.getItem().getToolClasses(mainHand);
                 Set<String> offToolClasses = offHand.getItem().getToolClasses(offHand);
-                if (mainToolClasses.contains(ToolClasses.SCREWDRIVER) || offToolClasses.contains(ToolClasses.SCREWDRIVER)) return true;
                 if (mainToolClasses.stream().anyMatch(s -> pipe.isToolEffective(s, state)) ||
                         offToolClasses.stream().anyMatch(s -> pipe.isToolEffective(s, state))) return true;
 
-                BooleanSupplier hasCover = () -> tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getCoverableImplementation().hasAnyCover();
-                Predicate<CoverDefinition> canCover = coverDef -> {
-                    if (tile instanceof IPipeTile<?, ?> pipeTile) {
-                        for (EnumFacing facing : EnumFacing.VALUES) {
-                            if (pipeTile.getCoverableImplementation().canPlaceCoverOnSide(facing)) {
-                                return true;
-                            }
-                        }
+                BooleanSupplier hasCover;
+                Predicate<CoverDefinition> canCover;
+                if (tile instanceof IPipeTile<?, ?> pipeTile) {
+                    final boolean hasAnyCover = pipeTile.getCoverableImplementation().hasAnyCover();
+                    if (hasAnyCover) {
+                        if (mainToolClasses.contains(ToolClasses.SCREWDRIVER)) return true;
+                        if (offToolClasses.contains(ToolClasses.SCREWDRIVER)) return true;
                     }
-                    return false;
-                };
-                if (GTUtility.isCoverBehaviorItem(mainHand, hasCover, canCover) || GTUtility.isCoverBehaviorItem(offHand, hasCover, canCover)) {
-                    return true;
+                    hasCover = () -> hasAnyCover;
+
+                    final boolean acceptsCovers = pipeTile.getCoverableImplementation().acceptsCovers();
+                    canCover = coverDefinition -> acceptsCovers;
+
+                    if (GTUtility.isCoverBehaviorItem(mainHand, hasCover, canCover) ||
+                            GTUtility.isCoverBehaviorItem(offHand, hasCover, canCover)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -320,14 +323,12 @@ public class ToolEventHandlers {
             }
         }
         CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, null);
-        return coverHolder != null && GTUtility.isCoverBehaviorItem(mainHand, coverHolder::hasAnyCover, coverDef -> {
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                if (coverHolder.canPlaceCoverOnSide(facing)) {
-                    return true;
-                }
-            }
-            return false;
-        });
+        if (coverHolder == null) return false;
+
+        final boolean hasAnyCover = coverHolder.hasAnyCover();
+        final boolean acceptsCovers = coverHolder.acceptsCovers();
+
+        return GTUtility.isCoverBehaviorItem(mainHand, () -> hasAnyCover, coverDefinition -> acceptsCovers);
     }
 
     private static float rColour;

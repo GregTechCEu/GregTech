@@ -15,6 +15,7 @@ import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -597,16 +598,18 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public abstract boolean isHoldingPipe(EntityPlayer player);
 
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
-        return isPipeTool(stack) || ToolHelper.isTool(stack, ToolClasses.SCREWDRIVER) ||
-                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
-                        coverDef -> getPipeTileEntity(world, pos).getCoverableImplementation()
-                                .canPlaceCoverOnSide(EnumFacing.DOWN)); //TODO figure out dir
-    }
+        if (isPipeTool(stack)) return true;
 
-    protected boolean hasCover(IPipeTile<PipeType, NodeDataType> pipeTile) {
-        if (pipeTile == null)
-            return false;
-        return pipeTile.getCoverableImplementation().hasAnyCover();
+        IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(world, pos);
+        if (pipeTile == null) return false;
+
+        PipeCoverableImplementation coverable = pipeTile.getCoverableImplementation();
+        final boolean hasAnyCover = coverable.hasAnyCover();
+
+        if (hasAnyCover && ToolHelper.isTool(stack, ToolClasses.SCREWDRIVER)) return true;
+        final boolean acceptsCovers = coverable.acceptsCovers();
+
+        return GTUtility.isCoverBehaviorItem(stack, () -> hasAnyCover, coverDef -> acceptsCovers);
     }
 
     @Override

@@ -7,7 +7,6 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.LaserPipeRenderer;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
@@ -23,7 +22,6 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -113,7 +111,6 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
         return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER);
     }
 
-
     @Override
     public boolean canPipesConnect(IPipeTile<LaserPipeType, LaserPipeProperties> selfTile, EnumFacing side, IPipeTile<LaserPipeType, LaserPipeProperties> sideTile) {
         return selfTile instanceof TileEntityLaserPipe && sideTile instanceof TileEntityLaserPipe;
@@ -131,14 +128,6 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
         }
         ItemStack stack = player.getHeldItemMainhand();
         return stack != ItemStack.EMPTY && stack.getItem() instanceof ItemBlockLaserPipe;
-    }
-
-    @Override
-    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
-        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER) ||
-                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
-                        coverDef -> getPipeTileEntity(world, pos).getCoverableImplementation()
-                                .canPlaceCoverOnSide(EnumFacing.DOWN)); //TODO figure out dir
     }
 
     @Override

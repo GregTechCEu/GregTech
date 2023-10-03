@@ -154,14 +154,6 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
-        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER) ||
-                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
-                        coverDef -> getPipeTileEntity(world, pos).getCoverableImplementation()
-                                .canPlaceCoverOnSide(EnumFacing.DOWN)); //TODO figure out dir
-        }
-
-    @Override
     public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return;
         Insulation insulation = getPipeTileEntity(worldIn, pos).getPipeType();
