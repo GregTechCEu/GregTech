@@ -61,6 +61,17 @@ public class GuiTextures extends com.cleanroommc.modularui.drawable.GuiTextures 
     public static final SteamTexture SLOT_STEAM = SteamTexture.fullImage(GTValues.MODID, "textures/gui/base/slot_%s.png");
     public static final UITexture TOGGLE_BUTTON_BACK = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/toggle_button_background.png");*/
 
+    // COVER UI TEXTURES
+    public static final UITexture CROSS = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/cross.png");
+    public static final UITexture EXPORT = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/export.png");
+    public static final UITexture FILTERED = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/filtered.png");
+    public static final UITexture IMPORT = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/import.png");
+    public static final UITexture UNFILTERED = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/unfiltered.png");
+    public static final UITexture DISTRIBUTION_MODE = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/button_distribution_mode.png");
+    public static final UITexture FIRST_INSERT = DISTRIBUTION_MODE.getSubArea(0, 0, 1, 1/3f);
+    public static final UITexture ROUND_ROBIN = DISTRIBUTION_MODE.getSubArea(0, 1/3f, 1, 2/3f);
+    public static final UITexture ROUND_ROBIN_GLOBAL = DISTRIBUTION_MODE.getSubArea(0, 2/3f, 1, 1);
+
     //FLUID & ITEM OUTPUT BUTTONS
     public static final UITexture BLOCKS_INPUT = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/button_blocks_input.png");
     public static final UITexture BUTTON = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/button.png");
@@ -85,7 +96,6 @@ public class GuiTextures extends com.cleanroommc.modularui.drawable.GuiTextures 
     public static final UITexture BUTTON_INT_CIRCUIT_MINUS = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/button_circuit_minus.png");
     public static final UITexture CLIPBOARD_BUTTON = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/clipboard_button.png");
     //public static final UITexture CLIPBOARD_TEXT_BOX = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/clipboard_text_box.png", 9, 18, 1, 1);
-    public static final UITexture DISTRIBUTION_MODE = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/button_distribution_mode.png");
     public static final UITexture LOCK = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/lock.png");
     public static final UITexture LOCK_WHITE = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/lock_white.png");
     public static final UITexture SWITCH = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/switch.png");

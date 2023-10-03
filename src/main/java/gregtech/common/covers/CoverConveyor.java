@@ -6,14 +6,17 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.value.sync.IServerMouseAction;
-import com.cleanroommc.modularui.api.widget.IGuiAction;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.manager.GuiCreationContext;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.value.sync.*;
-import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
@@ -29,12 +32,10 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.newgui.GTGuis;
-import gregtech.api.newgui.GuiFunctions;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.covers.filter.item.ItemFilter;
 import gregtech.common.covers.filter.item.ItemFilterHolder;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -513,10 +514,78 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         return buildUI(builder, player);
     }
 
+    public IWidget getTitleWidget() {
+        ItemStack item = getCoverDefinition().getDropItemStack();
+        return new Row().height(16).coverChildrenWidth()
+                .child(new ItemDrawable(item).asWidget().size(16).marginRight(4))
+                .child(IKey.str(item.getDisplayName()).asWidget().heightRel(1f))
+                .pos(7, 7);
+    }
+
+    public ParentWidget<?> settingsRow() {
+        return new ParentWidget<>().height(16).widthRel(1f).marginBottom(2);
+    }
+
+    private <T extends Enum<T>> BoolValue.Dynamic boolValueOf(EnumSyncValue<T> syncValue, T value) {
+        return new BoolValue.Dynamic(() -> syncValue.getValue() == value, val -> syncValue.setValue(value));
+    }
+
     @Override
     public ModularPanel buildUI(GuiCreationContext creationContext, GuiSyncManager syncManager, boolean isClient) {
-        ModularPanel panel = GTGuis.createPanel("conveyor", 176, 172);
-        panel.child(IKey.format(getUITitle(), GTValues.VN[tier]).asWidget().pos(6, 6))
+        EnumSyncValue<ConveyorMode> ioModeValue = new EnumSyncValue<>(ConveyorMode.class, this::getConveyorMode, this::setConveyorMode);
+        EnumSyncValue<ManualImportExportMode> manualIoModeValue = new EnumSyncValue<>(ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode);
+        EnumSyncValue<DistributionMode> distributionModeValue = new EnumSyncValue<>(DistributionMode.class, this::getDistributionMode, this::setDistributionMode);
+        syncManager.syncValue("io_mode", ioModeValue);
+        syncManager.syncValue("manual_io_mode", manualIoModeValue);
+        syncManager.syncValue("distribution_mode", distributionModeValue);
+
+        ModularPanel panel = GTGuis.createPanel("conveyor", 176, 202);
+        IWidget filterUI = this.filterHolder.createFilterUI(panel, creationContext, syncManager);
+        filterUI.flex().widthRel(1f).marginBottom(2);
+        panel.child(getTitleWidget())
+                .bindPlayerInventory()
+                .child(new Column()
+                        .widthRel(1f).margin(10, 0)
+                        .top(27).bottom(7)
+                        .child(settingsRow()
+                                .child(new ToggleButton().size(16).left(0)
+                                        .overlay(gregtech.api.newgui.GuiTextures.EXPORT)
+                                        .value(boolValueOf(ioModeValue, ConveyorMode.EXPORT)))
+                                .child(new ToggleButton().size(16).left(18)
+                                        .overlay(gregtech.api.newgui.GuiTextures.IMPORT)
+                                        .value(boolValueOf(ioModeValue, ConveyorMode.IMPORT)))
+                                .child(IKey.str("Import/Export").asWidget().height(16).left(60)))
+                        .child(settingsRow()
+                                .child(new ToggleButton().size(16).left(0)
+                                        .overlay(gregtech.api.newgui.GuiTextures.CROSS)
+                                        .value(boolValueOf(manualIoModeValue, ManualImportExportMode.DISABLED)))
+                                .child(new ToggleButton().size(16).left(18)
+                                        .overlay(gregtech.api.newgui.GuiTextures.FILTERED)
+                                        .value(boolValueOf(manualIoModeValue, ManualImportExportMode.FILTERED)))
+                                .child(new ToggleButton().size(16).left(36)
+                                        .overlay(gregtech.api.newgui.GuiTextures.UNFILTERED)
+                                        .value(boolValueOf(manualIoModeValue, ManualImportExportMode.UNFILTERED)))
+                                .child(IKey.str("Manual IO Mode").asWidget().height(16).left(60)))
+                        .child(settingsRow()
+                                .child(new ToggleButton().size(16).left(0)
+                                        .overlay(gregtech.api.newgui.GuiTextures.FIRST_INSERT)
+                                        .value(boolValueOf(distributionModeValue, DistributionMode.INSERT_FIRST)))
+                                .child(new ToggleButton().size(16).left(18)
+                                        .overlay(gregtech.api.newgui.GuiTextures.ROUND_ROBIN)
+                                        .value(boolValueOf(distributionModeValue, DistributionMode.ROUND_ROBIN_PRIO)))
+                                .child(new ToggleButton().size(16).left(36)
+                                        .overlay(gregtech.api.newgui.GuiTextures.ROUND_ROBIN_GLOBAL)
+                                        .value(boolValueOf(distributionModeValue, DistributionMode.ROUND_ROBIN_GLOBAL)))
+                                .child(IKey.str("Distribution Mode").asWidget().height(16).left(60)))
+                        .child(settingsRow().height(12)
+                                .child(new TextFieldWidget()
+                                        .value(new IntSyncValue(() -> transferRate, this::setTransferRate))
+                                        .setNumbers(1, maxItemTransferRate)
+                                        .setTextAlignment(Alignment.Center)
+                                        .size(56, 12))
+                                .child(IKey.str("Items/tick").asWidget().height(12).left(60)))
+                        .child(filterUI));
+        /*panel.child(IKey.format(getUITitle(), GTValues.VN[tier]).asWidget().pos(6, 6))
                 .bindPlayerInventory()
                 .child(new Column()
                         .child(IKey.lang("cover.transfer_rate").asWidget()
@@ -569,10 +638,10 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                                 .setEnabledIf(widget -> hasItemPipeNeighbour())
                                 .size(80, 12))
                         .pos(89, 18)
-                        .size(80, 48));
-        IWidget filterUI = this.filterHolder.createFilterUI(panel, creationContext, syncManager);
-        filterUI.flex().pos(7, 66);
-        panel.child(filterUI);
+                        .size(80, 48));*/
+        //IWidget filterUI = this.filterHolder.createFilterUI(panel, creationContext, syncManager);
+        //filterUI.flex().pos(7, 66);
+        //panel.child(filterUI);
         return panel;
     }
 

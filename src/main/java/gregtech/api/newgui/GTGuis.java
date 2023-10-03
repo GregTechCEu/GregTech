@@ -5,6 +5,8 @@ import com.cleanroommc.modularui.api.IThemeApi;
 import com.cleanroommc.modularui.manager.GuiInfo;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.theme.ReloadThemeEvent;
+import com.cleanroommc.modularui.theme.Theme;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.JsonBuilder;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
@@ -149,8 +151,13 @@ public class GTGuis {
 
     @SubscribeEvent
     public static void onReloadThemes(ReloadThemeEvent.Pre event) {
-        gregtechTheme.add("color", ConfigHolder.client.defaultUIColor);
+        gregtechTheme.add("color", ConfigHolder.client.defaultUIColor)
+                .addObject(Theme.TOGGLE_BUTTON, json -> json.add("disabledColor", darker(ConfigHolder.client.defaultUIColor, 0.5f)));
         bronzeTheme.add("parent", "gregtech")
                 .add("color", 0xFA9D23);
+    }
+
+    private static int darker(int color, float percent) {
+        return Color.argb(Color.getRedF(color) * percent, Color.getGreenF(color) * percent, Color.getBlueF(color) * percent, Color.getAlphaF(color));
     }
 }

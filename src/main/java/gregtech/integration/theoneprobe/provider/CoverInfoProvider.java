@@ -7,6 +7,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.*;
 import gregtech.common.covers.filter.*;
+import gregtech.common.covers.filter.fluid.FluidFilterHolder;
 import gregtech.common.covers.filter.item.ItemFilterHolder;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -105,12 +106,12 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
             transferRateText(probeInfo, pump.getPumpMode(), " " + rateUnit, pump.getBucketMode() == CoverPump.BucketMode.BUCKET ? pump.getTransferRate() / 1000 : pump.getTransferRate());
         }
 
-        FluidFilterContainer filter = pump.getFluidFilterContainer();
+        FluidFilterHolder filter = pump.getFilterHolder();
         if (pump instanceof CoverFluidRegulator) {
             CoverFluidRegulator regulator = (CoverFluidRegulator) pump;
-            transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator.getTransferAmount(), filter.getFilterWrapper().getFluidFilter() != null);
+            transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator.getTransferAmount(), filter.hasFilter());
         }
-        fluidFilterText(probeInfo, filter.getFilterWrapper().getFluidFilter());
+        fluidFilterText(probeInfo, filter.getCurrentFilter());
     }
 
     /**
@@ -126,7 +127,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
             CoverFluidVoidingAdvanced advanced = (CoverFluidVoidingAdvanced) voiding;
             VoidingMode mode = advanced.getVoidingMode();
             // do not display amount in overflow when a filter is present
-            voidingText(probeInfo, mode, unit, voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? advanced.getTransferAmount() / 1000 : advanced.getTransferAmount(), voiding.getFluidFilterContainer().getFilterWrapper().getFluidFilter() != null);
+            voidingText(probeInfo, mode, unit, voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? advanced.getTransferAmount() / 1000 : advanced.getTransferAmount(), voiding.getFilterHolder().hasFilter());
         }
     }
 
@@ -149,7 +150,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
      */
     private static void fluidFilterInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverFluidFilter fluidFilter) {
         filterModeText(probeInfo, fluidFilter.getFilterMode());
-        fluidFilterText(probeInfo, fluidFilter.getFluidFilter().getFluidFilter());
+        //fluidFilterText(probeInfo, fluidFilter.getFluidFilter().getFluidFilter());
     }
 
     /**
@@ -160,7 +161,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
      */
     private static void enderFluidLinkInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverEnderFluidLink enderFluidLink) {
         transferRateText(probeInfo, enderFluidLink.getPumpMode(), " {*cover.bucket.mode.milli_bucket*}", enderFluidLink.isIOEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
-        fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFilterWrapper().getFluidFilter());
+        //fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFilterWrapper().getFluidFilter());
 
         if (!enderFluidLink.getColorStr().isEmpty()) {
             probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.link_cover.color*} " + enderFluidLink.getColorStr());
@@ -243,7 +244,7 @@ public class CoverInfoProvider extends CapabilityInfoProvider<ICoverable> {
      * @param probeInfo the info to add the text to
      * @param filter    the filter to display info from
      */
-    private static void fluidFilterText(@Nonnull IProbeInfo probeInfo, @Nullable FluidFilter filter) {
+    private static void fluidFilterText(@Nonnull IProbeInfo probeInfo, @Nullable gregtech.common.covers.filter.fluid.FluidFilter filter) {
         // TODO If more unique fluid filtration is added, providers for it go here
     }
 }

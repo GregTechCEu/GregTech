@@ -52,8 +52,8 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
         FilterPanelSyncHandler filterPanelSyncHandler = new FilterPanelSyncHandler(mainPanel, this);
         syncManager.syncValue("filter_config", filterPanelSyncHandler);
         return new ParentWidget<>()
-                .coverChildren()
-                .child(IKey.lang("cover.filter.label").asWidget().pos(0, 4))
+                .height(18).widthRel(1f)
+                .child(IKey.lang("cover.filter.label").asWidget().height(18).left(0))
                 .child(new ItemSlot()
                         .slot(new ModularSlot(this.filterInventory, this.filterSlotIndex)
                                 .filter(item -> getFilterOf(item) != null)
@@ -68,7 +68,7 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                                         }
                                     }
                                 }))
-                        .pos(62, 0))
+                        .pos(60, 0))
                 .child(openFilterConfigButton
                         .onMousePressed(mouseButton -> {
                             if (hasFilter() && !filterPanelSyncHandler.isPanelOpen()) {
@@ -77,8 +77,8 @@ public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerial
                             return true;
                         })
                         .overlay(IKey.lang("cover.filter.settings_open.label"))
-                        .pos(82, 0)
-                        .size(80, 18));
+                        .pos(80, 0)
+                        .size(79, 18));
     }
 
     public ModularPanel buildFilterPanel(ModularPanel mainPanel, GuiSyncManager syncManager, FilterPanelSyncHandler filterPanelSyncHandler) {
