@@ -19,9 +19,9 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public class CoverStorage extends CoverBase implements CoverWithUI {
@@ -71,16 +71,15 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
         return builder.build(this, player);
     }
 
-    @Override
-    public <T> T getCapability(@NotNull Capability<T> capability, T defaultValue) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (defaultValue == null) {
-                return null;
-            }
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(storageHandler);
-        }
-
-        return defaultValue;
+    /**
+     * @deprecated Only exists for compatibility with the crafting table cover and will be removed in the future.
+     * Do not depend on this method.
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @ApiStatus.Internal
+    @Deprecated
+    public @NotNull IItemHandler getStorageHandler() {
+        return this.storageHandler;
     }
 
     @Override

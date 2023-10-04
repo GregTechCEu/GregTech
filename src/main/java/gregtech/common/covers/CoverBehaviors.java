@@ -14,6 +14,7 @@ import gregtech.common.covers.filter.SimpleItemFilter;
 import gregtech.common.covers.filter.SmartItemFilter;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.CoverDigitalInterfaceWirelessPlaceBehaviour;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,13 +77,13 @@ public final class CoverBehaviors {
         registerBehavior(gregtechId("activity_detector"), MetaItems.COVER_ACTIVITY_DETECTOR, CoverDetectorActivity::new);
         registerBehavior(gregtechId("activity_detector_advanced"), MetaItems.COVER_ACTIVITY_DETECTOR_ADVANCED, CoverDetectorActivityAdvanced::new);
         registerBehavior(gregtechId("maintenance_detector"), MetaItems.COVER_MAINTENANCE_DETECTOR, CoverDetectorMaintenance::new);
-        registerBehavior(gregtechId("crafting_table"), MetaItems.COVER_CRAFTING, CoverCraftingTable::new);
+        registerCover(gregtechId("crafting_table"), ItemStack.EMPTY, CoverCraftingTable::new);
         registerBehavior(gregtechId("infinite_water"), MetaItems.COVER_INFINITE_WATER, CoverInfiniteWater::new);
         registerBehavior(gregtechId("ender_fluid_link"), MetaItems.COVER_ENDER_FLUID_LINK, CoverEnderFluidLink::new);
         registerBehavior(gregtechId("cover.digital"), MetaItems.COVER_DIGITAL_INTERFACE, CoverDigitalInterface::new);
 
         // Custom cover behaviour
-        MetaItems.COVER_DIGITAL_INTERFACE_WIRELESS.addComponents(new CoverDigitalInterfaceWirelessPlaceBehaviour(registerCover(gregtechId("cover.digital.wireless"), MetaItems.COVER_DIGITAL_INTERFACE_WIRELESS, CoverDigitalInterfaceWireless::new)));
+        MetaItems.COVER_DIGITAL_INTERFACE_WIRELESS.addComponents(new CoverDigitalInterfaceWirelessPlaceBehaviour(registerCover(gregtechId("cover.digital.wireless"), MetaItems.COVER_DIGITAL_INTERFACE_WIRELESS.getStackForm(), CoverDigitalInterfaceWireless::new)));
 
         registerBehavior(gregtechId("pump.lv"), MetaItems.ELECTRIC_PUMP_LV, (def, tile, side) -> new CoverPump(def, tile, side, GTValues.LV, 1280));
         registerBehavior(gregtechId("pump.mv"), MetaItems.ELECTRIC_PUMP_MV, (def, tile, side) -> new CoverPump(def, tile, side, GTValues.MV, 1280 * 4));
@@ -137,7 +138,7 @@ public final class CoverBehaviors {
      */
     public static void registerBehavior(@NotNull ResourceLocation coverId, @NotNull MetaValueItem placerItem,
                                         @NotNull CoverDefinition.CoverCreator behaviorCreator) {
-        placerItem.addComponents(new CoverItemBehavior(registerCover(coverId, placerItem, behaviorCreator)));
+        placerItem.addComponents(new CoverItemBehavior(registerCover(coverId, placerItem.getStackForm(), behaviorCreator)));
     }
 
     /**
@@ -148,9 +149,9 @@ public final class CoverBehaviors {
      * @param behaviorCreator a function creating the cover behavior
      * @return the registered cover definition
      */
-    public static @NotNull CoverDefinition registerCover(@NotNull ResourceLocation coverId, @NotNull MetaValueItem itemStack,
+    public static @NotNull CoverDefinition registerCover(@NotNull ResourceLocation coverId, @NotNull ItemStack itemStack,
                                                          @NotNull CoverDefinition.CoverCreator behaviorCreator) {
-        CoverDefinition coverDefinition = new CoverDefinition(coverId, behaviorCreator, itemStack.getStackForm());
+        CoverDefinition coverDefinition = new CoverDefinition(coverId, behaviorCreator, itemStack);
         GregTechAPI.COVER_REGISTRY.register(rollingId++, coverId, coverDefinition);
         return coverDefinition;
     }
