@@ -151,8 +151,21 @@ public class GTGuis {
 
     @SubscribeEvent
     public static void onReloadThemes(ReloadThemeEvent.Pre event) {
+        // make sure class is loaded
+        GuiTextures.init();
         gregtechTheme.add("color", ConfigHolder.client.defaultUIColor)
-                .addObject(Theme.TOGGLE_BUTTON, json -> json.add("disabledColor", darker(ConfigHolder.client.defaultUIColor, 0.5f)));
+                .addObject(Theme.TOGGLE_BUTTON, json -> json
+                        .add("selectedColor", 0xFFFFFFFF)
+                        .add("color", 0xFFFFFFFF)
+                        .addObject("background", json1 -> json1
+                                .add("type", "texture")
+                                .add("id", "cover_button"))
+                        .addObject("hoverBackground", json1 -> json1
+                                .add("type", "texture")
+                                .add("id", "cover_button_hover"))
+                        .addObject("selectedBackground", json1 -> json1
+                                .add("type", "texture")
+                                .add("id", "cover_button_disabled")));
         bronzeTheme.add("parent", "gregtech")
                 .add("color", 0xFA9D23);
     }

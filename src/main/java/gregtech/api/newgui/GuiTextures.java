@@ -2,8 +2,11 @@ package gregtech.api.newgui;
 
 import com.cleanroommc.modularui.drawable.UITexture;
 import gregtech.api.GTValues;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiTextures extends com.cleanroommc.modularui.drawable.GuiTextures {
+
+    static void init() {}
 
     //GREGTECH
     public static final UITexture GREGTECH_LOGO = UITexture.fullImage(GTValues.MODID, "textures/gui/icon/gregtech_logo.png", false);
@@ -11,8 +14,8 @@ public class GuiTextures extends com.cleanroommc.modularui.drawable.GuiTextures 
     public static final UITexture GREGTECH_LOGO_DARK = UITexture.fullImage(GTValues.MODID, "textures/gui/icon/gregtech_logo_dark.png", false);
     public static final UITexture GREGTECH_LOGO_BLINKING_YELLOW = UITexture.fullImage(GTValues.MODID, "textures/gui/icon/gregtech_logo_blinking_yellow.png", false);
     public static final UITexture GREGTECH_LOGO_BLINKING_RED = UITexture.fullImage(GTValues.MODID, "textures/gui/icon/gregtech_logo_blinking_red.png", false);
-
     //BASE TEXTURES
+
     public static final UITexture BACKGROUND = UITexture.builder()
             .location(GTValues.MODID, "textures/gui/base/bordered_background.png")
             .imageSize(176, 166)
@@ -36,11 +39,10 @@ public class GuiTextures extends com.cleanroommc.modularui.drawable.GuiTextures 
             .adaptable(3)
             .canApplyTheme()
             .build();*/
-
     //public static final SteamTexture BACKGROUND_STEAM = SteamTexture.fullImage(GTValues.MODID, "textures/gui/base/background_%s.png", 176, 166, 3, 3);
+
     public static final UITexture CLIPBOARD_BACKGROUND = UITexture.fullImage(GTValues.MODID, "textures/gui/base/clipboard_background.png", false);
     public static final UITexture CLIPBOARD_PAPER_BACKGROUND = UITexture.fullImage(GTValues.MODID, "textures/gui/base/clipboard_paper_background.png", false);
-
     public static final UITexture DISPLAY = UITexture.builder()
             .location(GTValues.MODID, "textures/gui/base/display.png")
             .imageSize(143, 75)
@@ -48,6 +50,7 @@ public class GuiTextures extends com.cleanroommc.modularui.drawable.GuiTextures 
             .build();
 
     public static final UITexture BUTTON_PROXY = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/button_proxy.png", false);
+
     public static final UITexture CLIPBOARD_CHECK_BOX = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/clipboard_checkbox.png", false);
 
     /*public static final UITexture BLANK = UITexture.fullImage(GTValues.MODID, "textures/gui/base/blank.png", 1, 1, 0, 0);
@@ -60,8 +63,11 @@ public class GuiTextures extends com.cleanroommc.modularui.drawable.GuiTextures 
     public static final UITexture SLOT_DARKENED = UITexture.fullImage(GTValues.MODID, "textures/gui/base/darkened_slot.png");
     public static final SteamTexture SLOT_STEAM = SteamTexture.fullImage(GTValues.MODID, "textures/gui/base/slot_%s.png");
     public static final UITexture TOGGLE_BUTTON_BACK = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/toggle_button_background.png");*/
-
     // COVER UI TEXTURES
+
+    public static final UITexture COVER_BUTTON = new UITexture(new ResourceLocation(GTValues.MODID, "gui/base/cover_normal"), 0f, 0f, 1f, 0.5f, true);
+    public static final UITexture COVER_BUTTON_HOVER = new UITexture(new ResourceLocation(GTValues.MODID, "gui/base/cover_normal_hovered"), 0f, 0f, 1f, 0.5f, false);
+    public static final UITexture COVER_DISABLED = UITexture.fullImage(GTValues.MODID, "textures/gui/base/cover_normal_disabled.png");
     public static final UITexture CROSS = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/cross.png");
     public static final UITexture EXPORT = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/export.png");
     public static final UITexture FILTERED = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/filtered.png");
@@ -319,4 +325,10 @@ public class GuiTextures extends com.cleanroommc.modularui.drawable.GuiTextures 
     public static final UITexture CONFIG_ARROW = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/config_arrow.png");
     public static final UITexture CONFIG_ARROW_DARK = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/config_arrow_dark.png");
     public static final UITexture SELECT_BOX = UITexture.fullImage(GTValues.MODID, "textures/gui/widget/select_box.png");
+
+    static {
+        registerBackground("cover_button", COVER_BUTTON);
+        registerBackground("cover_button_hover", COVER_BUTTON_HOVER);
+        registerBackground("cover_button_disabled", COVER_DISABLED);
+    }
 }
