@@ -51,9 +51,17 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onRightClick(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+        if (!getCoverableView().getWorld().isRemote) {
+            openUI((EntityPlayerMP) player);
+        }
+        return EnumActionResult.SUCCESS;
+    }
+
+    @Override
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
         if (!getWorld().isRemote) {
-            openUI((EntityPlayerMP) playerIn);
+            openUI((EntityPlayerMP) player);
         }
         return EnumActionResult.SUCCESS;
     }

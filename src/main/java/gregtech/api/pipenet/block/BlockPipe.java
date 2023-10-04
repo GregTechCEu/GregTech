@@ -486,7 +486,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (worldIn.isRemote) {
             return getClientCollisionRayTrace(worldIn, pos, start, end);
         }
-        return RayTracer.rayTraceCuboidsClosest(start, end, pos, FULL_CUBE_COLLISION);
+        return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos, null));
     }
 
     @SideOnly(Side.CLIENT)
@@ -570,13 +570,14 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         CoverHolder coverHolder = pipeTile.getCoverableImplementation();
 
         // Check if the machine grid is being rendered
-        if (hasPipeCollisionChangingItem(world, pos, entityIn)) {
+        boolean usingGrid = hasPipeCollisionChangingItem(world, pos, entityIn);
+        if (usingGrid) {
             result.add(FULL_CUBE_COLLISION);
         }
 
         // Always add normal collision so player doesn't "fall through" the cable/pipe when
         // a tool is put in hand, and will still be standing where they were before.
-        result.add(new IndexedCuboid6(new CoverRayTracer.PrimaryBoxData(true), getSideBox(null, thickness)));
+        result.add(new IndexedCuboid6(new CoverRayTracer.PrimaryBoxData(usingGrid), getSideBox(null, thickness)));
         for (EnumFacing side : EnumFacing.VALUES) {
             if ((actualConnections & 1 << side.getIndex()) > 0) {
                 result.add(new IndexedCuboid6(new PipeConnectionData(side), getSideBox(side, thickness)));
