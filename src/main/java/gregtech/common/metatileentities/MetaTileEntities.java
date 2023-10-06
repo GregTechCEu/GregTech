@@ -664,7 +664,7 @@ public class MetaTileEntities {
         HPCA_ACTIVE_COOLER_COMPONENT = registerMetaTileEntity(1416, new MetaTileEntityHPCACooler(gregtechId("hpca.active_cooler_component"), true));
         HPCA_BRIDGE_COMPONENT = registerMetaTileEntity(1417, new MetaTileEntityHPCABridge(gregtechId("hpca.bridge_component")));
         // Free IDs 1418, 1419
-        endPos = GregTechAPI.isHighTier() ? LASER_INPUT_HATCH_256.length - 1 : Math.min(LASER_INPUT_HATCH_256.length - 1, GTValues.UHV + 1 - GTValues.IV);
+        endPos = GregTechAPI.isHighTier() ? LASER_INPUT_HATCH_256.length - 1 : Math.min(LASER_INPUT_HATCH_256.length - 1, GTValues.UHV - GTValues.IV);
         for (int i = 0; i < endPos; i++) {
             int v = i + GTValues.IV;
             String voltageName = GTValues.VN[v].toLowerCase();
