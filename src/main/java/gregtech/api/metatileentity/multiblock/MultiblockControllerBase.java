@@ -428,4 +428,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }
         doExplosion(explosionPower);
     }
+
+    /**
+     * @param part the part to check
+     * @return if the multiblock part is terrain and weather resistant
+     */
+    public boolean isMultiblockPartWeatherResistant(@Nonnull IMultiblockPart part) {
+        return false;
+    }
 }
