@@ -171,4 +171,11 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     public int getDefaultPaintingColor() {
         return !isAttachedToMultiBlock() && hatchTexture == null ? super.getDefaultPaintingColor() : 0xFFFFFF;
     }
+
+    @Override
+    public boolean getIsWeatherOrTerrainResistant() {
+        MultiblockControllerBase controllerBase = getController();
+        if (controllerBase == null) return super.getIsWeatherOrTerrainResistant();
+        return controllerBase.isMultiblockPartWeatherResistant(this);
+    }
 }
