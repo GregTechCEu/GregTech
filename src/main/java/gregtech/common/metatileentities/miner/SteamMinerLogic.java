@@ -6,8 +6,8 @@ import javax.annotation.Nonnull;
 
 public class SteamMinerLogic extends MinerLogic<SteamMiner> {
 
-    public SteamMinerLogic(@Nonnull SteamMiner steamMiner, int workFrequency, int maximumRadius) {
-        super(steamMiner, workFrequency, maximumRadius);
+    public SteamMinerLogic(@Nonnull SteamMiner steamMiner, int workFrequency, int maximumDiameter) {
+        super(steamMiner, workFrequency, maximumDiameter);
     }
 
     @Override

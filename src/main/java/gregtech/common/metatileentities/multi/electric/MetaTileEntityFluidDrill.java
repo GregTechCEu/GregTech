@@ -187,7 +187,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
                 textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
             }
             if (minerLogic.isInventoryFull()) {
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
+                textList.add(new TextComponentTranslation("gregtech.machine.fluid_drilling_rig.inventory_full").setStyle(new Style().setColor(TextFormatting.RED)));
             }
         }
     }

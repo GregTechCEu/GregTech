@@ -1,84 +1,28 @@
 package gregtech.common.metatileentities.miner;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.BlockUtility;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
-import gregtech.client.renderer.texture.Textures;
-import gregtech.common.ConfigHolder;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Objects;
 
 public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
-
-    /**
-     * Maximum amount of blocks to scan in one tick
-     */
-    private static final int MAX_BLOCK_SCAN = 100;
-
-    private static final Cuboid6 PIPE_CUBOID = new Cuboid6(4 / 16.0, 0.0, 4 / 16.0, 12 / 16.0, 1.0, 12 / 16.0);
-
-    private static String oreReplacementConfigCache;
-    private static IBlockState oreReplacement;
-
-    @Nonnull
-    @SuppressWarnings("deprecation")
-    public static IBlockState getOreReplacement() {
-        String config = ConfigHolder.machines.replaceMinedBlocksWith;
-        if (Objects.equals(oreReplacementConfigCache, config)) {
-            return oreReplacement;
-        }
-
-        oreReplacementConfigCache = config;
-
-        String[] blockDescription = StringUtils.split(config, ":");
-        String blockName = blockDescription.length <= 2 ? config : blockDescription[0] + ":" + blockDescription[1];
-        Block block = Block.getBlockFromName(blockName);
-
-        if (block == null) {
-            GTLog.logger.error("Invalid configuration on entry 'machines/replaceMinedBlocksWith': Cannot find block with name '{}', using cobblestone as fallback.", blockName);
-            return oreReplacement = Blocks.COBBLESTONE.getDefaultState();
-        } else if (blockDescription.length <= 2 || blockDescription[2].isEmpty()) {
-            return oreReplacement = block.getDefaultState();
-        } else {
-            try {
-                return oreReplacement = block.getDefaultState().getBlock().getStateFromMeta(Integer.parseInt(blockDescription[2]));
-            } catch (NumberFormatException ex) {
-                GTLog.logger.error("Invalid configuration on entry 'machines/replaceMinedBlocksWith': Cannot parse metadata value '{}' as integer, using cobblestone as fallback.", blockDescription[2]);
-                return oreReplacement = Blocks.COBBLESTONE.getDefaultState();
-            }
-        }
-    }
 
     protected final MTE mte;
 
@@ -92,17 +36,25 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
     private boolean done;
     private boolean workingEnabled = true;
 
-    protected long nextBlock;
-
     // last mined ore block
-
     protected final MutableBlockPos lastMinedOre = new MutableBlockPos();
     protected boolean hasLastMinedOre;
+    // number of ores processed so far
     protected int minedOreCount;
 
+    // pipe length used for rendering purposes
     private int pipeLength;
 
+    // non-negative value to limit Y level
+    private int yLimit;
+
+    // bool config for repeating the operation after finished
+    private boolean repeat;
+
     // transient values below (not saved)
+
+    @Nullable
+    private IMiningArea miningArea;
 
     // flag indicating last insertion to inventory failed
     private boolean inventoryFull;
@@ -111,13 +63,11 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
     // status of the last update; true means miner is working, false means no
     private boolean active;
 
-    // scan area; essentially bottomless AABB.
+    private boolean preview;
 
-    protected int startX;
-    protected int startY;
-    protected int startZ;
-    protected int endX;
-    protected int endZ;
+    // remote instance only, contains IMiningArea instances deserialized from packet
+    @Nullable
+    private IMiningArea previewArea;
 
     /**
      * Creates the general logic for all in-world ore block miners
@@ -188,6 +138,19 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
         return this.workingEnabled;
     }
 
+    public boolean isInventoryFull() {
+        return this.inventoryFull;
+    }
+
+    public int getPipeLength() {
+        return this.pipeLength;
+    }
+
+    @Nullable
+    public IMiningArea getPreviewArea() {
+        return this.previewArea;
+    }
+
     /**
      * @param isWorkingEnabled the new state of the miner's ability to work: true to change to enabled, else false
      */
@@ -202,6 +165,43 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
         }
     }
 
+    public int getYLimit() {
+        return yLimit;
+    }
+
+    public void setYLimit(int yLimit) {
+        if (yLimit != this.yLimit) {
+            this.yLimit = yLimit;
+            this.rebuildScanArea = true;
+            this.mte.markDirty();
+            if (this.preview) {
+                updatePreview();
+            }
+        }
+    }
+
+    public boolean isPreviewEnabled() {
+        return preview;
+    }
+
+    public void setPreviewEnabled(boolean previewEnabled) {
+        if (this.preview != previewEnabled) {
+            this.preview = previewEnabled;
+            updatePreview();
+        }
+    }
+
+    public boolean isRepeat() {
+        return repeat;
+    }
+
+    public void setRepeat(boolean repeat) {
+        if (this.repeat != repeat) {
+            this.repeat = repeat;
+            this.mte.markDirty();
+        }
+    }
+
     /**
      * @return whether the miner is currently working
      */
@@ -213,11 +213,10 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
      * Recalculates the mining area and restarts the miner, if it was done
      */
     public void reset() {
-        this.nextBlock = 0;
         this.hasLastMinedOre = false;
         this.pipeLength = 0;
 
-        initBoundary();
+        this.miningArea = Objects.requireNonNull(createMiningArea(), "createMiningArea() returned null!");
 
         if (this.done) {
             this.setWorkingEnabled(false);
@@ -237,17 +236,26 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
     }
 
     /**
-     * Initialize block boundary for mining, i.e. {@link #startX}, {@link #startY}, {@link #startZ}, {@link #endX} and
-     * {@link #endZ}
+     * Create instance of {@link IMiningArea} based on current state.
+     *
+     * @return new {@link IMiningArea} instance
      */
-    protected void initBoundary() {
+    @Nonnull
+    protected IMiningArea createMiningArea() {
         BlockPos origin = getOrigin();
         int radius = this.currentDiameter / 2;
-        this.startX = origin.getX() - radius;
-        this.startY = origin.getY();
-        this.startZ = origin.getZ() - radius;
-        this.endX = origin.getX() + radius;
-        this.endZ = origin.getZ() + radius;
+        int startX = origin.getX() - radius;
+        int startY = origin.getY() - 1;
+        int startZ = origin.getZ() - radius;
+        int endX = startX + this.currentDiameter;
+        int endY = this.yLimit > 0 ? origin.getY() - this.yLimit : Integer.MIN_VALUE;
+        int endZ = startZ + this.currentDiameter;
+        return new SimpleMiningArea(startX, startY, startZ, endX, endY, endZ);
+    }
+
+    @Nonnull
+    protected IMiningArea readPreviewArea(@Nonnull PacketBuffer buffer) {
+        return SimpleMiningArea.readPreview(buffer);
     }
 
     /**
@@ -267,38 +275,50 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
     }
 
     private boolean mine() {
-        if (!this.workingEnabled || this.done || !canOperate()) {
+        if (!this.workingEnabled || (!this.repeat && this.done) || !canOperate()) {
             return false;
         }
 
-        if (this.rebuildScanArea) {
+        if (this.rebuildScanArea || this.miningArea == null) {
             this.rebuildScanArea = false;
             reset();
         }
 
+        IMiningArea miningArea = Objects.requireNonNull(this.miningArea);
+
+        if (this.repeat && this.done) {
+            this.done = false;
+            miningArea.reset();
+        }
+
         World world = mte.getWorld();
-        for (int i = MAX_BLOCK_SCAN; i > 0; i--) {
-            BlockPos pos = getBlockPosAt(this.nextBlock);
-            if (pos == null || !world.isValid(pos)) {
-                this.done = true;
+        BlockPos origin = getOrigin();
+        for (int i = MinerUtil.MAX_BLOCK_SCAN; i > 0; i--) {
+            MutableBlockPos pos = this.mpos;
+            if (!miningArea.getCurrentBlockPos(pos) || !world.isValid(pos) || (this.yLimit > 0 && origin.getY() - yLimit > pos.getY())) {
+                if (this.repeat) {
+                    miningArea.reset();
+                } else {
+                    this.done = true;
+                }
                 return false;
             }
 
             IBlockState state = world.getBlockState(pos);
-            boolean isOrigin = alignsWithOrigin(pos);
+            boolean isOrigin = pos.getX() == origin.getX() && pos.getZ() == origin.getZ();
 
             // skip unbreakable block / TE blocks
             if (state.getBlockHardness(world, pos) < 0 || state.getBlock().hasTileEntity(state)) {
                 // center block (where mining pipes goes in) can be skipped by this, it'll probably look kind of janky
                 // but it's 100x better than voiding bedrock
                 if (isOrigin) incrementPipeLength();
-                this.nextBlock++;
+                miningArea.nextBlock();
                 continue;
             }
 
             boolean isOre = BlockUtility.isOre(state);
             if (!isOrigin && !isOre) {
-                this.nextBlock++;
+                miningArea.nextBlock();
                 continue;
             }
 
@@ -317,36 +337,14 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
                 this.minedOreCount++;
             }
             this.mte.drainMiningResources(false);
-            world.setBlockState(pos, isOrigin ? Blocks.AIR.getDefaultState() : getOreReplacement());
-
+            world.setBlockState(pos, isOrigin ? Blocks.AIR.getDefaultState() : MinerUtil.getOreReplacement());
             if (isOrigin) incrementPipeLength();
-
-            this.nextBlock++;
-
+            miningArea.nextBlock();
             onMineOperation(pos, isOre, isOrigin);
             this.mte.markDirty();
             return true;
         }
         return true;
-    }
-
-    @Nullable
-    protected final BlockPos getBlockPosAt(long index) {
-        if (index < 0) return null;
-        int sizeX = this.endX - this.startX;
-        int sizeZ = this.endZ - this.startZ;
-        if (sizeX <= 0 || sizeZ <= 0) return null;
-
-        int x = this.startX + (int) (index % sizeX);
-        index /= sizeX;
-        int z = this.startZ + (int) (index % sizeZ);
-        int y = this.startY - (int) (index / sizeZ);
-        return this.mpos.setPos(x, y, z);
-    }
-
-    private boolean alignsWithOrigin(@Nonnull BlockPos pos) {
-        BlockPos origin = getOrigin();
-        return pos.getX() == origin.getX() && pos.getZ() == origin.getZ();
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -377,25 +375,52 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
 
     private void incrementPipeLength() {
         this.pipeLength++;
+        this.mte.markDirty();
         this.mte.writeCustomData(GregtechDataCodes.PUMP_HEAD_LEVEL, b -> b.writeVarInt(pipeLength));
     }
 
     private void resetPipeLength() {
         if (this.pipeLength == 0) return;
         this.pipeLength = 0;
+        this.mte.markDirty();
         this.mte.writeCustomData(GregtechDataCodes.PUMP_HEAD_LEVEL, b -> b.writeVarInt(pipeLength));
     }
 
-    /**
-     * renders the pipe beneath the miner
-     */
-    @SideOnly(Side.CLIENT)
-    public void renderPipe(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.PIPE_IN_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
-        for (int i = 0; i < this.pipeLength; i++) {
-            translation.translate(0.0, -1.0, 0.0);
-            this.mte.getPipeTexture().render(renderState, translation, pipeline, PIPE_CUBOID);
+    private void updatePreview() {
+        this.mte.writeCustomData(GregtechDataCodes.MINER_UPDATE_PREVIEW, this::writePreviewUpdatePacket);
+    }
+
+    private void writePreviewUpdatePacket(@Nonnull PacketBuffer buffer) {
+        if (!this.preview) {
+            buffer.writeBoolean(false);
+            return;
         }
+        buffer.writeBoolean(true);
+        if (this.miningArea == null) {
+            this.miningArea = Objects.requireNonNull(createMiningArea(), "createMiningArea() returned null!");
+        }
+        this.miningArea.writePreviewPacket(buffer);
+        buffer.writeVarInt(this.yLimit);
+    }
+
+    private void readPreviewUpdatePacket(@Nonnull PacketBuffer buffer) {
+        if (!buffer.readBoolean()) {
+            this.previewArea = null;
+            return;
+        }
+        this.previewArea = readPreviewArea(buffer);
+        this.yLimit = buffer.readVarInt();
+    }
+
+    /**
+     * Get the block currently being mined by this miner.
+     *
+     * @param mpos Mutable block position
+     * @return {@code true} if the block exists (in which the {@code mpos} instance gets modified with the value, or
+     * {@code false} if it does not exist
+     */
+    public boolean getCurrentBlock(@Nonnull MutableBlockPos mpos) {
+        return this.miningArea != null && this.miningArea.getCurrentBlockPos(mpos);
     }
 
     /**
@@ -404,9 +429,8 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
     @Nonnull
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
         data.setInteger("currentDiameter", this.currentDiameter);
-        data.setBoolean("done", this.done);
-        data.setBoolean("workingEnabled", this.workingEnabled);
-        data.setLong("nextBlock", this.nextBlock);
+        if (this.done) data.setBoolean("done", true);
+        if (!this.workingEnabled) data.setBoolean("disabled", true);
 
         if (this.hasLastMinedOre) {
             data.setInteger("lastMinedOreX", this.lastMinedOre.getX());
@@ -416,6 +440,13 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
 
         data.setInteger("minedOreCount", this.minedOreCount);
         data.setInteger("pipeLength", this.pipeLength);
+
+        if (this.yLimit > 0) data.setInteger("yLimit", this.yLimit);
+        if (this.repeat) data.setBoolean("repeat", true);
+
+        if (this.miningArea != null) {
+            this.miningArea.write(data);
+        }
 
         return data;
     }
@@ -434,7 +465,6 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
 
             this.done = data.getInteger("isDone") != 0;
             this.workingEnabled = data.getInteger("isWorkingEnabled") != 0;
-            this.nextBlock = 0;
 
             this.hasLastMinedOre = false;
             this.minedOreCount = 0;
@@ -444,8 +474,7 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
 
         this.currentDiameter = MathHelper.clamp(data.getInteger("currentDiameter"), 1, getMaximumDiameter());
         this.done = data.getBoolean("done");
-        this.workingEnabled = data.getBoolean("workingEnabled");
-        this.nextBlock = data.getLong("nextBlock");
+        this.workingEnabled = !data.getBoolean("disabled");
 
         if (data.hasKey("lastMinedOreX", Constants.NBT.TAG_INT)) {
             this.lastMinedOre.setPos(data.getInteger("lastMinedOreX"),
@@ -458,6 +487,16 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
 
         this.minedOreCount = Math.max(0, data.getInteger("minedOreCount"));
         this.pipeLength = Math.max(0, data.getInteger("pipeLength"));
+
+        this.yLimit = Math.max(0, data.getInteger("yLimit"));
+        this.repeat = data.getBoolean("repeat");
+
+        this.miningArea = createMiningArea();
+        // Shouldn't be a problem but whatever
+        //noinspection ConstantValue
+        if (this.miningArea != null) {
+            this.miningArea.read(data);
+        }
     }
 
     /**
@@ -466,6 +505,7 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
     public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
         buf.writeVarInt(this.pipeLength);
         buf.writeBoolean(this.workingEnabled);
+        writePreviewUpdatePacket(buf);
     }
 
     /**
@@ -474,6 +514,7 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
     public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
         this.pipeLength = buf.readVarInt();
         this.workingEnabled = buf.readBoolean();
+        readPreviewUpdatePacket(buf);
     }
 
     /**
@@ -493,38 +534,9 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
                 this.workingEnabled = buf.readBoolean();
                 this.mte.scheduleRenderUpdate();
             }
+            case GregtechDataCodes.MINER_UPDATE_PREVIEW -> {
+                readPreviewUpdatePacket(buf);
+            }
         }
-    }
-
-    public void addMinerArea(@Nonnull List<ITextComponent> textList) {
-        int diameter = getCurrentDiameter();
-        // TODO
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.working_area", diameter, diameter));
-    }
-
-    public void addMinerWorkStatus(@Nonnull List<ITextComponent> textList) {
-        if (isDone()) {
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.done")
-                    .setStyle(new Style().setColor(TextFormatting.GREEN)));
-        } else if (isWorking()) {
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.working")
-                    .setStyle(new Style().setColor(TextFormatting.GOLD)));
-        } else if (!isWorkingEnabled()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-        }
-    }
-
-    public void addInventoryStatus(@Nonnull List<ITextComponent> textList) {
-        if (this.inventoryFull) {
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
-        }
-    }
-
-    public void addLastMinedBlock(@Nonnull List<ITextComponent> textList) {
-        if (!this.hasLastMinedOre) return;
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.minex", this.lastMinedOre.getX()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.miney", this.lastMinedOre.getY()));
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.minez", this.lastMinedOre.getZ()));
     }
 }

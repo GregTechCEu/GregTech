@@ -1,8 +1,9 @@
 package gregtech.common.metatileentities.miner;
 
-import gregtech.client.renderer.ICubeRenderer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.text.ITextComponent;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public interface IMiner {
 
@@ -14,6 +15,5 @@ public interface IMiner {
      */
     boolean drainMiningResources(boolean simulate);
 
-    @SideOnly(Side.CLIENT)
-    ICubeRenderer getPipeTexture();
+    default void describeMiningResourceStatus(@Nonnull List<ITextComponent> textList) {}
 }

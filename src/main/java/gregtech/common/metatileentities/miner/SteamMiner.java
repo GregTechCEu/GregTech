@@ -14,13 +14,14 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
+import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.ConfigHolder;
@@ -32,12 +33,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -49,7 +52,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class SteamMiner extends MetaTileEntity implements IMiner, IControllable, IVentable, IDataInfoProvider {
+public class SteamMiner extends MetaTileEntity implements IMiner, IControllable, IVentable, IDataInfoProvider, IFastRenderMetaTileEntity {
 
     private boolean needsVenting = false;
     private boolean ventingStuck = false;
@@ -59,11 +62,13 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
 
     private final SteamMinerLogic minerLogic;
 
-    public SteamMiner(ResourceLocation metaTileEntityId, int workFrequency, int maximumRadius) {
+    private boolean hasNotEnoughEnergy;
+
+    public SteamMiner(ResourceLocation metaTileEntityId, int workFrequency, int maximumDiameter) {
         super(metaTileEntityId);
         this.inventorySize = 4;
         this.energyPerTick = 16;
-        this.minerLogic = new SteamMinerLogic(this, workFrequency, maximumRadius);
+        this.minerLogic = new SteamMinerLogic(this, workFrequency, maximumDiameter);
         initializeInventory();
     }
 
@@ -101,40 +106,76 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         }
         Textures.STEAM_VENT_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         Textures.PIPE_IN_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
-        minerLogic.renderPipe(renderState, translation, pipeline);
+        MinerUtil.renderPipe(Textures.BRONZE_PLATED_BRICKS, this.minerLogic.getPipeLength(), renderState, translation, pipeline);
+    }
+
+    @Override
+    public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
+        IMiningArea previewArea = this.minerLogic.getPreviewArea();
+        if (previewArea != null) previewArea.renderMetaTileEntity(this, x, y, z, partialTicks);
+    }
+
+    @Override
+    public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
+        IMiningArea previewArea = this.minerLogic.getPreviewArea();
+        if (previewArea != null) previewArea.renderMetaTileEntityFast(this, renderState, translation, partialTicks);
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        IMiningArea previewArea = this.minerLogic.getPreviewArea();
+        return previewArea != null ? previewArea.getRenderBoundingBox() : MinerUtil.EMPTY_AABB;
+    }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        IMiningArea previewArea = this.minerLogic.getPreviewArea();
+        return previewArea != null && previewArea.shouldRenderInPass(pass);
+    }
+
+    @Override
+    public boolean isGlobalRenderer() {
+        return true;
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        int rowSize = (int) Math.sqrt(inventorySize);
+        int columns = 2;
+        int xStart = (176 - (18 * columns)) / 2;
+        int yStart = 25;
+        int sideWidgetY = yStart + (columns * 18 - 18) / 2;
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(false), 175, 176);
-        builder.bindPlayerInventory(entityPlayer.inventory, 94);
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(false), 176, 166)
+                .label(6, 6, getMetaFullName())
+                .shouldColor(false)
+                .widget(new ToggleButtonWidget(152, 25, 18, 18,
+                        GuiTextures.BUTTON_MINER_AREA_PREVIEW,
+                        this.minerLogic::isPreviewEnabled, this.minerLogic::setPreviewEnabled));
 
-        for (int y = 0; y < rowSize; y++) {
-            for (int x = 0; x < rowSize; x++) {
-                int index = y * rowSize + x;
-                builder.widget(new SlotWidget(exportItems, index, 142 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(false)));
-            }
+        IItemHandlerModifiable exportItems = this.getExportItems();
+        for (int i = 0, slots = exportItems.getSlots(); i < slots; i++) {
+            builder.slot(exportItems, i, xStart + 18 * (i % columns), yStart + 18 * (i / columns),
+                    true, false, GuiTextures.SLOT_STEAM.get(false));
         }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(false), 10);
 
-        builder.image(7, 16, 105, 75, GuiTextures.DISPLAY_STEAM.get(false))
-                .label(6, 6, getMetaFullName());
-        builder.widget(new AdvancedTextWidget(10, 19, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(84));
-        builder.widget(new AdvancedTextWidget(70, 19, this.minerLogic::addLastMinedBlock, 0xFFFFFF)
-                .setMaxWidthLimit(84));
-
+        builder.widget(
+                new ProgressWidget(() -> {
+                    if (!this.minerLogic.isWorking()) return 0;
+                    int workFrequency = this.minerLogic.getWorkFrequency();
+                    return workFrequency < 2 ? 1 : (getOffsetTimer() % workFrequency) / (double) workFrequency;
+                }, xStart - 4 - 21, sideWidgetY, 21, 18,
+                        GuiTextures.PROGRESS_BAR_MACERATE_STEAM.get(false), ProgressWidget.MoveType.HORIZONTAL)
+        ).widget(
+                new ImageWidget(xStart - 4 - 20, sideWidgetY + 18, 18, 18,
+                        GuiTextures.INDICATOR_NO_STEAM.get(false))
+                        .setPredicate(() -> this.hasNotEnoughEnergy)
+        ).bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(false), 0);
 
         return builder.build(getHolder(), entityPlayer);
     }
 
-    private void addDisplayText(List<ITextComponent> textList) {
-        this.minerLogic.addMinerArea(textList);
-        this.minerLogic.addMinerWorkStatus(textList);
-        this.minerLogic.addInventoryStatus(textList);
+    @Override
+    public void describeMiningResourceStatus(@Nonnull List<ITextComponent> textList) {
         if (this.ventingStuck) {
             textList.add(new TextComponentTranslation("gregtech.machine.steam_miner.vent")
                     .setStyle(new Style().setColor(TextFormatting.RED)));
@@ -163,19 +204,11 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
 
     @Override
     public boolean drainMiningResources(boolean simulate) {
-        int resultSteam = importFluids.getTankAt(0).getFluidAmount() - energyPerTick;
-        if (!ventingStuck && resultSteam >= 0L && resultSteam <= importFluids.getTankAt(0).getCapacity()) {
-            if (!simulate)
-                importFluids.getTankAt(0).drain(energyPerTick, true);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public ICubeRenderer getPipeTexture() {
-        return Textures.BRONZE_PLATED_BRICKS;
+        if (this.ventingStuck) return false;
+        FluidStack drained = this.importFluids.drain(energyPerTick, simulate);
+        boolean result = drained != null && drained.amount >= energyPerTick;
+        this.hasNotEnoughEnergy = !result;
+        return result;
     }
 
     @Override

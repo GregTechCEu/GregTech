@@ -40,8 +40,10 @@ public class GregtechDataCodes {
     public static final int INIT_CLIPBOARD_NBT = 3;
 
     public static final int UPDATE_UI = 10; // 10-36
-    // Pump
+    // Pump, Miner
     public static final int PUMP_HEAD_LEVEL = 200;
+    // Miner
+    public static final int MINER_UPDATE_PREVIEW = 201;
 
     // Item Collector, Magic Energy Absorber, Large Boiler, Steam Oven
     public static final int IS_WORKING = 100;

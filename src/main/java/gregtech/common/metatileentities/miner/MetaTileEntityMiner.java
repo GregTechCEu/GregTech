@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.google.common.math.IntMath;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -11,13 +12,15 @@ import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
+import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.client.resources.I18n;
@@ -26,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -39,10 +43,11 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner, IControllable, IDataInfoProvider {
+public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner, IControllable, IDataInfoProvider, IFastRenderMetaTileEntity {
 
     private final ItemStackHandler chargerInventory;
 
@@ -50,6 +55,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     private final long energyPerTick;
 
     private final MinerLogic<MetaTileEntityMiner> minerLogic;
+
+    private boolean hasNotEnoughEnergy;
 
     public MetaTileEntityMiner(@Nonnull ResourceLocation metaTileEntityId, int tier, int workFrequency, int maximumDiameter) {
         super(metaTileEntityId, tier);
@@ -86,58 +93,94 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
             } else
                 Textures.CHUNK_MINER_OVERLAY.renderSided(renderSide, renderState, translation, pipeline);
         }
-        minerLogic.renderPipe(renderState, translation, pipeline);
+        MinerUtil.renderPipe(Textures.SOLID_STEEL_CASING, this.minerLogic.getPipeLength(), renderState, translation, pipeline);
+    }
+
+    @Override
+    public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
+        IMiningArea previewArea = this.minerLogic.getPreviewArea();
+        if (previewArea != null) previewArea.renderMetaTileEntity(this, x, y, z, partialTicks);
+    }
+
+    @Override
+    public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
+        IMiningArea previewArea = this.minerLogic.getPreviewArea();
+        if (previewArea != null) previewArea.renderMetaTileEntityFast(this, renderState, translation, partialTicks);
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        IMiningArea previewArea = this.minerLogic.getPreviewArea();
+        return previewArea != null ? previewArea.getRenderBoundingBox() : MinerUtil.EMPTY_AABB;
+    }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        IMiningArea previewArea = this.minerLogic.getPreviewArea();
+        return previewArea != null && previewArea.shouldRenderInPass(pass);
+    }
+
+    @Override
+    public boolean isGlobalRenderer() {
+        return true;
     }
 
     @Override
     protected ModularUI createUI(@Nonnull EntityPlayer entityPlayer) {
-        int rowSize = (int) Math.sqrt(inventorySize);
-        ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 195, 176);
-        builder.bindPlayerInventory(entityPlayer.inventory, 94);
+        IItemHandlerModifiable exportItems = this.getExportItems();
+        int slots = exportItems.getSlots();
+        int columns = IntMath.sqrt(slots, RoundingMode.UP);
+        int xStart = (176 - (18 * columns)) / 2;
+        int yOffset = Math.max(0, 16 + ((columns + 1) * 18) + 4 - 80);
+        int yStart = yOffset > 0 ? 16 : 21;
+        int sideWidgetY = yStart + (columns * 18 - 20) / 2;
 
-        if (getTier() == GTValues.HV) {
-            for (int y = 0; y < rowSize; y++) {
-                for (int x = 0; x < rowSize; x++) {
-                    int index = y * rowSize + x;
-                    builder.widget(new SlotWidget(exportItems, index, 151 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
-                            .setBackgroundTexture(GuiTextures.SLOT));
-                }
-            }
-        } else {
-            for (int y = 0; y < rowSize; y++) {
-                for (int x = 0; x < rowSize; x++) {
-                    int index = y * rowSize + x;
-                    builder.widget(new SlotWidget(exportItems, index, 142 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
-                            .setBackgroundTexture(GuiTextures.SLOT));
-                }
-            }
+        ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset)
+                .label(5, 5, getMetaFullName())
+                .widget(new ToggleButtonWidget(152, 25, 18, 18,
+                        GuiTextures.BUTTON_MINER_AREA_PREVIEW,
+                        this.minerLogic::isPreviewEnabled, this.minerLogic::setPreviewEnabled))
+                .widget(new SlotWidget(this.chargerInventory, 0, 79, 62 + yOffset, true, true, false)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY)
+                        .setTooltipText("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()], GTValues.VNF[getTier()]));
+
+        for (int i = 0; i < slots; i++) {
+            builder.slot(exportItems, i, xStart + 18 * (i % columns), yStart + 18 * (i / columns),
+                    true, false, GuiTextures.SLOT);
         }
 
-        builder.image(7, 16, 105, 75, GuiTextures.DISPLAY)
-                .label(6, 6, getMetaFullName());
-        builder.widget(new AdvancedTextWidget(10, 19, this::addDisplayText, 0xFFFFFF)
-                .setMaxWidthLimit(84));
-        builder.widget(new AdvancedTextWidget(70, 19, this.minerLogic::addLastMinedBlock, 0xFFFFFF)
-                .setMaxWidthLimit(84));
-        builder.widget(new SlotWidget(chargerInventory, 0, 171, 152)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY));
+        builder.widget(
+                new ProgressWidget(() -> {
+                    if (!this.minerLogic.isWorking()) return 0;
+                    int workFrequency = this.minerLogic.getWorkFrequency();
+                    return workFrequency < 2 ? 1 : (getOffsetTimer() % workFrequency) / (double) workFrequency;
+                }, xStart - 4 - 20, sideWidgetY, 20, 20,
+                        GuiTextures.PROGRESS_BAR_MACERATE, ProgressWidget.MoveType.HORIZONTAL)
+        ).widget(
+                new ImageWidget(xStart - 4 - 20, sideWidgetY + 20, 18, 18,
+                        GuiTextures.INDICATOR_NO_ENERGY)
+                        .setIgnoreColor(true)
+                        .setPredicate(() -> this.hasNotEnoughEnergy)
+        ).widget(
+                new ImageWidget(152, 63 + yOffset, 17, 17,
+                        GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
+                        .setIgnoreColor(true)
+        ).bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, yOffset);
 
         return builder.build(getHolder(), entityPlayer);
     }
 
-    private void addDisplayText(@Nonnull List<ITextComponent> textList) {
-        this.minerLogic.addMinerArea(textList);
-        this.minerLogic.addMinerWorkStatus(textList);
-        this.minerLogic.addInventoryStatus(textList);
+    @Override
+    public void describeMiningResourceStatus(@Nonnull List<ITextComponent> textList) {
         if (!drainMiningResources(true)) {
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.needspower").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
         }
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
-        int currentArea = minerLogic.getCurrentDiameter();
-        tooltip.add(I18n.format("gregtech.machine.miner.tooltip", currentArea, currentArea));
+        tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick", energyPerTick)
                 + TextFormatting.GRAY + ", " + I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getWorkFrequency() / 20));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
@@ -158,18 +201,14 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     public boolean drainMiningResources(boolean simulate) {
         long resultEnergy = energyContainer.getEnergyStored() - energyPerTick;
         if (resultEnergy < 0 || resultEnergy > energyContainer.getEnergyCapacity()) {
+            this.hasNotEnoughEnergy = true;
             return false;
         }
         if (!simulate) {
             energyContainer.removeEnergy(energyPerTick);
         }
+        this.hasNotEnoughEnergy = false;
         return true;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public ICubeRenderer getPipeTexture() {
-        return Textures.SOLID_STEEL_CASING;
     }
 
     @Override
