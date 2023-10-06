@@ -48,6 +48,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
             ((LaserContainerHandler) this.buffer).setSideOutputCondition(s -> s == getFrontFacing());
         } else {
             this.buffer = LaserContainerHandler.receiverContainer(this, GTValues.V[tier] * 64L * amperage, GTValues.V[tier], amperage);
+            ((LaserContainerHandler) this.buffer).setSideInputCondition(s -> s == getFrontFacing());
         }
     }
 
