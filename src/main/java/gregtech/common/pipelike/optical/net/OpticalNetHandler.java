@@ -107,7 +107,7 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     private boolean traverseCanBridge(@Nonnull Collection<IOpticalComputationProvider> seen) {
         IOpticalComputationProvider provider = getComputationProvider(seen);
         if (provider == null) return true; // nothing found, so don't report a problem, just pass quietly
-        return provider.canBridge();
+        return provider.canBridge(seen);
     }
 
     @Nullable
