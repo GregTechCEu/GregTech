@@ -50,7 +50,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
     @Nonnull
     @Override
-    public Enum<ParallelLogicType> getParallelLogicType() {
+    public ParallelLogicType getParallelLogicType() {
         return ParallelLogicType.MULTIPLY; //TODO APPEND_FLUIDS
     }
 
