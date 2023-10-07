@@ -9,6 +9,7 @@ import codechicken.lib.util.TransformUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.uv.UV;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import gregtech.api.cover.ICoverable;
@@ -31,6 +32,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
@@ -38,6 +40,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.fml.relauncher.Side;
@@ -45,13 +48,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Mostly based on and (copied from) ThermalDynamics with minor tweaks
- * https://github.com/CoFH/ThermalDynamics/
+ * <p/>
+ * <a href="https://github.com/CoFH/ThermalDynamics/">Link</a>
  */
 @SideOnly(Side.CLIENT)
 public class FacadeRenderer implements IItemRenderer {
@@ -123,14 +126,14 @@ public class FacadeRenderer implements IItemRenderer {
             state = state.getBlock().getExtendedState(state, coverAccess, pos);
         } catch (Exception ignored) {
         }
-        long posRand = net.minecraft.util.math.MathHelper.getPositionRandom(pos);
-        List<BakedQuad> bakedQuads = new LinkedList<>(model.getQuads(state, null, posRand));
+        long posRand = MathHelper.getPositionRandom(pos);
+        List<BakedQuad> bakedQuads = new ArrayList<>(model.getQuads(state, null, posRand));
 
         for (EnumFacing face2 : EnumFacing.VALUES) {
             bakedQuads.addAll(model.getQuads(state, face2, posRand));
         }
 
-        List<CCQuad> quads = CCQuad.fromArray(bakedQuads);
+        List<CCQuad> quads = fromArray(bakedQuads);
         quads = sliceQuads(quads, side, bounds);
 
         if (!quads.isEmpty()) {
@@ -156,7 +159,7 @@ public class FacadeRenderer implements IItemRenderer {
                 quads.addAll(model.getQuads(null, face, 0));
             }
 
-            renderQuads = applyItemTint(sliceQuads(CCQuad.fromArray(quads), side, bounds), renderStack);
+            renderQuads = applyItemTint(sliceQuads(fromArray(quads), side, bounds), renderStack);
             itemQuadCache.put(cacheKey, renderQuads);
         }
 
@@ -171,7 +174,7 @@ public class FacadeRenderer implements IItemRenderer {
     }
 
     public static List<CCQuad> applyItemTint(List<CCQuad> quads, ItemStack stack) {
-        List<CCQuad> retQuads = new LinkedList<>();
+        List<CCQuad> retQuads = new ArrayList<>();
         for (CCQuad quad : quads) {
             int colour = -1;
 
@@ -226,7 +229,7 @@ public class FacadeRenderer implements IItemRenderer {
         double[][] quadPos = new double[4][3];
         boolean[] flat = new boolean[3];
         int verticesPerFace = 4;
-        List<CCQuad> finalQuads = new LinkedList<>();
+        List<CCQuad> finalQuads = new ArrayList<>();
 
         for (CCQuad quad : quads) {
 
@@ -325,6 +328,64 @@ public class FacadeRenderer implements IItemRenderer {
             return u + (x - u) * 0.001953125f;
         } else {
             return x;
+        }
+    }
+
+    private static List<CCQuad> fromArray(List<BakedQuad> bakedQuads) {
+        List<CCQuad> quads = new ArrayList<>();
+        for (BakedQuad quad : bakedQuads) {
+            quads.add(new FixedCCQuad(quad));
+        }
+        return quads;
+    }
+
+    /**
+     * Fixes incorrect arithmetic operation in {@link CCQuad#pipe(IVertexConsumer)}.
+     */
+    private static class FixedCCQuad extends CCQuad {
+
+        public FixedCCQuad(BakedQuad quad) {
+            super(quad);
+        }
+
+        @Override
+        public void pipe(IVertexConsumer consumer) {
+            quadulate();
+            computeNormals();
+            consumer.setApplyDiffuseLighting(applyDifuseLighting);
+            consumer.setTexture(sprite);
+            consumer.setQuadOrientation(getQuadFace());
+            consumer.setQuadTint(tintIndex);
+            for (int v = 0; v < 4; v++) {
+                for (int e = 0; e < consumer.getVertexFormat().getElementCount(); e++) {
+                    VertexFormatElement element = consumer.getVertexFormat().getElement(e);
+                    switch (element.getUsage()) {
+                        case POSITION -> {
+                            Vector3 pos = vertices[v].vec;
+                            consumer.put(e, (float) pos.x, (float) pos.y, (float) pos.z, 1);
+                        }
+                        case NORMAL -> {
+                            Vector3 normal = normals[v];
+                            consumer.put(e, (float) normal.x, (float) normal.y, (float) normal.z, 0);
+                        }
+                        case COLOR -> {
+                            Colour colour = colours[v];
+                            consumer.put(e, (colour.r & 0xFF) / 255F, (colour.g & 0xFF) / 255F, (colour.b & 0xFF) / 255F, (colour.a & 0xFF) / 255F);
+                        }
+                        case UV -> {
+                            if (element.getIndex() == 0) {
+                                UV uv = vertices[v].uv;
+                                consumer.put(e, (float) uv.u, (float) uv.v, 0, 1);
+                            } else {
+                                // fix
+                                int brightness = lightMaps[v];
+                                consumer.put(e, ((float) (brightness & 0xFFFF) / 0xFFFF) * 2, ((float) (brightness >> 16 & 0xFFFF) / 0xFFFF) * 2, 0, 1);
+                            }
+                        }
+                        default -> consumer.put(e);
+                    }
+                }
+            }
         }
     }
 }

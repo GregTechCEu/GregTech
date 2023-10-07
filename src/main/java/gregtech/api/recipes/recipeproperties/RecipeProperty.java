@@ -53,6 +53,27 @@ public abstract class RecipeProperty<T> {
         return false;
     }
 
+    /**
+     * Whether to hide the Total EU tooltip for the recipe in JEI.
+     */
+    public boolean hideTotalEU() {
+        return false;
+    }
+
+    /**
+     * Whether to hide the EU/t tooltip for the recipe in JEI.
+     */
+    public boolean hideEUt() {
+        return false;
+    }
+
+    /**
+     * Whether to hide the Duration tooltip for the recipe in JEI.
+     */
+    public boolean hideDuration() {
+        return false;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

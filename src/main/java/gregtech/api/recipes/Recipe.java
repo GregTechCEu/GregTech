@@ -363,6 +363,7 @@ public class Recipe {
                 .append("EUt", EUt)
                 .append("hidden", hidden)
                 .append("CTRecipe", isCTRecipe)
+                .append("GSRecipe", groovyRecipe)
                 .toString();
     }
 
@@ -584,6 +585,10 @@ public class Recipe {
 
     public Set<String> getPropertyKeys() {
         return recipePropertyStorage.getRecipePropertyKeys();
+    }
+
+    public Set<RecipeProperty<?>> getPropertyTypes() {
+        return recipePropertyStorage.getPropertyTypes();
     }
 
     public boolean hasProperty(RecipeProperty<?> property) {
