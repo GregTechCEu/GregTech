@@ -64,6 +64,27 @@ public class LaserContainerHandler extends EnergyContainerHandler implements ILa
     }
 
     @Override
+    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+        if (amps >= getInputAmperage()) return 0;
+        long canAccept = getEnergyCapacity() - getEnergyStored();
+        if (voltage > 0L && (side == null || inputsEnergy(side))) {
+            while (voltage > getInputVoltage()) {
+                voltage /= 4;
+                amperage *= 4;
+            }
+            if (canAccept >= voltage) {
+                long amperesAccepted = Math.min(canAccept / voltage, Math.min(amperage, getInputAmperage() - amps));
+                if (amperesAccepted > 0) {
+                    setEnergyStored(getEnergyStored() + voltage * amperesAccepted);
+                    amps += amperesAccepted;
+                    return amperesAccepted;
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Override
     public String toString() {
         return "LaserContainerHandler{" +
                 "maxCapacity=" + maxCapacity +
