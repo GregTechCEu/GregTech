@@ -705,30 +705,40 @@ public class GTUtility {
         return color;
     }
 
-    public static boolean isBlockSnowLayer(@Nonnull IBlockState blockState) {
-        return blockState.getBlock() == Blocks.SNOW_LAYER;
+    /**
+     * @param blockState the blockstate to check
+     * @return if the block is a snow layer or snow block
+     */
+    public static boolean isBlockSnow(@Nonnull IBlockState blockState) {
+        return blockState.getBlock() == Blocks.SNOW_LAYER || blockState.getBlock() == Blocks.SNOW;
     }
 
     /**
      * Attempt to break a (single) snow layer at the given BlockPos.
+     * Will also turn snow blocks into snow layers at height 7.
      *
-     * @return true if the passed IBlockState was a snow layer
+     * @return true if the passed IBlockState was valid snow block
      */
-    public static boolean tryBreakSnowLayer(World world, BlockPos pos, @Nonnull IBlockState blockState, boolean playSound) {
-        if (isBlockSnowLayer(blockState)) {
-            int layers = blockState.getValue(BlockSnow.LAYERS);
+    public static boolean tryBreakSnow(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, boolean playSound) {
+        boolean success = false;
+        if (state.getBlock() == Blocks.SNOW) {
+            world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, 7));
+            success = true;
+        } else if (state.getBlock() == Blocks.SNOW_LAYER) {
+            int layers = state.getValue(BlockSnow.LAYERS);
             if (layers == 1) {
                 world.destroyBlock(pos, false);
             } else {
                 world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, layers - 1));
             }
-
-            if (playSound) {
-                world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
-            }
-            return true;
+            success = true;
         }
-        return false;
+
+        if (success && playSound) {
+            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        }
+
+        return success;
     }
 
     /**
