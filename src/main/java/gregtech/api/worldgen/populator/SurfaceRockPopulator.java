@@ -1,6 +1,7 @@
 package gregtech.api.worldgen.populator;
 
 import com.google.gson.JsonObject;
+import gregtech.api.unification.FluidUnifier;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -19,12 +20,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.IFluidBlock;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 public class SurfaceRockPopulator implements VeinChunkPopulator {
 
@@ -47,22 +48,22 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
     public void initializeForVein(OreDepositDefinition definition) {
     }
 
-    private static Set<Material> findUndergroundMaterials(Collection<IBlockState> generatedBlocks) {
-        Set<Material> result = new HashSet<>();
+    private static boolean hasUndergroundMaterials(Collection<IBlockState> generatedBlocks) {
         for (IBlockState blockState : generatedBlocks) {
-            Material resultMaterial = null;
-            if (!(blockState.getBlock() instanceof IFluidBlock) && !(blockState.getBlock() instanceof BlockLiquid)) {
+            if (blockState.getBlock() instanceof IFluidBlock || blockState.getBlock() instanceof BlockLiquid) {
+                Fluid fluid = FluidRegistry.lookupFluidForBlock(blockState.getBlock());
+                if (fluid != null && FluidUnifier.getMaterialFromFluid(fluid) != null) {
+                    return true;
+                }
+            } else {
                 ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().damageDropped(blockState));
                 UnificationEntry entry = OreDictUnifier.getUnificationEntry(itemStack);
                 if (entry != null && entry.material != null && entry.material.hasProperty(PropertyKey.ORE)) {
-                    resultMaterial = entry.material;
+                    return true;
                 }
             }
-            if (resultMaterial != null) {
-                result.add(resultMaterial);
-            }
         }
-        return result;
+        return false;
     }
 
     private void setStoneBlock(World world, BlockPos blockPos) {
@@ -86,8 +87,9 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
     public void populateChunk(World world, int chunkX, int chunkZ, Random random, OreDepositDefinition definition, GridEntryInfo gridEntryInfo) {
         int stonesCount = random.nextInt(2) + 1;
         if (world.getWorldType() != WorldType.FLAT) {
-            if (findUndergroundMaterials(gridEntryInfo.getGeneratedBlocks(definition, chunkX, chunkZ)).isEmpty())
+            if (!hasUndergroundMaterials(gridEntryInfo.getGeneratedBlocks(definition, chunkX, chunkZ))) {
                 return;
+            }
 
             int baseX = chunkX * 16 + 8;
             int baseZ = chunkZ * 16 + 8;

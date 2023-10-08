@@ -48,7 +48,7 @@ public class FluidKey {
 
     @Override
     public String toString() {
-        return "FluidStorageKey{" +
+        return "FluidKey{" +
                 "fluid=" + fluid +
                 ", tag=" + tag +
                 '}';

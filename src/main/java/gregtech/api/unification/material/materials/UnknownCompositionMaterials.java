@@ -429,13 +429,17 @@ public class UnknownCompositionMaterials {
                 .build();
 
         Lava = new Material.Builder(1600, gregtechId("lava"))
-                .fluid().color(0xFF4000).build();
+                .fluid()
+                .color(0xFF4000)
+                .flags(GLOWING)
+                .build();
 
         Glowstone = new Material.Builder(1601, gregtechId("glowstone"))
                 .dust(1)
                 .fluid(FluidStorageKeys.LIQUID, new FluidBuilder().temperature(500))
                 .color(0xFFFF00).iconSet(SHINY)
-                .flags(NO_SMASHING, GENERATE_PLATE, EXCLUDE_PLATE_COMPRESSOR_RECIPE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
+                .flags(NO_SMASHING, GENERATE_PLATE, EXCLUDE_PLATE_COMPRESSOR_RECIPE,
+                        EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GLOWING)
                 .build();
 
         NetherStar = new Material.Builder(1602, gregtechId("nether_star"))

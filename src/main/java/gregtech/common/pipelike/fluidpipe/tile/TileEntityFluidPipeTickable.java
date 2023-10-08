@@ -211,13 +211,13 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             }
 
             // carrying plasmas which are too hot when plasma proof does not burn pipes
-            if (burning && prop.canContain(FluidState.PLASMA)) {
+            if (burning && state == FluidState.PLASMA && prop.canContain(FluidState.PLASMA)) {
                 burning = false;
             }
 
             for (FluidAttribute attribute : attributedFluid.getAttributes()) {
                 if (!prop.canContain(attribute)) {
-                    // corrodes if the pipe can't handle the attribute, even it's not an acid
+                    // corrodes if the pipe can't handle the attribute, even if it's not an acid
                     corroding = true;
                 }
             }

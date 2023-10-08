@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.store.FluidStorageKey;
+import gregtech.api.unification.FluidUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.BlastProperty;
@@ -209,15 +210,17 @@ public class FluidBuilder {
      * @return this
      */
     public @NotNull FluidBuilder customStill() {
-        return textures(true);
+        this.hasCustomStill = true;
+        this.isColorEnabled = false;
+        return this;
     }
 
     /**
-     * @param hasCustomStill if the fluid has a custom still texture
+     * Mark this fluid as having a custom flowing texture
      * @return this
      */
-    public @NotNull FluidBuilder textures(boolean hasCustomStill) {
-        this.hasCustomStill = hasCustomStill;
+    public @NotNull FluidBuilder customFlow() {
+        this.hasCustomFlowing = true;
         this.isColorEnabled = false;
         return this;
     }
@@ -294,6 +297,10 @@ public class FluidBuilder {
         fluid.setViscosity(viscosity);
 
         GTFluidRegistration.INSTANCE.registerFluid(fluid, modid, hasBucket);
+
+        if (material != null) {
+            FluidUnifier.registerFluid(fluid, material);
+        }
 
         FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createGTFluidTooltip(fluid));
 
@@ -390,7 +397,7 @@ public class FluidBuilder {
         if (state == FluidState.PLASMA) {
             luminosity = 15;
         } else if (material != null) {
-            if (material.hasFlag(MaterialFlags.PHOSPHORESCENT)) {
+            if (material.hasFlag(MaterialFlags.GLOWING)) {
                 luminosity = 15;
             } else if (state == FluidState.LIQUID && material.hasProperty(PropertyKey.DUST)) {
                 // liquids only glow if not phosphorescent

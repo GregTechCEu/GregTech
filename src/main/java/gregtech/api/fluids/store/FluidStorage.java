@@ -60,7 +60,10 @@ public final class FluidStorage {
         }
 
         for (var entry : toRegister.entrySet()) {
-            storeWithLogging(entry.getKey(), entry.getValue().build(material.getModid(), material, entry.getKey()), material);
+            Fluid fluid = entry.getValue().build(material.getModid(), material, entry.getKey());
+            if (!storeNoOverwrites(entry.getKey(), fluid)) {
+                GTLog.logger.error("{} already has an associated fluid for material {}", material);
+            }
         }
         toRegister = null;
         registered = true;
@@ -75,25 +78,27 @@ public final class FluidStorage {
     }
 
     /**
-     * @see #store(FluidStorageKey, Fluid)
+     * Will do nothing if an existing fluid association would be overwritten.
+     *
+     * @param key the key to associate with the fluid
+     * @param fluid the fluid to associate with the key
+     * @return if the associations were successfully updated
      */
-    private void storeWithLogging(@NotNull FluidStorageKey key, @NotNull Fluid fluid, @NotNull Material material) {
+    public boolean storeNoOverwrites(@NotNull FluidStorageKey key, @NotNull Fluid fluid) {
         if (map.containsKey(key)) {
-            GTLog.logger.error("{} already has an associated fluid for material {}", material);
-            return;
+            return false;
         }
-        map.put(key, fluid);
+        store(key, fluid);
+        return true;
     }
 
     /**
+     * Will overwrite existing fluid associations.
+     *
      * @param key the key to associate with the fluid
      * @param fluid the fluid to associate with the key
-     * @throws IllegalArgumentException if a key is already associated with another fluid
      */
     public void store(@NotNull FluidStorageKey key, @NotNull Fluid fluid) {
-        if (map.containsKey(key)) {
-            throw new IllegalArgumentException(key + " already has an associated fluid");
-        }
         map.put(key, fluid);
     }
 }
