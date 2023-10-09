@@ -8,7 +8,6 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -26,7 +25,6 @@ import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -154,7 +152,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        if (isWorkingEnabled()) {
+        if (isActive()) {
             textList.add(new TextComponentTranslation("gregtech.machine.active_transformer.routing")
                     .setStyle(new Style().setColor(TextFormatting.GREEN)));
         }
