@@ -3,6 +3,7 @@ package gregtech.common.pipelike.laser.net;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -25,6 +26,14 @@ public class LaserNetHandler implements ILaserContainer {
         this.net = net;
     }
 
+    private void setPipesActive() {
+        for (BlockPos pos : net.getAllNodes().keySet()) {
+            if (world.getTileEntity(pos) instanceof TileEntityLaserPipe laserPipe) {
+                laserPipe.setActive(true, 100);
+            }
+        }
+    }
+
     @Nullable
     private ILaserContainer getInnerContainer() {
         if (net == null || pipe == null || pipe.isInvalid() || (facing == null || pipe.isFaceBlocked(facing))) {
@@ -43,6 +52,7 @@ public class LaserNetHandler implements ILaserContainer {
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
         ILaserContainer handler = getInnerContainer();
         if (handler == null) return 0;
+        setPipesActive();
         return handler.acceptEnergyFromNetwork(side, voltage, amperage);
     }
 
@@ -64,6 +74,7 @@ public class LaserNetHandler implements ILaserContainer {
     public long changeEnergy(long amount) {
         ILaserContainer handler = getInnerContainer();
         if (handler == null) return 0;
+        setPipesActive();
         return handler.changeEnergy(amount);
     }
 
