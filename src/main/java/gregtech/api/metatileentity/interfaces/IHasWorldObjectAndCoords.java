@@ -21,11 +21,6 @@ public interface IHasWorldObjectAndCoords extends IDirtyNotifiable {
         return world() != null && world().isRemote;
     }
 
-    @Nullable
-    TileEntity getNeighbor(EnumFacing facing);
-
-    void onNeighborChanged(EnumFacing facing);
-
     void notifyBlockUpdate();
 
     default void scheduleRenderUpdate() {

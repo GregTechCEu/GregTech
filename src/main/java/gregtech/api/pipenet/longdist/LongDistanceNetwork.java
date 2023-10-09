@@ -124,7 +124,7 @@ public class LongDistanceNetwork {
         if (this.endpoints.remove(endpoint)) {
             invalidateEndpoints();
         }
-        onRemovePipe(endpoint.getPos());
+        onRemovePipe(endpoint.pos());
     }
 
     /**
@@ -140,8 +140,8 @@ public class LongDistanceNetwork {
      */
     public void onPlaceEndpoint(ILDEndpoint endpoint) {
         addEndpoint(endpoint);
-        this.longDistancePipeBlocks.add(endpoint.getPos());
-        this.world.putNetwork(endpoint.getPos(), this);
+        this.longDistancePipeBlocks.add(endpoint.pos());
+        this.world.putNetwork(endpoint.pos(), this);
     }
 
     /**
@@ -439,7 +439,7 @@ public class LongDistanceNetwork {
                 NBTTagList endpoints = new NBTTagList();
                 tag.setTag("endpoints", endpoints);
                 for (ILDEndpoint endpoint : network.endpoints) {
-                    endpoints.appendTag(new NBTTagLong(endpoint.getPos().toLong()));
+                    endpoints.appendTag(new NBTTagLong(endpoint.pos().toLong()));
                 }
             }
             nbtTagCompound.setTag("nets", list);

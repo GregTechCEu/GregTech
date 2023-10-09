@@ -34,11 +34,13 @@ public class LaserRoutePath implements IRoutePath<TileEntityLaserPipe> {
     }
 
 
+    @Nonnull
     @Override
     public TileEntityLaserPipe getTargetPipe() {
         return targetPipe;
     }
 
+    @Nonnull
     @Override
     public EnumFacing getTargetFacing() {
         return faceToHandler;

@@ -28,11 +28,13 @@ public class OpticalRoutePath implements IRoutePath<TileEntityOpticalPipe> {
         this.distance = distance;
     }
 
+    @Nonnull
     @Override
     public TileEntityOpticalPipe getTargetPipe() {
         return targetPipe;
     }
 
+    @Nonnull
     @Override
     public EnumFacing getTargetFacing() {
         return faceToHandler;

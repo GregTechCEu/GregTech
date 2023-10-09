@@ -54,6 +54,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -348,7 +349,7 @@ public class GTUtility {
      * @return position of neighbor relative to main or null the neighbor pos is not a neighbor
      */
     @Nullable
-    public static EnumFacing getFacingToNeighbor(BlockPos main, BlockPos neighbor) {
+    public static EnumFacing getFacingToNeighbor(@NotNull BlockPos main, @NotNull BlockPos neighbor) {
         int difX = neighbor.getX() - main.getX();
         int difY = neighbor.getY() - main.getY();
         int difZ = neighbor.getZ() - main.getZ();

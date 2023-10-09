@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -32,11 +33,13 @@ public class ItemRoutePath implements IRoutePath<TileEntityItemPipe> {
         };
     }
 
+    @Nonnull
     @Override
     public TileEntityItemPipe getTargetPipe() {
         return targetPipe;
     }
 
+    @Nonnull
     @Override
     public EnumFacing getTargetFacing() {
         return faceToHandler;

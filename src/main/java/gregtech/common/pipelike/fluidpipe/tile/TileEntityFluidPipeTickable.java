@@ -40,9 +40,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -189,7 +189,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
     }
 
-    private boolean checkForPumpCover(CoverBehavior cover) {
+    private boolean checkForPumpCover(@Nullable CoverBehavior cover) {
         if (cover instanceof CoverPump coverPump) {
             int pipeThroughput = getNodeData().getThroughput() * 20;
             if (coverPump.getTransferRate() > pipeThroughput) {
@@ -200,7 +200,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         return false;
     }
 
-    public void checkAndDestroy(@Nonnull FluidStack stack) {
+    public void checkAndDestroy(@NotNull FluidStack stack) {
         Fluid fluid = stack.getFluid();
         FluidPipeProperties prop = getNodeData();
 
@@ -389,9 +389,9 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         return fluids;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         NBTTagList list = new NBTTagList();
         for (int i = 0; i < getFluidTanks().length; i++) {
@@ -408,7 +408,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound nbt) {
+    public void readFromNBT(@NotNull NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         NBTTagList list = (NBTTagList) nbt.getTag("Fluids");
         createTanksList();
@@ -420,7 +420,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();

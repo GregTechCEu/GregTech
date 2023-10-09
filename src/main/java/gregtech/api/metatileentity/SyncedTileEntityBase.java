@@ -14,8 +14,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +30,6 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         if (world == null || pos == null) return null;
         return world.getTileEntity(pos.offset(facing));
     }
-
 
     public abstract void receiveCustomData(int discriminator, PacketBuffer buf);
 

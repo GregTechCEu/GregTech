@@ -5,6 +5,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.IRoutePath;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.util.EnumFacing;
+import org.jetbrains.annotations.NotNull;
 
 public class EnergyRoutePath implements IRoutePath<TileEntityCable> {
 
@@ -23,12 +24,12 @@ public class EnergyRoutePath implements IRoutePath<TileEntityCable> {
     }
 
     @Override
-    public TileEntityCable getTargetPipe() {
+    public @NotNull TileEntityCable getTargetPipe() {
         return targetPipe;
     }
 
     @Override
-    public EnumFacing getTargetFacing() {
+    public @NotNull EnumFacing getTargetFacing() {
         return destFacing;
     }
 

@@ -1,5 +1,6 @@
 package gregtech.api.metatileentity;
 
+import gregtech.api.metatileentity.interfaces.INeighborCache;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase {
+public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase implements INeighborCache {
 
     private final TileEntity[] neighbors = new TileEntity[6];
     private boolean neighborsInvalidated = false;

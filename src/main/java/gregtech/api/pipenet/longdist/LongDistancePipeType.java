@@ -55,8 +55,8 @@ public abstract class LongDistancePipeType {
     }
 
     public boolean satisfiesMinLength(ILDEndpoint endpoint1, ILDEndpoint endpoint2) {
-        BlockPos p = endpoint2.getPos();
-        return endpoint1 != endpoint2 && endpoint1.getPos().getDistance(p.getX(), p.getY(), p.getZ()) >= getMinLength();
+        BlockPos p = endpoint2.pos();
+        return endpoint1 != endpoint2 && endpoint1.pos().getDistance(p.getX(), p.getY(), p.getZ()) >= getMinLength();
     }
 
     @Nonnull
