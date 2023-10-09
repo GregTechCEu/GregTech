@@ -547,8 +547,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
         if (controllable != null) {
             controllable.setWorkingEnabled(!controllable.isWorkingEnabled());
             if (!getWorld().isRemote) {
-                playerIn.sendMessage(new TextComponentTranslation(controllable.isWorkingEnabled() ?
-                        "behaviour.soft_hammer.enabled" : "behaviour.soft_hammer.disabled"));
+                playerIn.sendStatusMessage(new TextComponentTranslation(controllable.isWorkingEnabled() ?
+                        "behaviour.soft_hammer.enabled" : "behaviour.soft_hammer.disabled"), true);
             }
             return true;
         }
@@ -563,8 +563,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
     public boolean onHardHammerClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         toggleMuffled();
         if (!getWorld().isRemote) {
-            playerIn.sendMessage(new TextComponentTranslation(isMuffled() ?
-                    "gregtech.machine.muffle.on" : "gregtech.machine.muffle.off"));
+            playerIn.sendStatusMessage(new TextComponentTranslation(isMuffled() ?
+                    "gregtech.machine.muffle.on" : "gregtech.machine.muffle.off"), true);
         }
         return true;
     }

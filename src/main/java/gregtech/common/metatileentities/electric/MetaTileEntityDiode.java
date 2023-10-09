@@ -128,7 +128,7 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart implements
             return true;
         }
         setAmpMode();
-        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.diode.message", amps));
+        playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.diode.message", amps), true);
         return true;
     }
 

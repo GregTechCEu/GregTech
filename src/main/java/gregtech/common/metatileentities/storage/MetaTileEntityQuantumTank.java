@@ -531,10 +531,10 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             if (!getWorld().isRemote) {
                 if (isAllowInputFromOutputSideFluids()) {
                     setAllowInputFromOutputSide(false);
-                    playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
+                    playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"), true);
                 } else {
                     setAllowInputFromOutputSide(true);
-                    playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
+                    playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"), true);
                 }
             }
             return true;

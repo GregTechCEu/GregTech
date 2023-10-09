@@ -186,7 +186,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
                 scheduleRenderUpdate();
                 return true;
             }
-            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.drum." + (isAutoOutput ? "disable" : "enable") + "_output"));
+            playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.drum." + (isAutoOutput ? "disable" : "enable") + "_output"), true);
             toggleOutput();
             return true;
         }

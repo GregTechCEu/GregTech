@@ -84,7 +84,7 @@ public abstract class CoverDetectorBase extends CoverBehavior {
         String translationKey = isInverted()
                 ? "gregtech.cover.detector_base.message_inverted_state"
                 : "gregtech.cover.detector_base.message_normal_state";
-        playerIn.sendMessage(new TextComponentTranslation(translationKey));
+        playerIn.sendStatusMessage(new TextComponentTranslation(translationKey), true);
 
         toggleInvertedWithNotification();
 
