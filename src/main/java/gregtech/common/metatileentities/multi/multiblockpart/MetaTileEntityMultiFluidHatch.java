@@ -15,8 +15,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import net.minecraft.client.resources.I18n;
@@ -36,18 +34,25 @@ import java.util.List;
 
 public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank>, IControllable {
 
-    private static final int TANK_SIZE = 16000;
+    private static final int BASE_TANK_SIZE = 8000;
+
+    private final int numSlots;
+    private final int tankSize;
 
     // only holding this for convenience
     private final FluidTankList fluidTankList;
     private boolean workingEnabled;
 
-    public MetaTileEntityMultiFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
+    public MetaTileEntityMultiFluidHatch(ResourceLocation metaTileEntityId, int tier, int numSlots, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
         this.workingEnabled = true;
-        FluidTank[] fluidsHandlers = new FluidTank[getTier() * getTier()];
+        this.numSlots = numSlots;
+        // Quadruple: 1/4th the capacity of a fluid hatch of this tier
+        // Nonuple: 1/8th the capacity of a fluid hatch of this tier
+        this.tankSize = (BASE_TANK_SIZE * (1 << Math.min(9, tier))) / (numSlots == 4 ? 4 : 8);
+        FluidTank[] fluidsHandlers = new FluidTank[numSlots];
         for (int i = 0; i < fluidsHandlers.length; i++) {
-            fluidsHandlers[i] = new NotifiableFluidTank(TANK_SIZE, this, isExportHatch);
+            fluidsHandlers[i] = new NotifiableFluidTank(tankSize, this, isExportHatch);
         }
         this.fluidTankList = new FluidTankList(false, fluidsHandlers);
         initializeInventory();
@@ -55,7 +60,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity metaTileEntityHolder) {
-        return new MetaTileEntityMultiFluidHatch(metaTileEntityId, this.getTier(), this.isExportHatch);
+        return new MetaTileEntityMultiFluidHatch(metaTileEntityId, this.getTier(), numSlots, this.isExportHatch);
     }
 
     @Override
@@ -131,30 +136,15 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            SimpleOverlayRenderer renderer = getTier() == 2 ? Textures.PIPE_4X_OVERLAY : Textures.PIPE_9X_OVERLAY;
+            SimpleOverlayRenderer renderer = numSlots == 4 ? Textures.PIPE_4X_OVERLAY : Textures.PIPE_9X_OVERLAY;
             renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
-        }
-    }
-
-    @Override
-    public ICubeRenderer getBaseTexture() {
-        MultiblockControllerBase controller = getController();
-        if (controller != null) {
-            return this.hatchTexture = controller.getBaseTexture(this);
-        } else if (this.hatchTexture != null) {
-            if (hatchTexture != Textures.getInactiveTexture(hatchTexture)) {
-                return this.hatchTexture = Textures.getInactiveTexture(hatchTexture);
-            }
-            return this.hatchTexture;
-        } else {
-            return Textures.VOLTAGE_CASINGS[getTier() == 2 ? 3 : 5];
         }
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format(isExportHatch ? "gregtech.machine.fluid_hatch.export.tooltip" : "gregtech.machine.fluid_hatch.import.tooltip"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", (int) Math.pow(this.getTier(), 2), TANK_SIZE));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", numSlots, tankSize));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
@@ -187,7 +177,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        int rowSize = getTier();
+        int rowSize = (int) Math.sqrt(numSlots);
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
                         18 + 18 * rowSize + 94)
                 .label(10, 5, getMetaFullName());
