@@ -13,6 +13,7 @@ import gregtech.common.pipelike.laser.net.LaserPipeNet;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -114,6 +115,27 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
             // create new handlers
             initHandlers();
         }
+    }
+
+    @Override
+    public void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor) {
+        if (!getWorld().isRemote && connected && !fromNeighbor) {
+            int connections = getConnections();
+            // block connection if any side other than the requested side and its opposite side are already connected.
+            connections &= ~(1 << side.getIndex());
+            connections &= ~(1 << side.getOpposite().getIndex());
+            if (connections != 0) return;
+
+            // check the same for the targeted pipe
+            TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
+            if (tile instanceof IPipeTile<?,?> pipeTile && pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
+                connections = pipeTile.getConnections();
+                connections &= ~(1 << side.getIndex());
+                connections &= ~(1 << side.getOpposite().getIndex());
+                if (connections != 0) return;
+            }
+        }
+        super.setConnection(side, connected, fromNeighbor);
     }
 
     public boolean isActive() {
