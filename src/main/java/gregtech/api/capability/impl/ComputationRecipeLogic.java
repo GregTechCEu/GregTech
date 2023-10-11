@@ -26,6 +26,7 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
     private boolean isDurationTotalCWU;
     private int recipeCWUt;
     private boolean hasNotEnoughComputation;
+    private int currentDrawnCWUt;
 
     public ComputationRecipeLogic(RecipeMapMultiblockController metaTileEntity, ComputationType type) {
         super(metaTileEntity);
@@ -78,8 +79,8 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
                 this.hasNotEnoughComputation = false;
                 if (isDurationTotalCWU) {
                     // draw as much CWU as possible, and increase progress by this amount
-                    int drawnCWU = provider.requestCWUt(availableCWUt, false);
-                    progressTime += drawnCWU;
+                    currentDrawnCWUt = provider.requestCWUt(availableCWUt, false);
+                    progressTime += currentDrawnCWUt;
                 } else {
                     // draw only the recipe CWU/t, and increase progress by 1
                     provider.requestCWUt(recipeCWUt, false);
@@ -89,6 +90,7 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
                     completeRecipe();
                 }
             } else {
+                currentDrawnCWUt = 0;
                 this.hasNotEnoughComputation = true;
                 // only decrement progress for low CWU/t if we need a steady supply
                 if (type == ComputationType.STEADY) {
@@ -110,10 +112,15 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
         this.recipeCWUt = 0;
         this.isDurationTotalCWU = false;
         this.hasNotEnoughComputation = false;
+        this.currentDrawnCWUt = 0;
     }
 
     public int getRecipeCWUt() {
         return recipeCWUt;
+    }
+
+    public int getCurrentDrawnCWUt() {
+        return isDurationTotalCWU ? currentDrawnCWUt : recipeCWUt;
     }
 
     public boolean isHasNotEnoughComputation() {

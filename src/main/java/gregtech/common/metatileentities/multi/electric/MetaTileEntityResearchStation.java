@@ -218,7 +218,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         super.addDisplayText(textList);
         if (isStructureFormed() && isActive()) {
             var recipeLogic = getRecipeMapWorkable();
-            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.usage", recipeLogic.getRecipeCWUt()));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.usage", recipeLogic.getCurrentDrawnCWUt()));
             if (recipeLogic.isHasNotEnoughComputation()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.computation.not_enough_computation")
                         .setStyle(new Style().setColor(TextFormatting.RED)));
