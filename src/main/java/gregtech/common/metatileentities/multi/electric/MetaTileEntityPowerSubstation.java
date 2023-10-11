@@ -21,6 +21,7 @@ import gregtech.api.util.BlockInfo;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockMetalCasing;
@@ -98,11 +99,13 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
         List<IEnergyContainer> inputs = new ArrayList<>();
         inputs.addAll(getAbilities(MultiblockAbility.INPUT_ENERGY));
         inputs.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
+        inputs.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
         this.inputHatches = new EnergyContainerList(inputs);
 
         List<IEnergyContainer> outputs = new ArrayList<>();
         outputs.addAll(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
         outputs.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
+        outputs.addAll(getAbilities(MultiblockAbility.OUTPUT_LASER));
         this.outputHatches = new EnergyContainerList(outputs);
 
         List<IBatteryData> parts = new ArrayList<>();
@@ -224,8 +227,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 .where('C', states(getCasingState()))
                 .where('X' ,states(getCasingState()).setMinGlobalLimited(MIN_CASINGS)
                         .or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setExactLimit(1))
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY).setMinGlobalLimited(1))
-                        .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY).setMinGlobalLimited(1)))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY, MultiblockAbility.INPUT_LASER).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY, MultiblockAbility.OUTPUT_LASER).setMinGlobalLimited(1)))
                 .where('G', states(getGlassState()))
                 .where('B', BATTERY_PREDICATE.get())
                 .build();
@@ -441,6 +444,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
         tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip3", MAX_BATTERY_LAYERS));
         tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip4"));
         tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip5", PASSIVE_DRAIN_MAX_PER_STORAGE));
+        tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip6")
+                + TooltipHelper.RAINBOW_SLOW + I18n.format("gregtech.machine.power_substation.tooltip6.5"));
     }
 
     public String getStored() {
