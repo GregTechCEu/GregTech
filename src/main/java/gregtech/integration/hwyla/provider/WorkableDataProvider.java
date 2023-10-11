@@ -3,6 +3,7 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
+import gregtech.api.capability.impl.ComputationRecipeLogic;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaRegistrar;
@@ -36,6 +37,7 @@ public class WorkableDataProvider extends CapabilityDataProvider<IWorkable> {
         NBTTagCompound subTag = new NBTTagCompound();
         subTag.setBoolean("Active", capability.isActive());
         if (capability.isActive()) {
+            subTag.setBoolean("ShowAsComputation", capability instanceof ComputationRecipeLogic logic && !logic.shouldShowDuration());
             subTag.setInteger("Progress", capability.getProgress());
             subTag.setInteger("MaxProgress", capability.getMaxProgress());
         }
@@ -56,6 +58,10 @@ public class WorkableDataProvider extends CapabilityDataProvider<IWorkable> {
             if (active) {
                 int progress = tag.getInteger("Progress");
                 int maxProgress = tag.getInteger("MaxProgress");
+
+                if (tag.getBoolean("ShowAsComputation")) {
+                    tooltip.add(I18n.format("gregtech.waila.progress_computation", progress, maxProgress));
+                }
 
                 if (maxProgress == 0) {
                     tooltip.add(I18n.format("gregtech.waila.progress_idle"));

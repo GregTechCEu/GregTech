@@ -119,9 +119,9 @@ public final class AssemblyLineManager {
                     .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
                     .inputs(researchItem)
                     .outputs(dataItem)
-                    .duration(duration)
                     .EUt(EUt)
                     .CWUt(CWUt)
+                    .totalCWU(duration)
                     .buildAndRegister();
         } else {
             RecipeMaps.SCANNER_RECIPES.recipeBuilder()

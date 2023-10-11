@@ -926,9 +926,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * This height is used to determine Y position to start drawing info on JEI.
+     * @deprecated remove overrides, this method is no longer used in any way.
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public int getPropertyListHeight(Recipe recipe) {
-        return (recipe.getUnhiddenPropertyCount() + 3) * 10 - 3; // GTRecipeWrapper#LINE_HEIGHT
+        return 0;
     }
 
     /**
