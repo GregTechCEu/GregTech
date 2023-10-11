@@ -126,6 +126,7 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
         NBTTagCompound compound = super.serializeNBT();
         if (this.progressTime > 0) {
             compound.setInteger("RecipeCWUt", recipeCWUt);
+            compound.setBoolean("IsDurationTotalCWU", isDurationTotalCWU);
         }
         return compound;
     }
@@ -135,7 +136,16 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
         super.deserializeNBT(compound);
         if (this.progressTime > 0) {
             recipeCWUt = compound.getInteger("RecipeCWUt");
+            isDurationTotalCWU = compound.getBoolean("IsDurationTotalCWU");
         }
+    }
+
+
+    /**
+     * @return Whether TOP / WAILA should show the recipe progress as duration or as total computation.
+     */
+    public boolean shouldShowDuration() {
+        return !isDurationTotalCWU;
     }
 
     public enum ComputationType {
