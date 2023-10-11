@@ -211,6 +211,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.3"));
+        tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.4"));
     }
 
     @Override
