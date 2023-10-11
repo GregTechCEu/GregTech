@@ -2292,7 +2292,7 @@ tile.optical_pipe_normal.name=Optical Fiber Cable
 tile.optical_pipe_normal.tooltip1=Transmitting §fComputation§7 or §fResearch Data§7
 
 tile.laser_pipe_normal.name=Laser Transmitting Cable
-tile.laser_pipe_normal.tooltip1=Transmitting power with no loss in straight lines
+tile.laser_pipe_normal.tooltip1=Transmitting power with §fno loss§7 in straight lines
 
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
@@ -5164,7 +5164,8 @@ gregtech.tool_action.screwdriver.auto_output=§8Use Screwdriver to toggle Auto-O
 gregtech.tool_action.screwdriver.auto_output_down=§8Use Screwdriver to toggle Auto-Output from the Bottom
 gregtech.tool_action.screwdriver.toggle_mode=§8Use Screwdriver to toggle Modes
 gregtech.tool_action.wrench.set_facing=§8Use Wrench to set Facing
-gregtech.tool_action.wrench.connect=§8Use Wrench to set Connections, sneak to block Connections
+gregtech.tool_action.wrench.connect=§8Use Wrench to set Connections
+gregtech.tool_action.wrench.connect_and_block=§8Use Wrench to set Connections, sneak to block transfer
 gregtech.tool_action.wire_cutter.connect=§8Use Wire Cutters to set Connections
 gregtech.tool_action.soft_mallet.reset=§8Use Soft Mallet to toggle Working
 gregtech.tool_action.soft_mallet.toggle_mode=§8Use Soft Mallet to toggle Modes
@@ -5254,9 +5255,9 @@ gregtech.jei.materials.average_neutrons=Average neutrons: %,d
 gregtech.item_filter.empty_item=Empty (No Item)
 gregtech.item_filter.footer=§eClick with item to override
 
-gregtech.cable.voltage=Max Voltage: §a%,d §a(%s§a)
-gregtech.cable.amperage=Max Amperage: §e%,d
-gregtech.cable.loss_per_block=Loss/Meter/Ampere: §c%,d§7 EU-Volt
+gregtech.cable.voltage=§aMax Voltage: §f%,d §f(%s§f)
+gregtech.cable.amperage=§eMax Amperage: §f%,d
+gregtech.cable.loss_per_block=§cLoss/Meter/Ampere: §f%,d§f EU-Volt
 gregtech.cable.superconductor=§d%s Superconductor
 
 gregtech.fluid_pipe.capacity=§9Capacity: §f%,d L
