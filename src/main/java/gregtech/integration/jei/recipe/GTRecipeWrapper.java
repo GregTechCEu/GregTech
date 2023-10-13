@@ -96,7 +96,17 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     Collection<Recipe> possibleRecipes = ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId);
                     if (possibleRecipes != null) {
                         for (Recipe r : possibleRecipes) {
-                            scannerPossibilities.add(r.getOutputs().get(0));
+                            ItemStack researchItem = r.getOutputs().get(0);
+                            researchItem = researchItem.copy();
+                            researchItem.setCount(1);
+                            boolean didMatch = false;
+                            for (ItemStack stack : scannerPossibilities) {
+                                if (ItemStack.areItemStacksEqual(stack, researchItem)) {
+                                    didMatch = true;
+                                    break;
+                                }
+                            }
+                            if (!didMatch) scannerPossibilities.add(researchItem);
                         }
                     }
                     scannerPossibilities.add(recipeOutputs.get(0));
