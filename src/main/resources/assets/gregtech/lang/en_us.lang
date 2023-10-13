@@ -5079,8 +5079,8 @@ gregtech.machine.laser_hatch.target_4096a.uxv.name=UXV 4096A Laser Target Hatch
 gregtech.machine.laser_hatch.target_4096a.opv.name=OpV 4096A Laser Target Hatch
 gregtech.machine.laser_hatch.target_4096a.max.name=MAX 4096A Laser Target Hatch
 
-
-gregtech.machine.laser_hatch.tooltip1=Receiving power from distance
+gregtech.machine.laser_hatch.source.tooltip1=Transmitting power at distance
+gregtech.machine.laser_hatch.target.tooltip1=Receiving power from distance
 gregtech.machine.laser_hatch.tooltip2=§cLaser Cables must be in a straight line!§7
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d

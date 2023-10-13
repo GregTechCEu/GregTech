@@ -96,7 +96,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart imple
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.laser_hatch.tooltip1"));
+        tooltip.add(I18n.format(isOutput ? "gregtech.machine.laser_hatch.source.tooltip1" : "gregtech.machine.laser_hatch.target.tooltip1"));
         tooltip.add(I18n.format("gregtech.machine.laser_hatch.tooltip2"));
 
         if (isOutput) {
