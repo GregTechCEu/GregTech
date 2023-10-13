@@ -107,6 +107,7 @@ gregtech.waila.energy_stored=Energy: %d EU / %d EU
 gregtech.waila.progress_idle=Idle
 gregtech.waila.progress_tick=Progress: %d t / %d t
 gregtech.waila.progress_sec=Progress: %d s / %d s
+gregtech.waila.progress_computation=Computation: %s / %s
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
@@ -4681,6 +4682,8 @@ gregtech.machine.power_substation.tooltip2=§fCapacitors§7 do not need to be al
 gregtech.machine.power_substation.tooltip3=Allows up to §f%d Capacitor Layers§7.
 gregtech.machine.power_substation.tooltip4=Loses energy equal to §f1%%§7 of total capacity every §f24 hours§7.
 gregtech.machine.power_substation.tooltip5=Capped at §f%,d EU/t§7 passive loss per Capacitor Block.
+gregtech.machine.power_substation.tooltip6=Can use
+gregtech.machine.power_substation.tooltip6.5= Laser Hatches§7.
 gregtech.multiblock.power_substation.description=The Power Substation is a multiblock structure used for storing immense amounts of Energy. Capable of holding up to 18 layers of Batteries. Can also use Empty Capacitors to fill space, as layers must be fully filled.
 
 gregtech.machine.active_transformer.name=Active Transformer
@@ -4689,11 +4692,13 @@ gregtech.machine.active_transformer.tooltip2=Can combine any number of Energy §
 gregtech.machine.active_transformer.tooltip3=Can transmit power at incredible distance with
 gregtech.machine.active_transformer.tooltip3.5= Lasers§7.
 gregtech.multiblock.active_transformer.description=The Active Transformer is a multiblock structure that can accept any number or tier of Energy Hatches, and transform them into any number or tier of Dynamo Hatches. They can be chained with Laser Source and Target Hatches, allowing long distance power transportation without any losses. Lasers must be in a straight line, otherwise they will not send energy.
+gregtech.machine.active_transformer.routing=Routing.
 
 gregtech.machine.research_station.name=Research Station
 gregtech.machine.research_station.tooltip.1=More than just a Multiblock Scanner
-gregtech.machine.research_station.tooltip.2=Used to scan onto §fData Orbs§7 or §fData Modules§7.
+gregtech.machine.research_station.tooltip.2=Used to scan onto §fData Orbs§7 and §fData Modules§7.
 gregtech.machine.research_station.tooltip.3=Requires §fComputation§7 to work.
+gregtech.machine.research_station.tooltip.4=Providing more Computation allows the recipe to run faster.
 gregtech.multiblock.research_station.description=The Research Station is a multiblock structure used for researching much more complex Assembly Line Research Data. Any Research requiring a Data Orb or Data Module must be scanned in the Research Station. Requires Compute Work Units (CWU/t) to research recipes, which is supplied by High Performance Computing Arrays (HPCAs).
 
 gregtech.machine.network_switch.name=Network Switch
@@ -5006,12 +5011,76 @@ gregtech.machine.computation_hatch.receiver.tooltip=Computation Data Input for M
 gregtech.machine.research_station.object_holder.name=Object Holder
 gregtech.machine.research_station.object_holder.tooltip=Advanced Holding Mechanism for Research Station
 
-gregtech.machine.laser_hatch.source.name=Laser Source Hatch
-gregtech.machine.laser_hatch.source.tooltip1=Transmitting power at distance
-gregtech.machine.laser_hatch.source.tooltip2=§cLaser Cables must be in a straight line!§7
-gregtech.machine.laser_hatch.target.name=Laser Target Hatch
-gregtech.machine.laser_hatch.target.tooltip1=Receiving power from distance
-gregtech.machine.laser_hatch.target.tooltip2=§cLaser Cables must be in a straight line!§7
+# laser hatches
+gregtech.machine.laser_hatch.source_256a.iv.name=IV 256A Laser Source Hatch
+gregtech.machine.laser_hatch.source_256a.luv.name=LuV 256A Laser Source Hatch
+gregtech.machine.laser_hatch.source_256a.zpm.name=ZPM 256A Laser Source Hatch
+gregtech.machine.laser_hatch.source_256a.uv.name=UV 256A Laser Source Hatch
+gregtech.machine.laser_hatch.source_256a.uhv.name=UHV 256A Laser Source Hatch
+gregtech.machine.laser_hatch.source_256a.uev.name=UEV 256A Laser Source Hatch
+gregtech.machine.laser_hatch.source_256a.uiv.name=UIV 256A Laser Source Hatch
+gregtech.machine.laser_hatch.source_256a.uxv.name=UXV 256A Laser Source Hatch
+gregtech.machine.laser_hatch.source_256a.opv.name=OpV 256A Laser Source Hatch
+gregtech.machine.laser_hatch.source_256a.max.name=MAX 256A Laser Source Hatch
+
+gregtech.machine.laser_hatch.source_1024a.iv.name=IV 1024A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1024a.luv.name=LuV 1024A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1024a.zpm.name=ZPM 1024A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1024a.uv.name=UV 1024A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1024a.uhv.name=UHV 1024A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1024a.uev.name=UEV 1024A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1024a.uiv.name=UIV 1024A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1024a.uxv.name=UXV 1024A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1024a.opv.name=OpV 1024A Laser Source Hatch
+gregtech.machine.laser_hatch.source_1024a.max.name=MAX 1024A Laser Source Hatch
+
+gregtech.machine.laser_hatch.source_4096a.iv.name=IV 4096A Laser Source Hatch
+gregtech.machine.laser_hatch.source_4096a.luv.name=LuV 4096A Laser Source Hatch
+gregtech.machine.laser_hatch.source_4096a.zpm.name=ZPM 4096A Laser Source Hatch
+gregtech.machine.laser_hatch.source_4096a.uv.name=UV 4096A Laser Source Hatch
+gregtech.machine.laser_hatch.source_4096a.uhv.name=UHV 4096A Laser Source Hatch
+gregtech.machine.laser_hatch.source_4096a.uev.name=UEV 4096A Laser Source Hatch
+gregtech.machine.laser_hatch.source_4096a.uiv.name=UIV 4096A Laser Source Hatch
+gregtech.machine.laser_hatch.source_4096a.uxv.name=UXV 4096A Laser Source Hatch
+gregtech.machine.laser_hatch.source_4096a.opv.name=OpV 4096A Laser Source Hatch
+gregtech.machine.laser_hatch.source_4096a.max.name=MAX 4096A Laser Source Hatch
+
+gregtech.machine.laser_hatch.target_256a.iv.name=IV 256A Laser Target Hatch
+gregtech.machine.laser_hatch.target_256a.luv.name=LuV 256A Laser Target Hatch
+gregtech.machine.laser_hatch.target_256a.zpm.name=ZPM 256A Laser Target Hatch
+gregtech.machine.laser_hatch.target_256a.uv.name=UV 256A Laser Target Hatch
+gregtech.machine.laser_hatch.target_256a.uhv.name=UHV 256A Laser Target Hatch
+gregtech.machine.laser_hatch.target_256a.uev.name=UEV 256A Laser Target Hatch
+gregtech.machine.laser_hatch.target_256a.uiv.name=UIV 256A Laser Target Hatch
+gregtech.machine.laser_hatch.target_256a.uxv.name=UXV 256A Laser Target Hatch
+gregtech.machine.laser_hatch.target_256a.opv.name=OpV 256A Laser Target Hatch
+gregtech.machine.laser_hatch.target_256a.max.name=MAX 256A Laser Target Hatch
+
+gregtech.machine.laser_hatch.target_1024a.iv.name=IV 1024A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1024a.luv.name=LuV 1024A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1024a.zpm.name=ZPM 1024A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1024a.uv.name=UV 1024A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1024a.uhv.name=UHV 1024A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1024a.uev.name=UEV 1024A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1024a.uiv.name=UIV 1024A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1024a.uxv.name=UXV 1024A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1024a.opv.name=OpV 1024A Laser Target Hatch
+gregtech.machine.laser_hatch.target_1024a.max.name=MAX 1024A Laser Target Hatch
+
+gregtech.machine.laser_hatch.target_4096a.iv.name=IV 4096A Laser Target Hatch
+gregtech.machine.laser_hatch.target_4096a.luv.name=LuV 4096A Laser Target Hatch
+gregtech.machine.laser_hatch.target_4096a.zpm.name=ZPM 4096A Laser Target Hatch
+gregtech.machine.laser_hatch.target_4096a.uv.name=UV 4096A Laser Target Hatch
+gregtech.machine.laser_hatch.target_4096a.uhv.name=UHV 4096A Laser Target Hatch
+gregtech.machine.laser_hatch.target_4096a.uev.name=UEV 4096A Laser Target Hatch
+gregtech.machine.laser_hatch.target_4096a.uiv.name=UIV 4096A Laser Target Hatch
+gregtech.machine.laser_hatch.target_4096a.uxv.name=UXV 4096A Laser Target Hatch
+gregtech.machine.laser_hatch.target_4096a.opv.name=OpV 4096A Laser Target Hatch
+gregtech.machine.laser_hatch.target_4096a.max.name=MAX 4096A Laser Target Hatch
+
+
+gregtech.machine.laser_hatch.tooltip1=Receiving power from distance
+gregtech.machine.laser_hatch.tooltip2=§cLaser Cables must be in a straight line!§7
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
@@ -5082,7 +5151,8 @@ gregtech.recipe.cleanroom=Requires %s
 gregtech.recipe.cleanroom.display_name=Cleanroom
 gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
 gregtech.recipe.research=Requires Research
-gregtech.recipe.computation_per_tick=Computation: %,d CWU/t
+gregtech.recipe.computation_per_tick=Min Computation: %,d CWU/t
+gregtech.recipe.total_computation=Computation: %,d
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).

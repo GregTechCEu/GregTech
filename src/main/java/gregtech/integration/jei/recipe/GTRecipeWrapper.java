@@ -150,19 +150,28 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     @Override
     public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
-        int yPosition = recipeHeight - recipeMap.getPropertyListHeight(recipe);
+        var properties = recipe.getPropertyTypes();
+        boolean drawTotalEU = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideTotalEU);
+        boolean drawEUt = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideEUt);
+        boolean drawDuration = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideDuration);
+
+        int defaultLines = 0;
+        if (drawTotalEU) defaultLines++;
+        if (drawEUt) defaultLines++;
+        if (drawDuration) defaultLines++;
+
+        int yPosition = recipeHeight - ((recipe.getUnhiddenPropertyCount() + defaultLines) * 10 - 3);
 
         // Default entries
-        var properties = recipe.getPropertyTypes();
-        if (properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideTotalEU)) {
+        if (drawTotalEU) {
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, 0x111111);
-        } else yPosition -= LINE_HEIGHT;
-        if (properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideEUt)) {
+        }
+        if (drawEUt) {
             minecraft.fontRenderer.drawString(I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]), 0, yPosition += LINE_HEIGHT, 0x111111);
-        } else yPosition -= LINE_HEIGHT;
-        if (properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideDuration)) {
+        }
+        if (drawDuration) {
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", TextFormattingUtil.formatNumbers(recipe.getDuration() / 20d)), 0, yPosition += LINE_HEIGHT, 0x111111);
-        } else yPosition -= LINE_HEIGHT;
+        }
 
         // Property custom entries
         for (Map.Entry<RecipeProperty<?>, Object> propertyEntry : recipe.getPropertyValues()) {

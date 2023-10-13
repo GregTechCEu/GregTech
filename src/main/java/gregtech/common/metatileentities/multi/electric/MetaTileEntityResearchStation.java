@@ -211,6 +211,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.3"));
+        tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.4"));
     }
 
     @Override
@@ -218,7 +219,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         super.addDisplayText(textList);
         if (isStructureFormed() && isActive()) {
             var recipeLogic = getRecipeMapWorkable();
-            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.usage", recipeLogic.getRecipeCWUt()));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.usage", recipeLogic.getCurrentDrawnCWUt()));
             if (recipeLogic.isHasNotEnoughComputation()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.computation.not_enough_computation")
                         .setStyle(new Style().setColor(TextFormatting.RED)));
