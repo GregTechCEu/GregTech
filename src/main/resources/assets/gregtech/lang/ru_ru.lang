@@ -2424,8 +2424,8 @@ tile.battery_block.ultimate_uhv.name=Лапотронный накопитель
 tile.battery_block.tooltip_empty=Для зарядки вашей Подстанции
 
 # Long Distance Pipeline Blocks
-tile.long_distance_item_pipeline.name=Предметная труба дальней передачи
-tile.long_distance_fluid_pipeline.name=Жидкостная труба дальней передачи
+tile.long_distance_item_pipeline.name=Предметный трубопровод
+tile.long_distance_fluid_pipeline.name=Жидкостный трубопровод
 
 # Креативные вкладки
 itemGroup.gregtech.main=Главная (GTCEu)
@@ -4137,10 +4137,10 @@ gregtech.machine.muffle.on=Глушение звука: Включено
 gregtech.machine.muffle.off=Глушение звука: Выключено
 gregtech.machine.perfect_oc=Не теряет энергоэффективности при разгоне.
 gregtech.machine.parallel_limit=Можно запустить до §b%d§r§7 рецептов одновременно.
-gregtech.machine.ld_item_endpoint.name=Конечная точка трубопровода предметов
-gregtech.machine.ld_fluid_endpoint.name=Конечная точка трубопровода жидкостей
+gregtech.machine.ld_item_endpoint.name=Конечная точка предметного трубопровода
+gregtech.machine.ld_fluid_endpoint.name=Конечная точка жидкостного трубопровода
 gregtech.machine.endpoint.tooltip.min_length=§bМинимальное расстояние: §f%d Блоков
-gregtech.machine.endpoint.tooltip.1=Соединяется с блоком §fКонвейерной Трубы§7 для создания трубопровода.
+gregtech.machine.endpoint.tooltip.1=Соединяется с блоком §fТрубопровода§7 для создания трубопровода.
 gregtech.machine.endpoint.tooltip.2=Трубопровод обязан иметь §f1 Входную§7 и §f1 Выходную§7 конечную точку.
 gregtech.machine.endpoint.tooltip.3=Только Конечная точка трубопровода может находится в §fЗагруженном чанке§7.
 
