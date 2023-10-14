@@ -284,7 +284,11 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @Override
     public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
-        CuboidRayTraceResult rayTraceResult = (CuboidRayTraceResult) RayTracer.retraceBlock(worldIn, playerIn, pos);
+        CuboidRayTraceResult rayTraceResult = RayTracer.rayTraceCuboidsClosest(
+                RayTracer.getStartVec(playerIn), RayTracer.getEndVec(playerIn),
+                pos, getCollisionBox(worldIn, pos, playerIn)
+        );
+
         if (rayTraceResult == null || pipeTile == null) {
             return false;
         }
