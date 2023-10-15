@@ -2328,14 +2328,14 @@ tile.gregtech_lamp.tooltip.no_light=Без Света
 tile.boiler_casing.bronze_pipe.name=Корпус бронзовой трубы
 tile.boiler_casing.steel_pipe.name=Корпус стальной трубы
 tile.boiler_casing.titanium_pipe.name=Корпус титановой трубы
-tile.boiler_casing.tungstensteel_pipe.name=Корпус вольфрамо-стальной трубы
+tile.boiler_casing.tungstensteel_pipe.name=Корпус вольфрамостальной трубы
 tile.boiler_casing.polytetrafluoroethylene_pipe.name=Корпус ПТФЭ трубы
 
 #Firebox casing blocks
 tile.boiler_casing.bronze_firebox.name=Бронзовый корпус топки
 tile.boiler_casing.steel_firebox.name=Стальной корпус топки
 tile.boiler_casing.titanium_firebox.name=Титановый корпус топки
-tile.boiler_casing.tungstensteel_firebox.name=Вольфрамо-стальной корпус топки
+tile.boiler_casing.tungstensteel_firebox.name=Вольфрамостальной корпус топки
 
 # Металлические корпусные блоки
 tile.metal_casing.primitive_bricks.name=Огнеупорные кирпичи
@@ -2346,7 +2346,7 @@ tile.metal_casing.aluminium_frostproof.name=Морозостойкий алюм�
 tile.metal_casing.steel_solid.name=Корпус из прочной стали
 tile.metal_casing.stainless_clean.name=Очищенный корпус из нержавеющей стали
 tile.metal_casing.titanium_stable.name=Стабильный титановый корпус
-tile.metal_casing.tungstensteel_robust.name=Крепкий вольфрамо-стальной корпус
+tile.metal_casing.tungstensteel_robust.name=Крепкий вольфрамостальной корпус
 tile.metal_casing.ptfe_inert.name=Корпус из химически-инертного ПТФЭ
 tile.metal_casing.hsse_sturdy.name=Корпус из прочной HSS-E стали
 tile.metal_casing.palladium_substation.name=Палладиевый корпус подстанции
@@ -2382,14 +2382,14 @@ tile.steam_casing.wood_wall.name=Деревянная стена
 tile.turbine_casing.bronze_gearbox.name=Бронзовый корпус коробки передач
 tile.turbine_casing.steel_gearbox.name=Стальной корпус коробки передач
 tile.turbine_casing.titanium_gearbox.name=Титановый корпус коробки передач
-tile.turbine_casing.tungstensteel_gearbox.name=Вольфрамо-стальной корпус коробки передач
+tile.turbine_casing.tungstensteel_gearbox.name=Вольфрамостальной корпус коробки передач
 tile.turbine_casing.stainless_steel_gearbox.name=Нержавеющий корпус коробки передач
 
 # Turbine casing blocks
 tile.turbine_casing.steel_turbine_casing.name=Стальной корпус турбины
 tile.turbine_casing.titanium_turbine_casing.name=Титановый корпус турбины
 tile.turbine_casing.stainless_turbine_casing.name=Нержавеющий корпус турбины
-tile.turbine_casing.tungstensteel_turbine_casing.name=Вольфрамо-стальной корпус турбины
+tile.turbine_casing.tungstensteel_turbine_casing.name=Вольфрамостальной корпус турбины
 
 # Multiblock casing blocks
 tile.multiblock_casing.engine_intake.name=Воздухозаборник двигателя
@@ -4403,7 +4403,7 @@ gregtech.machine.large_turbine.plasma.name=Большая плазменная �
 gregtech.machine.large_boiler.bronze.name=Большой бронзовый котел
 gregtech.machine.large_boiler.steel.name=Большой стальной котел
 gregtech.machine.large_boiler.titanium.name=Большой титановый котел
-gregtech.machine.large_boiler.tungstensteel.name=Большой вольфрамо-стальной котел
+gregtech.machine.large_boiler.tungstensteel.name=Большой вольфрамостальной котел
 gregtech.machine.assembly_line.name=Сборочная линия
 gregtech.machine.assembly_line.tooltip_ordered_both=§fПредметы§7 и §fПредметы§7 должны быть в правильном порядке.
 gregtech.machine.assembly_line.tooltip_ordered_items=§fПредметы§7 должны быть в правильном порядке.
