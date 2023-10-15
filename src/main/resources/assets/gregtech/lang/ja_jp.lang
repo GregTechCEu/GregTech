@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & GTModpackTeam
 # 日本語ローカライズ担当： MrKo_no & GTModpackTeam
-# Corresponding Version: 2.7.2 - beta
-# 対応バージョン: 2.7.2 - beta
+# Corresponding Version: 2.7.3 - beta
+# 対応バージョン: 2.7.3 - beta
 
 death.attack.heat=%s は熱さを感じなくなった。
 death.attack.frost=%s のふとんがふっとんだ。
@@ -112,6 +112,7 @@ gregtech.waila.energy_stored=エネルギー: %d EU / %d EU
 gregtech.waila.progress_idle=停止中
 gregtech.waila.progress_tick=進捗: %d t / %d t
 gregtech.waila.progress_sec=進捗: %d s / %d s
+gregtech.waila.progress_computation=計算力: %s / %s
 
 gregtech.multiblock.title=マルチブロックの構造
 gregtech.multiblock.primitive_blast_furnace.bronze.description=初歩的な溶鉱炉(PBF)は序盤にスチールを得るためのマルチブロック機械です。 動作は遅いですが、最初の高圧蒸気機械を作るためのスチールを提供します。
@@ -4687,6 +4688,8 @@ gregtech.machine.power_substation.tooltip2=§f蓄電ブロック§7のTierを揃
 gregtech.machine.power_substation.tooltip3=§f蓄電ブロック§7は§f%d層§7まで増築できる。
 gregtech.machine.power_substation.tooltip4=§f24時間毎に§7最大蓄電量の§f1%%§7を損失する。
 gregtech.machine.power_substation.tooltip5=蓄電ブロック当たり§f%,d EU/t§7の受動損失。
+gregtech.machine.power_substation.tooltip6=
+gregtech.machine.power_substation.tooltip6.5=レーザーハッチ§7も利用可能。
 gregtech.multiblock.power_substation.description=大型蓄電器は大量の電力を蓄えることができるマルチブロックです。蓄電ブロックの層は18層まで拡張できます。蓄電ブロック層は埋め尽くさないといけないので、空いた空間は空の蓄電ブロックを設置しましょう。
 
 gregtech.machine.active_transformer.name=大型変圧器
@@ -4695,11 +4698,13 @@ gregtech.machine.active_transformer.tooltip2=任意の数の§fエナジーハ�
 gregtech.machine.active_transformer.tooltip3=
 gregtech.machine.active_transformer.tooltip3.5=レーザー§7を用いることで驚異の超距離電力輸送が可能。
 gregtech.multiblock.active_transformer.description=大型変圧器は任意の電圧及び任意の数のエナジーハッチとダイナモハッチを組み込むことができるマルチブロックです。レーザー照射ハッチとレーザー照準ハッチによって大型変圧器同士を連携させると、長距離の無損失電力輸送ができます。 レーザーは直線でなければならず、そうでなければ電力は輸送されません。
+gregtech.machine.active_transformer.routing=経路選択
 
 gregtech.machine.research_station.name=研究ステーション
 gregtech.machine.research_station.tooltip.1=単なるマルチブロックスキャナーではない
-gregtech.machine.research_station.tooltip.2=§fデータオーブ§7または§fデータモジュール§7へのスキャンに用いる。
+gregtech.machine.research_station.tooltip.2=§fデータオーブ§7と§fデータモジュール§7へのスキャンに用いる。
 gregtech.machine.research_station.tooltip.3=動作には§f計算力§7が必要です。
+gregtech.machine.research_station.tooltip.4=計算力をさらに与えると、より早くレシピを実行できる。
 gregtech.multiblock.research_station.description=研究ステーションはアセンブリライン用のより複雑な研究を行うマルチブロックです。研究にはデータオーブまたはデータモジュールが必要です。また、動作には高機能計算アレイ (HPCAs) から供給されるComputer Work Units (CWU/t)が必要です。
 
 gregtech.machine.network_switch.name=ネットワークスイッチ
@@ -5012,12 +5017,76 @@ gregtech.machine.computation_hatch.receiver.tooltip=マルチブロックへの�
 gregtech.machine.research_station.object_holder.name=オブジェクトホルダー
 gregtech.machine.research_station.object_holder.tooltip=研究ステーションのための高度な保持機構
 
-gregtech.machine.laser_hatch.source.name=レーザー照射ハッチ
-gregtech.machine.laser_hatch.source.tooltip1=遠くにエネルギーを送信する
-gregtech.machine.laser_hatch.source.tooltip2=§cレーザーケーブルは直線でなければなりません!§7
-gregtech.machine.laser_hatch.target.name=レーザー照準ハッチ
-gregtech.machine.laser_hatch.target.tooltip1=遠くからエネルギーを受信する
-gregtech.machine.laser_hatch.target.tooltip2=§cレーザーケーブルは直線でなければなりません!§7
+# laser hatches
+gregtech.machine.laser_hatch.source_256a.iv.name=IV 256A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_256a.luv.name=LuV 256A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_256a.zpm.name=ZPM 256A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_256a.uv.name=UV 256A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_256a.uhv.name=UHV 256A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_256a.uev.name=UEV 256A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_256a.uiv.name=UIV 256A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_256a.uxv.name=UXV 256A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_256a.opv.name=OpV 256A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_256a.max.name=MAX 256A対応レーザー照射ハッチ
+
+gregtech.machine.laser_hatch.source_1024a.iv.name=IV 1024A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_1024a.luv.name=LuV 1024A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_1024a.zpm.name=ZPM 1024A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_1024a.uv.name=UV 1024A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_1024a.uhv.name=UHV 1024A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_1024a.uev.name=UEV 1024A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_1024a.uiv.name=UIV 1024A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_1024a.uxv.name=UXV 1024A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_1024a.opv.name=OpV 1024A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_1024a.max.name=MAX 1024A対応レーザー照射ハッチ
+
+gregtech.machine.laser_hatch.source_4096a.iv.name=IV 4096A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_4096a.luv.name=LuV 4096A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_4096a.zpm.name=ZPM 4096A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_4096a.uv.name=UV 4096A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_4096a.uhv.name=UHV 4096A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_4096a.uev.name=UEV 4096A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_4096a.uiv.name=UIV 4096A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_4096a.uxv.name=UXV 4096A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_4096a.opv.name=OpV 4096A対応レーザー照射ハッチ
+gregtech.machine.laser_hatch.source_4096a.max.name=MAX 4096A対応レーザー照射ハッチ
+
+gregtech.machine.laser_hatch.target_256a.iv.name=IV 256A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_256a.luv.name=LuV 256A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_256a.zpm.name=ZPM 256A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_256a.uv.name=UV 256A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_256a.uhv.name=UHV 256A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_256a.uev.name=UEV 256A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_256a.uiv.name=UIV 256A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_256a.uxv.name=UXV 256A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_256a.opv.name=OpV 256A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_256a.max.name=MAX 256A対応レーザー照準ハッチ
+
+gregtech.machine.laser_hatch.target_1024a.iv.name=IV 1024A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_1024a.luv.name=LuV 1024A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_1024a.zpm.name=ZPM 1024A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_1024a.uv.name=UV 1024A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_1024a.uhv.name=UHV 1024A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_1024a.uev.name=UEV 1024A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_1024a.uiv.name=UIV 1024A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_1024a.uxv.name=UXV 1024A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_1024a.opv.name=OpV 1024A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_1024a.max.name=MAX 1024A対応レーザー照準ハッチ
+
+gregtech.machine.laser_hatch.target_4096a.iv.name=IV 4096A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_4096a.luv.name=LuV 4096A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_4096a.zpm.name=ZPM 4096A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_4096a.uv.name=UV 4096A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_4096a.uhv.name=UHV 4096A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_4096a.uev.name=UEV 4096A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_4096a.uiv.name=UIV 4096A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_4096a.uxv.name=UXV 4096A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_4096a.opv.name=OpV 4096A対応レーザー照準ハッチ
+gregtech.machine.laser_hatch.target_4096a.max.name=MAX 4096A対応レーザー照準ハッチ
+
+
+gregtech.machine.laser_hatch.tooltip1=遠距離でのエネルギーの送受信
+gregtech.machine.laser_hatch.tooltip2=§cレーザーケーブルは直線でなければなりません!!§7
 
 gregtech.machine.fluid_tank.max_multiblock=最大サイズ: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=内容物: %s L の %s
@@ -5088,7 +5157,8 @@ gregtech.recipe.cleanroom=%sが必要
 gregtech.recipe.cleanroom.display_name=クリーンルーム
 gregtech.recipe.cleanroom_sterile.display_name=滅菌クリーンルーム
 gregtech.recipe.research=研究が必要
-gregtech.recipe.computation_per_tick=計算力: %,d CWU/t
+gregtech.recipe.computation_per_tick=最低計算力: %,d CWU/t
+gregtech.recipe.total_computation=計算力: %,d
 
 gregtech.fluid.click_to_fill=§7中身の入った液体容器でクリックすると、§b中身をタンクに移す§7。Shiftクリックで1スタック全て移す。
 gregtech.fluid.click_combined=§7液体容器でクリックすると、液体を§c液体容器§7と§b内部タンク§7間をやり取りできる。Shiftクリックで1スタック全て移す。
