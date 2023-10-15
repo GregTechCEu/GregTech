@@ -4677,8 +4677,8 @@ gregtech.machine.data_bank.name=データバンク
 gregtech.machine.data_bank.tooltip.1=個人用NAS (ネットワークHDD)
 gregtech.machine.data_bank.tooltip.2=大容量データストレージ。伝送には光ファイバーを利用する。
 gregtech.machine.data_bank.tooltip.3=データバンクは連結可能
-gregtech.machine.data_bank.tooltip.4=データハッチと光学データ受付ハッチ1つにつき§f%s EU/t§7を連結時に§f%s EU/t§7消費する。
-gregtech.machine.data_bank.tooltip.5=データハッチと光学データ受付ハッチ1つにつき§f%s EU/t§7を通常時に消費する。
+gregtech.machine.data_bank.tooltip.4=通常時、データハッチ/光学データ受付ハッチ1つにつき§f%s EU/t§7を消費する。
+gregtech.machine.data_bank.tooltip.5=連結時、データハッチ/光学データ受付ハッチ1つにつき§f%s EU/t§7を消費する。
 gregtech.multiblock.data_bank.description=データバンクは複数のアセンブリラインで研究データを共有するマルチブロックで、アセンブリラインにより複雑な研究データの読み取りを可能にさせます。
 
 gregtech.machine.power_substation.name=大型蓄電器
@@ -4710,7 +4710,7 @@ gregtech.machine.network_switch.name=ネットワークスイッチ
 gregtech.machine.network_switch.tooltip.1=イーサネットハブ
 gregtech.machine.network_switch.tooltip.2=§f計算力§7のルーティングと分配に。
 gregtech.machine.network_switch.tooltip.3=任意の数の計算§f受信器§7を任意の数の計算§f送信機§7に結合できる。
-gregtech.machine.network_switch.tooltip.4=Uses §f%s EU/t§7 per Computation Data Hatch. //TODO
+gregtech.machine.network_switch.tooltip.4=計算データハッチ1つにつき§f%s EU/t§7を消費する。
 gregtech.multiblock.network_switch.description=ネットワークスイッチは、多数の供給元から多数の使用先に計算力を分配するために使用されるマルチブロックです。計算データの受信ハッチや送信ハッチはいくつでも組み込むことができます。研究設備は1つの計算データ受信ハッチしか組み込めないため、より高度な計算を必要とする研究データにはネットワークスイッチが必要です。HPCAがネットワークスイッチから計算データにアクセスするには、ブリッジコンポーネントが必要です。
 
 gregtech.machine.high_performance_computing_array.name=高機能計算アレイ (HPCA)
@@ -5107,8 +5107,8 @@ gregtech.machine.laser_hatch.target_4096a.uxv.name=UXV 4096A対応レーザー�
 gregtech.machine.laser_hatch.target_4096a.opv.name=OpV 4096A対応レーザー照準ハッチ
 gregtech.machine.laser_hatch.target_4096a.max.name=MAX 4096A対応レーザー照準ハッチ
 
-gregtech.machine.laser_hatch.source.tooltip1=Transmitting power at distance //TODO
-gregtech.machine.laser_hatch.target.tooltip1=遠距離でのエネルギーの送受信
+gregtech.machine.laser_hatch.source.tooltip1=遠くにエネルギーを送信する
+gregtech.machine.laser_hatch.target.tooltip1=遠くからエネルギーを受信する
 gregtech.machine.laser_hatch.tooltip2=§cレーザーケーブルは直線でなければなりません!!§7
 
 gregtech.machine.fluid_tank.max_multiblock=最大サイズ: %,dx%,dx%,d
@@ -5166,7 +5166,7 @@ gregtech.universal.tooltip.requires_redstone=§4赤石信号が必要
 gregtech.block.tooltip.no_mob_spawning=§bモブはこのブロックにスポーンできない
 
 gregtech.recipe.total=合計: %,d EU
-gregtech.recipe.max_eu=Max. EU: %,d EU //TODO
+gregtech.recipe.max_eu=最大EU: %,d EU
 gregtech.recipe.eu=消費: %,d EU/t (%s§r)
 gregtech.recipe.eu_inverted=発電: %,d EU/t
 gregtech.recipe.duration=処理時間: %s 秒
@@ -5183,7 +5183,7 @@ gregtech.recipe.cleanroom_sterile.display_name=滅菌クリーンルーム
 gregtech.recipe.research=研究が必要
 gregtech.recipe.computation_per_tick=最低計算力: %,d CWU/t
 gregtech.recipe.total_computation=計算力: %,d
-gregtech.recipe.research_result=Research result item, not produced by this recipe directly //TODO
+gregtech.recipe.research_result=このレシピでは直接クラフトされない、研究結果のアイテムはです。
 
 gregtech.fluid.click_to_fill=§7中身の入った液体容器でクリックすると、§b中身をタンクに移す§7。Shiftクリックで1スタック全て移す。
 gregtech.fluid.click_combined=§7液体容器でクリックすると、液体を§c液体容器§7と§b内部タンク§7間をやり取りできる。Shiftクリックで1スタック全て移す。
