@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -43,6 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements IControllable {
+
+    private static final int EUT_PER_HATCH = GTValues.VA[GTValues.EV];
+    private static final int EUT_PER_HATCH_CHAINED = GTValues.VA[GTValues.LuV];
 
     private IEnergyContainer energyContainer;
 
@@ -75,8 +79,8 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
         int regulars = getAbilities(MultiblockAbility.DATA_ACCESS_HATCH).size();
 
         int dataHatches = receivers + transmitters + regulars;
-        int tier = receivers > 0 ? GTValues.LuV : GTValues.EV;
-        return GTValues.VA[tier] * dataHatches;
+        int eutPerHatch = receivers > 0 ? EUT_PER_HATCH_CHAINED : EUT_PER_HATCH;
+        return eutPerHatch * dataHatches;
     }
 
     @Override
@@ -237,8 +241,8 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.3"));
-        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.4", GTValues.VA[GTValues.EV]));
-        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.5", GTValues.VA[GTValues.LuV]));
+        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.4", TextFormattingUtil.formatNumbers(EUT_PER_HATCH)));
+        tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.5", TextFormattingUtil.formatNumbers(EUT_PER_HATCH_CHAINED)));
     }
 
     @Override

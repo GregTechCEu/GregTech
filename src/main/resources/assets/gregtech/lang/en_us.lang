@@ -4672,8 +4672,8 @@ gregtech.machine.data_bank.name=Data Bank
 gregtech.machine.data_bank.tooltip.1=Your Personal NAS
 gregtech.machine.data_bank.tooltip.2=Bulk Data Storage. Transfer with Optical Cables.
 gregtech.machine.data_bank.tooltip.3=Data Banks can be chained together.
-gregtech.machine.data_bank.tooltip.4=Uses §f%s EU/t§7 per Data Hatch normally.
-gregtech.machine.data_bank.tooltip.5=Uses §f%s EU/t§7 per Data Hatch when chained.
+gregtech.machine.data_bank.tooltip.4=Uses §f%s EU/t§7 per Data/Optical Hatch normally.
+gregtech.machine.data_bank.tooltip.5=Uses §f%s EU/t§7 per Data/Optical Hatch when chained.
 gregtech.multiblock.data_bank.description=The Data Bank is a multiblock structure used for sharing Assembly Line Research Data between multiple Assembly Lines. Additionally, it enables Assembly Lines to read more complex research data on Data Modules.
 
 gregtech.machine.power_substation.name=Power Substation
@@ -4705,6 +4705,7 @@ gregtech.machine.network_switch.name=Network Switch
 gregtech.machine.network_switch.tooltip.1=Ethernet Hub
 gregtech.machine.network_switch.tooltip.2=Used to route and distribute §fComputation§7.
 gregtech.machine.network_switch.tooltip.3=Can combine any number of Computation §fReceivers§7 into any number of Computation §fTransmitters§7.
+gregtech.machine.network_switch.tooltip.4=Uses §f%s EU/t§7 per Computation Data Hatch.
 gregtech.multiblock.network_switch.description=The Network Switch is a multiblock structure used for distributing Computation from many sources to many destinations. It can accept any number of Computation Data Reception or Transmission Hatches. It is necessary for Research Data which requires much higher Computation, as the Research Station can only accept one Computation Data Reception Hatch. HPCAs must have a Bridge Component for the Network Switch to be able to access their Computation.
 
 gregtech.machine.high_performance_computing_array.name=High Performance Computing Array
@@ -5078,8 +5079,8 @@ gregtech.machine.laser_hatch.target_4096a.uxv.name=UXV 4096A Laser Target Hatch
 gregtech.machine.laser_hatch.target_4096a.opv.name=OpV 4096A Laser Target Hatch
 gregtech.machine.laser_hatch.target_4096a.max.name=MAX 4096A Laser Target Hatch
 
-
-gregtech.machine.laser_hatch.tooltip1=Receiving power from distance
+gregtech.machine.laser_hatch.source.tooltip1=Transmitting power at distance
+gregtech.machine.laser_hatch.target.tooltip1=Receiving power from distance
 gregtech.machine.laser_hatch.tooltip2=§cLaser Cables must be in a straight line!§7
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
@@ -5137,6 +5138,7 @@ gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
 gregtech.block.tooltip.no_mob_spawning=§bMobs cannot spawn on this block
 
 gregtech.recipe.total=Total: %,d EU
+gregtech.recipe.max_eu=Max. EU: %,d EU
 gregtech.recipe.eu=Usage: %,d EU/t (%s§r)
 gregtech.recipe.eu_inverted=Generation: %,d EU/t
 gregtech.recipe.duration=Duration: %s secs
@@ -5151,8 +5153,9 @@ gregtech.recipe.cleanroom=Requires %s
 gregtech.recipe.cleanroom.display_name=Cleanroom
 gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
 gregtech.recipe.research=Requires Research
-gregtech.recipe.computation_per_tick=Min Computation: %,d CWU/t
-gregtech.recipe.total_computation=Computation: %,d
+gregtech.recipe.computation_per_tick=Min. Computation: %,d CWU/t
+gregtech.recipe.total_computation=Computation: %,d CWU
+gregtech.recipe.research_result=Research result item, not produced by this recipe directly
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
