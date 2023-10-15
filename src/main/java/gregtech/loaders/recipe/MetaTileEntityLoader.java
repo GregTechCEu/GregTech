@@ -153,12 +153,6 @@ public class MetaTileEntityLoader {
         ModHandler.addShapelessRecipe("frost_hazard_to_steel_solid_casing", MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID), MetaBlocks.WARNING_SIGN.getItemVariant(FROST_HAZARD));
         ModHandler.addShapelessRecipe("noise_hazard_to_steel_solid_casing", MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID), MetaBlocks.WARNING_SIGN.getItemVariant(NOISE_HAZARD));
 
-        ModHandler.addShapedRecipe(true, "fluid_import_hatch_4x", MetaTileEntities.MULTI_FLUID_IMPORT_HATCH[0].getStackForm(), "P", "M", 'M', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'P', new UnificationEntry(OrePrefix.pipeQuadrupleFluid, Materials.Titanium));
-        ModHandler.addShapedRecipe(true, "fluid_import_hatch_9x", MetaTileEntities.MULTI_FLUID_IMPORT_HATCH[1].getStackForm(), "P", "M", 'M', MetaTileEntities.HULL[GTValues.IV].getStackForm(), 'P', new UnificationEntry(OrePrefix.pipeNonupleFluid, Materials.TungstenSteel));
-
-        ModHandler.addShapedRecipe(true, "fluid_export_hatch_4x", MetaTileEntities.MULTI_FLUID_EXPORT_HATCH[0].getStackForm(), "M", "P", 'M', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'P', new UnificationEntry(OrePrefix.pipeQuadrupleFluid, Materials.Titanium));
-        ModHandler.addShapedRecipe(true, "fluid_export_hatch_9x", MetaTileEntities.MULTI_FLUID_EXPORT_HATCH[1].getStackForm(), "M", "P", 'M', MetaTileEntities.HULL[GTValues.IV].getStackForm(), 'P', new UnificationEntry(OrePrefix.pipeNonupleFluid, Materials.TungstenSteel));
-
         ModHandler.addShapedRecipe(true, "rotor_holder_hv", MetaTileEntities.ROTOR_HOLDER[0].getStackForm(), "SGS", "GHG", "SGS", 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'G', new UnificationEntry(OrePrefix.gear, Materials.BlackSteel), 'S', new UnificationEntry(OrePrefix.gearSmall, Materials.StainlessSteel));
         ModHandler.addShapedRecipe(true, "rotor_holder_ev", MetaTileEntities.ROTOR_HOLDER[1].getStackForm(), "SGS", "GHG", "SGS", 'H', MetaTileEntities.HULL[GTValues.EV].getStackForm(), 'G', new UnificationEntry(OrePrefix.gear, Materials.Ultimet), 'S', new UnificationEntry(OrePrefix.gearSmall, Materials.Titanium));
         ModHandler.addShapedRecipe(true, "rotor_holder_iv", MetaTileEntities.ROTOR_HOLDER[2].getStackForm(), "SGS", "GHG", "SGS", 'H', MetaTileEntities.HULL[GTValues.IV].getStackForm(), 'G', new UnificationEntry(OrePrefix.gear, Materials.HSSG), 'S', new UnificationEntry(OrePrefix.gearSmall, Materials.TungstenSteel));

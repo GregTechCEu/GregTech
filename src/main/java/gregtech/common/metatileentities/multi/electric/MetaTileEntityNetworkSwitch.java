@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockComputerCasing;
@@ -40,6 +41,8 @@ import java.util.List;
 import java.util.Set;
 
 public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implements IOpticalComputationProvider {
+
+    private static final int EUT_PER_HATCH = GTValues.VA[GTValues.IV];
 
     private final MultipleComputationHandler computationHandler = new MultipleComputationHandler();
 
@@ -143,6 +146,7 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
         tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.3"));
+        tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.4", TextFormattingUtil.formatNumbers(EUT_PER_HATCH)));
     }
 
     @Override
@@ -181,7 +185,7 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
             reset();
             this.providers.addAll(providers);
             this.transmitters.addAll(transmitters);
-            this.EUt = (providers.size() + transmitters.size()) * GTValues.VA[GTValues.IV];
+            this.EUt = (providers.size() + transmitters.size()) * EUT_PER_HATCH;
         }
 
         private void reset() {

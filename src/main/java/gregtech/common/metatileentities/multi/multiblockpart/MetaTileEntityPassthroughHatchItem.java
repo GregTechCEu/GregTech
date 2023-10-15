@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -17,9 +18,13 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -30,6 +35,9 @@ import java.util.List;
 public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
 
     private ItemStackHandler itemStackHandler;
+
+    private IItemHandler importHandler;
+    private IItemHandler exportHandler;
 
     public MetaTileEntityPassthroughHatchItem(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
@@ -45,6 +53,8 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     protected void initializeInventory() {
         super.initializeInventory();
         itemInventory = itemStackHandler = new ItemStackHandler(getInventorySize());
+        importHandler = new ItemHandlerProxy(itemStackHandler, new ItemStackHandler(0));
+        exportHandler = new ItemHandlerProxy(new ItemStackHandler(0), itemStackHandler);
     }
 
     private int getInventorySize() {
@@ -151,5 +161,18 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     @Override
     public Class<IItemHandlerModifiable> getPassthroughType() {
         return IItemHandlerModifiable.class;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        // enforce strict sided-ness for item IO
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (side == getFrontFacing()) {
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(importHandler);
+            } else if (side == getFrontFacing().getOpposite()) {
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(exportHandler);
+            } else return null;
+        }
+        return super.getCapability(capability, side);
     }
 }

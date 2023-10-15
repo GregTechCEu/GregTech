@@ -1079,13 +1079,21 @@ public class MachineRecipeLoader {
             }
         }
 
-        for (int i = 0; i < MULTI_FLUID_IMPORT_HATCH.length; i++) {
-            if (MULTI_FLUID_IMPORT_HATCH[i] != null && MULTI_FLUID_EXPORT_HATCH[i] != null) {
+        for (int i = 0; i < QUADRUPLE_IMPORT_HATCH.length; i++) {
+            if (QUADRUPLE_IMPORT_HATCH[i] != null && QUADRUPLE_EXPORT_HATCH[i] != null) {
+                ModHandler.addShapedRecipe("quadruple_fluid_hatch_output_to_input_" + QUADRUPLE_IMPORT_HATCH[i].getTier(), QUADRUPLE_IMPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', QUADRUPLE_EXPORT_HATCH[i].getStackForm());
+                ModHandler.addShapedRecipe("quadruple_fluid_hatch_input_to_output_" + QUADRUPLE_EXPORT_HATCH[i].getTier(), QUADRUPLE_EXPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', QUADRUPLE_IMPORT_HATCH[i].getStackForm());
+            }
+        }
 
-                ModHandler.addShapedRecipe("multi_fluid_hatch_output_to_input_" + MULTI_FLUID_IMPORT_HATCH[i].getTier(), MULTI_FLUID_IMPORT_HATCH[i].getStackForm(),
-                        "d", "B", 'B', MULTI_FLUID_EXPORT_HATCH[i].getStackForm());
-                ModHandler.addShapedRecipe("multi_fluid_hatch_input_to_output_" + MULTI_FLUID_EXPORT_HATCH[i].getTier(), MULTI_FLUID_EXPORT_HATCH[i].getStackForm(),
-                        "d", "B", 'B', MULTI_FLUID_IMPORT_HATCH[i].getStackForm());
+        for (int i = 0; i < NONUPLE_IMPORT_HATCH.length; i++) {
+            if (NONUPLE_IMPORT_HATCH[i] != null && NONUPLE_EXPORT_HATCH[i] != null) {
+                ModHandler.addShapedRecipe("nonuple_fluid_hatch_output_to_input_" + NONUPLE_IMPORT_HATCH[i].getTier(), NONUPLE_IMPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', NONUPLE_EXPORT_HATCH[i].getStackForm());
+                ModHandler.addShapedRecipe("nonuple_fluid_hatch_input_to_output_" + NONUPLE_EXPORT_HATCH[i].getTier(), NONUPLE_EXPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', NONUPLE_IMPORT_HATCH[i].getStackForm());
             }
         }
 
