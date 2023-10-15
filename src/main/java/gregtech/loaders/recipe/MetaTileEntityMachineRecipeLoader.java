@@ -37,6 +37,202 @@ public class MetaTileEntityMachineRecipeLoader {
         registerHatchBusRecipe(UV, FLUID_IMPORT_HATCH[UV], FLUID_EXPORT_HATCH[UV], QUANTUM_TANK[0].getStackForm());
         registerHatchBusRecipe(UHV, FLUID_IMPORT_HATCH[UHV], FLUID_EXPORT_HATCH[UHV], QUANTUM_TANK[1].getStackForm());
 
+        // Quadruple Fluid Input Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[EV])
+                .input(pipeQuadrupleFluid, Titanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_IMPORT_HATCH[0])
+                .duration(300).EUt(VA[EV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[IV])
+                .input(pipeQuadrupleFluid, TungstenSteel)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_IMPORT_HATCH[1])
+                .duration(300).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[LuV])
+                .input(pipeQuadrupleFluid, NiobiumTitanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_IMPORT_HATCH[2])
+                .duration(300).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[ZPM])
+                .input(pipeQuadrupleFluid, Iridium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_IMPORT_HATCH[3])
+                .duration(300).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[UV])
+                .input(pipeQuadrupleFluid, Naquadah)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_IMPORT_HATCH[4])
+                .duration(300).EUt(VA[UV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[UHV])
+                .input(pipeQuadrupleFluid, Neutronium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_IMPORT_HATCH[5])
+                .duration(300).EUt(VA[UV]).buildAndRegister();
+
+        // Nonuple Fluid Input Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[EV])
+                .input(pipeNonupleFluid, Titanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_IMPORT_HATCH[0])
+                .duration(600).EUt(VA[EV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[IV])
+                .input(pipeNonupleFluid, TungstenSteel)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_IMPORT_HATCH[1])
+                .duration(600).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[LuV])
+                .input(pipeNonupleFluid, NiobiumTitanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_IMPORT_HATCH[2])
+                .duration(600).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[ZPM])
+                .input(pipeNonupleFluid, Iridium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_IMPORT_HATCH[3])
+                .duration(600).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[UV])
+                .input(pipeNonupleFluid, Naquadah)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_IMPORT_HATCH[4])
+                .duration(600).EUt(VA[UV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[UHV])
+                .input(pipeNonupleFluid, Neutronium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_IMPORT_HATCH[5])
+                .duration(600).EUt(VA[UV]).buildAndRegister();
+
+        // Quadruple Fluid Output Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[EV])
+                .input(pipeQuadrupleFluid, Titanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_EXPORT_HATCH[0])
+                .duration(300).EUt(VA[EV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[IV])
+                .input(pipeQuadrupleFluid, TungstenSteel)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_EXPORT_HATCH[1])
+                .duration(300).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[LuV])
+                .input(pipeQuadrupleFluid, NiobiumTitanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_EXPORT_HATCH[2])
+                .duration(300).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[ZPM])
+                .input(pipeQuadrupleFluid, Iridium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_EXPORT_HATCH[3])
+                .duration(300).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[UV])
+                .input(pipeQuadrupleFluid, Naquadah)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_EXPORT_HATCH[4])
+                .duration(300).EUt(VA[UV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[UHV])
+                .input(pipeQuadrupleFluid, Neutronium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_EXPORT_HATCH[5])
+                .duration(300).EUt(VA[UV]).buildAndRegister();
+
+        // Nonuple Fluid Output Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[EV])
+                .input(pipeNonupleFluid, Titanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_EXPORT_HATCH[0])
+                .duration(600).EUt(VA[EV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[IV])
+                .input(pipeNonupleFluid, TungstenSteel)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_EXPORT_HATCH[1])
+                .duration(600).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[LuV])
+                .input(pipeNonupleFluid, NiobiumTitanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_EXPORT_HATCH[2])
+                .duration(600).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[ZPM])
+                .input(pipeNonupleFluid, Iridium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_EXPORT_HATCH[3])
+                .duration(600).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[UV])
+                .input(pipeNonupleFluid, Naquadah)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_EXPORT_HATCH[4])
+                .duration(600).EUt(VA[UV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[UHV])
+                .input(pipeNonupleFluid, Neutronium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_EXPORT_HATCH[5])
+                .duration(600).EUt(VA[UV]).buildAndRegister();
+
         // Item Buses
         registerHatchBusRecipe(ULV, ITEM_IMPORT_BUS[ULV], ITEM_EXPORT_BUS[ULV], new ItemStack(Blocks.CHEST));
         registerHatchBusRecipe(LV, ITEM_IMPORT_BUS[LV], ITEM_EXPORT_BUS[LV], new ItemStack(Blocks.CHEST));
