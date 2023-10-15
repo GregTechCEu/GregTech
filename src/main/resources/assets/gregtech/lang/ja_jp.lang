@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & GTModpackTeam
 # 日本語ローカライズ担当： MrKo_no & GTModpackTeam
-# Corresponding Version: 2.7.3 - beta
-# 対応バージョン: 2.7.3 - beta
+# Corresponding Version: 2.7.4 - beta
+# 対応バージョン: 2.7.4 - beta
 
 death.attack.heat=%s は熱さを感じなくなった。
 death.attack.frost=%s のふとんがふっとんだ。
@@ -5206,7 +5206,6 @@ gregtech.tool_action.soft_mallet.toggle_mode=§8ソフトマレットでモー�
 gregtech.tool_action.hammer=§8ハードハンマーで消音できます。
 gregtech.tool_action.crowbar=§8バールでカバーを撤去できます。
 gregtech.tool_action.tape=§8テープでメンテナンスの問題を解決できます。
-gregtech.tool_action.tape=§8Use Tape to fix Maintenance Problems //TODO
 
 gregtech.fluid.generic=%s
 gregtech.fluid.plasma=%sプラズマ
