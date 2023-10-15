@@ -2299,7 +2299,7 @@ tile.optical_pipe_normal.name=光ファイバーケーブル
 tile.optical_pipe_normal.tooltip1=§f計算情報§7や§f研究データ§7を伝送
 
 tile.laser_pipe_normal.name=レーザー伝送ケーブル
-tile.laser_pipe_normal.tooltip1=エネルギーを§f損失無し§fで直線的に伝送する
+tile.laser_pipe_normal.tooltip1=エネルギーを§f損失無し§7で直線的に伝送する
 
 metaitem.prospector.lv.name=LV電動探知機
 metaitem.prospector.hv.name=HV電動探知機
@@ -5198,7 +5198,8 @@ gregtech.tool_action.screwdriver.auto_output=§8スクリュードライバー�
 gregtech.tool_action.screwdriver.auto_output_down=§8スクリュードライバーで下面からの自動搬出を切替できます。
 gregtech.tool_action.screwdriver.toggle_mode=§8スクリュードライバーでモードを切替できます。
 gregtech.tool_action.wrench.set_facing=§8レンチを使うと向きを変更できます。
-gregtech.tool_action.wrench.connect=§8レンチで接続を設定でき、スニークで接続をブロックできます。
+gregtech.tool_action.wrench.connect=§8レンチで接続を設定できます。
+gregtech.tool_action.wrench.connect_and_block=§8レンチで接続を設定でき、スニークで逆流を防止します。
 gregtech.tool_action.wire_cutter.connect=§8ワイヤーカッターで接続を設定できます。
 gregtech.tool_action.soft_mallet.reset=§8ソフトマレットで動作をON / OFFできます。
 gregtech.tool_action.soft_mallet.toggle_mode=§8ソフトマレットでモードを切替できます。
