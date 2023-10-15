@@ -47,7 +47,6 @@ import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.BRONZE_BRI
 import static gregtech.common.blocks.MetaBlocks.METAL_CASING;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
-import static gregtech.common.metatileentities.MetaTileEntities.NONUPLE_EXPORT_HATCH;
 import static gregtech.loaders.OreDictionaryLoader.OREDICT_BLOCK_FUEL_COKE;
 import static gregtech.loaders.OreDictionaryLoader.OREDICT_FUEL_COKE;
 

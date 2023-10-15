@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -49,7 +50,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
         this.numSlots = numSlots;
         // Quadruple: 1/4th the capacity of a fluid hatch of this tier
         // Nonuple: 1/8th the capacity of a fluid hatch of this tier
-        this.tankSize = (BASE_TANK_SIZE * (1 << Math.min(9, tier))) / (numSlots == 4 ? 4 : 8);
+        this.tankSize = (BASE_TANK_SIZE * (1 << Math.min(GTValues.UHV, tier))) / (numSlots == 4 ? 4 : 8);
         FluidTank[] fluidsHandlers = new FluidTank[numSlots];
         for (int i = 0; i < fluidsHandlers.length; i++) {
             fluidsHandlers[i] = new NotifiableFluidTank(tankSize, this, isExportHatch);
