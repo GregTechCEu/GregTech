@@ -4,6 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FilteredFluidHandler;
+import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
@@ -19,8 +20,11 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -33,6 +37,9 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     private static final int TANK_SIZE = 16_000;
 
     private FluidTankList fluidTankList;
+
+    private IFluidHandler importHandler;
+    private IFluidHandler exportHandler;
 
     public MetaTileEntityPassthroughHatchFluid(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
@@ -52,6 +59,8 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
             fluidHandlers[i] = new FilteredFluidHandler(TANK_SIZE);
         }
         fluidInventory = fluidTankList = new FluidTankList(false, fluidHandlers);
+        importHandler = new FluidHandlerProxy(fluidTankList, new FluidTankList(false));
+        exportHandler = new FluidHandlerProxy(new FluidTankList(false), fluidTankList);
     }
 
     @Override
@@ -149,5 +158,18 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     @Override
     public Class<IFluidHandler> getPassthroughType() {
         return IFluidHandler.class;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        // enforce strict sided-ness for fluid IO
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            if (side == getFrontFacing()) {
+                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(importHandler);
+            } else if (side == getFrontFacing().getOpposite()) {
+                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(exportHandler);
+            } else return null;
+        }
+        return super.getCapability(capability, side);
     }
 }
