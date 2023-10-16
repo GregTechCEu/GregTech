@@ -512,6 +512,22 @@ public class Material implements Comparable<Material> {
         }
 
         /**
+         * Add a liquid for this material.
+         * @see #fluid(FluidStorageKey, FluidState)
+         */
+        public Builder liquid() {
+            return fluid(FluidStorageKeys.LIQUID, FluidState.LIQUID);
+        }
+
+        /**
+         * Add a liquid for this material.
+         * @see #fluid(FluidStorageKey, FluidState)
+         */
+        public Builder liquid(@Nonnull FluidBuilder builder) {
+            return fluid(FluidStorageKeys.LIQUID, builder.state(FluidState.LIQUID));
+        }
+
+        /**
          * Add a plasma for this material.
          * @see #fluid(FluidStorageKey, FluidState)
          */
@@ -520,11 +536,27 @@ public class Material implements Comparable<Material> {
         }
 
         /**
+         * Add a plasma for this material.
+         * @see #fluid(FluidStorageKey, FluidState)
+         */
+        public Builder plasma(@Nonnull FluidBuilder builder) {
+            return fluid(FluidStorageKeys.PLASMA, builder.state(FluidState.PLASMA));
+        }
+
+        /**
          * Add a gas for this material.
          * @see #fluid(FluidStorageKey, FluidState)
          */
         public Builder gas() {
             return fluid(FluidStorageKeys.GAS, FluidState.GAS);
+        }
+
+        /**
+         * Add a gas for this material.
+         * @see #fluid(FluidStorageKey, FluidState)
+         */
+        public Builder gas(@Nonnull FluidBuilder builder) {
+            return fluid(FluidStorageKeys.GAS, builder.state(FluidState.GAS));
         }
 
         /**
