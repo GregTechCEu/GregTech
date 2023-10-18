@@ -455,6 +455,20 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
         return TextFormattingUtil.formatNumbers(energyBank.getStored());
     }
 
+    public long getStoredLong() {
+        if (energyBank == null) {
+            return 0;
+        }
+        return energyBank.getStored().longValue() & ~(1L << 63);
+    }
+
+    public long getCapacityLong() {
+        if (energyBank == null) {
+            return 0;
+        }
+        return energyBank.getCapacity().longValue() & ~(1L << 63);
+    }
+
     public String getCapacity() {
         if (energyBank == null) {
             return "0";
