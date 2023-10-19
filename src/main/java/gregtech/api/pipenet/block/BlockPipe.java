@@ -284,10 +284,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @Override
     public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
-        CuboidRayTraceResult rayTraceResult = RayTracer.rayTraceCuboidsClosest(
-                RayTracer.getStartVec(playerIn), RayTracer.getEndVec(playerIn),
-                pos, getCollisionBox(worldIn, pos, playerIn)
-        );
+        CuboidRayTraceResult rayTraceResult = getServerCollisionRayTrace(playerIn, pos, worldIn);
 
         if (rayTraceResult == null || pipeTile == null) {
             return false;
@@ -496,6 +493,17 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @SideOnly(Side.CLIENT)
     public RayTraceResult getClientCollisionRayTrace(World worldIn, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
         return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos, Minecraft.getMinecraft().player));
+    }
+
+    /**
+     * This method attempts to properly raytrace the pipe to fix the server not getting the correct raytrace result.
+     */
+    @Nullable
+    public CuboidRayTraceResult getServerCollisionRayTrace(EntityPlayer playerIn, BlockPos pos, World worldIn) {
+        return RayTracer.rayTraceCuboidsClosest(
+                RayTracer.getStartVec(playerIn), RayTracer.getEndVec(playerIn),
+                pos, getCollisionBox(worldIn, pos, playerIn)
+        );
     }
 
     @Nonnull
