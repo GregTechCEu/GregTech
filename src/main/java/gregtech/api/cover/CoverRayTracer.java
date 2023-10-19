@@ -15,7 +15,11 @@ public final class CoverRayTracer {
     private CoverRayTracer() {}
 
     public static @Nullable EnumFacing rayTraceCoverableSide(@NotNull CoverableView coverableView, @NotNull EntityPlayer player) {
-        RayTraceResult result = RayTracer.retraceBlock(coverableView.getWorld(), player, coverableView.getPos());
+
+        // if the coverable view is from a blockpipe, use the proper raytrace method
+        RayTraceResult result = coverableView.getWorld().getBlockState(coverableView.getPos()).getBlock() instanceof BlockPipe<?,?,?> pipe ?
+                pipe.getServerCollisionRayTrace(player, coverableView.getPos(), coverableView.getWorld()) :
+                RayTracer.retraceBlock(coverableView.getWorld(), player, coverableView.getPos());
         if (result == null || result.typeOfHit != RayTraceResult.Type.BLOCK) {
             return null;
         }
