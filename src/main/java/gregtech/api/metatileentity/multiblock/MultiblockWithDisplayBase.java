@@ -353,13 +353,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * to use translation, use TextComponentTranslation
      */
     protected void addDisplayText(List<ITextComponent> textList) {
-        if (!isStructureFormed()) {
-            ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.invalid_structure.tooltip");
-            tooltip.setStyle(new Style().setColor(TextFormatting.GRAY));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure")
-                    .setStyle(new Style().setColor(TextFormatting.RED)
-                            .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, tooltip))));
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed()).addStructureLine();
     }
 
     protected void addMaintenanceText(List<ITextComponent> textList) {

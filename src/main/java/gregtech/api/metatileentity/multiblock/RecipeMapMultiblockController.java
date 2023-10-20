@@ -137,35 +137,14 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed()) {
-            IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
-            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-                long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-                String voltageName = GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
-                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatNumbers(maxVoltage), voltageName));
-            }
-
-            addExtraDisplayInfo(textList);
-
-            if (!recipeMapWorkable.isWorkingEnabled()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-
-            } else if (recipeMapWorkable.isActive()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-                int currentProgress = (int) (recipeMapWorkable.getProgressPercent() * 100);
-                if (this.recipeMapWorkable.getParallelLimit() != 1) {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.parallel", this.recipeMapWorkable.getParallelLimit()));
-                }
-                textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
-            } else {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
-            }
-
-            if (recipeMapWorkable.isHasNotEnoughEnergy()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .addStructureLine()
+                .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
+                .addWorkingStatusLine()
+                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addProgressLine(recipeMapWorkable.getProgressPercent())
+                .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy());
     }
 
     @Override

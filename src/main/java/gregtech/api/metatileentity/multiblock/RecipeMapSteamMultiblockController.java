@@ -99,28 +99,20 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed()) {
-            IFluidTank steamFluidTank = recipeMapWorkable.getSteamFluidTankCombined();
-            if (steamFluidTank != null && steamFluidTank.getCapacity() > 0) {
-                int steamStored = steamFluidTank.getFluidAmount();
-                textList.add(new TextComponentTranslation("gregtech.multiblock.steam.steam_stored", steamStored, steamFluidTank.getCapacity()));
-            }
-
-            if (!recipeMapWorkable.isWorkingEnabled()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-
-            } else if (recipeMapWorkable.isActive()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-                int currentProgress = (int) (recipeMapWorkable.getProgressPercent() * 100);
-                if (this.recipeMapWorkable.getParallelLimit() != 1) {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.parallel", this.recipeMapWorkable.getParallelLimit()));
-                }
-                textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
-            } else {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .addStructureLine()
+                .addCustom(tl -> {
+                    // custom steam tank line
+                    IFluidTank steamFluidTank = recipeMapWorkable.getSteamFluidTankCombined();
+                    if (steamFluidTank != null && steamFluidTank.getCapacity() > 0) {
+                        int steamStored = steamFluidTank.getFluidAmount();
+                        tl.add(new TextComponentTranslation("gregtech.multiblock.steam.steam_stored", steamStored, steamFluidTank.getCapacity()));
+                    }
+                })
+                .addWorkingStatusLine()
+                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
 
     @Override

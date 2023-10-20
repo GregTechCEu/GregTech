@@ -36,42 +36,15 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        if (!isStructureFormed()) {
-            ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.invalid_structure.tooltip");
-            tooltip.setStyle(new Style().setColor(TextFormatting.GRAY));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure")
-                    .setStyle(new Style().setColor(TextFormatting.RED)
-                            .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
-        } else {
+        MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
 
-            FluidStack fuelStack = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getInputFluidStack();
-            if (fuelStack != null && fuelStack.amount > 0) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", TextFormattingUtil.formatNumbers(fuelStack.amount), fuelStack.getLocalizedName()));
-            }
-
-            String fluidName = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getRecipeFluidInputInfo();
-            if (fluidName != null && isActive()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed",
-                        fluidName, TextFormatting.AQUA + TextFormattingUtil.formatNumbers(recipeMapWorkable.getPreviousRecipeDuration())));
-            }
-
-
-            long maxVoltage = getMaxVoltage();
-            if (maxVoltage != 0 && maxVoltage >= -recipeMapWorkable.getRecipeEUt()) {
-                String voltageName = GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
-                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatNumbers(maxVoltage), voltageName));
-            }
-
-            if (!recipeMapWorkable.isWorkingEnabled()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-            } else if (recipeMapWorkable.isActive()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-                int currentProgress = (int) (recipeMapWorkable.getProgressPercent() * 100);
-                textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
-            } else {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+                .addStructureLine()
+                .addFuelAmountLine(recipeLogic.getInputFluidStack())
+                .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
+                .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
+                .addWorkingStatusLine();
     }
 
     protected long getMaxVoltage() {
