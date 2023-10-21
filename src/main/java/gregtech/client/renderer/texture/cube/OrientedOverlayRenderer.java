@@ -16,6 +16,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
@@ -116,6 +118,7 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             basePath = split[1];
         }
 
+        boolean foundTexture = false;
         for (OverlayFace overlayFace : OverlayFace.VALUES) {
             final String faceName = overlayFace.name().toLowerCase();
             final String overlayPath = String.format("blocks/%s/overlay_%s", basePath, faceName);
@@ -124,6 +127,8 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             TextureAtlasSprite normalSprite = ICubeRenderer.getResource(textureMap, modID, overlayPath);
             // require the normal texture to get the rest
             if (normalSprite == null) continue;
+
+            foundTexture = true;
 
             // normal
 
@@ -143,6 +148,10 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
 
             sprites.put(overlayFace, new ActivePredicate(normalSprite, activeSprite, pausedSprite,
                     normalSpriteEmissive, activeSpriteEmissive, pausedSpriteEmissive));
+        }
+
+        if (!foundTexture) {
+            FMLClientHandler.instance().trackMissingTexture(new ResourceLocation(modID, "blocks/" + basePath + "/overlay_OVERLAY_FACE"));
         }
     }
 
