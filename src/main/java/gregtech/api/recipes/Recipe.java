@@ -86,13 +86,7 @@ public class Recipe {
                   int duration, int EUt, boolean hidden, boolean isCTRecipe, IRecipePropertyStorage recipePropertyStorage,
                   @Nonnull GTRecipeCategory recipeCategory) {
         this.recipePropertyStorage = recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE : recipePropertyStorage;
-        if (inputs.isEmpty()) {
-            this.inputs = Collections.emptyList();
-        } else {
-            this.inputs = NonNullList.create();
-            this.inputs.addAll(inputs);
-            this.inputs.sort((ing1, ing2) -> Boolean.compare(ing1.isNonConsumable(), ing2.isNonConsumable()));
-        }
+        this.inputs = GTRecipeInputCache.deduplicateInputs(inputs);
         if (outputs.isEmpty()) {
             this.outputs = EMPTY;
         } else {
@@ -100,7 +94,7 @@ public class Recipe {
             this.outputs.addAll(outputs);
         }
         this.chancedOutputs = chancedOutputs.isEmpty() ? Collections.emptyList() : new ArrayList<>(chancedOutputs);
-        this.fluidInputs = fluidInputs.isEmpty() ? Collections.emptyList() : ImmutableList.copyOf(fluidInputs);
+        this.fluidInputs = GTRecipeInputCache.deduplicateInputs(fluidInputs);
         this.fluidOutputs = fluidOutputs.isEmpty() ? Collections.emptyList() : ImmutableList.copyOf(fluidOutputs);
         this.duration = duration;
         this.EUt = EUt;
@@ -171,7 +165,7 @@ public class Recipe {
         Pair<Boolean, int[]> fluids = null;
         Pair<Boolean, int[]> items = null;
 
-        if (fluidInputs.size() >0 ) {
+        if (fluidInputs.size() > 0) {
             fluids = matchesFluid(fluidInputs);
             if (!fluids.getKey()) {
                 return false;
@@ -199,7 +193,7 @@ public class Recipe {
                         fluidInputs.set(i, null);
                 }
             }
-            if(items != null) {
+            if (items != null) {
                 int[] itemAmountInSlot = items.getValue();
                 for (int i = 0; i < itemAmountInSlot.length; i++) {
                     ItemStack itemInSlot = inputs.get(i);

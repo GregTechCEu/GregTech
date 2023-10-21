@@ -68,20 +68,6 @@ public class CTRecipeBuilder {
         return null;
     }
 
-    private static void checkIfExists(IIngredient ingredient, String oreDict) {
-        if (ingredient == null) {
-            throw new IllegalArgumentException("Invalid ingredient: is null");
-        }
-
-        if (ingredient.getItems().isEmpty()) {
-            if (oreDict != null) {
-                throw new IllegalArgumentException("Invalid Ore Dictionary [" + oreDict + "]: contains no items");
-            } else {
-                throw new IllegalArgumentException("Invalid Item [" + ingredient + "]: item not found");
-            }
-        }
-    }
-
     @ZenMethod
     public CTRecipeBuilder inputs(@Nonnull IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
@@ -111,7 +97,7 @@ public class CTRecipeBuilder {
             if (items.isEmpty()) {
                 throw new IllegalArgumentException("Invalid Ore Dictionary [" + oreDict + "]: contains no items");
             }
-            return GTRecipeOreInput.getOrCreate(oreDict, ingredient.getAmount());
+            return new GTRecipeOreInput(oreDict, ingredient.getAmount());
         } else if (items.isEmpty()) {
             // no possible input from what was supplied
             throw new IllegalArgumentException("Invalid Item [" + ingredient + "]: item not found");
@@ -124,7 +110,7 @@ public class CTRecipeBuilder {
             // check for the empty tag specifically, so it is treated as a non-nbt input instead
             final NBTTagCompound tagCompound = data == DataMap.EMPTY ? null : CraftTweakerMC.getNBTCompound(data);
 
-            return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(stack, ingredient.getAmount()), tagCompound);
+            return tryConstructNBTInput(new GTRecipeItemInput(stack, ingredient.getAmount()), tagCompound);
         } else {
             // multiple inputs for a single input entry
             final Map<ItemStack, List<NBTTagCompound>> map = new Object2ObjectOpenCustomHashMap<>(ItemStackHashStrategy.comparingItemDamageCount());
@@ -150,7 +136,7 @@ public class CTRecipeBuilder {
                 }
             }
 
-            return tryConstructNBTInput(GTRecipeItemInput.getOrCreate(stacks), map);
+            return tryConstructNBTInput(new GTRecipeItemInput(stacks), map);
         }
     }
 
@@ -201,7 +187,7 @@ public class CTRecipeBuilder {
     public CTRecipeBuilder fluidInputs(ILiquidStack... ingredients) {
         this.backingBuilder.fluidInputs(Arrays.stream(ingredients)
                 .map(CraftTweakerMC::getLiquidStack)
-                .map(fluidStack -> GTRecipeFluidInput.getOrCreate(fluidStack, fluidStack.amount))
+                .map(GTRecipeFluidInput::new)
                 .collect(Collectors.toList()));
         return this;
     }

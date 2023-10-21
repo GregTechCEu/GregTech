@@ -148,7 +148,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     private void updateDisplayUnlockComponents() {
         GTRecipeInput[] unlockComponents = getUnlockComponents();
         for (int i = 0; i < Math.min(this.unlockComponents.getSlots(), unlockComponents.length); i++) {
-            if (unlockComponents[i].isOreDict()){
+            if (unlockComponents[i].isOreDict()) {
                 this.unlockComponents.setStackInSlot(i, OreDictionary.getOres(OreDictionary.getOreName(unlockComponents[i].getOreDict())).get(0));
             } else {
                 this.unlockComponents.setStackInSlot(i, (unlockComponents[i].getInputStacks()[0]));
@@ -161,8 +161,9 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
             ALLOWED_COMPONENTS = new Component[]{CraftingComponent.PUMP, CraftingComponent.CONVEYOR, CraftingComponent.EMITTER, CraftingComponent.SENSOR};
 
         Random random = new Random(unlockComponentsSeed);
-        return new GTRecipeInput[]{GTRecipeOreInput.getOrCreate(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier).toString()),
-                GTRecipeItemInput.getOrCreate((ItemStack) ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)].getIngredient(unlockComponentTier)),
+        return new GTRecipeInput[]{
+                new GTRecipeOreInput(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier).toString()),
+                new GTRecipeItemInput((ItemStack) ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)].getIngredient(unlockComponentTier)),
         };
     }
 
