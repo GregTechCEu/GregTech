@@ -469,6 +469,9 @@ public class Materials {
     public static Material EnrichedNaquadahSulfate;
     public static Material NaquadriaSulfate;
     public static Material Pyrochlore;
+    public static Material LithiumFluoride;
+    public static Material BerylliumFluoride;
+    public static Material ThoriumTetrafluoride;
 
     /**
      * Organic chemistry
@@ -741,6 +744,7 @@ public class Materials {
     public static Material SaltWater;
     public static Material Clay;
     public static Material Redstone;
+    public static Material ThoriumFLiBe;
 
     /**
      * Third Degree Materials

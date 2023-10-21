@@ -1481,5 +1481,27 @@ public class FirstDegreeMaterials {
                 .components(Helium, 1)
                 .fluidTemp(4)
                 .build();
+
+        LithiumFluoride = new Material.Builder(451, gregtechId("lithium_fluoride"))
+                .dust()
+                .colorAverage()
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Lithium, 1, Fluorine, 1)
+                .build();
+
+        BerylliumFluoride = new Material.Builder(452, gregtechId("beryllium_fluoride"))
+                .dust()
+                .colorAverage()
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Beryllium, 1, Fluorine, 2)
+                .build();
+
+        ThoriumTetrafluoride = new Material.Builder(453, gregtechId("thorium_tetrafluoride"))
+                .dust()
+                .colorAverage()
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Thorium, 1, Fluorine, 4)
+                .build();
+
     }
 }

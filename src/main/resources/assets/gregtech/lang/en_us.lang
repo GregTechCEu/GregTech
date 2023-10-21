@@ -1740,7 +1740,9 @@ gregtech.material.antimony_trifluoride=Antimony Trifluoride
 gregtech.material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
 gregtech.material.naquadria_sulfate=Naquadria Sulfate
 gregtech.material.pyrochlore=Pyrochlore
-
+gregtech.material.lithium_fluoride=Lithium Fluoride
+gregtech.material.beryllium_fluoride=Beryllium Fluoride
+gregtech.material.thorium_tetrafluoride=Thorium Tetrafluoride
 
 # Organic Chemistry Materials
 gregtech.material.silicone_rubber=Silicone Rubber
@@ -2009,6 +2011,7 @@ gregtech.material.aqua_regia=Aqua Regia
 gregtech.material.salt_water=Salt Water
 gregtech.material.clay=Clay
 gregtech.material.redstone=Redstone
+gregtech.material.thorium_flibe=FLiBeTh
 
 
 # Third Degree Materials
