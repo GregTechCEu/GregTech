@@ -443,27 +443,32 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed()) {
-            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-                long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-                String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
-                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
-            }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(cleanroomLogic.isWorkingEnabled(), cleanroomLogic.isActive())
+                .addEnergyUsageLine(energyContainer)
+                .addCustom(tl -> {
+                    // Cleanliness status line
+                    if (isStructureFormed()) {
+                        // Base text
+                        ITextComponent statusComponent = new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_status")
+                                .setStyle(new Style().setColor(TextFormatting.GRAY));
 
-            if (!cleanroomLogic.isWorkingEnabled()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-            } else if (cleanroomLogic.isActive()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.progress", getProgressPercent()));
-            } else {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
-            }
+                        // Clean/Contaminated state
+                        if (isClean()) {
+                            statusComponent.appendSibling(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_state")
+                                    .setStyle(new Style().setColor(TextFormatting.GREEN)));
+                        } else {
+                            statusComponent.appendSibling(new TextComponentTranslation("gregtech.multiblock.cleanroom.dirty_state")
+                                    .setStyle(new Style().setColor(TextFormatting.DARK_RED)));
+                        }
 
-            if (isClean()) textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_state"));
-            else textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.dirty_state"));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_amount", this.cleanAmount));
-        }
+                        // Cleanliness amount
+                        statusComponent.appendText(String.format(" §7(%s%%)", this.cleanAmount));
+                        tl.add(statusComponent);
+                    }
+                })
+                .addWorkingStatusLine()
+                .addProgressLine(getProgressPercent() / 100.0);
     }
 
     @Override

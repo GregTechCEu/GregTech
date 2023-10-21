@@ -16,10 +16,13 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.core.sound.GTSoundEvents;
@@ -31,7 +34,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -42,9 +45,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-
-import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
-import static net.minecraft.util.text.TextFormatting.*;
 
 public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
 
@@ -96,17 +96,53 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed()) {
-            int efficiency = recipeLogic.getHeatScaled();
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_boiler.efficiency",
-                    (efficiency == 0 ? DARK_RED : efficiency <= 40 ? RED : efficiency == 100 ? GREEN : YELLOW).toString() + efficiency + "%"));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_boiler.steam_output", recipeLogic.getLastTickSteam()));
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+                .addCustom(tl -> {
+                    if (isStructureFormed()) {
+                        // Steam Output line
+                        ITextComponent steamOutput = TextComponentUtil.stringWithColor(
+                                TextFormatting.AQUA,
+                                TextFormattingUtil.formatNumbers(recipeLogic.getLastTickSteam()) + " L/t");
 
-            ITextComponent throttleText = new TextComponentTranslation("gregtech.multiblock.large_boiler.throttle",
-                    AQUA.toString() + getThrottle() + "%");
-            withHoverTextTranslate(throttleText, "gregtech.multiblock.large_boiler.throttle.tooltip");
-            textList.add(throttleText);
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.large_boiler.steam_output",
+                                steamOutput));
+
+                        // Efficiency line
+                        ITextComponent efficiency = TextComponentUtil.stringWithColor(
+                                getNumberColor(recipeLogic.getHeatScaled()),
+                                recipeLogic.getHeatScaled() + "%");
+
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.large_boiler.efficiency",
+                                efficiency));
+
+                        // Throttle line
+                        ITextComponent throttle = TextComponentUtil.stringWithColor(
+                                getNumberColor(getThrottle()),
+                                getThrottle() + "%");
+
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.large_boiler.throttle",
+                                throttle));
+                    }
+                })
+                .addWorkingStatusLine();
+    }
+
+    private TextFormatting getNumberColor(int number) {
+        if (number == 0) {
+            return TextFormatting.DARK_RED;
+        } else if (number <= 40) {
+            return TextFormatting.RED;
+        } else if (number < 100) {
+            return TextFormatting.YELLOW;
+        } else {
+            return TextFormatting.GREEN;
         }
     }
 

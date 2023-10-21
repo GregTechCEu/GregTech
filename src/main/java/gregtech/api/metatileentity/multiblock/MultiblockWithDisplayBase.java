@@ -353,7 +353,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * to use translation, use TextComponentTranslation
      */
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed()).addStructureLine();
+        MultiblockDisplayText.builder(textList, isStructureFormed());
     }
 
     protected void addMaintenanceText(List<ITextComponent> textList) {

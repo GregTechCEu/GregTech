@@ -17,6 +17,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -156,27 +157,11 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (!isStructureFormed())
-            return;
-
-        if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-            int energyContainer = getEnergyTier();
-            long maxVoltage = GTValues.V[energyContainer];
-            String voltageName = GTValues.VNF[energyContainer];
-            textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
-        }
-
-        if (!minerLogic.isWorkingEnabled()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-
-        } else if (minerLogic.isActive()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-            int currentProgress = (int) (minerLogic.getProgressPercent() * 100);
-            textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
-        } else {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(minerLogic.isWorkingEnabled(), minerLogic.isActive())
+                .addEnergyUsageLine(energyContainer)
+                .addWorkingStatusLine()
+                .addProgressLine(minerLogic.getProgressPercent());
     }
 
     @Override

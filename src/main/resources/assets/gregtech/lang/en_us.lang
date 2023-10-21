@@ -42,7 +42,7 @@ enchantment.disjunction=Disjunction
 gregtech.machine.steam_grinder.name=Steam Grinder
 gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Steam Age. Requires at least 14 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.
 gregtech.multiblock.steam.low_steam=Not enough Steam to run!
-gregtech.multiblock.steam.steam_stored=Steam: %s / %s mb
+gregtech.multiblock.steam.steam_stored=Steam: %s
 gregtech.machine.steam_hatch.name=Steam Hatch
 gregtech.machine.steam.steam_hatch.tooltip=§eAccepted Fluid: §fSteam
 gregtech.machine.steam_import_bus.name=Input Bus (Steam)
@@ -4657,9 +4657,9 @@ gregtech.machine.cleanroom.tooltip.8=Send power through §fHulls §7or §fDiodes
 gregtech.machine.cleanroom.tooltip.9=Send items and fluids with §fPassthrough Hatches §7in the walls.
 gregtech.machine.cleanroom.tooltip.ae2.channels=Send up to §f8 AE2 Channels §7through §fHulls§7 in the walls.
 gregtech.machine.cleanroom.tooltip.ae2.no_channels=Send §aAE2 Networks§7 through §fHulls§7 in the walls.
-gregtech.multiblock.cleanroom.clean_state=Status: §aCLEAN
-gregtech.multiblock.cleanroom.dirty_state=Status: §4CONTAMINATED
-gregtech.multiblock.cleanroom.clean_amount=Cleanliness: §a%s%%
+gregtech.multiblock.cleanroom.clean_status=Status:
+gregtech.multiblock.cleanroom.clean_state= Clean
+gregtech.multiblock.cleanroom.dirty_state= Contaminated
 
 gregtech.machine.charcoal_pile.name=Charcoal Pile Igniter
 gregtech.machine.charcoal_pile.tooltip.1=Turns Logs into §aCharcoal§7 when §cignited§7.
@@ -5309,7 +5309,7 @@ gregtech.multiblock.progress=Progress: %s%%
 gregtech.multiblock.invalid_structure=Invalid structure.
 gregtech.multiblock.invalid_structure.tooltip=This block is a controller of the multiblock structure. For building help, see structure template in JEI.
 gregtech.multiblock.validation_failed=Invalid amount of inputs/outputs.
-gregtech.multiblock.max_energy_per_tick=Max EU/t: §a%s (%s§r)
+gregtech.multiblock.max_energy_per_tick=Max EU/t: %s (%s)
 gregtech.multiblock.generation_eu=Outputting: §a%s EU/t
 gregtech.multiblock.universal.no_problems=No Maintenance Problems!
 gregtech.multiblock.universal.has_problems=Has Maintenance Problems!
@@ -5325,7 +5325,7 @@ gregtech.multiblock.universal.distinct_enabled=Distinct Buses: §aEnabled§r/nEa
 gregtech.multiblock.universal.distinct_disabled=Distinct Buses: §cDisabled§r/nEach Item Input Bus will be treated as a combined input for recipe lookup.
 gregtech.multiblock.universal.distinct_not_supported=This Multiblock does not support Distinct Buses
 gregtech.multiblock.universal.no_flex_button=This Multiblock has no additional functionality with this Button.
-gregtech.multiblock.parallel=Performing up to %d Recipes in Parallel
+gregtech.multiblock.parallel=Max Parallels: %s
 gregtech.multiblock.multiple_recipemaps.header=Machine Mode:
 gregtech.multiblock.multiple_recipemaps.tooltip=Screwdriver the controller to change which machine mode to use.
 gregtech.multiblock.multiple_recipemaps_recipes.tooltip=Machine Modes: §e%s§r
@@ -5355,8 +5355,8 @@ gregtech.multiblock.pattern.location_end=§cVery End§r
 gregtech.multiblock.pattern.replaceable_air=Replaceable by Air
 
 gregtech.multiblock.blast_furnace.max_temperature=Heat Capacity: %s
-gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
-gregtech.multiblock.multi_furnace.heating_coil_discount=Heating Coil EU Boost: %sx
+gregtech.multiblock.multi_furnace.heating_coil_discount=Heating Coil EU Boost: %s
+gregtech.multiblock.multi_furnace.heating_coil_discount_hover=Energy usage divisor, determined by coil tier
 gregtech.multiblock.distillation_tower.distilling_fluid=Distilling %s
 
 gregtech.multiblock.large_combustion_engine.no_lubricant=No Lubricant.
@@ -5382,8 +5382,8 @@ gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed
 gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 adds §f10%% efficiency§7.
 
 gregtech.multiblock.large_boiler.efficiency=Efficiency: %s
-gregtech.multiblock.large_boiler.steam_output=Steam Output: %s L/t
-gregtech.multiblock.large_boiler.throttle=Throttle: %d
+gregtech.multiblock.large_boiler.steam_output=Steam Output: %s
+gregtech.multiblock.large_boiler.throttle=Throttle: %s
 gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
 gregtech.multiblock.large_boiler.throttle_increment=Increase throttle by §a+5%%§r/n§7Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
 gregtech.multiblock.large_boiler.throttle_decrement=Decrease throttle by §c-5%%§r/n§7Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
@@ -5404,13 +5404,15 @@ gregtech.multiblock.miner.chunk_mode=Chunk Mode: §aEnabled§r/nSilk Touch Mode:
 gregtech.multiblock.miner.silk_touch_mode=Chunk Mode: §cDisabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
 gregtech.multiblock.miner.both_modes=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
 
-gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
+gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s
+gregtech.multiblock.pyrolyse_oven.speed_hover=Processing speed modifier set by the coils in the structure.
 
-gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
+gregtech.multiblock.cracking_unit.energy=Energy Usage: %s
+gregtech.multiblock.cracking_unit.energy_hover=Energy usage modifier set by the coils in the structure.
 
-gregtech.multiblock.energy_consumption=Energy Usage: %s EU/t
-gregtech.multiblock.computation.max=Max Computation: %s CWU/t
-gregtech.multiblock.computation.usage=Using: %s CWU/t
+gregtech.multiblock.energy_consumption=Energy Usage: %s EU/t (%s)
+gregtech.multiblock.computation.max=Max CWU/t: %s
+gregtech.multiblock.computation.usage=Using: %s
 gregtech.multiblock.computation.non_bridging=Non-bridging connection found
 gregtech.multiblock.computation.non_bridging.detailed=A Reception Hatch is linked to a machine which cannot bridge
 gregtech.multiblock.computation.not_enough_computation=§cWARNING:§f Machine needs more computation.
@@ -5429,6 +5431,8 @@ gregtech.multiblock.power_substation.time_days=%s Days
 gregtech.multiblock.power_substation.time_years=%s Years
 gregtech.multiblock.power_substation.time_forever=Forever
 gregtech.multiblock.power_substation.under_one_hour_left=Less than 1 hour until fully drained!
+
+gregtech.multiblock.data_bank.providing=Providing data.
 
 gregtech.multiblock.hpca.computation=Providing: %s / %s CWU/t
 gregtech.multiblock.hpca.energy=Using: %s / %s EU/t (%s)

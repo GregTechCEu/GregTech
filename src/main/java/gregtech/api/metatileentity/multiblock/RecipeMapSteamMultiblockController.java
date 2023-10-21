@@ -16,6 +16,8 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -101,17 +103,25 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addStructureLine()
                 .addCustom(tl -> {
                     // custom steam tank line
                     IFluidTank steamFluidTank = recipeMapWorkable.getSteamFluidTankCombined();
                     if (steamFluidTank != null && steamFluidTank.getCapacity() > 0) {
-                        int steamStored = steamFluidTank.getFluidAmount();
-                        tl.add(new TextComponentTranslation("gregtech.multiblock.steam.steam_stored", steamStored, steamFluidTank.getCapacity()));
+                        String stored = TextFormattingUtil.formatNumbers(steamFluidTank.getFluidAmount());
+                        String capacity = TextFormattingUtil.formatNumbers(steamFluidTank.getCapacity());
+
+                        ITextComponent steamInfo = TextComponentUtil.stringWithColor(
+                                TextFormatting.BLUE,
+                                stored + " / " + capacity + " L");
+
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.steam.steam_stored",
+                                steamInfo));
                     }
                 })
-                .addWorkingStatusLine()
                 .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addWorkingStatusLine()
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
 

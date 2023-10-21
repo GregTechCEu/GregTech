@@ -139,12 +139,10 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addStructureLine()
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
-                .addWorkingStatusLine()
                 .addParallelsLine(recipeMapWorkable.getParallelLimit())
-                .addProgressLine(recipeMapWorkable.getProgressPercent())
-                .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy());
+                .addWorkingStatusLine()
+                .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
 
     @Override
