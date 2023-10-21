@@ -4642,6 +4642,7 @@ gregtech.machine.fluid_drilling_rig.ev.name=Advanced Fluid Drilling Rig II
 gregtech.machine.fluid_drilling_rig.description=Drills fluids from veins under bedrock.
 gregtech.machine.fluid_drilling_rig.production=§eProduction Multiplier: §f%dx, %fx overclocked
 gregtech.machine.fluid_drilling_rig.depletion=§bDepletion Rate: §f%s%%
+gregtech.machine.fluid_drilling_rig.shows_depletion=Shows fluid vein depletion info
 
 gregtech.machine.cleanroom.name=Cleanroom
 gregtech.machine.cleanroom.tooltip.1=Place machines inside to run cleanroom recipes.
@@ -5408,6 +5409,8 @@ gregtech.multiblock.miner.both_modes=Chunk Mode: §aEnabled§r/nSilk Touch Mode:
 
 gregtech.multiblock.fluid_rig.drilled_fluid=Fluid: %s
 gregtech.multiblock.fluid_rig.fluid_amount=Pumping Rate: %s
+gregtech.multiblock.fluid_rig.vein_depletion=Vein Size: %s
+gregtech.multiblock.fluid_rig.vein_depleted=Depleted.
 gregtech.multiblock.miner.drilling=Drilling.
 
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s

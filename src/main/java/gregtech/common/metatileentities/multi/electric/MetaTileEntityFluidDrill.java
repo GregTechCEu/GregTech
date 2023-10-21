@@ -12,13 +12,12 @@ import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidDrillLogic;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -28,6 +27,7 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
@@ -55,7 +55,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implements ITieredMetaTileEntity, IWorkable {
+public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implements ITieredMetaTileEntity, IWorkable, IProgressBarMultiblock {
 
     private final FluidDrillLogic minerLogic;
     private final int tier;
@@ -213,6 +213,9 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.depletion", TextFormattingUtil.formatNumbers(100.0 / getDepletionChance())));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_tier_range", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier(), TextFormattingUtil.formatNumbers(getRigMultiplier() * 1.5)));
+        if (tier > GTValues.MV) {
+            tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.shows_depletion"));
+        }
     }
 
     @Override
@@ -351,5 +354,40 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     @Override
     protected boolean shouldShowVoidingModeButton() {
         return false;
+    }
+
+    @Override
+    public boolean showProgressBar() {
+        return tier > GTValues.MV; // only show for T2/3 fluid rigs
+    }
+
+    @Override
+    public double[] getFillPercentages() {
+        int numOperationsLeft = BedrockFluidVeinHandler.getOperationsRemaining(getWorld(), minerLogic.getChunkX(), minerLogic.getChunkZ());
+        int maxOperations = BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS;
+        return new double[]{1.0 * numOperationsLeft / maxOperations};
+    }
+
+    @Override
+    public TextureArea[] getProgressBarTextures() {
+        return new TextureArea[]{GuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION};
+    }
+
+    @Override
+    public void addBarHoverText(List<ITextComponent> hoverList, int index) {
+        int numOperationsLeft = BedrockFluidVeinHandler.getOperationsRemaining(getWorld(), minerLogic.getChunkX(), minerLogic.getChunkZ());
+        int maxOperations = BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS;
+        int percentage = (int) Math.round(1.0 * numOperationsLeft / maxOperations * 100);
+        TextFormatting color = percentage > 40 ? TextFormatting.GREEN : percentage > 10 ? TextFormatting.YELLOW : TextFormatting.RED;
+
+        if (numOperationsLeft == 0) {
+            hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.fluid_rig.vein_depleted"));
+        } else {
+            ITextComponent veinInfo = TextComponentUtil.stringWithColor(color, percentage + "%");
+            hoverList.add(TextComponentUtil.translationWithColor(
+                    TextFormatting.GRAY,
+                    "gregtech.multiblock.fluid_rig.vein_depletion",
+                    veinInfo));
+        }
     }
 }
