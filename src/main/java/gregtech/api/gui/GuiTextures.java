@@ -228,6 +228,7 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_FUSION_ENERGY = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fusion_energy.png");
     public static final TextureArea PROGRESS_BAR_FUSION_HEAT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fusion_heat.png");
     public static final TextureArea PROGRESS_BAR_MULTI_ENERGY_YELLOW = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_multi_energy_yellow.png");
+    public static final TextureArea PROGRESS_BAR_HPCA_COMPUTATION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_hpca_computation.png");
 
     //JEI
     public static final TextureArea INFO_ICON = TextureArea.fullImage("textures/gui/widget/information.png");

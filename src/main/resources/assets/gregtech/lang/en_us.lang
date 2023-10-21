@@ -5433,11 +5433,10 @@ gregtech.multiblock.power_substation.under_one_hour_left=Less than 1 hour until 
 
 gregtech.multiblock.data_bank.providing=Providing data.
 
-gregtech.multiblock.hpca.computation=Providing: %s / %s CWU/t
+gregtech.multiblock.hpca.computation=Providing: %s
 gregtech.multiblock.hpca.energy=Using: %s / %s EU/t (%s)
-gregtech.multiblock.hpca.coolant=Needs up to: %s L/t PCB Coolant
-gregtech.multiblock.hpca.cooling=Cooling:
-gregtech.multiblock.hpca.temperature=Temperature:
+gregtech.multiblock.hpca.temperature=Temperature: %s
+gregtech.multiblock.hpca.hover_for_info=Hover for details
 gregtech.multiblock.hpca.error_damaged=Damaged component in structure
 gregtech.multiblock.hpca.error_temperature=Temperature above 100C, components may be damaged!
 gregtech.multiblock.hpca.warning_temperature=Temperature above 50C, components may be damaged at 100C!
@@ -5446,6 +5445,13 @@ gregtech.multiblock.hpca.warning_structure_header=Structure Hints:
 gregtech.multiblock.hpca.warning_multiple_bridges=- Multiple bridges in structure (provides no additional benefit)
 gregtech.multiblock.hpca.warning_no_computation=- No computation providers
 gregtech.multiblock.hpca.warning_low_cooling=- Not enough cooling
+gregtech.multiblock.hpca.info_max_computation=Max CWU/t: %s
+gregtech.multiblock.hpca.info_max_cooling_demand=Cooling Demand: %s
+gregtech.multiblock.hpca.info_max_cooling_available=Cooling Available: %s
+gregtech.multiblock.hpca.info_max_coolant_required=Coolant Needed: %s
+gregtech.multiblock.hpca.info_coolant_name=PCB Coolant
+gregtech.multiblock.hpca.info_bridging_enabled=Bridging Enabled
+gregtech.multiblock.hpca.info_bridging_disabled=Bridging Disabled
 
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>

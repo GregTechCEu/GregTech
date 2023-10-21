@@ -28,7 +28,7 @@ public interface IProgressBarMultiblock {
     /**
      * Add hover text to your progress bar.
      *
-     * @param index The index, 1 or 2, of your progress bar. Only relevant if you have multiple bars.
+     * @param index The index, 0 or 1, of your progress bar. Only relevant if you have multiple bars.
      */
     default void addBarHoverText(List<ITextComponent> hoverList, int index) {
     }
