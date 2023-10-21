@@ -622,6 +622,7 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LuV]).input(OrePrefix.wireGtDouble, Materials.IndiumTinBariumTitaniumCuprate, 32).input(OrePrefix.foil, Materials.NiobiumTitanium, 32).fluidInputs(Materials.Trinium.getFluid(GTValues.L * 24)).outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL)).duration(100).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ZPM]).input(OrePrefix.wireGtDouble, Materials.UraniumRhodiumDinaquadide, 16).input(OrePrefix.foil, Materials.NiobiumTitanium, 16).fluidInputs(Materials.Trinium.getFluid(GTValues.L * 16)).outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL)).duration(100).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[UV]).input(OrePrefix.wireGtDouble, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 8).input(OrePrefix.foil, Materials.NiobiumTitanium, 8).fluidInputs(Materials.Trinium.getFluid(GTValues.L * 8)).outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL)).duration(100).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[UV]).input(OrePrefix.wireGtDouble, Materials.RutheniumTriniumAmericiumNeutronate, 4).input(OrePrefix.foil, Materials.NiobiumTitanium, 4).fluidInputs(Materials.Trinium.getFluid(GTValues.L * 4)).outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL)).duration(200).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ZPM]).inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL)).inputs(MetaItems.FIELD_GENERATOR_IV.getStackForm(2)).inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm()).inputs(MetaItems.NEUTRON_REFLECTOR.getStackForm(2)).input(OrePrefix.circuit, MarkerMaterials.Tier.LuV, 4).input(OrePrefix.pipeSmallFluid, Materials.Naquadah, 4).input(OrePrefix.plate, Materials.Europium, 4).fluidInputs(Materials.VanadiumGallium.getFluid(GTValues.L * 4)).outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_COIL)).duration(100).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
@@ -1078,13 +1079,21 @@ public class MachineRecipeLoader {
             }
         }
 
-        for (int i = 0; i < MULTI_FLUID_IMPORT_HATCH.length; i++) {
-            if (MULTI_FLUID_IMPORT_HATCH[i] != null && MULTI_FLUID_EXPORT_HATCH[i] != null) {
+        for (int i = 0; i < QUADRUPLE_IMPORT_HATCH.length; i++) {
+            if (QUADRUPLE_IMPORT_HATCH[i] != null && QUADRUPLE_EXPORT_HATCH[i] != null) {
+                ModHandler.addShapedRecipe("quadruple_fluid_hatch_output_to_input_" + QUADRUPLE_IMPORT_HATCH[i].getTier(), QUADRUPLE_IMPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', QUADRUPLE_EXPORT_HATCH[i].getStackForm());
+                ModHandler.addShapedRecipe("quadruple_fluid_hatch_input_to_output_" + QUADRUPLE_EXPORT_HATCH[i].getTier(), QUADRUPLE_EXPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', QUADRUPLE_IMPORT_HATCH[i].getStackForm());
+            }
+        }
 
-                ModHandler.addShapedRecipe("multi_fluid_hatch_output_to_input_" + MULTI_FLUID_IMPORT_HATCH[i].getTier(), MULTI_FLUID_IMPORT_HATCH[i].getStackForm(),
-                        "d", "B", 'B', MULTI_FLUID_EXPORT_HATCH[i].getStackForm());
-                ModHandler.addShapedRecipe("multi_fluid_hatch_input_to_output_" + MULTI_FLUID_EXPORT_HATCH[i].getTier(), MULTI_FLUID_EXPORT_HATCH[i].getStackForm(),
-                        "d", "B", 'B', MULTI_FLUID_IMPORT_HATCH[i].getStackForm());
+        for (int i = 0; i < NONUPLE_IMPORT_HATCH.length; i++) {
+            if (NONUPLE_IMPORT_HATCH[i] != null && NONUPLE_EXPORT_HATCH[i] != null) {
+                ModHandler.addShapedRecipe("nonuple_fluid_hatch_output_to_input_" + NONUPLE_IMPORT_HATCH[i].getTier(), NONUPLE_IMPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', NONUPLE_EXPORT_HATCH[i].getStackForm());
+                ModHandler.addShapedRecipe("nonuple_fluid_hatch_input_to_output_" + NONUPLE_EXPORT_HATCH[i].getTier(), NONUPLE_EXPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', NONUPLE_IMPORT_HATCH[i].getStackForm());
             }
         }
 

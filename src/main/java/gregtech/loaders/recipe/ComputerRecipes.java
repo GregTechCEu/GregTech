@@ -6,7 +6,6 @@ import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.BlockGlassCasing;
-import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.*;
@@ -38,7 +37,7 @@ public class ComputerRecipes {
                 .output(ADVANCED_DATA_ACCESS_HATCH)
                 .fluidInputs(SolderingAlloy.getFluid(L * 4))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
-                .research(b -> b.researchStack(DATA_BANK.getStackForm()).CWUt(4))
+                .stationResearch(b -> b.researchStack(DATA_BANK.getStackForm()).CWUt(4))
                 .duration(400).EUt(6000).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -99,7 +98,7 @@ public class ComputerRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 2))
                 .fluidInputs(Lubricant.getFluid(500))
                 .output(DATA_BANK)
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(DATA_ACCESS_HATCH.getStackForm())
                         .duration(2400)
                         .EUt(VA[EV]))
@@ -117,7 +116,7 @@ public class ComputerRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
                 .fluidInputs(VanadiumGallium.getFluid(L * 8))
                 .output(RESEARCH_STATION)
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(SCANNER[LuV].getStackForm())
                         .duration(2400)
                         .EUt(VA[IV]))
@@ -134,7 +133,7 @@ public class ComputerRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 4))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 2))
                 .output(OBJECT_HOLDER)
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(ITEM_IMPORT_BUS[ZPM].getStackForm())
                         .duration(2400)
                         .EUt(VA[IV]))
@@ -152,7 +151,7 @@ public class ComputerRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 4))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .output(NETWORK_SWITCH)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(new ItemStack(OPTICAL_PIPES[0]))
                         .CWUt(32)
                         .EUt(VA[ZPM]))
@@ -170,7 +169,7 @@ public class ComputerRecipes {
                 .fluidInputs(VanadiumGallium.getFluid(L * 8))
                 .fluidInputs(PCBCoolant.getFluid(4000))
                 .output(HIGH_PERFORMANCE_COMPUTING_ARRAY)
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(COVER_SCREEN.getStackForm())
                         .duration(2400)
                         .EUt(VA[IV]))
@@ -281,6 +280,7 @@ public class ComputerRecipes {
                 .output(ACTIVE_TRANSFORMER)
                 .duration(300).EUt(VA[LuV]).buildAndRegister();
 
+/*      TODO UPSATUPDATE
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[LuV])
                 .input(lens, Diamond)
@@ -297,7 +297,7 @@ public class ComputerRecipes {
                 .input(wireGtSingle, IndiumTinBariumTitaniumCuprate, 2)
                 .output(LASER_INPUT_HATCH)
                 .circuitMeta(2)
-                .duration(300).EUt(VA[IV]).buildAndRegister();
+                .duration(300).EUt(VA[IV]).buildAndRegister();*/
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.LAMINATED_GLASS))

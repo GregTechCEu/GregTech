@@ -73,7 +73,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        QuantumStorageRenderer.renderChestStack(x, y, z, this, this.itemStack, 420, partialTicks);
+        QuantumStorageRenderer.renderChestStack(x, y, z, this, this.virtualItemStack, 420, partialTicks);
     }
 
 
@@ -116,7 +116,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void update() {
         ItemStack stack = handler.getStackInSlot(0).copy();
-        this.itemStack = stack; // For rendering purposes
+        this.virtualItemStack = stack; // For rendering purposes
         super.update();
         if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0) return;
         if (getWorld().isRemote || !active || stack.isEmpty()) return;
@@ -150,7 +150,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         handler.deserializeNBT(data.getCompoundTag("ItemStackHandler"));
-        this.itemStack = handler.getStackInSlot(0); // For rendering purposes
+        this.virtualItemStack = handler.getStackInSlot(0); // For rendering purposes
         itemsPerCycle = data.getInteger("ItemsPerCycle");
         ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
@@ -188,6 +188,6 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.handler.setStackInSlot(0, this.itemStack);
+        this.handler.setStackInSlot(0, this.virtualItemStack);
     }
 }

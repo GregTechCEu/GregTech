@@ -144,6 +144,17 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
+    public int getNumConnections() {
+        int count = 0;
+        int connections = getConnections();
+        while (connections > 0) {
+            count++;
+            connections = connections & (connections - 1);
+        }
+        return count;
+    }
+
+    @Override
     public int getBlockedConnections() {
         return canHaveBlockedFaces() ? blockedConnections : 0;
     }
