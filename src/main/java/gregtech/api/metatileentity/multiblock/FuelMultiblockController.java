@@ -40,9 +40,8 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
 
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
-                .addFuelAmountLine(recipeLogic.getInputFluidStack())
-                .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
                 .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
+                .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
                 .addWorkingStatusLine();
     }
 

@@ -395,7 +395,29 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (this instanceof IProgressBarMultiblock progressMulti && progressMulti.showProgressBar()) {
             builder.image(4, 4, 190, 109, GuiTextures.DISPLAY);
 
-            if (progressMulti.getNumProgressBars() == 2) {
+            if (progressMulti.getNumProgressBars() == 3) {
+                // triple bar
+                ProgressWidget progressBar = new ProgressWidget(
+                        () -> progressMulti.getFillPercentages()[0],
+                        4, 115, 62, 7,
+                        progressMulti.getProgressBarTextures()[0], ProgressWidget.MoveType.HORIZONTAL)
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
+                builder.widget(progressBar);
+
+                progressBar = new ProgressWidget(
+                        () -> progressMulti.getFillPercentages()[1],
+                        68, 115, 62, 7,
+                        progressMulti.getProgressBarTextures()[1], ProgressWidget.MoveType.HORIZONTAL)
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 1));
+                builder.widget(progressBar);
+
+                progressBar = new ProgressWidget(
+                        () -> progressMulti.getFillPercentages()[2],
+                        132, 115, 62, 7,
+                        progressMulti.getProgressBarTextures()[2], ProgressWidget.MoveType.HORIZONTAL)
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 2));
+                builder.widget(progressBar);
+            } else if (progressMulti.getNumProgressBars() == 2) {
                 // double bar
                 ProgressWidget progressBar = new ProgressWidget(
                         () -> progressMulti.getFillPercentages()[0],

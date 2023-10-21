@@ -12,7 +12,7 @@ public interface IProgressBarMultiblock {
         return true;
     }
 
-    /** Can optionally have two progress bars side-by-side. Only values of 1 or 2 here will be respected, others default to 1. */
+    /** Can optionally have two progress bars side-by-side. Can support up to 3 bars. Any other values will default to 1. */
     default int getNumProgressBars() {
         return 1;
     }
@@ -26,9 +26,9 @@ public interface IProgressBarMultiblock {
     }
 
     /**
-     * Add hover text to your progress bar.
+     * Add hover text to your progress bar(s).
      *
-     * @param index The index, 0 or 1, of your progress bar. Only relevant if you have multiple bars.
+     * @param index The index, 0, 1, or 2, of your progress bar. Only relevant if you have multiple bars.
      */
     default void addBarHoverText(List<ITextComponent> hoverList, int index) {
     }

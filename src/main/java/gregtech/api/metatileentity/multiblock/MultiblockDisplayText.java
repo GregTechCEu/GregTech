@@ -6,8 +6,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.HoverEvent;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -117,11 +115,17 @@ public class MultiblockDisplayText {
          * <br>
          * Added if the structure is formed and if the max voltage is greater than zero and the recipe EU/t.
          */
-        public Builder addEnergyProductionLine(long maxVoltage, long recipeEUt) { // todo
+        public Builder addEnergyProductionLine(long maxVoltage, long recipeEUt) {
             if (!isStructureFormed) return this;
             if (maxVoltage != 0 && maxVoltage >= -recipeEUt) {
-                String voltageName = GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
-                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", TextFormattingUtil.formatNumbers(maxVoltage), voltageName));
+                String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
+                // wrap in text component to keep it from being formatted
+                ITextComponent voltageName = new TextComponentString(GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
+
+                textList.add(TextComponentUtil.translationWithColor(
+                        TextFormatting.GRAY,
+                        "gregtech.multiblock.max_energy_per_tick",
+                        energyFormatted, voltageName));
             }
             return this;
         }
@@ -266,27 +270,18 @@ public class MultiblockDisplayText {
         }
 
         /**
-         * Adds a line showing the fuel's name and the amount available for use in this multiblock.
-         * <br>
-         * Added if structure is formed and if the passed parameter is not null and has an amount greater than zero.
-         */
-        public Builder addFuelAmountLine(FluidStack fuelStack) { // todo
-            if (!isStructureFormed) return this;
-            if (fuelStack != null && fuelStack.amount > 0) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", TextFormattingUtil.formatNumbers(fuelStack.amount), fuelStack.getLocalizedName()));
-            }
-            return this;
-        }
-
-        /**
          * Adds a fuel consumption line showing the fuel name and the number of ticks per recipe run.
          * <br>
          * Added if structure is formed, the machine is active, and the passed fuelName parameter is not null.
          */
-        public Builder addFuelNeededLine(String fuelName, int previousRecipeDuration) { // todo
+        public Builder addFuelNeededLine(String fuelName, int previousRecipeDuration) {
             if (!isStructureFormed || !isActive) return this;
-            textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_needed",
-                    fuelName, TextFormatting.AQUA + TextFormattingUtil.formatNumbers(previousRecipeDuration)));
+            ITextComponent fuelNeeded = TextComponentUtil.stringWithColor(TextFormatting.RED, fuelName);
+            ITextComponent numTicks = TextComponentUtil.stringWithColor(TextFormatting.AQUA, TextFormattingUtil.formatNumbers(previousRecipeDuration));
+            textList.add(TextComponentUtil.translationWithColor(
+                    TextFormatting.GRAY,
+                    "gregtech.multiblock.turbine.fuel_needed",
+                    fuelName, numTicks));
             return this;
         }
 
