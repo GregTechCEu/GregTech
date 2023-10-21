@@ -226,7 +226,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 .where('S', selfPredicate())
                 .where('C', states(getCasingState()))
                 .where('X' ,states(getCasingState()).setMinGlobalLimited(MIN_CASINGS)
-                        .or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setExactLimit(1))
+                        .or(maintenancePredicate())
                         .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY, MultiblockAbility.INPUT_LASER).setMinGlobalLimited(1))
                         .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY, MultiblockAbility.OUTPUT_LASER).setMinGlobalLimited(1)))
                 .where('G', states(getGlassState()))
