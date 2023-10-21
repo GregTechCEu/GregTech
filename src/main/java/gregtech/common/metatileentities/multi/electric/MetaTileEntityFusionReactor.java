@@ -4,9 +4,12 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.*;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.IProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -17,6 +20,8 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
+import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -47,6 +52,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
@@ -60,7 +66,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController implements IFastRenderMetaTileEntity {
+public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController implements IFastRenderMetaTileEntity, IProgressBarMultiblock {
 
     private final int tier;
     private EnergyContainerList inputEnergyContainers;
@@ -273,15 +279,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.energy", this.energyContainer.getEnergyStored(), this.energyContainer.getEnergyCapacity()));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
-        }
-    }
-
-    @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.fusion_reactor.capacity", calculateEnergyStorageFactor(16) / 1000000L));
@@ -302,6 +299,49 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     public long getHeat() {
         return heat;
+    }
+
+    @Override
+    public int getNumProgressBars() {
+        return 2;
+    }
+
+    @Override
+    public double[] getFillPercentages() {
+        return new double[] {
+                1.0 * energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity(),
+                1.0 * heat / energyContainer.getEnergyCapacity()
+        };
+    }
+
+    @Override
+    public TextureArea[] getProgressBarTextures() {
+        return new TextureArea[] {
+                GuiTextures.PROGRESS_BAR_FUSION_ENERGY,
+                GuiTextures.PROGRESS_BAR_FUSION_HEAT
+        };
+    }
+
+    @Override
+    public void addBarHoverText(List<ITextComponent> hoverList, int index) {
+        if (index == 0) {
+            ITextComponent energyInfo = TextComponentUtil.stringWithColor(
+                    TextFormatting.AQUA,
+                    TextFormattingUtil.formatNumbers(energyContainer.getEnergyStored()) + " / "
+                            + TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()) + " EU");
+            hoverList.add(TextComponentUtil.translationWithColor(
+                    TextFormatting.GRAY,
+                    "gregtech.multiblock.energy_stored",
+                    energyInfo));
+        } else {
+            ITextComponent heatInfo = TextComponentUtil.stringWithColor(
+                    TextFormatting.RED,
+                    TextFormattingUtil.formatNumbers(heat) + " / " + TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()));
+            hoverList.add(TextComponentUtil.translationWithColor(
+                    TextFormatting.GRAY,
+                    "gregtech.multiblock.fusion_reactor.heat",
+                    heatInfo));
+        }
     }
 
     private class FusionRecipeLogic extends MultiblockRecipeLogic {

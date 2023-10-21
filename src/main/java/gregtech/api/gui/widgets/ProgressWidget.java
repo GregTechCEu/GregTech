@@ -6,8 +6,14 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.ConfigHolder;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.ITextComponent;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
 public class ProgressWidget extends Widget {
@@ -31,6 +37,9 @@ public class ProgressWidget extends Widget {
     private TextureArea[] filledBarArea;
 
     private double lastProgressValue;
+
+    private List<ITextComponent> hoverText = new ArrayList<>();
+    private Consumer<List<ITextComponent>> textSupplier;
 
     // TODO Clean up these constructors when Steam Machine UIs are cleaned up
     public ProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height) {
@@ -71,6 +80,11 @@ public class ProgressWidget extends Widget {
         this.emptyBarArea = emptyBarArea;
         this.filledBarArea = new TextureArea[]{filledBarArea};
         this.moveType = moveType;
+        return this;
+    }
+
+    public ProgressWidget setHoverTextConsumer(Consumer<List<ITextComponent>> supplier) {
+        this.textSupplier = supplier;
         return this;
     }
 
@@ -217,12 +231,47 @@ public class ProgressWidget extends Widget {
             this.lastProgressValue = actualValue;
             writeUpdateInfo(0, buffer -> buffer.writeDouble(actualValue));
         }
+
+        if (textSupplier != null) {
+            List<ITextComponent> textBuffer = new ArrayList<>();
+            textSupplier.accept(textBuffer);
+            if (!hoverText.equals(textBuffer)) {
+                this.hoverText = textBuffer;
+                writeUpdateInfo(1, buffer -> {
+                    buffer.writeVarInt(hoverText.size());
+                    for (ITextComponent textComponent : hoverText) {
+                        buffer.writeString(ITextComponent.Serializer.componentToJson(textComponent));
+                    }
+                });
+            }
+        }
     }
 
     @Override
     public void readUpdateInfo(int id, PacketBuffer buffer) {
         if (id == 0) {
             this.lastProgressValue = buffer.readDouble();
+        } else if (id == 1) {
+            this.hoverText.clear();
+            int count = buffer.readVarInt();
+            for (int i = 0; i < count; i++) {
+                String jsonText = buffer.readString(32767);
+                this.hoverText.add(ITextComponent.Serializer.jsonToComponent(jsonText));
+            }
+        }
+    }
+
+    @Override
+    public void drawInForeground(int mouseX, int mouseY) {
+        super.drawInForeground(mouseX, mouseY);
+        if (isMouseOverElement(mouseX, mouseY) && hoverText != null && !hoverText.isEmpty()) {
+            List<String> hoverList = new ArrayList<>();
+            for (ITextComponent component : hoverText) {
+                Collections.addAll(hoverList, component.getFormattedText());
+            }
+            if (!hoverList.isEmpty()) {
+                drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
+            }
         }
     }
 

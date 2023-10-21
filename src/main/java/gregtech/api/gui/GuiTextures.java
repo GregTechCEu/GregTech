@@ -225,6 +225,9 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_RESEARCH_STATION_1 = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_research_station_1.png");
     public static final TextureArea PROGRESS_BAR_RESEARCH_STATION_2 = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_research_station_2.png");
     public static final TextureArea PROGRESS_BAR_RESEARCH_STATION_BASE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_research_station_base.png");
+    public static final TextureArea PROGRESS_BAR_FUSION_ENERGY = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fusion_energy.png");
+    public static final TextureArea PROGRESS_BAR_FUSION_HEAT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fusion_heat.png");
+    public static final TextureArea PROGRESS_BAR_MULTI_ENERGY_YELLOW = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_multi_energy_yellow.png");
 
     //JEI
     public static final TextureArea INFO_ICON = TextureArea.fullImage("textures/gui/widget/information.png");

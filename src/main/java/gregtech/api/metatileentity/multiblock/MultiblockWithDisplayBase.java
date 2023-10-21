@@ -28,8 +28,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.HoverEvent;
-import net.minecraft.util.text.event.HoverEvent.Action;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -394,7 +392,43 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 198, 208);
 
         // Display
-        builder.image(4, 4, 190, 117, GuiTextures.DISPLAY);
+        if (this instanceof IProgressBarMultiblock progressMulti && progressMulti.showProgressBar()) {
+            builder.image(4, 4, 190, 109, GuiTextures.DISPLAY);
+
+            if (progressMulti.getNumProgressBars() == 2) {
+                // double bar
+                ProgressWidget progressBar = new ProgressWidget(
+                        () -> progressMulti.getFillPercentages()[0],
+                        4, 115, 94, 7,
+                        progressMulti.getProgressBarTextures()[0], ProgressWidget.MoveType.HORIZONTAL)
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
+                builder.widget(progressBar);
+
+                progressBar = new ProgressWidget(
+                        () -> progressMulti.getFillPercentages()[1],
+                        100, 115, 94, 7,
+                        progressMulti.getProgressBarTextures()[1], ProgressWidget.MoveType.HORIZONTAL)
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 1));
+                builder.widget(progressBar);
+            } else {
+                // single bar
+                ProgressWidget progressBar = new ProgressWidget(
+                        () -> progressMulti.getFillPercentages()[0],
+                        4, 115, 190, 7,
+                        progressMulti.getProgressBarTextures()[0], ProgressWidget.MoveType.HORIZONTAL)
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
+                builder.widget(progressBar);
+            }
+            builder.widget(new IndicatorImageWidget(174, 93, 17, 17, getLogo())
+                    .setWarningStatus(getWarningLogo(), this::addWarningText)
+                    .setErrorStatus(getErrorLogo(), this::addErrorText));
+        } else {
+            builder.image(4, 4, 190, 117, GuiTextures.DISPLAY);
+            builder.widget(new IndicatorImageWidget(174, 101, 17, 17, getLogo())
+                    .setWarningStatus(getWarningLogo(), this::addWarningText)
+                    .setErrorStatus(getErrorLogo(), this::addErrorText));
+        }
+
         builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
         builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(181)
@@ -430,11 +464,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
         // Flex Button
         builder.widget(getFlexButton(173, 124, 18, 18));
-
-        // Logo / Indicator Widget
-        builder.widget(new IndicatorImageWidget(174, 101, 17, 17, getLogo())
-                .setWarningStatus(getWarningLogo(), this::addWarningText)
-                .setErrorStatus(getErrorLogo(), this::addErrorText));
 
         builder.bindPlayerInventory(entityPlayer.inventory, 125);
         return builder;
