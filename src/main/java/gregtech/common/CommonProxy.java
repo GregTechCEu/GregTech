@@ -6,8 +6,8 @@ import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
@@ -35,7 +35,6 @@ import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -49,8 +48,9 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -279,6 +279,7 @@ public class CommonProxy {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void initComponents(RegistryEvent.Register<IRecipe> event) {
+        GTRecipeInputCache.enableCache();
         CraftingComponent.initializeComponents();
         MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, CraftingComponent.class));
     }
@@ -324,6 +325,11 @@ public class CommonProxy {
         GTLog.logger.info("Running late material handlers...");
         OrePrefix.runMaterialHandlers();
         GTRecipeManager.loadLatest();
+
+        // On initial load we need to postpone cache flushing until FMLPostInitializationEvent
+        // to account for WoodMachineRecipes#postInit().
+        if (Loader.instance().hasReachedState(LoaderState.AVAILABLE))
+            GTRecipeInputCache.disableCache();
     }
 
     @SubscribeEvent
@@ -378,8 +384,8 @@ public class CommonProxy {
         }
     }
 
-    public void onLoadComplete(FMLLoadCompleteEvent event) {
-        GTRecipeInput.INSTANCES = new ObjectOpenHashSet<>();
+    public void onLoadComplete() {
+        GTRecipeInputCache.disableCache();
     }
 
     public boolean isFancyGraphics() {

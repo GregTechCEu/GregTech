@@ -295,7 +295,7 @@ public class VanillaStandardRecipes {
                 .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-                .inputs(GTRecipeOreInput.getOrCreate("wool", 1))
+                .inputs(new GTRecipeOreInput("wool", 1))
                 .outputs(new ItemStack(Items.STRING, 1))
                 .chancedOutput(new ItemStack(Items.STRING, 1), 9000, 0)
                 .chancedOutput(new ItemStack(Items.STRING, 1), 5000, 0)
