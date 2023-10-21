@@ -5406,6 +5406,10 @@ gregtech.multiblock.miner.chunk_mode=Chunk Mode: §aEnabled§r/nSilk Touch Mode:
 gregtech.multiblock.miner.silk_touch_mode=Chunk Mode: §cDisabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
 gregtech.multiblock.miner.both_modes=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
 
+gregtech.multiblock.fluid_rig.drilled_fluid=Fluid: %s
+gregtech.multiblock.fluid_rig.fluid_amount=Pumping Rate: %s
+gregtech.multiblock.miner.drilling=Drilling.
+
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s
 gregtech.multiblock.pyrolyse_oven.speed_hover=Processing speed modifier set by the coils in the structure.
 

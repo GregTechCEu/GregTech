@@ -26,6 +26,7 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -44,6 +45,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -159,7 +161,35 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(minerLogic.isWorkingEnabled(), minerLogic.isActive())
+                .setWorkingStatusKeys(
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.work_paused",
+                        "gregtech.multiblock.miner.drilling")
                 .addEnergyUsageLine(energyContainer)
+                .addCustom(tl -> {
+                    if (isStructureFormed()) {
+                        if (minerLogic.getDrilledFluid() != null) {
+                            // Fluid name
+                            Fluid drilledFluid = minerLogic.getDrilledFluid();
+                            ITextComponent fluidInfo = TextComponentUtil.translationWithColor(
+                                    TextFormatting.GREEN,
+                                    drilledFluid.getUnlocalizedName());
+                            tl.add(TextComponentUtil.translationWithColor(
+                                    TextFormatting.GRAY,
+                                    "gregtech.multiblock.fluid_rig.drilled_fluid",
+                                    fluidInfo));
+
+                            // Fluid amount
+                            ITextComponent amountInfo = TextComponentUtil.stringWithColor(
+                                    TextFormatting.BLUE,
+                                    TextFormattingUtil.formatNumbers(minerLogic.getFluidToProduce() * 20L / FluidDrillLogic.MAX_PROGRESS) + " L/t");
+                            tl.add(TextComponentUtil.translationWithColor(
+                                    TextFormatting.GRAY,
+                                    "gregtech.multiblock.fluid_rig.fluid_amount",
+                                    amountInfo));
+                        }
+                    }
+                })
                 .addWorkingStatusLine()
                 .addProgressLine(minerLogic.getProgressPercent());
     }
