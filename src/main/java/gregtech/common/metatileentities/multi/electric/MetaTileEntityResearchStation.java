@@ -133,7 +133,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                 .where('A', states(getAdvancedState()))
                 .where('P', states(getCasingState())
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1))
-                        .or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setExactLimit(1))
+                        .or(maintenancePredicate())
                         .or(abilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION).setExactLimit(1)))
                 .where('H', abilities(MultiblockAbility.OBJECT_HOLDER))
                 .build();
