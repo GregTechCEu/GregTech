@@ -8,7 +8,10 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.IndicatorImageWidget;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
@@ -328,13 +331,20 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     public TraceabilityPredicate autoAbilities(boolean checkMaintenance, boolean checkMuffler) {
         TraceabilityPredicate predicate = new TraceabilityPredicate();
         if (checkMaintenance && hasMaintenanceMechanics()) {
-            predicate = predicate.or(abilities(MultiblockAbility.MAINTENANCE_HATCH)
-                    .setMinGlobalLimited(ConfigHolder.machines.enableMaintenance ? 1 : 0).setMaxGlobalLimited(1));
+            predicate = predicate.or(maintenancePredicate());
         }
         if (checkMuffler && hasMufflerMechanics()) {
             predicate = predicate.or(abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1));
         }
         return predicate;
+    }
+
+    protected TraceabilityPredicate maintenancePredicate() {
+        if (hasMaintenanceMechanics()) {
+            return abilities(MultiblockAbility.MAINTENANCE_HATCH)
+                    .setMinGlobalLimited(ConfigHolder.machines.enableMaintenance ? 1 : 0).setMaxGlobalLimited(1);
+        }
+        return new TraceabilityPredicate();
     }
 
     /**
