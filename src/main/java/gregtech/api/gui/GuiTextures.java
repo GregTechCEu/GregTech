@@ -232,6 +232,8 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_LCE_FUEL = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_lce_fuel.png");
     public static final TextureArea PROGRESS_BAR_LCE_LUBRICANT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_lce_lubricant.png");
     public static final TextureArea PROGRESS_BAR_LCE_OXYGEN = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_lce_oxygen.png");
+    public static final TextureArea PROGRESS_BAR_TURBINE_ROTOR_SPEED = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_turbine_rotor_speed.png");
+    public static final TextureArea PROGRESS_BAR_TURBINE_ROTOR_DURABILITY = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_turbine_rotor_durability.png");
 
     //JEI
     public static final TextureArea INFO_ICON = TextureArea.fullImage("textures/gui/widget/information.png");

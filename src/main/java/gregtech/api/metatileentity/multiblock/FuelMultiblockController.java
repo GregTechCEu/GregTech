@@ -2,10 +2,12 @@ package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.util.ResourceLocation;
@@ -13,7 +15,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
@@ -103,5 +104,52 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         }
 
         return list;
+    }
+
+    protected int[] getTotalFluidAmount(FluidStack testStack, IMultipleTankHandler multiTank) {
+        int fluidAmount = 0;
+        int fluidCapacity = 0;
+        for (var tank : multiTank) {
+            if (tank != null) {
+                FluidStack drainStack = tank.drain(testStack, false);
+                if (drainStack != null && drainStack.amount > 0) {
+                    fluidAmount += drainStack.amount;
+                    fluidCapacity += tank.getCapacity();
+                }
+            }
+        }
+        return new int[]{fluidAmount, fluidCapacity};
+    }
+
+    protected void addFuelText(List<ITextComponent> textList) {
+        // Fuel
+        int fuelStored = 0;
+        int fuelCapacity = 0;
+        FluidStack fuelStack = null;
+        MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
+        if (isStructureFormed() && recipeLogic.getInputFluidStack() != null && getInputFluidInventory() != null) {
+            fuelStack = recipeLogic.getInputFluidStack().copy();
+            fuelStack.amount = Integer.MAX_VALUE;
+            int[] fuelAmount = getTotalFluidAmount(fuelStack, getInputFluidInventory());
+            fuelStored = fuelAmount[0];
+            fuelCapacity = fuelAmount[1];
+        }
+
+        if (fuelStack != null) {
+            ITextComponent fuelName = TextComponentUtil.translationWithColor(TextFormatting.RED, fuelStack.getUnlocalizedName());
+            ITextComponent fuelInfo = new TextComponentTranslation("%s / %s (%s)",
+                    TextFormattingUtil.formatNumbers(fuelStored),
+                    TextFormattingUtil.formatNumbers(fuelCapacity),
+                    fuelName);
+            textList.add(TextComponentUtil.translationWithColor(
+                    TextFormatting.GRAY,
+                    "gregtech.multiblock.large_combustion_engine.fuel_amount", // todo rename these keys?
+                    TextComponentUtil.setColor(fuelInfo, TextFormatting.RED)));
+        } else {
+            textList.add(TextComponentUtil.translationWithColor(
+                    TextFormatting.GRAY,
+                    "gregtech.multiblock.large_combustion_engine.fuel_amount",
+                    "0 / 0 L"));
+        }
     }
 }

@@ -70,7 +70,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
                 .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
                 .addCustom(tl -> {
-                    if (recipeLogic.isOxygenBoosted) {
+                    if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
                         String key = isExtreme
                                 ? "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted"
                                 : "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
@@ -249,35 +249,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     @Override
     public void addBarHoverText(List<ITextComponent> hoverList, int index) {
         if (index == 0) {
-            // Fuel
-            int fuelStored = 0;
-            int fuelCapacity = 0;
-            FluidStack fuelStack = null;
-            MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
-            if (isStructureFormed() && recipeLogic.getInputFluidStack() != null && getInputFluidInventory() != null) {
-                fuelStack = recipeLogic.getInputFluidStack().copy();
-                fuelStack.amount = Integer.MAX_VALUE;
-                int[] fuelAmount = getTotalFluidAmount(fuelStack, getInputFluidInventory());
-                fuelStored = fuelAmount[0];
-                fuelCapacity = fuelAmount[1];
-            }
-
-            if (fuelStack != null) {
-                ITextComponent fuelName = TextComponentUtil.translationWithColor(TextFormatting.RED, fuelStack.getUnlocalizedName());
-                ITextComponent fuelInfo = new TextComponentTranslation("%s / %s (%s)",
-                        TextFormattingUtil.formatNumbers(fuelStored),
-                        TextFormattingUtil.formatNumbers(fuelCapacity),
-                        fuelName);
-                hoverList.add(TextComponentUtil.translationWithColor(
-                        TextFormatting.GRAY,
-                        "gregtech.multiblock.large_combustion_engine.fuel_amount",
-                        TextComponentUtil.setColor(fuelInfo, TextFormatting.RED)));
-            } else {
-                hoverList.add(TextComponentUtil.translationWithColor(
-                        TextFormatting.GRAY,
-                        "gregtech.multiblock.large_combustion_engine.fuel_amount",
-                        "0 / 0 L"));
-            }
+            addFuelText(hoverList);
         } else if (index == 1) {
             // Lubricant
             int lubricantStored = 0;
@@ -323,21 +295,6 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, key));
             }
         }
-    }
-
-    private int[] getTotalFluidAmount(FluidStack testStack, IMultipleTankHandler multiTank) {
-        int fluidAmount = 0;
-        int fluidCapacity = 0;
-        for (var tank : multiTank) {
-            if (tank != null) {
-                FluidStack drainStack = tank.drain(testStack, false);
-                if (drainStack != null && drainStack.amount > 0) {
-                    fluidAmount += drainStack.amount;
-                    fluidCapacity += tank.getCapacity();
-                }
-            }
-        }
-        return new int[]{fluidAmount, fluidCapacity};
     }
 
     private static class LargeCombustionEngineWorkableHandler extends MultiblockFuelRecipeLogic {
