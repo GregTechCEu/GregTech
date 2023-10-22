@@ -31,7 +31,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -83,14 +82,16 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     @Override
     protected void addErrorText(List<ITextComponent> textList) {
         super.addErrorText(textList);
-        if (isStructureFormed() && checkIntakesObstructed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.obstructed"));
+        if (isStructureFormed()) {
+            if (checkIntakesObstructed()) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.large_combustion_engine.obstructed"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
+            }
 
-            // todo
-            //FluidStack lubricantStack = getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE), false);
-            //if (lubricantStack == null || lubricantStack.amount == 0) {
-            //    textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.no_lubricant"));
-            //}
+            FluidStack lubricantStack = getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE), false);
+            if (lubricantStack == null || lubricantStack.amount == 0) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.large_combustion_engine.no_lubricant"));
+            }
         }
     }
 

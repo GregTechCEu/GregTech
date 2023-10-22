@@ -407,7 +407,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(hasNotEnoughEnergy)
                 .addCustom(tl -> {
                     if (isStructureFormed()) {
@@ -435,7 +435,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         super.addErrorText(textList);
         if (isStructureFormed()) {
             if (temperature > 1000) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.error_temperature"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.hpca.error_temperature"));
             }
             hpcaHandler.addErrors(textList);
         }
@@ -874,7 +874,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
 
         public void addErrors(List<ITextComponent> textList) {
             if (components.stream().anyMatch(IHPCAComponentHatch::isDamaged)) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.error_damaged"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.hpca.error_damaged"));
             }
         }
 

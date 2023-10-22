@@ -25,9 +25,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -495,7 +492,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Recommended to only display warnings if the structure is already formed.
      */
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
@@ -504,14 +501,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#addWarningText}.
      */
     protected void addErrorText(List<ITextComponent> textList) {
-        if (!isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
-        } else {
-            if (hasMufflerMechanics() && !isMufflerFaceFree()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed"));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .addMufflerObstructedLine(hasMufflerMechanics() && !isMufflerFaceFree());
     }
 
     protected boolean shouldShowVoidingModeButton() {

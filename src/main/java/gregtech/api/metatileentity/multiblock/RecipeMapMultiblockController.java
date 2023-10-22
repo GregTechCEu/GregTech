@@ -147,7 +147,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }

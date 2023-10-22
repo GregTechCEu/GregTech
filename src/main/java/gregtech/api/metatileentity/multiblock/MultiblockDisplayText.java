@@ -21,7 +21,11 @@ public class MultiblockDisplayText {
      * Automatically adds the "Invalid Structure" line if the structure is not formed.
      */
     public static Builder builder(List<ITextComponent> textList, boolean isStructureFormed) {
-        return new Builder(textList, isStructureFormed);
+        return builder(textList, isStructureFormed, true);
+    }
+
+    public static Builder builder(List<ITextComponent> textList, boolean isStructureFormed, boolean showIncompleteStructureWarning) {
+        return new Builder(textList, isStructureFormed, showIncompleteStructureWarning);
     }
 
     public static class Builder {
@@ -36,11 +40,11 @@ public class MultiblockDisplayText {
         private String pausedKey = "gregtech.multiblock.work_paused";
         private String runningKey = "gregtech.multiblock.running";
 
-        private Builder(List<ITextComponent> textList, boolean isStructureFormed) {
+        private Builder(List<ITextComponent> textList, boolean isStructureFormed, boolean showIncompleteStructureWarning) {
             this.textList = textList;
             this.isStructureFormed = isStructureFormed;
 
-            if (!isStructureFormed) {
+            if (!isStructureFormed && showIncompleteStructureWarning) {
                 ITextComponent base = TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.invalid_structure");
                 ITextComponent hover = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.invalid_structure.tooltip");
                 textList.add(TextComponentUtil.setHover(base, hover));
@@ -367,6 +371,20 @@ public class MultiblockDisplayText {
                         "gregtech.multiblock.universal.has_problems"));
             }
             return true;
+        }
+
+        /**
+         * Adds two error lines when the machine's muffler hatch is obstructed.
+         * <br>
+         * Added if the structure is formed and if the passed parameter is true.
+         */
+        public Builder addMufflerObstructedLine(boolean isObstructed) {
+            if (!isStructureFormed) return this;
+            if (isObstructed) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.universal.muffler_obstructed"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.universal.muffler_obstructed_desc"));
+            }
+            return this;
         }
 
         /**

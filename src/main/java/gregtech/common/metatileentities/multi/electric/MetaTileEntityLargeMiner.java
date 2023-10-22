@@ -260,7 +260,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(!drainEnergy(true))
                 .addCustom(tl -> {
                     if (isStructureFormed() && isInventoryFull) {
@@ -274,9 +274,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     protected void addErrorText(List<ITextComponent> textList) {
         super.addErrorText(textList);
-        //if (!drainFluid(true)) {
-        //    textList.add(new TextComponentTranslation("gregtech.machine.miner.multi.needsfluid").setStyle(new Style().setColor(TextFormatting.RED)));
-        //}
+        if (!drainFluid(true)) {
+            textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.machine.miner.multi.needsfluid"));
+        }
     }
 
     public IBlockState getCasingState() {

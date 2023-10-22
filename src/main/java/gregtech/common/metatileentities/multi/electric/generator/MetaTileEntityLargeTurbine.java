@@ -22,8 +22,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -135,7 +133,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addCustom(tl -> {
                     if (isStructureFormed()) {
                         IRotorHolder rotorHolder = getRotorHolder();
@@ -155,11 +153,16 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     @Override
     protected void addErrorText(List<ITextComponent> textList) {
         super.addErrorText(textList);
-        if (isStructureFormed() && !isRotorFaceFree()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.obstructed").setStyle(new Style().setColor(TextFormatting.RED)));
+        if (isStructureFormed()) {
+            if (!isRotorFaceFree()) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.turbine.obstructed"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.turbine.obstructed.desc"));
+            }
 
-            // todo make error
-            // textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.no_rotor"));
+            IRotorHolder rotorHolder = getRotorHolder();
+            if (rotorHolder.getRotorEfficiency() <= 0) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.turbine.no_rotor"));
+            }
         }
     }
 

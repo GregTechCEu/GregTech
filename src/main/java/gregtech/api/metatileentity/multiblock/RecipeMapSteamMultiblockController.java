@@ -125,7 +125,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addCustom(tl -> {
                     if (isStructureFormed() && recipeMapWorkable.isHasNotEnoughEnergy()) {
                         tl.add(TextComponentUtil.translationWithColor(

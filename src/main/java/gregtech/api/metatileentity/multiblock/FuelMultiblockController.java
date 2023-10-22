@@ -57,7 +57,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowDynamoTierLine(isDynamoTierTooLow())
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
