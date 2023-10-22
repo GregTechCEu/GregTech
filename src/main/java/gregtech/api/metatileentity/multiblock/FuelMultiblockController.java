@@ -136,14 +136,14 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         }
 
         if (fuelStack != null) {
-            ITextComponent fuelName = TextComponentUtil.translationWithColor(TextFormatting.RED, fuelStack.getUnlocalizedName());
-            ITextComponent fuelInfo = new TextComponentTranslation("%s / %s (%s)",
+            ITextComponent fuelName = TextComponentUtil.translationWithColor(TextFormatting.GOLD, fuelStack.getUnlocalizedName());
+            ITextComponent fuelInfo = new TextComponentTranslation("%s / %s L (%s)",
                     TextFormattingUtil.formatNumbers(fuelStored),
                     TextFormattingUtil.formatNumbers(fuelCapacity),
                     fuelName);
             textList.add(TextComponentUtil.translationWithColor(
                     TextFormatting.GRAY,
-                    "gregtech.multiblock.large_combustion_engine.fuel_amount", // todo rename these keys?
+                    "gregtech.multiblock.large_combustion_engine.fuel_amount",
                     TextComponentUtil.setColor(fuelInfo, TextFormatting.RED)));
         } else {
             textList.add(TextComponentUtil.translationWithColor(

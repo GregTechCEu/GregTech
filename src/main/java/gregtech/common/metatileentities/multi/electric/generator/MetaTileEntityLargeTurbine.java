@@ -312,10 +312,13 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
                 hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.turbine.no_rotor"));
             } else {
                 int rotorDurability = rotorHolder.getRotorDurabilityPercent();
-                hoverList.add(TextComponentUtil.translationWithColor(
+                ITextComponent rotorInfo = TextComponentUtil.stringWithColor(
                         getRotorDurabilityColor(rotorDurability),
+                        rotorDurability + "%");
+                hoverList.add(TextComponentUtil.translationWithColor(
+                        TextFormatting.GRAY,
                         "gregtech.multiblock.turbine.rotor_durability",
-                        rotorDurability + "%"));
+                        rotorInfo));
             }
         }
     }
