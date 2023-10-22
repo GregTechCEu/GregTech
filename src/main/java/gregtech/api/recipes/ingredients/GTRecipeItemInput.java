@@ -239,6 +239,6 @@ public class GTRecipeItemInput extends GTRecipeInput {
     }
 
     private static String toStringWithoutQuantity(ItemStack stack) {
-        return stack.getItem().getTranslationKey() + "@" + stack.getItemDamage();
+        return stack.getItem().getTranslationKey(stack) + "@" + stack.getItemDamage();
     }
 }
