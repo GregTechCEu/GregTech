@@ -148,7 +148,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             textList.add(TextComponentUtil.translationWithColor(
                     TextFormatting.GRAY,
                     "gregtech.multiblock.large_combustion_engine.fuel_amount",
-                    TextComponentUtil.setColor(fuelInfo, TextFormatting.RED)));
+                    TextComponentUtil.setColor(fuelInfo, TextFormatting.GOLD)));
         } else {
             textList.add(TextComponentUtil.translationWithColor(
                     TextFormatting.GRAY,

@@ -104,7 +104,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      */
     @Override
     public byte getMaintenanceProblems() {
-        return ConfigHolder.machines.enableMaintenance ? maintenance_problems : 0b111111;
+        return ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics() ? maintenance_problems : 0b111111;
     }
 
     /**
@@ -112,7 +112,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      */
     @Override
     public int getNumMaintenanceProblems() {
-        return ConfigHolder.machines.enableMaintenance ? 6 - Integer.bitCount(maintenance_problems) : 0;
+        return ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics() ? 6 - Integer.bitCount(maintenance_problems) : 0;
     }
 
     /**
@@ -120,7 +120,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      */
     @Override
     public boolean hasMaintenanceProblems() {
-        return ConfigHolder.machines.enableMaintenance && this.maintenance_problems < 63;
+        return ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics() && this.maintenance_problems < 63;
     }
 
     /**

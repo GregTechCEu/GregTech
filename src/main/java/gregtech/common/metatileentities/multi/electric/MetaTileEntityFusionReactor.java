@@ -350,7 +350,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         builder.widget(FusionProgressSupplier.Type.BOTTOM_RIGHT.getWidget(this));
 
         // Fusion Legend
-        builder.widget(new ImageWidget(7, 98, 128, 41, GuiTextures.FUSION_REACTOR_LEGEND).setIgnoreColor(true));
+        builder.widget(new ImageWidget(7, 98, 108, 41, GuiTextures.FUSION_REACTOR_LEGEND).setIgnoreColor(true));
 
         // Power Button + Detail
         builder.widget(new ImageCycleButtonWidget(173, 211, 18, 18, GuiTextures.BUTTON_POWER,
