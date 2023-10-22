@@ -21,8 +21,9 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -62,12 +63,12 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
         private final TextureAtlasSprite activeSpriteEmissive;
         private final TextureAtlasSprite pausedSpriteEmissive;
 
-        public ActivePredicate(TextureAtlasSprite normalSprite,
-                               TextureAtlasSprite activeSprite,
-                               TextureAtlasSprite pausedSprite,
-                               TextureAtlasSprite normalSpriteEmissive,
-                               TextureAtlasSprite activeSpriteEmissive,
-                               TextureAtlasSprite pausedSpriteEmissive) {
+        public ActivePredicate(@NotNull TextureAtlasSprite normalSprite,
+                               @NotNull TextureAtlasSprite activeSprite,
+                               @Nullable TextureAtlasSprite pausedSprite,
+                               @Nullable TextureAtlasSprite normalSpriteEmissive,
+                               @Nullable TextureAtlasSprite activeSpriteEmissive,
+                               @Nullable TextureAtlasSprite pausedSpriteEmissive) {
 
             this.normalSprite = normalSprite;
             this.activeSprite = activeSprite;
@@ -77,7 +78,7 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             this.pausedSpriteEmissive = pausedSpriteEmissive;
         }
 
-        public TextureAtlasSprite getSprite(boolean active, boolean workingEnabled) {
+        public @Nullable TextureAtlasSprite getSprite(boolean active, boolean workingEnabled) {
             if (active) {
                 if (workingEnabled) {
                     return activeSprite;
@@ -88,7 +89,7 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             return normalSprite;
         }
 
-        public TextureAtlasSprite getEmissiveSprite(boolean active, boolean workingEnabled) {
+        public @Nullable TextureAtlasSprite getEmissiveSprite(boolean active, boolean workingEnabled) {
             if (active) {
                 if (workingEnabled) {
                     return activeSpriteEmissive;
@@ -100,7 +101,7 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
         }
     }
 
-    public OrientedOverlayRenderer(@Nonnull String basePath) {
+    public OrientedOverlayRenderer(@NotNull String basePath) {
         this.basePath = basePath;
         Textures.CUBE_RENDERER_REGISTRY.put(basePath, this);
         Textures.iconRegisters.add(this);
@@ -134,6 +135,11 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
 
             final String active = String.format("%s_active", overlayPath);
             TextureAtlasSprite activeSprite = ICubeRenderer.getResource(textureMap, modID, active);
+
+            if (activeSprite == null) {
+                FMLClientHandler.instance().trackMissingTexture(new ResourceLocation(modID, "blocks/" + basePath + "/overlay_OVERLAY_FACE_active"));
+                continue;
+            }
 
             final String paused = String.format("%s_paused", overlayPath);
             TextureAtlasSprite pausedSprite = ICubeRenderer.getResource(textureMap, modID, paused);
