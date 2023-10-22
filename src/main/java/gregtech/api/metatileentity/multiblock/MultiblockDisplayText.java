@@ -12,6 +12,8 @@ import java.util.function.Consumer;
 
 public class MultiblockDisplayText {
 
+    private static final ITextComponent EMPTY_COMPONENT = new TextComponentString("");
+
     /**
      * Construct a new Multiblock Display Text builder.
      * <br>
@@ -285,31 +287,15 @@ public class MultiblockDisplayText {
             return this;
         }
 
-        /** Add custom text more dynamically, allowing for custom application logic. */
+        /** Insert an empty line into the text list. */
+        public Builder addEmptyLine() {
+            textList.add(EMPTY_COMPONENT);
+            return this;
+        }
+
+        /** Add custom text dynamically, allowing for custom application logic. */
         public Builder addCustom(Consumer<List<ITextComponent>> customConsumer) {
             customConsumer.accept(textList);
-            return this;
-        }
-
-        /** Adds a custom text line only when the multiblock is not formed. */
-        public Builder addCustomUnformedLine(ITextComponent custom) {
-            if (!isStructureFormed) {
-                textList.add(custom);
-            }
-            return this;
-        }
-
-        /** Adds a custom text line only when the multiblock is formed. */
-        public Builder addCustomFormedLine(ITextComponent custom) {
-            if (isStructureFormed) {
-                textList.add(custom);
-            }
-            return this;
-        }
-
-        /** Adds a custom text line that is always shown, no matter if the multiblock is formed or not formed. */
-        public Builder addCustomLine(ITextComponent custom) {
-            textList.add(custom);
             return this;
         }
     }

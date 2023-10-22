@@ -17,6 +17,7 @@ import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.*;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -449,22 +450,23 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 .addCustom(tl -> {
                     // Cleanliness status line
                     if (isStructureFormed()) {
-                        // Base text
-                        ITextComponent statusComponent = new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_status")
-                                .setStyle(new Style().setColor(TextFormatting.GRAY));
-
-                        // Clean/Contaminated state
+                        ITextComponent cleanState;
                         if (isClean()) {
-                            statusComponent.appendSibling(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_state")
-                                    .setStyle(new Style().setColor(TextFormatting.GREEN)));
+                            cleanState = TextComponentUtil.translationWithColor(
+                                    TextFormatting.GREEN,
+                                    "gregtech.multiblock.cleanroom.clean_state",
+                                    this.cleanAmount);
                         } else {
-                            statusComponent.appendSibling(new TextComponentTranslation("gregtech.multiblock.cleanroom.dirty_state")
-                                    .setStyle(new Style().setColor(TextFormatting.DARK_RED)));
+                            cleanState = TextComponentUtil.translationWithColor(
+                                    TextFormatting.DARK_RED,
+                                    "gregtech.multiblock.cleanroom.dirty_state",
+                                    this.cleanAmount);
                         }
 
-                        // Cleanliness amount
-                        statusComponent.appendText(String.format(" §7(%s%%)", this.cleanAmount));
-                        tl.add(statusComponent);
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.cleanroom.clean_status",
+                                cleanState));
                     }
                 })
                 .addWorkingStatusLine()
