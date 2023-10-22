@@ -64,7 +64,7 @@ public class HPCAHelper {
         }
 
         private HPCAGridHandler build() {
-            HPCAGridHandler handler = new HPCAGridHandler();
+            HPCAGridHandler handler = new HPCAGridHandler(null);
             List<IHPCAComponentHatch> components = new ArrayList<>(numComputation + numCooler);
             for (int i = 0; i < numCooler; i++) {
                 components.add(coolerBuilder.apply(new CoolerBuilder()).build());

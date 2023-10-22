@@ -68,7 +68,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
 
     private IEnergyContainer energyContainer;
     private IFluidHandler coolantHandler;
-    private final HPCAGridHandler hpcaHandler = new HPCAGridHandler();
+    private final HPCAGridHandler hpcaHandler;
 
     private boolean isActive;
     private boolean isWorkingEnabled = true;
@@ -82,6 +82,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         super(metaTileEntityId);
         this.energyContainer = new EnergyContainerList(new ArrayList<>());
         this.progressSupplier = new ProgressWidget.TimedProgressSupplier(200, 47, false);
+        this.hpcaHandler = new HPCAGridHandler(this);
     }
 
     @Override
@@ -494,6 +495,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.isWorkingEnabled = buf.readBoolean();
             scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.CACHED_CWU) {
+            hpcaHandler.cachedCWUt = buf.readInt();
         }
     }
 
@@ -548,6 +551,9 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     // Handles the logic of this structure's specific HPCA component grid
     public static class HPCAGridHandler {
 
+        @Nullable // for testing
+        private final MetaTileEntityHPCA controller;
+
         // structure info
         private final List<IHPCAComponentHatch> components = new ObjectArrayList<>();
         private final Set<IHPCACoolantProvider> coolantProviders = new ObjectOpenHashSet<>();
@@ -561,6 +567,10 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         // holding these values past the computation clear because GUI is too "late" to read the state in time
         private int cachedEUt;
         private int cachedCWUt;
+
+        public HPCAGridHandler(@Nullable MetaTileEntityHPCA controller) {
+            this.controller = controller;
+        }
 
         public void onStructureForm(Collection<IHPCAComponentHatch> components) {
             reset();
@@ -595,7 +605,12 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         }
 
         public void tick() {
-            cachedCWUt = allocatedCWUt;
+            if (cachedCWUt != allocatedCWUt) {
+                cachedCWUt = allocatedCWUt;
+                if (controller != null) {
+                    controller.writeCustomData(GregtechDataCodes.CACHED_CWU, buf -> buf.writeInt(cachedCWUt));
+                }
+            }
             cachedEUt = getCurrentEUt();
             if (allocatedCWUt != 0) {
                 allocatedCWUt = 0;
