@@ -23,8 +23,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -127,12 +125,15 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            if (recipeMapWorkable.isHasNotEnoughEnergy()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.steam.low_steam").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .addCustom(tl -> {
+                    if (isStructureFormed() && recipeMapWorkable.isHasNotEnoughEnergy()) {
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.YELLOW,
+                                "gregtech.multiblock.steam.low_steam"));
+                    }
+                })
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     @Override

@@ -81,21 +81,16 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            FluidStack lubricantStack = getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE), false);
-            if (lubricantStack == null || lubricantStack.amount == 0) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.no_lubricant"));
-            }
-        }
-    }
-
-    @Override
     protected void addErrorText(List<ITextComponent> textList) {
         super.addErrorText(textList);
         if (isStructureFormed() && checkIntakesObstructed()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.obstructed"));
+
+            // todo
+            //FluidStack lubricantStack = getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE), false);
+            //if (lubricantStack == null || lubricantStack.amount == 0) {
+            //    textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.no_lubricant"));
+            //}
         }
     }
 

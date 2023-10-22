@@ -407,22 +407,27 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            if (temperature > 500) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_temperature")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
-                if (hpcaHandler.hasActiveCoolers()) {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_temperature_active_cool")
-                            .setStyle(new Style().setColor(TextFormatting.GRAY)));
-                }
-            }
-            if (hasNotEnoughEnergy) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-            hpcaHandler.addWarnings(textList);
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .addLowPowerLine(hasNotEnoughEnergy)
+                .addCustom(tl -> {
+                    if (isStructureFormed()) {
+                        if (temperature > 500) {
+                            // Temperature warning
+                            tl.add(TextComponentUtil.translationWithColor(
+                                    TextFormatting.YELLOW,
+                                    "gregtech.multiblock.hpca.warning_temperature"));
+
+                            // Active cooler overdrive warning
+                            tl.add(TextComponentUtil.translationWithColor(
+                                    TextFormatting.GRAY,
+                                    "gregtech.multiblock.hpca.warning_temperature_active_cool"));
+                        }
+
+                        // Structure warnings
+                        hpcaHandler.addWarnings(tl);
+                    }
+                })
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     @Override
@@ -853,16 +858,16 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         public void addWarnings(List<ITextComponent> textList) {
             List<ITextComponent> warnings = new ArrayList<>();
             if (numBridges > 1) {
-                warnings.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_multiple_bridges"));
+                warnings.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.hpca.warning_multiple_bridges"));
             }
             if (computationProviders.isEmpty()) {
-                warnings.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_no_computation"));
+                warnings.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.hpca.warning_no_computation"));
             }
             if (getMaxCoolingDemand() > getMaxCoolingAmount()) {
-                warnings.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_low_cooling"));
+                warnings.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.hpca.warning_low_cooling"));
             }
             if (!warnings.isEmpty()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_structure_header"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.hpca.warning_structure_header"));
                 textList.addAll(warnings);
             }
         }

@@ -32,9 +32,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -228,11 +225,10 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed() && isActive() && getRecipeMapWorkable().isHasNotEnoughComputation()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.not_enough_computation")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
+                .addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation())
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     private static class ResearchStationRecipeLogic extends ComputationRecipeLogic {

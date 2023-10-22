@@ -354,32 +354,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         MultiblockDisplayText.builder(textList, isStructureFormed());
     }
 
-    protected void addMaintenanceText(List<ITextComponent> textList) {
-        if (hasMaintenanceProblems()) {
-            ITextComponent hoverEventTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems");
-
-            if (((this.maintenance_problems) & 1) == 0)
-                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.wrench", "\n"));
-
-            if (((this.maintenance_problems >> 1) & 1) == 0)
-                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.screwdriver", "\n"));
-
-            if (((this.maintenance_problems >> 2) & 1) == 0)
-                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.soft_mallet", "\n"));
-
-            if (((this.maintenance_problems >> 3) & 1) == 0)
-                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.hard_hammer", "\n"));
-
-            if (((this.maintenance_problems >> 4) & 1) == 0)
-                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.wire_cutter", "\n"));
-
-            if (((this.maintenance_problems >> 5) & 1) == 0)
-                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.crowbar", "\n"));
-
-            textList.add(hoverEventTranslation.setStyle(new Style().setColor(TextFormatting.RED)));
-        }
-    }
-
     /**
      * Called on serverside when client is clicked on the specific text component
      * with special click event handler
@@ -521,11 +495,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Recommended to only display warnings if the structure is already formed.
      */
     protected void addWarningText(List<ITextComponent> textList) {
-        if (isStructureFormed()) {
-            if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
-                addMaintenanceText(textList);
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     /**

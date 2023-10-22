@@ -260,11 +260,9 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed() && hasNotEnoughEnergy) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .addLowPowerLine(hasNotEnoughEnergy)
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     @Override

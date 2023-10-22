@@ -404,7 +404,9 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
             if (averageIOLastSec < 0) { // decreasing
                 BigInteger timeToDrainSeconds = energyBank.getStored().divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20));
                 if (timeToDrainSeconds.compareTo(BigInteger.valueOf(60 * 60)) < 0) { // less than 1 hour left
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.under_one_hour_left"));
+                    textList.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.YELLOW,
+                            "gregtech.multiblock.power_substation.under_one_hour_left"));
                 }
             }
         }

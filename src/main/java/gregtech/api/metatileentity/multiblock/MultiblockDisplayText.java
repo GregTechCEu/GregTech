@@ -5,6 +5,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.common.ConfigHolder;
 import net.minecraft.util.text.*;
 
 import java.util.List;
@@ -263,12 +264,109 @@ public class MultiblockDisplayText {
          * <br>
          * Added if the structure is formed and if the passed parameter is true.
          */
-        public Builder addLowPowerLine(boolean isLowPower) { // todo
+        public Builder addLowPowerLine(boolean isLowPower) {
             if (!isStructureFormed) return this;
             if (isLowPower) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.not_enough_energy"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.not_enough_energy"));
             }
             return this;
+        }
+
+        /**
+         * Adds a warning line when the machine is low on computation.
+         * <br>
+         * Added if the structure is formed and if the passed parameter is true.
+         */
+        public Builder addLowComputationLine(boolean isLowComputation) {
+            if (!isStructureFormed) return this;
+            if (isLowComputation) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.computation.not_enough_computation"));
+            }
+            return this;
+        }
+
+        /**
+         * Adds a warning line when the machine's dynamo tier is too low for current conditions.
+         * <br>
+         * Added if the structure is formed and if the passed parameter is true.
+         */
+        public Builder addLowDynamoTierLine(boolean isTooLow) {
+            if (!isStructureFormed) return this;
+            if (isTooLow) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.not_enough_energy_output"));
+            }
+            return this;
+        }
+
+        /**
+         * Adds warning line(s) when the machine has maintenance problems.
+         * <br>
+         * Added if there are any maintenance problems, one line per problem as well as a header. <br>
+         * Will check the config setting for if maintenance is enabled automatically.
+         */
+        public Builder addMaintenanceProblemLines(byte maintenanceProblems) {
+            if (!isStructureFormed || !ConfigHolder.machines.enableMaintenance) return this;
+            if (maintenanceProblems < 63) {
+                boolean hasAddedHeader = false;
+
+                // Wrench
+                if ((maintenanceProblems & 1) == 0) {
+                    hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
+                    textList.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.GRAY,
+                            "gregtech.multiblock.universal.problem.wrench"));
+                }
+
+                // Screwdriver
+                if (((maintenanceProblems >> 1) & 1) == 0) {
+                    hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
+                    textList.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.GRAY,
+                            "gregtech.multiblock.universal.problem.screwdriver"));
+                }
+
+                // Soft Mallet
+                if (((maintenanceProblems >> 2) & 1) == 0) {
+                    hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
+                    textList.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.GRAY,
+                            "gregtech.multiblock.universal.problem.soft_mallet"));
+                }
+
+                // Hammer
+                if (((maintenanceProblems >> 3) & 1) == 0) {
+                    hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
+                    textList.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.GRAY,
+                            "gregtech.multiblock.universal.problem.hard_hammer"));
+                }
+
+                // Wire Cutters
+                if (((maintenanceProblems >> 4) & 1) == 0) {
+                    hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
+                    textList.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.GRAY,
+                            "gregtech.multiblock.universal.problem.wire_cutter"));
+                }
+
+                // Crowbar
+                if (((maintenanceProblems >> 5) & 1) == 0) {
+                    addMaintenanceProblemHeader(hasAddedHeader);
+                    textList.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.GRAY,
+                            "gregtech.multiblock.universal.problem.crowbar"));
+                }
+            }
+            return this;
+        }
+
+        private boolean addMaintenanceProblemHeader(boolean hasAddedHeader) {
+            if (!hasAddedHeader) {
+                textList.add(TextComponentUtil.translationWithColor(
+                        TextFormatting.YELLOW,
+                        "gregtech.multiblock.universal.has_problems"));
+            }
+            return true;
         }
 
         /**
@@ -283,7 +381,7 @@ public class MultiblockDisplayText {
             textList.add(TextComponentUtil.translationWithColor(
                     TextFormatting.GRAY,
                     "gregtech.multiblock.turbine.fuel_needed",
-                    fuelName, numTicks));
+                    fuelNeeded, numTicks));
             return this;
         }
 

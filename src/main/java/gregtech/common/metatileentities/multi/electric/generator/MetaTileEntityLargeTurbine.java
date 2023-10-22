@@ -135,17 +135,21 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            IRotorHolder rotorHolder = getRotorHolder();
-            if (rotorHolder.getRotorEfficiency() > 0) {
-                if (rotorHolder.getRotorDurabilityPercent() <= MIN_DURABILITY_TO_WARN) {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_durability_low"));
-                }
-            } else {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.no_rotor"));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .addCustom(tl -> {
+                    if (isStructureFormed()) {
+                        IRotorHolder rotorHolder = getRotorHolder();
+                        if (rotorHolder.getRotorEfficiency() > 0) {
+                            if (rotorHolder.getRotorDurabilityPercent() <= MIN_DURABILITY_TO_WARN) {
+                                tl.add(TextComponentUtil.translationWithColor(
+                                        TextFormatting.YELLOW,
+                                        "gregtech.multiblock.turbine.rotor_durability_low"));
+                            }
+                        }
+                    }
+                })
+                .addLowDynamoTierLine(isDynamoTierTooLow())
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     @Override
@@ -153,6 +157,9 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
         super.addErrorText(textList);
         if (isStructureFormed() && !isRotorFaceFree()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.obstructed").setStyle(new Style().setColor(TextFormatting.RED)));
+
+            // todo make error
+            // textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.no_rotor"));
         }
     }
 

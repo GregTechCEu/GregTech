@@ -40,8 +40,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -196,15 +194,15 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            if (!drainEnergy(true)) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-            if (minerLogic.isInventoryFull()) {
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .addLowPowerLine(!drainEnergy(true))
+                .addCustom(tl -> {
+                    if (isStructureFormed() && minerLogic.isInventoryFull()) {
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.YELLOW,
+                                "gregtech.machine.miner.invfull"));
+                    }
+                });
     }
 
     @Override
