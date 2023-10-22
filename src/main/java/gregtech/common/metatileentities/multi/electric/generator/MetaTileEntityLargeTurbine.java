@@ -245,31 +245,36 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     }
 
     @Override
-    public double[] getFillPercentages() {
-        IRotorHolder rotorHolder = getRotorHolder();
-        int[] fuelAmount = new int[2];
-        if (getInputFluidInventory() != null) {
-            MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
-            if (recipeLogic.getInputFluidStack() != null) {
-                FluidStack testStack = recipeLogic.getInputFluidStack().copy();
-                testStack.amount = Integer.MAX_VALUE;
-                fuelAmount = getTotalFluidAmount(testStack, getInputFluidInventory());
+    public double getFillPercentage(int index) {
+        if (index == 0) {
+            int[] fuelAmount = new int[2];
+            if (getInputFluidInventory() != null) {
+                MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
+                if (recipeLogic.getInputFluidStack() != null) {
+                    FluidStack testStack = recipeLogic.getInputFluidStack().copy();
+                    testStack.amount = Integer.MAX_VALUE;
+                    fuelAmount = getTotalFluidAmount(testStack, getInputFluidInventory());
+                }
             }
+            return fuelAmount[1] != 0 ? 1.0 * fuelAmount[0] / fuelAmount[1] : 0;
+        } else if (index == 1) {
+            IRotorHolder rotorHolder = getRotorHolder();
+            return rotorHolder != null ? 1.0 * rotorHolder.getRotorSpeed() / rotorHolder.getMaxRotorHolderSpeed() : 0;
+        } else {
+            IRotorHolder rotorHolder = getRotorHolder();
+            return rotorHolder != null ? 1.0 * rotorHolder.getRotorDurabilityPercent() / 100 : 0;
         }
-        return new double[]{
-                fuelAmount[1] != 0 ? 1.0 * fuelAmount[0] / fuelAmount[1] : 0,
-                rotorHolder != null ? 1.0 * rotorHolder.getRotorSpeed() / rotorHolder.getMaxRotorHolderSpeed() : 0,
-                rotorHolder != null ? 1.0 * rotorHolder.getRotorDurabilityPercent() / 100 : 0,
-        };
     }
 
     @Override
-    public TextureArea[] getProgressBarTextures() {
-        return new TextureArea[]{
-                GuiTextures.PROGRESS_BAR_LCE_FUEL,
-                GuiTextures.PROGRESS_BAR_TURBINE_ROTOR_SPEED,
-                GuiTextures.PROGRESS_BAR_TURBINE_ROTOR_DURABILITY
-        };
+    public TextureArea getProgressBarTexture(int index) {
+        if (index == 0) {
+            return GuiTextures.PROGRESS_BAR_LCE_FUEL;
+        } else if (index == 1) {
+            return GuiTextures.PROGRESS_BAR_TURBINE_ROTOR_SPEED;
+        } else {
+            return GuiTextures.PROGRESS_BAR_TURBINE_ROTOR_DURABILITY;
+        }
     }
 
     @Override

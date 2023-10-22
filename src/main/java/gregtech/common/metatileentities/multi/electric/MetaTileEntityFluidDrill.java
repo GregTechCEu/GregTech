@@ -362,15 +362,15 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     }
 
     @Override
-    public double[] getFillPercentages() {
+    public double getFillPercentage(int index) {
         int numOperationsLeft = BedrockFluidVeinHandler.getOperationsRemaining(getWorld(), minerLogic.getChunkX(), minerLogic.getChunkZ());
         int maxOperations = BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS;
-        return new double[]{1.0 * numOperationsLeft / maxOperations};
+        return 1.0 * numOperationsLeft / maxOperations;
     }
 
     @Override
-    public TextureArea[] getProgressBarTextures() {
-        return new TextureArea[]{GuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION};
+    public TextureArea getProgressBarTexture(int index) {
+        return GuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION;
     }
 
     @Override

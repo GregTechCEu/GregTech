@@ -526,9 +526,9 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
     }
 
     @Override
-    public double[] getFillPercentages() {
-        if (energyBank == null) return new double[]{0};
-        return new double[]{energyBank.getStored().doubleValue() / energyBank.getCapacity().doubleValue()};
+    public double getFillPercentage(int index) {
+        if (energyBank == null) return 0;
+        return energyBank.getStored().doubleValue() / energyBank.getCapacity().doubleValue();
     }
 
     @Override

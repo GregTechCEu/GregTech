@@ -511,19 +511,17 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     }
 
     @Override
-    public double[] getFillPercentages() {
-        return new double[]{
-                1.0 * hpcaHandler.cachedCWUt / hpcaHandler.getMaxCWUt(),
-                Math.min(1.0, temperature / DAMAGE_TEMPERATURE)
-        };
+    public double getFillPercentage(int index) {
+        return index == 0
+                ? 1.0 * hpcaHandler.cachedCWUt / hpcaHandler.getMaxCWUt()
+                : Math.min(1.0, temperature / DAMAGE_TEMPERATURE);
     }
 
     @Override
-    public TextureArea[] getProgressBarTextures() {
-        return new TextureArea[]{
-                GuiTextures.PROGRESS_BAR_HPCA_COMPUTATION,
-                GuiTextures.PROGRESS_BAR_FUSION_HEAT
-        };
+    public TextureArea getProgressBarTexture(int index) {
+        return index == 0
+                ? GuiTextures.PROGRESS_BAR_HPCA_COMPUTATION
+                : GuiTextures.PROGRESS_BAR_FUSION_HEAT;
     }
 
     @Override

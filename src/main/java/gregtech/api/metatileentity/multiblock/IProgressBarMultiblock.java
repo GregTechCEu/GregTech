@@ -18,11 +18,11 @@ public interface IProgressBarMultiblock {
     }
 
     /** Fill percentages, formatted as a double from [0, 1] of the progress bar(s). */
-    double[] getFillPercentages();
+    double getFillPercentage(int index);
 
     /** Textures for the progress bar(s). */
-    default TextureArea[] getProgressBarTextures() {
-        return new TextureArea[]{GuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW};
+    default TextureArea getProgressBarTexture(int index) {
+        return GuiTextures.PROGRESS_BAR_MULTI_ENERGY_YELLOW;
     }
 
     /**

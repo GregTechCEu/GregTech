@@ -211,39 +211,45 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
-    public double[] getFillPercentages() {
-        int[] fuelAmount = new int[2];
-        int[] lubricantAmount = new int[2];
-        int[] oxygenAmount = new int[2];
-
-        if (getInputFluidInventory() != null) {
-            MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
-            if (recipeLogic.getInputFluidStack() != null) {
-                FluidStack testStack = recipeLogic.getInputFluidStack().copy();
-                testStack.amount = Integer.MAX_VALUE;
-                fuelAmount = getTotalFluidAmount(testStack, getInputFluidInventory());
+    public double getFillPercentage(int index) {
+        if (index == 0) {
+            int[] fuelAmount = new int[2];
+            if (getInputFluidInventory() != null) {
+                MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
+                if (recipeLogic.getInputFluidStack() != null) {
+                    FluidStack testStack = recipeLogic.getInputFluidStack().copy();
+                    testStack.amount = Integer.MAX_VALUE;
+                    fuelAmount = getTotalFluidAmount(testStack, getInputFluidInventory());
+                }
             }
-            lubricantAmount = getTotalFluidAmount(Materials.Lubricant.getFluid(Integer.MAX_VALUE), getInputFluidInventory());
-            if (isBoostAllowed()) {
-                Material material = isExtreme ? Materials.LiquidOxygen : Materials.Oxygen;
-                oxygenAmount = getTotalFluidAmount(material.getFluid(Integer.MAX_VALUE), getInputFluidInventory());
+            return fuelAmount[1] != 0 ? 1.0 * fuelAmount[0] / fuelAmount[1] : 0;
+        } else if (index == 1) {
+            int[] lubricantAmount = new int[2];
+            if (getInputFluidInventory() != null) {
+                lubricantAmount = getTotalFluidAmount(Materials.Lubricant.getFluid(Integer.MAX_VALUE), getInputFluidInventory());
             }
+            return lubricantAmount[1] != 0 ? 1.0 * lubricantAmount[0] / lubricantAmount[1] : 0;
+        } else {
+            int[] oxygenAmount = new int[2];
+            if (getInputFluidInventory() != null) {
+                if (isBoostAllowed()) {
+                    Material material = isExtreme ? Materials.LiquidOxygen : Materials.Oxygen;
+                    oxygenAmount = getTotalFluidAmount(material.getFluid(Integer.MAX_VALUE), getInputFluidInventory());
+                }
+            }
+            return oxygenAmount[1] != 0 ? 1.0 * oxygenAmount[0] / oxygenAmount[1] : 0;
         }
-
-        return new double[]{
-                fuelAmount[1] != 0 ? 1.0 * fuelAmount[0] / fuelAmount[1] : 0,
-                lubricantAmount[1] != 0 ? 1.0 * lubricantAmount[0] / lubricantAmount[1] : 0,
-                oxygenAmount[1] != 0 ? 1.0 * oxygenAmount[0] / oxygenAmount[1] : 0
-        };
     }
 
     @Override
-    public TextureArea[] getProgressBarTextures() {
-        return new TextureArea[]{
-                GuiTextures.PROGRESS_BAR_LCE_FUEL,
-                GuiTextures.PROGRESS_BAR_LCE_LUBRICANT,
-                GuiTextures.PROGRESS_BAR_LCE_OXYGEN
-        };
+    public TextureArea getProgressBarTexture(int index) {
+        if (index == 0) {
+            return GuiTextures.PROGRESS_BAR_LCE_FUEL;
+        } else if (index == 1) {
+            return GuiTextures.PROGRESS_BAR_LCE_LUBRICANT;
+        } else {
+            return GuiTextures.PROGRESS_BAR_LCE_OXYGEN;
+        }
     }
 
     @Override
