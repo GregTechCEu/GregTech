@@ -8,7 +8,11 @@ import gregtech.api.capability.*;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.gui.widgets.SuppliedImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
@@ -27,15 +31,19 @@ import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.core.sound.GTSoundEvents;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -51,6 +59,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOpticalComputationProvider, IControllable, IProgressBarMultiblock {
 
@@ -67,9 +76,12 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
 
     private double temperature = IDLE_TEMPERATURE; // start at idle temperature
 
+    private final ProgressWidget.TimedProgressSupplier progressSupplier;
+
     public MetaTileEntityHPCA(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.energyContainer = new EnergyContainerList(new ArrayList<>());
+        this.progressSupplier = new ProgressWidget.TimedProgressSupplier(200, 47, false);
     }
 
     @Override
@@ -109,6 +121,19 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         seen.add(this);
         // don't show a problem if the structure is not yet formed
         return !isStructureFormed() || hpcaHandler.hasHPCABridge();
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        // we need to know what components we have on the client
+        if (getWorld().isRemote) {
+            if (isStructureFormed()) {
+                hpcaHandler.tryGatherClientComponents(getWorld(), getPos(), getFrontFacing());
+            } else {
+                hpcaHandler.clearClientComponents();
+            }
+        }
     }
 
     @Override
@@ -317,9 +342,31 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     }
 
     @Override
+    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
+        ModularUI.Builder builder = super.createUITemplate(entityPlayer);
+
+        // Create the hover grid
+        builder.widget(new ProgressWidget(
+                () -> hpcaHandler.getAllocatedCWUt() > 0 ? progressSupplier.getAsDouble() : 0,
+                70, 57, 47, 47, GuiTextures.HPCA_COMPONENT_OUTLINE, ProgressWidget.MoveType.HORIZONTAL)
+                .setIgnoreColor(true)
+                .setHoverTextConsumer(hpcaHandler::addInfo));
+        int startX = 72;
+        int startY = 59;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                final int index = i * 3 + j;
+                Supplier<IGuiTexture> textureSupplier = () -> hpcaHandler.getComponentTexture(index);
+                builder.widget(new SuppliedImageWidget(startX + (15 * j), startY + (15 * i), 13, 13, textureSupplier).setIgnoreColor(true));
+            }
+        }
+        return builder;
+    }
+
+    @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
+                .setWorkingStatus(true, hpcaHandler.getAllocatedCWUt() > 0) // transform into two-state system for display
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
@@ -345,43 +392,13 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
                                 cwutInfo));
                     }
                 })
-                .addWorkingStatusLine()
-                .addCustom(tl -> {
-                    // Fill some space to get to the bottom
-                    tl.add(new TextComponentString(""));
-                    tl.add(new TextComponentString(""));
-                    tl.add(new TextComponentString(""));
-                    tl.add(new TextComponentString(""));
-
-                    // Structure Info
-                    ITextComponent structureInfo = TextComponentUtil.translationWithColor(TextFormatting.GOLD, "gregtech.multiblock.hpca.hover_for_info");
-                    List<ITextComponent> infoList = new ArrayList<>();
-                    hpcaHandler.addInfo(infoList);
-                    ITextComponent hoverComponent = null;
-                    for (ITextComponent c : infoList) {
-                        if (hoverComponent == null) {
-                            hoverComponent = c;
-                        } else {
-                            hoverComponent.appendSibling(new TextComponentString("\n").appendSibling(c));
-                        }
-                    }
-                    tl.add(TextComponentUtil.setHover(structureInfo, hoverComponent));
-                });
+                .addWorkingStatusLine();
     }
 
     private TextFormatting getDisplayTemperatureColor() {
         if (temperature < 500) {
             return TextFormatting.GREEN;
         } else if (temperature < 750) {
-            return TextFormatting.YELLOW;
-        }
-        return TextFormatting.RED;
-    }
-
-    private TextFormatting getDisplayCoolingColor(int provided, int demand) {
-        if (provided >= demand) {
-            return TextFormatting.GREEN;
-        } else if (demand - provided >= 2) {
             return TextFormatting.YELLOW;
         }
         return TextFormatting.RED;
@@ -497,7 +514,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     public double[] getFillPercentages() {
         return new double[]{
                 1.0 * hpcaHandler.cachedCWUt / hpcaHandler.getMaxCWUt(),
-                temperature / DAMAGE_TEMPERATURE
+                Math.min(1.0, temperature / DAMAGE_TEMPERATURE)
         };
     }
 
@@ -534,7 +551,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     public static class HPCAGridHandler {
 
         // structure info
-        private final Set<IHPCAComponentHatch> components = new ObjectOpenHashSet<>();
+        private final List<IHPCAComponentHatch> components = new ObjectArrayList<>();
         private final Set<IHPCACoolantProvider> coolantProviders = new ObjectOpenHashSet<>();
         private final Set<IHPCAComputationProvider> computationProviders = new ObjectOpenHashSet<>();
         private int numBridges;
@@ -841,6 +858,41 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
             if (components.stream().anyMatch(IHPCAComponentHatch::isDamaged)) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.error_damaged"));
             }
+        }
+
+        public TextureArea getComponentTexture(int index) {
+            if (components.size() <= index) {
+                return GuiTextures.BLANK_TRANSPARENT;
+            }
+            return components.get(index).getComponentIcon();
+        }
+
+        public void tryGatherClientComponents(World world, BlockPos pos, EnumFacing facing) {
+            if (components.isEmpty()) {
+                BlockPos testPos = pos
+                        .offset(facing.getOpposite(), 3)
+                        .offset(EnumFacing.UP, 3);
+
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        BlockPos tempPos = testPos.offset(facing, j).offset(EnumFacing.DOWN, i);
+                        TileEntity te = world.getTileEntity(tempPos);
+                        if (te instanceof IHPCAComponentHatch hatch) {
+                            components.add(hatch);
+                        } else if (te instanceof IGregTechTileEntity igtte) {
+                            MetaTileEntity mte = igtte.getMetaTileEntity();
+                            if (mte instanceof IHPCAComponentHatch hatch) {
+                                components.add(hatch);
+                            }
+                        }
+                        // if here without a hatch, something went wrong, better to skip than add a null into the mix.
+                    }
+                }
+            }
+        }
+
+        public void clearClientComponents() {
+            components.clear();
         }
     }
 }

@@ -23,6 +23,7 @@ public class GuiTextures {
     public static final TextureArea CLIPBOARD_PAPER_BACKGROUND = TextureArea.fullImage("textures/gui/base/clipboard_paper_background.png");
 
     public static final TextureArea BLANK = AdoptableTextureArea.fullImage("textures/gui/base/blank.png", 1, 1, 0, 0);
+    public static final TextureArea BLANK_TRANSPARENT = AdoptableTextureArea.fullImage("textures/gui/base/blank_transparent.png", 1, 1, 0, 0);
     public static final TextureArea DISPLAY = AdoptableTextureArea.fullImage("textures/gui/base/display.png", 143, 75, 2, 2);
     public static final SteamTexture DISPLAY_STEAM = SteamTexture.fullImage("textures/gui/base/display_%s.png", 143, 75, 2, 2);
     public static final TextureArea FLUID_SLOT = AdoptableTextureArea.fullImage("textures/gui/base/fluid_slot.png", 18, 18, 1, 1);
@@ -304,4 +305,15 @@ public class GuiTextures {
     public static final TextureArea FUSION_REACTOR_MK3_TITLE = TextureArea.fullImage("textures/gui/widget/fusion_reactor_mk3_title.png");
     public static final TextureArea FUSION_REACTOR_DIAGRAM = TextureArea.fullImage("textures/gui/widget/fusion_reactor_diagram.png");
     public static final TextureArea FUSION_REACTOR_LEGEND = TextureArea.fullImage("textures/gui/widget/fusion_reactor_legend.png");
+
+    // HPCA Component icons
+    public static final TextureArea HPCA_COMPONENT_OUTLINE = TextureArea.fullImage("textures/gui/widget/hpca/component_outline.png");
+    public static final TextureArea HPCA_ICON_EMPTY_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/empty_component.png");
+    public static final TextureArea HPCA_ICON_ADVANCED_COMPUTATION_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/advanced_computation_component.png");
+    public static final TextureArea HPCA_ICON_BRIDGE_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/bridge_component.png");
+    public static final TextureArea HPCA_ICON_COMPUTATION_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/computation_component.png");
+    public static final TextureArea HPCA_ICON_ACTIVE_COOLER_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/active_cooler_component.png");
+    public static final TextureArea HPCA_ICON_HEAT_SINK_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/heat_sink_component.png");
+    public static final TextureArea HPCA_ICON_DAMAGED_ADVANCED_COMPUTATION_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/damaged_advanced_computation_component.png");
+    public static final TextureArea HPCA_ICON_DAMAGED_COMPUTATION_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/damaged_computation_component.png");
 }
