@@ -236,6 +236,12 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_TURBINE_ROTOR_DURABILITY = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_turbine_rotor_durability.png");
     public static final TextureArea PROGRESS_BAR_FLUID_RIG_DEPLETION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fluid_rig_depletion.png");
 
+    // Fusion reactor diagram progress bar parts
+    public static final TextureArea PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_BL = TextureArea.fullImage("textures/gui/progress_bar/fusion_diagram/bottom_left.png");
+    public static final TextureArea PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_BR = TextureArea.fullImage("textures/gui/progress_bar/fusion_diagram/bottom_right.png");
+    public static final TextureArea PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_TL = TextureArea.fullImage("textures/gui/progress_bar/fusion_diagram/top_left.png");
+    public static final TextureArea PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_TR = TextureArea.fullImage("textures/gui/progress_bar/fusion_diagram/top_right.png");
+
     //JEI
     public static final TextureArea INFO_ICON = TextureArea.fullImage("textures/gui/widget/information.png");
     public static final TextureArea MULTIBLOCK_CATEGORY = TextureArea.fullImage("textures/gui/icon/multiblock_category.png");
@@ -292,4 +298,10 @@ public class GuiTextures {
     public static final TextureArea CONFIG_ARROW_DARK = TextureArea.fullImage("textures/gui/widget/config_arrow_dark.png");
     public static final TextureArea SELECT_BOX = TextureArea.fullImage("textures/gui/widget/select_box.png");
 
+    // Fusion Reactor custom images
+    public static final TextureArea FUSION_REACTOR_MK1_TITLE = TextureArea.fullImage("textures/gui/widget/fusion_reactor_mk1_title.png");
+    public static final TextureArea FUSION_REACTOR_MK2_TITLE = TextureArea.fullImage("textures/gui/widget/fusion_reactor_mk2_title.png");
+    public static final TextureArea FUSION_REACTOR_MK3_TITLE = TextureArea.fullImage("textures/gui/widget/fusion_reactor_mk3_title.png");
+    public static final TextureArea FUSION_REACTOR_DIAGRAM = TextureArea.fullImage("textures/gui/widget/fusion_reactor_diagram.png");
+    public static final TextureArea FUSION_REACTOR_LEGEND = TextureArea.fullImage("textures/gui/widget/fusion_reactor_legend.png");
 }

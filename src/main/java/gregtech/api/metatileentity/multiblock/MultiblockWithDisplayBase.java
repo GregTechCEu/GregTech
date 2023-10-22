@@ -485,7 +485,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
 
         // Flex Button
-        builder.widget(getFlexButton(173, 124, 18, 18));
+        builder.widget(getFlexButton(173, 125, 18, 18));
 
         builder.bindPlayerInventory(entityPlayer.inventory, 125);
         return builder;
