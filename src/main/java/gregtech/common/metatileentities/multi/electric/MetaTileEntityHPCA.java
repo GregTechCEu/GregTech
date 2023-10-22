@@ -348,10 +348,10 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         // Create the hover grid
         builder.widget(new ProgressWidget(
                 () -> hpcaHandler.getAllocatedCWUt() > 0 ? progressSupplier.getAsDouble() : 0,
-                70, 57, 47, 47, GuiTextures.HPCA_COMPONENT_OUTLINE, ProgressWidget.MoveType.HORIZONTAL)
+                74, 57, 47, 47, GuiTextures.HPCA_COMPONENT_OUTLINE, ProgressWidget.MoveType.HORIZONTAL)
                 .setIgnoreColor(true)
                 .setHoverTextConsumer(hpcaHandler::addInfo));
-        int startX = 72;
+        int startX = 76;
         int startY = 59;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
