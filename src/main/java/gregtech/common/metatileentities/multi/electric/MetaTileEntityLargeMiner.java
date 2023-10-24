@@ -261,7 +261,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addLowPowerLine(!drainEnergy(true))
+                .addLowPowerLine(isStructureFormed() && !drainEnergy(true))
                 .addCustom(tl -> {
                     if (isStructureFormed() && isInventoryFull) {
                         tl.add(TextComponentUtil.translationWithColor(
