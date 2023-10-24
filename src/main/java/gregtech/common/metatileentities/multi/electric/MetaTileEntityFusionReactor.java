@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import gregtech.api.GTValues;
 import gregtech.api.capability.*;
@@ -78,7 +79,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         super(metaTileEntityId, RecipeMaps.FUSION_RECIPES);
         this.recipeMapWorkable = new FusionRecipeLogic(this);
         this.tier = tier;
-        this.energyContainer = new EnergyContainerHandler(this, Integer.MAX_VALUE, 0, 0, 0, 0) {
+        this.energyContainer = new EnergyContainerHandler(this, 0, 0, 0, 0, 0) {
             @Nonnull
             @Override
             public String getName() {
@@ -207,6 +208,20 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     }
 
     @Override
+    public void invalidateStructure() {
+        super.invalidateStructure();
+        this.energyContainer = new EnergyContainerHandler(this, 0, 0, 0, 0, 0) {
+            @Nonnull
+            @Override
+            public String getName() {
+                return GregtechDataCodes.FUSION_REACTOR_ENERGY_CONTAINER_TRAIT;
+            }
+        };
+        this.inputEnergyContainers = new EnergyContainerList(Lists.newArrayList());
+        this.heat = 0;
+    }
+
+    @Override
     protected void initializeAbilities() {
         this.inputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.IMPORT_ITEMS));
         this.inputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
@@ -313,14 +328,14 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
         // Energy Bar
         builder.widget(new ProgressWidget(
-                () -> 1.0 * energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity(),
+                () -> energyContainer.getEnergyCapacity() > 0 ? 1.0 * energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() : 0,
                 4, 144, 94, 7,
                 GuiTextures.PROGRESS_BAR_FUSION_ENERGY, ProgressWidget.MoveType.HORIZONTAL)
                 .setHoverTextConsumer(this::addEnergyBarHoverText));
 
         // Heat Bar
         builder.widget(new ProgressWidget(
-                () -> 1.0 * heat / energyContainer.getEnergyCapacity(),
+                () -> energyContainer.getEnergyCapacity() > 0 ? 1.0 * heat / energyContainer.getEnergyCapacity() : 0,
                 100, 144, 94, 7,
                 GuiTextures.PROGRESS_BAR_FUSION_HEAT, ProgressWidget.MoveType.HORIZONTAL)
                 .setHoverTextConsumer(this::addHeatBarHoverText));
