@@ -216,6 +216,10 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .setWorkingStatusKeys(
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.work_paused",
+                        "gregtech.machine.research_station.researching")
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
                 .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
                 .addParallelsLine(recipeMapWorkable.getParallelLimit())

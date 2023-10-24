@@ -274,7 +274,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     protected void addErrorText(List<ITextComponent> textList) {
         super.addErrorText(textList);
-        if (!drainFluid(true)) {
+        if (isStructureFormed() && !drainFluid(true)) {
             textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.machine.miner.multi.needsfluid"));
         }
     }
