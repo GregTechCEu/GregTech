@@ -151,6 +151,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         super.checkStructurePattern();
     }
 
+    @Override
+    public boolean allowsExtendedFacing() {
+        return false;
+    }
+
     /**
      * Scans for blocks around the controller to update the dimensions
      */

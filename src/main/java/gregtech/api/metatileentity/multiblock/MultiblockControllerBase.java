@@ -450,6 +450,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return allowsExtendedFacing() || super.isValidFrontFacing(facing);
     }
 
+    // todo tooltip on multis saying if this is enabled or disabled?
     /** Whether this multi can be rotated or face upwards. */
     public boolean allowsExtendedFacing() {
         return true;

@@ -20,6 +20,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.ResearchProperty;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.RelativeDirection;
 import gregtech.client.particle.GTLaserBeamParticle;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.ICubeRenderer;
@@ -133,14 +134,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     @Override
     protected Function<BlockPos, Integer> multiblockPartSorter() {
-        // ensure the inputs are always in order
-        return switch (getFrontFacing()) {
-            case NORTH -> pos -> -pos.getX();
-            case SOUTH -> BlockPos::getX;
-            case EAST -> pos -> -pos.getZ();
-            case WEST -> BlockPos::getZ;
-            default -> BlockPos::hashCode;
-        };
+        return RelativeDirection.RIGHT.getSorter(getFrontFacing(), getUpwardsFacing());
     }
 
 
