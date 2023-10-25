@@ -87,6 +87,7 @@ public class GregtechDataCodes {
     public static final int RECIPE_MAP_INDEX = assignId();
     public static final int IS_FRONT_FACE_FREE = assignId();
     public static final int MAINTENANCE_MULTIPLIER = assignId();
+    public static final int UPDATE_UPWARDS_FACING = assignId();
 
     // Item Bus Item Stack Auto Collapsing
     public static final int TOGGLE_COLLAPSE_ITEMS = assignId();

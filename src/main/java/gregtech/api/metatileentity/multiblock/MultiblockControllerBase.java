@@ -5,6 +5,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import codechicken.lib.vec.Rotation;
+import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
@@ -51,6 +53,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.STRUCTURE_FORMED;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_UPWARDS_FACING;
 
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
 
@@ -60,6 +63,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
     private boolean structureFormed;
+
+    protected EnumFacing upwardsFacing = EnumFacing.NORTH;
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -100,6 +105,25 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      */
     @Nonnull
     protected abstract BlockPattern createStructurePattern();
+
+    public EnumFacing getUpwardsFacing() {
+        return upwardsFacing;
+    }
+
+    public void setUpwardsFacing(EnumFacing upwardsFacing) {
+        if (!allowsExtendedFacing()) return;
+        Preconditions.checkNotNull(upwardsFacing, "upwardsFacing");
+        this.upwardsFacing = upwardsFacing;
+        if (getWorld() != null && !getWorld().isRemote) {
+            notifyBlockUpdate();
+            markDirty();
+            writeCustomData(UPDATE_UPWARDS_FACING, buf -> buf.writeEnumValue(upwardsFacing));
+            if (structurePattern != null) {
+                structurePattern.clearCache();
+                checkStructurePattern();
+            }
+        }
+    }
 
     @SideOnly(Side.CLIENT)
     public abstract ICubeRenderer getBaseTexture(IMultiblockPart sourcePart);
@@ -215,6 +239,18 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         getBaseTexture(null).render(renderState, translation, ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+
+        if (allowsExtendedFacing()) {
+            double degree = Math.PI / 2 * (upwardsFacing == EnumFacing.EAST ? -1 : upwardsFacing == EnumFacing.SOUTH ? 2 : upwardsFacing == EnumFacing.WEST ? 1 : 0);
+            Rotation rotation = new Rotation(degree, frontFacing.getXOffset(), frontFacing.getYOffset(), frontFacing.getZOffset());
+            translation.translate(0.5, 0.5, 0.5);
+            if (frontFacing == EnumFacing.DOWN && upwardsFacing.getAxis() == EnumFacing.Axis.Z) {
+                translation.apply(new Rotation(Math.PI, 0, 1, 0));
+            }
+            translation.apply(rotation);
+            translation.scale(1.0000f);
+            translation.translate(-0.5, -0.5, -0.5);
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -240,7 +276,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void checkStructurePattern() {
         if (structurePattern == null) return;
-        PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(), getFrontFacing().getOpposite());
+        PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(), getFrontFacing().getOpposite(), getUpwardsFacing());
         if (context != null && !structureFormed) {
             Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
@@ -304,19 +340,31 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
+        if (data.hasKey("UpwardsFacing")) {
+            this.upwardsFacing = EnumFacing.byIndex(data.getInteger("UpwardsFacing"));
+        }
         this.reinitializeStructurePattern();
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setInteger("UpwardsFacing", upwardsFacing.getIndex());
+        return data;
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(structureFormed);
+        buf.writeEnumValue(upwardsFacing);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.structureFormed = buf.readBoolean();
+        this.upwardsFacing = buf.readEnumValue(EnumFacing.class);
     }
 
     @Override
@@ -327,6 +375,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             if (!structureFormed) {
                 GregTechAPI.soundManager.stopTileSound(getPos());
             }
+        } else if (dataId == UPDATE_UPWARDS_FACING) {
+            this.upwardsFacing = buf.readEnumValue(EnumFacing.class);
+            scheduleRenderUpdate();
         }
     }
 
@@ -379,6 +430,29 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+        if (!needsSneakToRotate() || playerIn.isSneaking()) {
+            if (wrenchSide == getFrontFacing() && allowsExtendedFacing()) {
+                if (!getWorld().isRemote) {
+                    setUpwardsFacing(upwardsFacing.rotateAround(EnumFacing.Axis.Y));
+                }
+                return true;
+            }
+        }
+        return super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
+    }
+
+    @Override
+    public boolean isValidFrontFacing(EnumFacing facing) {
+        return allowsExtendedFacing() || super.isValidFrontFacing(facing);
+    }
+
+    /** Whether this multi can be rotated or face upwards. */
+    public boolean allowsExtendedFacing() {
+        return true;
     }
 
     public List<MultiblockShapeInfo> getMatchingShapes() {
