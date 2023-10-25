@@ -233,6 +233,10 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
         return (int) (getBaseSteamOutput() * (currentTemperature / (getMaxTemperate() * 1.0)) / 2);
     }
 
+    public boolean hasWater() {
+        return !hasNoWater;
+    }
+
     private void generateSteam() {
         if (currentTemperature >= 100) {
             int fillAmount = getTotalSteamOutput();

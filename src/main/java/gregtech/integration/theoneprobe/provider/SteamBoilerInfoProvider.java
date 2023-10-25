@@ -30,12 +30,16 @@ public class SteamBoilerInfoProvider implements IProbeInfoProvider {
                         // Boiler is active
                         int steamOutput = boiler.getTotalSteamOutput();
                         if (steamOutput > 0) {
-                            // creating steam
-                            probeInfo.text(TextStyleClass.INFO
-                                    + "{*gregtech.top.energy_production*} "
-                                    + TextFormatting.AQUA + (steamOutput / 10)
-                                    + TextStyleClass.INFO + " L/t"
-                                    + " {*" + Materials.Steam.getUnlocalizedName() + "*}");
+                            if (boiler.hasWater()) {
+                                // creating steam
+                                probeInfo.text(TextStyleClass.INFO
+                                        + "{*gregtech.top.energy_production*} "
+                                        + TextFormatting.AQUA + (steamOutput / 10)
+                                        + TextStyleClass.INFO + " L/t"
+                                        + " {*" + Materials.Steam.getUnlocalizedName() + "*}");
+                            } else {
+                                probeInfo.text(TextStyleClass.WARNING + "{*gregtech.top.steam_no_water*}");
+                            }
                         } else {
                             // still doing initial heat-up
                             probeInfo.text(TextStyleClass.INFO.toString() + TextFormatting.RED + "{*gregtech.top.steam_heating_up*}");
