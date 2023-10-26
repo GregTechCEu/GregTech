@@ -331,8 +331,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
             // Drain heat when the reactor is not active, is paused via soft mallet, or does not have enough energy and has fully wiped recipe progress
             // Don't drain heat when there is not enough energy and there is still some recipe progress, as that makes it doubly hard to complete the recipe
             // (Will have to recover heat and recipe progress)
-            if ((!(isActive || workingEnabled) || (hasNotEnoughEnergy && progressTime == 0)) && heat > 0) {
-                heat = heat <= 10000 ? 0 : (heat - 10000);
+            if (heat > 0) {
+                if (!isActive || !workingEnabled || (hasNotEnoughEnergy && progressTime == 0)) {
+                    heat = heat <= 10000 ? 0 : (heat - 10000);
+                }
             }
         }
 
