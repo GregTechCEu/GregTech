@@ -156,6 +156,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         return false;
     }
 
+    @Override
+    public boolean allowsFlip() {
+        return false;
+    }
+
     /**
      * Scans for blocks around the controller to update the dimensions
      */
