@@ -6,7 +6,6 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
-import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
@@ -53,8 +52,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static gregtech.api.capability.GregtechDataCodes.STRUCTURE_FORMED;
-import static gregtech.api.capability.GregtechDataCodes.UPDATE_UPWARDS_FACING;
+import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
 
@@ -66,6 +64,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     private boolean structureFormed;
 
     protected EnumFacing upwardsFacing = EnumFacing.NORTH;
+    protected boolean isFlipped;
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -126,6 +125,20 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 structurePattern.clearCache();
                 checkStructurePattern();
             }
+        }
+    }
+
+    public boolean isFlipped() {
+        return isFlipped;
+    }
+
+    /** <strong>Should not be called outside of structure formation logic!</strong> */
+    protected void setFlipped(boolean isFlipped) {
+        if (this.isFlipped != isFlipped) {
+            this.isFlipped = isFlipped;
+            notifyBlockUpdate();
+            markDirty();
+            writeCustomData(UPDATE_FLIP, buf -> buf.writeBoolean(isFlipped));
         }
     }
 
@@ -306,6 +319,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             this.multiblockAbilities.putAll(abilities);
             this.structureFormed = true;
             writeCustomData(STRUCTURE_FORMED, buf -> buf.writeBoolean(true));
+            this.setFlipped(context.neededFlip());
             formStructure(context);
         } else if (context == null && structureFormed) {
             invalidateStructure();
@@ -320,6 +334,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         this.multiblockAbilities.clear();
         this.multiblockParts.clear();
         this.structureFormed = false;
+        this.setFlipped(false);
         writeCustomData(STRUCTURE_FORMED, buf -> buf.writeBoolean(false));
     }
 
@@ -347,6 +362,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (data.hasKey("UpwardsFacing")) {
             this.upwardsFacing = EnumFacing.VALUES[data.getInteger("UpwardsFacing")];
         }
+        if (data.hasKey("IsFlipped")) {
+            this.isFlipped = data.getBoolean("IsFlipped");
+        }
         this.reinitializeStructurePattern();
     }
 
@@ -354,6 +372,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setInteger("UpwardsFacing", upwardsFacing.getIndex());
+        data.setBoolean("IsFlipped", isFlipped);
         return data;
     }
 
@@ -362,6 +381,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         super.writeInitialSyncData(buf);
         buf.writeBoolean(structureFormed);
         buf.writeByte(upwardsFacing.getIndex());
+        buf.writeBoolean(isFlipped);
     }
 
     @Override
@@ -369,6 +389,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         super.receiveInitialSyncData(buf);
         this.structureFormed = buf.readBoolean();
         this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
+        this.isFlipped = buf.readBoolean();
     }
 
     @Override
@@ -382,6 +403,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         } else if (dataId == UPDATE_UPWARDS_FACING) {
             this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
             scheduleRenderUpdate();
+        } else if (dataId == UPDATE_FLIP) {
+            this.isFlipped = buf.readBoolean();
         }
     }
 

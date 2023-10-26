@@ -36,7 +36,7 @@ public enum RelativeDirection {
         return apply(facing).getDirectionVec();
     }
 
-    public EnumFacing getRelativeFacing(EnumFacing frontFacing, EnumFacing upwardsFacing) {
+    public EnumFacing getRelativeFacing(EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped) {
         return switch (this) {
             case UP -> {
                 if (frontFacing == EnumFacing.UP || frontFacing == EnumFacing.DOWN) {
@@ -67,28 +67,33 @@ public enum RelativeDirection {
                 }
             }
             case LEFT -> {
+                EnumFacing facing;
                 if (frontFacing == EnumFacing.UP || frontFacing == EnumFacing.DOWN) {
-                    yield upwardsFacing.rotateY();
+                    facing = upwardsFacing.rotateY();
                 } else {
-                    yield switch (upwardsFacing) {
+                    facing = switch (upwardsFacing) {
                         case NORTH -> frontFacing.rotateYCCW();
                         case SOUTH -> frontFacing.rotateY();
                         case EAST -> EnumFacing.DOWN;
                         default -> EnumFacing.UP; // WEST
                     };
                 }
+                yield isFlipped ? facing.getOpposite() : facing;
             }
             case RIGHT -> {
+                EnumFacing facing;
                 if (frontFacing == EnumFacing.UP || frontFacing == EnumFacing.DOWN) {
-                    yield upwardsFacing.rotateYCCW();
+                    facing = upwardsFacing.rotateYCCW();
                 } else {
-                    yield switch (upwardsFacing) {
+                    facing = switch (upwardsFacing) {
                         case NORTH -> frontFacing.rotateY();
                         case SOUTH -> frontFacing.rotateYCCW();
                         case EAST -> EnumFacing.UP;
                         default -> EnumFacing.DOWN; // WEST
                     };
                 }
+                // invert if flipped
+                yield isFlipped ? facing.getOpposite() : facing;
             }
             // same direction as front facing, upwards facing doesn't matter
             case FRONT -> frontFacing;
@@ -97,9 +102,9 @@ public enum RelativeDirection {
         };
     }
 
-    public Function<BlockPos, Integer> getSorter(EnumFacing frontFacing, EnumFacing upwardsFacing) {
+    public Function<BlockPos, Integer> getSorter(EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped) {
         // get the direction to go in for the part sorter
-        EnumFacing sorterDirection = getRelativeFacing(frontFacing, upwardsFacing);
+        EnumFacing sorterDirection = getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
 
         // Determined by EnumFacing Axis + AxisDirection
         return switch (sorterDirection) {

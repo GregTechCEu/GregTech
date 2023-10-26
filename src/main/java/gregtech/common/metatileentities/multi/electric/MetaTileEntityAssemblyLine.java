@@ -135,7 +135,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     @Override
     protected Function<BlockPos, Integer> multiblockPartSorter() {
         // player's right when looking at the controller, but the controller's left
-        return RelativeDirection.LEFT.getSorter(getFrontFacing(), getUpwardsFacing());
+        return RelativeDirection.LEFT.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
     }
 
     @SideOnly(Side.CLIENT)
@@ -147,8 +147,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         if (this.isStructureFormed()) {
-            EnumFacing relativeLeft = RelativeDirection.LEFT.getRelativeFacing(getFrontFacing(), getUpwardsFacing());
-            EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing());
+            EnumFacing relativeLeft = RelativeDirection.LEFT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
+            EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
 
             // render the grate on the relative top, bottom, and right side of the controller
             Textures.GRATE_CASING.renderSided(relativeUp, renderState, translation, pipeline);
@@ -242,8 +242,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getPos());
 
-        EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing());
-        EnumFacing relativeLeft = RelativeDirection.LEFT.getRelativeFacing(getFrontFacing(), getUpwardsFacing());
+        EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
+        EnumFacing relativeLeft = RelativeDirection.LEFT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
 
         for (int i = 0; i < beamParticles.length; i++) {
             GTLaserBeamParticle particle = beamParticles[i][0];

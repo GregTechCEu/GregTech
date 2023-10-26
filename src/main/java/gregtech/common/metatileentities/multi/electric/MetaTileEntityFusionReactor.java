@@ -627,8 +627,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
                 if (entity != null) {
                     buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
-                    EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing());
-                    EnumFacing.Axis axis = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing()).getAxis();
+                    EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
+                    EnumFacing.Axis axis = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped()).getAxis();
                     RenderBufferHelper.renderRing(buffer,
                             x + relativeBack.getXOffset() * 7 + 0.5,
                             y + relativeBack.getYOffset() * 7 + 0.5,
@@ -643,8 +643,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        EnumFacing relativeRight = RelativeDirection.RIGHT.getRelativeFacing(getFrontFacing(), getUpwardsFacing());
-        EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing());
+        EnumFacing relativeRight = RelativeDirection.RIGHT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
+        EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
 
         return new AxisAlignedBB(
                 this.getPos().offset(relativeBack).offset(relativeRight, 6),

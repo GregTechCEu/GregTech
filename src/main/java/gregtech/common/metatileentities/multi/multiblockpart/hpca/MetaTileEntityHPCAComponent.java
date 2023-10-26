@@ -91,7 +91,10 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
                 // Always render this outwards in the HPCA, in case it is not placed outwards in structure.
                 // Check for HPCA specifically since these components could potentially be used in other multiblocks.
                 if (controller instanceof MetaTileEntityHPCA) {
-                    facing = RelativeDirection.RIGHT.getRelativeFacing(controller.getFrontFacing(), controller.getUpwardsFacing());
+                    facing = RelativeDirection.RIGHT.getRelativeFacing(
+                            controller.getFrontFacing(),
+                            controller.getUpwardsFacing(),
+                            controller.isFlipped());
                 }
                 renderer.renderSided(facing, renderState, translation, pipeline);
             }

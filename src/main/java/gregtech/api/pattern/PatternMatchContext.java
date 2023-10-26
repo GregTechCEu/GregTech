@@ -15,6 +15,8 @@ public class PatternMatchContext {
 
     private final Map<String, Object> data = new HashMap<>();
 
+    private boolean neededFlip = false;
+
     public void reset() {
         this.data.clear();
     }
@@ -61,5 +63,13 @@ public class PatternMatchContext {
     @NotNull
     public Set<Map.Entry<String, Object>> entrySet() {
         return data.entrySet();
+    }
+
+    public boolean neededFlip() {
+        return neededFlip;
+    }
+
+    public void setNeededFlip(boolean neededFlip) {
+        this.neededFlip = neededFlip;
     }
 }

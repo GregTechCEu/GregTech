@@ -47,7 +47,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
     @Override
     protected Function<BlockPos, Integer> multiblockPartSorter() {
-        return RelativeDirection.UP.getSorter(getFrontFacing(), getUpwardsFacing());
+        return RelativeDirection.UP.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
     }
 
     @Override
