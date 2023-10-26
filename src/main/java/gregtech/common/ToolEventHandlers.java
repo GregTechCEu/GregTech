@@ -1,5 +1,6 @@
 package gregtech.common;
 
+import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Scale;
 import codechicken.lib.vec.Transformation;
 import codechicken.lib.vec.Vector3;
