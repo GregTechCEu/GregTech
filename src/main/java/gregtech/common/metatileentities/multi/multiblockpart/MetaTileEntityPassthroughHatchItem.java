@@ -54,8 +54,8 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     protected void initializeInventory() {
         super.initializeInventory();
         itemInventory = itemStackHandler = new GTItemStackHandler(this, getInventorySize());
-        importHandler = new ItemHandlerProxy(itemStackHandler, new ItemStackHandler(0));
-        exportHandler = new ItemHandlerProxy(new ItemStackHandler(0), itemStackHandler);
+        importHandler = new ItemHandlerProxy(itemStackHandler, new GTItemStackHandler(this, 0));
+        exportHandler = new ItemHandlerProxy(new GTItemStackHandler(this, 0), itemStackHandler);
     }
 
     private int getInventorySize() {
