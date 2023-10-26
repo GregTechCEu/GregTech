@@ -20,6 +20,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
@@ -116,14 +117,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             GTLog.logger.error("Tried to set upwards facing to invalid facing {}! Skipping", upwardsFacing);
             return;
         }
-        this.upwardsFacing = upwardsFacing;
-        if (getWorld() != null && !getWorld().isRemote) {
-            notifyBlockUpdate();
-            markDirty();
-            writeCustomData(UPDATE_UPWARDS_FACING, buf -> buf.writeByte(upwardsFacing.getIndex()));
-            if (structurePattern != null) {
-                structurePattern.clearCache();
-                checkStructurePattern();
+        if (this.upwardsFacing != upwardsFacing) {
+            this.upwardsFacing = upwardsFacing;
+            if (getWorld() != null && !getWorld().isRemote) {
+                notifyBlockUpdate();
+                markDirty();
+                writeCustomData(UPDATE_UPWARDS_FACING, buf -> buf.writeByte(upwardsFacing.getIndex()));
+                if (structurePattern != null) {
+                    structurePattern.clearCache();
+                    checkStructurePattern();
+                }
             }
         }
     }
@@ -293,7 +296,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void checkStructurePattern() {
         if (structurePattern == null) return;
-        PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(), getFrontFacing().getOpposite(), getUpwardsFacing());
+        PatternMatchContext context = structurePattern.checkPatternFastAt(getWorld(), getPos(), getFrontFacing().getOpposite(), getUpwardsFacing(), allowsFlip());
         if (context != null && !structureFormed) {
             Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
@@ -425,7 +428,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
+        EnumFacing oldFrontFacing = getFrontFacing();
         super.setFrontFacing(frontFacing);
+
+        // Set the upwards facing in a way that makes it "look like" the upwards facing wasn't changed
+        if (allowsExtendedFacing()) {
+            EnumFacing newUpwardsFacing = RelativeDirection.simulateAxisRotation(frontFacing, oldFrontFacing, getUpwardsFacing());
+            setUpwardsFacing(newUpwardsFacing);
+        }
+
         if (getWorld() != null && !getWorld().isRemote && structurePattern != null) {
             // clear cache since the cache has no concept of pre-existing facing
             // for the controller block (or any block) in the structure
@@ -480,6 +491,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     // todo tooltip on multis saying if this is enabled or disabled?
     /** Whether this multi can be rotated or face upwards. */
     public boolean allowsExtendedFacing() {
+        return true;
+    }
+
+    /** Set this to false only if your multiblock is set up such that it could have a wall-shared controller. */
+    public boolean allowsFlip() {
         return true;
     }
 

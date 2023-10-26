@@ -101,7 +101,7 @@ public class BlockPattern {
         return worldState.error;
     }
 
-    public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing frontFacing, EnumFacing upwardsFacing) {
+    public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing frontFacing, EnumFacing upwardsFacing, boolean allowsFlip) {
         if (!cache.isEmpty()) {
             boolean pass = true;
             for (Map.Entry<Long, BlockInfo> entry : cache.entrySet()) {
@@ -124,11 +124,15 @@ public class BlockPattern {
         }
 
         // First try normal pattern, and if it fails, try flipped.
-        PatternMatchContext pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
-        if (pmc != null) return pmc;
-        pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, true);
-        if (pmc != null) pmc.setNeededFlip(true);
-        return pmc;
+        if (allowsFlip) {
+            PatternMatchContext pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
+            if (pmc != null) return pmc;
+            pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, true);
+            if (pmc != null) pmc.setNeededFlip(true);
+            return pmc;
+        } else {
+            return checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
+        }
     }
 
     public void clearCache() {

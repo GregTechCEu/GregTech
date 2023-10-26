@@ -481,7 +481,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         RenderUtil.useStencil(()->{
             GlStateManager.pushMatrix();
             RenderUtil.moveToFace(x, y, z, this.frontFacing);
-            RenderUtil.rotateToFace(this.frontFacing, EnumFacing.NORTH);
+            RenderUtil.rotateToFace(this.frontFacing, this.upwardsFacing);
             RenderUtil.renderRect(0.5f, -0.5f - (height - 2), width, height, 0.001f, 0xFF000000);
             GlStateManager.popMatrix();
         }, ()->{
@@ -506,7 +506,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                                 BlockPos pos2 = this.getPos();
                                 GlStateManager.pushMatrix();
                                 RenderUtil.moveToFace(x + pos.getX() - pos2.getX(), y + pos.getY() - pos2.getY(), z + pos.getZ() - pos2.getZ(), this.frontFacing);
-                                RenderUtil.rotateToFace(this.frontFacing, EnumFacing.NORTH);
+                                RenderUtil.rotateToFace(this.frontFacing, this.upwardsFacing);
                                 screen.renderScreen(partialTicks, rayTraceResult);
                                 GlStateManager.popMatrix();
                             }
@@ -543,14 +543,32 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        BlockPos sp = this.getPos().offset(EnumFacing.DOWN);
-        BlockPos ep = sp.offset(this.frontFacing.rotateY(), -width - 2).offset(EnumFacing.UP, height);
+        BlockPos sp, ep;
+        EnumFacing spin = this.upwardsFacing;
+        if (frontFacing.getAxis() == EnumFacing.Axis.Y) {
+            sp = this.getPos().offset(spin, -2);
+            ep = sp.offset(spin, height + 1).offset(spin.rotateY(), (width + 2) * frontFacing.getYOffset());
+        } else {
+            if (spin == EnumFacing.NORTH) {
+                sp = this.getPos().offset(EnumFacing.DOWN, 2);
+                ep = sp.offset(EnumFacing.UP, height + 1).offset(this.frontFacing.rotateY(),  - width - 2);
+            } else if (spin == EnumFacing.SOUTH) {
+                sp = this.getPos().offset(EnumFacing.UP, 2);
+                ep = sp.offset(EnumFacing.DOWN, height + 1).offset(this.frontFacing.rotateY(), width + 2);
+            } else if (spin == EnumFacing.WEST) {
+                sp = this.getPos().offset(frontFacing.rotateY(), -2);
+                ep = sp.offset(frontFacing.rotateY(), height + 1).offset(EnumFacing.UP, width + 2);
+            } else {
+                sp = this.getPos().offset(frontFacing.rotateY(), 2);
+                ep = sp.offset(frontFacing.rotateY(), -height - 1).offset(EnumFacing.DOWN, width + 2);
+            }
+        }
         return new AxisAlignedBB(sp, ep);
     }
 
-    // im not doing this... someone else can
+    // Disallow flip because otherwise a controller could be shared between multiple valid structures
     @Override
-    public boolean allowsExtendedFacing() {
+    public boolean allowsFlip() {
         return false;
     }
 

@@ -1,6 +1,7 @@
 package gregtech.api.util;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
@@ -37,9 +38,10 @@ public enum RelativeDirection {
     }
 
     public EnumFacing getRelativeFacing(EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped) {
+        EnumFacing.Axis frontAxis = frontFacing.getAxis();
         return switch (this) {
             case UP -> {
-                if (frontFacing == EnumFacing.UP || frontFacing == EnumFacing.DOWN) {
+                if (frontAxis == Axis.Y) {
                     // same direction as upwards facing
                     yield upwardsFacing;
                 } else {
@@ -53,7 +55,7 @@ public enum RelativeDirection {
                 }
             }
             case DOWN -> {
-                if (frontFacing == EnumFacing.UP || frontFacing == EnumFacing.DOWN) {
+                if (frontAxis == Axis.Y) {
                     // opposite direction as upwards facing
                     yield upwardsFacing.getOpposite();
                 } else {
@@ -68,7 +70,7 @@ public enum RelativeDirection {
             }
             case LEFT -> {
                 EnumFacing facing;
-                if (frontFacing == EnumFacing.UP || frontFacing == EnumFacing.DOWN) {
+                if (frontAxis == Axis.Y) {
                     facing = upwardsFacing.rotateY();
                 } else {
                     facing = switch (upwardsFacing) {
@@ -82,7 +84,7 @@ public enum RelativeDirection {
             }
             case RIGHT -> {
                 EnumFacing facing;
-                if (frontFacing == EnumFacing.UP || frontFacing == EnumFacing.DOWN) {
+                if (frontAxis == Axis.Y) {
                     facing = upwardsFacing.rotateYCCW();
                 } else {
                     facing = switch (upwardsFacing) {
@@ -115,5 +117,47 @@ public enum RelativeDirection {
             case NORTH -> pos -> -pos.getZ();
             case SOUTH -> BlockPos::getZ;
         };
+    }
+
+    /**
+     * Simulates rotating the controller around an axis to get to a new front facing.
+     *
+     * @return Returns the new upwards facing.
+     */
+    public static EnumFacing simulateAxisRotation(EnumFacing newFrontFacing, EnumFacing oldFrontFacing, EnumFacing upwardsFacing) {
+        if (newFrontFacing == oldFrontFacing) return upwardsFacing;
+
+        EnumFacing.Axis newAxis = newFrontFacing.getAxis();
+        EnumFacing.Axis oldAxis = oldFrontFacing.getAxis();
+
+        if (newAxis != Axis.Y && oldAxis != Axis.Y) {
+            // no change needed
+            return upwardsFacing;
+        } else if (newAxis == Axis.Y && oldAxis != Axis.Y) {
+            // going from horizontal to vertical axis
+            EnumFacing newUpwardsFacing = switch (upwardsFacing) {
+                case NORTH -> oldFrontFacing.getOpposite();
+                case SOUTH -> oldFrontFacing;
+                case EAST -> oldFrontFacing.rotateYCCW();
+                default -> oldFrontFacing.rotateY(); // WEST
+            };
+            return newFrontFacing == EnumFacing.DOWN && upwardsFacing.getAxis() == Axis.Z ? newUpwardsFacing.getOpposite() : newUpwardsFacing;
+        } else if (newAxis != Axis.Y) {
+            // going from vertical to horizontal axis
+            EnumFacing newUpwardsFacing;
+            if (upwardsFacing == newFrontFacing.getOpposite()) {
+                newUpwardsFacing = EnumFacing.NORTH;
+            } else if (upwardsFacing == newFrontFacing) {
+                newUpwardsFacing = EnumFacing.SOUTH;
+            } else if (upwardsFacing == newFrontFacing.rotateY()) {
+                newUpwardsFacing = EnumFacing.WEST;
+            } else { // rotateYCCW
+                newUpwardsFacing = EnumFacing.EAST;
+            }
+            return oldFrontFacing == EnumFacing.DOWN && newUpwardsFacing.getAxis() == Axis.Z ? newUpwardsFacing.getOpposite() : newUpwardsFacing;
+        } else {
+            // was on vertical axis and still is. Must have flipped from up to down or vice versa
+            return upwardsFacing.getOpposite();
+        }
     }
 }

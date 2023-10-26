@@ -196,7 +196,8 @@ public class MachineSceneWidget extends WidgetGroup {
         around = new HashSet<>();
         cores.add(pos);
         if (mte instanceof MultiblockControllerBase multi && multi.isStructureFormed()) {
-            PatternMatchContext context = multi.structurePattern.checkPatternFastAt(world, pos, mte.getFrontFacing().getOpposite(), multi.getUpwardsFacing());
+            PatternMatchContext context = multi.structurePattern.checkPatternFastAt(
+                    world, pos, mte.getFrontFacing().getOpposite(), multi.getUpwardsFacing(), multi.allowsFlip());
             if (context != null) {
                 List<BlockPos> validPos = multi.structurePattern.cache.keySet().stream().map(BlockPos::fromLong).collect(Collectors.toList());
                 Set<IMultiblockPart> parts = context.getOrCreate("MultiblockParts", HashSet::new);
