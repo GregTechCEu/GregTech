@@ -190,4 +190,9 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
     public int getFluidProduction() {
         return (int) (biomeModifier * hatchModifier * (isRainingInBiome() ? 1.5 : 1));
     }
+
+    @Override
+    public boolean allowsExtendedFacing() {
+        return false;
+    }
 }

@@ -548,6 +548,12 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         return new AxisAlignedBB(sp, ep);
     }
 
+    // im not doing this... someone else can
+    @Override
+    public boolean allowsExtendedFacing() {
+        return false;
+    }
+
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         if (!isActive()) {
