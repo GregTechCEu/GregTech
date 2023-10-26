@@ -150,15 +150,15 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             EnumFacing relativeLeft = RelativeDirection.LEFT.getRelativeFacing(getFrontFacing(), getUpwardsFacing());
             EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing());
 
-            // render the grate on the top, bottom, and left side of the controller
+            // render the grate on the relative top, bottom, and right side of the controller
             Textures.GRATE_CASING.renderSided(relativeUp, renderState, translation, pipeline);
             Textures.GRATE_CASING.renderSided(relativeUp.getOpposite(), renderState, translation, pipeline);
-            Textures.GRATE_CASING.renderSided(relativeLeft, renderState, translation, pipeline);
+            Textures.GRATE_CASING.renderSided(relativeLeft.getOpposite(), renderState, translation, pipeline);
 
             // render the base texture on all other sides
             ICubeRenderer baseTexture = getBaseTexture(null);
             baseTexture.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            baseTexture.renderSided(relativeLeft.getOpposite(), renderState, translation, pipeline);
+            baseTexture.renderSided(relativeLeft, renderState, translation, pipeline);
             baseTexture.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
             this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
         } else {
