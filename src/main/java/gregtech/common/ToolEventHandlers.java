@@ -1,9 +1,6 @@
 package gregtech.common;
 
-import codechicken.lib.vec.Rotation;
-import codechicken.lib.vec.Scale;
-import codechicken.lib.vec.Transformation;
-import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.*;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -361,7 +358,7 @@ public class ToolEventHandlers {
             } else if (tile instanceof MetaTileEntityHolder) {
                 MetaTileEntity mte = ((MetaTileEntityHolder) tile).getMetaTileEntity();
                 drawGridOverlays(facing, box, mte::isSideUsed);
-                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing() && facing == multi.getFrontFacing()) {
+                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing()) {
                     // set up some render state first
                     GL11.glPushMatrix();
                     GL11.glTranslated(pos.getX() - (int) d3, pos.getY() - (int) d4, pos.getZ() - (int) d5);
@@ -369,7 +366,19 @@ public class ToolEventHandlers {
                     Rotation.sideRotations[facing.getIndex()].glApply();
                     GL11.glTranslated(0, -0.502, 0);
                     GL11.glLineWidth(2.5F);
-                    drawRotationMarker(ROTATION_MARKER_TRANSFORM_CENTER);
+                    if (multi.getFrontFacing() == facing) {
+                        // render in the center of the grid
+                        drawRotationMarker(ROTATION_MARKER_TRANSFORM_CENTER);
+                    } else if (multi.getFrontFacing() == facing.getOpposite()) {
+                        // render in the corners of the grid
+                        for (Transformation t : ROTATION_MARKER_TRANSFORMS_CORNER) {
+                            drawRotationMarker(t);
+                        }
+                    } else {
+                        // render on the side of the grid
+                        drawRotationMarker(ROTATION_MARKER_TRANSFORMS_SIDES_TRANSFORMS[
+                                ROTATION_MARKER_TRANSFORMS_SIDES[facing.getIndex() * 6 + multi.getFrontFacing().getIndex()]]);
+                    }
                     GL11.glPopMatrix();
                 }
             } else {
@@ -618,7 +627,20 @@ public class ToolEventHandlers {
     }
 
     // Rotation Marker
+    // do not question these
     private static final Transformation ROTATION_MARKER_TRANSFORM_CENTER = new Scale(0.5);
+    private static final Transformation[] ROTATION_MARKER_TRANSFORMS_SIDES_TRANSFORMS = {
+            new Scale(0.25).with(new Translation(0, 0, 0.375)).compile(),
+            new Scale(0.25).with(new Translation(0.375, 0, 0)).compile(),
+            new Scale(0.25).with(new Translation(0, 0, -0.375)).compile(),
+            new Scale(0.25).with(new Translation(-0.375, 0, 0)).compile()};
+    private static final int[] ROTATION_MARKER_TRANSFORMS_SIDES = { -1, -1, 2, 0, 3, 1, -1, -1, 0, 2, 3, 1, 0, 2, -1,
+            -1, 3, 1, 2, 0, -1, -1, 3, 1, 1, 3, 2, 0, -1, -1, 3, 1, 2, 0, -1, -1 };
+    private static final Transformation[] ROTATION_MARKER_TRANSFORMS_CORNER = {
+            new Scale(0.25).with(new Translation(0.375, 0, 0.375)).compile(),
+            new Scale(0.25).with(new Translation(-0.375, 0, 0.375)).compile(),
+            new Scale(0.25).with(new Translation(0.375, 0, -0.375)).compile(),
+            new Scale(0.25).with(new Translation(-0.375, 0, -0.375)).compile()};
     private static int rotationMarkerDisplayList;
     private static boolean rotationMarkerDisplayListCompiled = false;
 

@@ -101,6 +101,7 @@ public enum RelativeDirection {
         // get the direction to go in for the part sorter
         EnumFacing sorterDirection = getRelativeFacing(frontFacing, upwardsFacing);
 
+        // Determined by EnumFacing Axis + AxisDirection
         return switch (sorterDirection) {
             case UP -> BlockPos::getY;
             case DOWN -> pos -> -pos.getY();
