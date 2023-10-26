@@ -106,8 +106,8 @@ public enum RelativeDirection {
             case DOWN -> pos -> -pos.getY();
             case EAST -> BlockPos::getX;
             case WEST -> pos -> -pos.getX();
-            case NORTH -> BlockPos::getZ;
-            case SOUTH -> pos -> -pos.getZ();
+            case NORTH -> pos -> -pos.getZ();
+            case SOUTH -> BlockPos::getZ;
         };
     }
 }
