@@ -2184,6 +2184,14 @@ item.gregtech.material.iridium_metal_residue.dustTiny=Tiny Pile of Iridium Metal
 item.gregtech.material.iridium_metal_residue.dustSmall=Small Pile of Iridium Metal Residue
 item.gregtech.material.iridium_metal_residue.dust=Iridium Metal Residue
 
+# Plasma Names
+gregtech.material.argon.plasma=Argon Plasma
+gregtech.material.helium.plasma=Helium Plasma
+gregtech.material.iron.plasma=Iron Plasma
+gregtech.material.nickel.plasma=Nickel Plasma
+gregtech.material.nitrogen.plasma=Nitrogen Plasma
+gregtech.material.oxygen.plasma=Oxygen Plasma
+
 recipemap.ore_washer.name=Ore Washer
 recipemap.thermal_centrifuge.name=Thermal Centrifuge
 recipemap.extractor.name=Extractor

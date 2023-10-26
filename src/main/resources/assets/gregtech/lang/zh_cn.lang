@@ -2135,6 +2135,14 @@ item.gregtech.material.iridium_metal_residue.dustTiny=小撮铱金属渣
 item.gregtech.material.iridium_metal_residue.dustSmall=小堆铱金属渣
 item.gregtech.material.iridium_metal_residue.dust=铱金属渣
 
+# Plasma Names
+gregtech.material.argon.plasma=氩等离子体
+gregtech.material.helium.plasma=氦等离子体
+gregtech.material.iron.plasma=铁等离子体
+gregtech.material.nickel.plasma=镍等离子体
+gregtech.material.nitrogen.plasma=氮等离子体
+gregtech.material.oxygen.plasma=氧等离子体
+
 recipemap.ore_washer.name=洗矿厂
 recipemap.thermal_centrifuge.name=热力离心机
 recipemap.extractor.name=提取机
@@ -4567,7 +4575,7 @@ gregtech.machine.coke_oven.tooltip=为炼钢和发电提供更优质的燃料
 gregtech.machine.assembly_line.tooltip=真的不是什么多方块组装机！
 gregtech.machine.fusion_reactor.luv.tooltip=原子级合金熔炼机
 gregtech.machine.fusion_reactor.zpm.tooltip=一 轮 红 日 落 大 地
-gregtech.machine.fusion_reactor.uv.tooltip=化 作 白 矮 星 砸 向 你 
+gregtech.machine.fusion_reactor.uv.tooltip=化 作 白 矮 星 砸 向 你
 gregtech.machine.large_chemical_reactor.tooltip=黑匣子形反应器
 gregtech.machine.steam_oven.tooltip=和多重冶炼炉还是有区别的
 gregtech.machine.steam_grinder.tooltip=多方块研磨机，但是没有副产物

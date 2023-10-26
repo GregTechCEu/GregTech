@@ -1668,7 +1668,7 @@ gregtech.material.diphenyl_isophthalate=Дифенилизофталат
 gregtech.material.phthalic_acid=Фталевая кислота
 gregtech.material.dimethylbenzene=Диметилбензол
 gregtech.material.diaminobenzidine=3,3-Диаминобензидин
-gregtech.material.dichlorobenzidine=3,3-Дихлорбензидин 
+gregtech.material.dichlorobenzidine=3,3-Дихлорбензидин
 gregtech.material.nitrochlorobenzene=2-Нитрохлорбензол
 gregtech.material.chlorobenzene=Хлорбензол
 gregtech.material.octane=Октан
@@ -2057,6 +2057,15 @@ item.gregtech.material.platinum_sludge_residue.dust=Остаток платин�
 item.gregtech.material.iridium_metal_residue.dust=Металлический остаток иридия
 item.gregtech.material.iridium_metal_residue.dustSmall=Маленькая кучка металлического остатка иридия
 item.gregtech.material.iridium_metal_residue.dustTiny=Крошечная кучка металлического остатка иридия
+
+# Plasma Names
+gregtech.material.argon.plasma=Плазма (Аргон)
+gregtech.material.helium.plasma=Плазма (Гелий)
+gregtech.material.iron.plasma=Плазма (Железо)
+gregtech.material.nickel.plasma=Плазма (Никель)
+gregtech.material.nitrogen.plasma=Плазма (Азот)
+gregtech.material.oxygen.plasma=Плазма (Кислород)
+
 recipemap.ore_washer.name=Рудопромывка
 recipemap.thermal_centrifuge.name=Термальная центрифуга
 recipemap.extractor.name=Экстрактор

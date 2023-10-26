@@ -34,7 +34,7 @@ public abstract class FluidType {
         this.name = name;
         this.prefix = prefix;
         this.suffix = suffix;
-        this.localization = localization;
+        this.localization = localization.isEmpty() ? "" : ("." + localization);
         FLUID_TYPES.put(name, this);
     }
 

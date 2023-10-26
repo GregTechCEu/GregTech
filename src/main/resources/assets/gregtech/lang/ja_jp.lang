@@ -1291,7 +1291,7 @@ cover.advanced_fluid_detector.invert_tooltip=赤石ロジックの反転を切�
 cover.advanced_fluid_detector.max=最大液体量:
 cover.advanced_fluid_detector.min=最小液体量:
 cover.advanced_item_detector.label=発展型アイテム検出器
-cover.advanced_item_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、最小アイテム量を下回った時に信号が停止し、最大アイテム量を上回った時に信号が出力されます。 
+cover.advanced_item_detector.invert_tooltip=赤石ロジックの反転を切り替え/nデフォルトでは、最小アイテム量を下回った時に信号が停止し、最大アイテム量を上回った時に信号が出力されます。
 cover.advanced_item_detector.max=最大アイテム量:
 cover.advanced_item_detector.min=最小アイテム量:
 
@@ -2189,6 +2189,14 @@ item.gregtech.material.platinum_sludge_residue.dust=白金泥残留物の粉
 item.gregtech.material.iridium_metal_residue.dustTiny=極小のイリジウム金属残留物の粉
 item.gregtech.material.iridium_metal_residue.dustSmall=小さなイリジウム金属残留物の粉
 item.gregtech.material.iridium_metal_residue.dust=イリジウム金属残留物の粉
+
+# Plasma Names
+gregtech.material.argon.plasma=アルゴンプラズマ
+gregtech.material.helium.plasma=ヘリウムプラズマ
+gregtech.material.iron.plasma=鉄プラズマ
+gregtech.material.nickel.plasma=ニッケルプラズマ
+gregtech.material.nitrogen.plasma=窒素プラズマ
+gregtech.material.oxygen.plasma=酸素プラズマ
 
 recipemap.ore_washer.name=鉱石洗浄機
 recipemap.thermal_centrifuge.name=熱遠心分離機
@@ -5392,7 +5400,7 @@ gregtech.multiblock.large_boiler.throttle=スロットル: %d
 gregtech.multiblock.large_boiler.throttle.tooltip=ボイラーはより少ない蒸気を生産し、より少ない燃料を消費する。これにより効率が失われることはなく、予熱時間は影響されない。
 gregtech.multiblock.large_boiler.throttle_increment=スロットルを§a+5%%§f上昇§r/n§7ボイラーはより少ない蒸気を生産し、より少ない燃料を消費する。これにより効率が失われることはなく、予熱時間は影響されない。
 gregtech.multiblock.large_boiler.throttle_decrement=スロットを§c-5%%§f低下§r/n§7Bボイラーはより少ない蒸気を生産し、より少ない燃料を消費する。これにより効率が失われることはなく、予熱時間は影響されない。
-gregtech.multiblock.large_boiler.rate_tooltip=§f石炭1つ§7から§f%d L§7の蒸気を生産 
+gregtech.multiblock.large_boiler.rate_tooltip=§f石炭1つ§7から§f%d L§7の蒸気を生産
 gregtech.multiblock.large_boiler.heat_time_tooltip=§7予熱に§f%,d 秒§7必要
 gregtech.multiblock.large_boiler.explosion_tooltip=水がない状態で燃料を入れると爆発する。
 
