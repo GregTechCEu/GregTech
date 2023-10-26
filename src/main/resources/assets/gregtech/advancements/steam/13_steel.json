@@ -10,7 +10,7 @@
       "item": "gregtech:meta_ingot",
       "data": 324
     },
-    "frame": "goal"
+    "frame": "challenge"
   },
   "criteria": {
     "location": {
@@ -25,5 +25,5 @@
       }
     }
   },
-  "parent": "gregtech:steam/3_bronze_dust"
+  "parent": "gregtech:steam/91_primitive_blast_furnace"
 }
