@@ -19,6 +19,7 @@ import gregtech.api.pattern.*;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.client.renderer.ICubeRenderer;
@@ -112,12 +113,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void setUpwardsFacing(EnumFacing upwardsFacing) {
         if (!allowsExtendedFacing()) return;
-        Preconditions.checkNotNull(upwardsFacing, "upwardsFacing");
+        if (upwardsFacing == null || upwardsFacing == EnumFacing.UP || upwardsFacing == EnumFacing.DOWN) {
+            GTLog.logger.error("Tried to set upwards facing to invalid facing {}! Skipping", upwardsFacing);
+            return;
+        }
         this.upwardsFacing = upwardsFacing;
         if (getWorld() != null && !getWorld().isRemote) {
             notifyBlockUpdate();
             markDirty();
-            writeCustomData(UPDATE_UPWARDS_FACING, buf -> buf.writeEnumValue(upwardsFacing));
+            writeCustomData(UPDATE_UPWARDS_FACING, buf -> buf.writeByte(upwardsFacing.getIndex()));
             if (structurePattern != null) {
                 structurePattern.clearCache();
                 checkStructurePattern();
@@ -341,7 +345,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         if (data.hasKey("UpwardsFacing")) {
-            this.upwardsFacing = EnumFacing.byIndex(data.getInteger("UpwardsFacing"));
+            this.upwardsFacing = EnumFacing.VALUES[data.getInteger("UpwardsFacing")];
         }
         this.reinitializeStructurePattern();
     }
@@ -357,14 +361,14 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(structureFormed);
-        buf.writeEnumValue(upwardsFacing);
+        buf.writeByte(upwardsFacing.getIndex());
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.structureFormed = buf.readBoolean();
-        this.upwardsFacing = buf.readEnumValue(EnumFacing.class);
+        this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
     }
 
     @Override
@@ -376,7 +380,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 GregTechAPI.soundManager.stopTileSound(getPos());
             }
         } else if (dataId == UPDATE_UPWARDS_FACING) {
-            this.upwardsFacing = buf.readEnumValue(EnumFacing.class);
+            this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
             scheduleRenderUpdate();
         }
     }

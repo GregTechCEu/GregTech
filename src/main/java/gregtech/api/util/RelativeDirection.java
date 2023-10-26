@@ -68,25 +68,25 @@ public enum RelativeDirection {
             }
             case LEFT -> {
                 if (frontFacing == EnumFacing.UP || frontFacing == EnumFacing.DOWN) {
-                    yield upwardsFacing.rotateYCCW();
+                    yield upwardsFacing.rotateY();
                 } else {
                     yield switch (upwardsFacing) {
                         case NORTH -> frontFacing.rotateYCCW();
                         case SOUTH -> frontFacing.rotateY();
-                        case EAST -> EnumFacing.UP;
-                        default -> EnumFacing.DOWN; // WEST
+                        case EAST -> EnumFacing.DOWN;
+                        default -> EnumFacing.UP; // WEST
                     };
                 }
             }
             case RIGHT -> {
                 if (frontFacing == EnumFacing.UP || frontFacing == EnumFacing.DOWN) {
-                    yield upwardsFacing.rotateY();
+                    yield upwardsFacing.rotateYCCW();
                 } else {
                     yield switch (upwardsFacing) {
                         case NORTH -> frontFacing.rotateY();
                         case SOUTH -> frontFacing.rotateYCCW();
-                        case EAST -> EnumFacing.DOWN;
-                        default -> EnumFacing.UP; // WEST
+                        case EAST -> EnumFacing.UP;
+                        default -> EnumFacing.DOWN; // WEST
                     };
                 }
             }

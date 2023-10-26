@@ -12,12 +12,14 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -86,9 +88,10 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
             }
             if (renderer != null) {
                 EnumFacing facing = getFrontFacing();
-                // always render this outwards, in case it is not placed outwards in structure
-                if (controller != null) {
-                    facing = controller.getFrontFacing().rotateY();
+                // Always render this outwards in the HPCA, in case it is not placed outwards in structure.
+                // Check for HPCA specifically since these components could potentially be used in other multiblocks.
+                if (controller instanceof MetaTileEntityHPCA) {
+                    facing = RelativeDirection.RIGHT.getRelativeFacing(controller.getFrontFacing(), controller.getUpwardsFacing());
                 }
                 renderer.renderSided(facing, renderState, translation, pipeline);
             }
