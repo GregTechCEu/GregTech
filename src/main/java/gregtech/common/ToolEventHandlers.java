@@ -1,5 +1,7 @@
 package gregtech.common;
 
+import codechicken.lib.vec.Scale;
+import codechicken.lib.vec.Transformation;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
@@ -14,6 +16,7 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -357,6 +360,17 @@ public class ToolEventHandlers {
             } else if (tile instanceof MetaTileEntityHolder) {
                 MetaTileEntity mte = ((MetaTileEntityHolder) tile).getMetaTileEntity();
                 drawGridOverlays(facing, box, mte::isSideUsed);
+                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing() && facing == multi.getFrontFacing()) {
+                    // set up some render state first
+                    GL11.glPushMatrix();
+                    GL11.glTranslated(pos.getX() - (int) d3, pos.getY() - (int) d4, pos.getZ() - (int) d5);
+                    GL11.glTranslated(0.5D - (d3 - (int) d3), 0.5D - (d4 - (int) d4), 0.5D - (d5 - (int) d5));
+                    Rotation.sideRotations[facing.getIndex()].glApply();
+                    GL11.glTranslated(0, -0.502, 0);
+                    GL11.glLineWidth(2.5F);
+                    drawRotationMarker(ROTATION_MARKER_TRANSFORM_CENTER);
+                    GL11.glPopMatrix();
+                }
             } else {
                 drawGridOverlays(box);
             }
@@ -600,5 +614,44 @@ public class ToolEventHandlers {
     @SideOnly(Side.CLIENT)
     private static void endLine(BufferBuilder buffer, Vector3 vec) {
         buffer.pos(vec.x, vec.y, vec.z).color(rColour, gColour, bColour, 1F).endVertex();
+    }
+
+    // Rotation Marker
+    private static final Transformation ROTATION_MARKER_TRANSFORM_CENTER = new Scale(0.5);
+    private static int rotationMarkerDisplayList;
+    private static boolean rotationMarkerDisplayListCompiled = false;
+
+    @SideOnly(Side.CLIENT)
+    private static void drawRotationMarker(Transformation transform) {
+        if (!rotationMarkerDisplayListCompiled) {
+            rotationMarkerDisplayList = GLAllocation.generateDisplayLists(1);
+
+            GL11.glNewList(rotationMarkerDisplayList, GL11.GL_COMPILE);
+            GL11.glBegin(GL11.GL_LINE_LOOP);
+            for (int i = 0; i <= 120; i++) {
+                GL11.glVertex3d(
+                        Math.cos(i * Math.PI * 1.75 / 120) * 0.4,
+                        0,
+                        Math.sin(i * Math.PI * 1.75 / 120) * 0.4);
+            }
+            for (int i = 120; i >= 0; i--) {
+                GL11.glVertex3d(
+                        Math.cos(i * Math.PI * 1.75 / 120) * 0.24,
+                        0,
+                        Math.sin(i * Math.PI * 1.75 / 120) * 0.24);
+            }
+            GL11.glVertex3d(0.141114561800, 0, 0);
+            GL11.glVertex3d(0.32, 0, -0.178885438199);
+            GL11.glVertex3d(0.498885438199, 0, 0);
+            GL11.glEnd();
+            GL11.glEndList();
+
+            rotationMarkerDisplayListCompiled = true;
+        }
+        GL11.glPushMatrix();
+        GL11.glColor4f(rColour, gColour, bColour, 1.0f);
+        transform.glApply();
+        GL11.glCallList(rotationMarkerDisplayList);
+        GL11.glPopMatrix();
     }
 }
