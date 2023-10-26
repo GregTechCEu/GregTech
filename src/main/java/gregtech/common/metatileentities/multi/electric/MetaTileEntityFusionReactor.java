@@ -22,6 +22,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -626,12 +627,14 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
                 if (entity != null) {
                     buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
+                    EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing());
+                    EnumFacing.Axis axis = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing()).getAxis();
                     RenderBufferHelper.renderRing(buffer,
-                            x + getFrontFacing().getOpposite().getXOffset() * 7 + 0.5,
-                            y + 0.5,
-                            z + getFrontFacing().getOpposite().getZOffset() * 7 + 0.5,
+                            x + relativeBack.getXOffset() * 7 + 0.5,
+                            y + relativeBack.getYOffset() * 7 + 0.5,
+                            z + relativeBack.getZOffset() * 7 + 0.5,
                             6, 0.2, 10, 20,
-                            r, g, b, a, EnumFacing.Axis.Y);
+                            r, g, b, a, axis);
                     Tessellator.getInstance().draw();
                 }
             });
@@ -640,8 +643,12 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        return new AxisAlignedBB(this.getPos().offset(getFrontFacing().getOpposite()).offset(getFrontFacing().rotateY(), 6),
-                this.getPos().offset(getFrontFacing().getOpposite(), 13).offset(getFrontFacing().rotateY().getOpposite(), 6));
+        EnumFacing relativeRight = RelativeDirection.RIGHT.getRelativeFacing(getFrontFacing(), getUpwardsFacing());
+        EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing());
+
+        return new AxisAlignedBB(
+                this.getPos().offset(relativeBack).offset(relativeRight, 6),
+                this.getPos().offset(relativeBack, 13).offset(relativeRight.getOpposite(), 6));
     }
 
     @Override
