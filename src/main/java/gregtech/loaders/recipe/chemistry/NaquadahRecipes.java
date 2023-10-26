@@ -74,7 +74,7 @@ public class NaquadahRecipes {
         CENTRIFUGE_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
                 .fluidInputs(AcidicEnrichedNaquadahSolution.getFluid(3000))
                 .fluidOutputs(EnrichedNaquadahWaste.getFluid(2000))
-                .fluidOutputs(Fluorine.getFluid(500))
+                .fluidOutputs(Fluorine.getFluid(250))
                 .output(dust, EnrichedNaquadahSulfate, 6) // Nq+SO4
                 .buildAndRegister();
 
@@ -89,8 +89,8 @@ public class NaquadahRecipes {
                 .fluidInputs(EnrichedNaquadahWaste.getFluid(2000))
                 .output(dustSmall, BariumSulfide, 2)
                 .fluidOutputs(SulfuricAcid.getFluid(500))
-                .fluidOutputs(EnrichedNaquadahSolution.getFluid(250))
-                .fluidOutputs(NaquadriaSolution.getFluid(100))
+                .fluidOutputs(EnrichedNaquadahSolution.getFluid(350))
+                .fluidOutputs(NaquadriaSolution.getFluid(150))
                 .buildAndRegister();
 
 
@@ -112,7 +112,7 @@ public class NaquadahRecipes {
         CENTRIFUGE_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
                 .fluidInputs(AcidicNaquadriaSolution.getFluid(3000))
                 .fluidOutputs(NaquadriaWaste.getFluid(2000))
-                .fluidOutputs(Fluorine.getFluid(500))
+                .fluidOutputs(Fluorine.getFluid(250))
                 .output(dust, NaquadriaSulfate, 6)
                 .buildAndRegister();
 
@@ -127,8 +127,8 @@ public class NaquadahRecipes {
                 .fluidInputs(NaquadriaWaste.getFluid(2000))
                 .output(dustSmall, GalliumSulfide, 2)
                 .fluidOutputs(SulfuricAcid.getFluid(500))
-                .fluidOutputs(NaquadriaSolution.getFluid(250))
-                .fluidOutputs(EnrichedNaquadahSolution.getFluid(100))
+                .fluidOutputs(NaquadriaSolution.getFluid(350))
+                .fluidOutputs(EnrichedNaquadahSolution.getFluid(150))
                 .buildAndRegister();
 
 
