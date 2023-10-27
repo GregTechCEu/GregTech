@@ -141,29 +141,27 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        return Textures.SOLID_STEEL_CASING;
+        if (sourcePart != null) {
+            // part rendering
+            if (sourcePart instanceof IDataAccessHatch) {
+                return Textures.GRATE_CASING_STEEL_FRONT;
+            } else {
+                return Textures.SOLID_STEEL_CASING;
+            }
+        } else {
+            // controller rendering
+            if (isStructureFormed()) {
+                return Textures.GRATE_CASING_STEEL_FRONT;
+            } else {
+                return Textures.SOLID_STEEL_CASING;
+            }
+        }
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if (this.isStructureFormed()) {
-            EnumFacing relativeLeft = RelativeDirection.LEFT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
-            EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
-
-            // render the grate on the relative top, bottom, and right side of the controller
-            Textures.GRATE_CASING.renderSided(relativeUp, renderState, translation, pipeline);
-            Textures.GRATE_CASING.renderSided(relativeUp.getOpposite(), renderState, translation, pipeline);
-            Textures.GRATE_CASING.renderSided(relativeLeft.getOpposite(), renderState, translation, pipeline);
-
-            // render the base texture on all other sides
-            ICubeRenderer baseTexture = getBaseTexture(null);
-            baseTexture.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            baseTexture.renderSided(relativeLeft, renderState, translation, pipeline);
-            baseTexture.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
-            this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
-        } else {
-            super.renderMetaTileEntity(renderState, translation, pipeline);
-        }
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
     }
 
     @Override

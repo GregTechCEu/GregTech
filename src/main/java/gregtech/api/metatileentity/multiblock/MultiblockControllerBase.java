@@ -25,6 +25,7 @@ import gregtech.api.util.world.DummyWorld;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -258,7 +259,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        getBaseTexture(null).render(renderState, translation, ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+        ICubeRenderer baseTexture = getBaseTexture(null);
+        pipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+        if (baseTexture instanceof SimpleOrientedCubeRenderer) {
+            baseTexture.renderOriented(renderState, translation, pipeline, getFrontFacing());
+        } else {
+            baseTexture.render(renderState, translation, pipeline);
+        }
 
         if (allowsExtendedFacing()) {
             double degree = Math.PI / 2 * (upwardsFacing == EnumFacing.EAST ? -1 : upwardsFacing == EnumFacing.SOUTH ? 2 : upwardsFacing == EnumFacing.WEST ? 1 : 0);
