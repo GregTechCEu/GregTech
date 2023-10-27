@@ -75,6 +75,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -1297,7 +1298,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return false;
     }
 
-    public EnumFacing getFrontFacing() {
+    public @NotNull EnumFacing getFrontFacing() {
         return frontFacing;
     }
 
