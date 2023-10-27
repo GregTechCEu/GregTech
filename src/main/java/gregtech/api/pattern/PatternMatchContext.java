@@ -19,6 +19,7 @@ public class PatternMatchContext {
 
     public void reset() {
         this.data.clear();
+        this.neededFlip = false;
     }
 
     public void set(String key, Object value) {

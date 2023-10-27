@@ -333,6 +333,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             formStructure(context);
         } else if (context == null && structureFormed) {
             invalidateStructure();
+        } else if (context != null) {
+            // ensure flip is ok, possibly not necessary but good to check just in case
+            if (context.neededFlip() != isFlipped()) {
+                setFlipped(context.neededFlip());
+            }
         }
     }
 

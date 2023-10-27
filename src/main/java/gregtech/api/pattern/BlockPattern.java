@@ -123,16 +123,16 @@ public class BlockPattern {
             if (pass) return worldState.hasError() ? null : matchContext;
         }
 
-        // First try normal pattern, and if it fails, try flipped.
+        // First try normal pattern, and if it fails, try flipped (if allowed).
+        PatternMatchContext pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
         if (allowsFlip) {
-            PatternMatchContext pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
-            if (pmc != null) return pmc;
+            if (pmc != null) {
+                return pmc;
+            }
             pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, true);
-            if (pmc != null) pmc.setNeededFlip(true);
-            return pmc;
-        } else {
-            return checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
         }
+        if (pmc == null) clearCache(); // we don't want a random cache of a partially formed multi
+        return pmc;
     }
 
     public void clearCache() {
@@ -222,6 +222,7 @@ public class BlockPattern {
         }
 
         worldState.setError(null);
+        matchContext.setNeededFlip(isFlipped);
         return matchContext;
     }
 
