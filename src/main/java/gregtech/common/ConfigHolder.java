@@ -238,7 +238,7 @@ public class ConfigHolder {
         @Config.Comment({"Whether to remove Vanilla Block Recipes from the Crafting Table.", "Default: false"})
         public boolean removeVanillaBlockRecipes = false;
 
-        @Config.Comment({"Whether to make crafting recipes for Bricks, Firebricks, and Coke Bricks harder.", "Default: false"})
+        @Config.Comment({"Whether to make crafting recipes for Bricks, Nether Bricks, Firebricks, and Coke Bricks harder.", "Default: false"})
         public boolean harderBrickRecipes = false;
 
         @Config.Comment({"Whether to make the recipe for the EBF Controller harder.", "Default: false"})

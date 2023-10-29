@@ -15,6 +15,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -45,6 +46,7 @@ public class VanillaOverrideRecipes {
             ModHandler.addShapedRecipe("brick_from_water", new ItemStack(Blocks.BRICK_BLOCK, 2), "BBB", "BWB", "BBB",
                     'B', new ItemStack(Items.BRICK),
                     'W', new ItemStack(Items.WATER_BUCKET));
+            ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.NETHERRACK));
         }
         removeCompressionRecipes();
         toolArmorRecipes();
@@ -137,7 +139,7 @@ public class VanillaOverrideRecipes {
                 'C', OreDictNames.stoneCobble,
                 'R', new UnificationEntry(OrePrefix.plate, Materials.RedAlloy),
                 'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Iron),
-                'F', "fenceWood"
+                'F', OreDictNames.fenceWood
         );
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
@@ -264,6 +266,7 @@ public class VanillaOverrideRecipes {
         );
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:daylight_detector"));
+        ModHandler.removeRecipeByName(new ResourceLocation("appliedenergistics2:misc/vanilla_daylight_detector"));
         ModHandler.addShapedRecipe("daylight_detector", new ItemStack(Blocks.DAYLIGHT_DETECTOR), "GGG", "PPP", "SRS",
                 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.NetherQuartz),
@@ -343,6 +346,7 @@ public class VanillaOverrideRecipes {
         );
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:comparator"));
+        ModHandler.removeRecipeByName(new ResourceLocation("appliedenergistics2:misc/vanilla_comparator"));
         ModHandler.addShapedRecipe("comparator", new ItemStack(Items.COMPARATOR), "STS", "TQT", "PdP",
                 'S', new UnificationEntry(OrePrefix.screw, Materials.Iron),
                 'T', new ItemStack(Blocks.REDSTONE_TORCH),
@@ -397,7 +401,7 @@ public class VanillaOverrideRecipes {
         );
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:redstone_torch"));
-        ModHandler.addShapedRecipe("redstone_torch", new ItemStack(Blocks.REDSTONE_TORCH), "R", "T", 'R', new UnificationEntry(OrePrefix.dust, Materials.Redstone), 'T', new UnificationEntry(OrePrefix.stick, Materials.Wood));
+        ModHandler.addShapedRecipe("redstone_torch", new ItemStack(Blocks.REDSTONE_TORCH), "R", "T", 'R', new UnificationEntry(OrePrefix.dust, Materials.Redstone), 'T', new ItemStack(Blocks.TORCH));
     }
 
     /**
@@ -474,8 +478,12 @@ public class VanillaOverrideRecipes {
      * Replaces Vanilla Enchantment Table recipe
      * Replaces Vanilla Jukebox recipe
      * Replaces Vanilla Note Block recipe
-     * Replaces Vanilla Furnace
-     * - Removes Vanilla TNT recipe
+     * Replaces Vanilla Furnace recipe
+     * Replaces Vanilla Flower Pot recipe
+     * Replaces Vanilla Armor Stand recipe
+     * Replaces Vanilla Trapped Chest recipe
+     * Replaces Vanilla Ender Chest recipe
+     * Replaces Vanilla Bed recipes
      * - Removes Vanilla Golden Apple Recipe
      * - Removes Vanilla Ender Eye Recipe
      * - Removes Vanilla Glistering Melon Recipe
@@ -620,6 +628,53 @@ public class VanillaOverrideRecipes {
         ModHandler.addShapedRecipe("furnace_minecart", new ItemStack(Items.FURNACE_MINECART), "hIw", " M ", " d ", 'I', new ItemStack(Blocks.FURNACE), 'M', new ItemStack(Items.MINECART));
         ModHandler.addShapedRecipe("tnt_minecart", new ItemStack(Items.TNT_MINECART), "hIw", " M ", " d ", 'I', new ItemStack(Blocks.TNT), 'M', new ItemStack(Items.MINECART));
         ModHandler.addShapedRecipe("hopper_minecart", new ItemStack(Items.HOPPER_MINECART), "hIw", " M ", " d ", 'I', new ItemStack(Blocks.HOPPER), 'M', new ItemStack(Items.MINECART));
+
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:flower_pot"));
+        ModHandler.addShapedRecipe("flower_pot", new ItemStack(Items.FLOWER_POT), "BfB", " B ",
+                'B', new ItemStack(Items.BRICK));
+
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:armor_stand"));
+        ModHandler.addShapedRecipe("armor_stand", new ItemStack(Items.ARMOR_STAND), "BSB", "hSs", "IPI",
+                'B', new UnificationEntry(OrePrefix.bolt, Materials.Wood),
+                'S', new UnificationEntry(OrePrefix.stick, Materials.Wood),
+                'I', new UnificationEntry(OrePrefix.plate, Materials.Iron),
+                'P', new ItemStack(Blocks.STONE_PRESSURE_PLATE));
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(Blocks.STONE_PRESSURE_PLATE)
+                .input(OrePrefix.plate, Materials.Iron, 2)
+                .input(OrePrefix.stick, Materials.Wood, 2)
+                .output(Items.ARMOR_STAND)
+                .duration(100).EUt(VA[ULV]).buildAndRegister();
+
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:trapped_chest"));
+        ModHandler.addShapedRecipe("trapped_chest", new ItemStack(Blocks.TRAPPED_CHEST), " H ", "SCS", " d ",
+                'H', new ItemStack(Blocks.TRIPWIRE_HOOK),
+                'S', new UnificationEntry(OrePrefix.screw, Materials.Iron),
+                'C', new ItemStack(Blocks.CHEST));
+
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:ender_chest"));
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OrePrefix.plateDense, Materials.Obsidian, 6)
+                .input(OrePrefix.plate, Materials.EnderEye)
+                .output(Blocks.ENDER_CHEST)
+                .duration(200).EUt(VA[MV]).buildAndRegister();
+
+        for (int i = 0; i <= 15; i++) {
+            addBedRecipe(i);
+        }
+    }
+
+    private static void addBedRecipe(int meta) {
+        String colorName = EnumDyeColor.byMetadata(meta).getDyeColorName();
+        if ("silver".equals(colorName)) {
+            // thank you mojang
+            colorName = "light_gray";
+        }
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:" + colorName + "_bed"));
+        ModHandler.addShapedRecipe(colorName + "_bed", new ItemStack(Items.BED, 1, meta), "WWW", "PPP", "FrF",
+                'W', new ItemStack(Blocks.CARPET, 1, meta),
+                'P', new UnificationEntry(OrePrefix.plank, Materials.Wood),
+                'F', OreDictNames.fenceWood);
     }
 
     /**
@@ -659,6 +714,7 @@ public class VanillaOverrideRecipes {
             ModHandler.removeRecipeByName("minecraft:lapis_block");
             ModHandler.removeRecipeByName("minecraft:lapis_lazuli");
             ModHandler.removeRecipeByName("minecraft:quartz_block");
+            ModHandler.removeRecipeByName("appliedenergistics2:decorative/quartz_block_pure");
             ModHandler.removeRecipeByName("minecraft:clay");
             ModHandler.removeRecipeByName("minecraft:nether_brick");
             ModHandler.removeRecipeByName("minecraft:glowstone");
@@ -696,6 +752,28 @@ public class VanillaOverrideRecipes {
             ModHandler.removeRecipeByName("minecraft:smooth_red_sandstone");
             ModHandler.removeRecipeByName("minecraft:bookshelf");
             ModHandler.removeRecipeByName("minecraft:pillar_quartz_block");
+            ModHandler.removeRecipeByName("minecraft:sea_lantern");
+            ModHandler.removeRecipeByName("minecraft:chiseled_sandstone");
+
+            // Slab replacement
+            ModHandler.removeRecipeByName("minecraft:stone_slab");
+            ModHandler.addShapedRecipe("stone_slab_saw", new ItemStack(Blocks.STONE_SLAB), "sS", 'S', new ItemStack(Blocks.STONE));
+            ModHandler.removeRecipeByName("minecraft:sandstone_slab");
+            ModHandler.addShapedRecipe("sandstone_slab_saw", new ItemStack(Blocks.STONE_SLAB, 1, 1), "sS", 'S', new ItemStack(Blocks.SANDSTONE, 1, W));
+            ModHandler.removeRecipeByName("minecraft:cobblestone_slab");
+            ModHandler.addShapedRecipe("cobblestone_slab_saw", new ItemStack(Blocks.STONE_SLAB, 1, 3), "sS", 'S', new ItemStack(Blocks.COBBLESTONE));
+            ModHandler.removeRecipeByName("minecraft:brick_slab");
+            ModHandler.addShapedRecipe("brick_slab_saw", new ItemStack(Blocks.STONE_SLAB, 1, 4), "sS", 'S', new ItemStack(Blocks.BRICK_BLOCK));
+            ModHandler.removeRecipeByName("minecraft:stone_brick_slab");
+            ModHandler.addShapedRecipe("stone_brick_slab_saw", new ItemStack(Blocks.STONE_SLAB, 1, 5), "sS", 'S', OreDictNames.stoneBricks);
+            ModHandler.removeRecipeByName("minecraft:nether_brick_slab");
+            ModHandler.addShapedRecipe("nether_brick_slab_saw", new ItemStack(Blocks.STONE_SLAB, 1, 6), "sS", 'S', new ItemStack(Blocks.NETHER_BRICK));
+            ModHandler.removeRecipeByName("minecraft:quartz_slab");
+            ModHandler.addShapedRecipe("quartz_slab_saw", new ItemStack(Blocks.STONE_SLAB, 1, 7), "sS", 'S', new ItemStack(Blocks.QUARTZ_BLOCK, 1, W));
+            ModHandler.removeRecipeByName("minecraft:red_sandstone_slab");
+            ModHandler.addShapedRecipe("red_sandstone_slab_saw", new ItemStack(Blocks.STONE_SLAB2), "sS", 'S', new ItemStack(Blocks.RED_SANDSTONE, 1, W));
+            ModHandler.removeRecipeByName("minecraft:purpur_slab");
+            ModHandler.addShapedRecipe("purpur_slab_saw", new ItemStack(Blocks.PURPUR_SLAB), "sS", 'S', new ItemStack(Blocks.PURPUR_BLOCK));
         }
     }
 
