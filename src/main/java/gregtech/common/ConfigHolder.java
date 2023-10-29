@@ -243,6 +243,10 @@ public class ConfigHolder {
 
         @Config.Comment({"Whether to make the recipe for the EBF Controller harder.", "Default: false"})
         public boolean harderEBFControllerRecipe = false;
+
+        @Config.Comment({"How many Multiblock Casings to make per craft. Either 1, 2, or 3.", "Default: 2"})
+        @Config.RangeInt(min = 1, max = 3)
+        public int casingsPerCraft = 2;
     }
 
     public static class CompatibilityOptions {
