@@ -910,6 +910,10 @@ public class MetaItem1 extends StandardMetaItem {
             }
         }
 
+        // Nuclear metaitems: 841-900
+        FUEL_PELLET_LEU235 = addItem(841, "fuel_pellet.leu");
+        FUEL_ROD_LEU235 = addItem(842, "fuel_rod.leu");
+
         // Misc 1000+
         NAN_CERTIFICATE = addItem(1000, "nan.certificate").setRarity(EnumRarity.EPIC);
         FERTILIZER = addItem(1001, "fertilizer").addComponents(new FertilizerBehavior());

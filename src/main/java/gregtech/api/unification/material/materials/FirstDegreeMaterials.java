@@ -1185,11 +1185,11 @@ public class FirstDegreeMaterials {
                 .build()
                 .setFormula("UF6", true);
 
-        EnrichedUraniumHexafluoride = new Material.Builder(413, gregtechId("enriched_uranium_hexafluoride"))
+        //3.6% U-236
+        LowEnrichedUraniumHexafluoride = new Material.Builder(413, gregtechId("low_enriched_uranium_hexafluoride"))
                 .fluid(FluidTypes.GAS)
                 .color(0x4BF52A)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Uranium235, 1, Fluorine, 6)
                 .build()
                 .setFormula("UF6", true);
 
@@ -1503,5 +1503,50 @@ public class FirstDegreeMaterials {
                 .components(Thorium, 1, Fluorine, 4)
                 .build();
 
+        LowEnrichedUraniumDioxide = new Material.Builder(454, gregtechId("low_enriched_uranium_dioxide"))
+                .dust()
+                .color(0x4A6611).iconSet(DULL)
+                .flags(DISABLE_DECOMPOSITION)
+                .build()
+                .setFormula("UO2", true);
+
+        DepletedUraniumDioxide = new Material.Builder(455, gregtechId("depleted_uranium_dioxide"))
+                .dust()
+                .color(0x2E400A).iconSet(DULL)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Uranium238, 1, Oxygen, 2)
+                .build()
+                .setFormula("UO2", true);
+
+        Zircon = new Material.Builder(456, gregtechId("zircon"))
+                .gem().ore()
+                .color(0xF05C51).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Silicon, 1, Oxygen, 4)
+                .build();
+
+        HafniumDioxide = new Material.Builder(457, gregtechId("hafnium_dioxide"))
+                .dust()
+                .components(Hafnium, 1, Oxygen, 2)
+                .colorAverage()
+                .build();
+
+        ZirconiumDioxide = new Material.Builder(458, gregtechId("zirconium_dioxide"))
+                .dust()
+                .components(Zirconium, 1, Oxygen, 2)
+                .colorAverage()
+                .build();
+
+        HafniumTetrachloride = new Material.Builder(459, gregtechId("hafnium_tetrachloride"))
+                .dust()
+                .components(Hafnium, 1, Chlorine, 4)
+                .color(0xCAE3CC)
+                .build();
+
+        ZirconiumTetrachloride = new Material.Builder(460, gregtechId("zirconium_tetrachloride"))
+                .dust()
+                .components(Zirconium, 1, Chlorine, 4)
+                .color(0x32AD72)
+                .build();
     }
 }

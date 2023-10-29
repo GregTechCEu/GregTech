@@ -559,6 +559,9 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem MULTIBLOCK_BUILDER;
 
+    public static MetaItem<?>.MetaValueItem FUEL_PELLET_LEU235;
+    public static MetaItem<?>.MetaValueItem FUEL_ROD_LEU235;
+
     private static final List<OrePrefix> orePrefixes = new ArrayList<>();
 
     static {

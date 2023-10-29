@@ -3,7 +3,9 @@ package gregtech.loaders.recipe.chemistry;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.api.unification.ore.OrePrefix.*;
+
+import static gregtech.common.items.MetaItems.*;
 
 public class NuclearRecipes {
 
@@ -29,7 +31,7 @@ public class NuclearRecipes {
                 .output(dust, BerylliumFluoride, 3)
                 .buildAndRegister();
 
-        BLAST_RECIPES.recipeBuilder().duration(200).EUt([EV]).blastFurnaceTemp(1000)
+        BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(1000)
                 .input(dust, ThoriumTetrafluoride, 5)
                 .input(dust, LithiumFluoride, 4)
                 .input(dust, BerylliumFluoride, 3)
@@ -46,24 +48,79 @@ public class NuclearRecipes {
                 .fluidOutputs(Water.getFluid(2000))
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
+        GAS_CENTRIFUGE_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
                 .fluidInputs(UraniumHexafluoride.getFluid(1000))
-                .fluidOutputs(EnrichedUraniumHexafluoride.getFluid(100))
+                .fluidOutputs(LowEnrichedUraniumHexafluoride.getFluid(100))
                 .fluidOutputs(DepletedUraniumHexafluoride.getFluid(900))
                 .buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(160).EUt(VA[MV])
-                .fluidInputs(EnrichedUraniumHexafluoride.getFluid(1000))
-                .output(dust, Uranium235)
-                .fluidOutputs(Fluorine.getFluid(6000))
-                .buildAndRegister();
+        // Fuel rod fabrication
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(160).EUt(VA[MV])
-                .fluidInputs(DepletedUraniumHexafluoride.getFluid(1000))
-                .output(dust, Uranium238)
-                .fluidOutputs(Fluorine.getFluid(6000))
-                .buildAndRegister();
+                // LEU-235 Dioxide
+                CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                        .fluidInputs(LowEnrichedUraniumHexafluoride.getFluid(1000))
+                        .fluidInputs(Water.getFluid(2000))
+                        .fluidInputs(Hydrogen.getFluid(2000))
+                        .output(dust, LowEnrichedUraniumDioxide, 1)
+                        .fluidOutputs(HydrofluoricAcid.getFluid(6000))
+                        .buildAndRegister();
 
+                CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                        .fluidInputs(DepletedUraniumHexafluoride.getFluid(1000))
+                        .fluidInputs(Water.getFluid(2000))
+                        .fluidInputs(Hydrogen.getFluid(2000))
+                        .output(dust, DepletedUraniumDioxide, 1)
+                        .fluidOutputs(HydrofluoricAcid.getFluid(6000))
+                        .buildAndRegister();
+
+                FORMING_PRESS_RECIPES.recipeBuilder().duration(25).EUt(VA[EV])
+                        .input(dust, LowEnrichedUraniumDioxide, 1)
+                        .output(FUEL_PELLET_LEU235)
+                        .buildAndRegister();
+
+                // Zircaloy
+                BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(2100)
+                        .input(dust, Zircon, 1)
+                        .output(dust, SiliconDioxide, 3)
+                        .chancedOutput(dust, ZirconiumDioxide, 3, 9000, 0)
+                        .chancedOutput(dust, HafniumDioxide, 3, 1000, 0)
+                        .buildAndRegister();
+
+                BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(1400)
+                        .input(dust, ZirconiumDioxide, 1)
+                        .input(dust, Carbon, 1)
+                        .fluidInputs(Chlorine.getFluid(4000))
+                        .fluidOutputs(CarbonDioxide.getFluid(1000))
+                        .output(dust, ZirconiumTetrachloride, 5)
+                        .buildAndRegister();
+
+                BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(1250)
+                        .input(dust, HafniumDioxide, 1)
+                        .input(dust, Carbon, 1)
+                        .fluidInputs(Chlorine.getFluid(4000))
+                        .fluidOutputs(CarbonDioxide.getFluid(1000))
+                        .output(dust, HafniumTetrachloride, 5)
+                        .buildAndRegister();
+
+                BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(1150)
+                        .input(dust, ZirconiumTetrachloride, 5)
+                        .input(dust, Magnesium, 2)
+                        .output(dust, Zirconium, 1)
+                        .output(dust, MagnesiumChloride, 6)
+                        .buildAndRegister();
+
+                BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(1150)
+                        .input(dust, HafniumTetrachloride, 5)
+                        .input(dust, Magnesium, 2)
+                        .output(dust, Hafnium, 1)
+                        .output(dust, MagnesiumChloride, 6)
+                        .buildAndRegister();
+
+                ASSEMBLER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
+                        .input(plate, Zircaloy, 4)
+                        .input(FUEL_PELLET_LEU235, 16)
+                        .output(FUEL_ROD_LEU235)
+                        .buildAndRegister();
     }
 }
 

@@ -924,6 +924,9 @@ metaitem.brick.coke.name=Coke Oven Brick
 metaitem.wooden_form.empty.name=Empty Wooden Form
 metaitem.wooden_form.brick.name=Brick Wooden Form
 
+metaitem.fuel_pellet.leu.name=LEU-235 Dioxide Fuel Pellet
+metaitem.fuel_rod.leu=LEU-235 Fuel Rod
+
 item.gt.tool.replace_tool_head=Craft with a new Tool Head to replace it
 item.gt.tool.usable_as=Usable as: §f%s
 item.gt.tool.behavior.silk_ice=§bIce Cutter: §fSilk Harvests Ice
@@ -1702,7 +1705,7 @@ gregtech.material.hydrofluoric_acid=Hydrofluoric Acid
 gregtech.material.nitric_oxide=Nitric Oxide
 gregtech.material.iron_iii_chloride=Iron III Chloride
 gregtech.material.uranium_hexafluoride=Uranium Hexafluoride
-gregtech.material.enriched_uranium_hexafluoride=Enriched Uranium Hexafluoride
+gregtech.material.low_enriched_uranium_hexafluoride=Low Enriched Uranium Hexafluoride
 gregtech.material.depleted_uranium_hexafluoride=Depleted Uranium Hexafluoride
 gregtech.material.nitrous_oxide=Nitrous Oxide
 gregtech.material.ender_pearl=Enderpearl
@@ -1825,7 +1828,14 @@ gregtech.material.polyvinyl_butyral=Polyvinyl Butyral
 gregtech.material.biphenyl=Biphenyl
 gregtech.material.polychlorinated_biphenyl=Polychlorinated Biphenyl (PCB)
 gregtech.material.pcb_coolant=Dielectric PCB Coolant
-
+gregtech.material.low_enriched_uranium_dioxide=Low Enriched Uranium Dioxide
+gregtech.material.depleted_uranium_dioxide=Depleted Uranium Dioxide
+gregtech.material.zircon=Zircon
+gregtech.material.zirconium_dioxide=Zirconium Dioxide
+gregtech.material.hafnium_dioxide=Hafnium Dioxide
+gregtech.material.zirconium_tetrachloride=Zirconium Tetrachloride
+gregtech.material.hafnium_tetrachloride=Hafnium Tetrachloride
+gregtech.material.zircaloy=Zircaloy
 
 # Unknown Composition Materials
 gregtech.material.wood_gas=Wood Gas
@@ -2258,6 +2268,7 @@ recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 recipemap.research_station.name=Research Station
+recipemap.gas_centrifuge.name=Gas Centrifugation
 
 gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling

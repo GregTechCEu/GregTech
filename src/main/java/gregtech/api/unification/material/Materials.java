@@ -431,7 +431,7 @@ public class Materials {
     public static Material NitricOxide;
     public static Material Iron3Chloride;
     public static Material UraniumHexafluoride;
-    public static Material EnrichedUraniumHexafluoride;
+    public static Material LowEnrichedUraniumHexafluoride;
     public static Material DepletedUraniumHexafluoride;
     public static Material NitrousOxide;
     public static Material EnderPearl;
@@ -472,6 +472,13 @@ public class Materials {
     public static Material LithiumFluoride;
     public static Material BerylliumFluoride;
     public static Material ThoriumTetrafluoride;
+    public static Material LowEnrichedUraniumDioxide;
+    public static Material DepletedUraniumDioxide;
+    public static Material Zircon;
+    public static Material ZirconiumDioxide;
+    public static Material HafniumDioxide;
+    public static Material ZirconiumTetrachloride;
+    public static Material HafniumTetrachloride;
 
     /**
      * Organic chemistry
@@ -745,6 +752,7 @@ public class Materials {
     public static Material Clay;
     public static Material Redstone;
     public static Material ThoriumFLiBe;
+    public static Material Zircaloy;
 
     /**
      * Third Degree Materials
