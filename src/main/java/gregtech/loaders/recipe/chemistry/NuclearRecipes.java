@@ -56,28 +56,6 @@ public class NuclearRecipes {
 
         // Fuel rod fabrication
 
-                // LEU-235 Dioxide
-                CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                        .fluidInputs(LowEnrichedUraniumHexafluoride.getFluid(1000))
-                        .fluidInputs(Water.getFluid(2000))
-                        .fluidInputs(Hydrogen.getFluid(2000))
-                        .output(dust, LowEnrichedUraniumDioxide, 1)
-                        .fluidOutputs(HydrofluoricAcid.getFluid(6000))
-                        .buildAndRegister();
-
-                CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                        .fluidInputs(DepletedUraniumHexafluoride.getFluid(1000))
-                        .fluidInputs(Water.getFluid(2000))
-                        .fluidInputs(Hydrogen.getFluid(2000))
-                        .output(dust, DepletedUraniumDioxide, 1)
-                        .fluidOutputs(HydrofluoricAcid.getFluid(6000))
-                        .buildAndRegister();
-
-                FORMING_PRESS_RECIPES.recipeBuilder().duration(25).EUt(VA[EV])
-                        .input(dust, LowEnrichedUraniumDioxide, 1)
-                        .output(FUEL_PELLET_LEU235)
-                        .buildAndRegister();
-
                 // Zircaloy
                 BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(2100)
                         .input(dust, Zircon, 1)
@@ -116,8 +94,38 @@ public class NuclearRecipes {
                         .output(dust, MagnesiumChloride, 6)
                         .buildAndRegister();
 
+                MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
+                        .input(dust, Zirconium, 1)
+                        .fluidInputs(Tin.getFluid(15))
+                        .fluidInputs(Chrome.getFluid(1))
+                        .output(dust, Zircaloy, 1)
+                        .buildAndRegister();
+
+                // LEU-235 Dioxide
+                CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                        .fluidInputs(LowEnrichedUraniumHexafluoride.getFluid(1000))
+                        .fluidInputs(Water.getFluid(2000))
+                        .fluidInputs(Hydrogen.getFluid(2000))
+                        .output(dust, LowEnrichedUraniumDioxide, 1)
+                        .fluidOutputs(HydrofluoricAcid.getFluid(6000))
+                        .buildAndRegister();
+
+                CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                        .fluidInputs(DepletedUraniumHexafluoride.getFluid(1000))
+                        .fluidInputs(Water.getFluid(2000))
+                        .fluidInputs(Hydrogen.getFluid(2000))
+                        .output(dust, DepletedUraniumDioxide, 1)
+                        .fluidOutputs(HydrofluoricAcid.getFluid(6000))
+                        .buildAndRegister();
+
+                FORMING_PRESS_RECIPES.recipeBuilder().duration(25).EUt(VA[EV])
+                        .input(dust, LowEnrichedUraniumDioxide, 1)
+                        .output(FUEL_PELLET_LEU235)
+                        .buildAndRegister();
+
                 ASSEMBLER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
                         .input(plate, Zircaloy, 4)
+                        .input(spring, Zircaloy, 1)
                         .input(FUEL_PELLET_LEU235, 16)
                         .output(FUEL_ROD_LEU235)
                         .buildAndRegister();
