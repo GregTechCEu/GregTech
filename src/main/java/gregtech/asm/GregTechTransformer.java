@@ -44,27 +44,27 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                         LayerCustomHeadVisitor::new), 0);
                 return classWriter.toByteArray();
             } */
-            case SpecialArmorApplyVisitor.TARGET_CLASS_NAME: {
+            /*case SpecialArmorApplyVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                 classReader.accept(new SpecialArmorClassVisitor(classWriter, SpecialArmorApplyVisitor.TARGET_METHOD,
                         SpecialArmorApplyVisitor::new), 0);
                 return classWriter.toByteArray();
-            }
-            case LayerArmorBaseVisitor.TARGET_CLASS_NAME: {
+            }*/
+            /*case LayerArmorBaseVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                 classReader.accept(new TargetClassVisitor(classWriter, LayerArmorBaseVisitor.TARGET_METHOD,
                         LayerArmorBaseVisitor::new), 0);
                 return classWriter.toByteArray();
-            }
-            case RegionRenderCacheBuilderVisitor.TARGET_CLASS_NAME: {
+            }*/
+            /*case RegionRenderCacheBuilderVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                 classReader.accept(new TargetClassVisitor(classWriter, RegionRenderCacheBuilderVisitor.TARGET_METHOD,
                         RegionRenderCacheBuilderVisitor::new), 0);
                 return classWriter.toByteArray();
-            }
+            }*/
             /*case RenderChunkVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
@@ -123,12 +123,12 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                         0);
                 return classWriter.toByteArray();
             }
-            case CCLVisitor.TARGET_CLASS_NAME: {
+            /*case CCLVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                 classReader.accept(new TargetClassVisitor(classWriter, CCLVisitor.TARGET_METHOD, CCLVisitor::new), 0);
                 return classWriter.toByteArray();
-            }
+            }*/
             case NuclearCraftRecipeHelperVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(0);
@@ -186,13 +186,13 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                         ClassReader.EXPAND_FRAMES);
                 return classWriter.toByteArray();
             } */
-            case ModelLoaderRegistryVisitor.TARGET_CLASS_NAME: {
+            /*case ModelLoaderRegistryVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(0);
                 classReader.accept(new TargetClassVisitor(classWriter, ModelLoaderRegistryVisitor.TARGET_METHOD,
                         ModelLoaderRegistryVisitor::new), ClassReader.EXPAND_FRAMES);
                 return classWriter.toByteArray();
-            }
+            }*/
         }
         if (EnchantmentCanApplyVisitor.CLASS_TO_MAPPING_MAP.containsKey(internalName)) {
             ObfMapping methodMapping = EnchantmentCanApplyVisitor.CLASS_TO_MAPPING_MAP.get(internalName);

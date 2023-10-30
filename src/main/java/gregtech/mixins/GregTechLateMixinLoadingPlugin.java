@@ -14,6 +14,9 @@ public class GregTechLateMixinLoadingPlugin implements ILateMixinLoader {
         List<String> configs = new ArrayList<>();
 
         configs.add("mixins.gregtech.theoneprobe.json");
+        configs.add("mixins.gregtech.jei.json");
+        configs.add("mixins.gregtech.ctm.json");
+        configs.add("mixins.gregtech.ccl.json");
 
         return configs;
     }
@@ -23,6 +26,8 @@ public class GregTechLateMixinLoadingPlugin implements ILateMixinLoader {
 
         return switch (mixinConfig) {
             case "mixins.gregtech.theoneprobe.json" -> Loader.isModLoaded(GTValues.MODID_TOP);
+            case "mixins.gregtech.jei.json" -> Loader.isModLoaded(GTValues.MODID_JEI);
+            case "mixin.gregtech.ctm.json" -> Loader.isModLoaded(GTValues.MODID_CTM);
             default -> true;
         };
 

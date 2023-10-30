@@ -12,6 +12,8 @@
   "client": [
     "LayerArmorBaseMixin",
     "LayerCustomHeadMixin",
+    "RecipeRepairItemMixin",
+    "RegionRenderCacheBuilderMixin",
     "RenderChunkMixin",
     "RenderGlobalMixin"
   ],
