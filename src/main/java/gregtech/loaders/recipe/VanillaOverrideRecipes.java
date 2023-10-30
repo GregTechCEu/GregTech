@@ -491,6 +491,8 @@ public class VanillaOverrideRecipes {
      * - Removes Vanilla Magma Cream Recipe
      * - Removes Vanilla Polished Stone Variant Recipes
      * - Removes Vanilla Brick Smelting Recipe
+     * - Removes Vanilla Fermented Spider Eye recipe
+     * - Removes Vanilla Fire Charge recipe
      */
     private static void miscRecipes() {
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:tnt"));
@@ -662,6 +664,9 @@ public class VanillaOverrideRecipes {
         for (int i = 0; i <= 15; i++) {
             addBedRecipe(i);
         }
+
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:fermented_spider_eye"));
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:fire_charge"));
     }
 
     private static void addBedRecipe(int meta) {
