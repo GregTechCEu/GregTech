@@ -6,6 +6,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.fluids.GTFluid;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -36,6 +37,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -774,5 +776,15 @@ public class GTUtility {
     @Nonnull
     public static ResourceLocation gregtechId(@Nonnull String path) {
         return new ResourceLocation(GTValues.MODID, path);
+    }
+
+    @Nullable
+    public static TextComponentTranslation getFluidTranslation(@Nullable FluidStack stack) {
+        if (stack == null) return null;
+        if (stack.getFluid() instanceof GTFluid.GTMaterialFluid materialFluid) {
+            return materialFluid.toTextComponentTranslation();
+        }
+
+        return new TextComponentTranslation(stack.getUnlocalizedName());
     }
 }

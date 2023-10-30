@@ -6,6 +6,7 @@ import gregtech.api.unification.material.Material;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
@@ -42,6 +43,7 @@ public class GTFluid extends Fluid implements AttributedFluid {
         attributes.add(attribute);
     }
 
+
     public static class GTMaterialFluid extends GTFluid {
 
         private final Material material;
@@ -56,6 +58,22 @@ public class GTFluid extends Fluid implements AttributedFluid {
 
         public @NotNull Material getMaterial() {
             return this.material;
+        }
+
+        public @NotNull TextComponentTranslation toTextComponentTranslation() {
+            TextComponentTranslation localizedName;
+            String customMaterialTranslation = "fluid." + material.getUnlocalizedName();
+
+            if (net.minecraft.util.text.translation.I18n.canTranslate(customMaterialTranslation)) {
+                localizedName = new TextComponentTranslation(customMaterialTranslation);
+            } else {
+                localizedName = new TextComponentTranslation(material.getUnlocalizedName());
+            }
+
+            if (translationKey != null) {
+                return new TextComponentTranslation(translationKey, localizedName);
+            }
+            return localizedName;
         }
 
         @Override
