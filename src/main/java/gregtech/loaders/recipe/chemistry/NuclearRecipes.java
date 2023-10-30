@@ -129,6 +129,19 @@ public class NuclearRecipes {
                         .input(FUEL_PELLET_LEU235, 16)
                         .output(FUEL_ROD_LEU235)
                         .buildAndRegister();
+
+                // Natural Uranium Fuel
+
+                FORMING_PRESS_RECIPES.recipeBuilder().duration(25).EUt(VA[EV])
+                        .input(dust, Uraninite, 1)
+                        .output(FUEL_PELLET_NATURAL_URANIUM)
+                        .buildAndRegister();
+
+                ASSEMBLER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
+                        .input(plate, Zircaloy, 4)
+                        .input(FUEL_PELLET_NATURAL_URANIUM, 16)
+                        .output(FUEL_ROD_NATURAL_RUANIUM)
+                        .buildAndRegister();
     }
 }
 

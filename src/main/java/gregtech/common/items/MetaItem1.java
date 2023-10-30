@@ -913,6 +913,8 @@ public class MetaItem1 extends StandardMetaItem {
         // Nuclear metaitems: 841-900
         FUEL_PELLET_LEU235 = addItem(841, "fuel_pellet.leu");
         FUEL_ROD_LEU235 = addItem(842, "fuel_rod.leu");
+        FUEL_PELLET_NATURAL_URANIUM = addItem(841, "fuel_pellet.natural_uranium");
+        FUEL_ROD_NATURAL_URANIUM = addItem(842, "fuel_rod.natural_uranium");
 
         // Misc 1000+
         NAN_CERTIFICATE = addItem(1000, "nan.certificate").setRarity(EnumRarity.EPIC);

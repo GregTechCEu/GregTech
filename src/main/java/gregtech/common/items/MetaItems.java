@@ -561,6 +561,8 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem FUEL_PELLET_LEU235;
     public static MetaItem<?>.MetaValueItem FUEL_ROD_LEU235;
+    public static MetaItem<?>.MetaValueItem FUEL_PELLET_NATURAL_URANIUM;
+    public static MetaItem<?>.MetaValueItem FUEL_ROD_NATURAL_URANIUM;
 
     private static final List<OrePrefix> orePrefixes = new ArrayList<>();
 
