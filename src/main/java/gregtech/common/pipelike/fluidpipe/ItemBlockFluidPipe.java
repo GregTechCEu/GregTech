@@ -3,6 +3,7 @@ package gregtech.common.pipelike.fluidpipe;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.block.material.ItemBlockMaterialPipe;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -32,6 +33,12 @@ public class ItemBlockFluidPipe extends ItemBlockMaterialPipe<FluidPipeType, Flu
         if (pipeProperties.getTanks() > 1) tooltip.add(I18n.format("gregtech.fluid_pipe.channels", pipeProperties.getTanks()));
 
         pipeProperties.appendTooltips(tooltip, false, false);
+
+        if (TooltipHelper.isShiftDown()) {
+            tooltip.add(I18n.format("gregtech.tool_action.wrench.connect_and_block"));
+            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+            tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
+        }
 
         BlockMaterialPipe<?, ?, ?> blockMaterialPipe = (BlockMaterialPipe<?, ?, ?>) blockPipe;
 
