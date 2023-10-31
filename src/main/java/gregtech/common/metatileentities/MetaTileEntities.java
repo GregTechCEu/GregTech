@@ -21,7 +21,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.converter.MetaTileEntityConverter;
 import gregtech.common.metatileentities.electric.*;
 import gregtech.common.metatileentities.miner.MetaTileEntityLargeMiner;
-import gregtech.common.metatileentities.miner.MetaTileEntityLargeMiner.LargeMinerType;
+import gregtech.common.metatileentities.miner.LargeMinerTypes;
 import gregtech.common.metatileentities.miner.MetaTileEntityMiner;
 import gregtech.common.metatileentities.miner.SteamMiner;
 import gregtech.common.metatileentities.multi.*;
@@ -520,9 +520,9 @@ public class MetaTileEntities {
         STEAM_OVEN = registerMetaTileEntity(1024, new MetaTileEntitySteamOven(gregtechId("steam_oven")));
         STEAM_GRINDER = registerMetaTileEntity(1025, new MetaTileEntitySteamGrinder(gregtechId("steam_grinder")));
 
-        BASIC_LARGE_MINER = registerMetaTileEntity(1026, new MetaTileEntityLargeMiner(gregtechId("large_miner.ev"), GTValues.EV, 16, 3, 4, 8, LargeMinerType.STEEL));
-        LARGE_MINER = registerMetaTileEntity(1027, new MetaTileEntityLargeMiner(gregtechId("large_miner.iv"), GTValues.IV, 4, 5, 5, 16, LargeMinerType.TITANIUM));
-        ADVANCED_LARGE_MINER = registerMetaTileEntity(1028, new MetaTileEntityLargeMiner(gregtechId("large_miner.luv"), GTValues.LuV, 1, 7, 6, 32, LargeMinerType.TUNGSTEN_STEEL));
+        BASIC_LARGE_MINER = registerMetaTileEntity(1026, new MetaTileEntityLargeMiner(gregtechId("large_miner.ev"), GTValues.EV, 16, 3, 4, 8, LargeMinerTypes.STEEL));
+        LARGE_MINER = registerMetaTileEntity(1027, new MetaTileEntityLargeMiner(gregtechId("large_miner.iv"), GTValues.IV, 4, 5, 5, 16, LargeMinerTypes.TITANIUM));
+        ADVANCED_LARGE_MINER = registerMetaTileEntity(1028, new MetaTileEntityLargeMiner(gregtechId("large_miner.luv"), GTValues.LuV, 1, 7, 6, 32, LargeMinerTypes.TUNGSTEN_STEEL));
 
         CENTRAL_MONITOR = registerMetaTileEntity(1029, new MetaTileEntityCentralMonitor(gregtechId("central_monitor")));
 

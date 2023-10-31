@@ -4,6 +4,8 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.BlockUtility;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.common.metatileentities.miner.Miner.MinedBlockType;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -14,15 +16,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
-public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
+public class MinerLogic<MTE extends MetaTileEntity & Miner> {
 
     protected final MTE mte;
 
@@ -33,8 +34,8 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
 
     protected int currentDiameter;
 
-    private boolean done;
-    private boolean workingEnabled = true;
+    // flag indicating the miner has finished its action
+    protected boolean done;
 
     // last mined ore block
     protected final MutableBlockPos lastMinedOre = new MutableBlockPos();
@@ -42,64 +43,57 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
     // number of ores processed so far
     protected int minedOreCount;
 
+    private boolean workingEnabled = true;
+
     // pipe length used for rendering purposes
     private int pipeLength;
 
-    // non-negative value to limit Y level
-    private int yLimit;
-
-    // bool config for repeating the operation after finished
-    private boolean repeat;
-
-    // transient values below (not saved)
+    // transient fields below (not saved to NBT)
 
     @Nullable
-    private IMiningArea miningArea;
+    private MiningArea miningArea;
 
+    private boolean active;
+    private int workTick;
     // flag indicating last insertion to inventory failed
     private boolean inventoryFull;
-    // flag indicating scan area should be rebuilt
-    protected boolean rebuildScanArea;
-    // status of the last update; true means miner is working, false means no
-    private boolean active;
-
+    // flag indicating mining area should be rebuilt
+    protected boolean rebuildMiningArea;
+    // flag for area preview
     private boolean preview;
 
-    // remote instance only, contains IMiningArea instances deserialized from packet
+    private boolean hasNotEnoughEnergy;
+
+    // remote instances only, contains MiningArea instances deserialized from packet
     @Nullable
-    private IMiningArea previewArea;
+    private MiningArea previewArea;
 
     /**
      * Creates the general logic for all in-world ore block miners
      *
      * @param mte             the {@link MetaTileEntity} this logic belongs to
-     * @param workFrequency   work frequency in ticks; value of <=1 means the miner operates each tick, 2 means the miner
-     *                        operates every other tick and so on
+     * @param workFrequency   work frequency in ticks. In other words, the miner will operate every
+     *                        {@code workFrequency} ticks; once a second in {@code 20}, every other tick in {@code 2},
+     *                        and each tick in {@code 1}.
      * @param maximumDiameter the maximum diameter of a square the miner can mine in
+     * @throws IllegalArgumentException if {@code workFrequency <= 0}
+     * @throws NullPointerException     if {@code mte == null}
      */
     public MinerLogic(@Nonnull MTE mte, int workFrequency, int maximumDiameter) {
-        this.mte = mte;
+        if (workFrequency <= 0) throw new IllegalArgumentException("workFrequency <= 0");
+        this.mte = Objects.requireNonNull(mte, "mte == null");
         this.workFrequency = workFrequency;
         this.currentDiameter = this.maximumDiameter = maximumDiameter;
     }
 
-    /**
-     * @return the miner's speed in ticks
-     */
     public int getWorkFrequency() {
         return this.workFrequency;
     }
 
-    /**
-     * @return the miner's maximum diameter
-     */
     public int getMaximumDiameter() {
         return this.maximumDiameter;
     }
 
-    /**
-     * @return the miner's current diameter
-     */
     public int getCurrentDiameter() {
         return this.currentDiameter;
     }
@@ -112,30 +106,13 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
         currentDiameter = Math.max(1, Math.min(currentDiameter, getMaximumDiameter()));
         if (this.currentDiameter != currentDiameter) {
             this.currentDiameter = currentDiameter;
-            this.rebuildScanArea = true;
+            this.rebuildMiningArea = true;
             this.mte.markDirty();
         }
     }
 
-    /**
-     * @return true if the miner is finished working
-     */
-    public boolean isDone() {
-        return this.done;
-    }
-
-    /**
-     * @return true if the miner is active
-     */
     public boolean isActive() {
-        return this.workingEnabled && this.active;
-    }
-
-    /**
-     * @return whether working is enabled for the logic
-     */
-    public boolean isWorkingEnabled() {
-        return this.workingEnabled;
+        return this.active;
     }
 
     public boolean isInventoryFull() {
@@ -147,8 +124,41 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
     }
 
     @Nullable
-    public IMiningArea getPreviewArea() {
+    public MiningArea getPreviewArea() {
         return this.previewArea;
+    }
+
+    public boolean isAtWorkTick() {
+        if (this.workFrequency == 1) return true;
+        return this.mte.getOffsetTimer() % this.workFrequency == this.workTick;
+    }
+
+    /**
+     * <p>
+     * Set next work tick to {@code workTick} after current tick. When called during {@link #update()}, this method
+     * essentially sets next operation at {@code workTick} after. If not called, the next update happens
+     * {@link #workFrequency} ticks after.
+     * </p>
+     * <p>
+     * If {@code workTick} is greater or equal than {@link #workFrequency}, {@code workTick % workFrequency} will be
+     * used instead.
+     * </p>
+     */
+    protected void setNextWorkTick(int workTick) {
+        this.workTick = (this.workTick + workTick) % this.workFrequency;
+    }
+
+    public double getWorkProgress() {
+        if (!isWorking()) return 0;
+        if (getWorkFrequency() < 2) return 1;
+        return ((mte.getOffsetTimer() + getWorkFrequency() - workTick) % getWorkFrequency()) / (double) getWorkFrequency();
+    }
+
+    /**
+     * @return whether working is enabled for the logic
+     */
+    public boolean isWorkingEnabled() {
+        return this.workingEnabled;
     }
 
     /**
@@ -159,23 +169,7 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
             this.workingEnabled = isWorkingEnabled;
             this.mte.markDirty();
             if (mte.getWorld() != null && !mte.getWorld().isRemote) {
-                if (!isWorkingEnabled) reset();
                 this.mte.writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(isWorkingEnabled));
-            }
-        }
-    }
-
-    public int getYLimit() {
-        return yLimit;
-    }
-
-    public void setYLimit(int yLimit) {
-        if (yLimit != this.yLimit) {
-            this.yLimit = yLimit;
-            this.rebuildScanArea = true;
-            this.mte.markDirty();
-            if (this.preview) {
-                updatePreview();
             }
         }
     }
@@ -191,39 +185,15 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
         }
     }
 
-    public boolean isRepeat() {
-        return repeat;
-    }
-
-    public void setRepeat(boolean repeat) {
-        if (this.repeat != repeat) {
-            this.repeat = repeat;
-            this.mte.markDirty();
-        }
-    }
-
     /**
      * @return whether the miner is currently working
      */
     public boolean isWorking() {
-        return active && workingEnabled;
+        return this.miningArea != null && !this.done && isWorkingEnabled() && !hasNotEnoughEnergy();
     }
 
-    /**
-     * Recalculates the mining area and restarts the miner, if it was done
-     */
-    public void reset() {
-        this.hasLastMinedOre = false;
-        this.pipeLength = 0;
-
-        this.miningArea = Objects.requireNonNull(createMiningArea(), "createMiningArea() returned null!");
-
-        if (this.done) {
-            this.setWorkingEnabled(false);
-            this.done = false;
-        }
-        resetPipeLength();
-        this.mte.markDirty();
+    public boolean hasNotEnoughEnergy() {
+        return hasNotEnoughEnergy;
     }
 
     /**
@@ -235,83 +205,104 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
         return mte.getPos();
     }
 
+    @Nullable
+    public final MiningArea getMiningArea() {
+        return this.miningArea;
+    }
+
     /**
-     * Create instance of {@link IMiningArea} based on current state.
+     * Create instance of {@link MiningArea} based on current state.
      *
-     * @return new {@link IMiningArea} instance
+     * @return new {@link MiningArea} instance
      */
     @Nonnull
-    protected IMiningArea createMiningArea() {
+    protected MiningArea createMiningArea() {
         BlockPos origin = getOrigin();
         int radius = this.currentDiameter / 2;
         int startX = origin.getX() - radius;
-        int startY = origin.getY() - 1;
         int startZ = origin.getZ() - radius;
-        int endX = startX + this.currentDiameter;
-        int endY = this.yLimit > 0 ? origin.getY() - this.yLimit : Integer.MIN_VALUE;
-        int endZ = startZ + this.currentDiameter;
-        return new SimpleMiningArea(startX, startY, startZ, endX, endY, endZ);
+        return new SimpleMiningArea(startX, origin.getY() - 1, startZ,
+                startX + this.currentDiameter, Integer.MIN_VALUE, startZ + this.currentDiameter);
     }
 
-    @Nonnull
-    protected IMiningArea readPreviewArea(@Nonnull PacketBuffer buffer) {
-        return SimpleMiningArea.readPreview(buffer);
+    /**
+     * Recalculates the mining area and restarts the miner, if it was done
+     */
+    public void reset() {
+        this.hasLastMinedOre = false;
+        setPipeLength(0);
+        rebuildMiningArea();
+
+        this.mte.markDirty();
+    }
+
+    private void rebuildMiningArea() {
+        this.rebuildMiningArea = false;
+        this.miningArea = Objects.requireNonNull(createMiningArea(), "createMiningArea() returned null!");
+        if (isPreviewEnabled()) {
+            updatePreview();
+        }
+    }
+
+    protected void updatePreview() {
+        this.mte.writeCustomData(GregtechDataCodes.MINER_UPDATE_PREVIEW, this::writePreviewUpdatePacket);
     }
 
     /**
      * Performs the actual mining in world. Call this method every tick in update.
      */
     public void update() {
-        if (this.mte.getWorld().isRemote ||
-                (this.workFrequency >= 2 && this.mte.getOffsetTimer() % this.workFrequency != 0)) {
+        if (this.mte.getWorld().isRemote) return;
+
+        // rebuild scan area every tick regardless of miner status, for accurate preview
+        if (this.rebuildMiningArea || this.miningArea == null) {
+            rebuildMiningArea();
+        }
+
+        if (this.mte.drainMiningResources(MinedBlockType.ORE, true, true)) {
+            this.hasNotEnoughEnergy = false;
+        } else {
+            this.hasNotEnoughEnergy = true;
             return;
         }
 
-        boolean active = mine();
+        mine(Objects.requireNonNull(this.miningArea));
+        boolean active = !this.done;
         if (this.active != active) {
             this.active = active;
-            this.mte.writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(active));
+            this.mte.writeCustomData(GregtechDataCodes.MINER_UPDATE_ACTIVE, b -> b.writeBoolean(active));
         }
     }
 
-    private boolean mine() {
-        if (!this.workingEnabled || (!this.repeat && this.done) || !canOperate()) {
-            return false;
+    protected void mine(@Nonnull MiningArea miningArea) {
+        if (this.done || !isAtWorkTick() || !this.workingEnabled || !this.mte.canOperate()) {
+            return;
         }
-
-        if (this.rebuildScanArea || this.miningArea == null) {
-            this.rebuildScanArea = false;
-            reset();
-        }
-
-        IMiningArea miningArea = Objects.requireNonNull(this.miningArea);
-
-        if (this.repeat && this.done) {
-            this.done = false;
-            miningArea.reset();
-        }
-
         World world = mte.getWorld();
         BlockPos origin = getOrigin();
+        MutableBlockPos pos = this.mpos;
+
         for (int i = MinerUtil.MAX_BLOCK_SCAN; i > 0; i--) {
-            MutableBlockPos pos = this.mpos;
-            if (!miningArea.getCurrentBlockPos(pos) || !world.isValid(pos) || (this.yLimit > 0 && origin.getY() - yLimit > pos.getY())) {
-                if (this.repeat) {
-                    miningArea.reset();
-                } else {
-                    this.done = true;
-                }
-                return false;
+            if (!getCurrentBlock(miningArea, pos)) {
+                this.done = true;
+                return;
             }
 
             IBlockState state = world.getBlockState(pos);
             boolean isOrigin = pos.getX() == origin.getX() && pos.getZ() == origin.getZ();
 
-            // skip unbreakable block / TE blocks
-            if (state.getBlockHardness(world, pos) < 0 || state.getBlock().hasTileEntity(state)) {
-                // center block (where mining pipes goes in) can be skipped by this, it'll probably look kind of janky
-                // but it's 100x better than voiding bedrock
-                if (isOrigin) incrementPipeLength();
+            // skip air, unbreakable blocks & TE blocks
+            if (state.getMaterial() == Material.AIR ||
+                    state.getBlockHardness(world, pos) < 0 ||
+                    state.getBlock().hasTileEntity(state)) {
+                if (isOrigin) { // TODO liquid tile check?
+                    // center block (where mining pipes goes in) can be skipped by this, it'll probably look kind of janky
+                    // but it's 100x better than voiding bedrock
+                    if (!this.mte.drainMiningResources(MinedBlockType.NOTHING, true, false)) {
+                        return;
+                    }
+                    setPipeLength(this.pipeLength + 1);
+                }
                 miningArea.nextBlock();
                 continue;
             }
@@ -322,105 +313,76 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
                 continue;
             }
 
+            if (!this.mte.drainMiningResources(isOre ? MinedBlockType.ORE : MinedBlockType.BLOCK, true, false)) {
+                return;
+            }
+
             NonNullList<ItemStack> blockDrops = NonNullList.create();
-            getRegularBlockDrops(blockDrops, world, pos, state);
+            this.mte.getRegularBlockDrops(blockDrops, world, pos, state);
 
             if (isOre) {
                 IItemHandlerModifiable exportItems = mte.getExportItems();
                 if (!GTTransferUtils.addItemsToItemHandler(exportItems, true, blockDrops)) {
                     this.inventoryFull = true;
-                    return false;
+                    return;
                 }
                 GTTransferUtils.addItemsToItemHandler(exportItems, false, blockDrops);
                 this.inventoryFull = false;
                 this.lastMinedOre.setPos(pos);
                 this.minedOreCount++;
             }
-            this.mte.drainMiningResources(false);
-            world.setBlockState(pos, isOrigin ? Blocks.AIR.getDefaultState() : MinerUtil.getOreReplacement());
-            if (isOrigin) incrementPipeLength();
+            world.setBlockState(pos, isOrigin ? Blocks.AIR.getDefaultState() : getOreReplacement());
+            if (isOrigin) setPipeLength(this.pipeLength + 1);
             miningArea.nextBlock();
-            onMineOperation(pos, isOre, isOrigin);
+            this.mte.onMineOperation(pos, isOre, isOrigin);
             this.mte.markDirty();
-            return true;
-        }
-        return true;
-    }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    protected boolean canOperate() {
-        return this.mte.drainMiningResources(true);
-    }
-
-    /**
-     * Called after each block is mined.
-     *
-     * @param pos      Position of the block mined
-     * @param isOre    Whether it was ore block
-     * @param isOrigin Whether it was origin (the block mining pipe goes in)
-     */
-    protected void onMineOperation(@Nonnull BlockPos pos, boolean isOre, boolean isOrigin) {}
-
-    /**
-     * called to handle mining regular ores and blocks
-     *
-     * @param drops the List of items to fill after the operation
-     * @param world the {@link WorldServer} the miner is in
-     * @param pos   the {@link BlockPos} of the block being mined
-     * @param state the {@link IBlockState} of the block being mined
-     */
-    protected void getRegularBlockDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
-        state.getBlock().getDrops(drops, world, pos, state, 0); // regular ores do not get fortune applied
-    }
-
-    private void incrementPipeLength() {
-        this.pipeLength++;
-        this.mte.markDirty();
-        this.mte.writeCustomData(GregtechDataCodes.PUMP_HEAD_LEVEL, b -> b.writeVarInt(pipeLength));
-    }
-
-    private void resetPipeLength() {
-        if (this.pipeLength == 0) return;
-        this.pipeLength = 0;
-        this.mte.markDirty();
-        this.mte.writeCustomData(GregtechDataCodes.PUMP_HEAD_LEVEL, b -> b.writeVarInt(pipeLength));
-    }
-
-    private void updatePreview() {
-        this.mte.writeCustomData(GregtechDataCodes.MINER_UPDATE_PREVIEW, this::writePreviewUpdatePacket);
-    }
-
-    private void writePreviewUpdatePacket(@Nonnull PacketBuffer buffer) {
-        if (!this.preview) {
-            buffer.writeBoolean(false);
             return;
         }
-        buffer.writeBoolean(true);
-        if (this.miningArea == null) {
-            this.miningArea = Objects.requireNonNull(createMiningArea(), "createMiningArea() returned null!");
-        }
-        this.miningArea.writePreviewPacket(buffer);
-        buffer.writeVarInt(this.yLimit);
+        setNextWorkTick(1); // scan next tick
     }
 
-    private void readPreviewUpdatePacket(@Nonnull PacketBuffer buffer) {
-        if (!buffer.readBoolean()) {
-            this.previewArea = null;
-            return;
+    @Nonnull
+    protected IBlockState getOreReplacement() {
+        return MinerUtil.getOreReplacement();
+    }
+
+    private void setPipeLength(int length) {
+        if (this.pipeLength == length) return;
+        this.pipeLength = length;
+        this.mte.markDirty();
+        this.mte.writeCustomData(GregtechDataCodes.PUMP_HEAD_LEVEL, b -> b.writeVarInt(length));
+    }
+
+    protected void writePreviewUpdatePacket(@Nonnull PacketBuffer buffer) {
+        if (this.preview) {
+            MiningArea miningArea = this.miningArea;
+            if (miningArea != null) {
+                buffer.writeBoolean(true);
+                miningArea.writePreviewPacket(buffer);
+                return;
+            }
         }
-        this.previewArea = readPreviewArea(buffer);
-        this.yLimit = buffer.readVarInt();
+        buffer.writeBoolean(false);
+    }
+
+    protected void readPreviewUpdatePacket(@Nonnull PacketBuffer buffer) {
+        this.previewArea = buffer.readBoolean() ? readPreviewArea(buffer) : null;
+    }
+
+    @Nonnull
+    protected MiningArea readPreviewArea(@Nonnull PacketBuffer buffer) {
+        return SimpleMiningArea.readPreview(buffer);
     }
 
     /**
-     * Get the block currently being mined by this miner.
+     * Get the block currently being mined by this miner. This method only works on server environment.
      *
      * @param mpos Mutable block position
      * @return {@code true} if the block exists (in which the {@code mpos} instance gets modified with the value, or
      * {@code false} if it does not exist
      */
-    public boolean getCurrentBlock(@Nonnull MutableBlockPos mpos) {
-        return this.miningArea != null && this.miningArea.getCurrentBlockPos(mpos);
+    public boolean getCurrentBlock(@Nonnull MiningArea miningArea, @Nonnull MutableBlockPos mpos) {
+        return miningArea.getCurrentBlockPos(mpos) && !mte.getWorld().isOutsideBuildHeight(mpos);
     }
 
     /**
@@ -429,8 +391,8 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
     @Nonnull
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
         data.setInteger("currentDiameter", this.currentDiameter);
-        if (this.done) data.setBoolean("done", true);
         if (!this.workingEnabled) data.setBoolean("disabled", true);
+        if (this.done) data.setBoolean("done", true);
 
         if (this.hasLastMinedOre) {
             data.setInteger("lastMinedOreX", this.lastMinedOre.getX());
@@ -440,9 +402,6 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
 
         data.setInteger("minedOreCount", this.minedOreCount);
         data.setInteger("pipeLength", this.pipeLength);
-
-        if (this.yLimit > 0) data.setInteger("yLimit", this.yLimit);
-        if (this.repeat) data.setBoolean("repeat", true);
 
         if (this.miningArea != null) {
             this.miningArea.write(data);
@@ -456,14 +415,12 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
      */
     public void readFromNBT(@Nonnull NBTTagCompound data) {
         this.inventoryFull = false;
-        this.active = false;
-        this.rebuildScanArea = true;
+        this.rebuildMiningArea = false;
 
         if (data.hasKey("xPos", Constants.NBT.TAG_INT)) {
             // retro save compat
             this.currentDiameter = MathHelper.clamp(data.getInteger("currentRadius") * 2 + 1, 1, getMaximumDiameter());
 
-            this.done = data.getInteger("isDone") != 0;
             this.workingEnabled = data.getInteger("isWorkingEnabled") != 0;
 
             this.hasLastMinedOre = false;
@@ -473,8 +430,8 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
         }
 
         this.currentDiameter = MathHelper.clamp(data.getInteger("currentDiameter"), 1, getMaximumDiameter());
-        this.done = data.getBoolean("done");
         this.workingEnabled = !data.getBoolean("disabled");
+        this.done = data.getBoolean("done");
 
         if (data.hasKey("lastMinedOreX", Constants.NBT.TAG_INT)) {
             this.lastMinedOre.setPos(data.getInteger("lastMinedOreX"),
@@ -487,9 +444,6 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
 
         this.minedOreCount = Math.max(0, data.getInteger("minedOreCount"));
         this.pipeLength = Math.max(0, data.getInteger("pipeLength"));
-
-        this.yLimit = Math.max(0, data.getInteger("yLimit"));
-        this.repeat = data.getBoolean("repeat");
 
         this.miningArea = createMiningArea();
         // Shouldn't be a problem but whatever
@@ -505,6 +459,8 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
     public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
         buf.writeVarInt(this.pipeLength);
         buf.writeBoolean(this.workingEnabled);
+        buf.writeBoolean(this.done);
+        buf.writeBoolean(this.active);
         writePreviewUpdatePacket(buf);
     }
 
@@ -514,6 +470,8 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
     public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
         this.pipeLength = buf.readVarInt();
         this.workingEnabled = buf.readBoolean();
+        this.done = buf.readBoolean();
+        this.active = buf.readBoolean();
         readPreviewUpdatePacket(buf);
     }
 
@@ -526,16 +484,16 @@ public class MinerLogic<MTE extends MetaTileEntity & IMiner> {
                 this.pipeLength = buf.readVarInt();
                 this.mte.scheduleRenderUpdate();
             }
-            case GregtechDataCodes.WORKABLE_ACTIVE -> {
-                this.active = buf.readBoolean();
-                this.mte.scheduleRenderUpdate();
-            }
             case GregtechDataCodes.WORKING_ENABLED -> {
                 this.workingEnabled = buf.readBoolean();
                 this.mte.scheduleRenderUpdate();
             }
             case GregtechDataCodes.MINER_UPDATE_PREVIEW -> {
                 readPreviewUpdatePacket(buf);
+            }
+            case GregtechDataCodes.MINER_UPDATE_ACTIVE -> {
+                this.active = buf.readBoolean();
+                this.mte.scheduleRenderUpdate();
             }
         }
     }

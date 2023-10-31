@@ -1,16 +1,8 @@
 package gregtech.common.metatileentities.miner;
 
-import gregtech.api.GTValues;
-import gregtech.api.items.toolitem.ToolHelper;
-import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeMap;
-import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.GTUtility;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -20,17 +12,14 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.List;
 
 public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
 
-    private final int fortune;
-    private final RecipeMap<?> blockDropRecipeMap;
     private final int maximumChunkDiameter;
 
     private final MutableBlockPos mpos = new MutableBlockPos();
@@ -41,47 +30,65 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     private boolean chunkMode;
     private boolean silkTouchMode;
 
-    public MultiblockMinerLogic(MetaTileEntityLargeMiner largeMiner, int fortune, int workFrequency, int maximumChunkDiameter,
-                                RecipeMap<?> blockDropRecipeMap) {
+    // non-negative value to limit Y level
+    private int yLimit;
+
+    // bool config for repeating the operation after finished
+    private boolean repeat;
+
+    // flag for disabling ore replacement (if true, ores will be replaced with air instead of whatever block that was specified in the config)
+    private boolean disableReplacement;
+
+    public MultiblockMinerLogic(@Nonnull MetaTileEntityLargeMiner largeMiner, int workFrequency, int maximumChunkDiameter) {
         super(largeMiner, workFrequency, maximumChunkDiameter * 16);
-        this.fortune = fortune;
-        this.blockDropRecipeMap = blockDropRecipeMap;
         this.currentChunkDiameter = this.maximumChunkDiameter = maximumChunkDiameter;
     }
 
     @Override
-    protected void getRegularBlockDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
-        if (this.silkTouchMode) {
-            drops.add(ToolHelper.getSilkTouchDrop(state));
-        } else if (applyTieredHammerDrops(GTUtility.toItem(state), drops) == 0) { // 3X the ore compared to the single blocks
-            super.getRegularBlockDrops(drops, world, pos, state); // fallback
+    protected void mine(@NotNull MiningArea miningArea) {
+        if (this.done && this.repeat) {
+            miningArea.reset();
+            this.done = false;
         }
+        super.mine(miningArea);
+    }
+
+    @NotNull
+    @Override
+    protected IBlockState getOreReplacement() {
+        return this.disableReplacement ? Blocks.AIR.getDefaultState() : super.getOreReplacement();
     }
 
     @Nonnull
     @Override
-    protected IMiningArea createMiningArea() {
-        if (!this.chunkMode) return super.createMiningArea();
+    protected MiningArea createMiningArea() {
         BlockPos origin = getOrigin();
-        int chunkRadius = this.currentChunkDiameter / 2;
-        int originChunkX = origin.getX() / 16 - chunkRadius;
-        int originChunkZ = origin.getZ() / 16 - chunkRadius;
-        return new SimpleMiningArea((originChunkX) * 16,
-                origin.getY() - 1,
-                (originChunkZ) * 16,
-                (originChunkX + currentChunkDiameter) * 16,
-                getYLimit() > 0 ? origin.getY() - getYLimit() : Integer.MIN_VALUE,
-                (originChunkZ + currentChunkDiameter) * 16);
+        if (this.chunkMode) {
+            int chunkRadius = this.currentChunkDiameter / 2;
+            int originChunkX = origin.getX() / 16 - chunkRadius;
+            int originChunkZ = origin.getZ() / 16 - chunkRadius;
+            return new SimpleMiningArea((originChunkX) * 16,
+                    origin.getY() - 1,
+                    (originChunkZ) * 16,
+                    (originChunkX + currentChunkDiameter) * 16,
+                    getYLimit() > 0 ? origin.getY() - getYLimit() : Integer.MIN_VALUE,
+                    (originChunkZ + currentChunkDiameter) * 16);
+        } else {
+            int radius = this.currentDiameter / 2;
+            int startX = origin.getX() - radius;
+            int startY = origin.getY() - 1;
+            int startZ = origin.getZ() - radius;
+            int endX = startX + this.currentDiameter;
+            int endY = getYLimit() > 0 ? origin.getY() - getYLimit() : Integer.MIN_VALUE;
+            int endZ = startZ + this.currentDiameter;
+            return new SimpleMiningArea(startX, startY, startZ, endX, endY, endZ);
+        }
     }
 
     @Nonnull
     @Override
     protected BlockPos getOrigin() {
         return this.mpos.setPos(this.mte.getPos()).move(this.mte.getFrontFacing().getOpposite());
-    }
-
-    public int getFortune() {
-        return fortune;
     }
 
     public int getMaximumChunkDiameter() {
@@ -98,7 +105,7 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
         if (this.currentChunkDiameter != currentChunkDiameter || !this.chunkMode) {
             this.chunkMode = true;
             this.currentChunkDiameter = currentChunkDiameter;
-            this.rebuildScanArea = false;
+            this.rebuildMiningArea = false;
             this.mte.markDirty();
         }
     }
@@ -108,7 +115,7 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
         if (isWorking()) return;
         if (this.chunkMode) {
             this.chunkMode = false;
-            this.rebuildScanArea = true;
+            this.rebuildMiningArea = true;
             this.mte.markDirty();
         }
         super.setCurrentDiameter(currentDiameter);
@@ -121,7 +128,7 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     public void setChunkMode(boolean isChunkMode) {
         if (isWorking()) return;
         this.chunkMode = isChunkMode;
-        this.rebuildScanArea = true;
+        this.rebuildMiningArea = true;
         this.mte.markDirty();
     }
 
@@ -135,23 +142,55 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
         }
     }
 
+    public int getYLimit() {
+        return yLimit;
+    }
+
+    public void setYLimit(int yLimit) {
+        if (yLimit != this.yLimit) {
+            this.yLimit = yLimit;
+            this.rebuildMiningArea = true;
+            this.mte.markDirty();
+            if (this.isPreviewEnabled()) {
+                updatePreview();
+            }
+        }
+    }
+
+    public boolean isRepeat() {
+        return repeat;
+    }
+
+    public void setRepeat(boolean repeat) {
+        if (this.repeat != repeat) {
+            this.repeat = repeat;
+            this.mte.markDirty();
+        }
+    }
+
     @Nonnull
     @Override
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
-        data.setBoolean("isChunkMode", chunkMode);
-        data.setBoolean("isSilkTouchMode", silkTouchMode);
+        if (this.chunkMode) data.setBoolean("chunkMode", true);
+        if (this.silkTouchMode) data.setBoolean("silkTouch", true);
         data.setInteger("currentChunkDiameter", currentChunkDiameter);
+        if (this.yLimit > 0) data.setInteger("yLimit", this.yLimit);
+        if (this.repeat) data.setBoolean("repeat", true);
+        if (this.disableReplacement) data.setBoolean("disableReplacement", true);
         return super.writeToNBT(data);
     }
 
     @Override
     public void readFromNBT(@Nonnull NBTTagCompound data) {
-        this.chunkMode = data.getBoolean("isChunkMode");
-        this.silkTouchMode = data.getBoolean("isSilkTouchMode");
+        super.readFromNBT(data);
+        this.chunkMode = data.getBoolean("chunkMode") || data.getBoolean("isChunkMode");
+        this.silkTouchMode = data.getBoolean("silkTouch") || data.getBoolean("isSilkTouchMode");
         this.currentChunkDiameter = data.hasKey("currentChunkDiameter", Constants.NBT.TAG_INT) ?
                 MathHelper.clamp(data.getInteger("currentChunkDiameter"), 1, getMaximumChunkDiameter()) :
                 getMaximumChunkDiameter();
-        super.readFromNBT(data);
+        this.yLimit = Math.max(0, data.getInteger("yLimit"));
+        this.repeat = data.getBoolean("repeat");
+        this.disableReplacement = data.getBoolean("disableReplacement");
     }
 
     public void addDisplayText(@Nonnull List<ITextComponent> textList) {
@@ -185,15 +224,13 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
                                 this.isRepeat() ? "@!" + MinerUtil.DISPLAY_CLICK_REPEAT_DISABLE :
                                         "@!" + MinerUtil.DISPLAY_CLICK_REPEAT_ENABLE)))));
 
-        if (isDone()) {
+        if (this.getMiningArea() == null || !getCurrentBlock(this.getMiningArea(), this.mpos2)) {
             textList.add(new TextComponentTranslation("gregtech.machine.miner.display.done")
                     .setStyle(new Style().setColor(TextFormatting.GREEN)));
         } else if (isWorking()) {
-            if (getCurrentBlock(this.mpos2)) {
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.display.working",
-                        this.mpos2.getX(), this.mpos2.getY(), this.mpos2.getZ())
-                        .setStyle(new Style().setColor(TextFormatting.GOLD)));
-            }
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.display.working",
+                    this.mpos2.getX(), this.mpos2.getY(), this.mpos2.getZ())
+                    .setStyle(new Style().setColor(TextFormatting.GOLD)));
         } else if (!isWorkingEnabled()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
         }
@@ -228,31 +265,5 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
                     new TextComponentTranslation("gregtech.machine.miner.display.y_limit.decr")
                             .setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "@!" + MinerUtil.DISPLAY_CLICK_Y_LIMIT_DECR)));
         }
-    }
-
-    /**
-     * Applies a fortune hammer to block drops based on a tier value.
-     *
-     * @param stack the item stack to check for recipes
-     * @param drops where the drops are stored to
-     * @return amount of items inserted to {@code drops}
-     */
-    protected int applyTieredHammerDrops(@Nonnull ItemStack stack, @Nonnull List<ItemStack> drops) {
-        int energyTier = this.mte.getEnergyTier();
-        Recipe recipe = this.blockDropRecipeMap.findRecipe(
-                GTValues.V[energyTier],
-                Collections.singletonList(stack),
-                Collections.emptyList());
-        if (recipe == null || recipe.getOutputs().isEmpty()) return 0;
-        int c = 0;
-        for (ItemStack output : recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipe.getEUt()), energyTier, this.blockDropRecipeMap)) {
-            output = output.copy();
-            if (this.fortune > 0 && OreDictUnifier.getPrefix(output) == OrePrefix.crushed) {
-                output.grow(output.getCount() * this.fortune);
-            }
-            drops.add(output);
-            c++;
-        }
-        return c;
     }
 }

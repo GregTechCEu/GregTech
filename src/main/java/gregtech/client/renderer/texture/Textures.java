@@ -171,7 +171,8 @@ public class Textures {
     public static final OrientedOverlayRenderer STEAM_TURBINE_OVERLAY = new OrientedOverlayRenderer("generators/steam_turbine");
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator");
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_TE_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator_te");
-
+    public static final OrientedOverlayRenderer MINER_OVERLAY = new OrientedOverlayRenderer("machines/miner");
+    public static final OrientedOverlayRenderer STEAM_MINER_OVERLAY = new OrientedOverlayRenderer("machines/steam_miner");
 
     // Simple Overlay Renderers
     public static final SimpleOverlayRenderer SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_screen");
@@ -262,8 +263,6 @@ public class Textures {
     public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY_FULL_AUTO = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance_full_auto");
     public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY_CLEANING = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance_cleaning");
     public static final SimpleOverlayRenderer MUFFLER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_muffler");
-    public static final SimpleOverlayRenderer STEAM_MINER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_steam_miner");
-    public static final SimpleOverlayRenderer CHUNK_MINER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_chunk_miner");
     public static final SimpleOverlayRenderer BLANK_SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_blank_screen");
     public static final SimpleOverlayRenderer DATA_ACCESS_HATCH = new SimpleOverlayRenderer("overlay/machine/overlay_data_hatch");
     public static final SimpleOverlayRenderer CREATIVE_DATA_ACCESS_HATCH = new SimpleOverlayRenderer("overlay/machine/overlay_data_hatch_creative");

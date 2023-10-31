@@ -1,25 +1,23 @@
 package gregtech.common.metatileentities.miner;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class MinerUtil {
@@ -39,9 +37,6 @@ public class MinerUtil {
     public static final String DISPLAY_CLICK_REPEAT_DISABLE = "disable_repeat";
 
     public static final AxisAlignedBB EMPTY_AABB = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
-    public static final ResourceLocation MINER_AREA_PREVIEW_TEXTURE = GTUtility.gregtechId("textures/fx/miner_area_preview.png");
-
-    private static final Cuboid6 PIPE_CUBOID = new Cuboid6(4 / 16.0, 0.0, 4 / 16.0, 12 / 16.0, 1.0, 12 / 16.0);
 
     private static String oreReplacementConfigCache;
     private static IBlockState oreReplacement;
@@ -75,14 +70,30 @@ public class MinerUtil {
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void renderPipe(@Nonnull ICubeRenderer pipeRenderer, int pipeLength,
-                                  @Nonnull CCRenderState renderState, @Nonnull Matrix4 translation,
-                                  @Nonnull IVertexOperation[] pipeline) {
-        Textures.PIPE_IN_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
-        for (int i = 0; i < pipeLength; i++) {
-            translation.translate(0.0, -1.0, 0.0);
-            pipeRenderer.render(renderState, translation, pipeline, PIPE_CUBOID);
+    /**
+     * Applies a fortune hammer to block drops based on a tier value.
+     *
+     * @param stack the item stack to check for recipes
+     * @param drops where the drops are stored to
+     * @return amount of items inserted to {@code drops}
+     */
+    public static int applyTieredHammerDrops(@Nonnull ItemStack stack, @Nonnull List<ItemStack> drops,
+                                             int energyTier, @Nonnull RecipeMap<?> blockDropRecipeMap,
+                                             int oreMultiplier) {
+        Recipe recipe = blockDropRecipeMap.findRecipe(
+                GTValues.V[energyTier],
+                Collections.singletonList(stack),
+                Collections.emptyList());
+        if (recipe == null || recipe.getOutputs().isEmpty()) return 0;
+        int c = 0;
+        for (ItemStack output : recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipe.getEUt()), energyTier, blockDropRecipeMap)) {
+            output = output.copy();
+            if (oreMultiplier > 0 && OreDictUnifier.getPrefix(output) == OrePrefix.crushed) {
+                output.grow(output.getCount() * oreMultiplier);
+            }
+            drops.add(output);
+            c++;
         }
+        return c;
     }
 }

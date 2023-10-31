@@ -31,7 +31,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -40,6 +39,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,7 +47,7 @@ import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner, IControllable, IDataInfoProvider, IFastRenderMetaTileEntity {
+public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, IControllable, IDataInfoProvider, IFastRenderMetaTileEntity {
 
     private final ItemStackHandler chargerInventory;
 
@@ -55,8 +55,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     private final long energyPerTick;
 
     private final MinerLogic<MetaTileEntityMiner> minerLogic;
-
-    private boolean hasNotEnoughEnergy;
 
     public MetaTileEntityMiner(@Nonnull ResourceLocation metaTileEntityId, int tier, int workFrequency, int maximumDiameter) {
         super(metaTileEntityId, tier);
@@ -86,37 +84,34 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        Textures.SCREEN.renderSided(EnumFacing.UP, renderState, translation, pipeline);
-        for (EnumFacing renderSide : EnumFacing.HORIZONTALS) {
-            if (renderSide == getFrontFacing()) {
-                Textures.PIPE_OUT_OVERLAY.renderSided(renderSide, renderState, translation, pipeline);
-            } else
-                Textures.CHUNK_MINER_OVERLAY.renderSided(renderSide, renderState, translation, pipeline);
+        Textures.MINER_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), minerLogic.isActive(), minerLogic.isWorkingEnabled());
+        if (hasFrontFacing()) {
+            Textures.PIPE_OUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
-        MinerUtil.renderPipe(Textures.SOLID_STEEL_CASING, this.minerLogic.getPipeLength(), renderState, translation, pipeline);
+        MinerRenderHelper.renderPipe(Textures.SOLID_STEEL_CASING, this.minerLogic.getPipeLength(), renderState, translation, pipeline);
     }
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        IMiningArea previewArea = this.minerLogic.getPreviewArea();
+        MiningArea previewArea = this.minerLogic.getPreviewArea();
         if (previewArea != null) previewArea.renderMetaTileEntity(this, x, y, z, partialTicks);
     }
 
     @Override
     public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
-        IMiningArea previewArea = this.minerLogic.getPreviewArea();
+        MiningArea previewArea = this.minerLogic.getPreviewArea();
         if (previewArea != null) previewArea.renderMetaTileEntityFast(this, renderState, translation, partialTicks);
     }
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        IMiningArea previewArea = this.minerLogic.getPreviewArea();
+        MiningArea previewArea = this.minerLogic.getPreviewArea();
         return previewArea != null ? previewArea.getRenderBoundingBox() : MinerUtil.EMPTY_AABB;
     }
 
     @Override
     public boolean shouldRenderInPass(int pass) {
-        IMiningArea previewArea = this.minerLogic.getPreviewArea();
+        MiningArea previewArea = this.minerLogic.getPreviewArea();
         return previewArea != null && previewArea.shouldRenderInPass(pass);
     }
 
@@ -150,17 +145,13 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         }
 
         builder.widget(
-                new ProgressWidget(() -> {
-                    if (!this.minerLogic.isWorking()) return 0;
-                    int workFrequency = this.minerLogic.getWorkFrequency();
-                    return workFrequency < 2 ? 1 : (getOffsetTimer() % workFrequency) / (double) workFrequency;
-                }, xStart - 4 - 20, sideWidgetY, 20, 20,
+                new ProgressWidget(this.minerLogic::getWorkProgress, xStart - 4 - 20, sideWidgetY, 20, 20,
                         GuiTextures.PROGRESS_BAR_MACERATE, ProgressWidget.MoveType.HORIZONTAL)
         ).widget(
                 new ImageWidget(xStart - 4 - 20, sideWidgetY + 20, 18, 18,
                         GuiTextures.INDICATOR_NO_ENERGY)
                         .setIgnoreColor(true)
-                        .setPredicate(() -> this.hasNotEnoughEnergy)
+                        .setPredicate(minerLogic::hasNotEnoughEnergy)
         ).widget(
                 new ImageWidget(152, 63 + yOffset, 17, 17,
                         GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
@@ -168,14 +159,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         ).bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, yOffset);
 
         return builder.build(getHolder(), entityPlayer);
-    }
-
-    @Override
-    public void describeMiningResourceStatus(@Nonnull List<ITextComponent> textList) {
-        if (!drainMiningResources(true)) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
-        }
     }
 
     @Override
@@ -198,16 +181,13 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     @Override
-    public boolean drainMiningResources(boolean simulate) {
+    public boolean drainMiningResources(@NotNull MinedBlockType minedBlockType, boolean pipeExtended, boolean simulate) {
+        if (minedBlockType == MinedBlockType.NOTHING) return true;
         long resultEnergy = energyContainer.getEnergyStored() - energyPerTick;
-        if (resultEnergy < 0 || resultEnergy > energyContainer.getEnergyCapacity()) {
-            this.hasNotEnoughEnergy = true;
-            return false;
-        }
+        if (resultEnergy < 0 || resultEnergy > energyContainer.getEnergyCapacity()) return false;
         if (!simulate) {
             energyContainer.removeEnergy(energyPerTick);
         }
-        this.hasNotEnoughEnergy = false;
         return true;
     }
 
@@ -308,7 +288,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
     @Override
     public boolean isActive() {
-        return minerLogic.isActive() && isWorkingEnabled();
+        return minerLogic.isActive();
     }
 
     @Nonnull

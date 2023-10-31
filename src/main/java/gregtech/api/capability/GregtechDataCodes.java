@@ -43,7 +43,8 @@ public class GregtechDataCodes {
     // Pump, Miner
     public static final int PUMP_HEAD_LEVEL = 200;
     // Miner
-    public static final int MINER_UPDATE_PREVIEW = 201;
+    public static final int MINER_UPDATE_PREVIEW = 51;
+    public static final int MINER_UPDATE_ACTIVE = 52;
 
     // Item Collector, Magic Energy Absorber, Large Boiler, Steam Oven
     public static final int IS_WORKING = 100;
