@@ -137,7 +137,7 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             TextureAtlasSprite activeSprite = ICubeRenderer.getResource(textureMap, modID, active);
 
             if (activeSprite == null) {
-                FMLClientHandler.instance().trackMissingTexture(new ResourceLocation(modID, "blocks/" + basePath + "/overlay_OVERLAY_FACE_active"));
+                FMLClientHandler.instance().trackMissingTexture(new ResourceLocation(modID, "blocks/" + basePath + "/overlay_" + overlayFace.toString().toLowerCase() + "_active"));
                 continue;
             }
 
