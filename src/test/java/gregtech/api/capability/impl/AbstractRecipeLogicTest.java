@@ -77,7 +77,7 @@ public class AbstractRecipeLogicTest {
             }
 
             @Override
-            protected long getMaxVoltage() {
+            public long getMaxVoltage() {
                 return 32;
             }
         };

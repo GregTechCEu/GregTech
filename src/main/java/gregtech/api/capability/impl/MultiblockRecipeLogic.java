@@ -300,7 +300,31 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     public long getMaximumOverclockVoltage() {
-        return getMaxVoltage();
+        IEnergyContainer energyContainer = getEnergyContainer();
+        if (energyContainer instanceof EnergyContainerList) {
+            long voltage;
+            long amperage;
+            if (energyContainer.getInputVoltage() > energyContainer.getOutputVoltage()) {
+                voltage = energyContainer.getInputVoltage();
+                amperage = energyContainer.getInputAmperage();
+            } else {
+                voltage = energyContainer.getOutputVoltage();
+                amperage = energyContainer.getOutputAmperage();
+            }
+
+            if (amperage == 1) {
+                // amperage is 1 when the energy is not exactly on a tier
+
+                // the voltage for recipe search is always on tier, so take the closest lower tier
+                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+            } else {
+                // amperage != 1 means the voltage is exactly on a tier
+                // ignore amperage, since only the voltage is relevant for recipe search
+                // amps are never > 3 in an EnergyContainerList
+                return voltage;
+            }
+        }
+        return Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
     }
 
     @Nonnull
@@ -368,32 +392,35 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected long getMaxVoltage() {
+    public long getMaxVoltage() {
         IEnergyContainer energyContainer = getEnergyContainer();
-        if (energyContainer instanceof EnergyContainerList) {
-            long voltage;
-            long amperage;
-            if (energyContainer.getInputVoltage() > energyContainer.getOutputVoltage()) {
-                voltage = energyContainer.getInputVoltage();
-                amperage = energyContainer.getInputAmperage();
-            } else {
-                voltage = energyContainer.getOutputVoltage();
-                amperage = energyContainer.getOutputAmperage();
-            }
-
-            if (amperage == 1) {
-                // amperage is 1 when the energy is not exactly on a tier
-
-                // the voltage for recipe search is always on tier, so take the closest lower tier
+        if (!consumesEnergy()) {
+            // Generators
+            long voltage = energyContainer.getOutputVoltage();
+            long amperage = energyContainer.getOutputAmperage();
+            if (energyContainer instanceof EnergyContainerList && amperage == 1) {
+                // Amperage is 1 when the energy is not exactly on a tier.
+                // The voltage for recipe search is always on tier, so take the closest lower tier.
+                // List check is done because single hatches will always be a "clean voltage," no need
+                // for any additional checks.
                 return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+            }
+            return voltage;
+        } else {
+            // Machines
+            if (energyContainer instanceof EnergyContainerList energyList) {
+                long highestVoltage = energyList.getHighestInputVoltage();
+                if (energyList.getNumHighestInputContainers() > 1) {
+                    // allow tier + 1 if there are multiple hatches present at the highest tier
+                    int tier = GTUtility.getTierByVoltage(highestVoltage);
+                    return GTValues.V[Math.min(tier + 1, GTValues.MAX)];
+                } else {
+                    return highestVoltage;
+                }
             } else {
-                // amperage != 1 means the voltage is exactly on a tier
-                // ignore amperage, since only the voltage is relevant for recipe search
-                // amps are never > 3 in an EnergyContainerList
-                return voltage;
+                return energyContainer.getInputVoltage();
             }
         }
-        return Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
     }
 
     @Nullable
