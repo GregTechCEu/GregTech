@@ -712,16 +712,75 @@ public class MachineRecipeLoader {
     }
 
     private static void registerBlastFurnaceRecipes() {
+        // Steel
+        BLAST_RECIPES.recipeBuilder().duration(500).EUt(VA[MV])
+                .input(ingot, Iron)
+                .fluidInputs(Oxygen.getFluid(200))
+                .output(ingot, Steel)
+                .output(dustTiny, Ash)
+                .blastFurnaceTemp(1000)
+                .buildAndRegister();
+
+        BLAST_RECIPES.recipeBuilder().duration(400).EUt(VA[MV])
+                .input(dust, Iron)
+                .fluidInputs(Oxygen.getFluid(200))
+                .output(ingot, Steel)
+                .output(dustTiny, Ash)
+                .circuitMeta(2)
+                .blastFurnaceTemp(1000)
+                .buildAndRegister();
+
+        BLAST_RECIPES.recipeBuilder().duration(300).EUt(VA[MV])
+                .input(ingot, WroughtIron)
+                .fluidInputs(Oxygen.getFluid(200))
+                .output(ingot, Steel)
+                .output(dustTiny, Ash)
+                .blastFurnaceTemp(1000)
+                .buildAndRegister();
+
+        BLAST_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
+                .input(dust, WroughtIron)
+                .fluidInputs(Oxygen.getFluid(200))
+                .output(ingot, Steel)
+                .output(dustTiny, Ash)
+                .circuitMeta(2)
+                .blastFurnaceTemp(1000)
+                .buildAndRegister();
+
+        BLAST_RECIPES.recipeBuilder().duration(250).EUt(VA[EV])
+                .input(dust, Iron, 4)
+                .input(dust, Carbon)
+                .output(ingot, Steel, 4)
+                .output(dustTiny, Ash)
+                .blastFurnaceTemp(2000)
+                .buildAndRegister();
+
+        BLAST_RECIPES.recipeBuilder().duration(50).EUt(VA[EV])
+                .input(dust, WroughtIron, 4)
+                .input(dust, Carbon)
+                .output(ingot, Steel, 4)
+                .output(dustTiny, Ash)
+                .blastFurnaceTemp(2000)
+                .buildAndRegister();
+
+        // Aluminium from aluminium oxide gems
         BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, Ruby).output(nugget, Aluminium, 3).output(dustTiny, DarkAsh).blastFurnaceTemp(1200).buildAndRegister();
         BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, Ruby).output(nugget, Aluminium, 3).output(dustTiny, DarkAsh).blastFurnaceTemp(1200).buildAndRegister();
         BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, GreenSapphire).output(nugget, Aluminium, 3).output(dustTiny, DarkAsh).blastFurnaceTemp(1200).buildAndRegister();
         BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, GreenSapphire).output(nugget, Aluminium, 3).output(dustTiny, DarkAsh).blastFurnaceTemp(1200).buildAndRegister();
         BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, Sapphire).output(nugget, Aluminium, 3).blastFurnaceTemp(1200).buildAndRegister();
         BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, Sapphire).output(nugget, Aluminium, 3).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(800).EUt(VA[HV]).input(dust, Magnesium, 2).fluidInputs(TitaniumTetrachloride.getFluid(1000)).outputs(OreDictUnifier.get(OrePrefix.ingotHot, Materials.Titanium), OreDictUnifier.get(OrePrefix.dust, Materials.MagnesiumChloride, 6)).blastFurnaceTemp(Materials.Titanium.getBlastTemperature() + 200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(500).EUt(VA[MV]).input(ingot, Iron).fluidInputs(Oxygen.getFluid(200)).output(ingot, Steel).output(dustTiny, Ash).blastFurnaceTemp(1000).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(300).EUt(VA[MV]).input(ingot, WroughtIron).fluidInputs(Oxygen.getFluid(200)).output(ingot, Steel).output(dustTiny, Ash).blastFurnaceTemp(1000).buildAndRegister();
 
+        // Titanium tetrachloride
+        BLAST_RECIPES.recipeBuilder().duration(800).EUt(VA[HV])
+                .input(dust, Magnesium, 2)
+                .fluidInputs(TitaniumTetrachloride.getFluid(1000))
+                .output(ingotHot, Titanium)
+                .output(dust, MagnesiumChloride, 6)
+                .blastFurnaceTemp(Titanium.getBlastTemperature() + 200)
+                .buildAndRegister();
+
+        // Rutile from ilmenite
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, Ilmenite, 10)
                 .input(dust, Carbon, 4)
