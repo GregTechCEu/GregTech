@@ -66,7 +66,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
-                .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
+                .addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3)
                 .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
                 .addCustom(tl -> {
                     if (isStructureFormed() && recipeLogic.isOxygenBoosted) {

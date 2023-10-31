@@ -138,6 +138,26 @@ public class MultiblockDisplayText {
         }
 
         /**
+         * Adds the max EU/t that this multiblock can produce, including how many amps. Recommended for multi-amp outputting multis.
+         * <br>
+         * Added if the structure is formed, if the amperage is greater than zero and if the max voltage is greater than zero.
+         */
+        public Builder addEnergyProductionAmpsLine(long maxVoltage, int amperage) {
+            if (!isStructureFormed) return this;
+            if (maxVoltage != 0 && amperage != 0) {
+                String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
+                // wrap in text component to keep it from being formatted
+                ITextComponent voltageName = new TextComponentString(GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
+
+                textList.add(TextComponentUtil.translationWithColor(
+                        TextFormatting.GRAY,
+                        "gregtech.multiblock.max_energy_per_tick_amps",
+                        energyFormatted, voltageName, amperage));
+            }
+            return this;
+        }
+
+        /**
          * Adds the max CWU/t that this multiblock can use.
          * <br>
          * Added if the structure is formed and if the max CWU/t is greater than zero.
