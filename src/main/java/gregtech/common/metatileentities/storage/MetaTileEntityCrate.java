@@ -109,7 +109,14 @@ public class MetaTileEntityCrate extends MetaTileEntity {
             int baseColor = ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()), GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             Textures.METAL_CRATE.render(renderState, translation, baseColor, pipeline);
         }
-        if(isTaped) {
+        boolean taped = isTaped;
+        if (renderContextStack != null && renderContextStack.getTagCompound() != null) {
+            NBTTagCompound tag = renderContextStack.getTagCompound();
+            if (tag.hasKey(TAPED_NBT) && tag.getBoolean(TAPED_NBT)) {
+                taped = true;
+            }
+        }
+        if (taped) {
             Textures.TAPED_OVERLAY.render(renderState, translation, pipeline);
         }
     }
