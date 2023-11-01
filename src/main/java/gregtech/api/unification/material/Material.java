@@ -4,8 +4,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GregTechAPI;
-import gregtech.api.fluids.fluidType.FluidType;
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.FluidBuilder;
+import gregtech.api.fluids.FluidState;
+import gregtech.api.fluids.store.FluidStorageKey;
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.info.MaterialFlag;
@@ -14,7 +16,6 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
@@ -183,21 +184,61 @@ public class Material implements Comparable<Material> {
         }
     }
 
+    /**
+     * Retrieves a fluid from the material.
+     * Attempts to retrieve with {@link FluidProperty#getPrimaryKey()}, {@link FluidStorageKeys#LIQUID} and
+     * {@link FluidStorageKeys#GAS}.
+     * @return the fluid
+     * @see #getFluid(FluidStorageKey)
+     */
     public Fluid getFluid() {
         FluidProperty prop = getProperty(PropertyKey.FLUID);
         if (prop == null) {
             throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a Fluid!");
         }
 
-        Fluid fluid = prop.getFluid();
-        if (fluid == null)
-            GTLog.logger.warn("Material {} Fluid was null!", this);
+        FluidStorageKey key = prop.getPrimaryKey();
+        Fluid fluid = null;
 
-        return fluid;
+        if (key != null) fluid = prop.getStorage().get(key);
+        if (fluid != null) return fluid;
+
+        fluid = getFluid(FluidStorageKeys.LIQUID);
+        if (fluid != null) return fluid;
+
+        return getFluid(FluidStorageKeys.GAS);
     }
 
+    /**
+     * @param key the key for the fluid
+     * @return the fluid corresponding with the key
+     */
+    public Fluid getFluid(@Nonnull FluidStorageKey key) {
+        FluidProperty prop = getProperty(PropertyKey.FLUID);
+        if (prop == null) {
+            throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a Fluid!");
+        }
+
+        return prop.getStorage().get(key);
+    }
+
+    /**
+     * @param amount the amount the FluidStack should have
+     * @return a FluidStack with the fluid and amount
+     * @see #getFluid(FluidStorageKey, int)
+     */
     public FluidStack getFluid(int amount) {
         return new FluidStack(getFluid(), amount);
+    }
+
+    /**
+     *
+     * @param key the key for the fluid
+     * @param amount the amount the FluidStack should have
+     * @return a FluidStack with the fluid and amount
+     */
+    public FluidStack getFluid(@Nonnull FluidStorageKey key, int amount) {
+        return new FluidStack(getFluid(key), amount);
     }
 
     public int getBlockHarvestLevel() {
@@ -223,11 +264,6 @@ public class Material implements Comparable<Material> {
     @ZenGetter("materialRGB")
     public int getMaterialRGB() {
         return materialInfo.color;
-    }
-
-    @ZenGetter("hasFluidColor")
-    public boolean hasFluidColor() {
-        return materialInfo.hasFluidColor;
     }
 
     public void setMaterialIconSet(MaterialIconSet materialIconSet) {
@@ -297,8 +333,7 @@ public class Material implements Comparable<Material> {
     }
 
     public FluidStack getPlasma(int amount) {
-        PlasmaProperty prop = properties.getProperty(PropertyKey.PLASMA);
-        return prop == null ? null : prop.getPlasma(amount);
+        return getFluid(FluidStorageKeys.PLASMA, amount);
     }
 
     //TODO clean up the name-related methods
@@ -446,47 +481,82 @@ public class Material implements Comparable<Material> {
 
         /**
          * Add a {@link FluidProperty} to this Material.<br>
-         * Will be created as a {@link FluidTypes#LIQUID}, without a Fluid Block.
-         *
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
+         * Will be created as a {@link FluidStorageKeys#LIQUID}, with standard {@link FluidBuilder} defaults.
+         * <p>
+         * Can be called multiple times to add multiple fluids.
          */
         public Builder fluid() {
-            properties.ensureSet(PropertyKey.FLUID);
-            return this;
+            return fluid(FluidStorageKeys.LIQUID, new FluidBuilder());
         }
 
         /**
          * Add a {@link FluidProperty} to this Material.<br>
-         * Will be created without a Fluid Block.
-         *
-         * @param type The {@link FluidType} of this Material, either Fluid or Gas.
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
+         * Will be created with the specified state a with standard {@link FluidBuilder} defaults.
+         * <p>
+         * Can be called multiple times to add multiple fluids.
          */
-        public Builder fluid(FluidType type) {
-            return fluid(type, false);
+        public Builder fluid(@Nonnull FluidStorageKey key, @Nonnull FluidState state) {
+            return fluid(key, new FluidBuilder().state(state));
         }
 
         /**
-         * Add a {@link FluidProperty} to this Material.
-         *
-         * @param type     The {@link FluidType} of this Material.
-         * @param hasBlock If true, create a Fluid Block for this Material.
-         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
+         * Add a {@link FluidProperty} to this Material.<br>
+         * <p>
+         * Can be called multiple times to add multiple fluids.
          */
-        public Builder fluid(FluidType type, boolean hasBlock) {
-            properties.setProperty(PropertyKey.FLUID, new FluidProperty(type, hasBlock));
+        public Builder fluid(@Nonnull FluidStorageKey key, @Nonnull FluidBuilder builder) {
+            properties.ensureSet(PropertyKey.FLUID);
+            FluidProperty property = properties.getProperty(PropertyKey.FLUID);
+            property.getStorage().enqueueRegistration(key, builder);
             return this;
         }
 
         /**
-         * Add a {@link PlasmaProperty} to this Material.<br>
-         * Is not required to have a {@link FluidProperty}, and will not automatically apply one.
-         *
-         * @throws IllegalArgumentException If a {@link PlasmaProperty} has already been added to this Material.
+         * Add a liquid for this material.
+         * @see #fluid(FluidStorageKey, FluidState)
+         */
+        public Builder liquid() {
+            return fluid(FluidStorageKeys.LIQUID, FluidState.LIQUID);
+        }
+
+        /**
+         * Add a liquid for this material.
+         * @see #fluid(FluidStorageKey, FluidState)
+         */
+        public Builder liquid(@Nonnull FluidBuilder builder) {
+            return fluid(FluidStorageKeys.LIQUID, builder.state(FluidState.LIQUID));
+        }
+
+        /**
+         * Add a plasma for this material.
+         * @see #fluid(FluidStorageKey, FluidState)
          */
         public Builder plasma() {
-            properties.ensureSet(PropertyKey.PLASMA);
-            return this;
+            return fluid(FluidStorageKeys.PLASMA, FluidState.PLASMA);
+        }
+
+        /**
+         * Add a plasma for this material.
+         * @see #fluid(FluidStorageKey, FluidState)
+         */
+        public Builder plasma(@Nonnull FluidBuilder builder) {
+            return fluid(FluidStorageKeys.PLASMA, builder.state(FluidState.PLASMA));
+        }
+
+        /**
+         * Add a gas for this material.
+         * @see #fluid(FluidStorageKey, FluidState)
+         */
+        public Builder gas() {
+            return fluid(FluidStorageKeys.GAS, FluidState.GAS);
+        }
+
+        /**
+         * Add a gas for this material.
+         * @see #fluid(FluidStorageKey, FluidState)
+         */
+        public Builder gas(@Nonnull FluidBuilder builder) {
+            return fluid(FluidStorageKeys.GAS, builder.state(FluidState.GAS));
         }
 
         /**
@@ -688,7 +758,6 @@ public class Material implements Comparable<Material> {
             if (prop == null) dust(harvestLevel, 0);
             else if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
             properties.ensureSet(PropertyKey.POLYMER);
-            properties.ensureSet(PropertyKey.FLUID);
             return this;
         }
 
@@ -710,21 +779,7 @@ public class Material implements Comparable<Material> {
          * @param color The RGB-formatted Color.
          */
         public Builder color(int color) {
-            color(color, true);
-            return this;
-        }
-
-        /**
-         * Set the Color of this Material.<br>
-         * Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called, where
-         * it will be a weighted average of the components of the Material.
-         *
-         * @param color         The RGB-formatted Color.
-         * @param hasFluidColor Whether the fluid should be colored or not.
-         */
-        public Builder color(int color, boolean hasFluidColor) {
             this.materialInfo.color = color;
-            this.materialInfo.hasFluidColor = hasFluidColor;
             return this;
         }
 
@@ -739,9 +794,7 @@ public class Material implements Comparable<Material> {
          * <ul>
          * <li> {@link GemProperty}, it will default to {@link MaterialIconSet#GEM_VERTICAL}
          * <li> {@link IngotProperty} or {@link DustProperty}, it will default to {@link MaterialIconSet#DULL}
-         * <li> {@link FluidProperty}, it will default to either {@link MaterialIconSet#FLUID}
-         *      or {@link MaterialIconSet#GAS}, depending on the {@link FluidType}
-         * <li> {@link PlasmaProperty}, it will default to {@link MaterialIconSet#FLUID}
+         * <li> {@link FluidProperty}, it will default to {@link MaterialIconSet#FLUID}
          * </ul>
          * Default will be determined by first-found Property in this order, unless specified.
          *
@@ -861,12 +914,6 @@ public class Material implements Comparable<Material> {
 
         public Builder ore(int oreMultiplier, int byproductMultiplier, boolean emissive) {
             properties.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier, emissive));
-            return this;
-        }
-
-        public Builder fluidTemp(int temp) {
-            properties.ensureSet(PropertyKey.FLUID);
-            properties.getProperty(PropertyKey.FLUID).setFluidTemperature(temp);
             return this;
         }
 
@@ -995,18 +1042,11 @@ public class Material implements Comparable<Material> {
         private int color = -1;
 
         /**
-         * The color of this Material.
-         * <p>
-         * Default: 0xFFFFFF if no Components, otherwise it will be the average of Components.
-         */
-        private boolean hasFluidColor = true;
-
-        /**
          * The IconSet of this Material.
          * <p>
          * Default: - GEM_VERTICAL if it has GemProperty.
          * - DULL if has DustProperty or IngotProperty.
-         * - FLUID or GAS if only has FluidProperty or PlasmaProperty, depending on {@link FluidType}.
+         * - FLUID if only has FluidProperty.
          */
         private MaterialIconSet iconSet;
 
@@ -1042,12 +1082,10 @@ public class Material implements Comparable<Material> {
                 } else if (p.hasProperty(PropertyKey.DUST) || p.hasProperty(PropertyKey.INGOT) || p.hasProperty(PropertyKey.POLYMER)) {
                     iconSet = MaterialIconSet.DULL;
                 } else if (p.hasProperty(PropertyKey.FLUID)) {
-                    if (p.getProperty(PropertyKey.FLUID).isGas()) {
-                        iconSet = MaterialIconSet.GAS;
-                    } else iconSet = MaterialIconSet.FLUID;
-                } else if (p.hasProperty(PropertyKey.PLASMA))
                     iconSet = MaterialIconSet.FLUID;
-                else iconSet = MaterialIconSet.DULL;
+                } else {
+                    iconSet = MaterialIconSet.DULL;
+                }
             }
 
             // Verify MaterialRGB

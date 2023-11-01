@@ -5,6 +5,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFire;
+import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,23 +16,22 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+public class GTFluidBlock extends BlockFluidClassic {
 
-public class MaterialFluidBlock extends BlockFluidClassic {
+    private final boolean isFlammable;
+    private final boolean isExplosive;
+    private final boolean isSticky;
+    private @Nullable Material gtMaterial;
 
-    private final Material gtMaterial;
-    public final boolean isFlammable;
-    public final boolean isExplosive;
-    public final boolean isSticky;
-
-    public MaterialFluidBlock(@Nonnull Fluid fluid, @Nonnull GTFluidMaterial material, @Nonnull Material gtMaterial) {
+    public GTFluidBlock(@NotNull Fluid fluid, @NotNull MaterialLiquid material, boolean isFlammable,
+                        boolean isExplosive, boolean isSticky) {
         super(fluid, material);
-        this.gtMaterial = gtMaterial;
-        this.isFlammable = gtMaterial.hasFlag(MaterialFlags.FLAMMABLE);
-        this.isExplosive = gtMaterial.hasFlag(MaterialFlags.EXPLOSIVE);
-        this.isSticky = gtMaterial.hasFlag(MaterialFlags.STICKY);
+        this.isFlammable = isFlammable;
+        this.isExplosive = isExplosive;
+        this.isSticky = isSticky;
 
         boolean displaces = fluid.getDensity() > 1000; // water density
         this.displacements.put(Blocks.WATER, displaces);
@@ -41,29 +41,51 @@ public class MaterialFluidBlock extends BlockFluidClassic {
         this.displacements.put(Blocks.FLOWING_LAVA, displaces);
     }
 
+    public GTFluidBlock(@NotNull Fluid fluid, @NotNull MaterialLiquid material, @NotNull Material gtMaterial) {
+        this(fluid, material, gtMaterial.hasFlag(MaterialFlags.FLAMMABLE),
+                gtMaterial.hasFlag(MaterialFlags.EXPLOSIVE), gtMaterial.hasFlag(MaterialFlags.STICKY));
+        this.gtMaterial = gtMaterial;
+    }
+
+    public boolean isFlammable() {
+        return isFlammable;
+    }
+
+    public boolean isExplosive() {
+        return isExplosive;
+    }
+
+    public boolean isSticky() {
+        return isSticky;
+    }
+
+    public @Nullable Material getGtMaterial() {
+        return gtMaterial;
+    }
+
     @Nullable
     @Override
-    public Boolean isEntityInsideMaterial(@Nonnull IBlockAccess world, @Nonnull BlockPos blockpos, @Nonnull IBlockState iblockstate, @Nonnull Entity entity, double yToTest, @Nonnull net.minecraft.block.material.Material materialIn, boolean testingHead) {
+    public Boolean isEntityInsideMaterial(@NotNull IBlockAccess world, @NotNull BlockPos blockpos, @NotNull IBlockState iblockstate, @NotNull Entity entity, double yToTest, @NotNull net.minecraft.block.material.Material materialIn, boolean testingHead) {
         return materialIn == net.minecraft.block.material.Material.WATER ? true : null;
     }
 
     @Override
-    public int getFireSpreadSpeed(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+    public int getFireSpreadSpeed(@NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EnumFacing face) {
         return this.isFlammable ? 5 : 0;
     }
 
     @Override
-    public boolean isFlammable(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+    public boolean isFlammable(@NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EnumFacing face) {
         return this.isFlammable;
     }
 
     @Override
-    public int getFlammability(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+    public int getFlammability(@NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EnumFacing face) {
         return this.isFlammable ? 200 : 0;
     }
 
     @Override
-    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Block neighborBlock, @Nonnull BlockPos neighbourPos) {
+    public void neighborChanged(@NotNull IBlockState state, @NotNull World world, @NotNull BlockPos pos, @NotNull Block neighborBlock, @NotNull BlockPos neighbourPos) {
         super.neighborChanged(state, world, pos, neighborBlock, neighbourPos);
         if (this.isExplosive && this.isFlammable && neighborBlock instanceof BlockFire && GTValues.RNG.nextInt(5) == 0) {
             world.setBlockToAir(pos);
@@ -72,7 +94,7 @@ public class MaterialFluidBlock extends BlockFluidClassic {
     }
 
     @Override
-    public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
+    public void onEntityCollision(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state, @NotNull Entity entityIn) {
         if (this.isSticky) {
             if (entityIn instanceof EntityPlayer && ((EntityPlayer) entityIn).isCreative()) {
                 return;
@@ -85,7 +107,7 @@ public class MaterialFluidBlock extends BlockFluidClassic {
     }
 
     @Override
-    public boolean canDisplace(@Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+    public boolean canDisplace(@NotNull IBlockAccess world, @NotNull BlockPos pos) {
         if (this.isFlammable && world.getBlockState(pos).getMaterial() == net.minecraft.block.material.Material.FIRE) {
             return false;
         }
@@ -93,15 +115,10 @@ public class MaterialFluidBlock extends BlockFluidClassic {
     }
 
     @Override
-    public boolean displaceIfPossible(@Nonnull World world, @Nonnull BlockPos pos) {
+    public boolean displaceIfPossible(@NotNull World world, @NotNull BlockPos pos) {
         if (this.isFlammable && world.getBlockState(pos).getMaterial() == net.minecraft.block.material.Material.FIRE) {
             return false;
         }
         return super.displaceIfPossible(world, pos);
-    }
-
-    @Nonnull
-    public Material getGTMaterial() {
-        return this.gtMaterial;
     }
 }

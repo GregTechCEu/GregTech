@@ -5257,6 +5257,9 @@ gregtech.tool_action.crowbar=§8Use Crowbar to remove Covers
 gregtech.tool_action.tape=§8Use Tape to fix Maintenance Problems
 
 gregtech.fluid.generic=%s
+gregtech.fluid.liquid_generic=Liquid %s
+gregtech.fluid.gas_generic=%s Gas
+gregtech.fluid.gas_vapor=%s Vapor
 gregtech.fluid.plasma=%s Plasma
 gregtech.fluid.empty=Empty
 gregtech.fluid.amount=§9Amount: %,d/%,d L
