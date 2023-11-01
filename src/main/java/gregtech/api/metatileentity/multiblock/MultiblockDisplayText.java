@@ -152,7 +152,7 @@ public class MultiblockDisplayText {
                 textList.add(TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick_amps",
-                        energyFormatted, voltageName, amperage));
+                        energyFormatted, amperage, voltageName));
             }
             return this;
         }

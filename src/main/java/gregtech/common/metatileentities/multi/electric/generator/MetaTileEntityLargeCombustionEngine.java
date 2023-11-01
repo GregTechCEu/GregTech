@@ -64,10 +64,16 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     protected void addDisplayText(List<ITextComponent> textList) {
         LargeCombustionEngineWorkableHandler recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
 
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
-                .addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3)
-                .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
+        MultiblockDisplayText.Builder builder = MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
+
+        if (isExtreme) {
+            builder.addEnergyProductionLine(GTValues.V[tier + 1], recipeLogic.getRecipeEUt());
+        } else {
+            builder.addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3);
+        }
+
+        builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
                 .addCustom(tl -> {
                     if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
                         String key = isExtreme

@@ -295,7 +295,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
         } else if (index == 1) {
             // Rotor speed
             IRotorHolder rotorHolder = getRotorHolder();
-            if (rotorHolder == null || rotorHolder.getRotorEfficiency() == 0) {
+            if (rotorHolder == null || rotorHolder.getRotorEfficiency() <= 0) {
                 hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.turbine.no_rotor"));
             } else {
                 int rotorSpeed = rotorHolder.getRotorSpeed();
@@ -317,7 +317,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
         } else {
             // Rotor durability
             IRotorHolder rotorHolder = getRotorHolder();
-            if (rotorHolder == null || rotorHolder.getRotorEfficiency() == 0) {
+            if (rotorHolder == null || rotorHolder.getRotorEfficiency() <= 0) {
                 // No rotor found
                 hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.turbine.no_rotor"));
             } else {

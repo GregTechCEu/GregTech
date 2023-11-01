@@ -195,7 +195,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addLowPowerLine(!drainEnergy(true))
+                .addLowPowerLine(isStructureFormed() && !drainEnergy(true))
                 .addCustom(tl -> {
                     if (isStructureFormed() && minerLogic.isInventoryFull()) {
                         tl.add(TextComponentUtil.translationWithColor(
