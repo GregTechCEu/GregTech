@@ -290,7 +290,6 @@ public class Materials {
     public static Material Chromite;
     public static Material Cinnabar;
     public static Material Water;
-    public static Material LiquidOxygen;
     public static Material Coal;
     public static Material Cobaltite;
     public static Material Cooperite;
@@ -310,7 +309,6 @@ public class Materials {
     public static Material Invar;
     public static Material Kanthal;
     public static Material Lazurite;
-    public static Material LiquidHelium;
     public static Material Magnalium;
     public static Material Magnesite;
     public static Material Magnetite;

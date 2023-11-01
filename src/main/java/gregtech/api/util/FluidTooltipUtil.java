@@ -1,10 +1,7 @@
 package gregtech.api.util;
 
-import gregtech.api.fluids.fluidType.FluidType;
-import gregtech.api.fluids.fluidType.FluidTypes;
+import gregtech.api.fluids.GTFluid;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.FluidProperty;
-import gregtech.api.unification.material.properties.PropertyKey;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.Fluid;
@@ -14,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Supplier;
+
+import static gregtech.api.fluids.FluidConstants.CRYOGENIC_FLUID_THRESHOLD;
 
 public class FluidTooltipUtil {
 
@@ -30,20 +29,6 @@ public class FluidTooltipUtil {
      */
     public static void registerTooltip(@NotNull Fluid fluid, @NotNull Supplier<List<String>> tooltip) {
         tooltips.put(fluid, tooltip);
-    }
-
-    /**
-     * Used to register a tooltip to a Fluid.
-     * Creates the default Material Fluid tooltip.
-     *
-     * @param fluid    The fluid to register a tooltip for.
-     * @param material The material of this fluid.
-     * @param type     The type of this fluid.
-     */
-    public static void registerTooltip(@NotNull Fluid fluid, @NotNull Material material, @NotNull FluidType type) {
-        if (material.hasFluid()) {
-            registerTooltip(fluid, createMaterialTooltip(material, type == FluidTypes.PLASMA));
-        }
     }
 
     /**
@@ -89,27 +74,24 @@ public class FluidTooltipUtil {
         return getFluidTooltip(FluidRegistry.getFluid(fluidName));
     }
 
-    private static Supplier<List<String>> createMaterialTooltip(Material material, boolean isPlasma) {
+    public static Supplier<List<String>> createGTFluidTooltip(GTFluid fluid) {
         return () -> {
             List<String> tooltip = new ArrayList<>();
-            if (!material.getChemicalFormula().isEmpty()) {
-                tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
+            if (fluid instanceof GTFluid.GTMaterialFluid materialFluid) {
+                Material material = materialFluid.getMaterial();
+                if (!material.getChemicalFormula().isEmpty()) {
+                    tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
+                }
             }
 
-            FluidProperty property = material.getProperty(PropertyKey.FLUID);
-            int temperature = property.getFluidTemperature();
-            tooltip.add(I18n.format("gregtech.fluid.temperature", temperature));
+            tooltip.add(I18n.format("gregtech.fluid.temperature", fluid.getTemperature()));
+            tooltip.add(I18n.format(fluid.getState().getTranslationKey()));
+            fluid.getAttributes().forEach(a -> a.appendFluidTooltips(tooltip));
 
-            if (isPlasma) {
-                tooltip.add(I18n.format(FluidTypes.PLASMA.getUnlocalizedTooltip()));
-            } else {
-                tooltip.add(I18n.format(property.getFluidType().getUnlocalizedTooltip()));
-            }
-            property.getFluidType().addAdditionalTooltips(tooltip);
-            if (temperature < 120) {
-                // fluids colder than 120K are cryogenic
+            if (fluid.getTemperature() < CRYOGENIC_FLUID_THRESHOLD) {
                 tooltip.add(I18n.format("gregtech.fluid.temperature.cryogenic"));
             }
+
             return tooltip;
         };
     }

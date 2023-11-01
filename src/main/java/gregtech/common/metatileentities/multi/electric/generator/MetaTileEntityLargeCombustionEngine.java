@@ -7,6 +7,7 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
@@ -314,7 +315,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         private final int tier;
 
         private static final FluidStack OXYGEN_STACK = Materials.Oxygen.getFluid(20);
-        private static final FluidStack LIQUID_OXYGEN_STACK = Materials.LiquidOxygen.getFluid(80);
+        private static final FluidStack LIQUID_OXYGEN_STACK = Materials.Oxygen.getFluid(FluidStorageKeys.LIQUID, 80);
         private static final FluidStack LUBRICANT_STACK = Materials.Lubricant.getFluid(1);
 
         public LargeCombustionEngineWorkableHandler(RecipeMapMultiblockController tileEntity, boolean isExtreme) {

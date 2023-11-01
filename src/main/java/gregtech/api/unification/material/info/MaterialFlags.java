@@ -75,6 +75,11 @@ public class MaterialFlags {
      */
     public static final MaterialFlag STICKY = new MaterialFlag.Builder("sticky").build();
 
+    /**
+     * Add to material if it is some kind of glowing material
+     */
+    public static final MaterialFlag GLOWING = new MaterialFlag.Builder("glowing").build();
+
     //////////////////
     //     DUST     //
     //////////////////
