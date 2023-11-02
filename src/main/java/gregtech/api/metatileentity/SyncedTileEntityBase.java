@@ -32,7 +32,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
         dataWriter.accept(new PacketBuffer(backedBuffer));
         byte[] updateData = Arrays.copyOfRange(backedBuffer.array(), 0, backedBuffer.writerIndex());
         this.updates.add(discriminator, updateData);
-        if (this.updates.size() == 1) notifyWorld(); // if the data is not empty we already notified the world
+        notifyWorld(); // if the data is not empty we already notified the world
     }
 
     /**
