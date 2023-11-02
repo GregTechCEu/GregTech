@@ -629,7 +629,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                         insertedStackCopy.setCount(amountCanInsertIntoExport);
                         getExportItems().insertItem(0, insertedStackCopy, false);
                     }
-                    return insertedStack;
 
                 } else {
                     // could not fit everything, but still need to update the virtualized total count
