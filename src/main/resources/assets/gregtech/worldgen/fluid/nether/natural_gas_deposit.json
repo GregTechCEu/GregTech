@@ -1,14 +1,14 @@
 {
-  "weight": 35,
-  "name": "Nether Natural Gas Deposit",
-  "yield": {
-    "min": 150,
-    "max": 300
+  "name" : "gregtech.veins.fluid.natural_gas_nether",
+  "weight" : 35,
+  "yield" : {
+    "min" : 150,
+    "max" : 300
   },
-  "depletion": {
-    "amount": 1,
-    "chance": 100,
-    "depleted_yield": 40
+  "depletion" : {
+    "amount" : 1,
+    "chance" : 100,
+    "depleted_yield" : 40
   },
   "fluid": "natural_gas",
   "dimension_filter": [

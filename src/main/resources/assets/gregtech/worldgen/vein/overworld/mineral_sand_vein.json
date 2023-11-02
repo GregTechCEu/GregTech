@@ -1,14 +1,15 @@
 {
-  "weight": 80,
-  "density": 0.2,
-  "max_height": 60,
-  "min_height": 35,
-  "vein_populator": {
-    "type": "surface_rock",
-    "material": "basaltic_mineral_sand"
+  "name" : "gregtech.veins.ore.mineral_sand",
+  "weight" : 80,
+  "density" : 0.2,
+  "max_height" : 60,
+  "min_height" : 35,
+  "vein_populator" : {
+    "type" : "surface_rock",
+    "material" : "basaltic_mineral_sand"
   },
-  "generator": {
-    "type": "layered",
+  "generator" : {
+    "type" : "layered",
     "radius": [
       17,
       24

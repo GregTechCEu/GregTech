@@ -1,13 +1,14 @@
 {
-  "weight": 5,
-  "density": 0.25,
-  "min_height": 20,
-  "max_height": 50,
-  "vein_populator": {
-    "type": "surface_rock",
-    "material": "molybdenite"
+  "name" : "gregtech.veins.ore.molybdenum",
+  "weight" : 5,
+  "density" : 0.25,
+  "min_height" : 20,
+  "max_height" : 50,
+  "vein_populator" : {
+    "type" : "surface_rock",
+    "material" : "molybdenite"
   },
-  "dimension_filter": [
+  "dimension_filter" : [
     "is_nether"
   ],
   "generator": {

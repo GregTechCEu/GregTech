@@ -1,13 +1,14 @@
 {
-  "weight": 30,
-  "density": 0.2,
-  "min_height": 20,
-  "max_height": 40,
-  "vein_populator": {
-    "type": "surface_rock",
-    "material": "banded_iron"
+  "name" : "gregtech.veins.ore.banded_iron",
+  "weight" : 30,
+  "density" : 0.2,
+  "min_height" : 20,
+  "max_height" : 40,
+  "vein_populator" : {
+    "type" : "surface_rock",
+    "material" : "banded_iron"
   },
-  "dimension_filter": [
+  "dimension_filter" : [
     "is_nether"
   ],
   "generator": {

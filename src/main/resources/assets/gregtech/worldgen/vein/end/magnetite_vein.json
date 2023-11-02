@@ -1,13 +1,14 @@
 {
-  "weight": 30,
-  "density": 0.15,
-  "min_height": 20,
-  "max_height": 80,
-  "vein_populator": {
-    "type": "surface_rock",
-    "material": "chromite"
+  "name" : "gregtech.veins.ore.magnetite",
+  "weight" : 30,
+  "density" : 0.15,
+  "min_height" : 20,
+  "max_height" : 80,
+  "vein_populator" : {
+    "type" : "surface_rock",
+    "material" : "chromite"
   },
-  "dimension_filter": [
+  "dimension_filter" : [
     "name:the_end"
   ],
   "generator": {

@@ -1,13 +1,14 @@
 {
-  "weight": 30,
-  "density": 0.25,
-  "min_height": 5,
-  "max_height": 30,
-  "vein_populator": {
-    "type": "surface_rock",
-    "material": "beryllium"
+  "name" : "gregtech.veins.ore.beryllium",
+  "weight" : 30,
+  "density" : 0.25,
+  "min_height" : 5,
+  "max_height" : 30,
+  "vein_populator" : {
+    "type" : "surface_rock",
+    "material" : "beryllium"
   },
-  "dimension_filter": [
+  "dimension_filter" : [
     "is_nether"
   ],
   "generator": {

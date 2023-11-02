@@ -1,14 +1,15 @@
 {
-  "weight": 40,
-  "density": 0.25,
-  "max_height": 40,
-  "min_height": 10,
-  "vein_populator": {
-    "type": "surface_rock",
-    "material": "nickel"
+  "name" : "gregtech.veins.ore.nickel",
+  "weight" : 40,
+  "density" : 0.25,
+  "max_height" : 40,
+  "min_height" : 10,
+  "vein_populator" : {
+    "type" : "surface_rock",
+    "material" : "nickel"
   },
-  "generator": {
-    "type": "layered",
+  "generator" : {
+    "type" : "layered",
     "radius": [
       14,
       16

@@ -1,13 +1,14 @@
 {
-  "weight": 20,
-  "density": 0.2,
-  "min_height": 20,
-  "max_height": 60,
-  "vein_populator": {
-    "type": "surface_rock",
-    "material": "lithium"
+  "name" : "gregtech.veins.ore.scheelite",
+  "weight" : 20,
+  "density" : 0.2,
+  "min_height" : 20,
+  "max_height" : 60,
+  "vein_populator" : {
+    "type" : "surface_rock",
+    "material" : "lithium"
   },
-  "dimension_filter": [
+  "dimension_filter" : [
     "name:the_end"
   ],
   "generator": {

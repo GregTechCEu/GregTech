@@ -1,14 +1,15 @@
 {
-  "weight": 20,
-  "density": 0.25,
-  "max_height": 40,
-  "min_height": 10,
-  "vein_populator": {
-    "type": "surface_rock",
-    "material": "olivine"
+  "name" : "gregtech.veins.ore.olivine",
+  "weight" : 20,
+  "density" : 0.25,
+  "max_height" : 40,
+  "min_height" : 10,
+  "vein_populator" : {
+    "type" : "surface_rock",
+    "material" : "olivine"
   },
-  "generator": {
-    "type": "layered",
+  "generator" : {
+    "type" : "layered",
     "radius": [
       14,
       16
