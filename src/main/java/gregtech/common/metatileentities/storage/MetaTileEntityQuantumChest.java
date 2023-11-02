@@ -159,7 +159,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
             }
 
             if (previousStack == null || !areItemStackIdentical(previousStack, virtualItemStack)) {
-                writeCustomData(UPDATE_ITEM, buf -> buf.writeItemStack(virtualItemStack));
+                writeCustomData(UPDATE_ITEM, buf -> {
+                    virtualItemStack.setCount(1);
+                    buf.writeItemStack(virtualItemStack);
+                });
                 previousStack = virtualItemStack;
             }
             if (previousStackSize != itemsStoredInside) {
@@ -386,6 +389,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
         buf.writeBoolean(autoOutputItems);
+        this.virtualItemStack.setCount(1);
         buf.writeItemStack(virtualItemStack);
         buf.writeLong(itemsStoredInside);
         buf.writeBoolean(voiding);
