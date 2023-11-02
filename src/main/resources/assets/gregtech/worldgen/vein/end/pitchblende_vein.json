@@ -1,14 +1,14 @@
 {
-  "name" : "gregtech.veins.ore.pitchblende",
-  "weight" : 20,
-  "density" : 0.25,
-  "min_height" : 30,
-  "max_height" : 60,
-  "vein_populator" : {
-    "type" : "surface_rock",
-    "material" : "uraninite"
+  "name": "gregtech.veins.ore.pitchblende",
+  "weight": 20,
+  "density": 0.25,
+  "min_height": 30,
+  "max_height": 60,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "uraninite"
   },
-  "dimension_filter" : [
+  "dimension_filter": [
     "name:the_end"
   ],
   "generator": {

@@ -1,15 +1,15 @@
 {
-  "name" : "gregtech.veins.ore.sapphire",
-  "weight" : 60,
-  "density" : 0.25,
-  "max_height" : 40,
-  "min_height" : 10,
-  "vein_populator" : {
-    "type" : "surface_rock",
-    "material" : "sapphire"
+  "name": "gregtech.veins.ore.sapphire",
+  "weight": 60,
+  "density": 0.25,
+  "max_height": 40,
+  "min_height": 10,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "sapphire"
   },
-  "generator" : {
-    "type" : "layered",
+  "generator": {
+    "type": "layered",
     "radius": [
       14,
       16

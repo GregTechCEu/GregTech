@@ -1,14 +1,14 @@
 {
-  "name" : "gregtech.veins.fluid.heavy_oil",
-  "weight" : 15,
-  "yield" : {
-    "min" : 100,
-    "max" : 200
+  "name": "gregtech.veins.fluid.heavy_oil",
+  "weight": 15,
+  "yield": {
+    "min": 100,
+    "max": 200
   },
-  "depletion" : {
-    "amount" : 1,
-    "chance" : 100,
-    "depleted_yield" : 20
+  "depletion": {
+    "amount": 1,
+    "chance": 100,
+    "depleted_yield": 20
   },
   "fluid": "oil_heavy",
   "biome_modifier": {

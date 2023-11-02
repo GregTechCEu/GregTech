@@ -1,14 +1,14 @@
 {
-  "name" : "gregtech.veins.ore.naquadah",
-  "weight" : 30,
-  "density" : 0.15,
-  "min_height" : 10,
-  "max_height" : 90,
-  "vein_populator" : {
-    "type" : "surface_rock",
-    "material" : "naquadah"
+  "name": "gregtech.veins.ore.naquadah",
+  "weight": 30,
+  "density": 0.15,
+  "min_height": 10,
+  "max_height": 90,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "naquadah"
   },
-  "dimension_filter" : [
+  "dimension_filter": [
     "name:the_end"
   ],
   "generator": {

@@ -1,14 +1,14 @@
 {
-  "name" : "gregtech.veins.fluid.lava",
-  "weight" : 65,
-  "yield" : {
-    "min" : 125,
-    "max" : 250
+  "name": "gregtech.veins.fluid.lava",
+  "weight": 65,
+  "yield": {
+    "min": 125,
+    "max": 250
   },
-  "depletion" : {
-    "amount" : 1,
-    "chance" : 100,
-    "depleted_yield" : 30
+  "depletion": {
+    "amount": 1,
+    "chance": 100,
+    "depleted_yield": 30
   },
   "fluid": "lava",
   "dimension_filter": [
