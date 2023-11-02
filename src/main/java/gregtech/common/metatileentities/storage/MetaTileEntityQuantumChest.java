@@ -121,12 +121,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     }
 
     @Override
-    public int getActualComparatorValue() {
-        float f = itemsStoredInside / (maxStoredItems * 1.0f);
-        return MathHelper.floor(f * 14.0f) + (itemsStoredInside > 0 ? 1 : 0);
-    }
-
-    @Override
     public void update() {
         super.update();
         EnumFacing currentOutputFacing = getOutputFacing();
