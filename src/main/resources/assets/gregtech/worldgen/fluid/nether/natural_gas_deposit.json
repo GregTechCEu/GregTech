@@ -1,5 +1,5 @@
 {
-  "name": "gregtech.veins.fluid.natural_gas",
+  "name": "gregtech.veins.fluid.natural_gas_nether",
   "weight": 35,
   "yield": {
     "min": 150,
