@@ -5266,7 +5266,7 @@ gregtech.jei.ore.sporadic_2=Spawns anywhere in the vein
 gregtech.jei.ore.spawn_range=Spawn Range: %d - %d
 gregtech.jei.ore.vein_weight=Vein Weight: %d
 gregtech.jei.ore.dimension=Dimensions:
-gregtech.jei.ore.surfacematerial=Surface%nMaterial
+gregtech.jei.ore.surfacematerial=Surface Material
 
 fluid.spawnlocation.name=Fluid Vein Information
 gregtech.jei.fluid.vein_weight=Vein Weight: %d
