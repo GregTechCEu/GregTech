@@ -131,14 +131,18 @@ public class ForestryModule extends IntegrationSubmodule {
 
     @Override
     public void init(FMLInitializationEvent event) {
-        // Yes, this stuff has to be done in init. Because Forestry refuses to move their recipes to the event,
-        // causing removals to need to be done in init instead of registry event.
+        // Yes, this recipe stuff has to be done in init. Because Forestry refuses to move their recipes
+        // to the event, causing removals to need to be done in init instead of registry event.
         // See https://github.com/ForestryMC/ForestryMC/issues/2599
         if (ForestryConfig.enableGTElectronTubes) {
             ElectrodeRecipes.onInit();
         }
 
         if (ForestryUtil.apicultureEnabled()) {
+            if (ForestryConfig.harderForestryRecipes) {
+                MiscRecipes.initRemoval();
+            }
+
             if (ForestryConfig.enableGTBees) {
                 GTAlleleBeeSpecies.setupAlleles();
                 GTBeeDefinition.initBees();
@@ -264,6 +268,7 @@ public class ForestryModule extends IntegrationSubmodule {
 
         // Random other recipes
         MiscRecipes.init();
+        ForestryExtractorRecipes.init();
     }
 
     @SubscribeEvent

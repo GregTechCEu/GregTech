@@ -153,6 +153,8 @@ public class GTValues {
             MODID_TR = "techreborn",
             MODID_MB = "magicbees",
             MODID_EB = "extrabees",
+            MODID_ET = "extratrees",
+            MODID_GENETICS = "genetics",
             MODID_BOP = "biomesoplenty",
             MODID_TCON = "tconstruct";
 
