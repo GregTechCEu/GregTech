@@ -356,6 +356,7 @@ public class MiscRecipes {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.Tin, 2)
                 .input(Blocks.GLASS_PANE)
+                .circuitMeta(1)
                 .outputs(IntegrationUtil.getModItem(GTValues.MODID_FR, "can", 0))
                 .duration(120).EUt(7).buildAndRegister();
 
