@@ -24,6 +24,8 @@ import net.minecraftforge.fml.common.event.*;
                 + "required-after:codechickenlib@[3.2.3,);"
                 + "after:appliedenergistics2;"
                 + "after:forestry;"
+                + "after:extrabees;"
+                + "after:magicbees;"
                 + "after:jei@[4.15.0,);"
                 + "after:crafttweaker@[4.1.20,);"
                 + "after:groovyscript@[0.6.0,);"
