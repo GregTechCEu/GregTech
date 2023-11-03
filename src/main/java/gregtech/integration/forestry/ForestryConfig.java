@@ -42,11 +42,10 @@ public class ForestryConfig {
     @RequiresMcRestart
     public static boolean enableGTFrames = true;
 
-    // todo better detail on what this removes
     @Comment({
-            "Whether to remove some Forestry recipes (such as Fertilizer) in favor of GT recipes.",
+            "Whether to remove some Forestry Crafting Table recipes (such as Fertilizer, Compost, etc) in favor of GT recipes.",
             "Default: false"
     })
     @RequiresMcRestart
-    public static boolean harderForestryRecipes = true;
+    public static boolean harderForestryRecipes = false;
 }
