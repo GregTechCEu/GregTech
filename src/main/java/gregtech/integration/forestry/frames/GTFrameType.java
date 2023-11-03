@@ -2,8 +2,7 @@ package gregtech.integration.forestry.frames;
 
 import forestry.api.apiculture.IBeeGenome;
 import forestry.api.apiculture.IBeeModifier;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public enum GTFrameType implements IBeeModifier {
 

@@ -39,8 +39,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,41 +49,40 @@ import java.util.List;
         containerID = GTValues.MODID,
         modDependencies = GTValues.MODID_FR,
         name = "GregTech Forestry Integration",
-        descriptionKey = "gregtech.modules.fr_integration.description"
-)
+        descriptionKey = "gregtech.modules.fr_integration.description")
 public class ForestryModule extends IntegrationSubmodule {
 
-    public static GTItemFrame frameAccelerated;
-    public static GTItemFrame frameMutagenic;
-    public static GTItemFrame frameWorking;
-    public static GTItemFrame frameDecaying;
-    public static GTItemFrame frameSlowing;
-    public static GTItemFrame frameStabilizing;
-    public static GTItemFrame frameArborist;
+    private static MetaItem<?> forestryMetaItem;
 
-    public static MetaItem<?> forestryMetaItem;
+    public static GTItemFrame FRAME_ACCELERATED;
+    public static GTItemFrame FRAME_MUTAGENIC;
+    public static GTItemFrame FRAME_WORKING;
+    public static GTItemFrame FRAME_DECAYING;
+    public static GTItemFrame FRAME_SLOWING;
+    public static GTItemFrame FRAME_STABILIZING;
+    public static GTItemFrame FRAME_ARBORIST;
 
-    public static MetaItem<?>.MetaValueItem electrodeApatite;
-    public static MetaItem<?>.MetaValueItem electrodeBlaze;
-    public static MetaItem<?>.MetaValueItem electrodeBronze;
-    public static MetaItem<?>.MetaValueItem electrodeCopper;
-    public static MetaItem<?>.MetaValueItem electrodeDiamond;
-    public static MetaItem<?>.MetaValueItem electrodeEmerald;
-    public static MetaItem<?>.MetaValueItem electrodeEnder;
-    public static MetaItem<?>.MetaValueItem electrodeGold;
-    public static MetaItem<?>.MetaValueItem electrodeIron;
-    public static MetaItem<?>.MetaValueItem electrodeLapis;
-    public static MetaItem<?>.MetaValueItem electrodeObsidian;
-    public static MetaItem<?>.MetaValueItem electrodeOrchid;
-    public static MetaItem<?>.MetaValueItem electrodeRubber;
-    public static MetaItem<?>.MetaValueItem electrodeTin;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_APATITE;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_BLAZE;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_BRONZE;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_COPPER;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_DIAMOND;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_EMERALD;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_ENDER;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_GOLD;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_IRON;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_LAPIS;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_OBSIDIAN;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_ORCHID;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_RUBBER;
+    public static MetaItem<?>.MetaValueItem ELECTRODE_TIN;
 
     public static IGTTool SCOOP;
 
-    public static GTDropItem drops;
-    public static GTCombItem combs;
+    public static GTDropItem DROPS;
+    public static GTCombItem COMBS;
 
-    @Nonnull
+    @NotNull
     @Override
     public List<Class<?>> getEventBusSubscribers() {
         return Collections.singletonList(ForestryModule.class);
@@ -97,13 +96,13 @@ public class ForestryModule extends IntegrationSubmodule {
         // GT Frames
         if (ForestryConfig.enableGTFrames) {
             if (ForestryUtil.apicultureEnabled()) {
-                frameAccelerated = new GTItemFrame(GTFrameType.ACCELERATED);
-                frameMutagenic = new GTItemFrame(GTFrameType.MUTAGENIC);
-                frameWorking = new GTItemFrame(GTFrameType.WORKING);
-                frameDecaying = new GTItemFrame(GTFrameType.DECAYING);
-                frameSlowing = new GTItemFrame(GTFrameType.SLOWING);
-                frameStabilizing = new GTItemFrame(GTFrameType.STABILIZING);
-                frameArborist = new GTItemFrame(GTFrameType.ARBORIST);
+                FRAME_ACCELERATED = new GTItemFrame(GTFrameType.ACCELERATED);
+                FRAME_MUTAGENIC = new GTItemFrame(GTFrameType.MUTAGENIC);
+                FRAME_WORKING = new GTItemFrame(GTFrameType.WORKING);
+                FRAME_DECAYING = new GTItemFrame(GTFrameType.DECAYING);
+                FRAME_SLOWING = new GTItemFrame(GTFrameType.SLOWING);
+                FRAME_STABILIZING = new GTItemFrame(GTFrameType.STABILIZING);
+                FRAME_ARBORIST = new GTItemFrame(GTFrameType.ARBORIST);
             } else {
                 getLogger().warn("GregTech Frames are enabled, but Forestry Apiculture module is disabled. Skipping...");
             }
@@ -122,8 +121,8 @@ public class ForestryModule extends IntegrationSubmodule {
         // GT Bees
         if (ForestryConfig.enableGTBees) {
             if (ForestryUtil.apicultureEnabled()) {
-                drops = new GTDropItem();
-                combs = new GTCombItem();
+                DROPS = new GTDropItem();
+                COMBS = new GTCombItem();
             } else {
                 getLogger().warn("GregTech Bees are enabled, but Forestry Apiculture module is disabled. Skipping...");
             }
@@ -154,7 +153,7 @@ public class ForestryModule extends IntegrationSubmodule {
                             return coloredItem.getColorFromItemstack(stack, tintIndex);
                         }
                         return 0xFFFFFF;
-                    }, drops, combs);
+                    }, DROPS, COMBS);
                 }
             }
         }
@@ -175,46 +174,46 @@ public class ForestryModule extends IntegrationSubmodule {
         // GT Frames
         if (ForestryUtil.apicultureEnabled()) {
             if (ForestryConfig.enableGTFrames) {
-                registry.register(frameAccelerated);
-                registry.register(frameMutagenic);
-                registry.register(frameWorking);
-                registry.register(frameDecaying);
-                registry.register(frameSlowing);
-                registry.register(frameStabilizing);
-                registry.register(frameArborist);
+                registry.register(FRAME_ACCELERATED);
+                registry.register(FRAME_MUTAGENIC);
+                registry.register(FRAME_WORKING);
+                registry.register(FRAME_DECAYING);
+                registry.register(FRAME_SLOWING);
+                registry.register(FRAME_STABILIZING);
+                registry.register(FRAME_ARBORIST);
             }
         }
 
         // GT Electrodes
         if (ForestryConfig.enableGTElectronTubes) {
-            electrodeApatite = forestryMetaItem.addItem(1, "electrode.apatite");
-            electrodeBlaze = forestryMetaItem.addItem(2, "electrode.blaze");
-            electrodeBronze = forestryMetaItem.addItem(3, "electrode.bronze");
-            electrodeCopper = forestryMetaItem.addItem(4, "electrode.copper");
-            electrodeDiamond = forestryMetaItem.addItem(5, "electrode.diamond");
-            electrodeEmerald = forestryMetaItem.addItem(6, "electrode.emerald");
-            electrodeEnder = forestryMetaItem.addItem(7, "electrode.ender");
-            electrodeGold = forestryMetaItem.addItem(8, "electrode.gold");
-            electrodeLapis = forestryMetaItem.addItem(9, "electrode.lapis");
-            electrodeObsidian = forestryMetaItem.addItem(10, "electrode.obsidian");
-            electrodeTin = forestryMetaItem.addItem(11, "electrode.tin");
+            ELECTRODE_APATITE = forestryMetaItem.addItem(1, "electrode.apatite");
+            ELECTRODE_BLAZE = forestryMetaItem.addItem(2, "electrode.blaze");
+            ELECTRODE_BRONZE = forestryMetaItem.addItem(3, "electrode.bronze");
+            ELECTRODE_COPPER = forestryMetaItem.addItem(4, "electrode.copper");
+            ELECTRODE_DIAMOND = forestryMetaItem.addItem(5, "electrode.diamond");
+            ELECTRODE_EMERALD = forestryMetaItem.addItem(6, "electrode.emerald");
+            ELECTRODE_ENDER = forestryMetaItem.addItem(7, "electrode.ender");
+            ELECTRODE_GOLD = forestryMetaItem.addItem(8, "electrode.gold");
+            ELECTRODE_LAPIS = forestryMetaItem.addItem(9, "electrode.lapis");
+            ELECTRODE_OBSIDIAN = forestryMetaItem.addItem(10, "electrode.obsidian");
+            ELECTRODE_TIN = forestryMetaItem.addItem(11, "electrode.tin");
 
             if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_BINNIE)) {
-                electrodeIron = forestryMetaItem.addItem(12, "electrode.iron");
+                ELECTRODE_IRON = forestryMetaItem.addItem(12, "electrode.iron");
             }
             if (Loader.isModLoaded(GTValues.MODID_XU2)) {
-                electrodeOrchid = forestryMetaItem.addItem(13, "electrode.orchid");
+                ELECTRODE_ORCHID = forestryMetaItem.addItem(13, "electrode.orchid");
             }
             if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_TR) || Loader.isModLoaded(GTValues.MODID_BINNIE)) {
-                electrodeRubber = forestryMetaItem.addItem(14, "electrode.rubber");
+                ELECTRODE_RUBBER = forestryMetaItem.addItem(14, "electrode.rubber");
             }
         }
 
         // GT Drops
         if (ForestryUtil.apicultureEnabled()) {
             if (ForestryConfig.enableGTBees) {
-                registry.register(drops);
-                registry.register(combs);
+                registry.register(DROPS);
+                registry.register(COMBS);
             }
         }
     }
@@ -224,17 +223,17 @@ public class ForestryModule extends IntegrationSubmodule {
     public static void registerModels(ModelRegistryEvent event) {
         if (ForestryUtil.apicultureEnabled()) {
             if (ForestryConfig.enableGTFrames) {
-                frameAccelerated.registerModel(frameAccelerated, ForestryAPI.modelManager);
-                frameMutagenic.registerModel(frameMutagenic, ForestryAPI.modelManager);
-                frameWorking.registerModel(frameWorking, ForestryAPI.modelManager);
-                frameDecaying.registerModel(frameDecaying, ForestryAPI.modelManager);
-                frameSlowing.registerModel(frameSlowing, ForestryAPI.modelManager);
-                frameStabilizing.registerModel(frameStabilizing, ForestryAPI.modelManager);
-                frameArborist.registerModel(frameArborist, ForestryAPI.modelManager);
+                FRAME_ACCELERATED.registerModel(FRAME_ACCELERATED, ForestryAPI.modelManager);
+                FRAME_MUTAGENIC.registerModel(FRAME_MUTAGENIC, ForestryAPI.modelManager);
+                FRAME_WORKING.registerModel(FRAME_WORKING, ForestryAPI.modelManager);
+                FRAME_DECAYING.registerModel(FRAME_DECAYING, ForestryAPI.modelManager);
+                FRAME_SLOWING.registerModel(FRAME_SLOWING, ForestryAPI.modelManager);
+                FRAME_STABILIZING.registerModel(FRAME_STABILIZING, ForestryAPI.modelManager);
+                FRAME_ARBORIST.registerModel(FRAME_ARBORIST, ForestryAPI.modelManager);
             }
             if (ForestryConfig.enableGTBees) {
-                drops.registerModel(drops, ForestryAPI.modelManager);
-                combs.registerModel(combs, ForestryAPI.modelManager);
+                DROPS.registerModel(DROPS, ForestryAPI.modelManager);
+                COMBS.registerModel(COMBS, ForestryAPI.modelManager);
             }
         }
     }

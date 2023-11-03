@@ -60,7 +60,7 @@ public class ForestryUtil {
             IntegrationModule.logger.error("Tried to get GregTech Comb stack, but Apiculture module is not enabled!");
             return ItemStack.EMPTY;
         }
-        return new ItemStack(ForestryModule.combs, amount, type.ordinal());
+        return new ItemStack(ForestryModule.COMBS, amount, type.ordinal());
     }
 
     public static ItemStack getDropStack(GTDropType type) {
@@ -76,6 +76,6 @@ public class ForestryUtil {
             IntegrationModule.logger.error("Tried to get GregTech Drop stack, but Apiculture module is not enabled!");
             return ItemStack.EMPTY;
         }
-        return new ItemStack(ForestryModule.drops, amount, type.ordinal());
+        return new ItemStack(ForestryModule.DROPS, amount, type.ordinal());
     }
 }

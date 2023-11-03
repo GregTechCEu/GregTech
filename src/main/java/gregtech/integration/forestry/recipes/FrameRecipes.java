@@ -24,7 +24,7 @@ public class FrameRecipes {
                 new UnificationEntry(stick, Electrum),
                 new UnificationEntry(foil, Electrum),
                 Redstone.getFluid(GTValues.L * 4),
-                ForestryModule.frameAccelerated.getItemStack(),
+                ForestryModule.FRAME_ACCELERATED.getItemStack(),
                 ModuleApiculture.getItems().frameImpregnated.getItemStack());
 
         registerRecipe( // Mutagenic Frame
@@ -32,7 +32,7 @@ public class FrameRecipes {
                 new UnificationEntry(stick, Plutonium241),
                 new UnificationEntry(foil, Plutonium241),
                 Redstone.getFluid(GTValues.L * 4),
-                ForestryModule.frameMutagenic.getItemStack(),
+                ForestryModule.FRAME_MUTAGENIC.getItemStack(),
                 ModuleApiculture.getItems().frameImpregnated.getItemStack());
 
         registerRecipe( // Working Frame
@@ -40,7 +40,7 @@ public class FrameRecipes {
                 new UnificationEntry(stick, BlueSteel),
                 new UnificationEntry(gem, NetherStar),
                 Redstone.getFluid(GTValues.L * 4),
-                ForestryModule.frameWorking.getItemStack(),
+                ForestryModule.FRAME_WORKING.getItemStack(),
                 ModuleApiculture.getItems().frameImpregnated.getItemStack());
 
         registerRecipe( // Decaying Frame
@@ -48,7 +48,7 @@ public class FrameRecipes {
                 new UnificationEntry(stick, WroughtIron),
                 new UnificationEntry(foil, WroughtIron),
                 Redstone.getFluid(GTValues.L * 4),
-                ForestryModule.frameDecaying.getItemStack(),
+                ForestryModule.FRAME_DECAYING.getItemStack(),
                 ModuleApiculture.getItems().frameImpregnated.getItemStack());
 
         registerRecipe( // Slowing Frame
@@ -56,7 +56,7 @@ public class FrameRecipes {
                 new UnificationEntry(stick, Potin),
                 new UnificationEntry(foil, Electrum),
                 Redstone.getFluid(GTValues.L * 4),
-                ForestryModule.frameSlowing.getItemStack(),
+                ForestryModule.FRAME_SLOWING.getItemStack(),
                 ModuleApiculture.getItems().frameImpregnated.getItemStack());
 
         registerRecipe( // Stabilizing Frame
@@ -64,7 +64,7 @@ public class FrameRecipes {
                 new UnificationEntry(stick, Osmiridium),
                 new UnificationEntry(foil, Osmiridium),
                 Redstone.getFluid(GTValues.L * 4),
-                ForestryModule.frameStabilizing.getItemStack(),
+                ForestryModule.FRAME_STABILIZING.getItemStack(),
                 ModuleApiculture.getItems().frameImpregnated.getItemStack());
 
         registerRecipe( // Arborist Frame
@@ -72,7 +72,7 @@ public class FrameRecipes {
                 new UnificationEntry(stick, TreatedWood),
                 new UnificationEntry(plate, Paper),
                 Redstone.getFluid(GTValues.L * 4),
-                ForestryModule.frameArborist.getItemStack(),
+                ForestryModule.FRAME_ARBORIST.getItemStack(),
                 ModuleApiculture.getItems().frameImpregnated.getItemStack());
     }
 

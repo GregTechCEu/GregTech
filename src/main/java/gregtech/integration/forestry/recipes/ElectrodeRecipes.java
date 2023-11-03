@@ -35,7 +35,7 @@ public class ElectrodeRecipes {
 
     public static void addGregTechMachineRecipes() {
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.electrodeApatite)
+                .input(ForestryModule.ELECTRODE_APATITE)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.APATITE, 1))
                 .buildAndRegister();
@@ -44,11 +44,11 @@ public class ElectrodeRecipes {
                 .input(stick, Apatite, 4)
                 .input(bolt, Apatite, 2)
                 .input(dust, Redstone)
-                .output(ForestryModule.electrodeApatite, 2)
+                .output(ForestryModule.ELECTRODE_APATITE, 2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.electrodeBlaze)
+                .input(ForestryModule.ELECTRODE_BLAZE)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.BLAZE, 1))
                 .buildAndRegister();
@@ -56,11 +56,11 @@ public class ElectrodeRecipes {
         FORMING_PRESS_RECIPES.recipeBuilder().duration(400).EUt(24)
                 .input(dust, Blaze, 5)
                 .input(dust, Redstone, 2)
-                .output(ForestryModule.electrodeBlaze, 4)
+                .output(ForestryModule.ELECTRODE_BLAZE, 4)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.electrodeBronze)
+                .input(ForestryModule.ELECTRODE_BRONZE)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.BRONZE, 1))
                 .buildAndRegister();
@@ -68,11 +68,11 @@ public class ElectrodeRecipes {
         FORMING_PRESS_RECIPES.recipeBuilder().duration(200).EUt(24)
                 .input(stick, Bronze, 4).input(bolt, Bronze, 2)
                 .input(dust, Redstone)
-                .output(ForestryModule.electrodeBronze, 2)
+                .output(ForestryModule.ELECTRODE_BRONZE, 2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.electrodeCopper)
+                .input(ForestryModule.ELECTRODE_COPPER)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.COPPER, 1))
                 .buildAndRegister();
@@ -81,11 +81,11 @@ public class ElectrodeRecipes {
                 .input(stick, Copper, 4)
                 .input(bolt, Copper, 2)
                 .input(dust, Redstone)
-                .output(ForestryModule.electrodeCopper, 2)
+                .output(ForestryModule.ELECTRODE_COPPER, 2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.electrodeDiamond)
+                .input(ForestryModule.ELECTRODE_DIAMOND)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.DIAMOND, 1))
                 .buildAndRegister();
@@ -94,11 +94,11 @@ public class ElectrodeRecipes {
                 .input(stick, Diamond, 4)
                 .input(bolt, Diamond, 2)
                 .input(dust, Redstone)
-                .output(ForestryModule.electrodeDiamond, 2)
+                .output(ForestryModule.ELECTRODE_DIAMOND, 2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.electrodeEmerald)
+                .input(ForestryModule.ELECTRODE_EMERALD)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.EMERALD, 1))
                 .buildAndRegister();
@@ -107,11 +107,11 @@ public class ElectrodeRecipes {
                 .input(stick, Emerald, 4)
                 .input(bolt, Emerald, 2)
                 .input(dust, Redstone)
-                .output(ForestryModule.electrodeEmerald, 2)
+                .output(ForestryModule.ELECTRODE_EMERALD, 2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.electrodeEnder)
+                .input(ForestryModule.ELECTRODE_ENDER)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.ENDER, 1))
                 .buildAndRegister();
@@ -119,11 +119,11 @@ public class ElectrodeRecipes {
         FORMING_PRESS_RECIPES.recipeBuilder().duration(400).EUt(24)
                 .input(dust, Endstone, 5)
                 .input(dust, EnderEye, 2)
-                .output(ForestryModule.electrodeEnder, 4)
+                .output(ForestryModule.ELECTRODE_ENDER, 4)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.electrodeGold)
+                .input(ForestryModule.ELECTRODE_GOLD)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.GOLD, 1))
                 .buildAndRegister();
@@ -132,12 +132,12 @@ public class ElectrodeRecipes {
                 .input(stick, Gold, 4)
                 .input(bolt, Gold, 2)
                 .input(dust, Redstone)
-                .output(ForestryModule.electrodeGold, 2)
+                .output(ForestryModule.ELECTRODE_GOLD, 2)
                 .buildAndRegister();
 
         if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_BINNIE)) {
             CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                    .input(ForestryModule.electrodeIron)
+                    .input(ForestryModule.ELECTRODE_IRON)
                     .fluidInputs(Glass.getFluid(100))
                     .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.IRON, 1))
                     .buildAndRegister();
@@ -145,12 +145,12 @@ public class ElectrodeRecipes {
             FORMING_PRESS_RECIPES.recipeBuilder().duration(200).EUt(24)
                     .input(stick, Iron, 4).input(bolt, Iron, 2)
                     .input(dust, Redstone)
-                    .output(ForestryModule.electrodeIron, 2)
+                    .output(ForestryModule.ELECTRODE_IRON, 2)
                     .buildAndRegister();
 
         }
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.electrodeLapis)
+                .input(ForestryModule.ELECTRODE_LAPIS)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.LAPIS, 1))
                 .buildAndRegister();
@@ -159,11 +159,11 @@ public class ElectrodeRecipes {
                 .input(stick, Lapis, 4)
                 .input(bolt, Lapis, 2)
                 .input(dust, Redstone)
-                .output(ForestryModule.electrodeLapis, 2)
+                .output(ForestryModule.ELECTRODE_LAPIS, 2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.electrodeObsidian)
+                .input(ForestryModule.ELECTRODE_OBSIDIAN)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.OBSIDIAN, 1))
                 .buildAndRegister();
@@ -171,12 +171,12 @@ public class ElectrodeRecipes {
         FORMING_PRESS_RECIPES.recipeBuilder().duration(400).EUt(24)
                 .input(dust, Obsidian, 5)
                 .input(dust, Redstone, 2)
-                .output(ForestryModule.electrodeObsidian, 4)
+                .output(ForestryModule.ELECTRODE_OBSIDIAN, 4)
                 .buildAndRegister();
 
         if (Loader.isModLoaded(GTValues.MODID_XU2)) {
             CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                    .input(ForestryModule.electrodeOrchid)
+                    .input(ForestryModule.ELECTRODE_ORCHID)
                     .fluidInputs(Glass.getFluid(100))
                     .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.ORCHID, 1))
                     .buildAndRegister();
@@ -184,12 +184,14 @@ public class ElectrodeRecipes {
             FORMING_PRESS_RECIPES.recipeBuilder().duration(400).EUt(24)
                     .inputs(new ItemStack(Blocks.REDSTONE_ORE, 5))
                     .input(dust, Redstone)
-                    .output(ForestryModule.electrodeOrchid, 4)
+                    .output(ForestryModule.ELECTRODE_ORCHID, 4)
                     .buildAndRegister();
         }
+
+        // todo mixin forestry to allow this tube always, since we have rubber (once mixin port is done)
         if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_TR) || Loader.isModLoaded(GTValues.MODID_BINNIE)) {
             CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                    .input(ForestryModule.electrodeRubber)
+                    .input(ForestryModule.ELECTRODE_RUBBER)
                     .fluidInputs(Glass.getFluid(100))
                     .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.RUBBER, 1))
                     .buildAndRegister();
@@ -198,11 +200,11 @@ public class ElectrodeRecipes {
                     .input(stick, Rubber, 4)
                     .input(bolt, Rubber, 2)
                     .input(dust, Redstone)
-                    .output(ForestryModule.electrodeRubber, 2)
+                    .output(ForestryModule.ELECTRODE_RUBBER, 2)
                     .buildAndRegister();
         }
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.electrodeTin)
+                .input(ForestryModule.ELECTRODE_TIN)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.TIN, 1))
                 .buildAndRegister();
@@ -211,7 +213,7 @@ public class ElectrodeRecipes {
                 .input(stick, Tin, 4)
                 .input(bolt, Tin, 2)
                 .input(dust, Redstone)
-                .output(ForestryModule.electrodeTin, 2)
+                .output(ForestryModule.ELECTRODE_TIN, 2)
                 .buildAndRegister();
     }
 

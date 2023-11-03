@@ -14,9 +14,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GTDropItem extends Item implements IColoredItem, IItemModelRegister {
 
@@ -40,22 +39,22 @@ public class GTDropItem extends Item implements IColoredItem, IItemModelRegister
 
     @SuppressWarnings("deprecation")
     @Override
-    public void registerModel(@Nonnull Item item, @Nonnull IModelManager manager) {
+    public void registerModel(@NotNull Item item, @NotNull IModelManager manager) {
         manager.registerItemModel(item, 0);
         for (int i = 0; i < GTDropType.VALUES.length; i++) {
             manager.registerItemModel(item, i, GTValues.MODID_FR, "gt.honey_drop");
         }
     }
 
+    @NotNull
     @Override
-    @Nonnull
-    public String getTranslationKey(@Nonnull ItemStack stack) {
+    public String getTranslationKey(@NotNull ItemStack stack) {
         GTDropType type = GTDropType.getDrop(stack.getItemDamage());
         return super.getTranslationKey(stack) + "." + type.name;
     }
 
     @Override
-    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
+    public void getSubItems(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> items) {
         if (tab == Tabs.tabApiculture) {
             for (GTDropType type : GTDropType.VALUES) {
                 items.add(new ItemStack(this, 1, type.ordinal()));
@@ -64,7 +63,7 @@ public class GTDropItem extends Item implements IColoredItem, IItemModelRegister
     }
 
     @Override
-    public int getColorFromItemstack(@Nonnull ItemStack stack, int i) {
+    public int getColorFromItemstack(@NotNull ItemStack stack, int i) {
         GTDropType type = GTDropType.getDrop(stack.getItemDamage());
         return type.color[i == 0 ? 0 : 1];
     }

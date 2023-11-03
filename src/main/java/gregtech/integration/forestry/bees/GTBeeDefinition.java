@@ -29,8 +29,8 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 import org.apache.commons.lang3.text.WordUtils;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -1034,7 +1034,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
     }
 
     private static ItemStack getGTComb(GTCombType type) {
-        return new ItemStack(ForestryModule.combs, 1, type.ordinal());
+        return new ItemStack(ForestryModule.COMBS, 1, type.ordinal());
     }
 
     private void setSpeciesProperties(GTAlleleBeeSpecies beeSpecies) {
@@ -1083,27 +1083,27 @@ public enum GTBeeDefinition implements IBeeDefinition {
         return BeeManager.beeMutationFactory.createMutation(parent1, parent2, getTemplate(), chance);
     }
 
+    @NotNull
     @Override
-    @Nonnull
     public final IAllele[] getTemplate() {
         return Arrays.copyOf(template, template.length);
     }
 
+    @NotNull
     @Override
-    @Nonnull
     public final IBeeGenome getGenome() {
         return genome;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public final IBee getIndividual() {
         return new Bee(genome);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public final ItemStack getMemberStack(@Nonnull EnumBeeType beeType) {
+    public final ItemStack getMemberStack(@NotNull EnumBeeType beeType) {
         //noinspection ConstantConditions
         return BeeManager.beeRoot.getMemberStack(getIndividual(), beeType);
     }

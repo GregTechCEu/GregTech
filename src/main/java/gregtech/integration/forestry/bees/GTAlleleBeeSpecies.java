@@ -10,8 +10,7 @@ import forestry.core.genetics.alleles.AlleleFloat;
 import gregtech.api.GTValues;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class GTAlleleBeeSpecies extends AlleleBeeSpecies {
 
@@ -24,9 +23,9 @@ public class GTAlleleBeeSpecies extends AlleleBeeSpecies {
         AlleleManager.alleleRegistry.registerAllele(this, EnumBeeChromosome.SPECIES);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IAlleleBeeSpeciesBuilder addProduct(@Nonnull ItemStack product, @Nonnull Float chance) {
+    public IAlleleBeeSpeciesBuilder addProduct(@NotNull ItemStack product, @NotNull Float chance) {
         if (product == ItemStack.EMPTY) {
             product = new ItemStack(Items.BOAT);
         }
@@ -36,9 +35,9 @@ public class GTAlleleBeeSpecies extends AlleleBeeSpecies {
         return super.addProduct(product, chance);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IAlleleBeeSpeciesBuilder addSpecialty(@Nonnull ItemStack specialty, @Nonnull Float chance) {
+    public IAlleleBeeSpeciesBuilder addSpecialty(@NotNull ItemStack specialty, @NotNull Float chance) {
         if (specialty == ItemStack.EMPTY) {
             specialty = new ItemStack(Items.BOAT);
         }

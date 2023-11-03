@@ -14,9 +14,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class GTItemFrame extends Item implements IHiveFrame, IItemModelRegister {
@@ -35,14 +35,14 @@ public class GTItemFrame extends Item implements IHiveFrame, IItemModelRegister 
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World worldIn, @NotNull List<String> tooltip, @NotNull ITooltipFlag flagIn) {
         // TODO
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 
+    @NotNull
     @Override
-    @Nonnull
-    public ItemStack frameUsed(@Nonnull IBeeHousing housing, ItemStack frame, @Nonnull IBee bee, int wear) {
+    public ItemStack frameUsed(@NotNull IBeeHousing housing, ItemStack frame, @NotNull IBee bee, int wear) {
         frame.setItemDamage(frame.getItemDamage() + wear);
         if (frame.getItemDamage() >= frame.getMaxDamage()) {
             return ItemStack.EMPTY;
@@ -50,7 +50,7 @@ public class GTItemFrame extends Item implements IHiveFrame, IItemModelRegister 
         return frame;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IBeeModifier getBeeModifier() {
         return this.type;
@@ -58,7 +58,7 @@ public class GTItemFrame extends Item implements IHiveFrame, IItemModelRegister 
 
     @SuppressWarnings("deprecation")
     @Override
-    public void registerModel(@Nonnull Item item, @Nonnull IModelManager manager) {
+    public void registerModel(@NotNull Item item, @NotNull IModelManager manager) {
         manager.registerItemModel(item, 0, GTValues.MODID_FR, "gt.frame_" + type.getName().toLowerCase());
     }
 

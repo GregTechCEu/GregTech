@@ -14,9 +14,9 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class GTCombItem extends Item implements IColoredItem, IItemModelRegister {
@@ -32,14 +32,14 @@ public class GTCombItem extends Item implements IColoredItem, IItemModelRegister
     @SuppressWarnings("deprecation")
     @SideOnly(Side.CLIENT)
     @Override
-    public void registerModel(@Nonnull Item item, IModelManager manager) {
+    public void registerModel(@NotNull Item item, IModelManager manager) {
         manager.registerItemModel(item, 0);
         for (int i = 0; i < GTCombType.values().length; i++) {
             manager.registerItemModel(item, i, GTValues.MODID_FR, "gt.comb");
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getTranslationKey(ItemStack stack) {
         GTCombType type = GTCombType.getComb(stack.getItemDamage());
@@ -47,7 +47,7 @@ public class GTCombItem extends Item implements IColoredItem, IItemModelRegister
     }
 
     @Override
-    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
+    public void getSubItems(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> items) {
         if (tab == Tabs.tabApiculture) {
             for (GTCombType type : GTCombType.VALUES) {
                 if (!type.showInList) continue;
@@ -63,7 +63,7 @@ public class GTCombItem extends Item implements IColoredItem, IItemModelRegister
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World worldIn, @NotNull List<String> tooltip, @NotNull ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         ItemTooltipUtil.addInformation(stack, worldIn, tooltip, flagIn);
     }

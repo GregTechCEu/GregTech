@@ -28,10 +28,10 @@ public class ForestryConfig {
             "Whether or not to make GregTech Comb processing recipes harder.",
             "Requirements: Forestry Apiculture module, 'enableGTBees' config option enabled",
             "Primarily affects whether the Centrifuge (GregTech or Forestry) can process GregTech Combs.",
-            "Default: false"
+            "Default: true"
     })
     @RequiresMcRestart
-    public static boolean harderGTCombRecipes = false;
+    public static boolean harderGTCombRecipes = true;
 
     @Comment({
             "Enable GregTech Apiary Frames.",
