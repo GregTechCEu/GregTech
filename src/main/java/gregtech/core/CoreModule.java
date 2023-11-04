@@ -7,8 +7,6 @@ import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverUIFactory;
-import gregtech.api.cover2.CoverDefinition2;
-import gregtech.api.fluids.MetaFluids;
 import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
