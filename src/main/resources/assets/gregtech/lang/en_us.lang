@@ -951,6 +951,7 @@ gt.tool.class.knife=Knife
 gt.tool.class.butchery_knife=Butchery Knife
 gt.tool.class.grafter=Grafter
 gt.tool.class.plunger=Plunger
+gt.tool.class.scoop=Scoop
 
 item.gt.tool.sword.name=%s Sword
 item.gt.tool.pickaxe.name=%s Pickaxe

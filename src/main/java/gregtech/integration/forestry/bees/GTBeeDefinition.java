@@ -1,5 +1,6 @@
 package gregtech.integration.forestry.bees;
 
+import appeng.core.Api;
 import forestry.api.apiculture.*;
 import forestry.api.core.EnumHumidity;
 import forestry.api.core.EnumTemperature;
@@ -240,7 +241,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
     FERTILIZER(GTBranchDefinition.GT_ORGANIC, "Stercorat", true, 0x7FCEF5, 0x654525,
             beeSpecies -> {
                 if (Loader.isModLoaded(GTValues.MODID_EB)) {
-                    beeSpecies.addProduct(getExtraBeesComb(9), 0.15f);
+                    beeSpecies.addProduct(getExtraBeesComb(9), 0.15f); // SEED
                 } else {
                     beeSpecies.addProduct(getForestryComb(EnumHoneyComb.MOSSY), 0.15f);
                 }
@@ -293,8 +294,14 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 AlleleHelper.getInstance().set(template, FLOWER_PROVIDER, EnumAllele.Flowers.WHEAT);
                 AlleleHelper.getInstance().set(template, FLOWERING, EnumAllele.Flowering.FASTER);
             },
-            dis -> dis.registerMutation(BeeDefinition.AGRARIAN, ForestryUtil.getSpecies(GTValues.MODID_MB, "Batty"), 10),
-            () -> Loader.isModLoaded(GTValues.MODID_GTFO) && Loader.isModLoaded(GTValues.MODID_MB)
+            dis -> {
+                if (Loader.isModLoaded(GTValues.MODID_MB)) {
+                    dis.registerMutation(BeeDefinition.AGRARIAN, ForestryUtil.getSpecies(GTValues.MODID_MB, "Batty"), 10);
+                } else {
+                    dis.registerMutation(BeeDefinition.AGRARIAN, BeeDefinition.IMPERIAL, 10);
+                }
+            },
+            () -> Loader.isModLoaded(GTValues.MODID_GTFO)
     ),
 
     // Gems
@@ -336,8 +343,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.HERMITIC, LAPIS, 10);
                 mutation.requireResource("blockCertusQuartz");
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_MB)
+            }
     ),
     FLUIX(GTBranchDefinition.GT_GEM, "", true, 0xA375FF, 0xB591FF,
             beeSpecies -> {
@@ -349,9 +355,10 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(REDSTONE, LAPIS, 7);
-                mutation.requireResource("blockFluix");
+                Api.INSTANCE.definitions().blocks().fluixBlock().maybeBlock().ifPresent(block ->
+                        mutation.requireResource(block.getDefaultState()));
             },
-            () -> Loader.isModLoaded(GTValues.MODID_APPENG) && Loader.isModLoaded(GTValues.MODID_MB)
+            () -> Loader.isModLoaded(GTValues.MODID_APPENG)
     ),
     DIAMOND(GTBranchDefinition.GT_GEM, "Adamas", false, 0xCCFFFF, 0xA3CCCC,
             beeSpecies -> {
@@ -632,8 +639,13 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 AlleleHelper.getInstance().set(template, TERRITORY, EnumAllele.Territory.LARGER);
                 AlleleHelper.getInstance().set(template, TOLERATES_RAIN, true);
             },
-            dis -> dis.registerMutation(IRON, ForestryUtil.getSpecies(GTValues.MODID_MB, "AESkystone"), 17),
-            () -> Loader.isModLoaded(GTValues.MODID_MB)
+            dis -> {
+                if (Loader.isModLoaded(GTValues.MODID_MB)) {
+                    dis.registerMutation(IRON, ForestryUtil.getSpecies(GTValues.MODID_MB, "AESkystone"), 17);
+                } else {
+                    dis.registerMutation(IRON, BeeDefinition.IMPERIAL, 17);
+                }
+            }
     ),
 
     // Rare Metals
@@ -821,7 +833,11 @@ public enum GTBeeDefinition implements IBeeDefinition {
     // Industrial
     ENERGY(GTBranchDefinition.GT_INDUSTRIAL, "Industria", false, 0xC11F1F, 0xEBB9B9,
             beeSpecies -> {
-                beeSpecies.addProduct(getExtraBeesComb(14), 0.30f); // IC2ENERGY
+                if (Loader.isModLoaded(GTValues.MODID_EB)) {
+                    beeSpecies.addProduct(getExtraBeesComb(14), 0.30f); // STATIC
+                } else {
+                    beeSpecies.addProduct(getForestryComb(EnumHoneyComb.SIMMERING), 0.30f);
+                }
                 beeSpecies.addSpecialty(getGTComb(GTCombType.ENERGY), 0.15f);
                 beeSpecies.setHumidity(EnumHumidity.NORMAL);
                 beeSpecies.setTemperature(EnumTemperature.WARM);
@@ -837,10 +853,14 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 AlleleHelper.getInstance().set(template, FLOWERING, EnumAllele.Flowering.AVERAGE);
             },
             dis -> {
-                IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.DEMONIC, ForestryUtil.getSpecies(GTValues.MODID_EB, "volcanic"), 10);
+                IBeeMutationBuilder mutation;
+                if (Loader.isModLoaded(GTValues.MODID_EB)) {
+                    mutation = dis.registerMutation(BeeDefinition.DEMONIC, ForestryUtil.getSpecies(GTValues.MODID_EB, "volcanic"), 10);
+                } else {
+                    mutation = dis.registerMutation(BeeDefinition.DEMONIC, BeeDefinition.FIENDISH, 10);
+                }
                 mutation.requireResource("blockRedstone");
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_EB)
+            }
     ),
     LAPOTRON(GTBranchDefinition.GT_INDUSTRIAL, "Azureus", false, 0xFFEBC4, 0xE36400,
             beeSpecies -> {
@@ -864,8 +884,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 IBeeMutationBuilder mutation = dis.registerMutation(LAPIS, ENERGY, 6);
                 mutation.requireResource("blockLapis");
                 mutation.restrictTemperature(EnumTemperature.ICY);
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_EB)
+            }
     ),
     EXPLOSIVE(GTBranchDefinition.GT_INDUSTRIAL, "Explosionis", false, 0x7E270F, 0x747474,
             beeSpecies -> {
@@ -1044,11 +1063,15 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.LONGEST);
             },
             dis -> {
-                //AlleleManager.alleleRegistry.
-                IMutationBuilder mutation = dis.registerMutation(THORIUM, ForestryUtil.getSpecies(GTValues.MODID_EB, "rotten"), 1).setIsSecret();
+                IMutationBuilder mutation;
+                if (Loader.isModLoaded(GTValues.MODID_EB)) {
+                    mutation = dis.registerMutation(THORIUM, ForestryUtil.getSpecies(GTValues.MODID_EB, "rotten"), 1);
+                } else {
+                    mutation = dis.registerMutation(THORIUM, BeeDefinition.IMPERIAL, 1);
+                }
+                mutation.setIsSecret();
                 mutation.requireResource("blockLutetium");
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_EB)
+            }
     ),
     AMERICIUM(GTBranchDefinition.GT_RADIOACTIVE, "Libertas", false, 0x287869, 0x0C453A,
             beeSpecies -> {
@@ -1065,8 +1088,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IMutationBuilder mutation = dis.registerMutation(LUTETIUM, CHROME, 1).setIsSecret();
                 mutation.requireResource("blockAmericium");
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_EB)
+            }
     ),
     NEUTRONIUM(GTBranchDefinition.GT_RADIOACTIVE, "Media", false, 0xFFF0F0, 0xFAFAFA,
             beeSpecies -> {
@@ -1083,8 +1105,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IMutationBuilder mutation = dis.registerMutation(NAQUADRIA, AMERICIUM, 1).setIsSecret();
                 mutation.requireResource(new UnificationEntry(OrePrefix.block, Materials.Neutronium).toString());
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_EB)
+            }
     ),
 
     // Noble Gases
@@ -1098,10 +1119,14 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
             dis -> {
-                IBeeMutationBuilder mutation = dis.registerMutation(STAINLESSSTEEL, ForestryUtil.getSpecies(GTValues.MODID_MB, "Watery"), 10);
+                IBeeMutationBuilder mutation;
+                if (Loader.isModLoaded(GTValues.MODID_MB)) {
+                    mutation = dis.registerMutation(STAINLESSSTEEL, ForestryUtil.getSpecies(GTValues.MODID_MB, "Watery"), 10);
+                } else {
+                    mutation = dis.registerMutation(STAINLESSSTEEL, BeeDefinition.INDUSTRIOUS, 10);
+                }
                 mutation.restrictTemperature(EnumTemperature.ICY);
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_MB)
+            }
     ),
     ARGON(GTBranchDefinition.GT_NOBLEGAS, "Argon", false, 0x89D9E1, 0xBDA5C2,
             beeSpecies -> {
@@ -1113,10 +1138,14 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
             dis -> {
-                IBeeMutationBuilder mutation = dis.registerMutation(HELIUM, ForestryUtil.getSpecies(GTValues.MODID_MB, "Supernatural"), 8);
+                IBeeMutationBuilder mutation;
+                if (Loader.isModLoaded(GTValues.MODID_MB)) {
+                    mutation = dis.registerMutation(HELIUM, ForestryUtil.getSpecies(GTValues.MODID_MB, "Supernatural"), 8);
+                } else {
+                    mutation = dis.registerMutation(HELIUM, BeeDefinition.IMPERIAL, 8);
+                }
                 mutation.restrictTemperature(EnumTemperature.ICY);
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_MB)
+            }
     ),
     NEON(GTBranchDefinition.GT_NOBLEGAS, "Novum", false, 0xFFC826, 0xFF7200,
             beeSpecies -> {
@@ -1130,8 +1159,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(ARGON, IRON, 6);
                 mutation.restrictTemperature(EnumTemperature.ICY);
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_MB)
+            }
     ),
     KRYPTON(GTBranchDefinition.GT_NOBLEGAS, "Kryptos", false, 0x8A97B0, 0x160822,
             beeSpecies -> {
@@ -1143,10 +1171,14 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
             dis -> {
-                IBeeMutationBuilder mutation = dis.registerMutation(NEON, ForestryUtil.getSpecies(GTValues.MODID_MB, "Supernatural"), 4);
+                IBeeMutationBuilder mutation;
+                if (Loader.isModLoaded(GTValues.MODID_MB)) {
+                    mutation = dis.registerMutation(NEON, ForestryUtil.getSpecies(GTValues.MODID_MB, "Supernatural"), 4);
+                } else {
+                    mutation = dis.registerMutation(NEON, BeeDefinition.AVENGING, 4);
+                }
                 mutation.restrictTemperature(EnumTemperature.ICY);
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_MB)
+            }
     ),
     XENON(GTBranchDefinition.GT_NOBLEGAS, "Hostis", false, 0x8A97B0, 0x160822,
             beeSpecies -> {
@@ -1160,8 +1192,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(KRYPTON, BeeDefinition.EDENIC, 2);
                 mutation.restrictTemperature(EnumTemperature.ICY);
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_MB)
+            }
     ),
     OXYGEN(GTBranchDefinition.GT_NOBLEGAS, "Oxygeni", false, 0xFFFFFF, 0x8F8FFF,
             beeSpecies -> {
@@ -1176,8 +1207,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(HELIUM, BeeDefinition.ENDED, 15);
                 mutation.restrictTemperature(EnumTemperature.ICY);
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_MB)
+            }
     ),
     HYDROGEN(GTBranchDefinition.GT_NOBLEGAS, "Hydrogenium", false, 0xFFFFFF, 0xFF1493,
             beeSpecies -> {
@@ -1190,10 +1220,14 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
             dis -> {
-                IBeeMutationBuilder mutation = dis.registerMutation(OXYGEN, ForestryUtil.getSpecies(GTValues.MODID_MB, "Watery"), 15);
+                IBeeMutationBuilder mutation;
+                if (Loader.isModLoaded(GTValues.MODID_MB)) {
+                    mutation = dis.registerMutation(OXYGEN, ForestryUtil.getSpecies(GTValues.MODID_MB, "Watery"), 15);
+                } else {
+                    mutation = dis.registerMutation(OXYGEN, BeeDefinition.INDUSTRIOUS, 15);
+                }
                 mutation.restrictTemperature(EnumTemperature.ICY);
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_MB)
+            }
     ),
     NITROGEN(GTBranchDefinition.GT_NOBLEGAS, "Nitrogenium", false, 0xFFC832, 0xA52A2A,
             beeSpecies -> {
@@ -1208,8 +1242,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(OXYGEN, HYDROGEN, 15);
                 mutation.restrictTemperature(EnumTemperature.ICY);
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_MB)
+            }
     ),
     FLUORINE(GTBranchDefinition.GT_NOBLEGAS, "Fluens", false, 0x86AFF0, 0xFF6D00,
             beeSpecies -> {
@@ -1224,8 +1257,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(NITROGEN, HYDROGEN, 15);
                 mutation.restrictTemperature(EnumTemperature.ICY);
-            },
-            () -> Loader.isModLoaded(GTValues.MODID_MB)
+            }
     );
 
     private final GTBranchDefinition branch;

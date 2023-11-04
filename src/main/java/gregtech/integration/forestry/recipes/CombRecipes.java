@@ -83,14 +83,12 @@ public class CombRecipes {
         }
 
         // Industrial
-        if (Loader.isModLoaded(GTValues.MODID_EB)) {
-            addCentrifugeToItemStack(GTCombType.ENERGY, new ItemStack[]{MetaItems.ENERGIUM_DUST.getStackForm(), ModuleCore.getItems().refractoryWax.getItemStack()}, new int[]{20 * 100, 50 * 100}, Voltage.HV, 196);
-            ItemStack wax = ModuleCore.getItems().beeswax.getItemStack();
-            if (Loader.isModLoaded(GTValues.MODID_MB)) {
-                wax = IntegrationUtil.getModItem(GTValues.MODID_MB, "wax", 2);
-            }
-            addCentrifugeToItemStack(GTCombType.LAPOTRON, new ItemStack[]{OreDictUnifier.get(OrePrefix.dust, Materials.Lapotron), wax}, new int[]{15 * 100, 40 * 100}, Voltage.HV, 196);
+        addCentrifugeToItemStack(GTCombType.ENERGY, new ItemStack[]{MetaItems.ENERGIUM_DUST.getStackForm(), ModuleCore.getItems().refractoryWax.getItemStack()}, new int[]{20 * 100, 50 * 100}, Voltage.HV, 196);
+        ItemStack wax = ModuleCore.getItems().beeswax.getItemStack();
+        if (Loader.isModLoaded(GTValues.MODID_MB)) {
+            wax = IntegrationUtil.getModItem(GTValues.MODID_MB, "wax", 2);
         }
+        addCentrifugeToItemStack(GTCombType.LAPOTRON, new ItemStack[]{OreDictUnifier.get(OrePrefix.dust, Materials.Lapotron), wax}, new int[]{15 * 100, 40 * 100}, Voltage.HV, 196);
 
         // Alloy
         addProcessGT(GTCombType.REDALLOY, new Material[]{Materials.RedAlloy, Materials.Redstone, Materials.Copper}, Voltage.LV);
@@ -253,28 +251,28 @@ public class CombRecipes {
         if (Loader.isModLoaded(GTValues.MODID_MB)) {
             addProcessGT(GTCombType.SPARKLING, new Material[]{Materials.NetherStar}, Voltage.EV);
             addCentrifugeToItemStack(GTCombType.SPARKLING, new ItemStack[]{IntegrationUtil.getModItem(GTValues.MODID_MB, "wax", 0), IntegrationUtil.getModItem(GTValues.MODID_MB, "resource", 5), OreDictUnifier.get(OrePrefix.dustTiny, Materials.NetherStar)}, new int[]{50 * 100, 10 * 100, (ForestryConfig.harderGTCombRecipes ? 10 : 50) * 100}, Voltage.EV);
+        }
 
-            addExtractorProcess(GTCombType.HELIUM, Materials.Helium.getFluid(250), Voltage.HV, 100);
-            addExtractorProcess(GTCombType.ARGON, Materials.Argon.getFluid(250), Voltage.MV, 100);
-            addExtractorProcess(GTCombType.XENON, Materials.Xenon.getFluid(250), Voltage.IV, 50);
-            addExtractorProcess(GTCombType.NEON, Materials.Neon.getFluid(250), Voltage.IV, 15);
-            addExtractorProcess(GTCombType.KRYPTON, Materials.Krypton.getFluid(250), Voltage.IV, 25);
-            addExtractorProcess(GTCombType.NITROGEN, Materials.Nitrogen.getFluid(500), Voltage.MV, 100);
-            addExtractorProcess(GTCombType.OXYGEN, Materials.Oxygen.getFluid(500), Voltage.MV, 100);
-            addExtractorProcess(GTCombType.HYDROGEN, Materials.Hydrogen.getFluid(500), Voltage.MV, 100);
-            addExtractorProcess(GTCombType.FLUORINE, Materials.Fluorine.getFluid(250), Voltage.MV, 128);
+        addExtractorProcess(GTCombType.HELIUM, Materials.Helium.getFluid(250), Voltage.HV, 100);
+        addExtractorProcess(GTCombType.ARGON, Materials.Argon.getFluid(250), Voltage.MV, 100);
+        addExtractorProcess(GTCombType.XENON, Materials.Xenon.getFluid(250), Voltage.IV, 50);
+        addExtractorProcess(GTCombType.NEON, Materials.Neon.getFluid(250), Voltage.IV, 15);
+        addExtractorProcess(GTCombType.KRYPTON, Materials.Krypton.getFluid(250), Voltage.IV, 25);
+        addExtractorProcess(GTCombType.NITROGEN, Materials.Nitrogen.getFluid(500), Voltage.MV, 100);
+        addExtractorProcess(GTCombType.OXYGEN, Materials.Oxygen.getFluid(500), Voltage.MV, 100);
+        addExtractorProcess(GTCombType.HYDROGEN, Materials.Hydrogen.getFluid(500), Voltage.MV, 100);
+        addExtractorProcess(GTCombType.FLUORINE, Materials.Fluorine.getFluid(250), Voltage.MV, 128);
 
-            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
-                ItemStack fluixDust = OreDictUnifier.get("dustFluix");
-                if (fluixDust == ItemStack.EMPTY) {
-                    fluixDust = Api.INSTANCE.definitions().materials().fluixDust().maybeStack(1).orElse(ItemStack.EMPTY);
-                }
-                if (fluixDust != ItemStack.EMPTY) {
-                    if (ForestryConfig.harderGTCombRecipes) {
-                        addCentrifugeToItemStack(GTCombType.FLUIX, new ItemStack[]{fluixDust, ModuleCore.getItems().beeswax.getItemStack()}, new int[]{25 * 100, 30 * 100}, Voltage.ULV);
-                    } else {
-                        addCentrifugeToItemStack(GTCombType.FLUIX, new ItemStack[]{fluixDust, OreDictUnifier.get(OrePrefix.dust, Materials.CertusQuartz), OreDictUnifier.get(OrePrefix.dust, Materials.Quartzite), OreDictUnifier.get(OrePrefix.dust, Materials.Barite), ModuleCore.getItems().beeswax.getItemStack()}, new int[]{25 * 100, 90 * 100, 90 * 100, 90 * 100, 30 * 100}, Voltage.ULV);
-                    }
+        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            ItemStack fluixDust = OreDictUnifier.get("dustFluix");
+            if (fluixDust == ItemStack.EMPTY) {
+                fluixDust = Api.INSTANCE.definitions().materials().fluixDust().maybeStack(1).orElse(ItemStack.EMPTY);
+            }
+            if (fluixDust != ItemStack.EMPTY) {
+                if (ForestryConfig.harderGTCombRecipes) {
+                    addCentrifugeToItemStack(GTCombType.FLUIX, new ItemStack[]{fluixDust, ModuleCore.getItems().beeswax.getItemStack()}, new int[]{25 * 100, 30 * 100}, Voltage.ULV);
+                } else {
+                    addCentrifugeToItemStack(GTCombType.FLUIX, new ItemStack[]{fluixDust, OreDictUnifier.get(OrePrefix.dust, Materials.CertusQuartz), OreDictUnifier.get(OrePrefix.dust, Materials.Quartzite), OreDictUnifier.get(OrePrefix.dust, Materials.Barite), ModuleCore.getItems().beeswax.getItemStack()}, new int[]{25 * 100, 90 * 100, 90 * 100, 90 * 100, 30 * 100}, Voltage.ULV);
                 }
             }
         }

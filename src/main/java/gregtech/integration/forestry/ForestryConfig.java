@@ -19,7 +19,7 @@ public class ForestryConfig {
     @Comment({
             "Enable GregTech Bees.",
             "Requirements: Forestry Apiculture module",
-            "Recommended: ExtraBees and MagicBees, as some GT bees are only added if those mods are present",
+            "Recommended: ExtraBees and MagicBees, as some GT bees are only added, and others have more interesting mutations, if those mods are present",
             "Default: true"
     })
     @RequiresMcRestart
