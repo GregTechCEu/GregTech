@@ -3,6 +3,7 @@ package gregtech.api.metatileentity;
 import gregtech.api.block.BlockStateTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.network.PacketDataList;
+import gregtech.api.util.GTLog;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.state.IBlockState;
@@ -70,6 +71,10 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
             for (String discriminatorKey : entryTag.getKeySet()) {
                 ByteBuf backedBuffer = Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey));
                 receiveCustomData(Integer.parseInt(discriminatorKey), new PacketBuffer(backedBuffer));
+                if (backedBuffer.readableBytes() != 0) {
+                    GTLog.logger.error("Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
+                            getClass().getName(), discriminatorKey, backedBuffer.readableBytes());
+                }
             }
         }
     }
@@ -90,5 +95,9 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         byte[] updateData = tag.getByteArray("d");
         ByteBuf backedBuffer = Unpooled.copiedBuffer(updateData);
         receiveInitialSyncData(new PacketBuffer(backedBuffer));
+        if (backedBuffer.readableBytes() != 0) {
+            GTLog.logger.error("Class {} failed to finish reading initialSyncData with {} bytes remaining",
+                    getClass().getName(), backedBuffer.readableBytes());
+        }
     }
 }
