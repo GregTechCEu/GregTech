@@ -45,13 +45,8 @@ public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
         BlockPos.PooledMutableBlockPos offsetPos = BlockPos.PooledMutableBlockPos.retain();
         for (EnumFacing facing : EnumFacing.VALUES) {
             offsetPos.setPos(pos).move(facing);
-            ILDNetworkPart networkPart;
             IBlockState neighborState = worldIn.getBlockState(offsetPos);
-            if (neighborState.getBlock() instanceof ILDNetworkPart neighborBlock) {
-                networkPart = neighborBlock;
-            } else {
-                networkPart = ILDEndpoint.tryGet(worldIn, offsetPos);
-            }
+            ILDNetworkPart networkPart = ILDNetworkPart.tryGet(worldIn, offsetPos, neighborState);
             if (networkPart != null && networkPart.getPipeType() == getPipeType()) {
                 // neighbor is a valid pipe block
                 LongDistanceNetwork network = LongDistanceNetwork.get(worldIn, offsetPos);

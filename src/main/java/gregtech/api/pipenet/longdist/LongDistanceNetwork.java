@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class LongDistanceNetwork {
@@ -176,7 +177,7 @@ public class LongDistanceNetwork {
         this.endpoints.clear();
     }
 
-    protected void invalidateEndpoints() {
+    public void invalidateEndpoints() {
         this.activeInputIndex = -1;
         this.activeOutputIndex = -1;
         for (ILDEndpoint endpoint : this.endpoints) {
@@ -195,7 +196,16 @@ public class LongDistanceNetwork {
         // return null for invalid network configurations
         if (!isValid() || (!endpoint.isInput() && !endpoint.isOutput())) return null;
 
+        // check if endpoint really exists in this network
+        int thisIndex = this.endpoints.indexOf(endpoint);
+        if (thisIndex < 0) {
+            // endpoint not found in this network, something is wrong, recalculate network
+            recalculateNetwork(Collections.singleton(endpoint.getPos()));
+            return null;
+        }
+
         if (isIOIndexInvalid()) {
+            // current endpoint indexes are invalid
             invalidateEndpoints();
         } else if (this.activeInputIndex >= 0) {
             // there is an active input and output endpoint
@@ -222,9 +232,6 @@ public class LongDistanceNetwork {
         int otherIndex = find(endpoint);
         if (otherIndex >= 0) {
             // found other endpoint
-            int thisIndex = this.endpoints.indexOf(endpoint);
-            if (thisIndex < 0)
-                throw new IllegalStateException("Tried to get endpoint that is not part of this network. Something is seriously wrong!");
             ILDEndpoint other = this.endpoints.get(otherIndex);
             // set active endpoints
             this.activeOutputIndex = endpoint.isOutput() ? thisIndex : otherIndex;
@@ -237,6 +244,11 @@ public class LongDistanceNetwork {
     private int find(ILDEndpoint endpoint) {
         for (int i = 0; i < this.endpoints.size(); i++) {
             ILDEndpoint other = this.endpoints.get(i);
+            if (!other.isValid()) {
+                other.invalidateLink();
+                this.endpoints.remove(i--);
+                continue;
+            }
             if (endpoint != other &&
                     (other.isOutput() || other.isInput()) &&
                     other.isInput() != endpoint.isInput() &&

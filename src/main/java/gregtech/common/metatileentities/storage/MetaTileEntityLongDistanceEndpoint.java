@@ -167,6 +167,16 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             if (network != null && network.isValid()) {
                 this.link = network.getOtherEndpoint(this);
             }
+        } else if (!this.link.isValid()) {
+            this.link.invalidateLink();
+            this.link = null;
+            LongDistanceNetwork network = LongDistanceNetwork.get(getWorld(), getPos());
+            if (network != null) {
+                network.invalidateEndpoints();
+                if (network.isValid()) {
+                    this.link = network.getOtherEndpoint(this);
+                }
+            }
         }
         return this.link;
     }

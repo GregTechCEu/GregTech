@@ -70,6 +70,10 @@ public interface ILDEndpoint extends ILDNetworkPart{
      */
     BlockPos getPos();
 
+    World getWorld();
+
+    boolean isValid();
+
     @Nullable
     static ILDEndpoint tryGet(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
