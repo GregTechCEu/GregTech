@@ -77,6 +77,9 @@ public class ModuleManager implements IModuleManager {
     }
 
     public void setup(ASMDataTable asmDataTable, File configDirectory) {
+        // find and register all containers registered with the @ModuleContainer annotation
+        discoverContainers(asmDataTable);
+
         currentStage = ModuleStage.M_SETUP;
         //configFolder = new File(configDirectory, GTValues.MODID);
         Map<String, List<IGregTechModule>> modules = getModules(asmDataTable);
@@ -327,6 +330,18 @@ public class ModuleManager implements IModuleManager {
             }
         }
         return instances;
+    }
+
+    private void discoverContainers(ASMDataTable table) {
+        Set<ASMDataTable.ASMData> dataSet = table.getAll(ModuleContainer.class.getCanonicalName());
+        for (ASMDataTable.ASMData data : dataSet) {
+            try {
+                Class<?> clazz = Class.forName(data.getClassName());
+                registerContainer((IModuleContainer) clazz.newInstance());
+            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+                logger.error("Could not initialize module container " + data.getClassName(), e);
+            }
+        }
     }
 
     /*
