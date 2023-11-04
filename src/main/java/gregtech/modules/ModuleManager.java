@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ModuleManager implements IModuleManager {
 
@@ -21,7 +22,7 @@ public class ModuleManager implements IModuleManager {
     //private static final String MODULE_CFG_CATEGORY_NAME = "modules";
     //private static File configFolder;
 
-    private final Map<String, IModuleContainer> containers = new HashMap<>();
+    private Map<String, IModuleContainer> containers = new LinkedHashMap<>();
     private final Map<ResourceLocation, IGregTechModule> sortedModules = new LinkedHashMap<>();
     private final Set<IGregTechModule> loadedModules = new LinkedHashSet<>();
 
@@ -77,8 +78,13 @@ public class ModuleManager implements IModuleManager {
     }
 
     public void setup(ASMDataTable asmDataTable, File configDirectory) {
-        // find and register all containers registered with the @ModuleContainer annotation
+        // find and register all containers registered with the @ModuleContainer annotation, then sort them by container name
         discoverContainers(asmDataTable);
+        containers = containers.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new
+                ));
 
         currentStage = ModuleStage.M_SETUP;
         //configFolder = new File(configDirectory, GTValues.MODID);
@@ -207,8 +213,8 @@ public class ModuleManager implements IModuleManager {
     private void configureModules(Map<String, List<IGregTechModule>> modules) {
         //Locale locale = Locale.getDefault();
         //Locale.setDefault(Locale.ENGLISH);
-        Set<ResourceLocation> toLoad = new HashSet<>();
-        Set<IGregTechModule> modulesToLoad = new HashSet<>();
+        Set<ResourceLocation> toLoad = new LinkedHashSet<>();
+        Set<IGregTechModule> modulesToLoad = new LinkedHashSet<>();
         //Configuration config = getConfiguration();
 
         for (IModuleContainer container : containers.values()) {
@@ -262,7 +268,7 @@ public class ModuleManager implements IModuleManager {
             }
         } while (changed);
 
-        // Sort modules
+        // Sort modules by their module dependencies
         do {
             changed = false;
             iterator = modulesToLoad.iterator();
@@ -329,7 +335,11 @@ public class ModuleManager implements IModuleManager {
                 logger.info("Module {} is missing at least one of mod dependencies: {}, skipping loading...", moduleID, modDependencies);
             }
         }
-        return instances;
+        return instances.stream().sorted((m1, m2) -> {
+            GregTechModule m1a = m1.getClass().getAnnotation(GregTechModule.class);
+            GregTechModule m2a = m2.getClass().getAnnotation(GregTechModule.class);
+            return (m1a.containerID() + ":" + m1a.moduleID()).compareTo(m2a.containerID() + ":" + m2a.moduleID());
+        }).collect(Collectors.toCollection(ArrayList::new));
     }
 
     private void discoverContainers(ASMDataTable table) {
