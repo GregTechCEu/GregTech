@@ -17,10 +17,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.common.items.ToolItems;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.IntegrationSubmodule;
-import gregtech.integration.forestry.bees.GTAlleleBeeSpecies;
-import gregtech.integration.forestry.bees.GTBeeDefinition;
-import gregtech.integration.forestry.bees.GTCombItem;
-import gregtech.integration.forestry.bees.GTDropItem;
+import gregtech.integration.forestry.bees.*;
 import gregtech.integration.forestry.recipes.*;
 import gregtech.integration.forestry.frames.GTFrameType;
 import gregtech.integration.forestry.frames.GTItemFrame;
@@ -126,6 +123,13 @@ public class ForestryModule extends IntegrationSubmodule {
             } else {
                 getLogger().warn("GregTech Bees are enabled, but Forestry Apiculture module is disabled. Skipping...");
             }
+        }
+
+        // Remove duplicate/conflicting bees from other Forestry addons.
+        // Done in init to have our changes applied before their registration,
+        // since we load after other Forestry addons purposefully.
+        if (ForestryConfig.disableConflictingBees && ForestryUtil.apicultureEnabled()) {
+            BeeRemovals.init();
         }
     }
 

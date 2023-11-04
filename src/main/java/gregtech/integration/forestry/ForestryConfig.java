@@ -48,4 +48,12 @@ public class ForestryConfig {
     })
     @RequiresMcRestart
     public static boolean harderForestryRecipes = false;
+
+    @Comment({
+            "Whether to disable some bees from other Forestry addons, such as ExtraBees and MagicBees, in favor of GTs.",
+            "Heavily recommended, as the removed bees have no purpose with GT Bees other than JEI and breed tree clutter.",
+            "Default: true"
+    })
+    @RequiresMcRestart
+    public static boolean disableConflictingBees = true;
 }
