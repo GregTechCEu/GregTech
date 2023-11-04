@@ -46,11 +46,11 @@ public class Recipe {
     private static final NonNullList<ItemStack> EMPTY = NonNullList.create();
 
     /**
-     * This method was deprecated in 2.7 and will be removed in 2.8
+     * This method was deprecated in 2.8 and will be removed in 2.9
      *
      * @deprecated use {@link ChancedOutputLogic#getMaxChancedValue()}
      */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.8")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Deprecated
     public static int getMaxChancedValue() {
         return ChancedOutputLogic.getMaxChancedValue();
