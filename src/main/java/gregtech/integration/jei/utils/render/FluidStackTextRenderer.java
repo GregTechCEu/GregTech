@@ -1,14 +1,14 @@
 package gregtech.integration.jei.utils.render;
 
 import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
-import gregtech.client.utils.RenderUtil;
+import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.client.utils.RenderUtil;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.plugins.vanilla.ingredients.fluid.FluidStackRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
@@ -18,6 +18,7 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
     private boolean notConsumed;
     private int chanceBase = -1;
     private int chanceBoost = -1;
+    private ChancedOutputLogic chanceLogic;
 
     public FluidStackTextRenderer(int capacityMb, boolean showCapacity, int width, int height, @Nullable IDrawable overlay) {
         super(capacityMb, showCapacity, width, height, overlay);
@@ -30,10 +31,11 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
     }
 
     public FluidStackTextRenderer(int capacityMb, boolean showCapacity, int width, int height, @Nullable IDrawable overlay,
-                                  BoostableChanceEntry<FluidStack> chance) {
+                                  BoostableChanceEntry<FluidStack> chance, ChancedOutputLogic chanceLogic) {
         if (chance != null) {
             this.chanceBase = chance.getChance();
             this.chanceBoost = chance.getChanceBoost();
+            this.chanceLogic = chanceLogic;
         }
         this.notConsumed = false;
     }
@@ -64,8 +66,11 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
             GlStateManager.translate(0, 0, 160);
 
             String s2 = (this.chanceBase / 100) + "%";
-            if (this.chanceBoost > 0)
+            if (this.chanceLogic != null && this.chanceLogic != ChancedOutputLogic.NONE && this.chanceLogic != ChancedOutputLogic.OR) {
+                s2 += "*";
+            } else if (this.chanceBoost > 0) {
                 s2 += "+";
+            }
 
             fontRenderer.drawStringWithShadow(s2, (xPosition + 6) * 2 - fontRenderer.getStringWidth(s2) + 19, (yPosition + 1) * 2, 0xFFFF00);
 

@@ -1,6 +1,7 @@
 package gregtech.integration.jei.utils.render;
 
 import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
+import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import mezz.jei.plugins.vanilla.ingredients.item.ItemStackRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -13,15 +14,18 @@ import javax.annotation.Nullable;
 public class ItemStackTextRenderer extends ItemStackRenderer {
     private final int chanceBase;
     private final int chanceBoost;
+    private final ChancedOutputLogic chanceLogic;
     private final boolean notConsumed;
 
-    public ItemStackTextRenderer(BoostableChanceEntry<ItemStack> chance) {
-        if (chance != null) {
+    public ItemStackTextRenderer(BoostableChanceEntry<ItemStack> chance, ChancedOutputLogic chanceLogic) {
+        if (chance != null && chanceLogic != null) {
             this.chanceBase = chance.getChance();
             this.chanceBoost = chance.getChanceBoost();
+            this.chanceLogic = chanceLogic;
         } else {
             this.chanceBase = -1;
             this.chanceBoost = -1;
+            this.chanceLogic = null;
         }
         this.notConsumed = false;
     }
@@ -29,12 +33,14 @@ public class ItemStackTextRenderer extends ItemStackRenderer {
     public ItemStackTextRenderer(int chanceBase, int chanceBoost) {
         this.chanceBase = chanceBase;
         this.chanceBoost = chanceBoost;
+        this.chanceLogic = null;
         this.notConsumed = false;
     }
 
     public ItemStackTextRenderer(boolean notConsumed) {
         this.chanceBase = -1;
         this.chanceBoost = -1;
+        this.chanceLogic = null;
         this.notConsumed = notConsumed;
     }
 
@@ -50,8 +56,11 @@ public class ItemStackTextRenderer extends ItemStackRenderer {
             GlStateManager.translate(0, 0, 160);
 
             String s = (this.chanceBase / 100) + "%";
-            if (this.chanceBoost > 0)
+            if (this.chanceLogic != null && this.chanceLogic != ChancedOutputLogic.NONE && this.chanceLogic != ChancedOutputLogic.OR) {
+                s += "*";
+            } else if (this.chanceBoost > 0) {
                 s += "+";
+            }
 
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
             fontRenderer.drawStringWithShadow(s, (xPosition + 6) * 2 - fontRenderer.getStringWidth(s) + 19, (yPosition + 1) * 2, 0xFFFF00);

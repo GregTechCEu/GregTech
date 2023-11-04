@@ -41,6 +41,10 @@ public class ChancedOutputList<I, T extends ChancedOutput<I>> {
         return chancedOutputLogic.roll(getChancedEntries(), boostFunction, baseTier, machineTier);
     }
 
+    public @NotNull ChancedOutputLogic getChancedOutputLogic() {
+        return chancedOutputLogic;
+    }
+
     @Override
     public String toString() {
         return chancedEntries.toString();

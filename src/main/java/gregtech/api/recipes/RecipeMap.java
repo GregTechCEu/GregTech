@@ -394,7 +394,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             recipeStatus = EnumValidationResult.INVALID;
         }
 
-        amount = recipe.getFluidInputs().size() + recipe.getChancedFluidOutputs().getChancedEntries().size();
+        amount = recipe.getFluidInputs().size();
         if (amount > getMaxFluidInputs()) {
             GTLog.logger.error("Invalid amount of recipe fluid inputs. Actual: {}. Should be at most {}.", amount, getMaxFluidInputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
@@ -405,7 +405,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             recipeStatus = EnumValidationResult.INVALID;
         }
 
-        amount = recipe.getFluidOutputs().size();
+        amount = recipe.getFluidOutputs().size() + recipe.getChancedFluidOutputs().getChancedEntries().size();
         if (amount > getMaxFluidOutputs()) {
             GTLog.logger.error("Invalid amount of recipe fluid outputs. Actual: {}. Should be at most {}.", amount, getMaxFluidOutputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Outputs"));

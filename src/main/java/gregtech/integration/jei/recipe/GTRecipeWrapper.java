@@ -10,6 +10,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
+import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -35,6 +36,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
@@ -166,7 +168,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             }
         }
 
-        addIngredientTooltips(tooltip, notConsumed, entry);
+        addIngredientTooltips(tooltip, notConsumed, input, entry, recipe.getChancedOutputs().getChancedOutputLogic());
+        addIngredientTooltips(tooltip, notConsumed, input, ingredient, null);
     }
 
     public void addFluidTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
@@ -183,14 +186,23 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             }
         }
 
-        addIngredientTooltips(tooltip, notConsumed, entry);
+        addIngredientTooltips(tooltip, notConsumed, input, entry, recipe.getChancedFluidOutputs().getChancedOutputLogic());
+        addIngredientTooltips(tooltip, notConsumed, input, ingredient, null);
     }
 
-    public void addIngredientTooltips(Collection<String> tooltip, boolean notConsumed, BoostableChanceEntry<?> entry) {
-        if (entry != null) {
-            double chance = entry.getChance() / 100.0;
-            double boost = entry.getChanceBoost() / 100.0;
-            tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.chance", chance, boost));
+    public void addIngredientTooltips(@Nonnull Collection<String> tooltip, boolean notConsumed, boolean input, @Nullable Object ingredient, @Nullable Object ingredient2) {
+        if (ingredient2 instanceof ChancedOutputLogic logic) {
+            if (ingredient instanceof BoostableChanceEntry<?> entry) {
+                double chance = entry.getChance() / 100.0;
+                double boost = entry.getChanceBoost() / 100.0;
+                if (logic != ChancedOutputLogic.NONE && logic != ChancedOutputLogic.OR) {
+                    tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.chance_logic",
+                            chance, boost, I18n.format(logic.getTranslationKey())));
+                } else {
+                    tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.chance",
+                            chance, boost));
+                }
+            }
         } else if (notConsumed) {
             tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.not_consumed"));
         }
@@ -296,9 +308,17 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         return recipe.getChancedOutputs().getChancedEntries().get(slot);
     }
 
+    public ChancedOutputLogic getChancedOutputLogic() {
+        return recipe.getChancedOutputs().getChancedOutputLogic();
+    }
+
     public ChancedFluidOutput getFluidOutputChance(int slot) {
         if (slot >= recipe.getChancedFluidOutputs().getChancedEntries().size() || slot < 0) return null;
         return recipe.getChancedFluidOutputs().getChancedEntries().get(slot);
+    }
+
+    public ChancedOutputLogic getChancedFluidOutputLogic() {
+        return recipe.getChancedFluidOutputs().getChancedOutputLogic();
     }
 
     public boolean isNotConsumedItem(int slot) {

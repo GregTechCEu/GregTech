@@ -14,7 +14,6 @@ import java.util.List;
 /**
  * Logic for determining which chanced outputs should be produced from a list
  */
-@FunctionalInterface
 public interface ChancedOutputLogic {
 
     /**
@@ -32,6 +31,16 @@ public interface ChancedOutputLogic {
             }
             return builder == null ? null : builder.build();
         }
+
+        @Override
+        public @NotNull String getTranslationKey() {
+            return "gregtech.chance_logic.or";
+        }
+
+        @Override
+        public String toString() {
+            return "ChancedOutputLogic{OR}";
+        }
     };
 
     /**
@@ -46,6 +55,16 @@ public interface ChancedOutputLogic {
                 }
             }
             return ImmutableList.copyOf(chancedEntries);
+        }
+
+        @Override
+        public @NotNull String getTranslationKey() {
+            return "gregtech.chance_logic.and";
+        }
+
+        @Override
+        public String toString() {
+            return "ChancedOutputLogic{AND}";
         }
     };
 
@@ -62,6 +81,16 @@ public interface ChancedOutputLogic {
             }
             return null;
         }
+
+        @Override
+        public @NotNull String getTranslationKey() {
+            return "gregtech.chance_logic.xor";
+        }
+
+        @Override
+        public String toString() {
+            return "ChancedOutputLogic{XOR}";
+        }
     };
 
     /**
@@ -71,6 +100,17 @@ public interface ChancedOutputLogic {
         @Override
         public @Nullable @Unmodifiable <I, T extends ChancedOutput<I>> List<@NotNull T> roll(@NotNull @Unmodifiable List<@NotNull T> chancedEntries, @NotNull ChanceBoostFunction boostFunction, int baseTier, int machineTier) {
             return null;
+        }
+
+        @Override
+        public @NotNull String getTranslationKey() {
+            return "gregtech.chance_logic.none";
+        }
+
+        @Override
+        public String toString() {
+            return "ChancedOutputLogic{NONE}";
+
         }
     };
 
@@ -115,4 +155,6 @@ public interface ChancedOutputLogic {
     <I, T extends ChancedOutput<I>> @Nullable @Unmodifiable List<@NotNull T> roll(
             @NotNull @Unmodifiable List<@NotNull T> chancedEntries, @NotNull ChanceBoostFunction boostFunction,
             int baseTier, int machineTier);
+
+    @NotNull String getTranslationKey();
 }
