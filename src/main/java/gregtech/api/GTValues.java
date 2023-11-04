@@ -148,6 +148,7 @@ public class GTValues {
             MODID_BAUBLES = "baubles",
             MODID_TOP_ADDONS = "topaddons",
             MODID_IC2 = "ic2",
+            MODID_GTFO = "gregtechfoodoption",
             MODID_BINNIE = "binniecore",
             MODID_XU2 = "extrautils2",
             MODID_TR = "techreborn",

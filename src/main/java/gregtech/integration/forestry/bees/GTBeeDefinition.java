@@ -15,6 +15,7 @@ import forestry.core.ModuleCore;
 import forestry.core.genetics.alleles.AlleleHelper;
 import forestry.core.genetics.alleles.EnumAllele;
 import gregtech.api.GTValues;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -62,7 +63,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.INDUSTRIOUS, BeeDefinition.DILIGENT, 10);
-                mutation.requireResource(Blocks.CLAY.getDefaultState());
+                mutation.requireResource(Blocks.HARDENED_CLAY.getDefaultState());
             }
     ),
     SLIMEBALL(GTBranchDefinition.GT_ORGANIC, "Bituminipila", true, 0x4E9E55, 0x00FF15,
@@ -95,10 +96,10 @@ public enum GTBeeDefinition implements IBeeDefinition {
     ),
     PEAT(GTBranchDefinition.GT_ORGANIC, "Limus", true, 0x906237, 0x58300B,
             beeSpecies -> {
-                beeSpecies.addProduct(ModuleCore.getItems().peat.getItemStack(), 0.30f);
                 beeSpecies.addProduct(getForestryComb(EnumHoneyComb.HONEY), 0.15f);
                 beeSpecies.addProduct(getGTComb(GTCombType.COAL), 0.15f);
-                beeSpecies.addProduct(ModuleCore.getItems().mulch.getItemStack(), 0.05f);
+                beeSpecies.addSpecialty(ModuleCore.getItems().peat.getItemStack(), 0.30f);
+                beeSpecies.addSpecialty(ModuleCore.getItems().mulch.getItemStack(), 0.05f);
                 beeSpecies.setHumidity(EnumHumidity.NORMAL);
                 beeSpecies.setTemperature(EnumTemperature.NORMAL);
             },
@@ -152,7 +153,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
     OIL(GTBranchDefinition.GT_ORGANIC, "Oleum", true, 0x4C4C4C, 0x333333,
             beeSpecies -> {
                 beeSpecies.addProduct(getForestryComb(EnumHoneyComb.HONEY), 0.30f);
-                beeSpecies.addSpecialty(getGTComb(GTCombType.OIL), 0.15f);
+                beeSpecies.addSpecialty(getGTComb(GTCombType.OIL), 0.75f);
                 beeSpecies.setHumidity(EnumHumidity.DAMP);
                 beeSpecies.setTemperature(EnumTemperature.NORMAL);
                 beeSpecies.setHasEffect();
@@ -236,15 +237,50 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 mutation.restrictBiomeType(BiomeDictionary.Type.FOREST);
             }
     ),
-    /*
+    FERTILIZER(GTBranchDefinition.GT_ORGANIC, "Stercorat", true, 0x7FCEF5, 0x654525,
+            beeSpecies -> {
+                if (Loader.isModLoaded(GTValues.MODID_EB)) {
+                    beeSpecies.addProduct(getExtraBeesComb(9), 0.15f);
+                } else {
+                    beeSpecies.addProduct(getForestryComb(EnumHoneyComb.MOSSY), 0.15f);
+                }
+                beeSpecies.addSpecialty(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Ash), 0.2f);
+                beeSpecies.addSpecialty(OreDictUnifier.get(OrePrefix.dustTiny, Materials.DarkAsh), 0.2f);
+                beeSpecies.addSpecialty(MetaItems.FERTILIZER.getStackForm(), 0.3f);
+                beeSpecies.addSpecialty(IntegrationUtil.getModItem(GTValues.MODID_FR, "fertilizer_compound", 0), 0.3f);
+                beeSpecies.setHumidity(EnumHumidity.DAMP);
+                beeSpecies.setTemperature(EnumTemperature.WARM);
+            },
+            template -> {
+                AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.FASTEST);
+                AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.LONGER);
+                AlleleHelper.getInstance().set(template, FLOWER_PROVIDER, EnumAllele.Flowers.WHEAT);
+                AlleleHelper.getInstance().set(template, FLOWERING, EnumAllele.Flowering.FASTER);
+            },
+            dis -> dis.registerMutation(ASH, APATITE, 8)
+    ),
+    PHOSPHORUS(GTBranchDefinition.GT_ORGANIC, "Phosphorus", false, 0xFFC826, 0xC1C1F6,
+            beeSpecies -> {
+                beeSpecies.addSpecialty(getGTComb(GTCombType.PHOSPHORUS), 0.35f);
+                beeSpecies.setTemperature(EnumTemperature.HOT);
+                beeSpecies.setNocturnal();
+                beeSpecies.setHasEffect();
+            },
+            template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(APATITE, ASH, 12);
+                mutation.restrictTemperature(EnumTemperature.HOT);
+                mutation.requireResource("blockTricalciumPhosphate");
+            }
+    ),
     SANDWICH(GTBranchDefinition.GT_ORGANIC, "Sandwico", true, 0x32CD32, 0xDAA520,
             beeSpecies -> {
-                beeSpecies.addProduct(getForestryComb(EnumHoneyComb.WHEATEN), 0.15f);
-                beeSpecies.addProduct(OreDictUnifier.get(OrePrefix.ingot, Materials.Meat), 0.05f);
-                beeSpecies.addProduct(GTFOMetaItem.CHEDDAR_SLICE.getStackForm(), 0.05f);
-                beeSpecies.addSpecialty(GTFOMetaItem.CUCUMBER_SLICE.getStackForm(), 0.05f);
-                beeSpecies.addSpecialty(GTFOMetaItem.ONION_SLICE.getStackForm(), 0.05f);
-                beeSpecies.addSpecialty(GTFOMetaItem.TOMATO_SLICE.getStackForm(), 0.05f);
+                beeSpecies.addProduct(IntegrationUtil.getModItem(GTValues.MODID_GTFO, "gtfo_meta_item", 81), 0.05f); // Cucumber Slice
+                beeSpecies.addProduct(IntegrationUtil.getModItem(GTValues.MODID_GTFO, "gtfo_meta_item", 80), 0.05f); // Onion Slice
+                beeSpecies.addProduct(IntegrationUtil.getModItem(GTValues.MODID_GTFO, "gtfo_meta_item", 79), 0.05f); // Tomato Slice
+                beeSpecies.addSpecialty(new ItemStack(Items.COOKED_PORKCHOP), 0.05f);
+                beeSpecies.addSpecialty(new ItemStack(Items.COOKED_BEEF), 0.15f);
+                beeSpecies.addSpecialty(IntegrationUtil.getModItem(GTValues.MODID_GTFO, "gtfo_meta_item", 97), 0.05f); // Cheddar Slice
                 beeSpecies.setHumidity(EnumHumidity.NORMAL);
                 beeSpecies.setTemperature(EnumTemperature.NORMAL);
             },
@@ -257,9 +293,9 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 AlleleHelper.getInstance().set(template, FLOWER_PROVIDER, EnumAllele.Flowers.WHEAT);
                 AlleleHelper.getInstance().set(template, FLOWERING, EnumAllele.Flowering.FASTER);
             },
-            dis -> dis.registerMutation(BeeDefinition.AGRARIAN, BeeDefinition.CULTIVATED, 10),
-            () -> Loader.isModLoaded(GTValues.MODID_GTFO)
-    ),*/
+            dis -> dis.registerMutation(BeeDefinition.AGRARIAN, ForestryUtil.getSpecies(GTValues.MODID_MB, "Batty"), 10),
+            () -> Loader.isModLoaded(GTValues.MODID_GTFO) && Loader.isModLoaded(GTValues.MODID_MB)
+    ),
 
     // Gems
     REDSTONE(GTBranchDefinition.GT_GEM, "Rubrumlapis", true, 0x7D0F0F, 0xD11919,
@@ -289,6 +325,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 mutation.requireResource("blockLapis");
             }
     ),
+    // todo MB has this, do something about it
     CERTUS(GTBranchDefinition.GT_GEM, "Quarzeus", true, 0x57CFFB, 0xBBEEFF,
             beeSpecies -> {
                 beeSpecies.addProduct(getGTComb(GTCombType.STONE), 0.30f);
@@ -302,6 +339,8 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 mutation.requireResource("blockCertusQuartz");
             }
     ),
+    // todo fluix, silicon (but MB has these, do something about it)
+    // todo kill EB diamond or take it over
     DIAMOND(GTBranchDefinition.GT_GEM, "Adamas", false, 0xCCFFFF, 0xA3CCCC,
             beeSpecies -> {
                 beeSpecies.addProduct(getGTComb(GTCombType.STONE), 0.30f);
@@ -407,7 +446,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
     ),
     SPARKLING(GTBranchDefinition.GT_GEM, "Vesperstella", true, 0x7A007A, 0xFFFFFF,
             beeSpecies -> {
-                beeSpecies.addProduct(IntegrationUtil.getModItem(GTValues.MODID_MB, "resource", 5), 0.20f);
+                beeSpecies.addProduct(IntegrationUtil.getModItem(GTValues.MODID_MB, "resource", 3), 0.20f);
                 beeSpecies.addSpecialty(getGTComb(GTCombType.SPARKLING), 0.125f);
                 beeSpecies.setHumidity(EnumHumidity.NORMAL);
                 beeSpecies.setTemperature(EnumTemperature.NORMAL);
@@ -424,7 +463,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(ForestryUtil.getSpecies(GTValues.MODID_MB, "Withering"), ForestryUtil.getSpecies(GTValues.MODID_MB, "Draconic"), 1);
                 mutation.requireResource("blockNetherStar");
-                // todo end biome
+                mutation.restrictBiomeType(BiomeDictionary.Type.END);
             },
             () -> Loader.isModLoaded(GTValues.MODID_MB)
     ),
@@ -601,6 +640,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 mutation.requireResource("blockTitanium");
             }
     ),
+    // todo glowstone?
     CHROME(GTBranchDefinition.GT_RAREMETAL, "Chroma", true, 0xEBA1EB, 0xF2C3F2,
             beeSpecies -> {
                 beeSpecies.addProduct(getGTComb(GTCombType.SLAG), 0.30f);
@@ -729,6 +769,29 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 mutation.requireResource("blockElectrotine");
             }
     ),
+    SULFUR(GTBranchDefinition.GT_RAREMETAL, "Sulphur", false, 0x1E90FF, 0x3CB4C8,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.SULFUR), 0.70f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.HOT);
+            },
+            template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.NORMAL),
+            dis -> dis.registerMutation(ASH, PEAT, 15)
+    ),
+    INDIUM(GTBranchDefinition.GT_RAREMETAL, "Indicium", false, 0xFFA9FF, 0x8F5D99,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.INDIUM), 0.05f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.HOT);
+                beeSpecies.setHasEffect();
+            },
+            template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWEST),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(LEAD, OSMIUM, 1);
+                mutation.requireResource("blockIndium");
+                mutation.restrictBiomeType(BiomeDictionary.Type.END);
+            }
+    ),
 
     // Industrial
     ENERGY(GTBranchDefinition.GT_INDUSTRIAL, "Industria", false, 0xC11F1F, 0xEBB9B9,
@@ -751,7 +814,6 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.DEMONIC, ForestryUtil.getSpecies(GTValues.MODID_EB, "volcanic"), 10);
                 mutation.requireResource("blockRedstone");
-                //mutation.addMutationCondition() TODO Biome?
             },
             () -> Loader.isModLoaded(GTValues.MODID_EB)
     ),
@@ -779,6 +841,28 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 mutation.restrictTemperature(EnumTemperature.ICY);
             },
             () -> Loader.isModLoaded(GTValues.MODID_EB)
+    ),
+    EXPLOSIVE(GTBranchDefinition.GT_INDUSTRIAL, "Explosionis", false, 0x7E270F, 0x747474,
+            beeSpecies -> {
+                beeSpecies.addProduct(new ItemStack(Blocks.TNT), 0.2f);
+                // todo if we add a ITNT substitute, put it here instead of TNT
+                beeSpecies.setHumidity(EnumHumidity.ARID);
+                beeSpecies.setTemperature(EnumTemperature.HELLISH);
+                beeSpecies.setHasEffect();
+            },
+            template -> {
+                AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWEST);
+                AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.LONGEST);
+                AlleleHelper.getInstance().set(template, EFFECT, AlleleEffects.effectSnowing);
+                AlleleHelper.getInstance().set(template, TEMPERATURE_TOLERANCE, EnumAllele.Tolerance.NONE);
+                AlleleHelper.getInstance().set(template, NEVER_SLEEPS, true);
+                AlleleHelper.getInstance().set(template, FLOWER_PROVIDER, EnumAllele.Flowers.SNOW);
+                AlleleHelper.getInstance().set(template, FLOWERING, EnumAllele.Flowering.AVERAGE);
+            },
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.AUSTERE, COAL, 4);
+                mutation.requireResource(Blocks.TNT.getDefaultState());
+            }
     ),
 
     // Alloys
@@ -891,6 +975,21 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 mutation.requireResource("blockNaquadria");
             }
     ),
+    TRINIUM(GTBranchDefinition.GT_RADIOACTIVE, "Trinium", false, 0xB0E0E6, 0xC8C8D2,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.TRINIUM), 0.75f);
+                beeSpecies.addSpecialty(getGTComb(GTCombType.NAQUADAH), 0.10f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.COLD);
+                beeSpecies.setNocturnal();
+                beeSpecies.setHasEffect();
+            },
+            template -> AlleleHelper.getInstance().set(template, SPEED, GTAlleleBeeSpecies.speedBlinding),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(IRIDIUM, NAQUADAH, 4);
+                mutation.requireResource("blockTrinium");
+            }
+    ),
     THORIUM(GTBranchDefinition.GT_RADIOACTIVE, "Thorax", false, 0x005000, 0x001E00,
             beeSpecies -> {
                 beeSpecies.addProduct(getGTComb(GTCombType.THORIUM), 0.75f);
@@ -961,10 +1060,148 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 mutation.requireResource(new UnificationEntry(OrePrefix.block, Materials.Neutronium).toString());
             },
             () -> Loader.isModLoaded(GTValues.MODID_EB)
-    );
+    ),
 
-    // TODO Sandwich Bee
-    // TODO Fertilizer Bee?
+    // Noble Gases
+    HELIUM(GTBranchDefinition.GT_NOBLEGAS, "Helium", false, 0xFFA9FF, 0xC8B8B4,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.HELIUM), 0.35f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.ICY);
+                beeSpecies.setNocturnal();
+                beeSpecies.setHasEffect();
+            },
+            template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(STAINLESSSTEEL, ForestryUtil.getSpecies(GTValues.MODID_MB, "Watery"), 10);
+                mutation.restrictTemperature(EnumTemperature.ICY);
+            },
+            () -> Loader.isModLoaded(GTValues.MODID_MB)
+    ),
+    ARGON(GTBranchDefinition.GT_NOBLEGAS, "Argon", false, 0x89D9E1, 0xBDA5C2,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.ARGON), 0.35f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.ICY);
+                beeSpecies.setNocturnal();
+                beeSpecies.setHasEffect();
+            },
+            template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(HELIUM, ForestryUtil.getSpecies(GTValues.MODID_MB, "Supernatural"), 8);
+                mutation.restrictTemperature(EnumTemperature.ICY);
+            },
+            () -> Loader.isModLoaded(GTValues.MODID_MB)
+    ),
+    NEON(GTBranchDefinition.GT_NOBLEGAS, "Novum", false, 0xFFC826, 0xFF7200,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.NEON), 0.35f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.ICY);
+                beeSpecies.setNocturnal();
+                beeSpecies.setHasEffect();
+            },
+            template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(ARGON, IRON, 6);
+                mutation.restrictTemperature(EnumTemperature.ICY);
+            },
+            () -> Loader.isModLoaded(GTValues.MODID_MB)
+    ),
+    KRYPTON(GTBranchDefinition.GT_NOBLEGAS, "Kryptos", false, 0x8A97B0, 0x160822,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.KRYPTON), 0.35f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.ICY);
+                beeSpecies.setNocturnal();
+                beeSpecies.setHasEffect();
+            },
+            template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(NEON, ForestryUtil.getSpecies(GTValues.MODID_MB, "Supernatural"), 4);
+                mutation.restrictTemperature(EnumTemperature.ICY);
+            },
+            () -> Loader.isModLoaded(GTValues.MODID_MB)
+    ),
+    XENON(GTBranchDefinition.GT_NOBLEGAS, "Hostis", false, 0x8A97B0, 0x160822,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.XENON), 0.525f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.ICY);
+                beeSpecies.setNocturnal();
+                beeSpecies.setHasEffect();
+            },
+            template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(KRYPTON, BeeDefinition.EDENIC, 2);
+                mutation.restrictTemperature(EnumTemperature.ICY);
+            },
+            () -> Loader.isModLoaded(GTValues.MODID_MB)
+    ),
+    OXYGEN(GTBranchDefinition.GT_NOBLEGAS, "Oxygeni", false, 0xFFFFFF, 0x8F8FFF,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.OXYGEN), 0.45f);
+                beeSpecies.addSpecialty(getGTComb(GTCombType.HYDROGEN), 0.20f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.ICY);
+                beeSpecies.setNocturnal();
+                beeSpecies.setHasEffect();
+            },
+            template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(HELIUM, BeeDefinition.ENDED, 15);
+                mutation.restrictTemperature(EnumTemperature.ICY);
+            },
+            () -> Loader.isModLoaded(GTValues.MODID_MB)
+    ),
+    HYDROGEN(GTBranchDefinition.GT_NOBLEGAS, "Hydrogenium", false, 0xFFFFFF, 0xFF1493,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.HYDROGEN), 0.45f);
+                beeSpecies.addSpecialty(getGTComb(GTCombType.NITROGEN), 0.20f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.ICY);
+                beeSpecies.setNocturnal();
+                beeSpecies.setHasEffect();
+            },
+            template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(OXYGEN, ForestryUtil.getSpecies(GTValues.MODID_MB, "Watery"), 15);
+                mutation.restrictTemperature(EnumTemperature.ICY);
+            },
+            () -> Loader.isModLoaded(GTValues.MODID_MB)
+    ),
+    NITROGEN(GTBranchDefinition.GT_NOBLEGAS, "Nitrogenium", false, 0xFFC832, 0xA52A2A,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.NITROGEN), 0.45f);
+                beeSpecies.addSpecialty(getGTComb(GTCombType.FLUORINE), 0.20f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.ICY);
+                beeSpecies.setNocturnal();
+                beeSpecies.setHasEffect();
+            },
+            template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(OXYGEN, HYDROGEN, 15);
+                mutation.restrictTemperature(EnumTemperature.ICY);
+            },
+            () -> Loader.isModLoaded(GTValues.MODID_MB)
+    ),
+    FLUORINE(GTBranchDefinition.GT_NOBLEGAS, "Fluere", false, 0x86AFF0, 0xFF6D00,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.FLUORINE), 0.45f);
+                beeSpecies.addSpecialty(getGTComb(GTCombType.OXYGEN), 0.20f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.ICY);
+                beeSpecies.setNocturnal();
+                beeSpecies.setHasEffect();
+            },
+            template -> AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(NITROGEN, HYDROGEN, 15);
+                mutation.restrictTemperature(EnumTemperature.ICY);
+            },
+            () -> Loader.isModLoaded(GTValues.MODID_MB)
+    );
 
     private final GTBranchDefinition branch;
     private final GTAlleleBeeSpecies species;
@@ -1083,9 +1320,8 @@ public enum GTBeeDefinition implements IBeeDefinition {
         return BeeManager.beeMutationFactory.createMutation(parent1, parent2, getTemplate(), chance);
     }
 
-    @NotNull
     @Override
-    public final IAllele[] getTemplate() {
+    public final IAllele @NotNull [] getTemplate() {
         return Arrays.copyOf(template, template.length);
     }
 

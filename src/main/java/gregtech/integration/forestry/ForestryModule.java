@@ -291,15 +291,13 @@ public class ForestryModule extends IntegrationSubmodule {
                 Materials.Lithium.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
                 Materials.Electrotine.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
                 Materials.Lutetium.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
+                Materials.TricalciumPhosphate.addFlags(MaterialFlags.FORCE_GENERATE_BLOCK);
 
                 // Ores for Comb Processing, does not generate Ore Blocks
-                createOreProperty(Materials.Phosphate, Materials.Phosphorus);
                 createOreProperty(Materials.Chrome, Materials.Iron, Materials.Magnesium);
                 createOreProperty(Materials.Manganese, Materials.Chrome, Materials.Iron);
                 createOreProperty(Materials.Magnesium, Materials.Olivine);
                 createOreProperty(Materials.Silicon, Materials.SiliconDioxide);
-                createOreProperty(Materials.Zinc, Materials.Tin, Materials.Gallium);
-                createOreProperty(Materials.Antimony, Materials.Zinc, Materials.Iron);
                 createOreProperty(Materials.Tungsten, Materials.Manganese, Materials.Molybdenum);
                 createOreProperty(Materials.Titanium, Materials.Almandine);
                 createOreProperty(Materials.Osmium, Materials.Iridium);
@@ -311,8 +309,6 @@ public class ForestryModule extends IntegrationSubmodule {
                 createOreProperty(Materials.Neutronium);
                 createOreProperty(Materials.Gallium);
                 createOreProperty(Materials.Niobium);
-                createOreProperty(Materials.Arsenic);
-                createOreProperty(Materials.Bismuth);
                 createOreProperty(Materials.Rutile);
                 createOreProperty(Materials.Naquadria);
                 createOreProperty(Materials.Lutetium);

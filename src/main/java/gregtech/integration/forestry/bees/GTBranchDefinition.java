@@ -75,6 +75,15 @@ public enum GTBranchDefinition {
         AlleleHelper.getInstance().set(alleles, FLOWERING, EnumAllele.Flowering.AVERAGE);
         AlleleHelper.getInstance().set(alleles, SPEED, GTAlleleBeeSpecies.speedBlinding);
         AlleleHelper.getInstance().set(alleles, EFFECT, AlleleEffects.effectRadioactive);
+    }),
+
+    GT_NOBLEGAS("Nobilis Gasorum", alleles -> {
+        AlleleHelper.getInstance().set(alleles, TEMPERATURE_TOLERANCE, EnumAllele.Tolerance.BOTH_2);
+        AlleleHelper.getInstance().set(alleles, TOLERATES_RAIN, true);
+        AlleleHelper.getInstance().set(alleles, FLOWERING, EnumAllele.Flowering.FASTEST);
+        AlleleHelper.getInstance().set(alleles, LIFESPAN, EnumAllele.Lifespan.NORMAL);
+        AlleleHelper.getInstance().set(alleles, SPEED, EnumAllele.Speed.FASTEST);
+        AlleleHelper.getInstance().set(alleles, TERRITORY, EnumAllele.Territory.AVERAGE);
     });
 
     private static IAllele[] defaultTemplate;

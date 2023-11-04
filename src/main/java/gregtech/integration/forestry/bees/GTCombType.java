@@ -13,6 +13,7 @@ public enum GTCombType {
     APATITE("apatite", 0xc1c1f6, 0x676784),
     ASH("ash", 0x1e1a18, 0xc6c6c6),
     BIOMASS("biomass", 0x17AF0E, 0x21E118),
+    PHOSPHORUS("phosphorus", 0xC1C1F6, 0xFFC826),
 
     // Industrial
     ENERGY("energy", 0xC11F1F, 0xEBB9B9),
@@ -70,16 +71,29 @@ public enum GTCombType {
     SALT("salt", 0xF0C8C8, 0xFAFAFA),
     ELECTROTINE("electrotine", 0x1E90FF, 0x3CB4C8),
     ALMANDINE("almandine", 0xC60000, 0x8B8B8B),
+    INDIUM("indium", 0x8F5D99, 0xFFA9FF),
 
     // Radioactive
     URANIUM("uranium", 0x19AF19, 0x169E16),
     PLUTONIUM("plutonium", 0x240000, 0x570000),
     NAQUADAH("naquadah", 0x000000, 0x004400),
     NAQUADRIA("naquadria", 0x000000, 0x002400),
+    TRINIUM("trinium", 0xB0E0E6, 0xC8C8D2),
     THORIUM("thorium", 0x001E00, 0x005000),
     LUTETIUM("lutetium", 0x0059FF, 0x00AAFF),
     AMERICIUM("americium", 0x0C453A, 0x287869),
-    NEUTRONIUM("neutronium", 0xFFF0F0, 0xFAFAFA);
+    NEUTRONIUM("neutronium", 0xFFF0F0, 0xFAFAFA),
+
+    // Noble Gas
+    HELIUM("helium", 0xFFA9FF, 0xFFFFC3),
+    ARGON("argon", 0x89D9E1, 0x160822),
+    XENON("xenon", 0x160822, 0x8A97B0),
+    NEON("neon", 0xFF7200, 0xFFC826),
+    KRYPTON("krypton", 0x160822, 0x8A97B0),
+    NITROGEN("nitrogen", 0xA52A2A, 0xFFC832),
+    OXYGEN("oxygen", 0x8F8FFF, 0xFFFFFF),
+    HYDROGEN("hydrogen", 0xFF1493, 0xFFFFFF),
+    FLUORINE("fluorine", 0xFF6D00, 0x86AFF0);
 
     public static final GTCombType[] VALUES = values();
 

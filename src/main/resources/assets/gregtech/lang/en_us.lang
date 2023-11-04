@@ -5882,6 +5882,18 @@ item.gt.comb.thorium.name=Thorium Comb
 item.gt.comb.lutetium.name=Lutetium Comb
 item.gt.comb.americium.name=Americium Comb
 item.gt.comb.neutronium.name=Neutronium Comb
+item.gt.comb.phosphorus.name=Phosphorus Comb
+item.gt.comb.indium.name=Indium Comb
+item.gt.comb.trinium.name=Trinium Comb
+item.gt.comb.helium.name=Helium Comb
+item.gt.comb.argon.name=Argon Comb
+item.gt.comb.xenon.name=Xenon Comb
+item.gt.comb.neon.name=Neon Comb
+item.gt.comb.krypton.name=Krypton Comb
+item.gt.comb.nitrogen.name=Nitrogen Comb
+item.gt.comb.oxygen.name=Oxygen Comb
+item.gt.comb.hydrogen.name=Hydrogen Comb
+item.gt.comb.fluorine.name=Fluorine Comb
 
 # Bees
 for.bees.species.clay=Clay
@@ -5938,6 +5950,22 @@ for.bees.species.americium=Americium
 for.bees.species.neutronium=Neutronium
 for.bees.species.divided=Divided
 for.bees.species.sandwich=Sandwich
+for.bees.species.sparkling=Nether Star
+for.bees.species.fertilizer=Fertilizer
+for.bees.species.phosphorus=Phosphorus
+for.bees.species.sulfur=Sulfur
+for.bees.species.indium=Indium
+for.bees.species.explosive=Explosive
+for.bees.species.trinium=Trinium
+for.bees.species.helium=Helium
+for.bees.species.argon=Argon
+for.bees.species.neon=Neon
+for.bees.species.krypton=Krypton
+for.bees.species.xenon=Xenon
+for.bees.species.oxygen=Oxygen
+for.bees.species.hydrogen=Hydrogen
+for.bees.species.nitrogen=Nitrogen
+for.bees.species.fluorine=Fluorine
 
 # Bee Descriptions (many more to do)
 for.bees.description.clay=An organic bee known to be industrious and diligent. Rumor has it that it can find mud in the right biome.|Beekeeping 101

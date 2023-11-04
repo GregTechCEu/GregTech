@@ -66,19 +66,19 @@ public class CombRecipes {
         addProcessGT(GTCombType.COKE, new Material[]{Materials.Coke}, Voltage.LV);
         addCentrifugeToItemStack(GTCombType.STICKY, new ItemStack[]{MetaItems.STICKY_RESIN.getStackForm(), MetaItems.PLANT_BALL.getStackForm(), ModuleCore.getItems().beeswax.getItemStack()}, new int[]{50 * 100, 15 * 100, 50 * 100}, Voltage.ULV);
         addProcessGT(GTCombType.OIL, new Material[]{Materials.Oilsands}, Voltage.LV);
-        addProcessGT(GTCombType.APATITE, new Material[]{Materials.Apatite, Materials.Phosphate}, Voltage.LV);
+        addProcessGT(GTCombType.APATITE, new Material[]{Materials.Apatite, Materials.TricalciumPhosphate}, Voltage.LV);
         addCentrifugeToMaterial(GTCombType.ASH, new Material[]{Materials.DarkAsh, Materials.Ash}, new int[]{50 * 100, 50 * 100}, new int[]{}, Voltage.ULV, ItemStack.EMPTY, 50 * 100);
         addCentrifugeToItemStack(GTCombType.BIOMASS, new ItemStack[]{ForestryUtil.getDropStack(GTDropType.BIOMASS), ForestryUtil.getDropStack(GTDropType.ETHANOL), ModuleCore.getItems().beeswax.getItemStack()}, new int[]{70 * 100, 30 * 100, 50 * 100}, Voltage.ULV);
+        addCentrifugeToItemStack(GTCombType.PHOSPHORUS, new ItemStack[]{OreDictUnifier.get(OrePrefix.dust, Materials.Phosphorus), OreDictUnifier.get(OrePrefix.dust, Materials.TricalciumPhosphate), ModuleCore.getItems().beeswax.getItemStack()}, new int[]{100 * 100, 100 * 100, 100 * 100}, Voltage.HV);
         if (ForestryConfig.harderGTCombRecipes) {
             addCentrifugeToItemStack(GTCombType.COAL, new ItemStack[]{OreDictUnifier.get(OrePrefix.gem, Materials.Coal), ModuleCore.getItems().beeswax.getItemStack()}, new int[]{5 * 100, 50 * 100}, Voltage.ULV);
             addCentrifugeToItemStack(GTCombType.COKE, new ItemStack[]{OreDictUnifier.get(OrePrefix.gem, Materials.Coke), ModuleCore.getItems().beeswax.getItemStack()}, new int[]{5 * 100, 50 * 100}, Voltage.ULV);
-            // TODO the recipe below gave 1 oilberry instead of oilsands dust. change to that if oilberry balance stays the same in the new crop system
             addCentrifugeToItemStack(GTCombType.OIL, new ItemStack[]{OreDictUnifier.get(OrePrefix.dustTiny, Materials.Oilsands), ForestryUtil.getDropStack(GTDropType.OIL), ModuleCore.getItems().beeswax.getItemStack()}, new int[]{70 * 100, 100 * 100, 50 * 100}, Voltage.ULV);
         } else {
             addCentrifugeToItemStack(GTCombType.COAL, new ItemStack[]{OreDictUnifier.get(OrePrefix.gem, Materials.Coal), OreDictUnifier.get(OrePrefix.dustTiny, Materials.Coal), ModuleCore.getItems().beeswax.getItemStack()}, new int[]{5 * 100, 100 * 100, 50 * 100}, Voltage.ULV);
             addCentrifugeToItemStack(GTCombType.COKE, new ItemStack[]{OreDictUnifier.get(OrePrefix.gem, Materials.Coke), OreDictUnifier.get(OrePrefix.dustTiny, Materials.Coke), ModuleCore.getItems().beeswax.getItemStack()}, new int[]{5 * 100, 100 * 100, 50 * 100}, Voltage.ULV);
             addCentrifugeToItemStack(GTCombType.OIL, new ItemStack[]{OreDictUnifier.get(OrePrefix.dustSmall, Materials.Oilsands), ForestryUtil.getDropStack(GTDropType.OIL), ModuleCore.getItems().beeswax.getItemStack()}, new int[]{70 * 100, 100 * 100, 50 * 100}, Voltage.ULV);
-            addCentrifugeToMaterial(GTCombType.APATITE, new Material[]{Materials.Apatite, Materials.Phosphate}, new int[]{100 * 100, 80 * 100}, new int[]{}, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
+            addCentrifugeToMaterial(GTCombType.APATITE, new Material[]{Materials.Apatite, Materials.TricalciumPhosphate}, new int[]{100 * 100, 80 * 100}, new int[]{}, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
         }
 
         // Industrial
@@ -142,13 +142,13 @@ public class CombRecipes {
         addProcessGT(GTCombType.TIN, new Material[]{Materials.Tin, Materials.Cassiterite, Materials.CassiteriteSand}, Voltage.LV);
         addProcessGT(GTCombType.LEAD, new Material[]{Materials.Lead, Materials.Galena}, Voltage.LV);
         addProcessGT(GTCombType.NICKEL, new Material[]{Materials.Nickel, Materials.Garnierite, Materials.Pentlandite, Materials.Cobaltite, Materials.Wulfenite, Materials.Powellite}, Voltage.LV);
-        addProcessGT(GTCombType.ZINC, new Material[]{Materials.Zinc, Materials.Sulfur}, Voltage.LV);
+        addProcessGT(GTCombType.ZINC, new Material[]{Materials.Sphalerite, Materials.Sulfur}, Voltage.LV);
         addProcessGT(GTCombType.SILVER, new Material[]{Materials.Silver, Materials.Galena}, Voltage.LV);
         addProcessGT(GTCombType.GOLD, new Material[]{Materials.Gold, Materials.Magnetite}, Voltage.LV);
         addChemicalProcess(GTCombType.GOLD, Materials.Magnetite, Materials.Gold, Voltage.LV);
         addProcessGT(GTCombType.SULFUR, new Material[]{Materials.Sulfur, Materials.Pyrite, Materials.Sphalerite}, Voltage.LV);
         addProcessGT(GTCombType.GALLIUM, new Material[]{Materials.Gallium, Materials.Niobium}, Voltage.LV);
-        addProcessGT(GTCombType.ARSENIC, new Material[]{Materials.Arsenic, Materials.Bismuth, Materials.Antimony}, Voltage.LV);
+        addProcessGT(GTCombType.ARSENIC, new Material[]{Materials.Realgar, Materials.Cassiterite, Materials.Zeolite}, Voltage.LV);
         addProcessGT(GTCombType.IRON, new Material[]{Materials.Iron, Materials.Magnetite, Materials.BrownLimonite, Materials.YellowLimonite, Materials.VanadiumMagnetite, Materials.BandedIron, Materials.Pyrite}, Voltage.LV);
         addProcessGT(GTCombType.STEEL, new Material[]{Materials.Iron, Materials.Magnetite, Materials.YellowLimonite, Materials.BrownLimonite, Materials.VanadiumMagnetite, Materials.BandedIron, Materials.Pyrite, Materials.Molybdenite, Materials.Molybdenum}, Voltage.LV);
 
@@ -176,7 +176,7 @@ public class CombRecipes {
             addCentrifugeToMaterial(GTCombType.GOLD, new Material[]{Materials.Gold}, new int[]{100 * 100}, new int[]{}, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
             addCentrifugeToMaterial(GTCombType.SULFUR, new Material[]{Materials.Sulfur, Materials.Pyrite, Materials.Sphalerite}, new int[]{100 * 100, 90 * 100, 80 * 100}, new int[]{}, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
             addCentrifugeToMaterial(GTCombType.GALLIUM, new Material[]{Materials.Gallium, Materials.Niobium}, new int[]{80 * 100, 75 * 100}, new int[]{}, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
-            addCentrifugeToMaterial(GTCombType.ARSENIC, new Material[]{Materials.Arsenic, Materials.Bismuth, Materials.Antimony}, new int[]{80 * 100, 70 * 100, 70 * 100}, new int[]{}, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
+            addCentrifugeToMaterial(GTCombType.ARSENIC, new Material[]{Materials.Realgar, Materials.Zeolite, Materials.Cassiterite}, new int[]{80 * 100, 70 * 100, 70 * 100}, new int[]{}, Voltage.ULV, ItemStack.EMPTY, 30 * 100);
         }
 
         // Rare Metals
@@ -216,6 +216,16 @@ public class CombRecipes {
             addCentrifugeToMaterial(GTCombType.ELECTROTINE, new Material[]{Materials.Electrotine, Materials.Electrum, Materials.Redstone}, new int[]{80, 75, 65}, new int[]{}, Voltage.MV, ItemStack.EMPTY, 30 * 100);
         }
 
+        // Special Indium Recipe
+        RecipeMaps.CHEMICAL_RECIPES.recipeBuilder()
+                .input(OrePrefix.dust, Materials.Aluminium, 4)
+                .inputs(ForestryUtil.getCombStack(GTCombType.INDIUM))
+                .fluidInputs(Materials.IndiumConcentrate.getFluid(1000))
+                .output(OrePrefix.dustSmall, Materials.Indium, 2)
+                .output(OrePrefix.dust, Materials.AluminiumSulfite, 4)
+                .fluidOutputs(Materials.LeadZincSolution.getFluid(1000))
+                .duration(50).EUt(600).buildAndRegister();
+
         // Radioactive
         addProcessGT(GTCombType.ALMANDINE, new Material[]{Materials.Almandine, Materials.Pyrope, Materials.Sapphire, Materials.GreenSapphire}, Voltage.LV);
         addProcessGT(GTCombType.URANIUM, new Material[]{Materials.Uranium238, Materials.Pitchblende, Materials.Uraninite, Materials.Uranium235}, Voltage.EV);
@@ -242,6 +252,16 @@ public class CombRecipes {
         if (Loader.isModLoaded(GTValues.MODID_MB)) {
             addProcessGT(GTCombType.SPARKLING, new Material[]{Materials.NetherStar}, Voltage.EV);
             addCentrifugeToItemStack(GTCombType.SPARKLING, new ItemStack[]{IntegrationUtil.getModItem(GTValues.MODID_MB, "wax", 0), IntegrationUtil.getModItem(GTValues.MODID_MB, "resource", 5), OreDictUnifier.get(OrePrefix.dustTiny, Materials.NetherStar)}, new int[]{50 * 100, 10 * 100, (ForestryConfig.harderGTCombRecipes ? 10 : 50) * 100}, Voltage.EV);
+
+            addExtractorProcess(GTCombType.HELIUM, Materials.Helium.getFluid(250), Voltage.HV, 100);
+            addExtractorProcess(GTCombType.ARGON, Materials.Argon.getFluid(250), Voltage.MV, 100);
+            addExtractorProcess(GTCombType.XENON, Materials.Xenon.getFluid(250), Voltage.IV, 50);
+            addExtractorProcess(GTCombType.NEON, Materials.Neon.getFluid(250), Voltage.IV, 15);
+            addExtractorProcess(GTCombType.KRYPTON, Materials.Krypton.getFluid(250), Voltage.IV, 25);
+            addExtractorProcess(GTCombType.NITROGEN, Materials.Nitrogen.getFluid(500), Voltage.MV, 100);
+            addExtractorProcess(GTCombType.OXYGEN, Materials.Oxygen.getFluid(500), Voltage.MV, 100);
+            addExtractorProcess(GTCombType.HYDROGEN, Materials.Hydrogen.getFluid(500), Voltage.MV, 100);
+            addExtractorProcess(GTCombType.FLUORINE, Materials.Fluorine.getFluid(250), Voltage.MV, 128);
         }
     }
 
@@ -264,7 +284,9 @@ public class CombRecipes {
         if (property != null && !property.getOreByProducts().isEmpty()) {
             Material byproduct = property.getOreByProducts().get(0);
             if (byproduct != null && byproduct.hasProperty(PropertyKey.FLUID)) {
-                builder.fluidOutputs(byproduct.getFluid(GTValues.L));
+                if (!byproduct.hasProperty(PropertyKey.BLAST)) {
+                    builder.fluidOutputs(byproduct.getFluid(GTValues.L));
+                }
             }
         }
 
@@ -294,6 +316,15 @@ public class CombRecipes {
             builder.cleanroom(CleanroomType.CLEANROOM);
         }
         builder.buildAndRegister();
+    }
+
+    private static void addExtractorProcess(GTCombType comb, FluidStack fluidStack, Voltage volt, int duration) {
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(ForestryUtil.getCombStack(comb))
+                .fluidOutputs(fluidStack)
+                .duration(duration)
+                .EUt(volt.getCentrifugeEnergy() / 2)
+                .buildAndRegister();
     }
 
     /**
@@ -388,7 +419,7 @@ public class CombRecipes {
         // Finalize Forestry Map
         if (volt.compareTo(Voltage.MV) < 0 || !ForestryConfig.harderGTCombRecipes) {
             if (ModuleFactory.machineEnabled(MachineUIDs.CENTRIFUGE)) {
-                RecipeManagers.centrifugeManager.addRecipe(40, combStack, product.build());
+                RecipeManagers.centrifugeManager.addRecipe(duration, combStack, product.build());
             }
         }
         // Finalize GregTech Map
