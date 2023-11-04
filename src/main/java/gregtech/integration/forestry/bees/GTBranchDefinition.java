@@ -77,7 +77,7 @@ public enum GTBranchDefinition {
         AlleleHelper.getInstance().set(alleles, EFFECT, AlleleEffects.effectRadioactive);
     }),
 
-    GT_NOBLEGAS("Nobilis Gasorum", alleles -> {
+    GT_NOBLEGAS("Gasa Nobilia", alleles -> {
         AlleleHelper.getInstance().set(alleles, TEMPERATURE_TOLERANCE, EnumAllele.Tolerance.BOTH_2);
         AlleleHelper.getInstance().set(alleles, TOLERATES_RAIN, true);
         AlleleHelper.getInstance().set(alleles, FLOWERING, EnumAllele.Flowering.FASTEST);

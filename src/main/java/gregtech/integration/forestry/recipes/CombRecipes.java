@@ -1,5 +1,6 @@
 package gregtech.integration.forestry.recipes;
 
+import appeng.core.Api;
 import com.google.common.collect.ImmutableMap;
 import forestry.api.recipes.ICentrifugeRecipe;
 import forestry.api.recipes.RecipeManagers;
@@ -262,6 +263,20 @@ public class CombRecipes {
             addExtractorProcess(GTCombType.OXYGEN, Materials.Oxygen.getFluid(500), Voltage.MV, 100);
             addExtractorProcess(GTCombType.HYDROGEN, Materials.Hydrogen.getFluid(500), Voltage.MV, 100);
             addExtractorProcess(GTCombType.FLUORINE, Materials.Fluorine.getFluid(250), Voltage.MV, 128);
+
+            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+                ItemStack fluixDust = OreDictUnifier.get("dustFluix");
+                if (fluixDust == ItemStack.EMPTY) {
+                    fluixDust = Api.INSTANCE.definitions().materials().fluixDust().maybeStack(1).orElse(ItemStack.EMPTY);
+                }
+                if (fluixDust != ItemStack.EMPTY) {
+                    if (ForestryConfig.harderGTCombRecipes) {
+                        addCentrifugeToItemStack(GTCombType.FLUIX, new ItemStack[]{fluixDust, ModuleCore.getItems().beeswax.getItemStack()}, new int[]{25 * 100, 30 * 100}, Voltage.ULV);
+                    } else {
+                        addCentrifugeToItemStack(GTCombType.FLUIX, new ItemStack[]{fluixDust, OreDictUnifier.get(OrePrefix.dust, Materials.CertusQuartz), OreDictUnifier.get(OrePrefix.dust, Materials.Quartzite), OreDictUnifier.get(OrePrefix.dust, Materials.Barite), ModuleCore.getItems().beeswax.getItemStack()}, new int[]{25 * 100, 90 * 100, 90 * 100, 90 * 100, 30 * 100}, Voltage.ULV);
+                    }
+                }
+            }
         }
     }
 

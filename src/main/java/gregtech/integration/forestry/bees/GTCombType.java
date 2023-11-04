@@ -26,6 +26,7 @@ public enum GTCombType {
     // Gem
     STONE("stone", 0x808080, 0x999999),
     CERTUS("certus", 0x57CFFB, 0xBBEEFF),
+    FLUIX("fluix", 0xA375FF, 0xB591FF),
     REDSTONE("redstone", 0x7D0F0F, 0xD11919),
     RAREEARTH("rareearth", 0x555643, 0x343428),
     LAPIS("lapis", 0x1947D1, 0x476CDA),

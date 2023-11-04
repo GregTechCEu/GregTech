@@ -325,7 +325,6 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 mutation.requireResource("blockLapis");
             }
     ),
-    // todo MB has this, do something about it
     CERTUS(GTBranchDefinition.GT_GEM, "Quarzeus", true, 0x57CFFB, 0xBBEEFF,
             beeSpecies -> {
                 beeSpecies.addProduct(getGTComb(GTCombType.STONE), 0.30f);
@@ -337,10 +336,23 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.HERMITIC, LAPIS, 10);
                 mutation.requireResource("blockCertusQuartz");
-            }
+            },
+            () -> Loader.isModLoaded(GTValues.MODID_MB)
     ),
-    // todo fluix, silicon (but MB has these, do something about it)
-    // todo kill EB diamond or take it over
+    FLUIX(GTBranchDefinition.GT_GEM, "", true, 0xA375FF, 0xB591FF,
+            beeSpecies -> {
+                beeSpecies.addProduct(getGTComb(GTCombType.STONE), 0.30f);
+                beeSpecies.addProduct(getGTComb(GTCombType.FLUIX), 0.15f);
+                beeSpecies.setHumidity(EnumHumidity.NORMAL);
+                beeSpecies.setTemperature(EnumTemperature.NORMAL);
+            },
+            template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
+            dis -> {
+                IBeeMutationBuilder mutation = dis.registerMutation(REDSTONE, LAPIS, 7);
+                mutation.requireResource("blockFluix");
+            },
+            () -> Loader.isModLoaded(GTValues.MODID_APPENG) && Loader.isModLoaded(GTValues.MODID_MB)
+    ),
     DIAMOND(GTBranchDefinition.GT_GEM, "Adamas", false, 0xCCFFFF, 0xA3CCCC,
             beeSpecies -> {
                 beeSpecies.addProduct(getGTComb(GTCombType.STONE), 0.30f);
@@ -609,6 +621,19 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 IBeeMutationBuilder mutation = dis.registerMutation(ZINC, SILVER, 10);
                 mutation.requireResource("blockArsenic");
             }
+    ),
+    SILICON(GTBranchDefinition.GT_ORGANIC, "Silex", false, 0xADA2A7, 0x736675,
+            beeSpecies -> {
+                beeSpecies.addProduct(getForestryComb(EnumHoneyComb.HONEY), 0.10f);
+                beeSpecies.addSpecialty(OreDictUnifier.get(OrePrefix.dust, Materials.Silicon), 0.30f);
+            },
+            template -> {
+                AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOW);
+                AlleleHelper.getInstance().set(template, TERRITORY, EnumAllele.Territory.LARGER);
+                AlleleHelper.getInstance().set(template, TOLERATES_RAIN, true);
+            },
+            dis -> dis.registerMutation(IRON, ForestryUtil.getSpecies(GTValues.MODID_MB, "AESkystone"), 17),
+            () -> Loader.isModLoaded(GTValues.MODID_MB)
     ),
 
     // Rare Metals
@@ -1186,7 +1211,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             () -> Loader.isModLoaded(GTValues.MODID_MB)
     ),
-    FLUORINE(GTBranchDefinition.GT_NOBLEGAS, "Fluere", false, 0x86AFF0, 0xFF6D00,
+    FLUORINE(GTBranchDefinition.GT_NOBLEGAS, "Fluens", false, 0x86AFF0, 0xFF6D00,
             beeSpecies -> {
                 beeSpecies.addProduct(getGTComb(GTCombType.FLUORINE), 0.45f);
                 beeSpecies.addSpecialty(getGTComb(GTCombType.OXYGEN), 0.20f);
