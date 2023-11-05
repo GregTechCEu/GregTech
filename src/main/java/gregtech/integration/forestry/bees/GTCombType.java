@@ -57,13 +57,13 @@ public enum GTCombType {
     // Rare Metal
     BAUXITE("bauxite", 0x6B3600, 0x8B8B8B),
     ALUMINIUM("aluminium", 0x008AB8, 0xD6D6FF),
-    MANGANESE("manganese", 0xD5D5D5, 0xAAAAAA),
+    MANGANESE("manganese", 0xD5D5D5, 0xCDE1B9),
     MAGNESIUM("magnesium", 0xF1D9D9, 0x8B8B8B),
     TITANIUM("titanium", 0xCC99FF, 0xDBB8FF),
     CHROME("chrome", 0xEBA1EB, 0xF2C3F2),
     TUNGSTEN("tungsten", 0x62626D, 0x161620),
     PLATINUM("platinum", 0xE6E6E6, 0xFFFFCC),
-    IRIDIUM("iridium", 0xDADADA, 0xD1D1E0),
+    IRIDIUM("iridium", 0xDADADA, 0xA1E4E4),
     MOLYBDENUM("molybdenum", 0xAEAED4, 0x8B8B8B),
     OSMIUM("osmium", 0x2B2BDA, 0x8B8B8B),
     LITHIUM("lithium", 0xF0328C, 0xE1DCFF),
@@ -77,7 +77,7 @@ public enum GTCombType {
     PLUTONIUM("plutonium", 0x240000, 0x570000),
     NAQUADAH("naquadah", 0x000000, 0x004400),
     NAQUADRIA("naquadria", 0x000000, 0x002400),
-    TRINIUM("trinium", 0xB0E0E6, 0xC8C8D2),
+    TRINIUM("trinium", 0x9973BD, 0xC8C8D2),
     THORIUM("thorium", 0x001E00, 0x005000),
     LUTETIUM("lutetium", 0x0059FF, 0x00AAFF),
     AMERICIUM("americium", 0x0C453A, 0x287869),
@@ -85,13 +85,13 @@ public enum GTCombType {
 
     // Noble Gas
     HELIUM("helium", 0xFFA9FF, 0xFFFFC3),
-    ARGON("argon", 0x89D9E1, 0x160822),
+    ARGON("argon", 0x00FF00, 0x160822),
     XENON("xenon", 0x160822, 0x8A97B0),
-    NEON("neon", 0xFF7200, 0xFFC826),
-    KRYPTON("krypton", 0x160822, 0x8A97B0),
-    NITROGEN("nitrogen", 0xA52A2A, 0xFFC832),
+    NEON("neon", 0xFAB4B4, 0xFFC826),
+    KRYPTON("krypton", 0x80FF80, 0xFFFFC3),
+    NITROGEN("nitrogen", 0x00BFC1, 0xFFFFFF),
     OXYGEN("oxygen", 0x8F8FFF, 0xFFFFFF),
-    HYDROGEN("hydrogen", 0xFF1493, 0xFFFFFF),
+    HYDROGEN("hydrogen", 0x0000B5, 0xFFFFFF),
     FLUORINE("fluorine", 0xFF6D00, 0x86AFF0);
 
     public static final GTCombType[] VALUES = values();

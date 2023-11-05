@@ -133,14 +133,30 @@ public class CombRecipes {
         addProcessGT(GTCombType.TUNGSTEN, new Material[]{Materials.Tungsten, Materials.Tungstate, Materials.Scheelite, Materials.Lithium}, Voltage.IV);
         addProcessGT(GTCombType.PLATINUM, new Material[]{Materials.Platinum, Materials.Cooperite, Materials.Palladium}, Voltage.HV);
         addProcessGT(GTCombType.MOLYBDENUM, new Material[]{Materials.Molybdenum, Materials.Molybdenite, Materials.Powellite, Materials.Wulfenite}, Voltage.LV);
-        addChemicalProcess(GTCombType.MOLYBDENUM, Materials.Osmium, Materials.Osmium, Voltage.IV);
-        addAutoclaveProcess(GTCombType.MOLYBDENUM, Materials.Osmium, Voltage.IV, 5);
-        addProcessGT(GTCombType.IRIDIUM, new Material[]{Materials.Iridium, Materials.Osmium}, Voltage.IV);
-        addProcessGT(GTCombType.OSMIUM, new Material[]{Materials.Osmium, Materials.Iridium}, Voltage.IV);
         addProcessGT(GTCombType.LITHIUM, new Material[]{Materials.Lithium, Materials.Lepidolite, Materials.Spodumene}, Voltage.MV);
         addProcessGT(GTCombType.SALT, new Material[]{Materials.Salt, Materials.RockSalt, Materials.Saltpeter}, Voltage.MV);
         addProcessGT(GTCombType.ELECTROTINE, new Material[]{Materials.Electrotine, Materials.Electrum, Materials.Redstone}, Voltage.MV);
         addCentrifugeToMaterial(GTCombType.SALT, new Material[]{Materials.Salt, Materials.RockSalt, Materials.Saltpeter}, new int[]{100 * 100, 100 * 100, 25 * 100}, new int[]{9 * 6, 9 * 6, 9 * 6}, Voltage.MV, 160, ItemStack.EMPTY, 50 * 100);
+
+        // Special Iridium Recipe
+        RecipeMaps.CHEMICAL_RECIPES.recipeBuilder()
+                .inputs(ForestryUtil.getCombStack(GTCombType.IRIDIUM, 4))
+                .fluidInputs(Voltage.IV.getFluid())
+                .output(OrePrefix.nugget, Materials.Iridium)
+                .output(OrePrefix.dust, Materials.IridiumMetalResidue, 5)
+                .cleanroom(CleanroomType.CLEANROOM)
+                .duration(1000).EUt(Voltage.IV.getChemicalEnergy())
+                .buildAndRegister();
+
+        // Special Osmium Recipe
+        RecipeMaps.CHEMICAL_RECIPES.recipeBuilder()
+                .inputs(ForestryUtil.getCombStack(GTCombType.OSMIUM, 4))
+                .fluidInputs(Voltage.IV.getFluid())
+                .output(OrePrefix.nugget, Materials.Osmium)
+                .fluidOutputs(Materials.AcidicOsmiumSolution.getFluid(2000))
+                .cleanroom(CleanroomType.CLEANROOM)
+                .duration(1000).EUt(Voltage.IV.getChemicalEnergy())
+                .buildAndRegister();
 
         // Special Indium Recipe
         RecipeMaps.CHEMICAL_RECIPES.recipeBuilder()
@@ -156,13 +172,21 @@ public class CombRecipes {
         addProcessGT(GTCombType.ALMANDINE, new Material[]{Materials.Almandine, Materials.Pyrope, Materials.Sapphire, Materials.GreenSapphire}, Voltage.LV);
         addProcessGT(GTCombType.URANIUM, new Material[]{Materials.Uranium238, Materials.Pitchblende, Materials.Uraninite, Materials.Uranium235}, Voltage.EV);
         addProcessGT(GTCombType.PLUTONIUM, new Material[]{Materials.Plutonium239, Materials.Uranium235}, Voltage.EV);
-        addChemicalProcess(GTCombType.PLUTONIUM, Materials.Uranium235, Materials.Plutonium239, Voltage.EV);
         addProcessGT(GTCombType.NAQUADAH, new Material[]{Materials.Naquadah, Materials.NaquadahEnriched, Materials.Naquadria}, Voltage.IV);
         addProcessGT(GTCombType.NAQUADRIA, new Material[]{Materials.Naquadria, Materials.NaquadahEnriched, Materials.Naquadah}, Voltage.LUV);
         addProcessGT(GTCombType.THORIUM, new Material[]{Materials.Thorium, Materials.Uranium238, Materials.Coal}, Voltage.EV);
         addProcessGT(GTCombType.LUTETIUM, new Material[]{Materials.Lutetium, Materials.Thorium}, Voltage.IV);
         addProcessGT(GTCombType.AMERICIUM, new Material[]{Materials.Americium, Materials.Lutetium}, Voltage.LUV);
-        addProcessGT(GTCombType.NEUTRONIUM, new Material[]{Materials.Neutronium, Materials.Americium}, Voltage.UV);
+        addProcessGT(GTCombType.TRINIUM, new Material[]{Materials.Trinium, Materials.Naquadah, Materials.Naquadria}, Voltage.ZPM);
+
+        // Special Neutronium Recipe
+        RecipeMaps.CHEMICAL_RECIPES.recipeBuilder()
+                .inputs(ForestryUtil.getCombStack(GTCombType.NEUTRONIUM, 4))
+                .fluidInputs(Voltage.UV.getFluid())
+                .output(OrePrefix.nugget, Materials.Neutronium)
+                .fluidOutputs(Materials.Neutronium.getFluid(GTValues.L * 4))
+                .cleanroom(CleanroomType.CLEANROOM)
+                .duration(3000).EUt(Voltage.UV.getChemicalEnergy()).buildAndRegister();
 
         if (Loader.isModLoaded(GTValues.MODID_MB)) {
             addProcessGT(GTCombType.SPARKLING, new Material[]{Materials.NetherStar}, Voltage.EV);
@@ -190,9 +214,6 @@ public class CombRecipes {
         }
     }
 
-    /**
-     * Currently used separately for STEEL, GOLD, MOLYBDENUM, PLUTONIUM
-     **/
     private static void addChemicalProcess(GTCombType comb, Material inMaterial, Material outMaterial, Voltage volt) {
         if (OreDictUnifier.get(OrePrefix.crushedPurified, outMaterial, 4).isEmpty() || OreDictUnifier.get(OrePrefix.crushed, inMaterial).isEmpty() || inMaterial.hasFlag(MaterialFlags.DISABLE_ORE_BLOCK))
             return;

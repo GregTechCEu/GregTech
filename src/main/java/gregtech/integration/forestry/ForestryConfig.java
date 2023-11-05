@@ -5,7 +5,7 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.*;
 
 @LangKey("gregtech.config.forestry")
-@Config(modid = GTValues.MODID, name = GTValues.MODID + "/forestry", category = "Forestry")
+@Config(modid = GTValues.MODID, name = GTValues.MODID + "/forestry_integration", category = "Forestry")
 public class ForestryConfig {
 
     @Comment({"Enable GregTech Electron Tubes.", "Default: true"})

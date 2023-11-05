@@ -322,6 +322,7 @@ public class ForestryModule extends IntegrationSubmodule {
                 createOreProperty(Materials.Lutetium);
                 createOreProperty(Materials.Americium);
                 createOreProperty(Materials.NetherStar);
+                createOreProperty(Materials.Trinium);
             }
         }
     }
