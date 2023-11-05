@@ -11,10 +11,10 @@ import gregtech.loaders.recipe.handlers.ToolRecipeHandler;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
-public class ToolRecipes {
+public class ForestryToolRecipes {
 
     public static void registerHandlers() {
-        OrePrefix.stick.addProcessingHandler(PropertyKey.TOOL, ToolRecipes::processScoop);
+        OrePrefix.stick.addProcessingHandler(PropertyKey.TOOL, ForestryToolRecipes::processScoop);
     }
 
     private static void processScoop(OrePrefix prefix, Material material, ToolProperty property) {

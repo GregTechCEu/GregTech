@@ -8,6 +8,7 @@ import forestry.api.genetics.IClassification;
 import forestry.apiculture.genetics.alleles.AlleleBeeSpecies;
 import forestry.core.genetics.alleles.AlleleFloat;
 import gregtech.api.GTValues;
+import gregtech.integration.IntegrationModule;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -27,9 +28,11 @@ public class GTAlleleBeeSpecies extends AlleleBeeSpecies {
     @Override
     public IAlleleBeeSpeciesBuilder addProduct(@NotNull ItemStack product, @NotNull Float chance) {
         if (product == ItemStack.EMPTY) {
+            IntegrationModule.logger.warn("GTAlleleBeeSpecies#addProduct() passed an empty ItemStack for allele {}! Setting default", getUID());
             product = new ItemStack(Items.BOAT);
         }
         if (chance <= 0.0f || chance > 1.0f) {
+            IntegrationModule.logger.warn("GTAlleleBeeSpecies#addProduct() passed a chance value out of bounds for allele {}! Setting to 0.1", getUID());
             chance = 0.1f;
         }
         return super.addProduct(product, chance);
@@ -39,9 +42,11 @@ public class GTAlleleBeeSpecies extends AlleleBeeSpecies {
     @Override
     public IAlleleBeeSpeciesBuilder addSpecialty(@NotNull ItemStack specialty, @NotNull Float chance) {
         if (specialty == ItemStack.EMPTY) {
+            IntegrationModule.logger.warn("GTAlleleBeeSpecies#addProduct() passed an empty ItemStack for allele {}! Setting default", getUID());
             specialty = new ItemStack(Items.BOAT);
         }
         if (chance <= 0.0f || chance > 1.0f) {
+            IntegrationModule.logger.warn("GTAlleleBeeSpecies#addSpecialty() passed a chance value out of bounds for allele {}! Setting to 0.1", getUID());
             chance = 0.1f;
         }
         return super.addSpecialty(specialty, chance);

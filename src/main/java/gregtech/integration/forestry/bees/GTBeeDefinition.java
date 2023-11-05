@@ -378,7 +378,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             beeSpecies -> {
                 beeSpecies.addProduct(getGTComb(GTCombType.STONE), 0.30f);
                 beeSpecies.addProduct(getGTComb(GTCombType.RUBY), 0.15f);
-                beeSpecies.addProduct(getGTComb(GTCombType.REDGARNET), 0.05f);
+                beeSpecies.addProduct(getGTComb(GTCombType.REDSTONE), 0.05f);
                 beeSpecies.setHumidity(EnumHumidity.DAMP);
                 beeSpecies.setTemperature(EnumTemperature.HOT);
             },
@@ -425,42 +425,6 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(OLIVINE, DIAMOND, 4);
                 mutation.requireResource("blockEmerald");
-            }
-    ),
-    REDGARNET(GTBranchDefinition.GT_GEM, "Rubercarbunculus", false, 0xBD4C4C, 0xECCECE,
-            beeSpecies -> {
-                beeSpecies.addProduct(getGTComb(GTCombType.STONE), 0.30f);
-                beeSpecies.addSpecialty(getGTComb(GTCombType.REDGARNET), 0.15f);
-                beeSpecies.addSpecialty(getGTComb(GTCombType.PYROPE), 0.05f);
-                beeSpecies.setHumidity(EnumHumidity.DAMP);
-                beeSpecies.setTemperature(EnumTemperature.WARM);
-                beeSpecies.setHasEffect();
-            },
-            template -> {
-                AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.FAST);
-                AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST);
-            },
-            dis -> {
-                IBeeMutationBuilder mutation = dis.registerMutation(DIAMOND, RUBY, 4);
-                mutation.requireResource("blockGarnetRed");
-            }
-    ),
-    YELLOWGARNET(GTBranchDefinition.GT_GEM, "Flavocarbunculus", false, 0xA3A341, 0xEDEDCE,
-            beeSpecies -> {
-                beeSpecies.addProduct(getGTComb(GTCombType.STONE), 0.30f);
-                beeSpecies.addSpecialty(getGTComb(GTCombType.YELLOWGARNET), 0.15f);
-                beeSpecies.addSpecialty(getGTComb(GTCombType.GROSSULAR), 0.05f);
-                beeSpecies.setHumidity(EnumHumidity.DAMP);
-                beeSpecies.setTemperature(EnumTemperature.WARM);
-                beeSpecies.setHasEffect();
-            },
-            template -> {
-                AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.FAST);
-                AlleleHelper.getInstance().set(template, LIFESPAN, EnumAllele.Lifespan.SHORTEST);
-            },
-            dis -> {
-                IBeeMutationBuilder mutation = dis.registerMutation(EMERALD, REDGARNET, 3);
-                mutation.requireResource("blockGarnetYellow");
             }
     ),
     SPARKLING(GTBranchDefinition.GT_GEM, "Vesperstella", true, 0x7A007A, 0xFFFFFF,

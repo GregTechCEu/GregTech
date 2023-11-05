@@ -4,6 +4,7 @@ import forestry.api.lepidopterology.EnumFlutterType;
 import forestry.api.lepidopterology.IAlleleButterflySpecies;
 import forestry.api.lepidopterology.IEntityButterfly;
 import gregtech.api.GTValues;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -11,7 +12,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.Loader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,9 +36,16 @@ public class ScoopBehavior implements IToolBehavior {
 
         IAlleleButterflySpecies species = butterfly.getButterfly().getGenome().getPrimary();
         species.getRoot().getBreedingTracker(target.world, player.getGameProfile()).registerCatch(butterfly.getButterfly());
-        player.world.spawnEntity(new EntityItem(player.world, target.posX, target.posY, target.posZ,
-                species.getRoot().getMemberStack(butterfly.getButterfly().copy(), EnumFlutterType.BUTTERFLY)));
+
+        ItemStack memberStack = species.getRoot().getMemberStack(butterfly.getButterfly().copy(), EnumFlutterType.BUTTERFLY);
+        EntityItem entityItem = new EntityItem(player.world, target.posX, target.posY, target.posZ, memberStack);
         target.setDead();
+        NBTTagCompound behaviorTag = ToolHelper.getBehaviorsTag(stack);
+        if (behaviorTag.getBoolean(ToolHelper.RELOCATE_MINED_BLOCKS_KEY)) {
+            if (ForgeEventFactory.onItemPickup(entityItem, player) == -1) return;
+            if (player.addItemStackToInventory(memberStack)) return;
+        }
+        player.world.spawnEntity(entityItem);
     }
 
     @Override

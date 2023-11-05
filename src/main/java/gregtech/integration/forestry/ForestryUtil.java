@@ -10,6 +10,8 @@ import gregtech.integration.IntegrationModule;
 import gregtech.integration.forestry.bees.GTCombType;
 import gregtech.integration.forestry.bees.GTDropType;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ForestryUtil {
 
@@ -25,7 +27,8 @@ public class ForestryUtil {
         return ModuleHelper.isEnabled("lepidopterology");
     }
 
-    public static IAlleleBeeEffect getEffect(String modid, String name) {
+    @Nullable
+    public static IAlleleBeeEffect getEffect(@NotNull String modid, @NotNull String name) {
         String s = switch (modid) {
             case GTValues.MODID_EB -> "extrabees.effect." + name;
             case GTValues.MODID_MB -> "magicbees.effect" + name;
@@ -35,7 +38,8 @@ public class ForestryUtil {
         return (IAlleleBeeEffect) AlleleManager.alleleRegistry.getAllele(s);
     }
 
-    public static IAlleleFlowers getFlowers(String modid, String name) {
+    @Nullable
+    public static IAlleleFlowers getFlowers(@NotNull String modid, @NotNull String name) {
         String s = switch (modid) {
             case GTValues.MODID_EB -> "extrabees.flower." + name;
             case GTValues.MODID_MB -> "magicbees.flower" + name;
@@ -45,7 +49,8 @@ public class ForestryUtil {
         return (IAlleleFlowers) AlleleManager.alleleRegistry.getAllele(s);
     }
 
-    public static IAlleleBeeSpecies getSpecies(String modid, String name) {
+    @Nullable
+    public static IAlleleBeeSpecies getSpecies(@NotNull String modid, @NotNull String name) {
         String s = switch (modid) {
             case GTValues.MODID_EB -> "extrabees.species." + name;
             case GTValues.MODID_MB -> "magicbees.species" + name;
@@ -55,11 +60,13 @@ public class ForestryUtil {
         return (IAlleleBeeSpecies) AlleleManager.alleleRegistry.getAllele(s);
     }
 
-    public static ItemStack getCombStack(GTCombType type) {
+    @NotNull
+    public static ItemStack getCombStack(@NotNull GTCombType type) {
         return getCombStack(type, 1);
     }
 
-    public static ItemStack getCombStack(GTCombType type, int amount) {
+    @NotNull
+    public static ItemStack getCombStack(@NotNull GTCombType type, int amount) {
         if (!ForestryConfig.enableGTBees) {
             IntegrationModule.logger.error("Tried to get GregTech Comb stack, but GregTech Bees config is not enabled!");
             return ItemStack.EMPTY;
@@ -71,11 +78,13 @@ public class ForestryUtil {
         return new ItemStack(ForestryModule.COMBS, amount, type.ordinal());
     }
 
-    public static ItemStack getDropStack(GTDropType type) {
+    @NotNull
+    public static ItemStack getDropStack(@NotNull GTDropType type) {
         return getDropStack(type, 1);
     }
 
-    public static ItemStack getDropStack(GTDropType type, int amount) {
+    @NotNull
+    public static ItemStack getDropStack(@NotNull GTDropType type, int amount) {
         if (!ForestryConfig.enableGTBees) {
             IntegrationModule.logger.error("Tried to get GregTech Drop stack, but GregTech Bees config is not enabled!");
             return ItemStack.EMPTY;

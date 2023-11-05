@@ -16,7 +16,7 @@ import net.minecraftforge.fluids.FluidStack;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 
-public class FrameRecipes {
+public class ForestryFrameRecipes {
 
     public static void init() {
         registerRecipe( // Accelerated Frame

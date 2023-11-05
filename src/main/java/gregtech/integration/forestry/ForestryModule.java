@@ -143,12 +143,12 @@ public class ForestryModule extends IntegrationSubmodule {
         // to the event, causing removals to need to be done in init instead of registry event.
         // See https://github.com/ForestryMC/ForestryMC/issues/2599
         if (ForestryConfig.enableGTElectronTubes) {
-            ElectrodeRecipes.onInit();
+            ForestryElectrodeRecipes.onInit();
         }
 
         if (ForestryUtil.apicultureEnabled()) {
             if (ForestryConfig.harderForestryRecipes) {
-                MiscRecipes.initRemoval();
+                ForestryMiscRecipes.initRemoval();
             }
 
             if (ForestryConfig.enableGTBees) {
@@ -255,7 +255,7 @@ public class ForestryModule extends IntegrationSubmodule {
         if (ForestryUtil.apicultureEnabled()) {
             // GT Frames
             if (ForestryConfig.enableGTFrames) {
-                FrameRecipes.init();
+                ForestryFrameRecipes.init();
             }
 
             // GT Combs
@@ -266,16 +266,16 @@ public class ForestryModule extends IntegrationSubmodule {
 
         // GT Electrodes
         if (ForestryConfig.enableGTElectronTubes) {
-            ElectrodeRecipes.onRecipeEvent();
+            ForestryElectrodeRecipes.onRecipeEvent();
         }
 
         // GT Scoop
         if (ForestryConfig.enableGTScoop) {
-            ToolRecipes.registerHandlers();
+            ForestryToolRecipes.registerHandlers();
         }
 
         // Random other recipes
-        MiscRecipes.init();
+        ForestryMiscRecipes.init();
         ForestryExtractorRecipes.init();
     }
 

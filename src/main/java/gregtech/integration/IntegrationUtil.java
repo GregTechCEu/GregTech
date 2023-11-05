@@ -10,6 +10,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,15 +39,18 @@ public class IntegrationUtil {
         }
     }
 
-    public static ItemStack getModItem(String modid, String name, int meta) {
+    @NotNull
+    public static ItemStack getModItem(@NotNull String modid, @NotNull String name, int meta) {
         return getModItem(modid, name, meta, 1, null);
     }
 
-    public static ItemStack getModItem(String modid, String name, int meta, int amount) {
+    @NotNull
+    public static ItemStack getModItem(@NotNull String modid, @NotNull String name, int meta, int amount) {
         return getModItem(modid, name, meta, amount, null);
     }
 
-    public static ItemStack getModItem(String modid, String name, int meta, int amount, String nbt) {
+    @NotNull
+    public static ItemStack getModItem(@NotNull String modid, @NotNull String name, int meta, int amount, @Nullable String nbt) {
         if (!Loader.isModLoaded(modid)) {
             return ItemStack.EMPTY;
         }

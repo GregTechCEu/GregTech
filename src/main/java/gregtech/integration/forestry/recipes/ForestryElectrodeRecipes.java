@@ -22,7 +22,7 @@ import static gregtech.api.recipes.RecipeMaps.FORMING_PRESS_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 
-public class ElectrodeRecipes {
+public class ForestryElectrodeRecipes {
 
     public static void onRecipeEvent() {
         addGregTechMachineRecipes();

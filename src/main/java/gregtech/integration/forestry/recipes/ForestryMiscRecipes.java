@@ -23,7 +23,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 
-public class MiscRecipes {
+public class ForestryMiscRecipes {
 
     public static void init() {
 
