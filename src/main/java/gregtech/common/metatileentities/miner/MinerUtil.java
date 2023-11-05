@@ -31,10 +31,14 @@ public class MinerUtil {
 
     public static final String DISPLAY_CLICK_AREA_PREVIEW = "preview_area";
     public static final String DISPLAY_CLICK_AREA_PREVIEW_HIDE = "hide_preview_area";
+    public static final String DISPLAY_CLICK_AREA_DECR = "decr_area";
+    public static final String DISPLAY_CLICK_AREA_INCR = "incr_area";
     public static final String DISPLAY_CLICK_Y_LIMIT_DECR = "decr_y_limit";
     public static final String DISPLAY_CLICK_Y_LIMIT_INCR = "incr_y_limit";
     public static final String DISPLAY_CLICK_REPEAT_ENABLE = "enable_repeat";
     public static final String DISPLAY_CLICK_REPEAT_DISABLE = "disable_repeat";
+    public static final String DISPLAY_CLICK_REPLACE_ORE_ENABLE = "enable_replace_ore";
+    public static final String DISPLAY_CLICK_REPLACE_ORE_DISABLE = "disable_replace_ore";
 
     public static final AxisAlignedBB EMPTY_AABB = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 

@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.miner;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -12,15 +11,14 @@ import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
+import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.Position;
+import gregtech.api.util.Size;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.client.resources.I18n;
@@ -28,9 +26,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -39,7 +41,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -132,9 +133,25 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
 
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset)
                 .label(5, 5, getMetaFullName())
-                .widget(new ToggleButtonWidget(152, 25, 18, 18,
+                .widget(new ToggleButtonWidget(152, yStart, 18, 18,
                         GuiTextures.BUTTON_MINER_AREA_PREVIEW,
                         this.minerLogic::isPreviewEnabled, this.minerLogic::setPreviewEnabled))
+                .widget(new ClickButtonWidget(161, yStart + 18 + 2, 9, 9,
+                        "", cd -> this.minerLogic.setCurrentDiameter(this.minerLogic.getCurrentDiameter() + (cd.isShiftClick ? 5 : 1)))
+                        .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS))
+                .widget(new ClickButtonWidget(161, yStart + 18 + 2 + 9, 9, 9,
+                        "", cd -> this.minerLogic.setCurrentDiameter(this.minerLogic.getCurrentDiameter() - (cd.isShiftClick ? 5 : 1)))
+                        .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_MINUS))
+                .widget(new AdvancedTextWidget(159, yStart + 18 + 2 + (18 - 11) / 2, list -> {
+                    int currentDiameter = this.minerLogic.getCurrentDiameter();
+                    list.add(new TextComponentString(currentDiameter + "x" + currentDiameter));
+                }, 0x404040) {
+                    @Override
+                    protected void onSizeUpdate() { // >:(
+                        Size size = this.getSize();
+                        this.setSelfPosition(new Position(159 - size.width, this.getSelfPosition().y));
+                    }
+                })
                 .widget(new SlotWidget(this.chargerInventory, 0, 79, 62 + yOffset, true, true, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY)
                         .setTooltipText("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()], GTValues.VNF[getTier()]));
@@ -181,7 +198,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
     }
 
     @Override
-    public boolean drainMiningResources(@NotNull MinedBlockType minedBlockType, boolean pipeExtended, boolean simulate) {
+    public boolean drainMiningResources(@Nonnull MinedBlockType minedBlockType, boolean pipeExtended, boolean simulate) {
         if (minedBlockType == MinedBlockType.NOTHING) return true;
         long resultEnergy = energyContainer.getEnergyStored() - energyPerTick;
         if (resultEnergy < 0 || resultEnergy > energyContainer.getEnergyCapacity()) return false;
@@ -201,28 +218,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
             if (getOffsetTimer() % 5 == 0)
                 pushItemsIntoNearbyHandlers(getFrontFacing());
         }
-    }
-
-    @Override
-    public boolean onScrewdriverClick(EntityPlayer player, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (getWorld().isRemote) return true;
-
-        if (!this.isActive()) {
-            int currentRadius = this.minerLogic.getCurrentDiameter();
-            if (currentRadius == 1) {
-                this.minerLogic.setCurrentDiameter(this.minerLogic.getMaximumDiameter());
-            } else if (player.isSneaking()) {
-                this.minerLogic.setCurrentDiameter(currentRadius / 2 + currentRadius % 2);
-            } else {
-                this.minerLogic.setCurrentDiameter(currentRadius - 1);
-            }
-
-            int diameter = minerLogic.getCurrentDiameter();
-            player.sendMessage(new TextComponentTranslation("gregtech.machine.miner.working_area", diameter, diameter));
-        } else {
-            player.sendMessage(new TextComponentTranslation("gregtech.machine.miner.errorradius"));
-        }
-        return true;
     }
 
     @Override

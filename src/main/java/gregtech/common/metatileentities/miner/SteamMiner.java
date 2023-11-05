@@ -46,7 +46,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -181,7 +180,7 @@ public class SteamMiner extends MetaTileEntity implements Miner, IControllable, 
     }
 
     @Override
-    public boolean drainMiningResources(@NotNull MinedBlockType minedBlockType, boolean pipeExtended, boolean simulate) {
+    public boolean drainMiningResources(@Nonnull MinedBlockType minedBlockType, boolean pipeExtended, boolean simulate) {
         if (minedBlockType == MinedBlockType.NOTHING) return true;
         if (this.ventingStuck) return false;
         FluidStack drained = this.importFluids.drain(energyPerTick, simulate);

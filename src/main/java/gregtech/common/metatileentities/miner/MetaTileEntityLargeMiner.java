@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.miner;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -33,25 +32,27 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraft.util.text.*;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -74,6 +75,12 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private IEnergyContainer energyContainer;
     protected IMultipleTankHandler inputFluidInventory;
     protected IItemHandlerModifiable outputInventory;
+
+    // last mined ore block
+    protected final MutableBlockPos lastMinedOre = new MutableBlockPos();
+    protected boolean hasLastMinedOre;
+    // number of ores processed so far
+    protected int minedOreCount;
 
     public MetaTileEntityLargeMiner(ResourceLocation metaTileEntityId, int tier, int speed, int maxChunkDiameter,
                                     int oreMultiplier, int drillingFluidConsumePerTick, @Nonnull LargeMinerType type) {
@@ -115,7 +122,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     @Override
-    public boolean drainMiningResources(@NotNull MinedBlockType minedBlockType, boolean pipeExtended, boolean simulate) {
+    public boolean drainMiningResources(@Nonnull MinedBlockType minedBlockType, boolean pipeExtended, boolean simulate) {
         if (minedBlockType == MinedBlockType.NOTHING) return true;
         if (!drainEnergy(true) || !drainFluid(true)) return false;
         if (!simulate) {
@@ -151,6 +158,15 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         } else if (MinerUtil.applyTieredHammerDrops(GTUtility.toItem(state), drops,
                 this.getEnergyTier(), RecipeMaps.MACERATOR_RECIPES, this.oreMultiplier) == 0) {
             Miner.super.getRegularBlockDrops(drops, world, pos, state); // fallback
+        }
+    }
+
+    @Override
+    public void onMineOperation(@Nonnull BlockPos pos, boolean isOre, boolean isOrigin) {
+        if (isOre) {
+            this.lastMinedOre.setPos(pos);
+            this.hasLastMinedOre = true;
+            this.minedOreCount++;
         }
     }
 
@@ -247,15 +263,116 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
 
-        if (this.isStructureFormed()) {
-            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-                int energyContainer = getEnergyTier();
-                long maxVoltage = GTValues.V[energyContainer];
-                String voltageName = GTValues.VNF[energyContainer];
-                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
-            }
-            this.minerLogic.addDisplayText(textList);
+        if (!this.isStructureFormed()) return;
+
+        if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
+            int energyContainer = getEnergyTier();
+            long maxVoltage = GTValues.V[energyContainer];
+            String voltageName = GTValues.VNF[energyContainer];
+            textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
         }
+
+        ITextComponent areaText;
+        int area, maxArea;
+        if (this.minerLogic.isChunkMode()) {
+            area = this.minerLogic.getCurrentChunkDiameter();
+            maxArea = this.minerLogic.getMaximumChunkDiameter();
+            areaText = new TextComponentTranslation("gregtech.machine.miner.display.working_area.chunks", area, area);
+        } else {
+            area = this.minerLogic.getCurrentDiameter();
+            maxArea = this.minerLogic.getMaximumDiameter();
+            areaText = new TextComponentTranslation("gregtech.machine.miner.display.working_area", area, area);
+        }
+        if (!this.minerLogic.isWorking()) {
+            areaText.appendText(" ").appendSibling(incrButton(area, maxArea, MinerUtil.DISPLAY_CLICK_AREA_INCR))
+                    .appendText(" ").appendSibling(decrButton(area, 1, MinerUtil.DISPLAY_CLICK_AREA_DECR));
+        }
+        textList.add(areaText.appendText(" ").appendSibling(previewAreaButton(this.minerLogic.isPreviewEnabled())));
+
+        int yLimit = this.minerLogic.getYLimit();
+        ITextComponent value;
+        ITextComponent hoverText;
+        if (yLimit > 0) {
+            value = new TextComponentString(String.format("%,d", yLimit));
+            hoverText = new TextComponentTranslation("gregtech.machine.miner.display.y_limit.value_hover_tooltip", value);
+        } else {
+            value = new TextComponentTranslation("gregtech.machine.miner.display.y_limit.no_value");
+            hoverText = new TextComponentTranslation("gregtech.machine.miner.display.y_limit.value_hover_tooltip.no_value");
+        }
+        if (!this.minerLogic.isWorking()) {
+            value = new TextComponentString("")
+                    .appendSibling(incrButton(yLimit, Integer.MAX_VALUE, MinerUtil.DISPLAY_CLICK_Y_LIMIT_INCR))
+                    .appendText(" ").appendSibling(decrButton(yLimit, 0, MinerUtil.DISPLAY_CLICK_Y_LIMIT_DECR))
+                    .appendText(" ").appendSibling(value);
+        }
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.display.y_limit", value)
+                .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText))));
+
+        boolean currentValue = this.minerLogic.isRepeat();
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.display.repeat",
+                this.minerLogic.isWorking() ?
+                        new TextComponentTranslation(this.minerLogic.isRepeat() ?
+                                "gregtech.machine.miner.display.enabled" :
+                                "gregtech.machine.miner.display.disabled") :
+                        new TextComponentTranslation(currentValue ?
+                                "gregtech.machine.miner.display.toggle.enabled" :
+                                "gregtech.machine.miner.display.toggle.disabled")
+                                .setStyle(button(currentValue ? MinerUtil.DISPLAY_CLICK_REPEAT_DISABLE : MinerUtil.DISPLAY_CLICK_REPEAT_ENABLE))));
+
+        ITextComponent replaceOreText = new TextComponentTranslation(this.minerLogic.getOreReplacement().getBlock().getTranslationKey()+".name");
+        if (!this.minerLogic.isWorking()) {
+            replaceOreText = new TextComponentString("[")
+                    .appendSibling(replaceOreText.setStyle(new Style().setColor(TextFormatting.AQUA)))
+                    .appendText("]").setStyle(button(this.minerLogic.isReplaceOreWithAir() ?
+                            MinerUtil.DISPLAY_CLICK_REPLACE_ORE_DISABLE : MinerUtil.DISPLAY_CLICK_REPLACE_ORE_ENABLE));
+        }
+
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.display.replace_ore", replaceOreText));
+
+        MutableBlockPos mpos = new MutableBlockPos();
+        if (this.minerLogic.getMiningArea() == null || !this.minerLogic.getCurrentBlock(this.minerLogic.getMiningArea(), mpos)) {
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.display.done")
+                    .setStyle(new Style().setColor(TextFormatting.GREEN)));
+        } else if (this.minerLogic.isWorking()) {
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.display.working",
+                    mpos.getX(), mpos.getY(), mpos.getZ())
+                    .setStyle(new Style().setColor(TextFormatting.GOLD)));
+        } else if (!isWorkingEnabled()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
+        }
+
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.display.stats.total_mined", this.minedOreCount));
+        if (this.hasLastMinedOre) {
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.display.stats.last_mined",
+                    this.lastMinedOre.getX(), this.lastMinedOre.getY(), this.lastMinedOre.getZ()));
+        }
+    }
+
+    @Nonnull
+    protected static ITextComponent previewAreaButton(boolean previewEnabled) {
+        return new TextComponentTranslation(previewEnabled ?
+                "gregtech.machine.miner.display.working_area.hide_preview" :
+                "gregtech.machine.miner.display.working_area.preview")
+                .setStyle(button(previewEnabled ? MinerUtil.DISPLAY_CLICK_AREA_PREVIEW_HIDE : MinerUtil.DISPLAY_CLICK_AREA_PREVIEW));
+    }
+
+    @Nonnull
+    protected static ITextComponent incrButton(int currentValue, int maxValue, @Nonnull String event) {
+        return currentValue >= maxValue ?
+                new TextComponentTranslation("gregtech.machine.miner.display.incr.disabled") :
+                new TextComponentTranslation("gregtech.machine.miner.display.incr").setStyle(button(event));
+    }
+
+    @Nonnull
+    protected static ITextComponent decrButton(int currentValue, int minValue, @Nonnull String event) {
+        return currentValue <= minValue ?
+                new TextComponentTranslation("gregtech.machine.miner.display.decr.disabled") :
+                new TextComponentTranslation("gregtech.machine.miner.display.decr").setStyle(button(event));
+    }
+
+    @Nonnull
+    protected static Style button(@Nonnull String event) {
+        return new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "@!" + event));
     }
 
     @Override
@@ -263,6 +380,22 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         switch (componentData) {
             case MinerUtil.DISPLAY_CLICK_AREA_PREVIEW -> this.minerLogic.setPreviewEnabled(true);
             case MinerUtil.DISPLAY_CLICK_AREA_PREVIEW_HIDE -> this.minerLogic.setPreviewEnabled(false);
+            case MinerUtil.DISPLAY_CLICK_AREA_DECR -> {
+                int diff = clickData.isShiftClick ? 5 : 1;
+                if (this.minerLogic.isChunkMode()) {
+                    this.minerLogic.setCurrentChunkDiameter(this.minerLogic.getCurrentChunkDiameter() - diff);
+                } else {
+                    this.minerLogic.setCurrentDiameter(this.minerLogic.getCurrentDiameter() - diff);
+                }
+            }
+            case MinerUtil.DISPLAY_CLICK_AREA_INCR -> {
+                int diff = clickData.isShiftClick ? 5 : 1;
+                if (this.minerLogic.isChunkMode()) {
+                    this.minerLogic.setCurrentChunkDiameter(this.minerLogic.getCurrentChunkDiameter() + diff);
+                } else {
+                    this.minerLogic.setCurrentDiameter(this.minerLogic.getCurrentDiameter() + diff);
+                }
+            }
             case MinerUtil.DISPLAY_CLICK_Y_LIMIT_DECR -> this.minerLogic.setYLimit(Math.max(0,
                     this.minerLogic.getYLimit() - (clickData.isShiftClick ? 5 : 1)));
             case MinerUtil.DISPLAY_CLICK_Y_LIMIT_INCR -> {
@@ -272,6 +405,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             }
             case MinerUtil.DISPLAY_CLICK_REPEAT_ENABLE -> this.minerLogic.setRepeat(true);
             case MinerUtil.DISPLAY_CLICK_REPEAT_DISABLE -> this.minerLogic.setRepeat(false);
+            case MinerUtil.DISPLAY_CLICK_REPLACE_ORE_ENABLE -> this.minerLogic.setReplaceOreWithAir(true);
+            case MinerUtil.DISPLAY_CLICK_REPLACE_ORE_DISABLE -> this.minerLogic.setReplaceOreWithAir(false);
         }
     }
 
@@ -297,13 +432,33 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        return this.minerLogic.writeToNBT(data);
+        this.minerLogic.writeToNBT(data);
+
+        if (this.hasLastMinedOre) {
+            data.setInteger("lastMinedOreX", this.lastMinedOre.getX());
+            data.setInteger("lastMinedOreY", this.lastMinedOre.getY());
+            data.setInteger("lastMinedOreZ", this.lastMinedOre.getZ());
+        }
+
+        data.setInteger("minedOreCount", this.minedOreCount);
+
+        return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.minerLogic.readFromNBT(data);
+        if (data.hasKey("lastMinedOreX", Constants.NBT.TAG_INT)) {
+            this.lastMinedOre.setPos(data.getInteger("lastMinedOreX"),
+                    data.getInteger("lastMinedOreY"),
+                    data.getInteger("lastMinedOreZ"));
+            this.hasLastMinedOre = true;
+        } else {
+            this.hasLastMinedOre = false;
+        }
+
+        this.minedOreCount = Math.max(0, data.getInteger("minedOreCount"));
     }
 
     @Override
@@ -355,33 +510,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             case 2 -> "gregtech.multiblock.miner.silk_touch_mode";
             default -> "gregtech.multiblock.miner.both_modes";
         });
-    }
-
-    @Override
-    public boolean onScrewdriverClick(EntityPlayer player, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (getWorld().isRemote || !this.isStructureFormed()) {
-            return true;
-        }
-
-        if (!this.isActive()) {
-            if (this.minerLogic.isChunkMode()) {
-                int currentChunkDiameter = this.minerLogic.getCurrentChunkDiameter();
-                this.minerLogic.setCurrentChunkDiameter(currentChunkDiameter <= 1 ?
-                        this.minerLogic.getMaximumChunkDiameter() : currentChunkDiameter - 1);
-
-                int workingAreaChunks = this.minerLogic.getCurrentChunkDiameter();
-                player.sendMessage(new TextComponentTranslation("gregtech.machine.miner.working_area_chunks", workingAreaChunks, workingAreaChunks));
-            } else {
-                int diameter = this.minerLogic.getCurrentDiameter() - 8;
-                if (diameter <= 0) diameter = this.minerLogic.getMaximumDiameter();
-                this.minerLogic.setCurrentDiameter(diameter);
-
-                player.sendMessage(new TextComponentTranslation("gregtech.universal.tooltip.working_area", diameter, diameter));
-            }
-        } else {
-            player.sendMessage(new TextComponentTranslation("gregtech.machine.miner.errorradius"));
-        }
-        return true;
     }
 
     @Override

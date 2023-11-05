@@ -37,12 +37,6 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
     // flag indicating the miner has finished its action
     protected boolean done;
 
-    // last mined ore block
-    protected final MutableBlockPos lastMinedOre = new MutableBlockPos();
-    protected boolean hasLastMinedOre;
-    // number of ores processed so far
-    protected int minedOreCount;
-
     private boolean workingEnabled = true;
 
     // pipe length used for rendering purposes
@@ -229,7 +223,6 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
      * Recalculates the mining area and restarts the miner, if it was done
      */
     public void reset() {
-        this.hasLastMinedOre = false;
         setPipeLength(0);
         rebuildMiningArea();
 
@@ -328,8 +321,6 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
                 }
                 GTTransferUtils.addItemsToItemHandler(exportItems, false, blockDrops);
                 this.inventoryFull = false;
-                this.lastMinedOre.setPos(pos);
-                this.minedOreCount++;
             }
             world.setBlockState(pos, isOrigin ? Blocks.AIR.getDefaultState() : getOreReplacement());
             if (isOrigin) setPipeLength(this.pipeLength + 1);
@@ -394,13 +385,6 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
         if (!this.workingEnabled) data.setBoolean("disabled", true);
         if (this.done) data.setBoolean("done", true);
 
-        if (this.hasLastMinedOre) {
-            data.setInteger("lastMinedOreX", this.lastMinedOre.getX());
-            data.setInteger("lastMinedOreY", this.lastMinedOre.getY());
-            data.setInteger("lastMinedOreZ", this.lastMinedOre.getZ());
-        }
-
-        data.setInteger("minedOreCount", this.minedOreCount);
         data.setInteger("pipeLength", this.pipeLength);
 
         if (this.miningArea != null) {
@@ -422,9 +406,6 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
             this.currentDiameter = MathHelper.clamp(data.getInteger("currentRadius") * 2 + 1, 1, getMaximumDiameter());
 
             this.workingEnabled = data.getInteger("isWorkingEnabled") != 0;
-
-            this.hasLastMinedOre = false;
-            this.minedOreCount = 0;
             this.pipeLength = data.getInteger("pipeLength");
             return;
         }
@@ -433,16 +414,6 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
         this.workingEnabled = !data.getBoolean("disabled");
         this.done = data.getBoolean("done");
 
-        if (data.hasKey("lastMinedOreX", Constants.NBT.TAG_INT)) {
-            this.lastMinedOre.setPos(data.getInteger("lastMinedOreX"),
-                    data.getInteger("lastMinedOreY"),
-                    data.getInteger("lastMinedOreZ"));
-            this.hasLastMinedOre = true;
-        } else {
-            this.hasLastMinedOre = false;
-        }
-
-        this.minedOreCount = Math.max(0, data.getInteger("minedOreCount"));
         this.pipeLength = Math.max(0, data.getInteger("pipeLength"));
 
         this.miningArea = createMiningArea();
