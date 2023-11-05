@@ -17,6 +17,14 @@ public class ForestryUtil {
         return ModuleHelper.isEnabled("apiculture");
     }
 
+    public static boolean arboricultureEnabled() {
+        return ModuleHelper.isEnabled("arboriculture");
+    }
+
+    public static boolean lepidopterologyEnabled() {
+        return ModuleHelper.isEnabled("lepidopterology");
+    }
+
     public static IAlleleBeeEffect getEffect(String modid, String name) {
         String s = switch (modid) {
             case GTValues.MODID_EB -> "extrabees.effect." + name;

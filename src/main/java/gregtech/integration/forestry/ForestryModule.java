@@ -8,6 +8,7 @@ import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ItemGTTool;
 import gregtech.api.modules.GregTechModule;
+import gregtech.api.recipes.machines.RecipeMapScanner;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.event.MaterialEvent;
@@ -131,6 +132,9 @@ public class ForestryModule extends IntegrationSubmodule {
         if (ForestryConfig.disableConflictingBees && ForestryUtil.apicultureEnabled()) {
             BeeRemovals.init();
         }
+
+        // Custom scanner logic for scanning Forestry bees, saplings, etc
+        RecipeMapScanner.registerCustomScannerLogic(new ForestryScannerLogic());
     }
 
     @Override

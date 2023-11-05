@@ -3,18 +3,26 @@ package gregtech.api.util;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IDataItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
+import gregtech.api.recipes.machines.IScannerRecipeMap;
+import gregtech.api.recipes.machines.RecipeMapScanner;
+import gregtech.api.recipes.recipeproperties.ScanProperty;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 
 public final class AssemblyLineManager {
 
@@ -35,6 +43,10 @@ public final class AssemblyLineManager {
     }
 
     private AssemblyLineManager() {}
+
+    public static void registerScannerLogic() {
+        RecipeMapScanner.registerCustomScannerLogic(new DataStickCopyScannerLogic());
+    }
 
     /**
      * @param stackCompound the compound contained on the ItemStack to write to
@@ -124,13 +136,70 @@ public final class AssemblyLineManager {
                     .totalCWU(duration)
                     .buildAndRegister();
         } else {
-            RecipeMaps.SCANNER_RECIPES.recipeBuilder()
+            RecipeBuilder<?> builder = RecipeMaps.SCANNER_RECIPES.recipeBuilder()
                     .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
                     .inputs(researchItem)
                     .outputs(dataItem)
                     .duration(duration)
-                    .EUt(EUt)
-                    .buildAndRegister();
+                    .EUt(EUt);
+            builder.applyProperty(ScanProperty.getInstance(), true);
+            builder.buildAndRegister();
+        }
+    }
+
+    public static class DataStickCopyScannerLogic implements IScannerRecipeMap.ICustomScannerLogic {
+
+        private static final int EUT = 2;
+        private static final int DURATION = 100;
+
+        @Override
+        public Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, boolean exactVoltage) {
+            if (inputs.size() > 1) {
+                // try the data recipe both ways, prioritizing overwriting the first
+                Recipe recipe = createDataRecipe(inputs.get(0), inputs.get(1));
+                if (recipe != null) return recipe;
+
+                return createDataRecipe(inputs.get(1), inputs.get(0));
+            }
+            return null;
+        }
+
+        @Nullable
+        private Recipe createDataRecipe(@Nonnull ItemStack first, @Nonnull ItemStack second) {
+            NBTTagCompound compound = second.getTagCompound();
+            if (compound == null) return null;
+
+            boolean isFirstDataItem = AssemblyLineManager.isStackDataItem(first, true);
+            if (!isFirstDataItem) return null;
+            boolean isSecondDataItem = AssemblyLineManager.isStackDataItem(second, true);
+            if (isSecondDataItem) {
+                ItemStack output = first.copy();
+                output.setTagCompound(compound.copy());
+                return RecipeMaps.SCANNER_RECIPES.recipeBuilder()
+                        .inputs(first)
+                        .notConsumable(second)
+                        .outputs(output)
+                        .duration(DURATION).EUt(EUT).build().getResult();
+            }
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public List<Recipe> getRepresentativeRecipes() {
+            ItemStack copiedStick = MetaItems.TOOL_DATA_STICK.getStackForm();
+            copiedStick.setTranslatableName("gregtech.scanner.copy_stick_from");
+            ItemStack emptyStick = MetaItems.TOOL_DATA_STICK.getStackForm();
+            emptyStick.setTranslatableName("gregtech.scanner.copy_stick_empty");
+            ItemStack resultStick = MetaItems.TOOL_DATA_STICK.getStackForm();
+            resultStick.setTranslatableName("gregtech.scanner.copy_stick_to");
+            return Collections.singletonList(
+                    RecipeMaps.SCANNER_RECIPES.recipeBuilder()
+                            .inputs(emptyStick)
+                            .notConsumable(copiedStick)
+                            .outputs(resultStick)
+                            .duration(DURATION).EUt(EUT)
+                            .build().getResult());
         }
     }
 }

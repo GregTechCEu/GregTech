@@ -951,7 +951,6 @@ gt.tool.class.knife=Knife
 gt.tool.class.butchery_knife=Butchery Knife
 gt.tool.class.grafter=Grafter
 gt.tool.class.plunger=Plunger
-gt.tool.class.scoop=Scoop
 
 item.gt.tool.sword.name=%s Sword
 item.gt.tool.pickaxe.name=%s Pickaxe
@@ -3886,6 +3885,9 @@ gregtech.machine.scanner.uxv.name=Epic Scanner IV
 gregtech.machine.scanner.uxv.tooltip=Electron Microscope
 gregtech.machine.scanner.opv.name=Legendary Scanner
 gregtech.machine.scanner.opv.tooltip=Electron Microscope
+gregtech.scanner.copy_stick_from=§oStick to Copy
+gregtech.scanner.copy_stick_to=§oCopy of Stick
+gregtech.scanner.copy_stick_empty=§oEmpty Stick
 
 gregtech.machine.infinite_energy.name=Infinite GT Energy Unit Emitter
 gregtech.machine.creative_chest.name=Creative Quantum Chest
@@ -5179,6 +5181,7 @@ gregtech.recipe.cleanroom=Requires %s
 gregtech.recipe.cleanroom.display_name=Cleanroom
 gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
 gregtech.recipe.research=Requires Research
+gregtech.recipe.scan_for_research=Scan for Assembly Line
 gregtech.recipe.computation_per_tick=Min. Computation: %,d CWU/t
 gregtech.recipe.total_computation=Computation: %,d CWU
 gregtech.recipe.research_result=Research result item, not produced by this recipe directly
@@ -5813,6 +5816,7 @@ metaitem.electrode.tin.name=Tin Electrode
 # Scoop
 item.gt.tool.scoop.name=%s Scoop
 item.gt.tool.behavior.scoop=§dArborist: §fCatches Butterflies on Left-Click
+gt.tool.class.scoop=Scoop
 
 # Drops
 item.gt.honey_drop.oil.name=Oil Drop
@@ -5973,3 +5977,14 @@ for.bees.species.silicon=Silicon
 
 # Bee Descriptions (many more to do)
 for.bees.description.clay=An organic bee known to be industrious and diligent. Rumor has it that it can find mud in the right biome.|Beekeeping 101
+
+# Scanner Information
+gregtech.scanner.forestry.drone=§oScanned Drone
+gregtech.scanner.forestry.princess=§oScanned Princess
+gregtech.scanner.forestry.queen=§oScanned Queen
+gregtech.scanner.forestry.sapling=§oScanned Sapling
+gregtech.scanner.forestry.butterfly=§oScanned Butterfly
+gregtech.scanner.forestry.larvae=§oScanned Larvae
+gregtech.scanner.forestry.serum=§oScanned Serum
+gregtech.scanner.forestry.caterpillar=§oScanned Caterpillar
+gregtech.scanner.forestry.pollen=§oScanned Pollen
