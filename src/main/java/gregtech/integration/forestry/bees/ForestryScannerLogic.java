@@ -29,21 +29,22 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
 
     @Override
     public Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, boolean exactVoltage) {
-        ItemStack stack = inputs.get(0);
         FluidStack fluidStack = fluidInputs.get(0);
-        if (stack != ItemStack.EMPTY && fluidStack.containsFluid(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))) {
-            IIndividual individual = AlleleManager.alleleRegistry.getIndividual(stack);
-            if (individual != null) {
-                if (individual.analyze()) {
-                    NBTTagCompound outputNBT = new NBTTagCompound();
-                    individual.writeToNBT(outputNBT);
-                    ItemStack outputStack = stack.copy();
-                    outputStack.setTagCompound(outputNBT);
-                    return RecipeMaps.SCANNER_RECIPES.recipeBuilder()
-                            .inputs(stack)
-                            .fluidInputs(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))
-                            .outputs(outputStack)
-                            .duration(DURATION).EUt(EUT).build().getResult();
+        if (fluidStack != null && fluidStack.containsFluid(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))) {
+            for (ItemStack stack : inputs) {
+                if (stack != ItemStack.EMPTY) {
+                    IIndividual individual = AlleleManager.alleleRegistry.getIndividual(stack);
+                    if (individual != null && individual.analyze()) {
+                        NBTTagCompound outputNBT = new NBTTagCompound();
+                        individual.writeToNBT(outputNBT);
+                        ItemStack outputStack = stack.copy();
+                        outputStack.setTagCompound(outputNBT);
+                        return RecipeMaps.SCANNER_RECIPES.recipeBuilder()
+                                .inputs(stack)
+                                .fluidInputs(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))
+                                .outputs(outputStack)
+                                .duration(DURATION).EUt(EUT).build().getResult();
+                    }
                 }
             }
         }
