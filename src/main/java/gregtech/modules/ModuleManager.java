@@ -2,9 +2,13 @@ package gregtech.modules;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import gregtech.api.GTValues;
 import gregtech.api.modules.*;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.event.*;
@@ -18,9 +22,9 @@ import java.util.stream.Collectors;
 public class ModuleManager implements IModuleManager {
 
     private static final ModuleManager INSTANCE = new ModuleManager();
-    //private static final String MODULE_CFG_FILE_NAME = "modules.cfg";
-    //private static final String MODULE_CFG_CATEGORY_NAME = "modules";
-    //private static File configFolder;
+    private static final String MODULE_CFG_FILE_NAME = "modules.cfg";
+    private static final String MODULE_CFG_CATEGORY_NAME = "modules";
+    private static File configFolder;
 
     private Map<String, IModuleContainer> containers = new LinkedHashMap<>();
     private final Map<ResourceLocation, IGregTechModule> sortedModules = new LinkedHashMap<>();
@@ -30,7 +34,7 @@ public class ModuleManager implements IModuleManager {
 
     private ModuleStage currentStage = ModuleStage.C_SETUP;
     private final Logger logger = LogManager.getLogger("GregTech Module Loader");
-    //private Configuration config;
+    private Configuration config;
 
     private ModuleManager() {
     }
@@ -45,11 +49,10 @@ public class ModuleManager implements IModuleManager {
     }
 
     public boolean isModuleEnabled(IGregTechModule module) {
-        return true;
-        //GregTechModule annotation = module.getClass().getAnnotation(GregTechModule.class);
-        //String comment = getComment(module);
-        //Property prop = getConfiguration().get(MODULE_CFG_CATEGORY_NAME, annotation.containerID() + ":" + annotation.moduleID(), true, comment);
-        //return prop.getBoolean();
+        GregTechModule annotation = module.getClass().getAnnotation(GregTechModule.class);
+        String comment = getComment(module);
+        Property prop = getConfiguration().get(MODULE_CFG_CATEGORY_NAME, annotation.containerID() + ":" + annotation.moduleID(), true, comment);
+        return prop.getBoolean();
     }
 
     @Override
@@ -87,7 +90,7 @@ public class ModuleManager implements IModuleManager {
                 ));
 
         currentStage = ModuleStage.M_SETUP;
-        //configFolder = new File(configDirectory, GTValues.MODID);
+        configFolder = new File(configDirectory, GTValues.MODID);
         Map<String, List<IGregTechModule>> modules = getModules(asmDataTable);
         configureModules(modules);
 
@@ -211,18 +214,18 @@ public class ModuleManager implements IModuleManager {
     }
 
     private void configureModules(Map<String, List<IGregTechModule>> modules) {
-        //Locale locale = Locale.getDefault();
-        //Locale.setDefault(Locale.ENGLISH);
+        Locale locale = Locale.getDefault();
+        Locale.setDefault(Locale.ENGLISH);
         Set<ResourceLocation> toLoad = new LinkedHashSet<>();
         Set<IGregTechModule> modulesToLoad = new LinkedHashSet<>();
-        //Configuration config = getConfiguration();
+        Configuration config = getConfiguration();
 
         for (IModuleContainer container : containers.values()) {
             String containerID = container.getID();
             List<IGregTechModule> containerModules = modules.get(containerID);
-            //config.load();
-            //config.addCustomCategoryComment(MODULE_CFG_CATEGORY_NAME,
-            //        "Module configuration file. Can individually enable/disable modules from GregTech and its addons");
+            config.load();
+            config.addCustomCategoryComment(MODULE_CFG_CATEGORY_NAME,
+                    "Module configuration file. Can individually enable/disable modules from GregTech and its addons");
             IGregTechModule coreModule = getCoreModule(containerModules);
             if (coreModule == null) {
                 throw new IllegalStateException("Could not find core module for module container " + containerID);
@@ -286,10 +289,10 @@ public class ModuleManager implements IModuleManager {
 
         loadedModules.addAll(sortedModules.values());
 
-        //if (config.hasChanged()) {
-        //    config.save();
-        //}
-        //Locale.setDefault(locale);
+        if (config.hasChanged()) {
+            config.save();
+        }
+        Locale.setDefault(locale);
     }
 
     private static IGregTechModule getCoreModule(List<IGregTechModule> modules) {
@@ -354,7 +357,6 @@ public class ModuleManager implements IModuleManager {
         }
     }
 
-    /*
     @SuppressWarnings("deprecation")
     private String getComment(IGregTechModule module) {
         GregTechModule annotation = module.getClass().getAnnotation(GregTechModule.class);
@@ -373,9 +375,9 @@ public class ModuleManager implements IModuleManager {
             builder.append(" ]");
             comment = builder.toString();
         }
-        Set<String> modDependencies = module.getModDependencyIDs();
-        if (!modDependencies.isEmpty()) {
-            Iterator<String> iterator = modDependencies.iterator();
+        String[] modDependencies = annotation.modDependencies();
+        if (modDependencies != null && modDependencies.length > 0) {
+            Iterator<String> iterator = Arrays.stream(modDependencies).iterator();
             StringBuilder builder = new StringBuilder(comment);
             builder.append("\n");
             builder.append("Mod Dependencies: [ ");
@@ -395,5 +397,4 @@ public class ModuleManager implements IModuleManager {
         }
         return config;
     }
-     */
 }

@@ -1,3 +1,14 @@
+gregtech.modules.core.description=Core GregTech content. Disabling this disables the entire mod and all its addons
+gregtech.modules.tools.description=GregTech Tools Module
+gregtech.modules.ct_integration.description=CraftTweaker Integration Module
+gregtech.modules.grs_integration.description=Groovyscript Integration Module
+gregtech.modules.integration.description=General GregTech Integration Module. Disabling this disables all integration modules.
+gregtech.modules.jei_integration.description=JustEnoughItems Integration Module
+gregtech.modules.top_integration.description=TheOneProbe Integration Module
+gregtech.modules.oc_integration.description=OpenComputers Integration Module
+gregtech.modules.baubles_integration.description=Baubles Integration Module
+gregtech.modules.hwyla_integration.description=HWYLA (WAILA) Integration Module
+
 death.attack.heat=%s was boiled alive
 death.attack.frost=%s explored cryogenics
 death.attack.chemical=%s had a chemical accident
