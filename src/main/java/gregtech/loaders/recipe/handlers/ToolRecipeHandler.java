@@ -174,7 +174,7 @@ public class ToolRecipeHandler {
                     'S', stick);
 
             addToolRecipe(material, ToolItems.FILE, true,
-                    " P ", " P " , " S ",
+                    "P", "P", "S",
                     'P', plate,
                     'S', stick);
 
