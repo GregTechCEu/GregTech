@@ -279,7 +279,6 @@ public class OrePrefix {
         excludeAllGems(Materials.EnderEye);
         excludeAllGems(Materials.Flint);
         excludeAllGemsButNormal(Materials.Lapotron);
-        excludeAllGemsButNormal(Materials.Cinnabar);
 
         dust.setIgnored(Materials.Redstone);
         dust.setIgnored(Materials.Glowstone);
