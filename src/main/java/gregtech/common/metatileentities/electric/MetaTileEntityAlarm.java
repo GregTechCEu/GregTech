@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.terminal.gui.widgets.SelectorWidget;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -49,14 +50,17 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.alarm.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick", BASE_EU_CONSUMPTION));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
     }
 
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        Textures.ALARM_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        if (this.isActive) {
+            Textures.ALARM_OVERLAY_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        } else {
+            Textures.ALARM_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        }
     }
 
     @Override
@@ -67,14 +71,17 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
                         getSounds().stream().map((event) -> event.getSoundName().toString()).collect(Collectors.toList()),
                         0x555555, () -> this.selectedSound.getSoundName().toString(), true).setOnChanged((v) -> {
                     GregTechAPI.soundManager.stopTileSound(getPos());
-                    this.selectedSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(v));
-                    this.writeCustomData(GregtechDataCodes.UPDATE_SOUND, (writer) -> writer.writeResourceLocation(this.selectedSound.getSoundName()));
+                    SoundEvent newSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(v));
+                    if (this.selectedSound != newSound) {
+                        this.selectedSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(v));
+                        this.writeCustomData(GregtechDataCodes.UPDATE_SOUND, (writer) -> writer.writeResourceLocation(this.selectedSound.getSoundName()));
+                    }
                 }))
                 .build(this.getHolder(), entityPlayer);
     }
 
     protected List<SoundEvent> getSounds() {
-        if (GTValues.FOOLS.get()) {
+        if (GTValues.FOOLS.get() && ConfigHolder.misc.specialEvents) {
             return Arrays.asList(GTSoundEvents.DEFAULT_ALARM, GTSoundEvents.ARC, SoundEvents.ENTITY_WOLF_HOWL,
                     SoundEvents.ENTITY_ENDERMEN_DEATH, GTSoundEvents.SUS_RECORD);
         }
@@ -111,6 +118,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_ACTIVE) {
             this.isActive = buf.readBoolean();
+            this.scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.UPDATE_SOUND) {
             this.selectedSound = SoundEvent.REGISTRY.getObject(buf.readResourceLocation());
             GregTechAPI.soundManager.stopTileSound(getPos());
