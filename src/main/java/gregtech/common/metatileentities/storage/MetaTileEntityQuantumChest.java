@@ -70,6 +70,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     private static final String NBT_ITEMSTACK = "ItemStack";
     private static final String NBT_PARTIALSTACK = "PartialStack";
     private static final String NBT_ITEMCOUNT = "ItemAmount";
+    private static final String IS_VOIDING = "IsVoiding";
     protected IItemHandler outputItemInventory;
     private ItemHandlerList combinedInventory;
     private ItemStack previousStack;
@@ -273,7 +274,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             tagCompound.setTag(NBT_ITEMSTACK, virtualItemStack.writeToNBT(new NBTTagCompound()));
             tagCompound.setLong(NBT_ITEMCOUNT, itemsStoredInside);
         }
-        data.setBoolean("IsVoiding", voiding);
+        data.setBoolean(IS_VOIDING, voiding);
         return tagCompound;
     }
 
@@ -289,7 +290,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 this.itemsStoredInside = data.getLong(NBT_ITEMCOUNT);
             }
         }
-        this.voiding = data.getBoolean("IsVoiding");
+        if (data.hasKey(IS_VOIDING)){
+            this.voiding = data.getBoolean(IS_VOIDING);
+        }
     }
 
     @Override
@@ -304,7 +307,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             exportItems.setStackInSlot(0, new ItemStack(itemStack.getCompoundTag(NBT_PARTIALSTACK)));
         }
 
-        if (itemStack.getBoolean("IsVoiding")) {
+        if (itemStack.getBoolean(IS_VOIDING)) {
             setVoiding(true);
         }
     }
@@ -323,7 +326,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         }
 
         if (this.voiding) {
-            itemStack.setBoolean("IsVoiding", true);
+            itemStack.setBoolean(IS_VOIDING, true);
         }
 
         this.virtualItemStack = ItemStack.EMPTY;
@@ -442,8 +445,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         return voiding;
     }
 
-    private void setVoiding(boolean isPartialVoid) {
-        this.voiding = isPartialVoid;
+    private void setVoiding(boolean isVoiding) {
+        this.voiding = isVoiding;
         if (!getWorld().isRemote) {
             markDirty();
         }
