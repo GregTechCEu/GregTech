@@ -1,6 +1,6 @@
 {
+  "name": "gregtech.veins.fluid.lava",
   "weight": 65,
-  "name": "Nether Lava Deposit",
   "yield": {
     "min": 125,
     "max": 250

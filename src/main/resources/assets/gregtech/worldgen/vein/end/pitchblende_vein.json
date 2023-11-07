@@ -1,4 +1,5 @@
 {
+  "name": "gregtech.veins.ore.pitchblende",
   "weight": 20,
   "density": 0.25,
   "min_height": 30,
