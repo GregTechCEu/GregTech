@@ -23,6 +23,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -187,7 +188,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         textList.add(new TextComponentTranslation("gregtech.machine.quantum_chest.items_stored"));
         textList.add(new TextComponentString(String.format("%,d", itemsStoredInside)));
         if (!virtualItemStack.isEmpty()) {
-            textList.add(new TextComponentString(virtualItemStack.getDisplayName()));
+            textList.add(new TextComponentString(TextFormattingUtil.formatStringWithNewlines(virtualItemStack.getDisplayName(), 14)));
         }
     }
 
