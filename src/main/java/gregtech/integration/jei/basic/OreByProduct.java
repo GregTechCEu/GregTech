@@ -2,7 +2,7 @@ package gregtech.integration.jei.basic;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
-import gregtech.api.recipes.Recipe.ChanceEntry;
+import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -47,7 +47,7 @@ public class OreByProduct implements IRecipeWrapper {
 
     private static ImmutableList<ItemStack> ALWAYS_MACHINES;
 
-    private final Int2ObjectMap<ChanceEntry> chances = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<ChancedItemOutput> chances = new Int2ObjectOpenHashMap<>();
     private final List<List<ItemStack>> inputs = new ArrayList<>();
     private final List<List<ItemStack>> outputs = new ArrayList<>();
     private final List<List<FluidStack>> fluidInputs = new ArrayList<>();
@@ -287,14 +287,14 @@ public class OreByProduct implements IRecipeWrapper {
 
     public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
         if (chances.containsKey(slotIndex)) {
-            ChanceEntry entry = chances.get(slotIndex);
+            ChancedItemOutput entry = chances.get(slotIndex);
             double chance = entry.getChance() / 100.0;
-            double boost = entry.getBoostPerTier() / 100.0;
+            double boost = entry.getChanceBoost() / 100.0;
             tooltip.add(I18n.format("gregtech.recipe.chance", chance, boost));
         }
     }
 
-    public ChanceEntry getChance(int slot) {
+    public ChancedItemOutput getChance(int slot) {
         return chances.get(slot);
     }
 
@@ -339,7 +339,7 @@ public class OreByProduct implements IRecipeWrapper {
 
     private void addChance(int base, int tier) {
         // this is solely for the chance overlay and tooltip, neither of which care about the ItemStack
-        chances.put(currentSlot - 1, new ChanceEntry(ItemStack.EMPTY, base, tier));
+        chances.put(currentSlot - 1, new ChancedItemOutput(ItemStack.EMPTY, base, tier));
     }
 
     // make the code less :weary:
