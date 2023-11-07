@@ -130,7 +130,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
         IBlockState blockOnPos = metaTileEntity.getWorld().getBlockState(ventingBlockPos);
         if (blockOnPos.getCollisionBoundingBox(metaTileEntity.getWorld(), ventingBlockPos) == Block.NULL_AABB) {
             performVentingAnimation(ventingBlockPos, machinePos);
-        } else if (GTUtility.tryBreakSnowLayer(metaTileEntity.getWorld(), ventingBlockPos, blockOnPos, false)) {
+        } else if (GTUtility.tryBreakSnow(metaTileEntity.getWorld(), ventingBlockPos, blockOnPos, false)) {
             performVentingAnimation(ventingBlockPos, machinePos);
         } else if (!ventingStuck) {
             setVentingStuck(true);
