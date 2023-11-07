@@ -1,6 +1,6 @@
 {
+  "name": "gregtech.veins.fluid.natural_gas_overworld",
   "weight": 15,
-  "name": "Overworld Natural Gas Deposit",
   "yield": {
     "min": 100,
     "max": 175

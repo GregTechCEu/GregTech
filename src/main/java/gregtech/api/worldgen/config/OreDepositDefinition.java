@@ -2,6 +2,7 @@ package gregtech.api.worldgen.config;
 
 import com.google.gson.JsonObject;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.WorldBlockPredicate;
 import gregtech.api.worldgen.filler.BlockFiller;
 import gregtech.api.worldgen.populator.IVeinPopulator;
@@ -46,7 +47,7 @@ public class OreDepositDefinition implements IWorldgenDefinition {
         this.weight = configRoot.get("weight").getAsInt();
         this.density = configRoot.get("density").getAsFloat();
         if (configRoot.has("name")) {
-            this.assignedName = configRoot.get("name").getAsString();
+            this.assignedName = LocalizationUtils.format(configRoot.get("name").getAsString());
         }
         if (configRoot.has("description")) {
             this.description = configRoot.get("description").getAsString();

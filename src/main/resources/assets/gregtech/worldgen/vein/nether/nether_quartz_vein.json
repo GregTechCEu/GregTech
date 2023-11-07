@@ -1,4 +1,5 @@
 {
+  "name": "gregtech.veins.ore.nether_quartz",
   "weight": 80,
   "density": 0.2,
   "min_height": 40,
