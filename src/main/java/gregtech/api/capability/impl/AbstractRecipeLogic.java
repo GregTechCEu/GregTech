@@ -566,7 +566,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
 
         // We have already trimmed fluid outputs at this time
-        if (!metaTileEntity.canVoidRecipeFluidOutputs() && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!metaTileEntity.canVoidRecipeFluidOutputs() && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getAllFluidOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
@@ -754,12 +754,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.progressTime = 1;
         setMaxProgress(overclockResults[1]);
         this.recipeEUt = overclockResults[0];
-        this.fluidOutputs = GTUtility.copyFluidList(recipe.getAllFluidOutputs(metaTileEntity.getFluidOutputLimit()));
-        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(
-                GTUtility.getTierByVoltage(recipe.getEUt()),
-                getOverclockForTier(getMaximumOverclockVoltage()),
-                getRecipeMap())
-        );
+        int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
+        int machineTier = getOverclockForTier(getMaximumOverclockVoltage());
+        this.fluidOutputs = GTUtility.copyFluidList(recipe.getResultFluidOutputs(recipeTier, machineTier, getRecipeMap()));
+        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(recipeTier, machineTier, getRecipeMap()));
 
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;

@@ -344,6 +344,7 @@ public class RecipeMaps {
                         .outputs(recipeBuilder.getOutputs())
                         .chancedOutputs(recipeBuilder.getChancedOutputs())
                         .fluidOutputs(recipeBuilder.getFluidOutputs())
+                        .chancedFluidOutputs(recipeBuilder.getChancedFluidOutputs())
                         .cleanroom(recipeBuilder.getCleanroom())
                         .duration(recipeBuilder.duration)
                         .EUt(recipeBuilder.EUt)

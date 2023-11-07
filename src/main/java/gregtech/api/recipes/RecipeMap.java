@@ -19,6 +19,7 @@ import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.category.GTRecipeCategory;
+import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.map.*;
@@ -69,16 +70,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             .thenComparingInt(Recipe::getEUt)
             .thenComparing(Recipe::hashCode);
 
-    public static final IChanceFunction DEFAULT_CHANCE_FUNCTION = (baseChance, boostPerTier, baseTier, machineTier) -> {
-        int tierDiff = machineTier - baseTier;
-        if (tierDiff <= 0) return baseChance; // equal or invalid tiers do not boost at all
-        if (baseTier == GTValues.ULV) tierDiff--; // LV does not boost over ULV
-        return baseChance + (boostPerTier * tierDiff);
-    };
-
     private static boolean foundInvalidRecipe = false;
 
-    public IChanceFunction chanceFunction = DEFAULT_CHANCE_FUNCTION;
+    public static final ChanceBoostFunction DEFAULT_CHANCE_FUNCTION = ChanceBoostFunction.OVERCLOCK;
+
+    public ChanceBoostFunction chanceFunction = DEFAULT_CHANCE_FUNCTION;
 
     public final String unlocalizedName;
 
@@ -197,7 +193,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenMethod
-    public IChanceFunction getChanceFunction() {
+    public ChanceBoostFunction getChanceFunction() {
         return chanceFunction;
     }
 
@@ -234,8 +230,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    @ZenMethod("setChanceFunction")
-    public RecipeMap<R> setChanceFunction(IChanceFunction function) {
+    public RecipeMap<R> setChanceFunction(@Nonnull ChanceBoostFunction function) {
         chanceFunction = function;
         return this;
     }
@@ -364,8 +359,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
-        boolean emptyOutputs = !this.allowEmptyOutput && recipe.getEUt() > 0 &&
-                recipe.getOutputs().isEmpty() && recipe.getFluidOutputs().isEmpty() && recipe.getChancedOutputs().isEmpty();
+        boolean emptyOutputs = !this.allowEmptyOutput && recipe.getEUt() > 0 && recipe.getOutputs().isEmpty() &&
+                recipe.getFluidOutputs().isEmpty() && recipe.getChancedOutputs().getChancedEntries().isEmpty() &&
+                recipe.getChancedFluidOutputs().getChancedEntries().isEmpty();
         if (emptyOutputs) {
             GTLog.logger.error("Invalid amount of recipe outputs. Recipe outputs are empty.");
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
@@ -387,7 +383,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             recipeStatus = EnumValidationResult.INVALID;
         }
 
-        amount = recipe.getOutputs().size() + recipe.getChancedOutputs().size();
+        amount = recipe.getOutputs().size() + recipe.getChancedOutputs().getChancedEntries().size();
         if (amount > getMaxOutputs()) {
             GTLog.logger.error("Invalid amount of recipe outputs. Actual: {}. Should be at most {}.", amount, getMaxOutputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
@@ -409,7 +405,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             recipeStatus = EnumValidationResult.INVALID;
         }
 
-        amount = recipe.getFluidOutputs().size();
+        amount = recipe.getFluidOutputs().size() + recipe.getChancedFluidOutputs().getChancedEntries().size();
         if (amount > getMaxFluidOutputs()) {
             GTLog.logger.error("Invalid amount of recipe fluid outputs. Actual: {}. Should be at most {}.", amount, getMaxFluidOutputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Outputs"));
@@ -1411,20 +1407,4 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (!(obj instanceof RecipeMap)) return false;
         return ((RecipeMap<?>) obj).unlocalizedName.equals(this.unlocalizedName);
     }
-
-    @FunctionalInterface
-    @ZenClass("mods.gregtech.recipe.IChanceFunction")
-    @ZenRegister
-    public interface IChanceFunction {
-
-        /**
-         * @param baseChance   the base chance of the recipe
-         * @param boostPerTier the amount the chance is changed per tier over the base
-         * @param baseTier     the lowest tier used to obtain un-boosted chances
-         * @param boostTier    the tier the chance should be calculated at
-         * @return the chance
-         */
-        int chanceFor(int baseChance, int boostPerTier, int baseTier, int boostTier);
-    }
-
 }
