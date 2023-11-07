@@ -59,4 +59,32 @@ public class TextFormattingUtil {
     public static String formatNumbers(Object number) {
         return NUMBER_FORMAT.format(number);
     }
+
+    /**
+     * Formats a string to multiple lines, attempting to place a new line at the closest space from "maxLength" characters away.
+     * @param toFormat the string to be formatted to multiple lines.
+     * @param maxLength the length where a newline should be placed in the nearest space.
+     * @return a string formatted with newlines.
+     */
+    public static String formatStringWithNewlines(String toFormat, int maxLength) {
+        String[] name = toFormat.split(" ");
+        StringBuilder builder = new StringBuilder();
+        int length = 0;
+        for (String s : name) {
+            length += s.length();
+
+            if (length >= maxLength) {
+                builder.append("\n");
+                builder.append(s);
+                length = 0;
+                continue;
+            }
+
+            if (!(builder.length() == 0))
+                builder.append(" ");
+
+            builder.append(s);
+        }
+        return builder.toString();
+    }
 }
