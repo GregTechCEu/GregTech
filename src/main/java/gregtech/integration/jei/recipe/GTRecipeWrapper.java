@@ -127,7 +127,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             }
 
             List<ChancedItemOutput> chancedOutputs = new ArrayList<>(recipe.getChancedOutputs().getChancedEntries());
-            chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
             for (ChancedItemOutput chancedEntry : chancedOutputs) {
                 recipeOutputs.add(chancedEntry.getIngredient());
             }
@@ -146,7 +145,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     .collect(Collectors.toList());
 
             List<ChancedFluidOutput> chancedOutputs = new ArrayList<>(recipe.getChancedFluidOutputs().getChancedEntries());
-            chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
             for (ChancedFluidOutput chancedEntry : chancedOutputs) {
                 recipeOutputs.add(chancedEntry.getIngredient());
             }

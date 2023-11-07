@@ -703,9 +703,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.fluidInputs(newFluidInputs);
 
         this.outputs(outputItems);
-        chancedOutputsMultiply(recipe, multiplier);
-
         this.fluidOutputs(outputFluids);
+
+        chancedOutputsMultiply(recipe, multiplier);
 
         this.EUt(multiplyDuration ? recipe.getEUt() : this.EUt + recipe.getEUt() * multiplier);
         this.duration(multiplyDuration ? this.duration + recipe.getDuration() * multiplier : recipe.getDuration());
