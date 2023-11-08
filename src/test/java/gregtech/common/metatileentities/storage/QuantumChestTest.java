@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.Bootstrap;
 import gregtech.api.GTValues;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -38,7 +39,7 @@ public class QuantumChestTest {
     }
 
     @Test
-    public void Test_Insertion() {
+    public void Test_Single_Insertion() {
         for (var quantumChest : createInstances()) {
             IItemHandler itemInventory = quantumChest.getItemInventory();
             IItemHandlerModifiable exportItems = quantumChest.getExportItems();
@@ -69,6 +70,28 @@ public class QuantumChestTest {
 
             stack = itemInventory.getStackInSlot(0);
             assertThat(stack.getCount(), is(128));
+        }
+    }
+
+    @Test
+    public void Test_Multiple_Insertions() {
+
+        for (var quantumChest : createInstances()) {
+            IItemHandler itemInventory = quantumChest.getItemInventory();
+            IItemHandlerModifiable exportItems = quantumChest.getExportItems();
+            IItemHandlerModifiable importItems = quantumChest.getImportItems();
+
+            for (int i = 0; i < 16; i++) {
+                importItems.insertItem(0, GRAVEL.copy(), false);
+                quantumChest.fakeUpdate(false);
+            }
+
+            ItemStack virtualized = itemInventory.getStackInSlot(0);
+            ItemStack export = exportItems.getStackInSlot(0);
+
+            assertThat("Virtualized amount is wrong!", virtualized.getCount() == 64 * 15);
+            assertThat("Export slot is empty!", export.getCount() == 64 && !export.isEmpty());
+            assertThat("Import slot has an item in it!", importItems.getStackInSlot(0).isEmpty());
         }
     }
 
@@ -138,6 +161,10 @@ public class QuantumChestTest {
             super(metaTileEntityId, tier, maxStoredItems);
         }
 
+        /**
+         * Simulates the {@linkplain  MetaTileEntity#update()} function
+         * @param isRemote should the method be run as if it was on client
+         */
         public void fakeUpdate(boolean isRemote) {
             if (!isRemote) {
                 if (itemsStoredInside < maxStoredItems) {
