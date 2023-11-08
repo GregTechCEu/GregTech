@@ -105,14 +105,14 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
                 .aisle("###############", "######OSO######", "###############")
                 .where('S', selfPredicate())
-                .where('G', states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.FUSION_GLASS)).or(states(getCasingState())))
-                .where('E', states(getCasingState()).or(metaTileEntities(Arrays.stream(MetaTileEntities.ENERGY_INPUT_HATCH)
+                .where('G', states(getCasingState(), getGlassState()))
+                .where('E', states(getCasingState(), getGlassState()).or(metaTileEntities(Arrays.stream(MetaTileEntities.ENERGY_INPUT_HATCH)
                         .filter(mte -> mte != null && tier <= mte.getTier() && mte.getTier() <= GTValues.UV)
                         .toArray(MetaTileEntity[]::new))
                         .setMinGlobalLimited(1).setPreviewCount(16)))
                 .where('C', states(getCasingState()))
                 .where('K', states(getCoilState()))
-                .where('O', states(getCasingState()).or(abilities(MultiblockAbility.EXPORT_FLUIDS)))
+                .where('O', states(getCasingState(), getGlassState()).or(abilities(MultiblockAbility.EXPORT_FLUIDS)))
                 .where('A', air())
                 .where('I', states(getCasingState()).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(2)))
                 .where('#', any())
@@ -172,6 +172,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         } else {
             return Textures.FUSION_TEXTURE;
         }
+    }
+
+    private IBlockState getGlassState() {
+        return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.FUSION_GLASS);
     }
 
     private IBlockState getCasingState() {
@@ -331,8 +335,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
             // Drain heat when the reactor is not active, is paused via soft mallet, or does not have enough energy and has fully wiped recipe progress
             // Don't drain heat when there is not enough energy and there is still some recipe progress, as that makes it doubly hard to complete the recipe
             // (Will have to recover heat and recipe progress)
-            if ((!(isActive || workingEnabled) || (hasNotEnoughEnergy && progressTime == 0)) && heat > 0) {
-                heat = heat <= 10000 ? 0 : (heat - 10000);
+            if (heat > 0) {
+                if (!isActive || !workingEnabled || (hasNotEnoughEnergy && progressTime == 0)) {
+                    heat = heat <= 10000 ? 0 : (heat - 10000);
+                }
             }
         }
 

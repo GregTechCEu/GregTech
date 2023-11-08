@@ -36,6 +36,8 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     int getConnections();
 
+    int getNumConnections();
+
     boolean isConnected(EnumFacing side);
 
     void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor);

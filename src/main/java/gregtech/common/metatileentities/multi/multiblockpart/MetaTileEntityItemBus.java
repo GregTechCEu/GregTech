@@ -22,6 +22,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.GTHashMaps;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.integration.jei.recipe.IntCircuitCategory;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -274,7 +275,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
 
             SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, circuitX, circuitY)
                     .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
-            builder.widget(getCircuitSlotTooltip(circuitSlot));
+            builder.widget(circuitSlot.setConsumer(this::getCircuitSlotTooltip));
         }
 
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, inventoryStartX, inventoryStartY);
@@ -291,8 +292,15 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     // Method provided to override
-    protected SlotWidget getCircuitSlotTooltip(@Nonnull SlotWidget widget) {
-        return widget.setTooltipText("gregtech.gui.configurator_slot.tooltip");
+    protected void getCircuitSlotTooltip(@Nonnull SlotWidget widget) {
+        String configString;
+        if (circuitInventory == null || circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
+            configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
+        } else {
+            configString = String.valueOf(circuitInventory.getCircuitValue());
+        }
+
+        widget.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
     }
 
     private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {

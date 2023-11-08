@@ -120,8 +120,10 @@ public class MetaTileEntities {
     public static final MetaTileEntityItemBus[] ITEM_EXPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV + 1];
     public static final MetaTileEntityFluidHatch[] FLUID_IMPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
     public static final MetaTileEntityFluidHatch[] FLUID_EXPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
-    public static final MetaTileEntityMultiFluidHatch[] MULTI_FLUID_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[2];
-    public static final MetaTileEntityMultiFluidHatch[] MULTI_FLUID_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[2];
+    public static final MetaTileEntityMultiFluidHatch[] QUADRUPLE_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[6]; // EV-UHV
+    public static final MetaTileEntityMultiFluidHatch[] NONUPLE_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[6]; // EV-UHV
+    public static final MetaTileEntityMultiFluidHatch[] QUADRUPLE_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[6]; // EV-UHV
+    public static final MetaTileEntityMultiFluidHatch[] NONUPLE_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[6]; // EV-UHV
     public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
     public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_4A = new MetaTileEntityEnergyHatch[6]; // EV, IV, LuV, ZPM, UV, UHV
     public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_16A = new MetaTileEntityEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
@@ -149,8 +151,12 @@ public class MetaTileEntities {
     public static MetaTileEntityDataAccessHatch CREATIVE_DATA_HATCH;
     public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_RECEIVER;
     public static MetaTileEntityOpticalDataHatch OPTICAL_DATA_HATCH_TRANSMITTER;
-    public static MetaTileEntityLaserHatch LASER_INPUT_HATCH;
-    public static MetaTileEntityLaserHatch LASER_OUTPUT_HATCH;
+    public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_256 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_1024 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH_4096 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_256 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_1024 = new MetaTileEntityLaserHatch[10]; // IV+
+    public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH_4096 = new MetaTileEntityLaserHatch[10]; // IV+
     public static MetaTileEntityComputationHatch COMPUTATION_HATCH_RECEIVER;
     public static MetaTileEntityComputationHatch COMPUTATION_HATCH_TRANSMITTER;
     public static MetaTileEntityObjectHolder OBJECT_HOLDER;
@@ -558,11 +564,7 @@ public class MetaTileEntities {
             registerMetaTileEntity(1195 + i, FLUID_EXPORT_HATCH[i]);
         }
 
-        // Multi-Fluid Hatches
-        MULTI_FLUID_IMPORT_HATCH[0] = registerMetaTileEntity(1190, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_4x"), 2, false));
-        MULTI_FLUID_IMPORT_HATCH[1] = registerMetaTileEntity(1191, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_9x"), 3, false));
-        MULTI_FLUID_EXPORT_HATCH[0] = registerMetaTileEntity(1205, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_4x"), 2, true));
-        MULTI_FLUID_EXPORT_HATCH[1] = registerMetaTileEntity(1206, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x"), 3, true));
+        // IDs 1190, 1191, 1205, and 1206 reserved for multi-fluid hatches
 
         // Energy Input/Output Hatches, IDs 1210-1269
         endPos = GregTechAPI.isHighTier() ? ENERGY_INPUT_HATCH.length - 1 : Math.min(ENERGY_INPUT_HATCH.length - 1, GTValues.UV + 2);
@@ -661,9 +663,18 @@ public class MetaTileEntities {
         HPCA_ACTIVE_COOLER_COMPONENT = registerMetaTileEntity(1416, new MetaTileEntityHPCACooler(gregtechId("hpca.active_cooler_component"), true));
         HPCA_BRIDGE_COMPONENT = registerMetaTileEntity(1417, new MetaTileEntityHPCABridge(gregtechId("hpca.bridge_component")));
         // Free IDs 1418, 1419
-        LASER_INPUT_HATCH = registerMetaTileEntity(1420, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source"), true));
-        LASER_OUTPUT_HATCH = registerMetaTileEntity(1421, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target"), false));
-        // Free Range: 1422-1509
+        endPos = GregTechAPI.isHighTier() ? LASER_INPUT_HATCH_256.length - 1 : Math.min(LASER_INPUT_HATCH_256.length - 1, GTValues.UHV - GTValues.IV);
+        for (int i = 0; i < endPos; i++) {
+            int v = i + GTValues.IV;
+            String voltageName = GTValues.VN[v].toLowerCase();
+            LASER_INPUT_HATCH_256[i] = registerMetaTileEntity(1420 + i, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_256a." + voltageName), false, v, 256));
+            LASER_OUTPUT_HATCH_256[i] = registerMetaTileEntity(1429 + i, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_256a." + voltageName), true, v, 256));
+            LASER_INPUT_HATCH_1024[i] = registerMetaTileEntity(1438 + i, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_1024a." + voltageName), false, v, 1024));
+            LASER_OUTPUT_HATCH_1024[i] = registerMetaTileEntity(1447 + i, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_1024a." + voltageName), true, v, 1024));
+            LASER_INPUT_HATCH_4096[i] = registerMetaTileEntity(1456 + i, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.target_4096a." + voltageName), false, v, 4096));
+            LASER_OUTPUT_HATCH_4096[i] = registerMetaTileEntity(1465 + i, new MetaTileEntityLaserHatch(gregtechId("laser_hatch.source_4096a." + voltageName), true, v, 4096));
+        }
+        // Free Range: 1475-1509
 
         // Buffers, IDs 1510-1512
         BUFFER[0] = registerMetaTileEntity(1510, new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));
@@ -806,12 +817,28 @@ public class MetaTileEntities {
             FLUID_IMPORT_HATCH_ME = registerMetaTileEntity(1747, new MetaTileEntityMEInputHatch(gregtechId("me_import_fluid_hatch")));
             ITEM_IMPORT_BUS_ME = registerMetaTileEntity(1748, new MetaTileEntityMEInputBus(gregtechId("me_import_item_bus")));
         }
-      
+
         LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(1749, new MetaTileEntityLDItemEndpoint(gregtechId("ld_item_endpoint")));
         LONG_DIST_FLUID_ENDPOINT = registerMetaTileEntity(1750, new MetaTileEntityLDFluidEndpoint(gregtechId("ld_fluid_endpoint")));
 
         // Alarm, ID 1751
         ALARM = registerMetaTileEntity(1751, new MetaTileEntityAlarm(gregtechId("alarm")));
+
+        // Multi-Fluid Hatches, IDs 1190, 1191, 1205, 1206, 1780-1799
+        // EV hatches separate because of old names/IDs
+        QUADRUPLE_IMPORT_HATCH[0] = registerMetaTileEntity(1190, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_4x"), GTValues.EV, 4, false));
+        NONUPLE_IMPORT_HATCH[0] = registerMetaTileEntity(1191, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_9x"), GTValues.EV, 9, false));
+        QUADRUPLE_EXPORT_HATCH[0] = registerMetaTileEntity(1205, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_4x"), GTValues.EV, 4, true));
+        NONUPLE_EXPORT_HATCH[0] = registerMetaTileEntity(1206, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x"), GTValues.EV, 9, true));
+        for (int i = GTValues.IV; i <= GTValues.UHV; i++) {
+            int index = i - GTValues.IV;
+            String tierName = GTValues.VN[i].toLowerCase();
+            QUADRUPLE_IMPORT_HATCH[index + 1] = registerMetaTileEntity(1780 + index, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_4x." + tierName), i, 4, false));
+            NONUPLE_IMPORT_HATCH[index + 1] = registerMetaTileEntity(1785 + index, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_9x." + tierName), i, 9, false));
+            QUADRUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(1790 + index, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_4x." + tierName), i, 4, true));
+            NONUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(1795 + index, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x." + tierName), i, 9, true));
+        }
+
 
         /*
          * FOR ADDON DEVELOPERS:
@@ -841,8 +868,8 @@ public class MetaTileEntities {
                                                      String name,
                                                      RecipeMap<?> map,
                                                      ICubeRenderer texture,
-                                                    boolean hasFrontFacing,
-                                                    Function<Integer, Integer> tankScalingFunction) {
+                                                     boolean hasFrontFacing,
+                                                     Function<Integer, Integer> tankScalingFunction) {
         registerSimpleMetaTileEntity(machines, startId, name, map, texture, hasFrontFacing, GTUtility::gregtechId, tankScalingFunction);
     }
 

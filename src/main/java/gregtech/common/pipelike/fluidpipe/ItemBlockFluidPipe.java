@@ -12,9 +12,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemBlockFluidPipe extends ItemBlockMaterialPipe<FluidPipeType, FluidPipeProperties> {
@@ -25,7 +25,7 @@ public class ItemBlockFluidPipe extends ItemBlockMaterialPipe<FluidPipeType, Flu
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World worldIn, @NotNull List<String> tooltip, @NotNull ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         FluidPipeProperties pipeProperties = blockPipe.createItemProperties(stack);
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", pipeProperties.getThroughput()));
@@ -41,8 +41,11 @@ public class ItemBlockFluidPipe extends ItemBlockMaterialPipe<FluidPipeType, Flu
             if (pipeProperties.isAcidProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
             if (pipeProperties.isCryoProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
             if (pipeProperties.isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
+            tooltip.add(I18n.format("gregtech.tool_action.wrench.connect_and_block"));
+            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+            tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
         } else {
-            tooltip.add(I18n.format("gregtech.tooltip.fluid_pipe_hold_shift"));
+            tooltip.add(I18n.format("gregtech.tooltip.tool_fluid_hold_shift"));
         }
 
         if (ConfigHolder.misc.debug) {

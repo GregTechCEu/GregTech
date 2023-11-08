@@ -1365,7 +1365,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_DIODE, 8)
                 .fluidInputs(SolderingAlloy.getFluid(L * 10))
                 .output(CRYSTAL_MAINFRAME_UV)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(CRYSTAL_COMPUTER_ZPM.getStackForm())
                         .CWUt(16))
                 .buildAndRegister();
@@ -1432,7 +1432,7 @@ public class CircuitRecipes {
                 .input(plate, Europium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(1152))
                 .output(WETWARE_SUPER_COMPUTER_UV)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(WETWARE_PROCESSOR_ASSEMBLY_ZPM.getStackForm())
                         .CWUt(16))
                 .buildAndRegister();
@@ -1453,7 +1453,7 @@ public class CircuitRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 20))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 8))
                 .output(WETWARE_MAINFRAME_UHV)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(WETWARE_SUPER_COMPUTER_UV.getStackForm())
                         .CWUt(96)
                         .EUt(VA[UV]))

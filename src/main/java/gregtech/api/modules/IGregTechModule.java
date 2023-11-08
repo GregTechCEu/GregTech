@@ -9,8 +9,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * All modules must implement this interface.
+ * <p>
+ * Provides methods for responding to FML lifecycle events, adding event bus subscriber classes, and processing IMC messages.
+ */
 public interface IGregTechModule {
 
+    /**
+     * What other modules this module depends on.
+     * <p>
+     * e.g. <code>new ResourceLocation("gregtech", "foo_module")</code> represents a dependency on the module "foo_module" in the container "gregtech"
+     */
     @Nonnull
     default Set<ResourceLocation> getDependencyUids() {
         return Collections.emptySet();
@@ -46,9 +56,16 @@ public interface IGregTechModule {
     default void serverStopped(FMLServerStoppedEvent event) {
     }
 
+    /**
+     * Register packets using GregTech's packet handling API here.
+     */
     default void registerPackets() {
     }
 
+    /**
+     * @return A list of classes to subscribe to the Forge event bus.
+     * As the class gets subscribed, not any specific instance, event handlers must be static!
+     */
     @Nonnull
     default List<Class<?>> getEventBusSubscribers() {
         return Collections.emptyList();
@@ -58,6 +75,9 @@ public interface IGregTechModule {
         return false;
     }
 
+    /**
+     * @return A logger to use for this module.
+     */
     @Nonnull
     Logger getLogger();
 }

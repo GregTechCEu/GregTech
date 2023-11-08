@@ -76,7 +76,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     public void recoverItemsTable(List<ItemStack> recoveryItems) {
         for (ItemStack recoveryItem : recoveryItems) {
             if (calculateChance()) {
-                GTTransferUtils.insertItem(inventory, recoveryItem, false);
+                GTTransferUtils.insertItem(inventory, recoveryItem.copy(), false);
             }
         }
     }

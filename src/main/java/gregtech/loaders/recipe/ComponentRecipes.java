@@ -86,7 +86,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L))
                 .fluidInputs(Lubricant.getFluid(250))
                 .output(ELECTRIC_MOTOR_LuV)
-                .research(ELECTRIC_MOTOR_IV.getStackForm())
+                .scannerResearch(ELECTRIC_MOTOR_IV.getStackForm())
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -100,7 +100,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 2))
                 .fluidInputs(Lubricant.getFluid(500))
                 .output(ELECTRIC_MOTOR_ZPM)
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(ELECTRIC_MOTOR_LuV.getStackForm())
                         .duration(1200)
                         .EUt(VA[IV]))
@@ -118,7 +118,7 @@ public class ComponentRecipes {
                 .fluidInputs(Lubricant.getFluid(1000))
                 .fluidInputs(Naquadria.getFluid(L * 4))
                 .output(ELECTRIC_MOTOR_UV)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(ELECTRIC_MOTOR_ZPM.getStackForm())
                         .CWUt(32)
                         .EUt(VA[ZPM]))
@@ -256,7 +256,7 @@ public class ComponentRecipes {
                 .fluidInputs(Lubricant.getFluid(250))
                 .fluidInputs(StyreneButadieneRubber.getFluid(L * 8))
                 .output(CONVEYOR_MODULE_LuV)
-                .research(CONVEYOR_MODULE_IV.getStackForm())
+                .scannerResearch(CONVEYOR_MODULE_IV.getStackForm())
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -270,7 +270,7 @@ public class ComponentRecipes {
                 .fluidInputs(Lubricant.getFluid(500))
                 .fluidInputs(StyreneButadieneRubber.getFluid(L * 16))
                 .output(CONVEYOR_MODULE_ZPM)
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(CONVEYOR_MODULE_LuV.getStackForm())
                         .duration(1200)
                         .EUt(VA[IV]))
@@ -288,7 +288,7 @@ public class ComponentRecipes {
                 .fluidInputs(StyreneButadieneRubber.getFluid(L * 24))
                 .fluidInputs(Naquadria.getFluid(L * 4))
                 .output(CONVEYOR_MODULE_UV)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(CONVEYOR_MODULE_ZPM.getStackForm())
                         .CWUt(32)
                         .EUt(VA[ZPM]))
@@ -305,7 +305,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L))
                 .fluidInputs(Lubricant.getFluid(250))
                 .output(ELECTRIC_PUMP_LuV)
-                .research(ELECTRIC_PUMP_IV.getStackForm())
+                .scannerResearch(ELECTRIC_PUMP_IV.getStackForm())
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -319,7 +319,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 2))
                 .fluidInputs(Lubricant.getFluid(500))
                 .output(ELECTRIC_PUMP_ZPM)
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(ELECTRIC_PUMP_LuV.getStackForm())
                         .duration(1200)
                         .EUt(VA[IV]))
@@ -337,7 +337,7 @@ public class ComponentRecipes {
                 .fluidInputs(Lubricant.getFluid(1000))
                 .fluidInputs(Naquadria.getFluid(L * 4))
                 .output(ELECTRIC_PUMP_UV)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(ELECTRIC_PUMP_ZPM.getStackForm())
                         .CWUt(32)
                         .EUt(VA[ZPM]))
@@ -521,7 +521,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L))
                 .fluidInputs(Lubricant.getFluid(250))
                 .output(ELECTRIC_PISTON_LUV)
-                .research(ELECTRIC_PISTON_IV.getStackForm())
+                .scannerResearch(ELECTRIC_PISTON_IV.getStackForm())
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -536,7 +536,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 2))
                 .fluidInputs(Lubricant.getFluid(500))
                 .output(ELECTRIC_PISTON_ZPM)
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(ELECTRIC_PISTON_LUV.getStackForm())
                         .duration(1200)
                         .EUt(VA[IV]))
@@ -555,7 +555,7 @@ public class ComponentRecipes {
                 .fluidInputs(Lubricant.getFluid(1000))
                 .fluidInputs(Naquadria.getFluid(L * 4))
                 .output(ELECTRIC_PISTON_UV)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(ELECTRIC_PISTON_ZPM.getStackForm())
                         .CWUt(32)
                         .EUt(VA[ZPM]))
@@ -628,7 +628,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 4))
                 .fluidInputs(Lubricant.getFluid(250))
                 .output(ROBOT_ARM_LuV)
-                .research(ROBOT_ARM_IV.getStackForm())
+                .scannerResearch(ROBOT_ARM_IV.getStackForm())
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -644,7 +644,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
                 .fluidInputs(Lubricant.getFluid(500))
                 .output(ROBOT_ARM_ZPM)
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(ROBOT_ARM_LuV.getStackForm())
                         .duration(1200)
                         .EUt(VA[IV]))
@@ -664,7 +664,7 @@ public class ComponentRecipes {
                 .fluidInputs(Lubricant.getFluid(1000))
                 .fluidInputs(Naquadria.getFluid(L * 4))
                 .output(ROBOT_ARM_UV)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(ROBOT_ARM_ZPM.getStackForm())
                         .CWUt(32)
                         .EUt(VA[ZPM]))
@@ -730,7 +730,7 @@ public class ComponentRecipes {
                 .input(cableGtSingle, NiobiumTitanium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L * 4))
                 .output(FIELD_GENERATOR_LuV)
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(FIELD_GENERATOR_IV.getStackForm())
                         .duration(2400))
                 .duration(600).EUt(6000).buildAndRegister();
@@ -746,7 +746,7 @@ public class ComponentRecipes {
                 .input(cableGtSingle, VanadiumGallium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
                 .output(FIELD_GENERATOR_ZPM)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(FIELD_GENERATOR_LuV.getStackForm())
                         .CWUt(4))
                 .duration(600).EUt(24000).buildAndRegister();
@@ -763,7 +763,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 12))
                 .fluidInputs(Naquadria.getFluid(L * 4))
                 .output(FIELD_GENERATOR_UV)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(FIELD_GENERATOR_ZPM.getStackForm())
                         .CWUt(48)
                         .EUt(VA[ZPM]))
@@ -829,7 +829,7 @@ public class ComponentRecipes {
                 .input(cableGtSingle, NiobiumTitanium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L * 2))
                 .output(SENSOR_LuV)
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(SENSOR_IV.getStackForm())
                         .duration(2400))
                 .duration(600).EUt(6000).buildAndRegister();
@@ -845,7 +845,7 @@ public class ComponentRecipes {
                 .input(cableGtSingle, VanadiumGallium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L * 4))
                 .output(SENSOR_ZPM)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(SENSOR_LuV.getStackForm())
                         .CWUt(4))
                 .duration(600).EUt(24000).buildAndRegister();
@@ -862,7 +862,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
                 .fluidInputs(Naquadria.getFluid(L * 4))
                 .output(SENSOR_UV)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(SENSOR_ZPM.getStackForm())
                         .CWUt(48)
                         .EUt(VA[ZPM]))
@@ -932,7 +932,7 @@ public class ComponentRecipes {
                 .input(cableGtSingle, NiobiumTitanium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L * 2))
                 .output(EMITTER_LuV)
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(EMITTER_IV.getStackForm())
                         .duration(2400))
                 .duration(600).EUt(6000).buildAndRegister();
@@ -948,7 +948,7 @@ public class ComponentRecipes {
                 .input(cableGtSingle, VanadiumGallium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L * 4))
                 .output(EMITTER_ZPM)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(EMITTER_LuV.getStackForm())
                         .CWUt(8))
                 .duration(600).EUt(24000).buildAndRegister();
@@ -965,7 +965,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
                 .fluidInputs(Naquadria.getFluid(L * 4))
                 .output(EMITTER_UV)
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(EMITTER_ZPM.getStackForm())
                         .CWUt(48)
                         .EUt(VA[ZPM]))

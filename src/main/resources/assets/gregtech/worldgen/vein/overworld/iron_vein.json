@@ -1,4 +1,5 @@
 {
+  "name": "gregtech.veins.ore.iron",
   "weight": 120,
   "density": 0.2,
   "max_height": 40,
