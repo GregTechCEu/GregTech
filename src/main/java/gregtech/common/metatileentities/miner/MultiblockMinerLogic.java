@@ -93,10 +93,10 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     public void setCurrentChunkDiameter(int currentChunkDiameter) {
         if (isWorking()) return;
         currentChunkDiameter = Math.max(1, Math.min(currentChunkDiameter, getMaximumChunkDiameter()));
-        if (this.currentChunkDiameter != currentChunkDiameter || !this.chunkMode) {
-            this.chunkMode = true;
+        setChunkMode(true);
+        if (this.currentChunkDiameter != currentChunkDiameter) {
             this.currentChunkDiameter = currentChunkDiameter;
-            this.rebuildMiningArea = false;
+            this.rebuildMiningArea = true;
             this.mte.markDirty();
         }
     }
@@ -104,11 +104,7 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     @Override
     public void setCurrentDiameter(int currentDiameter) {
         if (isWorking()) return;
-        if (this.chunkMode) {
-            this.chunkMode = false;
-            this.rebuildMiningArea = true;
-            this.mte.markDirty();
-        }
+        setChunkMode(false);
         super.setCurrentDiameter(currentDiameter);
     }
 
@@ -116,9 +112,9 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
         return this.chunkMode;
     }
 
-    public void setChunkMode(boolean isChunkMode) {
-        if (isWorking()) return;
-        this.chunkMode = isChunkMode;
+    public void setChunkMode(boolean chunkMode) {
+        if (isWorking() || this.chunkMode == chunkMode) return;
+        this.chunkMode = chunkMode;
         this.rebuildMiningArea = true;
         this.mte.markDirty();
     }
@@ -127,10 +123,10 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
         return this.silkTouchMode;
     }
 
-    public void setSilkTouchMode(boolean isSilkTouchMode) {
-        if (!isWorking()) {
-            this.silkTouchMode = isSilkTouchMode;
-        }
+    public void setSilkTouchMode(boolean silkTouchMode) {
+        if (isWorking() || this.silkTouchMode == silkTouchMode) return;
+        this.silkTouchMode = silkTouchMode;
+        this.mte.markDirty();
     }
 
     public int getYLimit() {
@@ -138,13 +134,12 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     }
 
     public void setYLimit(int yLimit) {
-        if (yLimit != this.yLimit) {
-            this.yLimit = yLimit;
-            this.rebuildMiningArea = true;
-            this.mte.markDirty();
-            if (this.isPreviewEnabled()) {
-                updatePreview();
-            }
+        if (isWorking() || this.yLimit == yLimit) return;
+        this.yLimit = yLimit;
+        this.rebuildMiningArea = true;
+        this.mte.markDirty();
+        if (this.isPreviewEnabled()) {
+            updatePreview();
         }
     }
 
@@ -153,10 +148,9 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     }
 
     public void setRepeat(boolean repeat) {
-        if (this.repeat != repeat) {
-            this.repeat = repeat;
-            this.mte.markDirty();
-        }
+        if (isWorking() || this.repeat == repeat) return;
+        this.repeat = repeat;
+        this.mte.markDirty();
     }
 
     public boolean isReplaceOreWithAir() {
@@ -164,10 +158,9 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     }
 
     public void setReplaceOreWithAir(boolean replaceOreWithAir) {
-        if (this.replaceOreWithAir != replaceOreWithAir) {
-            this.replaceOreWithAir = replaceOreWithAir;
-            this.mte.markDirty();
-        }
+        if (isWorking() || this.replaceOreWithAir == replaceOreWithAir) return;
+        this.replaceOreWithAir = replaceOreWithAir;
+        this.mte.markDirty();
     }
 
     @Nonnull
