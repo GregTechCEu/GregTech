@@ -18,16 +18,12 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
 
 public class QuantumChestTest {
-
-    private static final QuantumChestWrapper[] quantumChests = new QuantumChestWrapper[10];
-
     private static ItemStack GRAVEL;
     private static ItemStack SAND;
 
     @BeforeAll
     public static void bootstrap() {
         Bootstrap.perform();
-        createInstances();
         GRAVEL = new ItemStack(Blocks.GRAVEL);
         GRAVEL.setCount(64);
         SAND = new ItemStack(Blocks.SAND);
@@ -35,15 +31,15 @@ public class QuantumChestTest {
     }
 
     @Test
-    public void Test_Quantum_Chests_Valid() {
-        for (var quantumChest : quantumChests) {
+    public void Test_Valid() {
+        for (var quantumChest : createInstances()) {
             assertThat(quantumChest, notNullValue());
         }
     }
 
     @Test
-    public void Test_Quantum_Chest_Insertion() {
-        for (var quantumChest : quantumChests) {
+    public void Test_Insertion() {
+        for (var quantumChest : createInstances()) {
             IItemHandler itemInventory = quantumChest.getItemInventory();
             IItemHandlerModifiable exportItems = quantumChest.getExportItems();
             IItemHandlerModifiable importItems = quantumChest.getImportItems();
@@ -77,8 +73,8 @@ public class QuantumChestTest {
     }
 
     @Test
-    public void Test_Quantum_Chest_Overflow() {
-        for (var quantumChest : quantumChests) {
+    public void Test_Overflow() {
+        for (var quantumChest : createInstances()) {
             ItemStack stack = GRAVEL.copy();
             stack.setCount(Integer.MAX_VALUE);
 
@@ -95,7 +91,18 @@ public class QuantumChestTest {
         }
     }
 
-    private static void createInstances() {
+    @Test
+    public void Test_Extraction() {
+        for (var quantumChest : createInstances()) {
+            insertItem(quantumChest.getItemInventory(), GTUtility.copy(256, GRAVEL), false);
+
+            ItemStack extracted = quantumChest.getExportItems().extractItem(0, 64, true);
+            assertThat(String.format("%s did not extract properly!", quantumChest.getMetaFullName()), !extracted.isEmpty() && extracted.getCount() > 0);
+        }
+    }
+
+    private static QuantumChestWrapper[] createInstances() {
+        QuantumChestWrapper[] quantumChests = new QuantumChestWrapper[10];
         for (int i = 0; i < 5; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
             quantumChests[i] = new QuantumChestWrapper(gregtechId("super_chest." + voltageName), i + 1, 4000000L * (int) Math.pow(2, i));
@@ -106,6 +113,7 @@ public class QuantumChestTest {
             long capacity = i == GTValues.UHV ? Integer.MAX_VALUE : 4000000L * (int) Math.pow(2, i);
             quantumChests[i] = new QuantumChestWrapper(gregtechId("quantum_chest." + voltageName), i, capacity);
         }
+        return quantumChests;
     }
 
     private static class QuantumChestWrapper extends MetaTileEntityQuantumChest {
