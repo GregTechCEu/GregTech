@@ -56,7 +56,7 @@ public class QuantumTankTest {
             filled = handler.fill(LAVA.copy(), true);
             assertThat("Quantum tank inserted fluid different from it's internal fluid!", filled == 0);
 
-            // todo add test here to check fluid containers
+            // todo test here to check inserting via filled fluid containers
         }
     }
 
@@ -75,6 +75,26 @@ public class QuantumTankTest {
 
             inserted = handler.fill(LAVA.copy(), true);
             assertThat("Quantum tank voided the wrong fluid!", inserted == 0);
+        }
+    }
+
+    @Test
+    public void Test_Extraction() {
+        for (var quantumTank : createInstances()) {
+            IFluidHandler handler = quantumTank.getFluidInventory();
+            FluidStack inTank = LAVA.copy();
+            inTank.amount = 5000;
+            handler.fill(inTank, true);
+
+            FluidStack extracted = handler.drain(2500, true);
+            assertThat("extracted was null!", extracted != null);
+            assertThat("Too much/little fluid was extracted!", extracted.amount == 2500);
+
+            inTank = handler.getTankProperties()[0].getContents();
+            assertThat("tank contents was null!", inTank != null);
+            assertThat("Too much/little fluid in quantum tank!", inTank.amount == 2500);
+
+            // todo tests for extracting with an empty fluid container
         }
     }
 
