@@ -589,9 +589,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 return ItemStack.EMPTY;
             }
 
-            // If there is a virtualized stack and the stack to insert does not match it, do not insert anything
             ItemStack exportItems = getExportItems().getStackInSlot(0);
 
+            // If there is a virtualized stack and the stack to insert does not match it, do not insert anything
             if (itemsStoredInside > 0L &&
                     !virtualItemStack.isEmpty() && (
                     !areItemStackIdentical(virtualItemStack, insertedStack) ||
@@ -604,53 +604,44 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             // Attempt to insert into the export slot first
             int amountCanInsertIntoExport = Math.min(spaceInExport, insertedStack.getCount());
 
-            if (insertedStack.getCount() <= amountCanInsertIntoExport) {
-                // If all the items can fit into export slot, store it there
-                return getExportItems().insertItem(0, insertedStack, simulate);
+            // If all the items can fit into export slot, store it there
+            ItemStack remainingStack = ItemStack.EMPTY;
+
+            if (amountCanInsertIntoExport > 0) {
+                remainingStack = getExportItems().insertItem(0, insertedStack, simulate);
+
+                // All items fit into the export slot, return early
+                if (remainingStack.isEmpty()) return remainingStack;
             }
 
             // Have more items than would fit into the export slot, so virtualize the remainder
-            long amountLeftInChest = virtualItemStack.isEmpty() ? maxStoredItems : maxStoredItems - itemsStoredInside;
+            long amountLeftInChest = maxStoredItems - itemsStoredInside;
+            int maxPotentialVirtualizedAmount = insertedStack.getCount() - amountCanInsertIntoExport;
 
-            int maxVirtualAmount = insertedStack.getCount() - amountCanInsertIntoExport;
-            int virtualizedAmount = (int) Math.min(maxVirtualAmount, amountLeftInChest);
-
-            ItemStack remainingStack = ItemStack.EMPTY;
+            int actualVirtualizedAmount = (int) Math.min(maxPotentialVirtualizedAmount, amountLeftInChest);
 
             // If we are at the maximum that the chest can hold, the remainder stack has all items that could not fit
-            if (virtualizedAmount < maxVirtualAmount) {
-                remainingStack = insertedStack.copy();
-                remainingStack.setCount(insertedStack.getCount() - virtualizedAmount);
+            if (actualVirtualizedAmount < maxPotentialVirtualizedAmount) {
+                remainingStack.shrink(actualVirtualizedAmount);
             }
 
             if (!simulate) {
-                if (remainingStack.isEmpty()) {
-                    // inserted everything
+                // inserted something
+                if (actualVirtualizedAmount > 0) {
                     if (virtualItemStack.isEmpty()) {
                         // have no virtual stack, so set it to the inserted stack
                         ItemStack virtualStack = insertedStack.copy();
-                        virtualStack.setCount(virtualizedAmount);
+                        virtualStack.setCount(actualVirtualizedAmount);
                         MetaTileEntityQuantumChest.this.virtualItemStack = virtualStack;
-                        MetaTileEntityQuantumChest.this.itemsStoredInside = virtualizedAmount;
+                        MetaTileEntityQuantumChest.this.itemsStoredInside = actualVirtualizedAmount;
                     } else {
                         // update the virtualized total count
-                        MetaTileEntityQuantumChest.this.itemsStoredInside += virtualizedAmount;
+                        MetaTileEntityQuantumChest.this.itemsStoredInside += actualVirtualizedAmount;
                     }
-
-                    if (amountCanInsertIntoExport != 0) {
-                        // fill the export slot as much as possible
-                        ItemStack insertedStackCopy = insertedStack.copy();
-                        insertedStackCopy.setCount(amountCanInsertIntoExport);
-                        getExportItems().insertItem(0, insertedStackCopy, false);
-                    }
-
-                } else {
-                    // could not fit everything, but still need to update the virtualized total count
-                    MetaTileEntityQuantumChest.this.itemsStoredInside += virtualizedAmount;
                 }
             }
 
-            if (voiding && itemsStoredInside == maxStoredItems) {
+            if (voiding && remainingStack.getCount() > 0) {
                 return ItemStack.EMPTY;
             } else {
                 return remainingStack;
