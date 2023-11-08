@@ -87,7 +87,7 @@ public class QuantumChestTest {
             long transferred = stack.getCount() - remainder.getCount();
             assertThat("%s was voided too early!", stack, transferred == quantumChest.maxStoredItems);
 
-            quantumChest.voiding = true;
+            quantumChest.setVoiding(true);
             remainder = insertItem(quantumChest.getItemInventory(), stack, false);
             assertThat("%s was not voided!", remainder, remainder.isEmpty());
         }
@@ -166,6 +166,11 @@ public class QuantumChestTest {
                     previousStackSize = itemsStoredInside;
                 }
             }
+        }
+
+        @Override
+        protected void setVoiding(boolean isVoiding) {
+            this.voiding = isVoiding;
         }
     }
 }
