@@ -61,10 +61,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
 
     private final int tier;
-    private final long maxStoredItems;
+    protected final long maxStoredItems;
     /** The ItemStack that the Quantum Chest is storing */
     protected ItemStack virtualItemStack = ItemStack.EMPTY;
-    private long itemsStoredInside = 0L;
+    protected long itemsStoredInside = 0L;
     private boolean autoOutputItems;
     private EnumFacing outputFacing;
     private boolean allowInputFromOutputSide = false;
@@ -74,9 +74,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     private static final String IS_VOIDING = "IsVoiding";
     protected IItemHandler outputItemInventory;
     private ItemHandlerList combinedInventory;
-    private ItemStack previousStack;
-    private long previousStackSize;
-    private boolean voiding;
+    protected ItemStack previousStack;
+    protected long previousStackSize;
+    protected boolean voiding;
 
     public MetaTileEntityQuantumChest(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
         super(metaTileEntityId);
@@ -179,7 +179,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         }
     }
 
-    private static boolean areItemStackIdentical(ItemStack first, ItemStack second) {
+    protected static boolean areItemStackIdentical(ItemStack first, ItemStack second) {
         return ItemStack.areItemsEqual(first, second) &&
                 ItemStack.areItemStackTagsEqual(first, second);
     }
@@ -442,11 +442,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         }
     }
 
-    private boolean isVoiding() {
+    protected boolean isVoiding() {
         return voiding;
     }
 
-    private void setVoiding(boolean isVoiding) {
+    protected void setVoiding(boolean isVoiding) {
         this.voiding = isVoiding;
         if (!getWorld().isRemote) {
             markDirty();
