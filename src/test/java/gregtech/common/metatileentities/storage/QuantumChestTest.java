@@ -73,7 +73,7 @@ public class QuantumChestTest {
     }
 
     @Test
-    public void Test_Overflow() {
+    public void Test_Voiding() {
         for (var quantumChest : createInstances()) {
             ItemStack stack = GRAVEL.copy();
             stack.setCount(Integer.MAX_VALUE);
@@ -88,6 +88,11 @@ public class QuantumChestTest {
             quantumChest.setVoiding(true);
             ItemStack remainder = insertItem(quantumChest.getItemInventory(), stack, false);
             assertThat(String.format("%s was not voided!", remainder), remainder.isEmpty());
+
+            stack = SAND.copy();
+            stack.setCount(Integer.MAX_VALUE);
+            remainder = insertItem(quantumChest.getItemInventory(), stack, false);
+            assertThat("Quantum Chest voided the wrong item!", remainder.getCount() == stack.getCount());
         }
     }
 
