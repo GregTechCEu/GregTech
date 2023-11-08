@@ -73,9 +73,9 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     protected IFluidHandler outputFluidInventory;
 
     @Nullable
-    private FluidStack previousFluid;
-    private boolean locked;
-    private boolean voiding;
+    protected FluidStack previousFluid;
+    protected boolean locked;
+    protected boolean voiding;
     @Nullable
     private FluidStack lockedFluid;
 
@@ -135,7 +135,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     // should only be called on the server
-    private void updatePreviousFluid(FluidStack currentFluid) {
+    protected void updatePreviousFluid(FluidStack currentFluid) {
         previousFluid = currentFluid == null ? null : currentFluid.copy();
         writeCustomData(UPDATE_FLUID, buf -> buf.writeCompoundTag(currentFluid == null ? null : currentFluid.writeToNBT(new NBTTagCompound())));
     }
@@ -559,11 +559,11 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         }
     }
 
-    private boolean isLocked() {
+    protected boolean isLocked() {
         return this.locked;
     }
 
-    private void setLocked(boolean locked) {
+    protected void setLocked(boolean locked) {
         if (this.locked == locked) return;
         this.locked = locked;
         if (!getWorld().isRemote) {
@@ -577,11 +577,11 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.lockedFluid = null;
     }
 
-    private boolean isVoiding() {
+    protected boolean isVoiding() {
         return voiding;
     }
 
-    private void setVoiding(boolean isPartialVoid) {
+    protected void setVoiding(boolean isPartialVoid) {
         this.voiding = isPartialVoid;
         if (!getWorld().isRemote) {
             markDirty();
