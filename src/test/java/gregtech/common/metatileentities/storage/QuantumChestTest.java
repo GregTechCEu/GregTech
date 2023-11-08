@@ -8,15 +8,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static gregtech.api.util.GTStringUtils.itemStackToString;
 import static gregtech.api.util.GTTransferUtils.insertItem;
 import static gregtech.api.util.GTUtility.gregtechId;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.*;
 
 public class QuantumChestTest {
 
@@ -38,7 +37,7 @@ public class QuantumChestTest {
     @Test
     public void Test_Quantum_Chests_Valid() {
         for (var quantumChest : quantumChests) {
-            MatcherAssert.assertThat(quantumChest, notNullValue());
+            assertThat(quantumChest, notNullValue());
         }
     }
 
@@ -50,30 +49,30 @@ public class QuantumChestTest {
             IItemHandlerModifiable importItems = quantumChest.getImportItems();
 
             ItemStack stack = itemInventory.insertItem(0, GRAVEL.copy(), true);
-            MatcherAssert.assertThat(String.format("%s should be Empty!", itemStackToString(stack)), stack.isEmpty());
+            assertThat(String.format("%s should be Empty!", itemStackToString(stack)), stack.isEmpty());
 
             itemInventory.insertItem(0, GRAVEL.copy(), false);
-            MatcherAssert.assertThat(exportItems.getStackInSlot(0).getCount(), is(64));
+            assertThat(exportItems.getStackInSlot(0).getCount(), is(64));
 
             stack = itemInventory.insertItem(0, GRAVEL.copy(), true);
-            MatcherAssert.assertThat(String.format("%s should be Empty!", itemStackToString(stack)), stack.isEmpty());
+            assertThat(String.format("%s should be Empty!", itemStackToString(stack)), stack.isEmpty());
 
             itemInventory.insertItem(0, GRAVEL.copy(), false);
-            MatcherAssert.assertThat(itemInventory.getStackInSlot(0).getCount(), is(64));
+            assertThat(itemInventory.getStackInSlot(0).getCount(), is(64));
 
             stack = importItems.insertItem(0, SAND.copy(), true);
-            MatcherAssert.assertThat(String.format("%s should not be Empty!", itemStackToString(stack)), !stack.isEmpty());
+            assertThat(String.format("%s should not be Empty!", itemStackToString(stack)), !stack.isEmpty());
 
             stack = importItems.insertItem(0, SAND.copy(), false);
-            MatcherAssert.assertThat(String.format("%s should be Sand!", itemStackToString(stack)), !stack.isEmpty());
+            assertThat(String.format("%s should be Sand!", itemStackToString(stack)), !stack.isEmpty());
 
             importItems.insertItem(0, GRAVEL.copy(), false);
             quantumChest.fakeUpdate(false);
             stack = importItems.getStackInSlot(0);
-            MatcherAssert.assertThat(String.format("%s should be Empty!", itemStackToString(stack)), stack.isEmpty());
+            assertThat(String.format("%s should be Empty!", itemStackToString(stack)), stack.isEmpty());
 
             stack = itemInventory.getStackInSlot(0);
-            MatcherAssert.assertThat(stack.getCount(), is(128));
+            assertThat(stack.getCount(), is(128));
         }
     }
 
@@ -83,18 +82,17 @@ public class QuantumChestTest {
             ItemStack stack = GRAVEL.copy();
             stack.setCount(Integer.MAX_VALUE);
 
-            ItemStack remainder = insertItem(quantumChest.getItemInventory(), stack, false);
-            long transferred = stack.getCount() - remainder.getCount();
-            assertThat("%s was voided too early!", stack, transferred == quantumChest.maxStoredItems);
+            insertItem(quantumChest.getItemInventory(), stack, false);
+
+            // UHV qchest stores exactly Integer.MAX_VALUE, so it will be 64 items less than expected
+            long transferred = quantumChest.getTier() == GTValues.UHV ? quantumChest.itemsStoredInside + 64 : quantumChest.itemsStoredInside;
+
+            assertThat(String.format("%s voided %s too early!", quantumChest.getMetaFullName(), stack), transferred == quantumChest.maxStoredItems);
 
             quantumChest.setVoiding(true);
-            remainder = insertItem(quantumChest.getItemInventory(), stack, false);
-            assertThat("%s was not voided!", remainder, remainder.isEmpty());
+            ItemStack remainder = insertItem(quantumChest.getItemInventory(), stack, false);
+            assertThat(String.format("%s was not voided!", remainder), remainder.isEmpty());
         }
-    }
-
-    private static void assertThat(String format, ItemStack stack, boolean assertion) {
-        MatcherAssert.assertThat(String.format(format, itemStackToString(stack)), assertion);
     }
 
     private static void createInstances() {
