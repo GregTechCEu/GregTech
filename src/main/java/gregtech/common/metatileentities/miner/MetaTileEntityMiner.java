@@ -86,9 +86,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         Textures.MINER_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), minerLogic.isActive(), minerLogic.isWorkingEnabled());
-        if (hasFrontFacing()) {
-            Textures.PIPE_OUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
-        }
         MinerRenderHelper.renderPipe(Textures.SOLID_STEEL_CASING, this.minerLogic.getPipeLength(), renderState, translation, pipeline);
     }
 

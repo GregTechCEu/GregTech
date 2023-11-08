@@ -94,10 +94,8 @@ public class SteamMiner extends MetaTileEntity implements Miner, IControllable, 
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         Textures.STEAM_CASING_BRONZE.render(renderState, translation, colouredPipeline);
-        Textures.STEAM_MINER_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), minerLogic.isActive(), minerLogic.isWorkingEnabled());
-        if (hasFrontFacing()) {
-            Textures.PIPE_OUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
-        }
+        // TODO replace top with vent, in standalone mod
+        Textures.MINER_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), minerLogic.isActive(), minerLogic.isWorkingEnabled());
         MinerRenderHelper.renderPipe(Textures.BRONZE_PLATED_BRICKS, this.minerLogic.getPipeLength(), renderState, translation, pipeline);
     }
 

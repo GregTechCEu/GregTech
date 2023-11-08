@@ -172,7 +172,6 @@ public class Textures {
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator");
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_TE_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator_te");
     public static final OrientedOverlayRenderer MINER_OVERLAY = new OrientedOverlayRenderer("machines/miner");
-    public static final OrientedOverlayRenderer STEAM_MINER_OVERLAY = new OrientedOverlayRenderer("machines/steam_miner");
 
     // Simple Overlay Renderers
     public static final SimpleOverlayRenderer SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_screen");
@@ -302,7 +301,7 @@ public class Textures {
     public static final SimpleOverlayRenderer ME_INPUT_HATCH = new SimpleOverlayRenderer("overlay/appeng/me_input_hatch");
     public static final SimpleOverlayRenderer ME_OUTPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_output_bus");
     public static final SimpleOverlayRenderer ME_INPUT_BUS = new SimpleOverlayRenderer("overlay/appeng/me_input_bus");
-  
+
     public static final ResourceLocation GREGTECH_CAPE_TEXTURE = gregtechId("textures/capes/gregtechcape.png");
     public static final ResourceLocation RED_CAPE_TEXTURE = gregtechId("textures/capes/redcape.png");
     public static final ResourceLocation YELLOW_CAPE_TEXTURE = gregtechId("textures/capes/yellowcape.png");
