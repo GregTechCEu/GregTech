@@ -2,15 +2,20 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.Bootstrap;
 import gregtech.api.GTValues;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_FLUID_AMOUNT;
+import static gregtech.api.util.GTTransferUtils.insertItem;
 import static gregtech.api.util.GTUtility.gregtechId;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
@@ -19,11 +24,15 @@ public class QuantumTankTest {
 
     private static FluidStack WATER;
     private static FluidStack LAVA;
+    private static ItemStack BUCKET_WATER;
+    private static ItemStack BUCKET_LAVA;
     @BeforeAll
     public static void bootstrap() {
         Bootstrap.perform();
         WATER = new FluidStack(FluidRegistry.WATER, 1000);
         LAVA = new FluidStack(FluidRegistry.LAVA, 1000);
+        BUCKET_WATER = FluidUtil.getFilledBucket(WATER);
+        BUCKET_LAVA = FluidUtil.getFilledBucket(LAVA);
     }
 
     @Test
@@ -46,11 +55,14 @@ public class QuantumTankTest {
 
             filled = handler.fill(LAVA.copy(), true);
             assertThat("Quantum tank inserted fluid different from it's internal fluid!", filled == 0);
+
+//            ItemStack remainder = insertItem(quantumTank.getImportItems(), BUCKET_WATER.copy(), false);
+//            quantumTank.fakeUpdate(false);
         }
     }
 
     @Test
-    public void Test_Overflow() {
+    public void Test_Voiding() {
         for (var quantumTank : createInstances()) {
             IFluidHandler handler = quantumTank.getFluidInventory();
             FluidStack resource = WATER.copy();
