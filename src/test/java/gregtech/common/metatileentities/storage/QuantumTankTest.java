@@ -56,8 +56,7 @@ public class QuantumTankTest {
             filled = handler.fill(LAVA.copy(), true);
             assertThat("Quantum tank inserted fluid different from it's internal fluid!", filled == 0);
 
-//            ItemStack remainder = insertItem(quantumTank.getImportItems(), BUCKET_WATER.copy(), false);
-//            quantumTank.fakeUpdate(false);
+            // todo add test here to check fluid containers
         }
     }
 
