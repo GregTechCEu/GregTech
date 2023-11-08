@@ -98,6 +98,18 @@ public class QuantumChestTest {
 
             ItemStack extracted = quantumChest.getExportItems().extractItem(0, 64, true);
             assertThat(String.format("%s did not extract properly!", quantumChest.getMetaFullName()), !extracted.isEmpty() && extracted.getCount() > 0);
+
+            quantumChest.getExportItems().extractItem(0, 64, false);
+            quantumChest.fakeUpdate(false);
+            ItemStack virtualized = quantumChest.getItemInventory().getStackInSlot(0);
+            assertThat(String.format("%s did not extract properly!", quantumChest.getMetaFullName()), virtualized.getCount() == 128);
+
+            extracted = quantumChest.getItemInventory().extractItem(0, Integer.MAX_VALUE, false);
+            int amountInExport = quantumChest.getExportItems().extractItem(0, Integer.MAX_VALUE, false).getCount();
+            extracted.grow(amountInExport);
+
+            assertThat(String.format("%s extracted too much!", quantumChest.getMetaFullName()), extracted.getCount() > 128);
+            assertThat(String.format("%s extracted too little!", quantumChest.getMetaFullName()), quantumChest.itemsStoredInside == 0);
         }
     }
 
