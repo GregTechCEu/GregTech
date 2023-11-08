@@ -601,10 +601,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
             int spaceInExport = Math.abs(exportItems.getCount() - exportItems.getMaxStackSize());
 
-            // Attempt to insert into the export slot first
+            // Check how much we can insert into our export slot
             int amountCanInsertIntoExport = Math.min(spaceInExport, insertedStack.getCount());
-
-            // If all the items can fit into export slot, store it there
             ItemStack remainingStack = ItemStack.EMPTY;
 
             if (amountCanInsertIntoExport > 0) {
@@ -620,22 +618,20 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
             int actualVirtualizedAmount = (int) Math.min(maxPotentialVirtualizedAmount, amountLeftInChest);
 
-            // If we are at the maximum that the chest can hold, the remainder stack has all items that could not fit
-            if (actualVirtualizedAmount < maxPotentialVirtualizedAmount) {
-                remainingStack.shrink(actualVirtualizedAmount);
-            }
+            // shrink the remainder stack by the amount virtualized,
+            // which should always be between 0 and the amount left in chest
+            remainingStack.shrink(actualVirtualizedAmount);
 
             if (!simulate) {
-                // inserted something
                 if (actualVirtualizedAmount > 0) {
                     if (virtualItemStack.isEmpty()) {
-                        // have no virtual stack, so set it to the inserted stack
                         ItemStack virtualStack = insertedStack.copy();
-                        virtualStack.setCount(actualVirtualizedAmount);
+
+                        // set the virtual stack to 1, since it's mostly for display
+                        virtualStack.setCount(1);
                         MetaTileEntityQuantumChest.this.virtualItemStack = virtualStack;
                         MetaTileEntityQuantumChest.this.itemsStoredInside = actualVirtualizedAmount;
                     } else {
-                        // update the virtualized total count
                         MetaTileEntityQuantumChest.this.itemsStoredInside += actualVirtualizedAmount;
                     }
                 }
