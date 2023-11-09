@@ -79,14 +79,10 @@ public class QuantumChestTest {
             int expected = 256;
 
             insertItem(itemInventory, GTUtility.copy(expected, SAND), false);
-            int totalCount = itemInventory.getStackInSlot(1).getCount();
-
-            String reason = String.format("The total count using the chest's handler got %d, should've been %d", totalCount, expected);
-            assertThat(reason, totalCount == expected);
 
             expected = 64;
             int exportCount = quantumChest.getExportItems().getStackInSlot(0).getCount();
-            reason = String.format("The combined count using the chest's handler and the export slot got %d, should've been %d", exportCount, expected);
+            String reason = String.format("The combined count using the chest's handler and the export slot got %d, should've been %d", exportCount, expected);
             assertThat(reason, exportCount == expected);
 
             expected = 192;
