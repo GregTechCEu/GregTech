@@ -174,8 +174,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     protected void addDisplayInformation(List<ITextComponent> textList) {
         textList.add(new TextComponentTranslation("gregtech.machine.quantum_chest.items_stored"));
         textList.add(new TextComponentString(String.format("%,d", itemsStoredInside)));
-        if (!virtualItemStack.isEmpty()) {
-            textList.add(new TextComponentString(TextFormattingUtil.formatStringWithNewlines(virtualItemStack.getDisplayName(), 14)));
+        if (!exportItems.getStackInSlot(0).isEmpty()) {
+            ItemStack export = exportItems.getStackInSlot(0);
+            textList.add(new TextComponentString(TextFormattingUtil.formatStringWithNewlines(export.getDisplayName(), 14)));
         }
     }
 
