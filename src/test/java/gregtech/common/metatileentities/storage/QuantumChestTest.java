@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import static gregtech.api.util.GTStringUtils.itemStackToString;
 import static gregtech.api.util.GTTransferUtils.insertItem;
 import static gregtech.api.util.GTUtility.gregtechId;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -48,27 +47,34 @@ public class QuantumChestTest {
             IItemHandlerModifiable importItems = quantumChest.getImportItems();
 
             ItemStack stack = itemInventory.insertItem(0, GRAVEL.copy(), true);
-            assertThat(String.format("%s should be Empty!", itemStackToString(stack)), stack.isEmpty());
+            String reason = String.format("%s should be Empty!", itemStackToString(stack));
+            assertThat(reason, stack.isEmpty());
 
             itemInventory.insertItem(0, GRAVEL.copy(), false);
-            assertThat(exportItems.getStackInSlot(0).getCount(), is(64));
+            int expected = 64;
+            stack = exportItems.getStackInSlot(0);
+            reason = String.format("Got %d in the export slot when it should be %d", exportItems.getStackInSlot(0).getCount(), expected);
+            assertThat(reason, stack.getCount() == expected);
 
             stack = itemInventory.insertItem(0, GRAVEL.copy(), true);
-            assertThat(String.format("%s should be Empty!", itemStackToString(stack)), stack.isEmpty());
+            reason = String.format("%s should be Empty!", itemStackToString(stack));
+            assertThat(reason, stack.isEmpty());
 
             itemInventory.insertItem(0, GRAVEL.copy(), false);
             stack = itemInventory.getStackInSlot(0);
-            assertThat(stack.getCount(), is(64));
+            reason = String.format("Got %d in the virtualized inventory when it should be %d", stack.getCount(), expected);
+            assertThat(reason, stack.getCount() == expected);
 
             stack = importItems.insertItem(0, SAND.copy(), true);
-            assertThat(String.format("%s should not be Empty!", itemStackToString(stack)), !stack.isEmpty());
+            reason = String.format("%s should not be Empty!", itemStackToString(stack));
+            assertThat(reason, !stack.isEmpty());
 
             stack = importItems.insertItem(0, SAND.copy(), false);
-            assertThat(String.format("%s should be Sand!", itemStackToString(stack)), !stack.isEmpty());
-
+            reason = String.format("%s should be Sand!", itemStackToString(stack));
+            assertThat(reason, !stack.isEmpty());
             stack = itemInventory.getStackInSlot(0);
-            stack.grow(exportItems.getStackInSlot(0).getCount());
-            assertThat("Items were voided somehow!", stack.getCount(), is(128));
+            reason = String.format("Got %d in the virtualized inventory when it should be %d", stack.getCount(), expected);
+            assertThat(reason, stack.getCount() == expected);
         }
     }
 
