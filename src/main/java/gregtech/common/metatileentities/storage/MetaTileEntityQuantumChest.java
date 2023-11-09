@@ -231,7 +231,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
                 if (!isItemValid(slot, stack)) return stack;
-                return super.insertItem(slot, stack, simulate);
+                return GTTransferUtils.insertItem(getCombinedInventory(), stack, simulate);
             }
 
             @Override
