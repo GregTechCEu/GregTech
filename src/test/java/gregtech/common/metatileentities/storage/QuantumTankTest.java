@@ -2,8 +2,6 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.Bootstrap;
 import gregtech.api.GTValues;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -15,10 +13,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_FLUID_AMOUNT;
-import static gregtech.api.util.GTTransferUtils.insertItem;
 import static gregtech.api.util.GTUtility.gregtechId;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class QuantumTankTest {
 
