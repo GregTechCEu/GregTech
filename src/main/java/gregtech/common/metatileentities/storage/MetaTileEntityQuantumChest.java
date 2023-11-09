@@ -22,6 +22,7 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
@@ -127,21 +128,17 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             if (itemsStoredInside < maxStoredItems) {
                 ItemStack inputStack = importItems.getStackInSlot(0);
                 ItemStack outputStack = exportItems.getStackInSlot(0);
-                if (outputStack.isEmpty() || outputStack.isItemEqual(inputStack) && ItemStack.areItemStackTagsEqual(inputStack, outputStack)) {
-                    if (!inputStack.isEmpty() && (virtualItemStack.isEmpty() || areItemStackIdentical(virtualItemStack, inputStack))) {
-                        ItemStack inserted = itemInventory.insertItem(0, inputStack, false);
-                        importItems.setStackInSlot(0, inserted);
+                if (!inputStack.isEmpty() && (virtualItemStack.isEmpty() || areItemStackIdentical(outputStack, inputStack))) {
+                    GTTransferUtils.moveInventoryItems(importItems, combinedInventory);
 
-                        markDirty();
-                    }
+                    markDirty();
                 }
             }
             if (itemsStoredInside > 0 && !virtualItemStack.isEmpty()) {
                 ItemStack outputStack = exportItems.getStackInSlot(0);
                 int maxStackSize = virtualItemStack.getMaxStackSize();
                 if (outputStack.isEmpty() || (areItemStackIdentical(virtualItemStack, outputStack) && outputStack.getCount() < maxStackSize)) {
-                    ItemStack extracted = itemInventory.extractItem(0, maxStackSize, false);
-                    exportItems.setStackInSlot(0, extracted);
+                    GTTransferUtils.moveInventoryItems(itemInventory, exportItems);
 
                     markDirty();
                 }
@@ -150,6 +147,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             if (isAutoOutputItems()) {
                 pushItemsIntoNearbyHandlers(currentOutputFacing);
             }
+
+            if (this.voiding && !importItems.getStackInSlot(0).isEmpty()) {
+                importItems.setStackInSlot(0, ItemStack.EMPTY);
+            }
+
             if (previousStack == null || !areItemStackIdentical(previousStack, virtualItemStack)) {
                 writeCustomData(UPDATE_ITEM, buf -> {
                     virtualItemStack.setCount(1);
