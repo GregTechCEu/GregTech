@@ -129,13 +129,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 ItemStack outputStack = exportItems.getStackInSlot(0);
                 if (outputStack.isEmpty() || outputStack.isItemEqual(inputStack) && ItemStack.areItemStackTagsEqual(inputStack, outputStack)) {
                     if (!inputStack.isEmpty() && (virtualItemStack.isEmpty() || areItemStackIdentical(virtualItemStack, inputStack))) {
-                        int amountOfItemsToInsert = (int) Math.min(inputStack.getCount(), maxStoredItems - itemsStoredInside);
-                        if (this.itemsStoredInside == 0L || virtualItemStack.isEmpty()) {
-                            this.virtualItemStack = GTUtility.copy(1, inputStack);
-                        }
-                        inputStack.shrink(amountOfItemsToInsert);
-                        importItems.setStackInSlot(0, inputStack);
-                        this.itemsStoredInside += amountOfItemsToInsert;
+                        ItemStack inserted = itemInventory.insertItem(0, inputStack, false);
+                        importItems.setStackInSlot(0, inserted);
 
                         markDirty();
                     }
@@ -145,21 +140,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 ItemStack outputStack = exportItems.getStackInSlot(0);
                 int maxStackSize = virtualItemStack.getMaxStackSize();
                 if (outputStack.isEmpty() || (areItemStackIdentical(virtualItemStack, outputStack) && outputStack.getCount() < maxStackSize)) {
-                    int amountOfItemsToRemove = (int) Math.min(maxStackSize - outputStack.getCount(), itemsStoredInside);
-                    if (outputStack.isEmpty()) {
-                        outputStack = GTUtility.copy(amountOfItemsToRemove, virtualItemStack);
-                    } else outputStack.grow(amountOfItemsToRemove);
-                    exportItems.setStackInSlot(0, outputStack);
-                    this.itemsStoredInside -= amountOfItemsToRemove;
-                    if (this.itemsStoredInside == 0) {
-                        this.virtualItemStack = ItemStack.EMPTY;
-                    }
+                    ItemStack extracted = itemInventory.extractItem(0, maxStackSize, false);
+                    exportItems.setStackInSlot(0, extracted);
+
                     markDirty();
                 }
-            }
-
-            if (voiding && !importItems.getStackInSlot(0).isEmpty()) {
-                importItems.setStackInSlot(0, ItemStack.EMPTY);
             }
 
             if (isAutoOutputItems()) {
