@@ -173,8 +173,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     protected void addDisplayInformation(List<ITextComponent> textList) {
         textList.add(new TextComponentTranslation("gregtech.machine.quantum_chest.items_stored"));
+        textList.add(new TextComponentString(String.format("%,d", itemsStoredInside)));
         ItemStack export = exportItems.getStackInSlot(0);
-        textList.add(new TextComponentString(String.format("%,d", itemsStoredInside + export.getCount())));
         if (!export.isEmpty()) {
             textList.add(new TextComponentString(TextFormattingUtil.formatStringWithNewlines(export.getDisplayName(), 14)));
         }
@@ -190,17 +190,19 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         if (compound != null) {
             String translationKey = null;
             long count = 0;
+            int exportCount = 0;
             if (compound.hasKey(NBT_ITEMSTACK)) {
-                translationKey = new ItemStack(compound.getCompoundTag(NBT_ITEMSTACK)).getDisplayName();
+                // translationKey = new ItemStack(compound.getCompoundTag(NBT_ITEMSTACK)).getDisplayName();
                 count = compound.getLong(NBT_ITEMCOUNT);
-            } else if (compound.hasKey(NBT_PARTIALSTACK)) {
+            }
+            if (compound.hasKey(NBT_PARTIALSTACK)) {
                 ItemStack tempStack = new ItemStack(compound.getCompoundTag(NBT_PARTIALSTACK));
                 translationKey = tempStack.getDisplayName();
-                count = tempStack.getCount();
+                exportCount = tempStack.getCount();
             }
             if (translationKey != null) {
                 tooltip.add(I18n.format("gregtech.universal.tooltip.item_stored",
-                        I18n.format(translationKey), count));
+                        I18n.format(translationKey), count, exportCount));
             }
         }
     }
@@ -293,7 +295,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             if (!this.virtualItemStack.isEmpty()) {
                 this.itemsStoredInside = itemStack.getLong(NBT_ITEMCOUNT);
             }
-        } else if (itemStack.hasKey(NBT_PARTIALSTACK, NBT.TAG_COMPOUND)) {
+        }
+        if (itemStack.hasKey(NBT_PARTIALSTACK, NBT.TAG_COMPOUND)) {
             exportItems.setStackInSlot(0, new ItemStack(itemStack.getCompoundTag(NBT_PARTIALSTACK)));
         }
 
@@ -307,13 +310,13 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.writeItemStackData(itemStack);
         if (!this.virtualItemStack.isEmpty()) {
             itemStack.setTag(NBT_ITEMSTACK, this.virtualItemStack.writeToNBT(new NBTTagCompound()));
-            itemStack.setLong(NBT_ITEMCOUNT, itemsStoredInside + this.exportItems.getStackInSlot(0).getCount());
-        } else {
-            ItemStack partialStack = exportItems.extractItem(0, 64, false);
-            if (!partialStack.isEmpty()) {
-                itemStack.setTag(NBT_PARTIALSTACK, partialStack.writeToNBT(new NBTTagCompound()));
-            }
+            itemStack.setLong(NBT_ITEMCOUNT, itemsStoredInside);
         }
+        ItemStack partialStack = exportItems.extractItem(0, 64, false);
+        if (!partialStack.isEmpty()) {
+            itemStack.setTag(NBT_PARTIALSTACK, partialStack.writeToNBT(new NBTTagCompound()));
+        }
+
 
         if (this.voiding) {
             itemStack.setBoolean(IS_VOIDING, true);
@@ -457,7 +460,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 
             // for TOP/Waila
-            if (side == null) return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemInventory);
+            if (side == null) return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(combinedInventory);
 
             // try fix being able to insert through output hole when input on output is disabled
             IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSideItems()) ? outputItemInventory : combinedInventory;
