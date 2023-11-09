@@ -215,11 +215,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     protected void initializeInventory() {
         super.initializeInventory();
         this.itemInventory = new QuantumChestItemHandler();
-        this.outputItemInventory = new ItemHandlerProxy(new GTItemStackHandler(this, 0), itemInventory);
         List<IItemHandler> temp = new ArrayList<>();
-        temp.add(outputItemInventory);
-        temp.add(itemInventory);
-        combinedInventory = new ItemHandlerList(temp);
+        temp.add(this.exportItems);
+        temp.add(this.itemInventory);
+        this.combinedInventory = new ItemHandlerList(temp);
+        this.outputItemInventory = new ItemHandlerProxy(new GTItemStackHandler(this, 0), combinedInventory);
 
     }
 
@@ -453,13 +453,21 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             if (side == null) return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemInventory);
 
             // try fix being able to insert through output hole when input on output is disabled
-            IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSideItems()) ? outputItemInventory : itemInventory;
+            IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSideItems()) ? outputItemInventory : combinedInventory;
             if (itemHandler.getSlots() > 0) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
             }
             return null;
         }
         return super.getCapability(capability, side);
+    }
+
+    public IItemHandler getCombinedInventory() {
+        return this.combinedInventory;
+    }
+
+    public IItemHandler getOutputItemInventory() {
+        return this.outputItemInventory;
     }
 
     @Override
