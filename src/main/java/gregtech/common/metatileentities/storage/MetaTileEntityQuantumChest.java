@@ -535,9 +535,19 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         public ItemStack getStackInSlot(int slot) {
             ItemStack itemStack = MetaTileEntityQuantumChest.this.virtualItemStack;
             long itemsStored = MetaTileEntityQuantumChest.this.itemsStoredInside;
+
+            if (slot == 1) {
+                ItemStack exportStack = getExportItems().getStackInSlot(0);
+                if (itemStack.isEmpty()) {
+                    itemStack = exportStack;
+                }
+                itemsStored += exportStack.getCount();
+            }
+
             if (itemStack.isEmpty() || itemsStored == 0L) {
                 return ItemStack.EMPTY;
             }
+
             ItemStack resultStack = itemStack.copy();
             resultStack.setCount((int) itemsStored);
             return resultStack;
