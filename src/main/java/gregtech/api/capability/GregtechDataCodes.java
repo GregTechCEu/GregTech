@@ -21,6 +21,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_OUTPUT_FACING = assignId();
     public static final int UPDATE_AUTO_OUTPUT_ITEMS = assignId();
     public static final int UPDATE_AUTO_OUTPUT_FLUIDS = assignId();
+    public static final int UPDATE_IS_VOIDING = assignId();
 
     // Drum
     public static final int UPDATE_AUTO_OUTPUT = assignId();

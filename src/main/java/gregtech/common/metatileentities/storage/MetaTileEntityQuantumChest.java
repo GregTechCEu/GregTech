@@ -379,6 +379,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         this.virtualItemStack.setCount(1);
         buf.writeItemStack(virtualItemStack);
         buf.writeLong(itemsStoredInside);
+        buf.writeBoolean(voiding);
     }
 
     @Override
@@ -392,6 +393,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             GTLog.logger.warn("Failed to load item from NBT in a quantum chest at " + this.getPos() + " on initial server/client sync");
         }
         this.itemsStoredInside = buf.readLong();
+        this.voiding = buf.readBoolean();
     }
 
     @Override
@@ -418,6 +420,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             }
         } else if (dataId == UPDATE_ITEM_COUNT) {
             this.itemsStoredInside = buf.readLong();
+        } else if (dataId == UPDATE_IS_VOIDING) {
+            setVoiding(buf.readBoolean());
         }
     }
 
@@ -436,6 +440,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     protected void setVoiding(boolean isVoiding) {
         this.voiding = isVoiding;
         if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_IS_VOIDING, buf -> buf.writeBoolean(this.voiding));
             markDirty();
         }
     }
