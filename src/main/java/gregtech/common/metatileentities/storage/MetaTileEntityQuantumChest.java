@@ -430,7 +430,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     }
 
     protected boolean isVoiding() {
-        return voiding;
+        return this.voiding;
     }
 
     protected void setVoiding(boolean isVoiding) {
@@ -624,7 +624,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 }
             }
 
-            if (voiding && remainingStack.getCount() > 0) {
+            if (isVoiding() && remainingStack.getCount() > 0) {
                 return ItemStack.EMPTY;
             } else {
                 return remainingStack;
