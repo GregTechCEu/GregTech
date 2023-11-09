@@ -594,13 +594,15 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
             // Check how much we can insert into our export slot
             int amountCanInsertIntoExport = Math.min(spaceInExport, insertedStack.getCount());
-            ItemStack remainingStack = ItemStack.EMPTY;
+            ItemStack remainingStack;
 
             if (amountCanInsertIntoExport > 0) {
                 remainingStack = getExportItems().insertItem(0, insertedStack, simulate);
 
                 // All items fit into the export slot, return early
                 if (remainingStack.isEmpty()) return remainingStack;
+            } else {
+                remainingStack = insertedStack.copy();
             }
 
             // Have more items than would fit into the export slot, so virtualize the remainder
@@ -609,7 +611,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
             int actualVirtualizedAmount = (int) Math.min(maxPotentialVirtualizedAmount, amountLeftInChest);
 
-            // shrink the remainder stack by the amount virtualized,
+            // if there are any items left over, shrink it by the amount virtualized,
             // which should always be between 0 and the amount left in chest
             remainingStack.shrink(actualVirtualizedAmount);
 
