@@ -2,11 +2,12 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.Bootstrap;
 import gregtech.api.GTValues;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.world.DummyWorld;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,8 +16,9 @@ import org.junit.jupiter.api.Test;
 import static gregtech.api.util.GTStringUtils.itemStackToString;
 import static gregtech.api.util.GTTransferUtils.insertItem;
 import static gregtech.api.util.GTUtility.gregtechId;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class QuantumChestTest {
     private static ItemStack GRAVEL;
@@ -55,7 +57,8 @@ public class QuantumChestTest {
             assertThat(String.format("%s should be Empty!", itemStackToString(stack)), stack.isEmpty());
 
             itemInventory.insertItem(0, GRAVEL.copy(), false);
-            assertThat(itemInventory.getStackInSlot(0).getCount(), is(64));
+            stack = itemInventory.getStackInSlot(0);
+            assertThat(stack.getCount(), is(64));
 
             stack = importItems.insertItem(0, SAND.copy(), true);
             assertThat(String.format("%s should not be Empty!", itemStackToString(stack)), !stack.isEmpty());
@@ -63,19 +66,38 @@ public class QuantumChestTest {
             stack = importItems.insertItem(0, SAND.copy(), false);
             assertThat(String.format("%s should be Sand!", itemStackToString(stack)), !stack.isEmpty());
 
-            importItems.insertItem(0, GRAVEL.copy(), false);
-            quantumChest.fakeUpdate(false);
-            stack = importItems.getStackInSlot(0);
-            assertThat(String.format("%s should be Empty!", itemStackToString(stack)), stack.isEmpty());
-
             stack = itemInventory.getStackInSlot(0);
-            assertThat(stack.getCount(), is(128));
+            stack.grow(exportItems.getStackInSlot(0).getCount());
+            assertThat("Items were voided somehow!", stack.getCount(), is(128));
+        }
+    }
+
+    @Test
+    public void Test_Stack_In_Slot() {
+        for (var quantumChest : createInstances()) {
+            IItemHandler itemInventory = quantumChest.getItemInventory();
+            int expected = 256;
+
+            insertItem(itemInventory, GTUtility.copy(expected, SAND), false);
+            int totalCount = itemInventory.getStackInSlot(1).getCount();
+
+            String reason = String.format("The total count using the chest's handler got %d, should've been %d", totalCount, expected);
+            assertThat(reason, totalCount == expected);
+
+            expected = 64;
+            int exportCount = quantumChest.getExportItems().getStackInSlot(0).getCount();
+            reason = String.format("The combined count using the chest's handler and the export slot got %d, should've been %d", exportCount, expected);
+            assertThat(reason, exportCount == expected);
+
+            expected = 192;
+            int virtualizedAmount = itemInventory.getStackInSlot(0).getCount();
+            reason = String.format("The virtualized amount in the chest's handler got %d, should've been %d", exportCount, expected);
+            assertThat(reason, virtualizedAmount == expected);
         }
     }
 
     @Test
     public void Test_Multiple_Insertions() {
-
         for (var quantumChest : createInstances()) {
             IItemHandler itemInventory = quantumChest.getItemInventory();
             IItemHandlerModifiable exportItems = quantumChest.getExportItems();
@@ -83,7 +105,7 @@ public class QuantumChestTest {
 
             for (int i = 0; i < 16; i++) {
                 importItems.insertItem(0, GRAVEL.copy(), false);
-                quantumChest.fakeUpdate(false);
+                quantumChest.update();
             }
 
             ItemStack virtualized = itemInventory.getStackInSlot(0);
@@ -92,6 +114,28 @@ public class QuantumChestTest {
             assertThat("Virtualized amount is wrong!", virtualized.getCount() == 64 * 15);
             assertThat("Export slot is empty!", export.getCount() == 64 && !export.isEmpty());
             assertThat("Import slot has an item in it!", importItems.getStackInSlot(0).isEmpty());
+        }
+    }
+
+    @Test
+    public void Test_Insertion_And_Update() {
+        for (var quantumChest : createInstances()) {
+            IItemHandler itemInventory = quantumChest.getItemInventory();
+            IItemHandlerModifiable exportItems = quantumChest.getExportItems();
+            IItemHandlerModifiable importItems = quantumChest.getImportItems();
+
+            importItems.insertItem(0, GRAVEL.copy(), false);
+            quantumChest.update();
+            ItemStack stack = importItems.getStackInSlot(0);
+
+            assertThat(String.format("%s should be Empty!", itemStackToString(stack)), stack.isEmpty());
+            assertThat("Virtual stack should be empty!", quantumChest.virtualItemStack.isEmpty());
+            assertThat("Export slot was not filled!", !exportItems.getStackInSlot(0).isEmpty());
+
+            stack = importItems.insertItem(0, GRAVEL.copy(), false);
+            quantumChest.update();
+            assertThat("Virtual stack has incorrect count!", quantumChest.virtualItemStack.getCount() == 1);
+            assertThat("Virtual stack should not be empty!", !quantumChest.virtualItemStack.isEmpty());
         }
     }
 
@@ -125,19 +169,24 @@ public class QuantumChestTest {
             insertItem(quantumChest.getItemInventory(), GTUtility.copy(256, GRAVEL), false);
 
             ItemStack extracted = quantumChest.getExportItems().extractItem(0, 64, true);
-            assertThat(String.format("%s did not extract properly!", quantumChest.getMetaFullName()), !extracted.isEmpty() && extracted.getCount() > 0);
+            int expected = 64;
+
+            String reason = String.format("Quantum chest inserted %d into export slot, should've been %d!", extracted.getCount(), expected);
+            assertThat(reason, !extracted.isEmpty() && extracted.getCount() == expected);
 
             quantumChest.getExportItems().extractItem(0, 64, false);
-            quantumChest.fakeUpdate(false);
+            quantumChest.update();
             ItemStack virtualized = quantumChest.getItemInventory().getStackInSlot(0);
-            assertThat(String.format("%s did not extract properly!", quantumChest.getMetaFullName()), virtualized.getCount() == 128);
+
+            expected = 128;
+            reason = String.format("Virtualized count is %d, should be %d!", virtualized.getCount(), expected);
+            assertThat(reason, virtualized.getCount() == expected);
 
             extracted = quantumChest.getItemInventory().extractItem(0, Integer.MAX_VALUE, false);
-            int amountInExport = quantumChest.getExportItems().extractItem(0, Integer.MAX_VALUE, false).getCount();
-            extracted.grow(amountInExport);
+            expected = 192;
 
-            assertThat(String.format("%s extracted too much!", quantumChest.getMetaFullName()), extracted.getCount() > 128);
-            assertThat(String.format("%s extracted too little!", quantumChest.getMetaFullName()), quantumChest.itemsStoredInside == 0);
+            reason = String.format("Extracted %d items, should've extracted %d!", extracted.getCount(), expected);
+            assertThat(reason, extracted.getCount() == expected);
         }
     }
 
@@ -161,66 +210,14 @@ public class QuantumChestTest {
             super(metaTileEntityId, tier, maxStoredItems);
         }
 
-        /**
-         * Simulates the {@linkplain  MetaTileEntity#update()} function
-         * @param isRemote should the method be run as if it was on client
-         */
-        public void fakeUpdate(boolean isRemote) {
-            if (!isRemote) {
-                if (itemsStoredInside < maxStoredItems) {
-                    ItemStack inputStack = importItems.getStackInSlot(0);
-                    ItemStack outputStack = exportItems.getStackInSlot(0);
-                    if (outputStack.isEmpty() || outputStack.isItemEqual(inputStack) && ItemStack.areItemStackTagsEqual(inputStack, outputStack)) {
-                        if (!inputStack.isEmpty() && (virtualItemStack.isEmpty() || areItemStackIdentical(virtualItemStack, inputStack))) {
-                            int amountOfItemsToInsert = (int) Math.min(inputStack.getCount(), maxStoredItems - itemsStoredInside);
-                            if (this.itemsStoredInside == 0L || virtualItemStack.isEmpty()) {
-                                this.virtualItemStack = GTUtility.copy(1, inputStack);
-                            }
-                            inputStack.shrink(amountOfItemsToInsert);
-                            importItems.setStackInSlot(0, inputStack);
-                            this.itemsStoredInside += amountOfItemsToInsert;
-
-                            markDirty();
-                        }
-                    }
-                }
-                if (itemsStoredInside > 0 && !virtualItemStack.isEmpty()) {
-                    ItemStack outputStack = exportItems.getStackInSlot(0);
-                    int maxStackSize = virtualItemStack.getMaxStackSize();
-                    if (outputStack.isEmpty() || (areItemStackIdentical(virtualItemStack, outputStack) && outputStack.getCount() < maxStackSize)) {
-                        int amountOfItemsToRemove = (int) Math.min(maxStackSize - outputStack.getCount(), itemsStoredInside);
-                        if (outputStack.isEmpty()) {
-                            outputStack = GTUtility.copy(amountOfItemsToRemove, virtualItemStack);
-                        } else outputStack.grow(amountOfItemsToRemove);
-                        exportItems.setStackInSlot(0, outputStack);
-                        this.itemsStoredInside -= amountOfItemsToRemove;
-                        if (this.itemsStoredInside == 0) {
-                            this.virtualItemStack = ItemStack.EMPTY;
-                        }
-                        markDirty();
-                    }
-                }
-
-                if (voiding && !importItems.getStackInSlot(0).isEmpty()) {
-                    importItems.setStackInSlot(0, ItemStack.EMPTY);
-                }
-
-                if (isAutoOutputItems()) {
-                    pushItemsIntoNearbyHandlers(getOutputFacing());
-                }
-
-                if (previousStack == null || !areItemStackIdentical(previousStack, virtualItemStack)) {
-                    previousStack = virtualItemStack;
-                }
-                if (previousStackSize != itemsStoredInside) {
-                    previousStackSize = itemsStoredInside;
-                }
-            }
-        }
-
         @Override
         protected void setVoiding(boolean isVoiding) {
             this.voiding = isVoiding;
+        }
+
+        @Override
+        public World getWorld() {
+            return DummyWorld.INSTANCE;
         }
     }
 }
