@@ -238,11 +238,12 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 NBTTagCompound compound = stack.getTagCompound();
                 ItemStack outStack = getExportItems().getStackInSlot(0);
+                boolean outStackMatch = true;
                 if (!outStack.isEmpty()) {
-                    return areItemStackIdentical(stack, outStack);
+                    outStackMatch = areItemStackIdentical(stack, outStack);
                 }
                 if (compound == null) return true;
-                return !(compound.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) || compound.hasKey("Fluid", NBT.TAG_COMPOUND)); //prevents inserting items with NBT to the Quantum Chest
+                return !(compound.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) || compound.hasKey("Fluid", NBT.TAG_COMPOUND)) && outStackMatch; //prevents inserting items with NBT to the Quantum Chest
             }
         };
     }
