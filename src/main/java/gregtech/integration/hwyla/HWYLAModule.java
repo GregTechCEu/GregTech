@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
         containerID = GTValues.MODID,
         modDependencies = GTValues.MODID_HWYLA,
         name = "GregTech HWYLA Integration",
-        descriptionKey = "gregtech.modules.hwyla_integration.description"
+        description = "HWYLA (WAILA) Integration Module"
 )
 public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
 
