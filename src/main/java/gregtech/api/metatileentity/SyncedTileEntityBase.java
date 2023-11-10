@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.block.BlockStateTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.network.PacketDataList;
 import gregtech.api.util.GTLog;
@@ -72,8 +73,16 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
                 ByteBuf backedBuffer = Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey));
                 receiveCustomData(Integer.parseInt(discriminatorKey), new PacketBuffer(backedBuffer));
                 if (backedBuffer.readableBytes() != 0) {
+                    String className = null;
+                    if (this instanceof IGregTechTileEntity gtte) {
+                        MetaTileEntity mte = gtte.getMetaTileEntity();
+                        if (mte != null) className = mte.getClass().getName();
+                    }
+                    if (className == null) {
+                        className = this.getClass().getName();
+                    }
                     GTLog.logger.error("Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
-                            getClass().getName(), discriminatorKey, backedBuffer.readableBytes());
+                            className, discriminatorKey, backedBuffer.readableBytes());
                 }
             }
         }
@@ -96,8 +105,17 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         ByteBuf backedBuffer = Unpooled.copiedBuffer(updateData);
         receiveInitialSyncData(new PacketBuffer(backedBuffer));
         if (backedBuffer.readableBytes() != 0) {
+            String className = null;
+            if (this instanceof IGregTechTileEntity gtte) {
+                MetaTileEntity mte = gtte.getMetaTileEntity();
+                if (mte != null) className = mte.getClass().getName();
+            }
+            if (className == null) {
+                className = this.getClass().getName();
+            }
+
             GTLog.logger.error("Class {} failed to finish reading initialSyncData with {} bytes remaining",
-                    getClass().getName(), backedBuffer.readableBytes());
+                    className, backedBuffer.readableBytes());
         }
     }
 }
