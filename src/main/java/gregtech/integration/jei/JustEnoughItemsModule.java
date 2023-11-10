@@ -67,7 +67,7 @@ import java.util.stream.Stream;
         containerID = GTValues.MODID,
         modDependencies = GTValues.MODID_JEI,
         name = "GregTech JEI Integration",
-        descriptionKey = "gregtech.modules.jei_integration.description"
+        description = "JustEnoughItems Integration Module"
 )
 public class JustEnoughItemsModule extends IntegrationSubmodule implements IModPlugin {
 

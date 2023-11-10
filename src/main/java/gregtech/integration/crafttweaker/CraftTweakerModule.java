@@ -27,7 +27,7 @@ import java.util.List;
         containerID = GTValues.MODID,
         modDependencies = GTValues.MODID_CT,
         name = "GregTech CraftTweaker Integration",
-        descriptionKey = "gregtech.modules.ct_integration.description"
+        description = "CraftTweaker Integration Module"
 )
 public class CraftTweakerModule extends IntegrationSubmodule {
 

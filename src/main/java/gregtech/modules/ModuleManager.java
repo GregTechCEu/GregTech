@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.modules.*;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -357,11 +356,10 @@ public class ModuleManager implements IModuleManager {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private String getComment(IGregTechModule module) {
         GregTechModule annotation = module.getClass().getAnnotation(GregTechModule.class);
 
-        String comment = I18n.translateToLocal(annotation.descriptionKey());
+        String comment = annotation.description();
         Set<ResourceLocation> dependencies = module.getDependencyUids();
         if (!dependencies.isEmpty()) {
             Iterator<ResourceLocation> iterator = dependencies.iterator();
