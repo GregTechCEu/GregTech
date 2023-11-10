@@ -89,7 +89,7 @@ public class WireRecipeHandler {
                     .input(prefix, material, multiplier)
                     .circuitMeta(multiplier * 2)
                     .output(wireSize, material)
-                    .duration((int) (material.getMass() * multiplier * 2))
+                    .duration((int) (material.getMass() * multiplier))
                     .EUt(getVoltageMultiplier(material))
                     .buildAndRegister();
         }
