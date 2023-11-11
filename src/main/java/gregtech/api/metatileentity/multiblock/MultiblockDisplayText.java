@@ -89,10 +89,12 @@ public class MultiblockDisplayText {
                 // wrap in text component to keep it from being formatted
                 ITextComponent voltageName = new TextComponentString(GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
-                textList.add(TextComponentUtil.translationWithColor(
+                ITextComponent bodyText = TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick",
-                        energyFormatted, voltageName));
+                        energyFormatted, voltageName);
+                ITextComponent hoverText = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.max_energy_per_tick_hover");
+                textList.add(TextComponentUtil.setHover(bodyText, hoverText));
             }
             return this;
         }
