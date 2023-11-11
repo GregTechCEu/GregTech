@@ -4,8 +4,8 @@ import gregtech.api.recipes.Recipe;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +25,7 @@ public interface IScannerRecipeMap {
          * @return A custom recipe to run given the current Scanner's inputs. Will be called only if a registered
          *         recipe is not found to run. Return null if no recipe should be run by your logic.
          */
+        @Nullable
         Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, boolean exactVoltage);
 
         /**

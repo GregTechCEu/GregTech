@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,6 +45,7 @@ public final class AssemblyLineManager {
 
     private AssemblyLineManager() {}
 
+    @ApiStatus.Internal
     public static void registerScannerLogic() {
         RecipeMapScanner.registerCustomScannerLogic(new DataStickCopyScannerLogic());
     }
@@ -169,19 +171,17 @@ public final class AssemblyLineManager {
             NBTTagCompound compound = second.getTagCompound();
             if (compound == null) return null;
 
-            boolean isFirstDataItem = AssemblyLineManager.isStackDataItem(first, true);
-            if (!isFirstDataItem) return null;
-            boolean isSecondDataItem = AssemblyLineManager.isStackDataItem(second, true);
-            if (isSecondDataItem) {
-                ItemStack output = first.copy();
-                output.setTagCompound(compound.copy());
-                return RecipeMaps.SCANNER_RECIPES.recipeBuilder()
-                        .inputs(first)
-                        .notConsumable(second)
-                        .outputs(output)
-                        .duration(DURATION).EUt(EUT).build().getResult();
-            }
-            return null;
+            // Both must be data items
+            if (!isStackDataItem(first, true)) return null;
+            if (!isStackDataItem(second, true)) return null;
+
+            ItemStack output = first.copy();
+            output.setTagCompound(compound.copy());
+            return RecipeMaps.SCANNER_RECIPES.recipeBuilder()
+                    .inputs(first)
+                    .notConsumable(second)
+                    .outputs(output)
+                    .duration(DURATION).EUt(EUT).build().getResult();
         }
 
         @Nullable
