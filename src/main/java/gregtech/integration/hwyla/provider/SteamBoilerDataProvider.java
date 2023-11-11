@@ -57,14 +57,21 @@ public class SteamBoilerDataProvider implements IWailaDataProvider {
             NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gregtech.SteamBoiler");
             if (tag.getBoolean("IsBurning")) {
                 int steamRate = tag.getInteger("SteamRate");
-                if (steamRate > 0) {
-                    if (tag.getBoolean("HasWater")) {
-                        tooltip.add(I18n.format("gregtech.top.energy_production") + ": " + (steamRate / 10) + " L/t " + I18n.format(Materials.Steam.getUnlocalizedName()));
-                    } else {
-                        tooltip.add(I18n.format("gregtech.top.steam_no_water"));
-                    }
-                } else {
+                boolean hasWater = tag.getBoolean("HasWater");
+
+                // Creating steam
+                if (steamRate > 0 && hasWater) {
+                    tooltip.add(I18n.format("gregtech.top.energy_production") + ": " + (steamRate / 10) + " L/t " + I18n.format(Materials.Steam.getUnlocalizedName()));
+                }
+
+                // Initial heat-up
+                if (steamRate <= 0) {
                     tooltip.add(I18n.format("gregtech.top.steam_heating_up"));
+                }
+
+                // No water
+                if (!hasWater) {
+                    tooltip.add(I18n.format("gregtech.top.steam_no_water"));
                 }
             }
         }

@@ -29,20 +29,24 @@ public class SteamBoilerInfoProvider implements IProbeInfoProvider {
                     if (boiler.isBurning()) {
                         // Boiler is active
                         int steamOutput = boiler.getTotalSteamOutput();
-                        if (steamOutput > 0) {
-                            if (boiler.hasWater()) {
-                                // creating steam
-                                probeInfo.text(TextStyleClass.INFO
-                                        + "{*gregtech.top.energy_production*} "
-                                        + TextFormatting.AQUA + (steamOutput / 10)
-                                        + TextStyleClass.INFO + " L/t"
-                                        + " {*" + Materials.Steam.getUnlocalizedName() + "*}");
-                            } else {
-                                probeInfo.text(TextStyleClass.WARNING + "{*gregtech.top.steam_no_water*}");
-                            }
-                        } else {
-                            // still doing initial heat-up
+
+                        // Creating steam
+                        if (steamOutput > 0 && boiler.hasWater()) {
+                            probeInfo.text(TextStyleClass.INFO
+                                    + "{*gregtech.top.energy_production*} "
+                                    + TextFormatting.AQUA + (steamOutput / 10)
+                                    + TextStyleClass.INFO + " L/t"
+                                    + " {*" + Materials.Steam.getUnlocalizedName() + "*}");
+                        }
+
+                        // Initial heat-up
+                        if (steamOutput <= 0) {
                             probeInfo.text(TextStyleClass.INFO.toString() + TextFormatting.RED + "{*gregtech.top.steam_heating_up*}");
+                        }
+
+                        // No water
+                        if (!boiler.hasWater()) {
+                            probeInfo.text(TextStyleClass.WARNING + "{*gregtech.top.steam_no_water*}");
                         }
                     }
                 }
