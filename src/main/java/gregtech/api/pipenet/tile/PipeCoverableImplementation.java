@@ -24,7 +24,7 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class PipeCoverableImplementation implements CoverHolder {
 
-    private final IPipeTile<?, ?> holder;
+    private IPipeTile<?, ?> holder;
     private final EnumMap<EnumFacing, Cover> covers = new EnumMap<>(EnumFacing.class);
     private final int[] sidedRedstoneInput = new int[6];
 
@@ -49,6 +49,7 @@ public class PipeCoverableImplementation implements CoverHolder {
         if (cover.isTickable() && !holder.supportsTicking()) {
             IPipeTile<?, ?> newHolderTile = holder.setSupportsTicking();
             newHolderTile.getCoverableImplementation().addCover(side, cover);
+            holder = newHolderTile;
             return;
         }
         // we checked before if the side already has a cover
