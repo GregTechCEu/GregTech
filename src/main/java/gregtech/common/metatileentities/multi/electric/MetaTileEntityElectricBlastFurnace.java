@@ -69,6 +69,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                 .addCustom(tl -> {
                     // Coil heat capacity line
                     if (isStructureFormed()) {

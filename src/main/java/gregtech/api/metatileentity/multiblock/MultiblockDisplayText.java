@@ -98,6 +98,25 @@ public class MultiblockDisplayText {
         }
 
         /**
+         * Adds the max Recipe Tier that this multiblock can use for recipe lookup.
+         * <br>
+         * Added if the structure is formed and if the passed tier is a valid energy tier index for {@link GTValues#VNF}.
+         */
+        public Builder addEnergyTierLine(int tier) {
+            if (!isStructureFormed) return this;
+            if (tier < GTValues.ULV || tier > GTValues.MAX) return this;
+
+            ITextComponent voltageName = new TextComponentString(GTValues.VNF[tier]);
+            ITextComponent bodyText = TextComponentUtil.translationWithColor(
+                    TextFormatting.GRAY,
+                    "gregtech.multiblock.max_recipe_tier",
+                    voltageName);
+            ITextComponent hoverText = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.max_recipe_tier_hover");
+            textList.add(TextComponentUtil.setHover(bodyText, hoverText));
+            return this;
+        }
+
+        /**
          * Adds the exact EU/t that this multiblock needs to run.
          * <br>
          * Added if the structure is formed and if the passed value is greater than zero.
