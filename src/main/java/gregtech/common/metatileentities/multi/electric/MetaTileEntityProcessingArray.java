@@ -114,6 +114,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                     if (isStructureFormed()) {
                         ProcessingArrayWorkable logic = (ProcessingArrayWorkable) recipeMapWorkable;
 
+                        // Machine mode text
                         // Shared text components for both states
                         ITextComponent maxMachinesText = TextComponentUtil.stringWithColor(TextFormatting.DARK_PURPLE, Integer.toString(getMachineLimit()));
                         maxMachinesText = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.machine.machine_hatch.machines_max", maxMachinesText);
@@ -142,13 +143,11 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                                     energyFormatted, amps, voltageName);
                             tl.add(TextComponentUtil.setHover(bodyText, hoverText, maxMachinesText));
                         }
-                    }
-                })
-                //.addParallelsLine(recipeMapWorkable.getParallelLimit())
-                .addCustom(tl -> {
-                    // Hatch locked status
-                    if (isStructureFormed() && isActive()) {
-                        tl.add(TextComponentUtil.translationWithColor(TextFormatting.DARK_RED, "gregtech.machine.machine_hatch.locked"));
+
+                        // Hatch locked status
+                        if (isActive()) {
+                            tl.add(TextComponentUtil.translationWithColor(TextFormatting.DARK_RED, "gregtech.machine.machine_hatch.locked"));
+                        }
                     }
                 })
                 .addWorkingStatusLine()

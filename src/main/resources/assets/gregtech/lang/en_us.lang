@@ -5366,6 +5366,7 @@ gregtech.multiblock.pattern.replaceable_air=Replaceable by Air
 gregtech.multiblock.blast_furnace.max_temperature=Heat Capacity: %s
 gregtech.multiblock.multi_furnace.heating_coil_discount=Heating Coil EU Boost: %s
 gregtech.multiblock.multi_furnace.heating_coil_discount_hover=Energy usage divisor, determined by coil tier
+gregtech.multiblock.multi_furnace.parallel_hover=Multi Smelter Parallels, determined by coil tier
 gregtech.multiblock.distillation_tower.distilling_fluid=Distilling %s
 
 gregtech.multiblock.large_combustion_engine.fuel_amount=Fuel: %s
