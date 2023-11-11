@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -247,23 +248,21 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.energy_consumption", getEnergyUsage()));
-            if (hasNotEnoughEnergy) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
+                .setWorkingStatusKeys(
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.data_bank.providing")
+                .addEnergyUsageExactLine(getEnergyUsage())
+                .addWorkingStatusLine();
     }
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed() && hasNotEnoughEnergy) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
+                .addLowPowerLine(hasNotEnoughEnergy)
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     @Override

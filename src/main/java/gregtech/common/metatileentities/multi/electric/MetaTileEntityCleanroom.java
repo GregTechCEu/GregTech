@@ -17,6 +17,7 @@ import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.*;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -443,40 +444,47 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed()) {
-            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-                long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-                String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
-                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
-            }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(cleanroomLogic.isWorkingEnabled(), cleanroomLogic.isActive())
+                .addEnergyUsageLine(energyContainer)
+                .addCustom(tl -> {
+                    // Cleanliness status line
+                    if (isStructureFormed()) {
+                        ITextComponent cleanState;
+                        if (isClean()) {
+                            cleanState = TextComponentUtil.translationWithColor(
+                                    TextFormatting.GREEN,
+                                    "gregtech.multiblock.cleanroom.clean_state",
+                                    this.cleanAmount);
+                        } else {
+                            cleanState = TextComponentUtil.translationWithColor(
+                                    TextFormatting.DARK_RED,
+                                    "gregtech.multiblock.cleanroom.dirty_state",
+                                    this.cleanAmount);
+                        }
 
-            if (!cleanroomLogic.isWorkingEnabled()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-            } else if (cleanroomLogic.isActive()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.progress", getProgressPercent()));
-            } else {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
-            }
-
-            if (isClean()) textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_state"));
-            else textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.dirty_state"));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_amount", this.cleanAmount));
-        }
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.cleanroom.clean_status",
+                                cleanState));
+                    }
+                })
+                .addWorkingStatusLine()
+                .addProgressLine(getProgressPercent() / 100.0);
     }
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            if (!drainEnergy(true)) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-            if (!isClean()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.dirty_state"));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
+                .addLowPowerLine(!drainEnergy(true))
+                .addCustom(tl -> {
+                    if (isStructureFormed() && !isClean()) {
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.YELLOW,
+                                "gregtech.multiblock.cleanroom.warning_contaminated"));
+                    }
+                })
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     @Override
