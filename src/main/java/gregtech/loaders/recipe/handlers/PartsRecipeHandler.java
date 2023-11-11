@@ -164,7 +164,7 @@ public class PartsRecipeHandler {
                 .input(OrePrefix.ingot, material)
                 .circuitMeta(3)
                 .output(fineWirePrefix, material, 8)
-                .duration((int) material.getMass() * 3)
+                .duration((int) material.getMass() * 2)
                 .EUt(VA[ULV])
                 .buildAndRegister();
     }
