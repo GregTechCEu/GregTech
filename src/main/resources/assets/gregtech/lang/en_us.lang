@@ -5012,6 +5012,11 @@ gregtech.machine.pump_hatch.tooltip=Primitive Fluid Output for Water Pump
 
 gregtech.machine.machine_hatch.name=Machine Access Interface
 gregtech.machine.machine_hatch.locked=Machine Interface Locked
+gregtech.machine.machine_hatch.machines=Machine: %s
+gregtech.machine.machine_hatch.machines_none=None
+gregtech.machine.machine_hatch.machines_none_hover=Insert machines into Machine Access Interface to run.
+gregtech.machine.machine_hatch.machines_max=Max Machines: %s
+gregtech.machine.machine_hatch.machines_max_eut=Max Usable EU/t: %s (%sA %s)
 gregtech.machine.machine_hatch.tooltip=Specialized Access Bus that only holds valid items
 gregtech.machine.machine_hatch.processing_array=When in the §eProcessing Array§7, only holds machines that work in the §eProcessing Array
 

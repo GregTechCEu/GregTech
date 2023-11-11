@@ -18,6 +18,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer;
@@ -31,8 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -110,8 +110,43 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
-                .addParallelsLine(recipeMapWorkable.getParallelLimit())
                 .addCustom(tl -> {
+                    if (isStructureFormed()) {
+                        ProcessingArrayWorkable logic = (ProcessingArrayWorkable) recipeMapWorkable;
+
+                        // Shared text components for both states
+                        ITextComponent maxMachinesText = TextComponentUtil.stringWithColor(TextFormatting.DARK_PURPLE, Integer.toString(getMachineLimit()));
+                        maxMachinesText = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.machine.machine_hatch.machines_max", maxMachinesText);
+
+                        if (logic.activeRecipeMap == null) {
+                            // No machines in hatch
+                            ITextComponent noneText = TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.machine.machine_hatch.machines_none");
+                            ITextComponent bodyText = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.machine.machine_hatch.machines", noneText);
+                            ITextComponent hoverText1 = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.machine.machine_hatch.machines_none_hover");
+                            tl.add(TextComponentUtil.setHover(bodyText, hoverText1, maxMachinesText));
+                        } else {
+                            // Some amount of machines in hatch
+                            String key = logic.getMachineStack().getTranslationKey();
+                            ITextComponent mapText = TextComponentUtil.translationWithColor(TextFormatting.DARK_PURPLE, key + ".name");
+                            mapText = TextComponentUtil.translationWithColor(
+                                    TextFormatting.DARK_PURPLE,
+                                    "%sx %s",
+                                    logic.getParallelLimit(), mapText);
+                            ITextComponent bodyText = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.machine.machine_hatch.machines", mapText);
+                            ITextComponent voltageName = new TextComponentString(GTValues.VNF[logic.machineTier]);
+                            int amps = logic.getMachineStack().getCount();
+                            String energyFormatted = TextFormattingUtil.formatNumbers(GTValues.V[logic.machineTier] * amps);
+                            ITextComponent hoverText = TextComponentUtil.translationWithColor(
+                                    TextFormatting.GRAY,
+                                    "gregtech.machine.machine_hatch.machines_max_eut",
+                                    energyFormatted, amps, voltageName);
+                            tl.add(TextComponentUtil.setHover(bodyText, hoverText, maxMachinesText));
+                        }
+                    }
+                })
+                //.addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addCustom(tl -> {
+                    // Hatch locked status
                     if (isStructureFormed() && isActive()) {
                         tl.add(TextComponentUtil.translationWithColor(TextFormatting.DARK_RED, "gregtech.machine.machine_hatch.locked"));
                     }
