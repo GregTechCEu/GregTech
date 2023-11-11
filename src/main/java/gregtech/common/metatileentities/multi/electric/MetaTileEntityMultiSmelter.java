@@ -56,7 +56,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                         if (heatingCoilDiscount > 1) {
                             ITextComponent coilDiscount = TextComponentUtil.stringWithColor(
                                     TextFormatting.AQUA,
-                                    TextFormattingUtil.formatNumbers(heatingCoilDiscount) + "x");
+                                    TextFormattingUtil.formatNumbers(100.0 / heatingCoilDiscount) + "%");
 
                             ITextComponent base = TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
