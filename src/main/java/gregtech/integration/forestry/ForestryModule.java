@@ -19,9 +19,9 @@ import gregtech.common.items.ToolItems;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.forestry.bees.*;
-import gregtech.integration.forestry.recipes.*;
 import gregtech.integration.forestry.frames.GTFrameType;
 import gregtech.integration.forestry.frames.GTItemFrame;
+import gregtech.integration.forestry.recipes.*;
 import gregtech.integration.forestry.tools.ScoopBehavior;
 import gregtech.modules.GregTechModules;
 import net.minecraft.client.Minecraft;
@@ -47,7 +47,7 @@ import java.util.List;
         containerID = GTValues.MODID,
         modDependencies = GTValues.MODID_FR,
         name = "GregTech Forestry Integration",
-        descriptionKey = "gregtech.modules.fr_integration.description")
+        description = "Forestry Integration Module")
 public class ForestryModule extends IntegrationSubmodule {
 
     private static MetaItem<?> forestryMetaItem;
