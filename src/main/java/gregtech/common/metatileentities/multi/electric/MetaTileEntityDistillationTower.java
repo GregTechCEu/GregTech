@@ -13,6 +13,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
@@ -71,7 +72,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
                         .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setExactLimit(1)))
                 .where('X', states(getCasingState())
                         .or(metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.EXPORT_FLUIDS).stream()
-                                .filter(mte->!(mte instanceof MetaTileEntityMultiFluidHatch))
+                                .filter(mte -> !(mte instanceof MetaTileEntityMultiFluidHatch) && !(mte instanceof MetaTileEntityMEOutputHatch))
                                 .toArray(MetaTileEntity[]::new))
                                 .setMinLayerLimited(1).setMaxLayerLimited(1))
                         .or(autoAbilities(true, false)))
