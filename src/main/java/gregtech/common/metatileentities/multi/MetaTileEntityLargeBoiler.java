@@ -4,20 +4,19 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.BoilerRecipeLogic;
+import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.Widget.ClickData;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -36,6 +35,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -46,7 +46,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
+public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements IProgressBarMultiblock {
 
     public final BoilerType boilerType;
     protected BoilerRecipeLogic recipeLogic;
@@ -143,6 +143,18 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
             return TextFormatting.YELLOW;
         } else {
             return TextFormatting.GREEN;
+        }
+    }
+
+    @Override
+    protected void addWarningText(List<ITextComponent> textList) {
+        super.addWarningText(textList);
+        if (isStructureFormed()) {
+            int[] waterAmount = getWaterAmount();
+            if (waterAmount[0] == 0) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.large_boiler.no_water"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.large_boiler.explosion_tooltip"));
+            }
         }
     }
 
@@ -294,5 +306,57 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
     @Override
     protected boolean shouldShowVoidingModeButton() {
         return false;
+    }
+
+    @Override
+    public double getFillPercentage(int index) {
+        if (!isStructureFormed()) return 0;
+        int[] waterAmount = getWaterAmount();
+        if (waterAmount[1] == 0) return 0; // no water capacity
+        return (1.0 * waterAmount[0]) / waterAmount[1];
+    }
+
+    @Override
+    public TextureArea getProgressBarTexture(int index) {
+        return GuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION;
+    }
+
+    @Override
+    public void addBarHoverText(List<ITextComponent> hoverList, int index) {
+        if (!isStructureFormed()) {
+            hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.invalid_structure"));
+        } else {
+            int[] waterAmount = getWaterAmount();
+            if (waterAmount[0] == 0) {
+                hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.large_boiler.no_water"));
+            } else {
+                ITextComponent waterInfo = TextComponentUtil.translationWithColor(
+                        TextFormatting.BLUE,
+                        "%s / %s L",
+                        waterAmount[0], waterAmount[1]);
+                hoverList.add(TextComponentUtil.translationWithColor(
+                        TextFormatting.GRAY,
+                        "gregtech.multiblock.large_boiler.water_bar_hover",
+                        waterInfo));
+            }
+        }
+    }
+
+    /**
+     * Returns an int[] of {AmountFilled, Capacity} where capacity is the sum of hatches with some water in them.
+     * If there is no water in the boiler (or the structure isn't formed, both of these values will be zero.
+     */
+    private int[] getWaterAmount() {
+        if (!isStructureFormed()) return new int[]{0, 0};
+        List<IFluidTank> tanks = getAbilities(MultiblockAbility.IMPORT_FLUIDS);
+        int filled = 0, capacity = 0;
+        for (IFluidTank tank : tanks) {
+            if (tank == null || tank.getFluid() == null) continue;
+            if (CommonFluidFilters.BOILER_FLUID.test(tank.getFluid())) {
+                filled += tank.getFluidAmount();
+                capacity += tank.getCapacity();
+            }
+        }
+        return new int[]{filled, capacity};
     }
 }
