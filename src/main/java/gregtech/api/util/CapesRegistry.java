@@ -192,6 +192,14 @@ public class CapesRegistry {
         }
     }
 
+    /**
+     * Adds a cape that will always be unlocked for all players.
+     * @param cape A ResourceLocation pointing to the cape texture.
+     */
+    public static void addFreeCape(ResourceLocation cape) {
+        FREE_CAPES.add(cape);
+    }
+
     private static final List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<>();
     private static final List<ResourceLocation> ctFreeCapes = new ArrayList<>();
 
