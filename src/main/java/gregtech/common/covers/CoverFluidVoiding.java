@@ -11,7 +11,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
@@ -89,8 +88,8 @@ public class CoverFluidVoiding extends CoverPump {
     public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         this.isWorkingAllowed = !this.isWorkingAllowed;
         if (!playerIn.world.isRemote) {
-            playerIn.sendMessage(new TextComponentTranslation(isWorkingEnabled() ?
-                    "cover.voiding.message.enabled" : "cover.voiding.message.disabled"));
+            playerIn.sendStatusMessage(new TextComponentTranslation(isWorkingEnabled() ?
+                    "cover.voiding.message.enabled" : "cover.voiding.message.disabled"), true);
         }
         return EnumActionResult.SUCCESS;
     }

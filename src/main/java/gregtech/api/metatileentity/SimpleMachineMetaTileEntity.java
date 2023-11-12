@@ -191,11 +191,11 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             if (isAllowInputFromOutputSideItems()) {
                 setAllowInputFromOutputSideItems(false);
                 setAllowInputFromOutputSideFluids(false);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"), true);
             } else {
                 setAllowInputFromOutputSideItems(true);
                 setAllowInputFromOutputSideFluids(true);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"), true);
             }
         }
         return true;
