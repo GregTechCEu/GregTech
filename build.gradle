@@ -1,4 +1,4 @@
-//version: 1695527071
+//version: 1699743071
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -456,7 +456,7 @@ configurations {
     }
 }
 
-String mixinProviderSpec = 'zone.rong:mixinbooter:8.3'
+String mixinProviderSpec = 'zone.rong:mixinbooter:8.9'
 dependencies {
     if (usesMixins.toBoolean()) {
         annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
