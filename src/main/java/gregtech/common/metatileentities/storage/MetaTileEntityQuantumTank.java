@@ -13,7 +13,7 @@ import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.GTFluidHandlerItemStack;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
@@ -526,7 +526,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        EnumFacing hitFacing = ICoverable.determineGridSideHit(hitResult);
+        EnumFacing hitFacing = CoverRayTracer.determineGridSideHit(hitResult);
         if (facing == getOutputFacing() || (hitFacing == getOutputFacing() && playerIn.isSneaking())) {
             if (!getWorld().isRemote) {
                 if (isAllowInputFromOutputSideFluids()) {

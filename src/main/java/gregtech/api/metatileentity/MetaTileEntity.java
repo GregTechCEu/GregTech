@@ -20,10 +20,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.*;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.CoverDefinition;
-import gregtech.api.cover.CoverIO;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover.*;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -37,7 +34,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
-import gregtech.core.advancement.AdvancementTriggers;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -75,21 +71,18 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, IVoidable {
+public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
@@ -120,7 +113,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
 
     private boolean wasExploded = false;
 
-    private final CoverBehavior[] coverBehaviors = new CoverBehavior[6];
+    private final EnumMap<EnumFacing, Cover> covers = new EnumMap<>(EnumFacing.class);
+
     protected List<IItemHandlerModifiable> notifiedItemOutputList = new ArrayList<>();
     protected List<IItemHandlerModifiable> notifiedItemInputList = new ArrayList<>();
     protected List<IFluidHandler> notifiedFluidInputList = new ArrayList<>();
@@ -151,10 +145,12 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
 
     public abstract MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity);
 
+    @Override
     public World getWorld() {
         return holder == null ? null : holder.world();
     }
 
+    @Override
     public BlockPos getPos() {
         return holder == null ? null : holder.pos();
     }
@@ -175,6 +171,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
      *
      * @return Timer value, starting at zero, with a random offset [0, 20).
      */
+    @Override
     public long getOffsetTimer() {
         return holder == null ? 0L : holder.getOffsetTimer();
     }
@@ -264,6 +261,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
                 (renderLayer == BlockRenderLayer.TRANSLUCENT && !getWorld().getBlockState(getPos()).getValue(BlockMachine.OPAQUE));
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public int getPaintingColorForRendering() {
         if (getWorld() == null && renderContextStack != null) {
@@ -312,7 +310,6 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
      *
      * @param creativeTab The creative tab to check
      * @return Whether this MTE belongs in the creative tab or not
-     *
      * @see gregtech.api.block.machines.MachineItemBlock#addCreativeTab(CreativeTabs) MachineItemBlock#addCreativeTab(CreativeTabs)
      */
     public boolean isInCreativeTab(CreativeTabs creativeTab) {
@@ -373,6 +370,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
 
     /**
      * Get a trait by name
+     *
      * @param name the name of the trait
      * @return the trait associated with the name
      */
@@ -414,8 +412,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
     }
 
     public final void onCoverLeftClick(EntityPlayer playerIn, CuboidRayTraceResult result) {
-        CoverBehavior coverBehavior = getCoverAtSide(result.sideHit);
-        if (coverBehavior == null || !coverBehavior.onLeftClick(playerIn, result)) {
+        Cover cover = getCoverAtSide(result.sideHit);
+        if (cover == null || !cover.onLeftClick(playerIn, result)) {
             onLeftClick(playerIn, result.sideHit, result);
         }
     }
@@ -446,17 +444,16 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
                 }
             }
             EnumFacing hitFacing = hitResult.sideHit;
-            CoverBehavior coverBehavior = hitFacing == null ? null : getCoverAtSide(hitFacing);
-            if (coverBehavior == null) {
+            Cover cover = hitFacing == null ? null : getCoverAtSide(hitFacing);
+            if (cover == null) {
                 return false;
             }
-            EnumActionResult result = coverBehavior.onRightClick(playerIn, hand, hitResult);
+            EnumActionResult result = cover.onRightClick(playerIn, hand, hitResult);
 
             if (result == EnumActionResult.SUCCESS) {
                 return true;
-            }
-            else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
-                result = coverBehavior.onScrewdriverClick(playerIn, hand, hitResult);
+            } else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
+                result = cover.onScrewdriverClick(playerIn, hand, hitResult);
 
                 return result == EnumActionResult.SUCCESS;
             }
@@ -470,19 +467,19 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
      *
      * @return true if something happened, so tools will get damaged and animations will be played
      */
-    public final boolean onToolClick(EntityPlayer playerIn, @Nonnull Set<String> toolClasses, EnumHand hand, CuboidRayTraceResult hitResult)  {
+    public final boolean onToolClick(EntityPlayer playerIn, @Nonnull Set<String> toolClasses, EnumHand hand, CuboidRayTraceResult hitResult) {
         // the side hit from the machine grid
-        EnumFacing gridSideHit = ICoverable.determineGridSideHit(hitResult);
-        CoverBehavior coverBehavior = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
+        EnumFacing gridSideHit = CoverRayTracer.determineGridSideHit(hitResult);
+        Cover cover = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
 
         // Prioritize covers where they apply (Screwdriver, Soft Mallet)
         if (toolClasses.contains(ToolClasses.SCREWDRIVER)) {
-            if (coverBehavior != null && coverBehavior.onScrewdriverClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+            if (cover != null && cover.onScrewdriverClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
                 return true;
             } else return onScrewdriverClick(playerIn, hand, gridSideHit, hitResult);
         }
         if (toolClasses.contains(ToolClasses.SOFT_MALLET)) {
-            if (coverBehavior != null && coverBehavior.onSoftMalletClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+            if (cover != null && cover.onSoftMalletClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
                 return true;
             } else return onSoftMalletClick(playerIn, hand, gridSideHit, hitResult);
         }
@@ -532,7 +529,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
      */
     public boolean onCrowbarClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (getCoverAtSide(facing) != null) {
-            return removeCover(facing);
+            removeCover(facing);
+            return true;
         }
         return false;
     }
@@ -580,89 +578,65 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
     }
 
     @Nullable
-    public final CoverBehavior getCoverAtSide(EnumFacing side) {
-        return coverBehaviors[side.getIndex()];
+    @Override
+    public Cover getCoverAtSide(@NotNull EnumFacing side) {
+        return covers.get(side);
     }
 
-    public boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition, EntityPlayer player) {
-        Preconditions.checkNotNull(side, "side");
-        Preconditions.checkNotNull(coverDefinition, "coverDefinition");
-        CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, side);
-        if (!canPlaceCoverOnSide(side) || !coverBehavior.canAttach()) {
-            return false;
+    @Override
+    public boolean hasAnyCover() {
+        return !covers.isEmpty();
+    }
+
+    @Override
+    public void addCover(@NotNull EnumFacing side, @NotNull Cover cover) {
+        // we checked before if the side already has a cover
+        covers.put(side, cover);
+        if (!getWorld().isRemote) {
+            CoverSaveHandler.writeCoverPlacement(this, COVER_ATTACHED_MTE, side, cover);
         }
-        if (coverBehaviors[side.getIndex()] != null) {
-            removeCover(side);
-        }
-        this.coverBehaviors[side.getIndex()] = coverBehavior;
-        coverBehavior.onAttached(itemStack, player);
-        writeCustomData(COVER_ATTACHED_MTE, CoverIO.getCoverPlacementCustomDataWriter(side, coverBehavior));
         notifyBlockUpdate();
         markDirty();
         onCoverPlacementUpdate();
-        AdvancementTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
-        return true;
     }
 
-    public final boolean removeCover(EnumFacing side) {
-        Preconditions.checkNotNull(side, "side");
-        CoverBehavior coverBehavior = getCoverAtSide(side);
-        if (coverBehavior == null) {
-            return false;
-        }
-        List<ItemStack> drops = coverBehavior.getDrops();
-        coverBehavior.onRemoved();
-        this.coverBehaviors[side.getIndex()] = null;
-        for (ItemStack dropStack : drops) {
-            Block.spawnAsEntity(getWorld(), getPos(), dropStack);
-        }
+    @Override
+    public boolean canPlaceCoverOnSide(@NotNull EnumFacing side) {
+        List<IndexedCuboid6> collisionList = new ArrayList<>();
+        addCollisionBoundingBox(collisionList);
+        // cover collision box overlaps with meta tile entity collision box
+        return !CoverUtil.doesCoverCollide(side, collisionList, getCoverPlateThickness());
+    }
+
+    @Override
+    public final boolean acceptsCovers() {
+        return covers.size() < EnumFacing.VALUES.length;
+    }
+
+    /**
+     * @param side the side to remove a cover from
+     */
+    public final void removeCover(@NotNull EnumFacing side) {
+        Cover cover = getCoverAtSide(side);
+        if (cover == null) return;
+
+        dropCover(side);
+        covers.remove(side);
         writeCustomData(COVER_REMOVED_MTE, buffer -> buffer.writeByte(side.getIndex()));
         notifyBlockUpdate();
         markDirty();
         onCoverPlacementUpdate();
-        return true;
     }
 
-    protected void onCoverPlacementUpdate() {
-    }
+    protected void onCoverPlacementUpdate() {}
 
-    public final void dropAllCovers() {
-        for (EnumFacing coverSide : EnumFacing.VALUES) {
-            CoverBehavior coverBehavior = coverBehaviors[coverSide.getIndex()];
-            if (coverBehavior == null) continue;
-            List<ItemStack> drops = coverBehavior.getDrops();
-            coverBehavior.onRemoved();
-            for (ItemStack dropStack : drops) {
-                Block.spawnAsEntity(getWorld(), getPos(), dropStack);
-            }
-        }
-    }
-
-    public boolean canPlaceCoverOnSide(EnumFacing side) {
-        ArrayList<IndexedCuboid6> collisionList = new ArrayList<>();
-        addCollisionBoundingBox(collisionList);
-        //noinspection RedundantIfStatement
-        if (ICoverable.doesCoverCollide(side, collisionList, getCoverPlateThickness())) {
-            //cover collision box overlaps with meta tile entity collision box
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * @return the cover plate thickness. It is used to render cover's base plate
-     * if this meta tile entity is not full block length, and also
-     * to check whatever cover placement is possible on specified side,
-     * because cover cannot be placed if collision boxes of machine and it's plate overlap
-     * If zero, it is expected that machine is full block and plate doesn't need to be rendered
-     */
     @Override
     public double getCoverPlateThickness() {
-        return 0.0;
+        return 0;
     }
 
     @Override
-    public boolean shouldRenderBackSide() {
+    public boolean shouldRenderCoverBackSides() {
         return !isOpaqueCube();
     }
 
@@ -682,11 +656,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
             return canConnectRedstone(EnumFacing.UP) ||
                     canConnectRedstone(EnumFacing.DOWN);
         }
-        CoverBehavior coverBehavior = getCoverAtSide(side);
-        if (coverBehavior == null) {
+        Cover cover = getCoverAtSide(side);
+        if (cover == null) {
             return canMachineConnectRedstone(side);
         }
-        return coverBehavior.canConnectRedstone();
+        return cover.canConnectRedstone();
     }
 
     protected boolean canMachineConnectRedstone(EnumFacing side) {
@@ -694,7 +668,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
     }
 
     @Override
-    public final int getInputRedstoneSignal(EnumFacing side, boolean ignoreCover) {
+    public final int getInputRedstoneSignal(@NotNull EnumFacing side, boolean ignoreCover) {
         if (!ignoreCover && getCoverAtSide(side) != null) {
             return 0; //covers block input redstone signal for machine
         }
@@ -719,9 +693,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
             int currentValue = sidedRedstoneInput[side.getIndex()];
             if (redstoneValue != currentValue) {
                 this.sidedRedstoneInput[side.getIndex()] = redstoneValue;
-                CoverBehavior coverBehavior = getCoverAtSide(side);
-                if (coverBehavior != null) {
-                    coverBehavior.onRedstoneInputSignalChange(redstoneValue);
+                Cover cover = getCoverAtSide(side);
+                if (cover != null) {
+                    cover.onRedstoneInputSignalChange(redstoneValue);
                 }
             }
         }
@@ -770,11 +744,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
             }
         }
         if (!getWorld().isRemote) {
-            for (CoverBehavior coverBehavior : coverBehaviors) {
-                if (coverBehavior instanceof ITickable) {
-                    ((ITickable) coverBehavior).update();
-                }
-            }
+            updateCovers();
         } else {
             updateSound();
         }
@@ -831,15 +801,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
 
     public ItemStack getPickItem(CuboidRayTraceResult result, EntityPlayer player) {
         IndexedCuboid6 hitCuboid = result.cuboid6;
-        if (hitCuboid.data instanceof CoverSideData) {
-            CoverSideData coverSideData = (CoverSideData) hitCuboid.data;
-            CoverBehavior behavior = getCoverAtSide(coverSideData.side);
-            return behavior == null ? ItemStack.EMPTY : behavior.getPickItem();
-        } else if (hitCuboid.data == null || hitCuboid.data instanceof PrimaryBoxData) {
+        if (hitCuboid.data instanceof CoverRayTracer.CoverSideData coverSideData) {
+            Cover cover = getCoverAtSide(coverSideData.side);
+            return cover == null ? ItemStack.EMPTY : cover.getPickItem();
+        } else if (hitCuboid.data == null || hitCuboid.data instanceof CoverRayTracer.PrimaryBoxData) {
             //data is null -> MetaTileEntity hull hit
-            CoverBehavior behavior = getCoverAtSide(result.sideHit);
-            if (behavior != null) {
-                return behavior.getPickItem();
+            Cover cover = getCoverAtSide(result.sideHit);
+            if (cover != null) {
+                return cover.getPickItem();
             }
             return getStackForm();
         } else {
@@ -898,7 +867,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
             buf.writeVarInt(entry.getIntKey());
             entry.getValue().writeInitialData(buf);
         }
-        CoverIO.writeCoverSyncData(buf, this);
+        CoverSaveHandler.writeInitialSyncData(buf, this);
         buf.writeBoolean(muffled);
     }
 
@@ -918,7 +887,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
             } else trait.receiveInitialData(buf);
         }
-        CoverIO.receiveCoverSyncData(buf, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
+        CoverSaveHandler.receiveInitialSyncData(buf, this);
         this.muffled = buf.readBoolean();
     }
 
@@ -930,11 +899,12 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
         });
     }
 
-    public void writeCoverData(CoverBehavior cover, int internalId, Consumer<PacketBuffer> dataWriter) {
+    @Override
+    public void writeCoverData(@NotNull Cover cover, int discriminator, @NotNull Consumer<@NotNull PacketBuffer> buf) {
         writeCustomData(UPDATE_COVER_DATA_MTE, buffer -> {
-            buffer.writeByte(cover.attachedSide.getIndex());
-            buffer.writeVarInt(internalId);
-            dataWriter.accept(buffer);
+            buffer.writeByte(cover.getAttachedSide().getIndex());
+            buffer.writeVarInt(discriminator);
+            buf.accept(buffer);
         });
     }
 
@@ -953,22 +923,20 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
             } else trait.receiveCustomData(buf.readVarInt(), buf);
         } else if (dataId == COVER_ATTACHED_MTE) {
-            CoverIO.readCoverPlacement(buf, this,
-                    (s, cover) -> this.coverBehaviors[s.getIndex()] = cover,
-                    this::scheduleRenderUpdate);
+            CoverSaveHandler.readCoverPlacement(buf, this);
         } else if (dataId == COVER_REMOVED_MTE) {
             //cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
-            this.coverBehaviors[placementSide.getIndex()] = null;
+            this.covers.remove(placementSide);
             onCoverPlacementUpdate();
             scheduleRenderUpdate();
         } else if (dataId == UPDATE_COVER_DATA_MTE) {
             //cover custom data received
             EnumFacing coverSide = EnumFacing.VALUES[buf.readByte()];
-            CoverBehavior coverBehavior = getCoverAtSide(coverSide);
+            Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();
-            if (coverBehavior != null) {
-                coverBehavior.readUpdateData(internalId, buf);
+            if (cover != null) {
+                cover.readCustomData(internalId, buf);
             }
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
             this.muffled = buf.readBoolean();
@@ -986,19 +954,18 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
     }
 
     public final <T> T getCoverCapability(Capability<T> capability, EnumFacing side) {
-        boolean isCoverable = capability == GregtechTileCapabilities.CAPABILITY_COVERABLE;
-        CoverBehavior coverBehavior = side == null ? null : getCoverAtSide(side);
+        boolean isCoverable = capability == GregtechTileCapabilities.CAPABILITY_COVER_HOLDER;
+        Cover cover = side == null ? null : getCoverAtSide(side);
         T originalCapability = getCapability(capability, side);
-        if (coverBehavior != null && !isCoverable) {
-            return coverBehavior.getCapability(capability, originalCapability);
+        if (cover != null && !isCoverable) {
+            return cover.getCapability(capability, originalCapability);
         }
         return originalCapability;
     }
 
-
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == GregtechTileCapabilities.CAPABILITY_COVERABLE) {
-            return GregtechTileCapabilities.CAPABILITY_COVERABLE.cast(this);
+        if (capability == GregtechTileCapabilities.CAPABILITY_COVER_HOLDER) {
+            return GregtechTileCapabilities.CAPABILITY_COVER_HOLDER.cast(this);
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY &&
                 getFluidInventory().getTankProperties().length > 0) {
@@ -1102,17 +1069,17 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
         if (side == null) {
             return getHighestOutputRedstoneSignal();
         }
-        CoverBehavior behavior = getCoverAtSide(side);
+        Cover cover = getCoverAtSide(side);
         int sidedOutput = sidedRedstoneOutput[side.getIndex()];
-        return behavior == null ? sidedOutput : behavior.getRedstoneSignalOutput();
+        return cover == null ? sidedOutput : cover.getRedstoneSignalOutput();
     }
 
     public final int getHighestOutputRedstoneSignal() {
         int highestSignal = 0;
         for (EnumFacing side : EnumFacing.VALUES) {
-            CoverBehavior behavior = getCoverAtSide(side);
+            Cover cover = getCoverAtSide(side);
             int sidedOutput = sidedRedstoneOutput[side.getIndex()];
-            int sideResult = behavior == null ? sidedOutput : behavior.getRedstoneSignalOutput();
+            int sideResult = cover == null ? sidedOutput : cover.getRedstoneSignalOutput();
             highestSignal = Math.max(highestSignal, sideResult);
         }
         return highestSignal;
@@ -1198,7 +1165,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
             data.setTag(mteTrait.getName(), mteTrait.serializeNBT());
         }
 
-        CoverIO.writeCoverNBT(data, (side) -> coverBehaviors[side.getIndex()]);
+        CoverSaveHandler.writeCoverNBT(data, this);
 
         data.setBoolean(TAG_KEY_MUFFLED, muffled);
         return data;
@@ -1224,8 +1191,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
             mteTrait.deserializeNBT(traitCompound);
         }
 
-        CoverIO.readCoverNBT(data, this, (side, cover) -> this.coverBehaviors[side.getIndex()] = cover);
-
+        CoverSaveHandler.readCoverNBT(data, this, covers::put);
         this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
     }
 
@@ -1476,7 +1442,6 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, ICoverable, I
         return true;
     }
 
-    @Override
     public boolean canRenderMachineGrid(@Nonnull ItemStack mainHandStack, @Nonnull ItemStack offHandStack) {
         final String[] tools = {ToolClasses.WRENCH, ToolClasses.SCREWDRIVER};
         return ToolHelper.isTool(mainHandStack, tools) ||

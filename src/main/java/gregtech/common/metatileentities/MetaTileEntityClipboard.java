@@ -49,6 +49,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -504,7 +505,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public boolean canPlaceCoverOnSide(EnumFacing side) {
+    public boolean canPlaceCoverOnSide(@NotNull EnumFacing side) {
         return false;
     }
 

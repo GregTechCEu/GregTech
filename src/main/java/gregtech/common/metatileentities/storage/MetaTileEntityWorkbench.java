@@ -41,6 +41,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -237,7 +238,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     }
 
     @Override
-    public boolean canPlaceCoverOnSide(EnumFacing side) {
+    public boolean canPlaceCoverOnSide(@NotNull EnumFacing side) {
         return false;
     }
 

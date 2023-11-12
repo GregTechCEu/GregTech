@@ -7,6 +7,7 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.GTFluid;
+import gregtech.api.items.behavior.CoverItemBehavior;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -17,7 +18,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -510,8 +510,8 @@ public class GTUtility {
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
                 for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
-                    if (behaviour instanceof CoverPlaceBehavior) {
-                        return canPlaceCover == null || canPlaceCover.test(((CoverPlaceBehavior) behaviour).coverDefinition);
+                    if (behaviour instanceof CoverItemBehavior coverItemBehavior) {
+                        return canPlaceCover == null || canPlaceCover.test(coverItemBehavior.getDefinition());
                     }
                 }
             }

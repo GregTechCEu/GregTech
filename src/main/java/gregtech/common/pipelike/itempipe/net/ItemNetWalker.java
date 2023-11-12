@@ -1,6 +1,6 @@
 package gregtech.common.pipelike.itempipe.net;
 
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.Cover;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.GTUtility;
@@ -100,16 +100,16 @@ public class ItemNetWalker extends PipeNetWalker<TileEntityItemPipe> {
 
     @Override
     protected boolean isValidPipe(TileEntityItemPipe currentPipe, TileEntityItemPipe neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
-        CoverBehavior thisCover = currentPipe.getCoverableImplementation().getCoverAtSide(faceToNeighbour);
-        CoverBehavior neighbourCover = neighbourPipe.getCoverableImplementation().getCoverAtSide(faceToNeighbour.getOpposite());
+        Cover thisCover = currentPipe.getCoverableImplementation().getCoverAtSide(faceToNeighbour);
+        Cover neighbourCover = neighbourPipe.getCoverableImplementation().getCoverAtSide(faceToNeighbour.getOpposite());
         List<Predicate<ItemStack>> filters = new ArrayList<>();
         if (thisCover instanceof CoverShutter) {
-            filters.add(stack -> !thisCover.isValid() || !((CoverShutter) thisCover).isWorkingEnabled());
+            filters.add(stack ->  !((CoverShutter) thisCover).isWorkingEnabled());
         } else if (thisCover instanceof CoverItemFilter && ((CoverItemFilter) thisCover).getFilterMode() != ItemFilterMode.FILTER_INSERT) {
             filters.add(((CoverItemFilter) thisCover)::testItemStack);
         }
         if (neighbourCover instanceof CoverShutter) {
-            filters.add(stack -> !neighbourCover.isValid() || !((CoverShutter) neighbourCover).isWorkingEnabled());
+            filters.add(stack -> !((CoverShutter) neighbourCover).isWorkingEnabled());
         } else if (neighbourCover instanceof CoverItemFilter && ((CoverItemFilter) neighbourCover).getFilterMode() != ItemFilterMode.FILTER_EXTRACT) {
             filters.add(((CoverItemFilter) neighbourCover)::testItemStack);
         }

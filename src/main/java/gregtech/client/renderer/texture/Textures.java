@@ -186,7 +186,6 @@ public class Textures {
     public static final SimpleOverlayRenderer DETECTOR_ACTIVITY = new SimpleOverlayRenderer("cover/overlay_activity_detector");
     public static final SimpleOverlayRenderer DETECTOR_ACTIVITY_ADVANCED = new SimpleOverlayRenderer("cover/overlay_activity_detector_advanced");
     public static final SimpleOverlayRenderer DETECTOR_MAINTENANCE = new SimpleOverlayRenderer("cover/overlay_maintenance_detector");
-    public static final SimpleOverlayRenderer CRAFTING = new SimpleOverlayRenderer("cover/overlay_crafting");
     public static final SimpleOverlayRenderer SOLAR_PANEL = new SimpleOverlayRenderer("cover/overlay_solar_panel");
     public static final SimpleOverlayRenderer INFINITE_WATER = new SimpleOverlayRenderer("cover/overlay_infinite_water");
     public static final SimpleOverlayRenderer FLUID_VOIDING = new SimpleOverlayRenderer("cover/overlay_fluid_voiding");
