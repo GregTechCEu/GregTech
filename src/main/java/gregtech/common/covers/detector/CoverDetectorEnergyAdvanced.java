@@ -104,9 +104,9 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         );
 
         // invert logic button
-        group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING), "cover.advanced_energy_detector.invert_label"));
+        group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING), "cover.generic.advanced_detector.invert_label"));
         group.addWidget(new CycleButtonWidget(72, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
-                "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
+                "cover.machine_controller.normal", "cover.machine_controller.inverted")
                 .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip")
         );
 
