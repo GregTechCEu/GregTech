@@ -19,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -256,13 +255,12 @@ public class PipeCoverableImplementation implements CoverHolder {
         return holder.getPipePos();
     }
 
-    @Override
     public TileEntity getTileEntityHere() {
         return holder instanceof TileEntity te ? te : getWorld().getTileEntity(getPos());
     }
 
     @Override
-    public @Nullable TileEntity getNeighbor(EnumFacing facing) {
+    public @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
         return holder.getNeighbor(facing);
     }
 

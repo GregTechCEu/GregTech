@@ -2,16 +2,12 @@ package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.fluids.MaterialFluid;
-import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.EntityDamageUtil;
@@ -140,7 +136,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 // Shutter covers return null capability when active, so check here to prevent NPE
                 if (pipeTank == null || checkForPumpCover(cover)) continue;
             } else {
-                ICoverable coverable = neighbor.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, facing.getOpposite());
+                CoverableView coverable = neighbor.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, facing.getOpposite());
                 if (coverable != null) {
                     cover = coverable.getCoverAtSide(facing.getOpposite());
                     if (checkForPumpCover(cover)) continue;
@@ -189,7 +185,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
     }
 
-    private boolean checkForPumpCover(@Nullable CoverBehavior cover) {
+    private boolean checkForPumpCover(@Nullable Cover cover) {
         if (cover instanceof CoverPump coverPump) {
             int pipeThroughput = getNodeData().getThroughput() * 20;
             if (coverPump.getTransferRate() > pipeThroughput) {

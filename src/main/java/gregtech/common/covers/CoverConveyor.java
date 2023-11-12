@@ -86,7 +86,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 ((TileEntityItemPipe) te).resetTransferred();
             }
             // tile neighbour to holder pos at attached side
-            te = getNeighbor(attachedSide);
+            te = getNeighbor(getAttachedSide());
             if (te instanceof TileEntityItemPipe) {
                 ((TileEntityItemPipe) te).resetTransferred();
             }
@@ -493,7 +493,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
         if (getTileEntityHere() instanceof TileEntityItemPipe ||
-                getNeighbor(attachedSide) instanceof TileEntityItemPipe) {
+                getNeighbor(getAttachedSide()) instanceof TileEntityItemPipe) {
             final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
                     () -> distributionMode.ordinal(),
                     val -> setDistributionMode(DistributionMode.values()[val]))

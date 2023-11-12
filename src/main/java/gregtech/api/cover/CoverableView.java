@@ -1,6 +1,7 @@
 package gregtech.api.cover;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,6 +23,12 @@ public interface CoverableView extends ICapabilityProvider {
      * @return the pos of the block containing the CoverableView
      */
     @UnknownNullability BlockPos getPos();
+
+    /**
+     * @param facing the side to get the neighbor at
+     * @return the neighbor tile entity at the side
+     */
+    @UnknownNullability TileEntity getNeighbor(@NotNull EnumFacing facing);
 
     /**
      * Mark the CoverableView as needing to be saved to the chunk

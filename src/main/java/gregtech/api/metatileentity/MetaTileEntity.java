@@ -53,7 +53,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.PooledMutableBlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -75,7 +74,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -177,13 +175,12 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return holder == null ? 0L : holder.getOffsetTimer();
     }
 
-    @Override
     public TileEntity getTileEntityHere() {
         return holder instanceof TileEntity te ? te : getWorld().getTileEntity(getPos());
     }
 
-    @Nullable
-    public TileEntity getNeighbor(EnumFacing facing) {
+    @Override
+    public @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
         return holder != null ? holder.getNeighbor(facing) : null;
     }
 
@@ -1458,7 +1455,6 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return true;
     }
 
-    @Override
     public boolean canRenderMachineGrid(@NotNull ItemStack mainHandStack, @NotNull ItemStack offHandStack) {
         final String[] tools = {ToolClasses.WRENCH, ToolClasses.SCREWDRIVER};
         return ToolHelper.isTool(mainHandStack, tools) ||
