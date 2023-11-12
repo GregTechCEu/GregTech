@@ -273,4 +273,11 @@ public class MaterialFlags {
     public static final MaterialFlag HIGH_SIFTER_OUTPUT = new MaterialFlag.Builder("high_sifter_output")
             .requireProps(PropertyKey.GEM, PropertyKey.ORE)
             .build();
+
+    /**
+     * If this material should generate ore processing items, but no ore block.
+     */
+    public static final MaterialFlag DISABLE_ORE_BLOCK = new MaterialFlag.Builder("disable_ore_block")
+            .requireProps(PropertyKey.ORE)
+            .build();
 }

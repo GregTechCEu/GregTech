@@ -11,12 +11,14 @@ import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.*;
 import gregtech.common.items.MetaItems;
@@ -76,7 +78,7 @@ public class CommonProxy {
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
             for (Material material : materialRegistry) {
-                if (material.hasProperty(PropertyKey.ORE)) {
+                if (material.hasProperty(PropertyKey.ORE) && !material.hasFlag(MaterialFlags.DISABLE_ORE_BLOCK)) {
                     createOreBlock(material);
                 }
 
@@ -285,6 +287,9 @@ public class CommonProxy {
         FusionEUToStartProperty.registerFusionTier(6, "(MK1)");
         FusionEUToStartProperty.registerFusionTier(7, "(MK2)");
         FusionEUToStartProperty.registerFusionTier(8, "(MK3)");
+
+        // Register data stick copying custom scanner logic
+        AssemblyLineManager.registerScannerLogic();
 
         GTLog.logger.info("Registering ore dictionary...");
 

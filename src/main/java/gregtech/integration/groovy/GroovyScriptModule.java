@@ -49,7 +49,7 @@ import java.util.function.Supplier;
         containerID = GTValues.MODID,
         modDependencies = GTValues.MODID_GROOVYSCRIPT,
         name = "GregTech GroovyScript Integration",
-        descriptionKey = "gregtech.modules.grs_integration.description"
+        description = "GroovyScript Integration Module"
 )
 public class GroovyScriptModule extends IntegrationSubmodule {
 

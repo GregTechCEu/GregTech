@@ -4,6 +4,7 @@ import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import net.minecraft.item.ItemStack;
@@ -47,7 +48,7 @@ public class ComputerRecipes {
                 .input(wireFine, Cobalt, 16)
                 .input(wireFine, Copper, 16)
                 .input(wireGtSingle, NiobiumTitanium, 2)
-                .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.HIGH_POWER_CASING, 2))
+                .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.HIGH_POWER_CASING, ConfigHolder.recipes.casingsPerCraft))
                 .duration(100).EUt(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -57,7 +58,7 @@ public class ComputerRecipes {
                 .input(wireFine, Cobalt, 32)
                 .input(wireFine, Copper, 32)
                 .input(wireGtSingle, VanadiumGallium, 2)
-                .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_CASING, 2))
+                .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_CASING, ConfigHolder.recipes.casingsPerCraft))
                 .duration(200).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -76,7 +77,7 @@ public class ComputerRecipes {
                 .input(pipeTinyFluid, StainlessSteel, 16)
                 .input(plate, Copper, 16)
                 .input(wireGtSingle, SamariumIronArsenicOxide)
-                .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_HEAT_VENT, 2))
+                .outputs(COMPUTER_CASING.getItemVariant(BlockComputerCasing.CasingType.COMPUTER_HEAT_VENT, ConfigHolder.recipes.casingsPerCraft))
                 .duration(100).EUt(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
