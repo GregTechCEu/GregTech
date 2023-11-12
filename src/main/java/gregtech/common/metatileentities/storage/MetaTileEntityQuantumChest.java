@@ -22,7 +22,9 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -58,20 +60,24 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
 
+
     private final int tier;
-    private final long maxStoredItems;
+    protected final long maxStoredItems;
+    /** The ItemStack that the Quantum Chest is storing */
     protected ItemStack virtualItemStack = ItemStack.EMPTY;
-    private long itemsStoredInside = 0L;
+    protected long itemsStoredInside = 0L;
     private boolean autoOutputItems;
     private EnumFacing outputFacing;
     private boolean allowInputFromOutputSide = false;
     private static final String NBT_ITEMSTACK = "ItemStack";
     private static final String NBT_PARTIALSTACK = "PartialStack";
     private static final String NBT_ITEMCOUNT = "ItemAmount";
+    private static final String IS_VOIDING = "IsVoiding";
     protected IItemHandler outputItemInventory;
     private ItemHandlerList combinedInventory;
-    private ItemStack previousStack;
-    private long previousStackSize;
+    protected ItemStack previousStack;
+    protected long previousStackSize;
+    protected boolean voiding;
 
     public MetaTileEntityQuantumChest(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
         super(metaTileEntityId);
@@ -122,41 +128,30 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             if (itemsStoredInside < maxStoredItems) {
                 ItemStack inputStack = importItems.getStackInSlot(0);
                 ItemStack outputStack = exportItems.getStackInSlot(0);
-                if (outputStack.isEmpty() || outputStack.isItemEqual(inputStack) && ItemStack.areItemStackTagsEqual(inputStack, outputStack)) {
-                    if (!inputStack.isEmpty() && (virtualItemStack.isEmpty() || areItemStackIdentical(virtualItemStack, inputStack))) {
-                        int amountOfItemsToInsert = (int) Math.min(inputStack.getCount(), maxStoredItems - itemsStoredInside);
-                        if (this.itemsStoredInside == 0L || virtualItemStack.isEmpty()) {
-                            this.virtualItemStack = GTUtility.copy(1, inputStack);
-                        }
-                        inputStack.shrink(amountOfItemsToInsert);
-                        importItems.setStackInSlot(0, inputStack);
-                        this.itemsStoredInside += amountOfItemsToInsert;
+                if (!inputStack.isEmpty() && (virtualItemStack.isEmpty() || areItemStackIdentical(outputStack, inputStack))) {
+                    GTTransferUtils.moveInventoryItems(importItems, combinedInventory);
 
-                        markDirty();
-                    }
+                    markDirty();
                 }
             }
             if (itemsStoredInside > 0 && !virtualItemStack.isEmpty()) {
                 ItemStack outputStack = exportItems.getStackInSlot(0);
                 int maxStackSize = virtualItemStack.getMaxStackSize();
                 if (outputStack.isEmpty() || (areItemStackIdentical(virtualItemStack, outputStack) && outputStack.getCount() < maxStackSize)) {
-                    int amountOfItemsToRemove = (int) Math.min(maxStackSize - outputStack.getCount(), itemsStoredInside);
-                    if (outputStack.isEmpty()) {
-                        outputStack = GTUtility.copy(amountOfItemsToRemove, virtualItemStack);
-                    } else outputStack.grow(amountOfItemsToRemove);
-                    exportItems.setStackInSlot(0, outputStack);
-                    this.itemsStoredInside -= amountOfItemsToRemove;
-                    if (this.itemsStoredInside == 0) {
-                        this.virtualItemStack = ItemStack.EMPTY;
-                    }
+                    GTTransferUtils.moveInventoryItems(itemInventory, exportItems);
 
                     markDirty();
                 }
-
             }
+
             if (isAutoOutputItems()) {
                 pushItemsIntoNearbyHandlers(currentOutputFacing);
             }
+
+            if (this.voiding && !importItems.getStackInSlot(0).isEmpty()) {
+                importItems.setStackInSlot(0, ItemStack.EMPTY);
+            }
+
             if (previousStack == null || !areItemStackIdentical(previousStack, virtualItemStack)) {
                 writeCustomData(UPDATE_ITEM, buf -> buf.writeItemStack(virtualItemStack));
                 previousStack = virtualItemStack;
@@ -168,7 +163,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         }
     }
 
-    private static boolean areItemStackIdentical(ItemStack first, ItemStack second) {
+    protected static boolean areItemStackIdentical(ItemStack first, ItemStack second) {
         return ItemStack.areItemsEqual(first, second) &&
                 ItemStack.areItemStackTagsEqual(first, second);
     }
@@ -176,6 +171,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     protected void addDisplayInformation(List<ITextComponent> textList) {
         textList.add(new TextComponentTranslation("gregtech.machine.quantum_chest.items_stored"));
         textList.add(new TextComponentString(String.format("%,d", itemsStoredInside)));
+        ItemStack export = exportItems.getStackInSlot(0);
+        if (!export.isEmpty()) {
+            textList.add(new TextComponentString(TextFormattingUtil.formatStringWithNewlines(export.getDisplayName(), 14)));
+        }
     }
 
     @Override
@@ -188,17 +187,18 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         if (compound != null) {
             String translationKey = null;
             long count = 0;
+            int exportCount = 0;
             if (compound.hasKey(NBT_ITEMSTACK)) {
-                translationKey = new ItemStack(compound.getCompoundTag(NBT_ITEMSTACK)).getDisplayName();
                 count = compound.getLong(NBT_ITEMCOUNT);
-            } else if (compound.hasKey(NBT_PARTIALSTACK)) {
+            }
+            if (compound.hasKey(NBT_PARTIALSTACK)) {
                 ItemStack tempStack = new ItemStack(compound.getCompoundTag(NBT_PARTIALSTACK));
                 translationKey = tempStack.getDisplayName();
-                count = tempStack.getCount();
+                exportCount = tempStack.getCount();
             }
             if (translationKey != null) {
                 tooltip.add(I18n.format("gregtech.universal.tooltip.item_stored",
-                        I18n.format(translationKey), count));
+                        I18n.format(translationKey), count, exportCount));
             }
         }
     }
@@ -214,22 +214,35 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     protected void initializeInventory() {
         super.initializeInventory();
         this.itemInventory = new QuantumChestItemHandler();
-        this.outputItemInventory = new ItemHandlerProxy(new GTItemStackHandler(this, 0), exportItems);
         List<IItemHandler> temp = new ArrayList<>();
-        temp.add(outputItemInventory);
-        temp.add(itemInventory);
-        combinedInventory = new ItemHandlerList(temp);
+        temp.add(this.exportItems);
+        temp.add(this.itemInventory);
+        this.combinedInventory = new ItemHandlerList(temp);
+        this.outputItemInventory = new ItemHandlerProxy(new GTItemStackHandler(this, 0), combinedInventory);
 
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         return new GTItemStackHandler(this, 1) {
+
+            @Nonnull
+            @Override
+            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+                if (!isItemValid(slot, stack)) return stack;
+                return GTTransferUtils.insertItem(getCombinedInventory(), stack, simulate);
+            }
+
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 NBTTagCompound compound = stack.getTagCompound();
+                ItemStack outStack = getExportItems().getStackInSlot(0);
+                boolean outStackMatch = true;
+                if (!outStack.isEmpty()) {
+                    outStackMatch = areItemStackIdentical(stack, outStack);
+                }
                 if (compound == null) return true;
-                return !(compound.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) || compound.hasKey("Fluid", NBT.TAG_COMPOUND)); //prevents inserting items with NBT to the Quantum Chest
+                return outStackMatch && !(compound.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) || compound.hasKey("Fluid", NBT.TAG_COMPOUND)); //prevents inserting items with NBT to the Quantum Chest
             }
         };
     }
@@ -249,6 +262,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             tagCompound.setTag(NBT_ITEMSTACK, virtualItemStack.writeToNBT(new NBTTagCompound()));
             tagCompound.setLong(NBT_ITEMCOUNT, itemsStoredInside);
         }
+        data.setBoolean(IS_VOIDING, voiding);
         return tagCompound;
     }
 
@@ -264,6 +278,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 this.itemsStoredInside = data.getLong(NBT_ITEMCOUNT);
             }
         }
+        if (data.hasKey(IS_VOIDING)){
+            this.voiding = data.getBoolean(IS_VOIDING);
+        }
     }
 
     @Override
@@ -274,8 +291,13 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             if (!this.virtualItemStack.isEmpty()) {
                 this.itemsStoredInside = itemStack.getLong(NBT_ITEMCOUNT);
             }
-        } else if (itemStack.hasKey(NBT_PARTIALSTACK, NBT.TAG_COMPOUND)) {
+        }
+        if (itemStack.hasKey(NBT_PARTIALSTACK, NBT.TAG_COMPOUND)) {
             exportItems.setStackInSlot(0, new ItemStack(itemStack.getCompoundTag(NBT_PARTIALSTACK)));
+        }
+
+        if (itemStack.getBoolean(IS_VOIDING)) {
+            setVoiding(true);
         }
     }
 
@@ -284,13 +306,18 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.writeItemStackData(itemStack);
         if (!this.virtualItemStack.isEmpty()) {
             itemStack.setTag(NBT_ITEMSTACK, this.virtualItemStack.writeToNBT(new NBTTagCompound()));
-            itemStack.setLong(NBT_ITEMCOUNT, itemsStoredInside + this.exportItems.getStackInSlot(0).getCount());
-        } else {
-            ItemStack partialStack = exportItems.extractItem(0, 64, false);
-            if (!partialStack.isEmpty()) {
-                itemStack.setTag(NBT_PARTIALSTACK, partialStack.writeToNBT(new NBTTagCompound()));
-            }
+            itemStack.setLong(NBT_ITEMCOUNT, itemsStoredInside);
         }
+        ItemStack partialStack = exportItems.extractItem(0, 64, false);
+        if (!partialStack.isEmpty()) {
+            itemStack.setTag(NBT_PARTIALSTACK, partialStack.writeToNBT(new NBTTagCompound()));
+        }
+
+
+        if (this.voiding) {
+            itemStack.setBoolean(IS_VOIDING, true);
+        }
+
         this.virtualItemStack = ItemStack.EMPTY;
         this.itemsStoredInside = 0;
         exportItems.setStackInSlot(0, ItemStack.EMPTY);
@@ -299,18 +326,23 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         Builder builder = ModularUI.defaultBuilder();
-        int leftButtonStartX = 7;
-        builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
+        builder.image(7, 16, 81, 46, GuiTextures.DISPLAY);
         builder.widget(new AdvancedTextWidget(11, 20, this::addDisplayInformation, 0xFFFFFF));
-        return builder.label(6, 6, getMetaFullName())
+        builder.label(6, 6, getMetaFullName())
                 .widget(new SlotWidget(importItems, 0, 90, 17, true, true)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
-                .widget(new SlotWidget(exportItems, 0, 90, 54, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY)).widget(new ToggleButtonWidget(leftButtonStartX, 53, 18, 18,
+                .widget(new SlotWidget(exportItems, 0, 90, 44, true, false)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
+                .widget(new ToggleButtonWidget(7, 64, 18, 18,
                         GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems).shouldUseBaseBackground()
                         .setTooltipText("gregtech.gui.item_auto_output.tooltip"))
-                .bindPlayerInventory(entityPlayer.inventory)
-                .build(getHolder(), entityPlayer);
+                .widget(new ToggleButtonWidget(25, 64, 18, 18,
+                        GuiTextures.BUTTON_ITEM_VOID, this::isVoiding, this::setVoiding)
+                        .setTooltipText("gregtech.gui.item_voiding.tooltip")
+                        .shouldUseBaseBackground())
+                .bindPlayerInventory(entityPlayer.inventory);
+
+        return builder.build(getHolder(), entityPlayer);
     }
 
     public EnumFacing getOutputFacing() {
@@ -347,6 +379,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         buf.writeBoolean(autoOutputItems);
         buf.writeItemStack(virtualItemStack);
         buf.writeLong(itemsStoredInside);
+        buf.writeBoolean(voiding);
     }
 
     @Override
@@ -360,6 +393,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             GTLog.logger.warn("Failed to load item from NBT in a quantum chest at " + this.getPos() + " on initial server/client sync");
         }
         this.itemsStoredInside = buf.readLong();
+        this.voiding = buf.readBoolean();
     }
 
     @Override
@@ -386,6 +420,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             }
         } else if (dataId == UPDATE_ITEM_COUNT) {
             this.itemsStoredInside = buf.readLong();
+        } else if (dataId == UPDATE_IS_VOIDING) {
+            setVoiding(buf.readBoolean());
         }
     }
 
@@ -393,6 +429,18 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         this.autoOutputItems = autoOutputItems;
         if (!getWorld().isRemote) {
             writeCustomData(UPDATE_AUTO_OUTPUT_ITEMS, buf -> buf.writeBoolean(autoOutputItems));
+            markDirty();
+        }
+    }
+
+    protected boolean isVoiding() {
+        return this.voiding;
+    }
+
+    protected void setVoiding(boolean isVoiding) {
+        this.voiding = isVoiding;
+        if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_IS_VOIDING, buf -> buf.writeBoolean(this.voiding));
             markDirty();
         }
     }
@@ -405,9 +453,26 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             }
             return null;
         } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(combinedInventory);
+
+            // for TOP/Waila
+            if (side == null) return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(combinedInventory);
+
+            // try fix being able to insert through output hole when input on output is disabled
+            IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSideItems()) ? outputItemInventory : combinedInventory;
+            if (itemHandler.getSlots() > 0) {
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
+            }
+            return null;
         }
         return super.getCapability(capability, side);
+    }
+
+    public IItemHandler getCombinedInventory() {
+        return this.combinedInventory;
+    }
+
+    public IItemHandler getOutputItemInventory() {
+        return this.outputItemInventory;
     }
 
     @Override
@@ -485,9 +550,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         public ItemStack getStackInSlot(int slot) {
             ItemStack itemStack = MetaTileEntityQuantumChest.this.virtualItemStack;
             long itemsStored = MetaTileEntityQuantumChest.this.itemsStoredInside;
+
             if (itemStack.isEmpty() || itemsStored == 0L) {
                 return ItemStack.EMPTY;
             }
+
             ItemStack resultStack = itemStack.copy();
             resultStack.setCount((int) itemsStored);
             return resultStack;
@@ -505,8 +572,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             if (virtualItemStack.isEmpty() || extractedAmount == 0) {
                 return ItemStack.EMPTY;
             }
+
             ItemStack extractedStack = virtualItemStack.copy();
             extractedStack.setCount(extractedAmount);
+
             if (!simulate) {
                 MetaTileEntityQuantumChest.this.itemsStoredInside -= extractedAmount;
                 if (itemsStoredInside == 0L) {
@@ -523,72 +592,48 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 return ItemStack.EMPTY;
             }
 
+            ItemStack exportItems = getExportItems().getStackInSlot(0);
+
             // If there is a virtualized stack and the stack to insert does not match it, do not insert anything
             if (itemsStoredInside > 0L &&
-                    !virtualItemStack.isEmpty() &&
-                    !areItemStackIdentical(virtualItemStack, insertedStack)) {
+                    !virtualItemStack.isEmpty() && (
+                    !areItemStackIdentical(virtualItemStack, insertedStack) ||
+                    !areItemStackIdentical(exportItems, insertedStack))) {
                 return insertedStack;
             }
 
-            // The Quantum Chest automatically populates the export slot, so we need to check what is contained in it
-            ItemStack exportItems = getExportItems().getStackInSlot(0);
+            ItemStack remainingStack = insertedStack.copy();
 
-            // If the item being inserted does not match the item in the export slot, insert into the input slot and do not virtualize
-            if (!areItemStackIdentical(insertedStack, exportItems)) {
-                return MetaTileEntityQuantumChest.this.importItems.insertItem(0, insertedStack, simulate);
-            }
+            // Virtualize the items
+            long amountLeftInChest = maxStoredItems - itemsStoredInside;
+            int maxPotentialVirtualizedAmount = insertedStack.getCount();
 
-            int spaceInExport = Math.abs(exportItems.getMaxStackSize() - exportItems.getCount());
+            int actualVirtualizedAmount = (int) Math.min(maxPotentialVirtualizedAmount, amountLeftInChest);
 
-            // Attempt to insert into the export slot first
-            int amountCanInsertIntoExport = Math.min(spaceInExport, insertedStack.getCount());
-
-            if (insertedStack.getCount() <= amountCanInsertIntoExport) {
-                // If all the items can fit into export slot, store it there
-                return MetaTileEntityQuantumChest.this.exportItems.insertItem(0, insertedStack, simulate);
-            }
-
-            // Have more items than would fit into the export slot, so virtualize the remainder
-            long amountLeftInChest = virtualItemStack.isEmpty() ? maxStoredItems : maxStoredItems - itemsStoredInside;
-
-            int maxVirtualAmount = insertedStack.getCount() - amountCanInsertIntoExport;
-            int virtualizedAmount = (int) Math.min(maxVirtualAmount, amountLeftInChest);
-
-            ItemStack remainingStack = ItemStack.EMPTY;
-
-            // If we are at the maximum that the chest can hold, the remainder stack has all items that could not fit
-            if (virtualizedAmount < maxVirtualAmount) {
-                remainingStack = insertedStack.copy();
-                remainingStack.setCount(insertedStack.getCount() - virtualizedAmount);
-            }
+            // if there are any items left over, shrink it by the amount virtualized,
+            // which should always be between 0 and the amount left in chest
+            remainingStack.shrink(actualVirtualizedAmount);
 
             if (!simulate) {
-                if (remainingStack.isEmpty()) {
-                    // inserted everything
+                if (actualVirtualizedAmount > 0) {
                     if (virtualItemStack.isEmpty()) {
-                        // have no virtual stack, so set it to the inserted stack
                         ItemStack virtualStack = insertedStack.copy();
-                        virtualStack.setCount(virtualizedAmount);
-                        MetaTileEntityQuantumChest.this.virtualItemStack = virtualStack;
-                        MetaTileEntityQuantumChest.this.itemsStoredInside = virtualizedAmount;
-                    } else {
-                        // update the virtualized total count
-                        MetaTileEntityQuantumChest.this.itemsStoredInside += virtualizedAmount;
-                    }
 
-                    if (amountCanInsertIntoExport != 0) {
-                        // fill the export slot as much as possible
-                        ItemStack insertedStackCopy = insertedStack.copy();
-                        insertedStackCopy.setCount(amountCanInsertIntoExport);
-                        MetaTileEntityQuantumChest.this.exportItems.insertItem(0, insertedStackCopy, simulate);
+                        // set the virtual stack to 1, since it's mostly for display
+                        virtualStack.setCount(1);
+                        MetaTileEntityQuantumChest.this.virtualItemStack = virtualStack;
+                        MetaTileEntityQuantumChest.this.itemsStoredInside = actualVirtualizedAmount;
+                    } else {
+                        MetaTileEntityQuantumChest.this.itemsStoredInside += actualVirtualizedAmount;
                     }
-                } else {
-                    // could not fit everything, but still need to update the virtualized total count
-                    MetaTileEntityQuantumChest.this.itemsStoredInside += virtualizedAmount;
                 }
             }
 
-            return remainingStack;
+            if (isVoiding() && remainingStack.getCount() > 0) {
+                return ItemStack.EMPTY;
+            } else {
+                return remainingStack;
+            }
         }
     }
 

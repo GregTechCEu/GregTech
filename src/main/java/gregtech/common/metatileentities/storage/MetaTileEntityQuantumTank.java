@@ -73,9 +73,9 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     protected IFluidHandler outputFluidInventory;
 
     @Nullable
-    private FluidStack previousFluid;
-    private boolean locked;
-    private boolean voiding;
+    protected FluidStack previousFluid;
+    protected boolean locked;
+    protected boolean voiding;
     @Nullable
     private FluidStack lockedFluid;
 
@@ -135,7 +135,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     // should only be called on the server
-    private void updatePreviousFluid(FluidStack currentFluid) {
+    protected void updatePreviousFluid(FluidStack currentFluid) {
         previousFluid = currentFluid == null ? null : currentFluid.copy();
         writeCustomData(UPDATE_FLUID, buf -> buf.writeCompoundTag(currentFluid == null ? null : currentFluid.writeToNBT(new NBTTagCompound())));
     }
@@ -337,7 +337,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                         .setTooltipText("gregtech.gui.fluid_lock.tooltip")
                         .shouldUseBaseBackground())
                 .widget(new ToggleButtonWidget(43, 64, 18, 18,
-                        GuiTextures.BUTTON_VOID, this::isVoiding, this::setVoiding)
+                        GuiTextures.BUTTON_FLUID_VOID, this::isVoiding, this::setVoiding)
                         .setTooltipText("gregtech.gui.fluid_voiding.tooltip")
                         .shouldUseBaseBackground())
                 .bindPlayerInventory(entityPlayer.inventory)
@@ -440,6 +440,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 stack.amount = Math.min(buf.readInt(), fluidTank.getCapacity());
                 scheduleRenderUpdate();
             }
+        } else if (dataId == UPDATE_IS_VOIDING) {
+            setVoiding(buf.readBoolean());
         }
     }
 
@@ -455,6 +457,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         buf.writeBoolean(autoOutputFluids);
         buf.writeBoolean(locked);
         buf.writeCompoundTag(fluidTank.getFluid() == null ? null : fluidTank.getFluid().writeToNBT(new NBTTagCompound()));
+        buf.writeBoolean(voiding);
     }
 
     @Override
@@ -476,6 +479,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         } catch (IOException e) {
             GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at " + this.getPos() + " on initial server/client sync");
         }
+        this.voiding = buf.readBoolean();
     }
 
     public void setOutputFacing(EnumFacing outputFacing) {
@@ -559,11 +563,11 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         }
     }
 
-    private boolean isLocked() {
+    protected boolean isLocked() {
         return this.locked;
     }
 
-    private void setLocked(boolean locked) {
+    protected void setLocked(boolean locked) {
         if (this.locked == locked) return;
         this.locked = locked;
         if (!getWorld().isRemote) {
@@ -577,13 +581,14 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.lockedFluid = null;
     }
 
-    private boolean isVoiding() {
+    protected boolean isVoiding() {
         return voiding;
     }
 
-    private void setVoiding(boolean isPartialVoid) {
+    protected void setVoiding(boolean isPartialVoid) {
         this.voiding = isPartialVoid;
         if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_IS_VOIDING, buf -> buf.writeBoolean(this.voiding));
             markDirty();
         }
     }
