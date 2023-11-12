@@ -460,13 +460,6 @@ public class MachineRecipeLoader {
                 .EUt(16).duration(100)
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(WORKBENCH.getStackForm())
-                .input(plate, material)
-                .outputs(COVER_CRAFTING.getStackForm())
-                .EUt(16).duration(100)
-                .buildAndRegister();
-
         FluidStack solder = SolderingAlloy.getFluid(L / 2);
 
         ASSEMBLER_RECIPES.recipeBuilder()

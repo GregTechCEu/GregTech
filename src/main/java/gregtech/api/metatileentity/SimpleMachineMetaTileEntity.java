@@ -9,8 +9,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.impl.*;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.Cover;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
@@ -44,6 +43,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -134,20 +134,16 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     }
 
     @Override
-    public boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition, EntityPlayer player) {
-        boolean coverPlaced = super.placeCoverOnSide(side, itemStack, coverDefinition, player);
-        if (coverPlaced) {
-            CoverBehavior cover = getCoverAtSide(side);
-            if (cover != null && cover.shouldCoverInteractWithOutputside()) {
-                if (getOutputFacingItems() == side) {
-                    setAllowInputFromOutputSideItems(true);
-                }
-                if (getOutputFacingFluids() == side) {
-                    setAllowInputFromOutputSideFluids(true);
-                }
+    public void addCover(@NotNull EnumFacing side, @NotNull Cover cover) {
+        super.addCover(side, cover);
+        if (cover.canInteractWithOutputSide()) {
+            if (getOutputFacingItems() == side) {
+                setAllowInputFromOutputSideItems(true);
+            }
+            if (getOutputFacingFluids() == side) {
+                setAllowInputFromOutputSideFluids(true);
             }
         }
-        return coverPlaced;
     }
 
     @Override

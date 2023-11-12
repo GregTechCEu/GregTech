@@ -79,14 +79,14 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
         buf.writeVarInt(getPipeBlock().getMaterialRegistry().getIDForObject(pipeMaterial));
+        super.writeInitialSyncData(buf);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
         this.pipeMaterial = getPipeBlock().getMaterialRegistry().getObjectById(buf.readVarInt());
+        super.receiveInitialSyncData(buf);
     }
 
     @Override

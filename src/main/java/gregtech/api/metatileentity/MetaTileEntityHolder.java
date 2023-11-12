@@ -12,7 +12,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.Cover;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTLog;
@@ -386,8 +386,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public boolean shouldRenderInPass(int pass) {
         if (metaTileEntity == null) return false;
         for (EnumFacing side : EnumFacing.VALUES) {
-            CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
-            if (cover instanceof IFastRenderMetaTileEntity && ((IFastRenderMetaTileEntity) cover).shouldRenderInPass(pass)) {
+            Cover cover = metaTileEntity.getCoverAtSide(side);
+            if (cover instanceof IFastRenderMetaTileEntity fastRender && fastRender.shouldRenderInPass(pass)) {
                 return true;
             }
         }
@@ -422,7 +422,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             return true;
         }
         for (EnumFacing side : EnumFacing.VALUES) {
-            CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
+            Cover cover = metaTileEntity.getCoverAtSide(side);
             if (cover instanceof IFastRenderMetaTileEntity) {
                 return true;
             }

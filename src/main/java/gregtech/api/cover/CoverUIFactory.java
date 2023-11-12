@@ -12,11 +12,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
-public class CoverBehaviorUIFactory extends UIFactory<CoverBehavior> {
+public final class CoverUIFactory extends UIFactory<CoverWithUI> {
 
-    public static final CoverBehaviorUIFactory INSTANCE = new CoverBehaviorUIFactory();
+    public static final CoverUIFactory INSTANCE = new CoverUIFactory();
 
-    private CoverBehaviorUIFactory() {
+    private CoverUIFactory() {
     }
 
     public void init() {
@@ -24,25 +24,28 @@ public class CoverBehaviorUIFactory extends UIFactory<CoverBehavior> {
     }
 
     @Override
-    protected ModularUI createUITemplate(CoverBehavior holder, EntityPlayer entityPlayer) {
-        return ((CoverWithUI) holder).createUI(entityPlayer);
+    protected ModularUI createUITemplate(CoverWithUI holder, EntityPlayer entityPlayer) {
+        return holder.createUI(entityPlayer);
     }
 
     @Override
-    protected CoverBehavior readHolderFromSyncData(PacketBuffer syncData) {
+    protected CoverWithUI readHolderFromSyncData(PacketBuffer syncData) {
         BlockPos blockPos = syncData.readBlockPos();
         EnumFacing attachedSide = EnumFacing.VALUES[syncData.readByte()];
         TileEntity tileEntity = Minecraft.getMinecraft().world.getTileEntity(blockPos);
-        ICoverable coverable = tileEntity == null ? null : tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, attachedSide);
+        CoverableView coverable = tileEntity == null ? null : tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, attachedSide);
         if (coverable != null) {
-            return coverable.getCoverAtSide(attachedSide);
+            Cover cover = coverable.getCoverAtSide(attachedSide);
+            if (cover instanceof CoverWithUI coverWithUI) {
+                return coverWithUI;
+            }
         }
         return null;
     }
 
     @Override
-    protected void writeHolderToSyncData(PacketBuffer syncData, CoverBehavior holder) {
-        syncData.writeBlockPos(holder.coverHolder.getPos());
-        syncData.writeByte(holder.attachedSide.ordinal());
+    protected void writeHolderToSyncData(PacketBuffer syncData, CoverWithUI cover) {
+        syncData.writeBlockPos(cover.getPos());
+        syncData.writeByte(cover.getAttachedSide().ordinal());
     }
 }

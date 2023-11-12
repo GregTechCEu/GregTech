@@ -1257,6 +1257,9 @@ cover.voiding.tooltip=§cWARNING!§7 Setting this to "Enabled" means that fluids
 cover.voiding.message.disabled=Voiding Cover Disabled
 cover.voiding.message.enabled=Voiding Cover Enabled
 
+cover.shutter.message.disabled=Shutter Cover Disabled
+cover.shutter.message.enabled=Shutter Cover Enabled
+
 cover.smart_item_filter.title=Smart Item Filter
 cover.smart_item_filter.filtering_mode.electrolyzer=Electrolyzer
 cover.smart_item_filter.filtering_mode.centrifuge=Centrifuge

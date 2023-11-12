@@ -1,7 +1,8 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.capability.IPropertyFluidFilter;
+import gregtech.api.cover.Cover;
 import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.AttributedFluid;
@@ -128,7 +129,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 continue;
 
             IFluidHandler pipeTank = tank;
-            CoverBehavior cover = getCoverableImplementation().getCoverAtSide(facing);
+            Cover cover = getCoverableImplementation().getCoverAtSide(facing);
 
             // pipeTank should only be determined by the cover attached to the actual pipe
             if (cover != null) {
