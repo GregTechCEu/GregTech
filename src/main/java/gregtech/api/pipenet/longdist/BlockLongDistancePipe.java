@@ -57,7 +57,8 @@ public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
                     return;
                 }
                 if (!network.getPipeType().isValidPart(networkPart)) {
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("NetworkPart " + networkPart + " pipeType " +
+                            network.getPipeType() + " is not valid for network type " + network.getPipeType());
                 }
                 ILDEndpoint endpoint = ILDEndpoint.tryGet(worldIn, offsetPos);
                 // only count the network as connected if it's not an endpoint or the endpoints input or output face is connected
