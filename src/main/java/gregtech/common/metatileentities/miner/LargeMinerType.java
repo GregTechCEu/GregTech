@@ -24,4 +24,8 @@ public interface LargeMinerType {
     @SideOnly(Side.CLIENT)
     @Nonnull
     ICubeRenderer getBaseTexture(@Nullable IMultiblockPart sourcePart);
+
+    @SideOnly(Side.CLIENT)
+    @Nonnull
+    MiningPipeModel getMiningPipeModel();
 }

@@ -51,7 +51,7 @@ public interface MiningArea {
     AxisAlignedBB getRenderBoundingBox();
 
     default boolean shouldRenderInPass(int pass) {
-        return pass == IFastRenderMetaTileEntity.RENDER_PASS_NORMAL;
+        return pass == IFastRenderMetaTileEntity.RENDER_PASS_TRANSLUCENT;
     }
 
     /**

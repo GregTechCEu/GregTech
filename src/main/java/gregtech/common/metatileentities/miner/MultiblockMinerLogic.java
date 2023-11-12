@@ -177,7 +177,6 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
 
     @Override
     public void readFromNBT(@Nonnull NBTTagCompound data) {
-        super.readFromNBT(data);
         this.chunkMode = data.getBoolean("chunkMode") || data.getBoolean("isChunkMode");
         this.silkTouchMode = data.getBoolean("silkTouch") || data.getBoolean("isSilkTouchMode");
         this.currentChunkDiameter = data.hasKey("currentChunkDiameter", Constants.NBT.TAG_INT) ?
@@ -186,5 +185,6 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
         this.yLimit = Math.max(0, data.getInteger("yLimit"));
         this.repeat = data.getBoolean("repeat");
         this.replaceOreWithAir = data.getBoolean("replaceWithAir");
+        super.readFromNBT(data);
     }
 }

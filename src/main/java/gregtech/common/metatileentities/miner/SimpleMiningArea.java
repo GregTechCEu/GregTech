@@ -1,16 +1,18 @@
 package gregtech.common.metatileentities.miner;
 
-import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import static gregtech.api.metatileentity.IFastRenderMetaTileEntity.RENDER_PASS_TRANSLUCENT;
 
 /**
  * Simple implementation of {@link MiningArea}. Defines cube-shaped mining area with simple iteration logic.
@@ -91,12 +93,9 @@ public class SimpleMiningArea implements MiningArea {
     @Override
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(@Nonnull MetaTileEntity mte, double x, double y, double z, float partialTicks) {
-        MinerRenderHelper.renderAreaPreview(this.getRenderBoundingBox(), mte.getPos(), x, y, z);
-    }
-
-    @Override
-    public boolean shouldRenderInPass(int pass) {
-        return pass == IFastRenderMetaTileEntity.RENDER_PASS_TRANSLUCENT;
+        if (MinecraftForgeClient.getRenderPass() == RENDER_PASS_TRANSLUCENT) {
+            MinerRenderHelper.renderAreaPreview(this.getRenderBoundingBox(), mte.getPos(), x, y, z);
+        }
     }
 
     @Nonnull

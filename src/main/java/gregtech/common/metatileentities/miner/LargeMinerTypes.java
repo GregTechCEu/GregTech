@@ -51,6 +51,16 @@ public enum LargeMinerTypes implements LargeMinerType {
 
     @Nonnull
     @Override
+    public MiningPipeModel getMiningPipeModel() {
+        return switch (this) {
+            case STEEL -> MiningPipeModels.STEEL;
+            case TITANIUM -> MiningPipeModels.TITANIUM;
+            case TUNGSTEN_STEEL -> MiningPipeModels.TUNGSTEN_STEEL;
+        };
+    }
+
+    @Nonnull
+    @Override
     @SideOnly(Side.CLIENT)
     public ICubeRenderer getFrontOverlay() {
         return switch (this) {

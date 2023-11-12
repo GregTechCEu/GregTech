@@ -1,12 +1,7 @@
 package gregtech.common.metatileentities.miner;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.texture.Textures;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,11 +10,11 @@ import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.culling.ClippingHelperImpl;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
+import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
@@ -30,11 +25,11 @@ public class MinerRenderHelper {
     private MinerRenderHelper() {}
 
     public static final ResourceLocation MINER_AREA_PREVIEW_TEXTURE = GTUtility.gregtechId("textures/fx/miner_area_preview.png");
-    private static final Cuboid6 PIPE_CUBOID = new Cuboid6(4 / 16.0, 0.0, 4 / 16.0, 12 / 16.0, 1.0, 12 / 16.0);
 
     private static final long TEXTURE_WRAP_INTERVAL_NANOSECONDS = 3_000_000_000L;
 
     private static final ClippingHelperImpl clippingHelper = new ClippingHelperImpl();
+
     private static final Vector3f[] nearPlaneVectors = {
             new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f()
     };
@@ -46,17 +41,49 @@ public class MinerRenderHelper {
     private static final SATTestResult sat = new SATTestResult();
     private static final Vector3f vec1 = new Vector3f(), vec2 = new Vector3f();
 
-    /**
-     * Draws mining pipe with given length. This method modifies {@code translation} argument's state.
-     */
-    public static void renderPipe(@Nonnull ICubeRenderer pipeRenderer, int pipeLength,
-                                  @Nonnull CCRenderState renderState, @Nonnull Matrix4 translation,
-                                  @Nonnull IVertexOperation[] pipeline) {
-        Textures.PIPE_IN_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
+    private static int prevFrameIndex = -1;
+
+    private static void updateFrustum() {
+        int index = Minecraft.getMinecraft().frameTimer.getIndex();
+        if (prevFrameIndex == index) return;
+        prevFrameIndex = index;
+        clippingHelper.init();
+    }
+
+    public static void renderPipe(double x, double y, double z,
+                                  @Nonnull World world, @Nonnull BlockPos pos,
+                                  int pipeLength, @Nonnull MiningPipeModel miningPipeModel) {
+        if (pipeLength <= 0) return;
+        updateFrustum();
+
+        Minecraft mc = Minecraft.getMinecraft();
+        MutableBlockPos mpos = new MutableBlockPos(pos);
+        Tessellator t = Tessellator.getInstance();
+        BufferBuilder buffer = t.getBuffer();
+
+        GlStateManager.disableLighting();
+        GlStateManager.shadeModel(Minecraft.isAmbientOcclusionEnabled() ? GL11.GL_SMOOTH : GL11.GL_FLAT);
+        GlStateManager.bindTexture(mc.getTextureMapBlocks().getGlTextureId());
+        buffer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
+        mpos.setY(mpos.getY());
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         for (int i = 0; i < pipeLength; i++) {
-            translation.translate(0.0, -1.0, 0.0);
-            pipeRenderer.render(renderState, translation, pipeline, PIPE_CUBOID);
+            mpos.setY(mpos.getY() - 1);
+            // me epicly dodging AABB allocations by plugging in primitive values directly (very epic)
+            if (!clippingHelper.isBoxInFrustum(
+                    mpos.getX() + .25 + x - pos.getX(), mpos.getY() + y - pos.getY(), mpos.getZ() + .25 + z - pos.getZ(),
+                    mpos.getX() + .75 + x - pos.getX(), mpos.getY() + 1 + y - pos.getY(), mpos.getZ() + .75 + z - pos.getZ())) {
+                continue;
+            }
+
+            IBlockState state = world.getBlockState(mpos);
+            mc.blockRenderDispatcher.getBlockModelRenderer().renderModel(world,
+                    i == (pipeLength - 1) ? miningPipeModel.getBottomModel() : miningPipeModel.getBaseModel(),
+                    state, mpos, buffer, false);
         }
+        buffer.setTranslation(0, 0, 0);
+        t.draw();
+        GlStateManager.enableLighting();
     }
 
     /**
@@ -77,6 +104,8 @@ public class MinerRenderHelper {
         double minY = Math.max(0, box.minY) + y - pos.getY(), maxY = box.maxY + y - pos.getY();
         double minZ = box.minZ + z - pos.getZ(), maxZ = box.maxZ + z - pos.getZ();
 
+        boolean isBoxClippingThroughCamera = isBoxClippingThroughCamera(minX, maxX, minY, maxY, minZ, maxZ);
+
         // texture UVs
         double texOffset = (System.nanoTime() % TEXTURE_WRAP_INTERVAL_NANOSECONDS) / (double) (TEXTURE_WRAP_INTERVAL_NANOSECONDS);
 
@@ -93,18 +122,6 @@ public class MinerRenderHelper {
         double vMin = vMax - dz;
         double vMin2 = vMin - dy;
         double vMin3 = vMin2 + dz;
-
-        Entity renderViewEntity = Minecraft.getMinecraft().getRenderViewEntity();
-        double eyeHeight = renderViewEntity != null ? renderViewEntity.getEyeHeight() : 0; // why :(((((
-        // the check is not perfect, there's a small but noticeable area around outer parts where the algo
-        // doesn't detect the box clipping through the camera
-        // but I have already spent significant portion of my live implementing this alone so I'll just eat my loss and
-        // inflate the box a bit to compensate
-        final double expand = 3 / 16.0;
-        boolean isBoxClippingThroughCamera = isBoxClippingThroughCamera(
-                minX - expand, maxX + expand,
-                minY - eyeHeight * 2 - expand, maxY - eyeHeight * 2 + expand,
-                minZ - expand, maxZ + expand);
 
         GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
         GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
@@ -189,7 +206,7 @@ public class MinerRenderHelper {
     public static boolean isBoxClippingThroughCamera(double minX, double maxX,
                                                      double minY, double maxY,
                                                      double minZ, double maxZ) {
-        clippingHelper.init();
+        updateFrustum();
 
         // obtain 4 vertices of near plane rectangle
         // just halt and return false as a fallback, theoretically possible if view matrix got somehow borked
@@ -254,7 +271,7 @@ public class MinerRenderHelper {
 
         // idk
         if (!Float.isFinite(x) || !Float.isFinite(y) || !Float.isFinite(z)) return false;
-        nearPlaneVectors[vectorIndex].set(x, y, z);
+        nearPlaneVectors[vectorIndex].set(-x, -y, -z);
         return true;
     }
 

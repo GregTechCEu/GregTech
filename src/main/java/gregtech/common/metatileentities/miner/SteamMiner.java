@@ -96,11 +96,11 @@ public class SteamMiner extends MetaTileEntity implements Miner, IControllable, 
         Textures.STEAM_CASING_BRONZE.render(renderState, translation, colouredPipeline);
         // TODO replace top with vent, in standalone mod
         Textures.MINER_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), minerLogic.isActive(), minerLogic.isWorkingEnabled());
-        MinerRenderHelper.renderPipe(Textures.BRONZE_PLATED_BRICKS, this.minerLogic.getPipeLength(), renderState, translation, pipeline);
     }
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
+        MinerRenderHelper.renderPipe(x, y, z, getWorld(), getPos(), this.minerLogic.getPipeLength(), MiningPipeModels.BRONZE);
         MiningArea previewArea = this.minerLogic.getPreviewArea();
         if (previewArea != null) previewArea.renderMetaTileEntity(this, x, y, z, partialTicks);
     }
@@ -113,12 +113,12 @@ public class SteamMiner extends MetaTileEntity implements Miner, IControllable, 
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        MiningArea previewArea = this.minerLogic.getPreviewArea();
-        return previewArea != null ? previewArea.getRenderBoundingBox() : MinerUtil.EMPTY_AABB;
+        return this.minerLogic.getRenderBoundingBox();
     }
 
     @Override
     public boolean shouldRenderInPass(int pass) {
+        if (pass == RENDER_PASS_NORMAL) return true;
         MiningArea previewArea = this.minerLogic.getPreviewArea();
         return previewArea != null && previewArea.shouldRenderInPass(pass);
     }

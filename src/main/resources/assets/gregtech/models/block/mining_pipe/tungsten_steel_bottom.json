@@ -1,0 +1,6 @@
+{
+  "parent": "gregtech:block/mining_pipe/base_bottom",
+  "textures": {
+    "texture": "gregtech:blocks/casings/solid/machine_casing_robust_tungstensteel"
+  }
+}

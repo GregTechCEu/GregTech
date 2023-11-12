@@ -36,6 +36,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -86,11 +87,13 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         Textures.MINER_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), minerLogic.isActive(), minerLogic.isWorkingEnabled());
-        MinerRenderHelper.renderPipe(Textures.SOLID_STEEL_CASING, this.minerLogic.getPipeLength(), renderState, translation, pipeline);
     }
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
+        if (MinecraftForgeClient.getRenderPass() == RENDER_PASS_NORMAL) {
+            MinerRenderHelper.renderPipe(x, y, z, getWorld(), getPos(), this.minerLogic.getPipeLength(), MiningPipeModels.STEEL);
+        }
         MiningArea previewArea = this.minerLogic.getPreviewArea();
         if (previewArea != null) previewArea.renderMetaTileEntity(this, x, y, z, partialTicks);
     }
@@ -103,12 +106,12 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        MiningArea previewArea = this.minerLogic.getPreviewArea();
-        return previewArea != null ? previewArea.getRenderBoundingBox() : MinerUtil.EMPTY_AABB;
+        return this.minerLogic.getRenderBoundingBox();
     }
 
     @Override
     public boolean shouldRenderInPass(int pass) {
+        if (pass == RENDER_PASS_NORMAL) return true;
         MiningArea previewArea = this.minerLogic.getPreviewArea();
         return previewArea != null && previewArea.shouldRenderInPass(pass);
     }
