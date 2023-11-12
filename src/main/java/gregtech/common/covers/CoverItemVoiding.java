@@ -98,8 +98,8 @@ public class CoverItemVoiding extends CoverConveyor {
     public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         this.isWorkingAllowed = !this.isWorkingAllowed;
         if (!playerIn.world.isRemote) {
-            playerIn.sendMessage(new TextComponentTranslation(isWorkingEnabled() ?
-                    "cover.voiding.message.enabled" : "cover.voiding.message.disabled"));
+            playerIn.sendStatusMessage(new TextComponentTranslation(isWorkingEnabled() ?
+                    "cover.voiding.message.enabled" : "cover.voiding.message.disabled"), true);
         }
         return EnumActionResult.SUCCESS;
     }

@@ -353,12 +353,12 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         if (!getWorld().isRemote) {
             if (isAttached) {
                 if (this.autoCollapse) {
-                    playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse_true"));
+                    playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse_true"), true);
                 } else {
-                    playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse_false"));
+                    playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse_false"), true);
                 }
             } else {
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse.error"));
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse.error"), true);
             }
         }
         return true;
