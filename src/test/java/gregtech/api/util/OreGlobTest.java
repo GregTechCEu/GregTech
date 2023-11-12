@@ -1,5 +1,6 @@
 package gregtech.api.util;
 
+import gregtech.Bootstrap;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobCompileResult;
 import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
@@ -9,6 +10,7 @@ import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static gregtech.common.covers.filter.oreglob.node.OreGlobNodes.*;
@@ -18,6 +20,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class OreGlobTest {
 
     private static final boolean LOG = false;
+
+    @BeforeAll
+    public static void bootstrap() {
+        Bootstrap.perform();
+    }
 
     @Test
     public void compileTest() {
@@ -92,7 +99,9 @@ public class OreGlobTest {
                         match("c")
                 ));
 
-        assertCompile("!()", something());
+        assertCompile("?*", nonempty());
+        assertCompile("!()", nonempty());
+        assertCompile("(?)(*)", nonempty());
         assertCompile("!(logical) !(inversions) !(are) !(confusing) !(as) !(hell)", everything());
         assertCompile("!(x) !(x)", not(match("x")));
         assertCompile("!(x) !(y)",
@@ -125,7 +134,7 @@ public class OreGlobTest {
         assertCompile("(() | !())", everything());
 
         assertCompile("(a | b | c | d | e | f | g | *)", everything());
-        assertCompile("(a | b | c | d | e | f | g | !())", something());
+        assertCompile("(a | b | c | d | e | f | g | !())", nonempty());
 
         assertCompile("((a | ()) | ())",
                 or(
@@ -292,7 +301,7 @@ public class OreGlobTest {
     }
 
     private static void assertMatch(OreGlob expr, String input, boolean expectedResult) {
-        assertThat(input, new TypeSafeMatcher<String>(String.class) {
+        assertThat(input, new TypeSafeMatcher<>(String.class) {
 
             @Override
             public void describeTo(Description description) {
@@ -318,7 +327,7 @@ public class OreGlobTest {
 
     private static void assertCompile(String expression, OreGlobNode result) {
         OreGlob glob = compile(expression);
-        assertThat(glob, new TypeSafeMatcher<OreGlob>(OreGlob.class) {
+        assertThat(glob, new TypeSafeMatcher<>(OreGlob.class) {
 
             @Override
             public void describeTo(Description description) {
@@ -345,7 +354,7 @@ public class OreGlobTest {
 
     private static void assertReport(String expression, boolean error) {
         OreGlobCompileResult result = new OreGlobParser(expression).compile();
-        assertThat(result, new TypeSafeMatcher<OreGlobCompileResult>(OreGlobCompileResult.class) {
+        assertThat(result, new TypeSafeMatcher<>(OreGlobCompileResult.class) {
 
             @Override
             public void describeTo(Description description) {
