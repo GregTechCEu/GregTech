@@ -112,8 +112,7 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
             return;
 
         // Get selected cape button
-        Widget button = ((WidgetGroup) this.getContainedWidgets(false).get(this.selectedY))
-                .getContainedWidgets(false).get(this.selectedX);
+        Widget button = ((WidgetGroup) this.widgets.get(this.selectedY)).widgets.get(this.selectedX);
 
         drawSelectionOverlay(button.toRectangleBox().x - 6, button.toRectangleBox().y - 6,
                 button.toRectangleBox().width + 12, button.toRectangleBox().height + 12); // Add a bit of margin

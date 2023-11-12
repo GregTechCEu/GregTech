@@ -36,6 +36,7 @@ public class CapesRegistry {
     private static final Map<UUID, List<ResourceLocation>> UNLOCKED_CAPES = new HashMap<>();
     private static final Map<UUID, ResourceLocation> WORN_CAPES = new HashMap<>();
     private static final Map<Advancement, ResourceLocation> CAPE_ADVANCEMENTS = new HashMap<>();
+    private static final Set<ResourceLocation> FREE_CAPES = new HashSet<>();
 
     public static void registerDevCapes() {
         unlockCape(UUID.fromString("2fa297a6-7803-4629-8360-7059155cf43e"), Textures.GREGTECH_CAPE_TEXTURE); // KilaBash
@@ -54,6 +55,7 @@ public class CapesRegistry {
         unlockCape(UUID.fromString("e6e784af-bd04-46ad-8141-47b8b9102cb9"), Textures.GREGTECH_CAPE_TEXTURE); // Tictim
         unlockCape(UUID.fromString("1184eb79-5831-4f7d-b8f4-3a46fccf7a1d"), Textures.GREGTECH_CAPE_TEXTURE); // screret
         unlockCape(UUID.fromString("88374b6a-4710-46cd-bb04-a1580905a918"), Textures.GREGTECH_CAPE_TEXTURE); // Ghzdude
+        unlockCape(UUID.fromString("30628e4c-f7ac-427f-8ca7-aab2c0572be8"), Textures.GREGTECH_CAPE_TEXTURE); // TheLastKumquat
         save();
     }
 
@@ -148,6 +150,19 @@ public class CapesRegistry {
         for (Tuple<ResourceLocation, ResourceLocation> tuple : ctRegisterCapes) {
             registerCape(tuple.getFirst(), tuple.getSecond(), world);
         }
+        FREE_CAPES.addAll(ctFreeCapes);
+        FREE_CAPES.add(Textures.ACE_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.AGENDER_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.AROMANTIC_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.BI_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.GENDERFLUID_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.GENDERQUEER_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.INTERSEX_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.LESBIAN_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.NONBINARY_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.PAN_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.RAINBOW_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.TRANS_CAPE_TEXTURE);
     }
 
     /**
@@ -177,12 +192,19 @@ public class CapesRegistry {
         }
     }
 
-    private static List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<>();
+    private static final List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<>();
+    private static final List<ResourceLocation> ctFreeCapes = new ArrayList<>();
 
     @Optional.Method(modid = GTValues.MODID_CT)
     @ZenMethod
     public static void registerCape(String advancement, String cape) {
         ctRegisterCapes.add(new Tuple<>(new ResourceLocation(advancement), new ResourceLocation(cape)));
+    }
+
+    @Optional.Method(modid = GTValues.MODID_CT)
+    @ZenMethod
+    public static void registerFreeCape(String cape) {
+        ctFreeCapes.add(new ResourceLocation(cape));
     }
 
     /**
@@ -245,6 +267,12 @@ public class CapesRegistry {
                         ((EntityPlayerMP) player).getAdvancements().getProgress(capeEntry.getKey()).isDone()) {
                     unlockCapeOnAdvancement(player, capeEntry.getKey());
                 }
+            }
+            if (UNLOCKED_CAPES.get(player.getPersistentID()) == null || !new HashSet<>(UNLOCKED_CAPES.get(player.getPersistentID())).containsAll(FREE_CAPES)) {
+                for (ResourceLocation cape : FREE_CAPES) {
+                    unlockCape(player.getPersistentID(), cape);
+                }
+                save();
             }
         }
     }
