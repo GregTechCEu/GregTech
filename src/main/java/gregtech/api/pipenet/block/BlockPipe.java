@@ -509,6 +509,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @Nonnull
     @Override
     public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+        IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
+        if (pipeTile != null && pipeTile.getCoverableImplementation().getCoverAtSide(face) != null) {
+            return BlockFaceShape.SOLID;
+        }
         return BlockFaceShape.UNDEFINED;
     }
 
