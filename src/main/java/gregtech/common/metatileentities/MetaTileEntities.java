@@ -329,7 +329,7 @@ public class MetaTileEntities {
                             case 3 -> 3;
                             default -> 4;
                         },
-                        Textures.MACERATOR_OVERLAY,
+                        tier <= GTValues.MV ? Textures.MACERATOR_OVERLAY : Textures.PULVERIZER_OVERLAY,
                         tier));
 
         // Alloy Smelter, IDs 80-94
