@@ -189,7 +189,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             long count = 0;
             int exportCount = 0;
             if (compound.hasKey(NBT_ITEMSTACK)) {
-                // translationKey = new ItemStack(compound.getCompoundTag(NBT_ITEMSTACK)).getDisplayName();
                 count = compound.getLong(NBT_ITEMCOUNT);
             }
             if (compound.hasKey(NBT_PARTIALSTACK)) {
