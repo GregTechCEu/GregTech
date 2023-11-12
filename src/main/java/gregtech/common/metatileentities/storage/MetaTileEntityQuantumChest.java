@@ -153,10 +153,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             }
 
             if (previousStack == null || !areItemStackIdentical(previousStack, virtualItemStack)) {
-                writeCustomData(UPDATE_ITEM, buf -> {
-                    virtualItemStack.setCount(1);
-                    buf.writeItemStack(virtualItemStack);
-                });
+                writeCustomData(UPDATE_ITEM, buf -> buf.writeItemStack(virtualItemStack));
                 previousStack = virtualItemStack;
             }
             if (previousStackSize != itemsStoredInside) {
@@ -246,7 +243,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                     outStackMatch = areItemStackIdentical(stack, outStack);
                 }
                 if (compound == null) return true;
-                return !(compound.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) || compound.hasKey("Fluid", NBT.TAG_COMPOUND)) && outStackMatch; //prevents inserting items with NBT to the Quantum Chest
+                return outStackMatch && !(compound.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) || compound.hasKey("Fluid", NBT.TAG_COMPOUND)); //prevents inserting items with NBT to the Quantum Chest
             }
         };
     }
@@ -381,7 +378,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
         buf.writeBoolean(autoOutputItems);
-        this.virtualItemStack.setCount(1);
         buf.writeItemStack(virtualItemStack);
         buf.writeLong(itemsStoredInside);
         buf.writeBoolean(voiding);

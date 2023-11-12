@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import static gregtech.api.util.GTStringUtils.itemStackToString;
 import static gregtech.api.util.GTTransferUtils.insertItem;
 import static gregtech.api.util.GTUtility.gregtechId;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -55,7 +56,7 @@ public class QuantumChestTest {
             int expected = 64;
             stack = exportItems.getStackInSlot(0);
             reason = String.format("Got %d in the export slot when it should be %d", exportItems.getStackInSlot(0).getCount(), expected);
-            assertThat(reason, stack.getCount() == expected);
+            assertThat(reason, stack.getCount(), is(expected));
 
             stack = insertItem(combinedInventory, GRAVEL.copy(), true);
             reason = String.format("%s should be Empty!", itemStackToString(stack));
@@ -64,7 +65,7 @@ public class QuantumChestTest {
             insertItem(combinedInventory, GRAVEL.copy(), false);
             stack = virtualInventory.getStackInSlot(0);
             reason = String.format("Got %d in the virtualized inventory when it should be %d", stack.getCount(), expected);
-            assertThat(reason, stack.getCount() == expected);
+            assertThat(reason, stack.getCount(), is(expected));
 
             stack = importItems.insertItem(0, SAND.copy(), true);
             reason = String.format("%s should not be Empty!", itemStackToString(stack));
@@ -72,11 +73,11 @@ public class QuantumChestTest {
 
             stack = importItems.insertItem(0, SAND.copy(), false);
             reason = String.format("%s should be Sand!", itemStackToString(stack));
-            assertThat(reason, !stack.isEmpty());
+            assertThat(reason, !stack.isEmpty() && stack.isItemEqual(SAND));
 
             stack = virtualInventory.getStackInSlot(0);
             reason = String.format("Got %d in the virtualized inventory when it should be %d", stack.getCount(), expected);
-            assertThat(reason, stack.getCount() == expected);
+            assertThat(reason, stack.getCount(), is(expected));
         }
     }
 
@@ -91,12 +92,12 @@ public class QuantumChestTest {
             expected = 64;
             int exportCount = quantumChest.getExportItems().getStackInSlot(0).getCount();
             String reason = String.format("The combined count using the chest's handler and the export slot got %d, should've been %d", exportCount, expected);
-            assertThat(reason, exportCount == expected);
+            assertThat(reason, exportCount, is(expected));
 
             expected = 192;
             int virtualizedAmount = itemInventory.getStackInSlot(0).getCount();
             reason = String.format("The virtualized amount in the chest's handler got %d, should've been %d", exportCount, expected);
-            assertThat(reason, virtualizedAmount == expected);
+            assertThat(reason, virtualizedAmount, is(expected));
         }
     }
 
@@ -115,7 +116,7 @@ public class QuantumChestTest {
             ItemStack virtualized = itemInventory.getStackInSlot(0);
             ItemStack export = exportItems.getStackInSlot(0);
 
-            assertThat("Virtualized amount is wrong!", virtualized.getCount() == 64 * 15);
+            assertThat("Virtualized amount is wrong!", virtualized.getCount(), is(64 * 15));
             assertThat("Export slot is empty!", export.getCount() == 64 && !export.isEmpty());
             assertThat("Import slot has an item in it!", importItems.getStackInSlot(0).isEmpty());
         }
@@ -152,7 +153,7 @@ public class QuantumChestTest {
             int remainder = insertItem(quantumChest.getImportItems(), SAND.copy(), true).getCount();
             quantumChest.update();
             String reason = String.format("Remainder should be exactly %d, but was %d!", 32, remainder);
-            assertThat(reason, remainder == 32);
+            assertThat(reason, remainder, is(32));
         }
     }
 
@@ -176,7 +177,7 @@ public class QuantumChestTest {
             stack = SAND.copy();
             stack.setCount(Integer.MAX_VALUE);
             remainder = insertItem(quantumChest.getItemInventory(), stack, false);
-            assertThat("Quantum Chest voided the wrong item!", remainder.getCount() == stack.getCount());
+            assertThat("Quantum Chest voided the wrong item!", remainder.getCount(), is(stack.getCount()));
         }
     }
 
@@ -189,7 +190,7 @@ public class QuantumChestTest {
             int expected = 64;
 
             String reason = String.format("Quantum chest failed to insert %d items into export slot, actually was %d!", expected, extractedCount);
-            assertThat(reason, extractedCount == expected);
+            assertThat(reason, extractedCount, is(expected));
 
             quantumChest.getExportItems().extractItem(0, 64, false);
             quantumChest.update();
@@ -197,13 +198,13 @@ public class QuantumChestTest {
 
             expected = 128;
             reason = String.format("Virtualized count is %d, should be %d!", extractedCount, expected);
-            assertThat(reason, extractedCount == expected);
+            assertThat(reason, extractedCount, is(expected));
 
             expected = 192;
             extractedCount = testAllSlots(quantumChest.getCombinedInventory(), true);
 
             reason = String.format("Extracted %d items, should've extracted %d!", extractedCount, expected);
-            assertThat(reason, extractedCount == expected);
+            assertThat(reason, extractedCount, is(expected));
         }
     }
 

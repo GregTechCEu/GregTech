@@ -73,14 +73,14 @@ public class TextFormattingUtil {
         for (String s : name) {
             length += s.length();
 
-            if (length >= maxLength) {
+            if (length > maxLength) {
                 builder.append("\n");
                 builder.append(s);
                 length = 0;
                 continue;
             }
 
-            if (!(builder.length() == 0))
+            if (!(builder.isEmpty()))
                 builder.append(" ");
 
             builder.append(s);
