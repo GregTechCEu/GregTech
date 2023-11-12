@@ -17,10 +17,10 @@ public class OrganicChemistryMaterials {
                 .polymer()
                 .color(0xDCDCDC)
                 .flags(GENERATE_GEAR, GENERATE_RING, GENERATE_FOIL)
-                .components(Carbon, 6, Hydrogen, 18, Oxygen, 1, Silicon, 2)
+                .components(Carbon, 2, Hydrogen, 6, Oxygen, 1, Silicon, 1)
                 .fluidTemp(900)
                 .build()
-                .setFormula("Si2(CH3)6O", true);
+                .setFormula("Si(CH3)2O", true);
 
         Nitrobenzene = new Material.Builder(1001, gregtechId("nitrobenzene"))
                 .fluid(FluidTypes.GAS)
@@ -104,7 +104,8 @@ public class OrganicChemistryMaterials {
                 .color(0xF5F5F5)
                 .flags(DISABLE_DECOMPOSITION, FLAMMABLE)
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1, Silicon, 1)
-                .build();
+                .build()
+                .setFormula("Si(CH3)2O", true);
 
         Polyethylene = new Material.Builder(1012, gregtechId("plastic")) //todo add polyethylene oredicts
                 .polymer(1)
