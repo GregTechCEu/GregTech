@@ -268,7 +268,9 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
 
                 steamFluidTank.drain(4000, true);
             }
-        } else this.hasNoWater = false;
+        } else {
+            this.hasNoWater = waterFluidTank.getFluidAmount() == 0;
+        }
     }
 
     public boolean isBurning() {
