@@ -33,8 +33,6 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         return world.getTileEntity(pos.offset(facing));
     }
 
-    public abstract void receiveCustomData(int discriminator, PacketBuffer buf);
-
     @Override
     public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter) {
         ByteBuf backedBuffer = Unpooled.buffer();

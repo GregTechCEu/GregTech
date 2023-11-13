@@ -1,11 +1,8 @@
 package gregtech.api.metatileentity.interfaces;
 
 import gregtech.api.util.IDirtyNotifiable;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 public interface IHasWorldObjectAndCoords extends IDirtyNotifiable {
 
