@@ -6,6 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
@@ -44,11 +45,11 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
     }
 
     @Override
-    public TileEntity getNeighbor(EnumFacing facing) {
+    public @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
         if (world == null || pos == null) return null;
         int i = facing.getIndex();
         TileEntity neighbor = this.neighbors[i];
-        if (neighbor == this) {
+        if (neighbor == this || neighbor.isInvalid()) {
             neighbor = world.getTileEntity(pos.offset(facing));
             this.neighbors[i] = neighbor;
             this.neighborsInvalidated = false;
@@ -56,7 +57,7 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
         return neighbor;
     }
 
-    public void onNeighborChanged(EnumFacing facing) {
+    public void onNeighborChanged(@NotNull EnumFacing facing) {
         this.neighbors[facing.getIndex()] = this;
     }
 }

@@ -27,8 +27,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
 
     private final PacketDataList updates = new PacketDataList();
 
-    @Nullable
-    public TileEntity getNeighbor(EnumFacing facing) {
+    public @Nullable TileEntity getNeighbor(EnumFacing facing) {
         if (world == null || pos == null) return null;
         return world.getTileEntity(pos.offset(facing));
     }

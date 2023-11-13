@@ -261,7 +261,7 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
     }
 
     @Override
-    public void onNeighborChanged(EnumFacing facing) {
+    public void onNeighborChanged(@NotNull EnumFacing facing) {
     }
 
     @Override

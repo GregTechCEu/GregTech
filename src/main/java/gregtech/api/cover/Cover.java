@@ -52,7 +52,7 @@ public interface Cover {
     /**
      * @return the tile entity at the cover's position
      */
-    default @UnknownNullability TileEntity getTileEntityHere() {
+    default @Nullable TileEntity getTileEntityHere() {
         CoverableView view = getCoverableView();
         return view.getWorld().getTileEntity(view.getPos());
     }
@@ -61,7 +61,7 @@ public interface Cover {
      * @param facing the side to get the neighbor at
      * @return the neighbor tile entity at the side
      */
-    default @UnknownNullability TileEntity getNeighbor(@NotNull EnumFacing facing) {
+    default @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
         CoverableView view = getCoverableView();
         return view.getNeighbor(facing);
     }
