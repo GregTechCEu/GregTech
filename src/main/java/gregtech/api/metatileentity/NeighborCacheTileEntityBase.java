@@ -49,7 +49,7 @@ public abstract class NeighborCacheTileEntityBase extends SyncedTileEntityBase i
         if (world == null || pos == null) return null;
         int i = facing.getIndex();
         TileEntity neighbor = this.neighbors[i];
-        if (neighbor == this || neighbor.isInvalid()) {
+        if (neighbor == this || (neighbor != null && neighbor.isInvalid())) {
             neighbor = world.getTileEntity(pos.offset(facing));
             this.neighbors[i] = neighbor;
             this.neighborsInvalidated = false;
