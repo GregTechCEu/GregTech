@@ -74,7 +74,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
         if (isTransmitter()) {
             // Ask the Multiblock controller, which *should* be an IOpticalComputationProvider
             if (controller instanceof IOpticalComputationProvider provider) {
-                return provider.getMaxCWUt();
+                return provider.getMaxCWUt(seen);
             } else {
                 GTLog.logger.error("Computation Transmission Hatch could not get maximum CWU/t from its controller!");
                 return 0;

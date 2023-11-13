@@ -50,6 +50,8 @@ public interface IRecipePropertyStorage {
 
     Set<String> getRecipePropertyKeys();
 
+    Set<RecipeProperty<?>> getPropertyTypes();
+
     /**
      * Provides un-casted value for one specific {@link RecipeProperty} searched by key
      *

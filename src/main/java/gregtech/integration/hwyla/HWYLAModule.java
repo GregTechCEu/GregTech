@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
         containerID = GTValues.MODID,
         modDependencies = GTValues.MODID_HWYLA,
         name = "GregTech HWYLA Integration",
-        descriptionKey = "gregtech.modules.hwyla_integration.description"
+        description = "HWYLA (WAILA) Integration Module"
 )
 public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
 
@@ -33,6 +33,7 @@ public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
         MultiRecipeMapDataProvider.INSTANCE.register(registrar);
         ConverterDataProvider.INSTANCE.register(registrar);
         RecipeLogicDataProvider.INSTANCE.register(registrar);
+        SteamBoilerDataProvider.INSTANCE.register(registrar);
         PrimitivePumpDataProvider.INSTANCE.register(registrar);
         // one day, if cover provider is ported to waila, register it right here
         BlockOreDataProvider.INSTANCE.register(registrar);

@@ -2,6 +2,7 @@ package gregtech.api.worldgen.config;
 
 import com.google.gson.JsonObject;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
@@ -55,7 +56,7 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
         }
         // vein name for JEI display
         if (configRoot.has("name")) {
-            this.assignedName = configRoot.get("name").getAsString();
+            this.assignedName = LocalizationUtils.format(configRoot.get("name").getAsString());
         }
         // vein description for JEI display
         if (configRoot.has("description")) {

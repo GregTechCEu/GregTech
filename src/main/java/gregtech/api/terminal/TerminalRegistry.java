@@ -74,6 +74,7 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new TutorialGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new GuideEditorApp()).defaultApp().build();
         AppRegistryBuilder.create(new SettingsApp()).defaultApp().build();
+        AppRegistryBuilder.create(new CapeSelectorApp()).defaultApp().build();
 
         AppRegistryBuilder.create(new TeleportApp())
                 .battery(GTValues.ZPM, 10000)
@@ -155,9 +156,6 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new VirtualTankApp())
                 .battery(GTValues.MV, 500)
                 .device(DeviceHardware.DEVICE.WIRELESS)
-                .build();
-        AppRegistryBuilder.create(new CapeSelectorApp())
-                .battery(GTValues.ULV, 8)
                 .build();
     }
 

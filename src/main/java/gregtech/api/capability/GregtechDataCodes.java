@@ -138,6 +138,7 @@ public class GregtechDataCodes {
     // HPCA / Research Station
     public static final int DAMAGE_STATE = 222;
     public static final int LOCK_OBJECT_HOLDER = 223;
+    public static final int CACHED_CWU = 224;
 
     // NBT Keys
 

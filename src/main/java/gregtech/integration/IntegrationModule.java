@@ -24,7 +24,7 @@ import java.util.List;
         moduleID = GregTechModules.MODULE_INTEGRATION,
         containerID = GTValues.MODID,
         name = "GregTech Mod Integration",
-        descriptionKey = "gregtech.modules.integration.description"
+        description = "General GregTech Integration Module. Disabling this disables all integration modules."
 )
 public class IntegrationModule extends BaseGregTechModule {
 

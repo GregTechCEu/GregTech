@@ -135,7 +135,7 @@ public class PipeRecipeHandler {
         } else {
             if (ModHandler.isMaterialWood(material)) {
                 ModHandler.addShapedRecipe(String.format("small_%s_pipe", material),
-                        pipeStack, "wXr",
+                        pipeStack, "sXr",
                         'X', new UnificationEntry(OrePrefix.plank, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
@@ -177,7 +177,7 @@ public class PipeRecipeHandler {
         } else {
             if (ModHandler.isMaterialWood(material)) {
                 ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material),
-                        pipeStack, "XXX", "w r",
+                        pipeStack, "XXX", "s r",
                         'X', new UnificationEntry(OrePrefix.plank, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
@@ -219,7 +219,7 @@ public class PipeRecipeHandler {
         } else {
             if (ModHandler.isMaterialWood(material)) {
                 ModHandler.addShapedRecipe(String.format("large_%s_pipe", material),
-                        pipeStack, "XXX", "w r", "XXX",
+                        pipeStack, "XXX", "s r", "XXX",
                         'X', new UnificationEntry(OrePrefix.plank, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
@@ -261,7 +261,7 @@ public class PipeRecipeHandler {
         } else if (OrePrefix.plateDouble.doGenerateItem(material)) {
             if (ModHandler.isMaterialWood(material)) {
                 ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material),
-                        pipeStack, "XXX", "w r", "XXX",
+                        pipeStack, "XXX", "s r", "XXX",
                         'X', new UnificationEntry(OrePrefix.plateDouble, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])

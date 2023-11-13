@@ -24,7 +24,7 @@ import java.util.List;
         containerID = GTValues.MODID,
         modDependencies = GTValues.MODID_BAUBLES,
         name = "GregTech Baubles Integration",
-        descriptionKey = "gregtech.modules.baubles_integration.description"
+        description = "Baubles Integration Module"
 )
 public class BaublesModule extends IntegrationSubmodule {
 

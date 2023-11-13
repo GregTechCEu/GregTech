@@ -1,6 +1,6 @@
 {
+  "name": "gregtech.veins.fluid.heavy_oil",
   "weight": 15,
-  "name": "Heavy Oil Deposit",
   "yield": {
     "min": 100,
     "max": 200

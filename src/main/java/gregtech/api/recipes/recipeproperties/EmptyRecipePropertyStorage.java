@@ -58,6 +58,11 @@ public final class EmptyRecipePropertyStorage implements IRecipePropertyStorage 
     }
 
     @Override
+    public Set<RecipeProperty<?>> getPropertyTypes() {
+        return Collections.emptySet();
+    }
+
+    @Override
     public Object getRawRecipePropertyValue(String key) {
         return null;
     }

@@ -1,4 +1,5 @@
 {
+  "name": "gregtech.veins.ore.sheldonite",
   "weight": 10,
   "density": 0.2,
   "min_height": 5,

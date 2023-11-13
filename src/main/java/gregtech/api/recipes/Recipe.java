@@ -587,6 +587,10 @@ public class Recipe {
         return recipePropertyStorage.getRecipePropertyKeys();
     }
 
+    public Set<RecipeProperty<?>> getPropertyTypes() {
+        return recipePropertyStorage.getPropertyTypes();
+    }
+
     public boolean hasProperty(RecipeProperty<?> property) {
         return recipePropertyStorage.hasRecipeProperty(property);
     }

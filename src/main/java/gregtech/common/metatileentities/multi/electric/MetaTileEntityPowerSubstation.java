@@ -12,15 +12,14 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IBatteryData;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.*;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockMetalCasing;
@@ -35,9 +34,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -53,7 +51,7 @@ import java.util.function.Supplier;
 
 import static gregtech.api.util.RelativeDirection.*;
 
-public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase implements IControllable {
+public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase implements IControllable, IProgressBarMultiblock {
 
     // Structure Constants
     public static final int MAX_BATTERY_LAYERS = 18;
@@ -98,11 +96,13 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
         List<IEnergyContainer> inputs = new ArrayList<>();
         inputs.addAll(getAbilities(MultiblockAbility.INPUT_ENERGY));
         inputs.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
+        inputs.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
         this.inputHatches = new EnergyContainerList(inputs);
 
         List<IEnergyContainer> outputs = new ArrayList<>();
         outputs.addAll(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
         outputs.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
+        outputs.addAll(getAbilities(MultiblockAbility.OUTPUT_LASER));
         this.outputHatches = new EnergyContainerList(outputs);
 
         List<IBatteryData> parts = new ArrayList<>();
@@ -223,9 +223,9 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 .where('S', selfPredicate())
                 .where('C', states(getCasingState()))
                 .where('X' ,states(getCasingState()).setMinGlobalLimited(MIN_CASINGS)
-                        .or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setExactLimit(1))
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY).setMinGlobalLimited(1))
-                        .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY).setMinGlobalLimited(1)))
+                        .or(maintenancePredicate())
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY, MultiblockAbility.INPUT_LASER).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY, MultiblockAbility.OUTPUT_LASER).setMinGlobalLimited(1)))
                 .where('G', states(getGlassState()))
                 .where('B', BATTERY_PREDICATE.get())
                 .build();
@@ -312,27 +312,89 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed()) {
-            if (energyBank != null) {
-                BigInteger energyStored = energyBank.getStored();
-                BigInteger energyCapacity = energyBank.getCapacity();
-                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.stored", TextFormattingUtil.formatNumbers(energyStored)));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.capacity", TextFormattingUtil.formatNumbers(energyCapacity)));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.passive_drain", TextFormattingUtil.formatNumbers(getPassiveDrain())));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.average_io", TextFormattingUtil.formatNumbers(averageIOLastSec))
-                        .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                new TextComponentTranslation("gregtech.multiblock.power_substation.average_io_hover")))));
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
+                .setWorkingStatusKeys(
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.idling",
+                        "gregtech.machine.active_transformer.routing")
+                .addCustom(tl -> {
+                    if (isStructureFormed() && energyBank != null) {
+                        BigInteger energyStored = energyBank.getStored();
+                        BigInteger energyCapacity = energyBank.getCapacity();
 
-                if (averageIOLastSec > 0) {
-                    BigInteger timeToFillSeconds = energyCapacity.subtract(energyStored).divide(BigInteger.valueOf(averageIOLastSec * 20));
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.time_to_fill", getTimeToFillDrainText(timeToFillSeconds)));
-                } else if (averageIOLastSec < 0) {
-                    BigInteger timeToDrainSeconds = energyStored.divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20));
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.time_to_drain", getTimeToFillDrainText(timeToDrainSeconds)));
-                }
-            }
-        }
+                        // Stored EU line
+                        ITextComponent storedFormatted = TextComponentUtil.stringWithColor(
+                                TextFormatting.GOLD,
+                                TextFormattingUtil.formatNumbers(energyStored) + " EU");
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.power_substation.stored",
+                                storedFormatted));
+
+                        // EU Capacity line
+                        ITextComponent capacityFormatted = TextComponentUtil.stringWithColor(
+                                TextFormatting.GOLD,
+                                TextFormattingUtil.formatNumbers(energyCapacity) + " EU");
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.power_substation.capacity",
+                                capacityFormatted));
+
+                        // Passive Drain line
+                        ITextComponent passiveDrain = TextComponentUtil.stringWithColor(
+                                TextFormatting.DARK_RED,
+                                TextFormattingUtil.formatNumbers(getPassiveDrain()) + " EU/t");
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.power_substation.passive_drain",
+                                passiveDrain));
+
+                        // Average I/O line
+                        TextFormatting averageIOColor = TextFormatting.GRAY;
+                        if (isActive() && isWorkingEnabled() && averageIOLastSec == 0) {
+                            // only set to yellow on zero if the machine is on, avoids a yellow "warning"
+                            // color when the machine is first formed and not yet plugged in.
+                            averageIOColor = TextFormatting.YELLOW;
+                        } else if (averageIOLastSec > 0) {
+                            averageIOColor = TextFormatting.GREEN;
+                        } else if (averageIOLastSec < 0) {
+                            averageIOColor = TextFormatting.RED;
+                        }
+
+                        ITextComponent averageIO = TextComponentUtil.stringWithColor(
+                                averageIOColor,
+                                TextFormattingUtil.formatNumbers(averageIOLastSec) + " EU/t");
+
+                        ITextComponent base = TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.power_substation.average_io",
+                                averageIO);
+
+                        ITextComponent hover = TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.power_substation.average_io_hover");
+                        tl.add(TextComponentUtil.setHover(base, hover));
+
+                        // Time to fill/drain line
+                        if (averageIOLastSec > 0) {
+                            ITextComponent timeToFill = getTimeToFillDrainText(energyCapacity.subtract(energyStored).divide(BigInteger.valueOf(averageIOLastSec * 20)));
+                            TextComponentUtil.setColor(timeToFill, TextFormatting.GREEN);
+                            tl.add(TextComponentUtil.translationWithColor(
+                                    TextFormatting.GRAY,
+                                    "gregtech.multiblock.power_substation.time_to_fill",
+                                    timeToFill));
+                        } else if (averageIOLastSec < 0) {
+                            ITextComponent timeToDrain = getTimeToFillDrainText(energyStored.divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20)));
+                            TextComponentUtil.setColor(timeToDrain, TextFormatting.RED);
+                            tl.add(TextComponentUtil.translationWithColor(
+                                    TextFormatting.GRAY,
+                                    "gregtech.multiblock.power_substation.time_to_drain",
+                                    timeToDrain));
+                        }
+                    }
+                })
+                .addWorkingStatusLine();
     }
 
     @Override
@@ -342,7 +404,9 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
             if (averageIOLastSec < 0) { // decreasing
                 BigInteger timeToDrainSeconds = energyBank.getStored().divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20));
                 if (timeToDrainSeconds.compareTo(BigInteger.valueOf(60 * 60)) < 0) { // less than 1 hour left
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.power_substation.under_one_hour_left"));
+                    textList.add(TextComponentUtil.translationWithColor(
+                            TextFormatting.YELLOW,
+                            "gregtech.multiblock.power_substation.under_one_hour_left"));
                 }
             }
         }
@@ -441,6 +505,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
         tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip3", MAX_BATTERY_LAYERS));
         tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip4"));
         tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip5", PASSIVE_DRAIN_MAX_PER_STORAGE));
+        tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip6")
+                + TooltipHelper.RAINBOW_SLOW + I18n.format("gregtech.machine.power_substation.tooltip6.5"));
     }
 
     public String getStored() {
@@ -448,6 +514,20 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
             return "0";
         }
         return TextFormattingUtil.formatNumbers(energyBank.getStored());
+    }
+
+    public long getStoredLong() {
+        if (energyBank == null) {
+            return 0;
+        }
+        return energyBank.getStored().longValue() & ~(1L << 63);
+    }
+
+    public long getCapacityLong() {
+        if (energyBank == null) {
+            return 0;
+        }
+        return energyBank.getCapacity().longValue() & ~(1L << 63);
     }
 
     public String getCapacity() {
@@ -459,6 +539,26 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
 
     public long getAverageIOLastSec() {
         return averageIOLastSec;
+    }
+
+    @Override
+    public double getFillPercentage(int index) {
+        if (energyBank == null) return 0;
+        return energyBank.getStored().doubleValue() / energyBank.getCapacity().doubleValue();
+    }
+
+    @Override
+    public void addBarHoverText(List<ITextComponent> hoverList, int index) {
+        String stored = energyBank != null ? TextFormattingUtil.formatNumbers(energyBank.getStored()) : "0";
+        String capacity = energyBank != null ? TextFormattingUtil.formatNumbers(energyBank.getCapacity()) : "0";
+
+        ITextComponent energyInfo = TextComponentUtil.stringWithColor(
+                TextFormatting.YELLOW,
+                stored + " / " + capacity + " EU");
+        hoverList.add(TextComponentUtil.translationWithColor(
+                TextFormatting.GRAY,
+                "gregtech.multiblock.energy_stored",
+                energyInfo));
     }
 
     public static class PowerStationEnergyBank {

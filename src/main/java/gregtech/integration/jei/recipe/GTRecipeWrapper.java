@@ -3,6 +3,9 @@ package gregtech.integration.jei.recipe;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.metaitem.stats.IDataItem;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
@@ -10,8 +13,10 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
-import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
+import gregtech.api.recipes.recipeproperties.ComputationProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
+import gregtech.api.recipes.recipeproperties.ScanProperty;
+import gregtech.api.recipes.recipeproperties.TotalComputationProperty;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
@@ -92,7 +97,17 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     Collection<Recipe> possibleRecipes = ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId);
                     if (possibleRecipes != null) {
                         for (Recipe r : possibleRecipes) {
-                            scannerPossibilities.add(r.getOutputs().get(0));
+                            ItemStack researchItem = r.getOutputs().get(0);
+                            researchItem = researchItem.copy();
+                            researchItem.setCount(1);
+                            boolean didMatch = false;
+                            for (ItemStack stack : scannerPossibilities) {
+                                if (ItemStack.areItemStacksEqual(stack, researchItem)) {
+                                    didMatch = true;
+                                    break;
+                                }
+                            }
+                            if (!didMatch) scannerPossibilities.add(researchItem);
                         }
                     }
                     scannerPossibilities.add(recipeOutputs.get(0));
@@ -136,6 +151,23 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         } else if (notConsumed) {
             tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.not_consumed"));
         }
+
+        if (!input && this.recipeMap instanceof IScannerRecipeMap && ingredient instanceof ItemStack stack && !stack.isEmpty()) {
+            // check for "normal" data items
+            if (stack.getItem() instanceof IDataItem) return;
+            // check for metaitem data items
+            if (stack.getItem() instanceof MetaItem<?> metaItem) {
+                for (IItemBehaviour behaviour : metaItem.getBehaviours(stack)) {
+                    if (behaviour instanceof IDataItem) {
+                        return;
+                    }
+                }
+            }
+            // If we are here, we know this is not the data item, so add the tooltip
+            if (recipe.hasProperty(ScanProperty.getInstance())) {
+                tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.research_result"));
+            }
+        }
     }
 
     public void addFluidTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
@@ -151,12 +183,37 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     @Override
     public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
-        int yPosition = recipeHeight - recipeMap.getPropertyListHeight(recipe);
-        if (!recipe.hasProperty(PrimitiveProperty.getInstance())) {
-            minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, 0x111111);
+        var properties = recipe.getPropertyTypes();
+        boolean drawTotalEU = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideTotalEU);
+        boolean drawEUt = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideEUt);
+        boolean drawDuration = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideDuration);
+
+        int defaultLines = 0;
+        if (drawTotalEU) defaultLines++;
+        if (drawEUt) defaultLines++;
+        if (drawDuration) defaultLines++;
+
+        int yPosition = recipeHeight - ((recipe.getUnhiddenPropertyCount() + defaultLines) * 10 - 3);
+
+        // Default entries
+        if (drawTotalEU) {
+            long eu = Math.abs((long) recipe.getEUt()) * recipe.getDuration();
+            // sadly we still need a custom override here, since computation uses duration and EU/t very differently
+            if (recipe.hasProperty(TotalComputationProperty.getInstance()) && recipe.hasProperty(ComputationProperty.getInstance())) {
+                int minimumCWUt = recipe.getProperty(ComputationProperty.getInstance(), 1);
+                minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.max_eu", eu / minimumCWUt), 0, yPosition, 0x111111);
+            } else {
+                minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", eu), 0, yPosition, 0x111111);
+            }
+        }
+        if (drawEUt) {
             minecraft.fontRenderer.drawString(I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]), 0, yPosition += LINE_HEIGHT, 0x111111);
-        } else yPosition -= LINE_HEIGHT * 2;
-        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", TextFormattingUtil.formatNumbers(recipe.getDuration() / 20d)), 0, yPosition += LINE_HEIGHT, 0x111111);
+        }
+        if (drawDuration) {
+            minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", TextFormattingUtil.formatNumbers(recipe.getDuration() / 20d)), 0, yPosition += LINE_HEIGHT, 0x111111);
+        }
+
+        // Property custom entries
         for (Map.Entry<RecipeProperty<?>, Object> propertyEntry : recipe.getPropertyValues()) {
             if (!propertyEntry.getKey().isHidden()) {
                 RecipeProperty<?> property = propertyEntry.getKey();

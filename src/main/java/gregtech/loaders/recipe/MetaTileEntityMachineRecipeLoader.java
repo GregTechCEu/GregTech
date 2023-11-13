@@ -18,6 +18,7 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.blocks.MetaBlocks.LD_ITEM_PIPE;
 import static gregtech.common.blocks.MetaBlocks.LD_FLUID_PIPE;
 import static gregtech.common.items.MetaItems.*;
+import static gregtech.common.items.MetaItems.SENSOR_UV;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
 
 public class MetaTileEntityMachineRecipeLoader {
@@ -36,6 +37,202 @@ public class MetaTileEntityMachineRecipeLoader {
         registerHatchBusRecipe(UV, FLUID_IMPORT_HATCH[UV], FLUID_EXPORT_HATCH[UV], QUANTUM_TANK[0].getStackForm());
         registerHatchBusRecipe(UHV, FLUID_IMPORT_HATCH[UHV], FLUID_EXPORT_HATCH[UHV], QUANTUM_TANK[1].getStackForm());
 
+        // Quadruple Fluid Input Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[EV])
+                .input(pipeQuadrupleFluid, Titanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_IMPORT_HATCH[0])
+                .duration(300).EUt(VA[EV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[IV])
+                .input(pipeQuadrupleFluid, TungstenSteel)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_IMPORT_HATCH[1])
+                .duration(300).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[LuV])
+                .input(pipeQuadrupleFluid, NiobiumTitanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_IMPORT_HATCH[2])
+                .duration(300).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[ZPM])
+                .input(pipeQuadrupleFluid, Iridium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_IMPORT_HATCH[3])
+                .duration(300).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[UV])
+                .input(pipeQuadrupleFluid, Naquadah)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_IMPORT_HATCH[4])
+                .duration(300).EUt(VA[UV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[UHV])
+                .input(pipeQuadrupleFluid, Neutronium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_IMPORT_HATCH[5])
+                .duration(300).EUt(VA[UV]).buildAndRegister();
+
+        // Nonuple Fluid Input Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[EV])
+                .input(pipeNonupleFluid, Titanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_IMPORT_HATCH[0])
+                .duration(600).EUt(VA[EV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[IV])
+                .input(pipeNonupleFluid, TungstenSteel)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_IMPORT_HATCH[1])
+                .duration(600).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[LuV])
+                .input(pipeNonupleFluid, NiobiumTitanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_IMPORT_HATCH[2])
+                .duration(600).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[ZPM])
+                .input(pipeNonupleFluid, Iridium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_IMPORT_HATCH[3])
+                .duration(600).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[UV])
+                .input(pipeNonupleFluid, Naquadah)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_IMPORT_HATCH[4])
+                .duration(600).EUt(VA[UV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_IMPORT_HATCH[UHV])
+                .input(pipeNonupleFluid, Neutronium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_IMPORT_HATCH[5])
+                .duration(600).EUt(VA[UV]).buildAndRegister();
+
+        // Quadruple Fluid Output Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[EV])
+                .input(pipeQuadrupleFluid, Titanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_EXPORT_HATCH[0])
+                .duration(300).EUt(VA[EV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[IV])
+                .input(pipeQuadrupleFluid, TungstenSteel)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_EXPORT_HATCH[1])
+                .duration(300).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[LuV])
+                .input(pipeQuadrupleFluid, NiobiumTitanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_EXPORT_HATCH[2])
+                .duration(300).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[ZPM])
+                .input(pipeQuadrupleFluid, Iridium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_EXPORT_HATCH[3])
+                .duration(300).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[UV])
+                .input(pipeQuadrupleFluid, Naquadah)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_EXPORT_HATCH[4])
+                .duration(300).EUt(VA[UV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[UHV])
+                .input(pipeQuadrupleFluid, Neutronium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 4))
+                .circuitMeta(4)
+                .output(QUADRUPLE_EXPORT_HATCH[5])
+                .duration(300).EUt(VA[UV]).buildAndRegister();
+
+        // Nonuple Fluid Output Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[EV])
+                .input(pipeNonupleFluid, Titanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_EXPORT_HATCH[0])
+                .duration(600).EUt(VA[EV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[IV])
+                .input(pipeNonupleFluid, TungstenSteel)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_EXPORT_HATCH[1])
+                .duration(600).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[LuV])
+                .input(pipeNonupleFluid, NiobiumTitanium)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_EXPORT_HATCH[2])
+                .duration(600).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[ZPM])
+                .input(pipeNonupleFluid, Iridium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_EXPORT_HATCH[3])
+                .duration(600).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[UV])
+                .input(pipeNonupleFluid, Naquadah)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_EXPORT_HATCH[4])
+                .duration(600).EUt(VA[UV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(FLUID_EXPORT_HATCH[UHV])
+                .input(pipeNonupleFluid, Neutronium)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 9))
+                .circuitMeta(9)
+                .output(NONUPLE_EXPORT_HATCH[5])
+                .duration(600).EUt(VA[UV]).buildAndRegister();
+
         // Item Buses
         registerHatchBusRecipe(ULV, ITEM_IMPORT_BUS[ULV], ITEM_EXPORT_BUS[ULV], new ItemStack(Blocks.CHEST));
         registerHatchBusRecipe(LV, ITEM_IMPORT_BUS[LV], ITEM_EXPORT_BUS[LV], new ItemStack(Blocks.CHEST));
@@ -47,6 +244,9 @@ public class MetaTileEntityMachineRecipeLoader {
         registerHatchBusRecipe(ZPM, ITEM_IMPORT_BUS[ZPM], ITEM_EXPORT_BUS[ZPM], TUNGSTENSTEEL_CRATE.getStackForm());
         registerHatchBusRecipe(UV, ITEM_IMPORT_BUS[UV], ITEM_EXPORT_BUS[UV], QUANTUM_CHEST[0].getStackForm());
         registerHatchBusRecipe(UHV, ITEM_IMPORT_BUS[UHV], ITEM_EXPORT_BUS[UHV], QUANTUM_CHEST[1].getStackForm());
+
+        // Laser Hatches
+        registerLaserRecipes();
 
         // Energy Output Hatches
 
@@ -127,7 +327,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(6000))
                 .fluidInputs(SolderingAlloy.getFluid(720))
                 .output(ENERGY_OUTPUT_HATCH[LuV])
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[IV].getStackForm())
                         .EUt(VA[EV]))
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
@@ -141,7 +341,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(8000))
                 .fluidInputs(SolderingAlloy.getFluid(1440))
                 .output(ENERGY_OUTPUT_HATCH[ZPM])
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[LuV].getStackForm())
                         .CWUt(8))
                 .duration(600).EUt(VA[ZPM]).buildAndRegister();
@@ -155,7 +355,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(10000))
                 .fluidInputs(SolderingAlloy.getFluid(2880))
                 .output(ENERGY_OUTPUT_HATCH[UV])
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[ZPM].getStackForm())
                         .CWUt(64)
                         .EUt(VA[ZPM]))
@@ -170,7 +370,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(12000))
                 .fluidInputs(SolderingAlloy.getFluid(5760))
                 .output(ENERGY_OUTPUT_HATCH[UHV])
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[UV].getStackForm())
                         .CWUt(128)
                         .EUt(VA[UV]))
@@ -255,7 +455,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(6000))
                 .fluidInputs(SolderingAlloy.getFluid(720))
                 .output(ENERGY_INPUT_HATCH[LuV])
-                .research(b -> b
+                .scannerResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[IV].getStackForm())
                         .EUt(VA[EV]))
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
@@ -269,7 +469,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(8000))
                 .fluidInputs(SolderingAlloy.getFluid(1440))
                 .output(ENERGY_INPUT_HATCH[ZPM])
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[LuV].getStackForm())
                         .CWUt(8))
                 .duration(600).EUt(VA[ZPM]).buildAndRegister();
@@ -283,7 +483,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(10000))
                 .fluidInputs(SolderingAlloy.getFluid(2880))
                 .output(ENERGY_INPUT_HATCH[UV])
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[ZPM].getStackForm())
                         .CWUt(64)
                         .EUt(VA[ZPM]))
@@ -298,7 +498,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .fluidInputs(SodiumPotassium.getFluid(12000))
                 .fluidInputs(SolderingAlloy.getFluid(5760))
                 .output(ENERGY_INPUT_HATCH[UHV])
-                .research(b -> b
+                .stationResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[UV].getStackForm())
                         .CWUt(128)
                         .EUt(VA[UV]))
@@ -956,5 +1156,255 @@ public class MetaTileEntityMachineRecipeLoader {
             case 9:
             default: return 720;
         }
+    }
+
+    // TODO clean this up with a CraftingComponent rework
+    private static void registerLaserRecipes() {
+
+        // 256A Laser Source Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[IV])
+                .input(lens, Diamond)
+                .input(EMITTER_IV)
+                .input(ELECTRIC_PUMP_IV)
+                .input(cableGtSingle, Platinum, 4)
+                .circuitMeta(1)
+                .output(LASER_INPUT_HATCH_256[0])
+                .duration(300).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(lens, Diamond)
+                .input(EMITTER_LuV)
+                .input(ELECTRIC_PUMP_LuV)
+                .input(cableGtSingle, NiobiumTitanium, 4)
+                .circuitMeta(1)
+                .output(LASER_INPUT_HATCH_256[1])
+                .duration(300).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[ZPM])
+                .input(lens, Diamond)
+                .input(EMITTER_ZPM)
+                .input(ELECTRIC_PUMP_ZPM)
+                .input(cableGtSingle, VanadiumGallium, 4)
+                .circuitMeta(1)
+                .output(LASER_INPUT_HATCH_256[2])
+                .duration(300).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[UV])
+                .input(lens, Diamond)
+                .input(EMITTER_UV)
+                .input(ELECTRIC_PUMP_UV)
+                .input(cableGtSingle, YttriumBariumCuprate, 4)
+                .circuitMeta(1)
+                .output(LASER_INPUT_HATCH_256[3])
+                .duration(300).EUt(VA[UV]).buildAndRegister();
+
+        // 256A Laser Target Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[IV])
+                .input(lens, Diamond)
+                .input(SENSOR_IV)
+                .input(ELECTRIC_PUMP_IV)
+                .input(cableGtSingle, Platinum, 4)
+                .circuitMeta(1)
+                .output(LASER_OUTPUT_HATCH_256[0])
+                .duration(300).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(lens, Diamond)
+                .input(SENSOR_LuV)
+                .input(ELECTRIC_PUMP_LuV)
+                .input(cableGtSingle, NiobiumTitanium, 4)
+                .circuitMeta(1)
+                .output(LASER_OUTPUT_HATCH_256[1])
+                .duration(300).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[ZPM])
+                .input(lens, Diamond)
+                .input(SENSOR_ZPM)
+                .input(ELECTRIC_PUMP_ZPM)
+                .input(cableGtSingle, VanadiumGallium, 4)
+                .circuitMeta(1)
+                .output(LASER_OUTPUT_HATCH_256[2])
+                .duration(300).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[UV])
+                .input(lens, Diamond)
+                .input(SENSOR_UV)
+                .input(ELECTRIC_PUMP_UV)
+                .input(cableGtSingle, YttriumBariumCuprate, 4)
+                .circuitMeta(1)
+                .output(LASER_OUTPUT_HATCH_256[3])
+                .duration(300).EUt(VA[UV]).buildAndRegister();
+
+        // 1024A Laser Source Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[IV])
+                .input(lens, Diamond, 2)
+                .input(EMITTER_IV, 2)
+                .input(ELECTRIC_PUMP_IV, 2)
+                .input(cableGtDouble, Platinum, 4)
+                .circuitMeta(2)
+                .output(LASER_INPUT_HATCH_1024[0])
+                .duration(600).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(lens, Diamond, 2)
+                .input(EMITTER_LuV, 2)
+                .input(ELECTRIC_PUMP_LuV, 2)
+                .input(cableGtDouble, NiobiumTitanium, 4)
+                .circuitMeta(2)
+                .output(LASER_INPUT_HATCH_1024[1])
+                .duration(600).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[ZPM])
+                .input(lens, Diamond, 2)
+                .input(EMITTER_ZPM, 2)
+                .input(ELECTRIC_PUMP_ZPM, 2)
+                .input(cableGtDouble, VanadiumGallium, 4)
+                .circuitMeta(2)
+                .output(LASER_INPUT_HATCH_1024[2])
+                .duration(600).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[UV])
+                .input(lens, Diamond, 2)
+                .input(EMITTER_UV, 2)
+                .input(ELECTRIC_PUMP_UV, 2)
+                .input(cableGtDouble, YttriumBariumCuprate, 4)
+                .circuitMeta(2)
+                .output(LASER_INPUT_HATCH_1024[3])
+                .duration(600).EUt(VA[UV]).buildAndRegister();
+
+        // 1024A Laser Target Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[IV])
+                .input(lens, Diamond, 2)
+                .input(SENSOR_IV, 2)
+                .input(ELECTRIC_PUMP_IV, 2)
+                .input(cableGtDouble, Platinum, 4)
+                .circuitMeta(2)
+                .output(LASER_OUTPUT_HATCH_1024[0])
+                .duration(600).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(lens, Diamond, 2)
+                .input(SENSOR_LuV, 2)
+                .input(ELECTRIC_PUMP_LuV, 2)
+                .input(cableGtDouble, NiobiumTitanium, 4)
+                .circuitMeta(2)
+                .output(LASER_OUTPUT_HATCH_1024[1])
+                .duration(600).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[ZPM])
+                .input(lens, Diamond, 2)
+                .input(SENSOR_ZPM, 2)
+                .input(ELECTRIC_PUMP_ZPM, 2)
+                .input(cableGtDouble, VanadiumGallium, 4)
+                .circuitMeta(2)
+                .output(LASER_OUTPUT_HATCH_1024[2])
+                .duration(600).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[UV])
+                .input(lens, Diamond, 2)
+                .input(SENSOR_UV, 2)
+                .input(ELECTRIC_PUMP_UV, 2)
+                .input(cableGtDouble, YttriumBariumCuprate, 4)
+                .circuitMeta(2)
+                .output(LASER_OUTPUT_HATCH_1024[3])
+                .duration(600).EUt(VA[UV]).buildAndRegister();
+
+        // 4096A Laser Source Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[IV])
+                .input(lens, Diamond, 4)
+                .input(EMITTER_IV, 4)
+                .input(ELECTRIC_PUMP_IV, 4)
+                .input(cableGtQuadruple, Platinum, 4)
+                .circuitMeta(3)
+                .output(LASER_INPUT_HATCH_4096[0])
+                .duration(1200).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(lens, Diamond, 4)
+                .input(EMITTER_LuV, 4)
+                .input(ELECTRIC_PUMP_LuV, 4)
+                .input(cableGtQuadruple, NiobiumTitanium, 4)
+                .circuitMeta(3)
+                .output(LASER_INPUT_HATCH_4096[1])
+                .duration(1200).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[ZPM])
+                .input(lens, Diamond, 4)
+                .input(EMITTER_ZPM, 4)
+                .input(ELECTRIC_PUMP_ZPM, 4)
+                .input(cableGtQuadruple, VanadiumGallium, 4)
+                .circuitMeta(3)
+                .output(LASER_INPUT_HATCH_4096[2])
+                .duration(1200).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[UV])
+                .input(lens, Diamond, 4)
+                .input(EMITTER_UV, 4)
+                .input(ELECTRIC_PUMP_UV, 4)
+                .input(cableGtQuadruple, YttriumBariumCuprate, 4)
+                .circuitMeta(3)
+                .output(LASER_INPUT_HATCH_4096[3])
+                .duration(1200).EUt(VA[UV]).buildAndRegister();
+
+        // 4096A Laser Target Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[IV])
+                .input(lens, Diamond, 4)
+                .input(SENSOR_IV, 4)
+                .input(ELECTRIC_PUMP_IV, 4)
+                .input(cableGtQuadruple, Platinum, 4)
+                .circuitMeta(3)
+                .output(LASER_OUTPUT_HATCH_4096[0])
+                .duration(1200).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(lens, Diamond, 4)
+                .input(SENSOR_LuV, 4)
+                .input(ELECTRIC_PUMP_LuV, 4)
+                .input(cableGtQuadruple, NiobiumTitanium, 4)
+                .circuitMeta(3)
+                .output(LASER_OUTPUT_HATCH_4096[1])
+                .duration(1200).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[ZPM])
+                .input(lens, Diamond, 4)
+                .input(SENSOR_ZPM, 4)
+                .input(ELECTRIC_PUMP_ZPM, 4)
+                .input(cableGtQuadruple, VanadiumGallium, 4)
+                .circuitMeta(3)
+                .output(LASER_OUTPUT_HATCH_4096[2])
+                .duration(1200).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[UV])
+                .input(lens, Diamond, 4)
+                .input(SENSOR_UV, 4)
+                .input(ELECTRIC_PUMP_UV, 4)
+                .input(cableGtQuadruple, YttriumBariumCuprate, 4)
+                .circuitMeta(3)
+                .output(LASER_OUTPUT_HATCH_4096[3])
+                .duration(1200).EUt(VA[UV]).buildAndRegister();
     }
 }

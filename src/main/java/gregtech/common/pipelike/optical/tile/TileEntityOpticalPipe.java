@@ -14,6 +14,7 @@ import gregtech.common.pipelike.optical.net.OpticalNetHandler;
 import gregtech.common.pipelike.optical.net.OpticalPipeNet;
 import gregtech.common.pipelike.optical.net.WorldOpticalPipeNet;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
@@ -123,6 +124,21 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
             // create new handlers
             initHandlers();
         }
+    }
+
+    @Override
+    public void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor) {
+        if (!getWorld().isRemote && connected && !fromNeighbor) {
+            // never allow more than two connections total
+            if (getNumConnections() >= 2) return;
+
+            // also check the other pipe
+            TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
+            if (tile instanceof IPipeTile<?,?> pipeTile && pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
+                if (pipeTile.getNumConnections() >= 2) return;
+            }
+        }
+        super.setConnection(side, connected, fromNeighbor);
     }
 
     public boolean isActive() {
