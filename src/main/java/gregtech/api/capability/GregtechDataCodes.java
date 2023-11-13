@@ -151,4 +151,5 @@ public class GregtechDataCodes {
 
     // Alarm
     public static final int UPDATE_SOUND = 1;
+    public static final int UPDATE_RADIUS = 2;
 }

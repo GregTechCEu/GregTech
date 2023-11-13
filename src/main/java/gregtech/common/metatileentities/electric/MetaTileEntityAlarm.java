@@ -8,11 +8,14 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.terminal.gui.widgets.SelectorWidget;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.core.sound.GTSoundEvents;
@@ -35,6 +38,7 @@ import java.util.stream.Collectors;
 public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     private SoundEvent selectedSound;
     private boolean isActive;
+    private int radius = 64;
     public static final int BASE_EU_CONSUMPTION = 4;
 
     public MetaTileEntityAlarm(ResourceLocation metaTileEntityId) {
@@ -65,8 +69,8 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return ModularUI.builder(GuiTextures.BACKGROUND, 240, 50)
-                .widget(new LabelWidget(5, 5, getMetaFullName()))
+        return ModularUI.builder(GuiTextures.BACKGROUND, 240, 86)
+                .widget(new LabelWidget(10, 5, getMetaFullName()))
                 .widget(new SelectorWidget(10, 20, 220, 20,
                         getSounds().stream().map((event) -> event.getSoundName().toString()).collect(Collectors.toList()),
                         0x555555, () -> this.selectedSound.getSoundName().toString(), true).setOnChanged((v) -> {
@@ -77,6 +81,17 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
                         this.writeCustomData(GregtechDataCodes.UPDATE_SOUND, (writer) -> writer.writeResourceLocation(this.selectedSound.getSoundName()));
                     }
                 }))
+                .widget(new ImageWidget(10, 54, 220, 20, GuiTextures.DISPLAY))
+                .label(10, 44, "gregtech.gui.alarm.radius")
+                .widget(new TextFieldWidget2(12, 60, 216, 16, () -> String.valueOf(radius), value -> {
+                    if (!value.isEmpty()) {
+                        int newRadius = Integer.parseInt(value);
+                        if (newRadius != radius) {
+                            this.writeCustomData(GregtechDataCodes.UPDATE_RADIUS, (writer) -> writer.writeInt(newRadius));
+                            radius = newRadius;
+                        }
+                    }
+                }).setMaxLength(10).setNumbersOnly(0, 128))
                 .build(this.getHolder(), entityPlayer);
     }
 
@@ -122,12 +137,15 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
         } else if (dataId == GregtechDataCodes.UPDATE_SOUND) {
             this.selectedSound = SoundEvent.REGISTRY.getObject(buf.readResourceLocation());
             GregTechAPI.soundManager.stopTileSound(getPos());
+        } else if (dataId == GregtechDataCodes.UPDATE_RADIUS) {
+            this.radius = buf.readInt();
+            GregTechAPI.soundManager.stopTileSound(getPos());
         }
     }
 
     @Override
     public float getVolume() {
-        return 4.0F;
+        return radius / 16f;
     }
 
     @Override
@@ -135,6 +153,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
         super.receiveInitialSyncData(buf);
         this.isActive = buf.readBoolean();
         this.selectedSound = SoundEvent.REGISTRY.getObject(buf.readResourceLocation());
+        this.radius = buf.readInt();
     }
 
     @Override
@@ -142,12 +161,14 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(this.isActive);
         buf.writeResourceLocation(this.selectedSound.getSoundName());
+        buf.writeInt(this.radius);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         data.setBoolean("isActive", this.isActive);
         data.setString("selectedSound", this.selectedSound.getSoundName().toString());
+        data.setInteger("radius", this.radius);
         return super.writeToNBT(data);
     }
 
@@ -155,6 +176,7 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     public void readFromNBT(NBTTagCompound data) {
         this.isActive = data.getBoolean("isActive");
         this.selectedSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(data.getString("selectedSound")));
+        this.radius = data.getInteger("radius");
         super.readFromNBT(data);
     }
 }
