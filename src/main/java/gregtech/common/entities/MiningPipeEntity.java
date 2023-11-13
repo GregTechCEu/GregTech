@@ -1,12 +1,10 @@
 package gregtech.common.entities;
 
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.common.metatileentities.miner.Miner;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,60 +14,85 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Section of the mining pipe. The pipe should be divided into multiple segments due to naive algorithm used in AABB
+ * Section of the mining pipe. The pipe should be divided into multiple segments due to a naive algorithm used in AABB
  * checks making exceptionally large bounding boxes not work properly
  */
-public class MiningPipeEntity extends Entity {
-
-    private static final DataParameter<Integer> Y = EntityDataManager.createKey(MiningPipeEntity.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> LENGTH = EntityDataManager.createKey(MiningPipeEntity.class, DataSerializers.VARINT);
+public class MiningPipeEntity<MTE extends MetaTileEntity & Miner> extends Entity {
 
     @Nullable
-    private MetaTileEntity mte;
+    private final MTE mte;
+    private final BlockPos origin;
+
+    private int y;
+    private int length;
+    private boolean end;
 
     private int prevLength = -1;
 
-    public MiningPipeEntity(@Nonnull World world) {
+    protected MiningPipeEntity(@Nonnull World world, @Nullable MTE mte, @Nonnull BlockPos origin) {
         super(world);
         this.setSize(.5f, 0);
         this.setNoGravity(true);
         this.noClip = true;
         this.preventEntitySpawning = true;
         this.setEntityInvulnerable(true);
-    }
 
-    public MiningPipeEntity(@Nonnull MetaTileEntity mte, BlockPos origin) {
-        this(mte.getWorld());
         this.mte = mte;
-        this.setPosition(origin.getX() + .5, origin.getY(), origin.getZ() + .5);
+        this.origin = origin;
     }
 
-    public void setLength(int y, int length) {
-        this.dataManager.set(Y, y);
-        this.dataManager.set(LENGTH, length);
+    @SuppressWarnings("unused")
+    public MiningPipeEntity(@Nonnull World world) {
+        this(world, null, BlockPos.ORIGIN);
+    }
+
+    public MiningPipeEntity(@Nonnull MTE mte, @Nonnull BlockPos origin) {
+        this(mte.getWorld(), mte, origin.toImmutable());
+        this.setPosition(this.origin.getX() + .5, this.origin.getY(), this.origin.getZ() + .5);
+    }
+
+    @Nullable
+    public MTE getMTE() {
+        return mte;
+    }
+
+    @Nonnull
+    public BlockPos getOrigin() {
+        return origin;
+    }
+
+    public int getY() {
+        return this.y;
+    }
+
+    public int getLength() {
+        return this.length;
+    }
+
+    public boolean isEnd() {
+        return end;
+    }
+
+    public void setProperties(int y, int length, boolean end) {
+        this.y = y;
+        this.length = length;
+        this.end = end;
     }
 
     @Override
-    protected void entityInit() {
-        this.dataManager.register(Y, 0);
-        this.dataManager.register(LENGTH, 0);
-    }
+    protected void entityInit() {}
 
     @Override
     public void onUpdate() {
-        if (!this.world.isRemote) {
-            if (this.mte == null || !this.mte.isValid()) {
-                setDead();
-                return;
-            }
+        if (this.mte == null || !this.mte.isValid()) {
+            setDead();
+            return;
         }
 
-        int length = this.dataManager.get(LENGTH);
+        int length = this.length;
         if (length != this.prevLength) {
             this.prevLength = length;
-            if (!this.world.isRemote) {
-                setPosition(this.posX, this.dataManager.get(Y) - length, this.posZ);
-            }
+            setPosition(this.posX, getY() - length, this.posZ);
             setSize(.5f, length);
         }
 
@@ -100,7 +123,7 @@ public class MiningPipeEntity extends Entity {
     @Nullable
     @Override
     public AxisAlignedBB getCollisionBox(@Nonnull Entity entity) {
-        return entity.getEntityBoundingBox(); // TODO maybe avoiding pushable check on the entity would allow pipes to stop stuffs like arrow?
+        return entity.canBePushed() ? entity.getEntityBoundingBox() : null;
     }
 
     @Nullable
@@ -119,9 +142,4 @@ public class MiningPipeEntity extends Entity {
 
     @Override
     protected void writeEntityToNBT(@Nonnull NBTTagCompound tag) {}
-
-    // @Override
-    // public boolean shouldRenderInPass(int pass) {
-    //     return false;
-    // }
 }

@@ -6,8 +6,8 @@ public class MiningPipeModels {
 
     public static void init() {}
 
-    public static final MiningPipeModel BRONZE = MiningPipeModel.register("bronze");
-    public static final MiningPipeModel STEEL = MiningPipeModel.register("steel");
-    public static final MiningPipeModel TITANIUM = MiningPipeModel.register("titanium");
-    public static final MiningPipeModel TUNGSTEN_STEEL = MiningPipeModel.register("tungsten_steel");
+    public static final SimpleMiningPipeModel BRONZE = SimpleMiningPipeModel.register("bronze");
+    public static final SimpleMiningPipeModel STEEL = SimpleMiningPipeModel.register("steel");
+    public static final SimpleMiningPipeModel TITANIUM = SimpleMiningPipeModel.register("titanium");
+    public static final SimpleMiningPipeModel TUNGSTEN_STEEL = SimpleMiningPipeModel.register("tungsten_steel");
 }

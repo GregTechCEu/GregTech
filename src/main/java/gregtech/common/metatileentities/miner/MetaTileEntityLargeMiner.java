@@ -47,7 +47,6 @@ import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
@@ -171,6 +170,13 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         }
     }
 
+    @Nonnull
+    @Override
+    @SideOnly(Side.CLIENT)
+    public MiningPipeModel getMiningPipeModel() {
+        return this.type.getMiningPipeModel();
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
@@ -185,11 +191,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        if (MinecraftForgeClient.getRenderPass() == RENDER_PASS_NORMAL) {
-            EnumFacing f = getFrontFacing().getOpposite();
-            MinerRenderHelper.renderPipe(x + f.getXOffset(), y, z + f.getZOffset(), getWorld(), getPos().offset(f),
-                    this.minerLogic.getPipeLength(), this.type.getMiningPipeModel());
-        }
         MiningArea previewArea = this.minerLogic.getPreviewArea();
         if (previewArea != null) previewArea.renderMetaTileEntity(this, x, y, z, partialTicks);
     }
@@ -202,12 +203,12 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        return this.minerLogic.getRenderBoundingBox();
+        MiningArea previewArea = this.minerLogic.getPreviewArea();
+        return previewArea != null ? previewArea.getRenderBoundingBox() : MinerUtil.EMPTY_AABB;
     }
 
     @Override
     public boolean shouldRenderInPass(int pass) {
-        if (pass == RENDER_PASS_NORMAL) return true;
         MiningArea previewArea = this.minerLogic.getPreviewArea();
         return previewArea != null && previewArea.shouldRenderInPass(pass);
     }
@@ -220,6 +221,14 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     protected void updateFormedValid() {
         this.minerLogic.update();
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (this.getWorld().isRemote) {
+            this.minerLogic.update();
+        }
     }
 
     @Nonnull

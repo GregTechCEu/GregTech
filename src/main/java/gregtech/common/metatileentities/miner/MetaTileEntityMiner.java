@@ -36,7 +36,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -91,9 +90,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        if (MinecraftForgeClient.getRenderPass() == RENDER_PASS_NORMAL) {
-            MinerRenderHelper.renderPipe(x, y, z, getWorld(), getPos(), this.minerLogic.getPipeLength(), MiningPipeModels.STEEL);
-        }
         MiningArea previewArea = this.minerLogic.getPreviewArea();
         if (previewArea != null) previewArea.renderMetaTileEntity(this, x, y, z, partialTicks);
     }
@@ -106,12 +102,12 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        return this.minerLogic.getRenderBoundingBox();
+        MiningArea previewArea = this.minerLogic.getPreviewArea();
+        return previewArea != null ? previewArea.getRenderBoundingBox() : MinerUtil.EMPTY_AABB;
     }
 
     @Override
     public boolean shouldRenderInPass(int pass) {
-        if (pass == RENDER_PASS_NORMAL) return true;
         MiningArea previewArea = this.minerLogic.getPreviewArea();
         return previewArea != null && previewArea.shouldRenderInPass(pass);
     }
@@ -206,6 +202,13 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
             energyContainer.removeEnergy(energyPerTick);
         }
         return true;
+    }
+
+    @Nonnull
+    @Override
+    @SideOnly(Side.CLIENT)
+    public MiningPipeModel getMiningPipeModel() {
+        return MiningPipeModels.STEEL;
     }
 
     @Override

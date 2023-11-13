@@ -6,6 +6,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -20,6 +22,10 @@ public interface Miner {
      * @return Whether the action was successful
      */
     boolean drainMiningResources(@Nonnull MinedBlockType minedBlockType, boolean pipeExtended, boolean simulate);
+
+    @Nonnull
+    @SideOnly(Side.CLIENT)
+    MiningPipeModel getMiningPipeModel();
 
     default boolean canOperate() {
         return true;
@@ -61,6 +67,6 @@ public interface Miner {
         /**
          * Mined a block that isn't an ore, like a block in the center (pipe column).
          */
-        BLOCK;
+        BLOCK
     }
 }

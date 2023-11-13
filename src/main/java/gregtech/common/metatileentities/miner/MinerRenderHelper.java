@@ -1,12 +1,14 @@
 package gregtech.common.metatileentities.miner;
 
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
-import net.minecraft.block.state.IBlockState;
+import gregtech.common.entities.MiningPipeEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.culling.ClippingHelperImpl;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -14,7 +16,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
-import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
@@ -50,40 +51,43 @@ public class MinerRenderHelper {
         clippingHelper.init();
     }
 
-    public static void renderPipe(double x, double y, double z,
-                                  @Nonnull World world, @Nonnull BlockPos pos,
-                                  int pipeLength, @Nonnull MiningPipeModel miningPipeModel) {
-        if (pipeLength <= 0) return;
+    public static <MTE extends MetaTileEntity & Miner> void renderPipe(double x, double y, double z, float partialTicks,
+                                                                       @Nonnull MiningPipeEntity<MTE> entity) {
+        if (entity.getMTE() == null || entity.getLength() <= 0) return;
         updateFrustum();
 
+        x -= entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks;
+        y -= entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks;
+        z -= entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks;
+
         Minecraft mc = Minecraft.getMinecraft();
-        MutableBlockPos mpos = new MutableBlockPos(pos);
+        BlockPos origin = entity.getOrigin();
+        MutableBlockPos mpos = new MutableBlockPos(origin);
         Tessellator t = Tessellator.getInstance();
         BufferBuilder buffer = t.getBuffer();
+        MiningPipeModel model = entity.getMTE().getMiningPipeModel();
 
-        GlStateManager.disableLighting();
+        RenderHelper.disableStandardItemLighting();
         GlStateManager.shadeModel(Minecraft.isAmbientOcclusionEnabled() ? GL11.GL_SMOOTH : GL11.GL_FLAT);
         GlStateManager.bindTexture(mc.getTextureMapBlocks().getGlTextureId());
-        buffer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
-        mpos.setY(mpos.getY());
+        buffer.setTranslation(x, y, z);
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        for (int i = 0; i < pipeLength; i++) {
-            mpos.setY(mpos.getY() - 1);
+        for (int i = 0, len = entity.getLength(); i < len; i++) {
+            mpos.setY(entity.getY() - len + i);
             // me epicly dodging AABB allocations by plugging in primitive values directly (very epic)
             if (!clippingHelper.isBoxInFrustum(
-                    mpos.getX() + .25 + x - pos.getX(), mpos.getY() + y - pos.getY(), mpos.getZ() + .25 + z - pos.getZ(),
-                    mpos.getX() + .75 + x - pos.getX(), mpos.getY() + 1 + y - pos.getY(), mpos.getZ() + .75 + z - pos.getZ())) {
+                    mpos.getX() + .25 + x, mpos.getY() + y, mpos.getZ() + .25 + z,
+                    mpos.getX() + .75 + x, mpos.getY() + 1 + y, mpos.getZ() + .75 + z)) {
                 continue;
             }
 
-            IBlockState state = world.getBlockState(mpos);
-            mc.blockRenderDispatcher.getBlockModelRenderer().renderModel(world,
-                    i == (pipeLength - 1) ? miningPipeModel.getBottomModel() : miningPipeModel.getBaseModel(),
-                    state, mpos, buffer, false);
+            mc.blockRenderDispatcher.getBlockModelRenderer().renderModel(entity.world,
+                    i == (len - 1) && entity.isEnd() ? model.getBottomModel() : model.getBaseModel(),
+                    entity.world.getBlockState(mpos), mpos, buffer, false);
         }
         buffer.setTranslation(0, 0, 0);
         t.draw();
-        GlStateManager.enableLighting();
+        RenderHelper.enableStandardItemLighting();
     }
 
     /**
