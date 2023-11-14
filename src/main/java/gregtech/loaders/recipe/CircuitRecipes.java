@@ -212,27 +212,27 @@ public class CircuitRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(GLASS_TUBE)
-                .input(bolt, Steel)
+                .input(bolt, Steel, 2)
                 .input(wireGtSingle, Copper, 2)
                 .circuitMeta(1)
                 .output(VACUUM_TUBE, 2)
-                .duration(120).EUt(VA[ULV]).buildAndRegister();
+                .duration(160).EUt(VA[ULV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(GLASS_TUBE)
-                .input(bolt, Steel)
+                .input(bolt, Steel, 2)
                 .input(wireGtSingle, Copper, 2)
                 .fluidInputs(RedAlloy.getFluid(18))
                 .output(VACUUM_TUBE, 3)
-                .duration(40).EUt(VA[ULV]).buildAndRegister();
+                .duration(160).EUt(VA[ULV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(GLASS_TUBE)
-                .input(bolt, Steel)
+                .input(bolt, Steel, 2)
                 .input(wireGtSingle, AnnealedCopper, 2)
                 .fluidInputs(RedAlloy.getFluid(18))
                 .output(VACUUM_TUBE, 4)
-                .duration(40).EUt(VA[ULV]).buildAndRegister();
+                .duration(160).EUt(VA[ULV]).buildAndRegister();
 
         ALLOY_SMELTER_RECIPES.recipeBuilder()
                 .input(dust, Glass)
@@ -927,7 +927,7 @@ public class CircuitRecipes {
                 'B', GOOD_CIRCUIT_BOARD.getStackForm(),
                 'D', DIODE.getStackForm());
 
-        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).duration(300)
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(16).duration(300)
                 .input(GOOD_CIRCUIT_BOARD)
                 .input(circuit, Tier.LV, 2)
                 .input(component, Component.Diode, 2)
@@ -1034,14 +1034,14 @@ public class CircuitRecipes {
                 .buildAndRegister();
 
         // HV
-        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[MV]).duration(400)
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(90).duration(400)
                 .input(PLASTIC_CIRCUIT_BOARD)
                 .input(PROCESSOR_MV, 2)
                 .input(component, Component.Inductor, 4)
                 .input(component, Component.Capacitor, 8)
                 .input(RANDOM_ACCESS_MEMORY, 4)
                 .input(wireFine, RedAlloy, 8)
-                .output(PROCESSOR_ASSEMBLY_HV, 2)
+                .output(PROCESSOR_ASSEMBLY_HV)
                 .solderMultiplier(2)
                 .buildAndRegister();
 
@@ -1126,7 +1126,7 @@ public class CircuitRecipes {
                 .input(SMD_CAPACITOR, 8)
                 .input(RANDOM_ACCESS_MEMORY, 8)
                 .input(wireFine, Electrum, 16)
-                .output(NANO_PROCESSOR_ASSEMBLY_EV, 2)
+                .output(NANO_PROCESSOR_ASSEMBLY_EV)
                 .solderMultiplier(2)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
@@ -1138,7 +1138,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_CAPACITOR, 2)
                 .input(RANDOM_ACCESS_MEMORY, 8)
                 .input(wireFine, Electrum, 16)
-                .output(NANO_PROCESSOR_ASSEMBLY_EV, 2)
+                .output(NANO_PROCESSOR_ASSEMBLY_EV)
                 .solderMultiplier(2)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
@@ -1236,7 +1236,7 @@ public class CircuitRecipes {
                 .input(SMD_CAPACITOR, 16)
                 .input(RANDOM_ACCESS_MEMORY, 4)
                 .input(wireFine, Platinum, 16)
-                .output(QUANTUM_ASSEMBLY_IV, 2)
+                .output(QUANTUM_ASSEMBLY_IV)
                 .solderMultiplier(2)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
@@ -1248,7 +1248,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_CAPACITOR, 4)
                 .input(RANDOM_ACCESS_MEMORY, 4)
                 .input(wireFine, Platinum, 16)
-                .output(QUANTUM_ASSEMBLY_IV, 2)
+                .output(QUANTUM_ASSEMBLY_IV)
                 .solderMultiplier(2)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
@@ -1335,7 +1335,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_CAPACITOR, 8)
                 .input(RANDOM_ACCESS_MEMORY, 24)
                 .input(wireFine, NiobiumTitanium, 16)
-                .output(CRYSTAL_ASSEMBLY_LUV, 2)
+                .output(CRYSTAL_ASSEMBLY_LUV)
                 .solderMultiplier(2)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
@@ -1416,7 +1416,7 @@ public class CircuitRecipes {
                 .input(RANDOM_ACCESS_MEMORY, 24)
                 .input(wireFine, YttriumBariumCuprate, 16)
                 .solderMultiplier(2)
-                .output(WETWARE_PROCESSOR_ASSEMBLY_ZPM, 2)
+                .output(WETWARE_PROCESSOR_ASSEMBLY_ZPM)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
