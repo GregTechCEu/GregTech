@@ -1262,6 +1262,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         }
     }
 
+    public int getItemStackLimit(ItemStack stack) {
+        return 64;
+    }
+
     /**
      * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy}
      * <p>

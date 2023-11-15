@@ -157,6 +157,15 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
+    public int getItemStackLimit(ItemStack stack) {
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag != null && tag.getBoolean(TAPED_NBT)) {
+            return 1;
+        }
+        return super.getItemStackLimit(stack);
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("Inventory", inventory.serializeNBT());
