@@ -272,13 +272,9 @@ public class TankWidget extends Widget implements IIngredientSlot {
     public void handleClientAction(int id, PacketBuffer buffer) {
         super.handleClientAction(id, buffer);
         if (id == 1) {
-            System.out.println("Old stack: " + gui.entityPlayer.inventory.getItemStack());
             ItemStack clickResult = tryClickContainer(buffer.readBoolean());
             if (clickResult != ItemStack.EMPTY) {
-                System.out.println("New stack: " + clickResult);
                 ((EntityPlayerMP) gui.entityPlayer).updateHeldItem();
-            } else {
-                System.out.println("New stack: Empty (no change made)");
             }
         }
     }
