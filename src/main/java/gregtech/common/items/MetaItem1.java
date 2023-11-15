@@ -715,6 +715,7 @@ public class MetaItem1 extends StandardMetaItem {
         DUCT_TAPE = addItem(502, "duct_tape");
         WIRELESS = addItem(503, "wireless");
         CAMERA = addItem(504, "camera");
+        BASIC_TAPE = addItem(505, "basic_tape");
 
         // Circuit Components: ID 516-565
         VACUUM_TUBE = addItem(516, "circuit.vacuum_tube").setUnificationData(OrePrefix.circuit, Tier.ULV);

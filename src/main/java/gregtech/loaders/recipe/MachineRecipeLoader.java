@@ -14,6 +14,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.*;
 import gregtech.common.blocks.BlockMachineCasing.MachineCasingType;
@@ -678,6 +679,9 @@ public class MachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, SiliconeRubber, 2).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(288)).output(DUCT_TAPE, 2).duration(100).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, Polycaprolactam, 2).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(144)).output(DUCT_TAPE, 4).duration(100).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, Polybenzimidazole).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(72)).output(DUCT_TAPE, 8).duration(100).buildAndRegister();
+
+        ModHandler.addShapedRecipe("basic_tape", BASIC_TAPE.getStackForm(), " P ", "PSP", " P ", 'P', new UnificationEntry(plate, Paper), 'S', STICKY_RESIN.getStackForm());
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).input(plate, Paper, 2).input(STICKY_RESIN).output(BASIC_TAPE, 2).duration(100).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plateDouble, Steel, 2)

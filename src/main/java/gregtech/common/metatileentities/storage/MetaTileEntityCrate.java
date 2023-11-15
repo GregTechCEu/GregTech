@@ -139,20 +139,20 @@ public class MetaTileEntityCrate extends MetaTileEntity {
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-
         ItemStack stack = playerIn.getHeldItem(hand);
-        if(playerIn.isSneaking() && stack.isItemEqual(MetaItems.DUCT_TAPE.getStackForm()) && !isTaped) {
-            if(!playerIn.isCreative()) {
-                stack.shrink(1);
+        if(playerIn.isSneaking() && !isTaped) {
+            if (stack.isItemEqual(MetaItems.DUCT_TAPE.getStackForm()) || stack.isItemEqual(MetaItems.BASIC_TAPE.getStackForm())) {
+                if (!playerIn.isCreative()) {
+                    stack.shrink(1);
+                }
+                isTaped = true;
+                if (!getWorld().isRemote) {
+                    writeCustomData(IS_TAPED, buf -> buf.writeBoolean(isTaped));
+                    markDirty();
+                }
+                return true;
             }
-            isTaped = true;
-            if (!getWorld().isRemote) {
-                writeCustomData(IS_TAPED, buf -> buf.writeBoolean(isTaped));
-                markDirty();
-            }
-            return true;
         }
-
         return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
