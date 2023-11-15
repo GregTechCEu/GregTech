@@ -10,12 +10,14 @@
     "MinecraftMixin"
   ],
   "client": [
+    "BlockMixin",
     "LayerArmorBaseMixin",
     "LayerCustomHeadMixin",
     "RecipeRepairItemMixin",
     "RegionRenderCacheBuilderMixin",
     "RenderChunkMixin",
-    "RenderGlobalMixin"
+    "RenderGlobalMixin",
+    "RenderItemMixin"
   ],
   "server": []
 }
