@@ -54,4 +54,9 @@ public class GregTechLoadingPlugin implements IFMLLoadingPlugin, IEarlyMixinLoad
 
         return configs;
     }
+
+    @Override
+    public boolean shouldMixinConfigQueue(String mixinConfig) {
+        return IEarlyMixinLoader.super.shouldMixinConfigQueue(mixinConfig);
+    }
 }
