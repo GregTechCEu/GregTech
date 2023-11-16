@@ -656,6 +656,7 @@ public class VanillaOverrideRecipes {
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:ender_chest"));
         ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OreDictNames.chestWood.name())
                 .input(OrePrefix.plateDense, Materials.Obsidian, 6)
                 .input(OrePrefix.plate, Materials.EnderEye)
                 .output(Blocks.ENDER_CHEST)

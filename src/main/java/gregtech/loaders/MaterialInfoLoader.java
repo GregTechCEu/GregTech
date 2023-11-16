@@ -320,6 +320,7 @@ public class MaterialInfoLoader {
                     new MaterialStack(Materials.Paper, M * 9)));
 
             OreDictUnifier.registerOre(new ItemStack(Blocks.ENDER_CHEST, 1, W), new ItemMaterialInfo(
+                    new MaterialStack(Materials.Wood, M * 8), // chest
                     new MaterialStack(Materials.Obsidian, M * 9 * 6), // 6 dense plates
                     new MaterialStack(Materials.EnderEye, M)));
         } else {
