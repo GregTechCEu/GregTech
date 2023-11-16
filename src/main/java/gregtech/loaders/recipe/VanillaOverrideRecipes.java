@@ -746,7 +746,7 @@ public class VanillaOverrideRecipes {
             ModHandler.removeRecipeByName("minecraft:polished_granite");
             ModHandler.removeRecipeByName("minecraft:coarse_dirt");
             ModHandler.removeRecipeByName("minecraft:smooth_sandstone");
-            ModHandler.removeRecipeByName("minecraft_chiseled_sandstone");
+            ModHandler.removeRecipeByName("minecraft:chiseled_sandstone");
             ModHandler.removeRecipeByName("minecraft:chiseled_quartz_block");
             ModHandler.removeRecipeByName("minecraft:stonebrick");
             ModHandler.removeRecipeByName("minecraft:chiseled_stonebrick");
@@ -759,7 +759,6 @@ public class VanillaOverrideRecipes {
             ModHandler.removeRecipeByName("minecraft:bookshelf");
             ModHandler.removeRecipeByName("minecraft:pillar_quartz_block");
             ModHandler.removeRecipeByName("minecraft:sea_lantern");
-            ModHandler.removeRecipeByName("minecraft:chiseled_sandstone");
 
             // Slab replacement
             ModHandler.removeRecipeByName("minecraft:stone_slab");
