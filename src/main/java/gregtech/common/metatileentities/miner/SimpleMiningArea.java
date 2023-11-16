@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.miner;
 
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.client.utils.MinerRenderHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.AxisAlignedBB;

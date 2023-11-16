@@ -1,7 +1,7 @@
 package gregtech.client.renderer.handler;
 
 import gregtech.common.entities.MiningPipeEntity;
-import gregtech.common.metatileentities.miner.MinerRenderHelper;
+import gregtech.client.utils.MinerRenderHelper;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
