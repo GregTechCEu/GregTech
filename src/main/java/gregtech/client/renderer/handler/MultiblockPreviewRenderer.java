@@ -39,6 +39,7 @@ public class MultiblockPreviewRenderer {
     private static long mbpEndTime;
     private static int opList = -1;
     private static int layer;
+    private static int shapeIndex = 0;
 
     public static void renderWorldLastEvent(RenderWorldLastEvent event) {
         if (mbpPos != null) {
@@ -85,8 +86,13 @@ public class MultiblockPreviewRenderer {
         opList = GLAllocation.generateDisplayLists(1); // allocate op list
         GlStateManager.glNewList(opList, GL11.GL_COMPILE);
         List<MultiblockShapeInfo> shapes = controller.getMatchingShapes();
-        if (!shapes.isEmpty()) renderControllerInList(controller, shapes.get(0), layer);
+        if(shapeIndex > shapes.size()) shapeIndex = shapes.size() - 1;
+        if (!shapes.isEmpty()) renderControllerInList(controller, shapes.get(shapeIndex), layer);
         GlStateManager.glEndList();
+    }
+
+    public static void setShapeInfoIndex(int index) {
+        shapeIndex = index;
     }
 
     public static void resetMultiblockRender() {
