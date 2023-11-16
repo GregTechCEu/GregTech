@@ -27,7 +27,7 @@ public interface Miner {
      * {@code false} means the operation cannot be done (ex. not enough inventory space to store the drops). Returning
      * {@code false} will momentarily halt the miner operation.
      *
-     * @param world the {@link WorldServer} the miner is in
+     * @param world the {@link World} the miner is in
      * @param pos   the {@link BlockPos} of the block being mined
      * @param state the {@link IBlockState} of the block being mined
      * @return Whether the action was successful
