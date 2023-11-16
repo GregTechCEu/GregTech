@@ -1,7 +1,5 @@
 package gregtech.client.model.miningpipe;
 
-import gregtech.common.metatileentities.miner.SimpleMiningPipeModel;
-
 public class MiningPipeModels {
 
     private MiningPipeModels() {}
