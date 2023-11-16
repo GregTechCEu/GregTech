@@ -445,19 +445,20 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
                     return true;
                 }
             }
+
+            // Try to do cover right-click behavior on this specific side first
             EnumFacing hitFacing = hitResult.sideHit;
             CoverBehavior coverBehavior = hitFacing == null ? null : getCoverAtSide(hitFacing);
-            if (coverBehavior == null) {
-                return false;
+            if (coverBehavior != null) {
+                EnumActionResult result = coverBehavior.onRightClick(playerIn, hand, hitResult);
+                if (result == EnumActionResult.SUCCESS) return true;
             }
-            EnumActionResult result = coverBehavior.onRightClick(playerIn, hand, hitResult);
 
-            if (result == EnumActionResult.SUCCESS) {
-                return true;
-            }
-            else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
-                result = coverBehavior.onScrewdriverClick(playerIn, hand, hitResult);
-
+            // Then try to do cover screwdriver-click behavior on the cover grid side next
+            EnumFacing gridSideHit = ICoverable.determineGridSideHit(hitResult);
+            coverBehavior = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
+            if (coverBehavior != null && playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
+                EnumActionResult result = coverBehavior.onScrewdriverClick(playerIn, hand, hitResult);
                 return result == EnumActionResult.SUCCESS;
             }
         }
