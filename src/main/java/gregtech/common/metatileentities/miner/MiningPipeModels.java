@@ -6,7 +6,6 @@ public class MiningPipeModels {
 
     public static void init() {}
 
-    public static final SimpleMiningPipeModel BRONZE = SimpleMiningPipeModel.register("bronze");
     public static final SimpleMiningPipeModel STEEL = SimpleMiningPipeModel.register("steel");
     public static final SimpleMiningPipeModel TITANIUM = SimpleMiningPipeModel.register("titanium");
     public static final SimpleMiningPipeModel TUNGSTEN_STEEL = SimpleMiningPipeModel.register("tungsten_steel");
