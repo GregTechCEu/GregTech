@@ -45,6 +45,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -829,7 +830,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public void getDrops(NonNullList<ItemStack> dropsList, @Nullable EntityPlayer harvester) {
     }
 
-    public ItemStack getPickItem(CuboidRayTraceResult result, EntityPlayer player) {
+    public final ItemStack getPickItem(CuboidRayTraceResult result, EntityPlayer player) {
         IndexedCuboid6 hitCuboid = result.cuboid6;
         if (hitCuboid.data instanceof CoverSideData) {
             CoverSideData coverSideData = (CoverSideData) hitCuboid.data;
@@ -841,10 +842,14 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (behavior != null) {
                 return behavior.getPickItem();
             }
-            return getStackForm();
+            return getPickItem(player);
         } else {
             return ItemStack.EMPTY;
         }
+    }
+
+    public ItemStack getPickItem(EntityPlayer player) {
+        return getStackForm();
     }
 
     /**

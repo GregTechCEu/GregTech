@@ -519,7 +519,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public ItemStack getPickItem(CuboidRayTraceResult result, EntityPlayer player) {
+    public ItemStack getPickItem(EntityPlayer player) {
         return this.getClipboard();
     }
 }
