@@ -20,6 +20,8 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.client.model.miningpipe.MiningPipeModel;
+import gregtech.client.model.miningpipe.MiningPipeModels;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;

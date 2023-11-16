@@ -1,4 +1,4 @@
-package gregtech.common.metatileentities.miner;
+package gregtech.client.model.miningpipe;
 
 import net.minecraft.client.renderer.block.model.IBakedModel;
 

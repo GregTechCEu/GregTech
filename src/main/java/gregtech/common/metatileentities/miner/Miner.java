@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.miner;
 
+import gregtech.client.model.miningpipe.MiningPipeModel;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

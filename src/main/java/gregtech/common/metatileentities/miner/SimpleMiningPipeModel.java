@@ -4,6 +4,7 @@ import com.google.common.base.Suppliers;
 import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.client.model.miningpipe.MiningPipeModel;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;

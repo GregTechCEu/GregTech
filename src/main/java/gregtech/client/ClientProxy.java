@@ -25,7 +25,7 @@ import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
-import gregtech.common.metatileentities.miner.MiningPipeModels;
+import gregtech.client.model.miningpipe.MiningPipeModels;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;

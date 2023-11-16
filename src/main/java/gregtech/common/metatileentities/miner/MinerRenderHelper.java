@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.miner;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
+import gregtech.client.model.miningpipe.MiningPipeModel;
 import gregtech.common.entities.MiningPipeEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
