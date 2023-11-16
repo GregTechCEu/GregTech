@@ -3,22 +3,18 @@ package gregtech.common.metatileentities.miner;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.BlockUtility;
-import gregtech.api.util.GTTransferUtils;
 import gregtech.common.entities.MiningPipeEntity;
 import gregtech.common.metatileentities.miner.Miner.MinedBlockType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,8 +48,6 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
 
     private boolean active;
     private int workDelay;
-    // flag indicating last insertion to inventory failed
-    private boolean inventoryFull;
     // flag indicating mining area should be rebuilt
     protected boolean rebuildMiningArea;
     // flag for area preview
@@ -102,7 +96,6 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
      * @param currentDiameter the radius to set the miner to use
      */
     public void setCurrentDiameter(int currentDiameter) {
-        if (isWorking()) return;
         currentDiameter = Math.max(1, Math.min(currentDiameter, getMaximumDiameter()));
         if (this.currentDiameter != currentDiameter) {
             this.currentDiameter = currentDiameter;
@@ -113,10 +106,6 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
 
     public boolean isActive() {
         return this.active;
-    }
-
-    public boolean isInventoryFull() {
-        return this.inventoryFull;
     }
 
     public int getPipeLength() {
@@ -130,8 +119,8 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
 
     public double getWorkProgress() {
         if (!isWorking()) return 0;
-        if (getWorkFrequency() < 2) return 1;
-        return (double) workDelay / getWorkFrequency();
+        if (getWorkFrequency() == 2) return 1;
+        return 1 - (double) workDelay / getWorkFrequency();
     }
 
     /**
@@ -176,6 +165,10 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
         return hasNotEnoughEnergy;
     }
 
+    public boolean isDone() {
+        return done;
+    }
+
     /**
      * @return origin position of the miner. Block boundary will be centered around this position, and mining pipes will
      * be rendered under this position.
@@ -211,8 +204,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
     public void reset() {
         setPipeLength(0);
         rebuildMiningArea();
-
-        this.mte.markDirty();
+        this.done = false;
     }
 
     private void rebuildMiningArea() {
@@ -234,7 +226,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
         if (!this.mte.getWorld().isRemote) {
             // rebuild scan area every tick regardless of miner status, for accurate preview
             if (this.rebuildMiningArea || this.miningArea == null) {
-                rebuildMiningArea();
+                reset();
             }
 
             updateLogic();
@@ -245,12 +237,14 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
             int pipeIndex = 0;
             int y = this.getOrigin().getY();
             int yEnd = y - this.pipeLength;
+            MiningPipeEntity<MTE> entity = null;
 
             while (y > yEnd) { // divide segments every 16 blocks, aligned with Y position
                 int length = y % 16;
                 if (length == 0) length = 16;
+                length = Math.min(length, y - yEnd);
 
-                MiningPipeEntity<MTE> entity = this.pipeEntities.size() > pipeIndex ? this.pipeEntities.get(pipeIndex) : null;
+                entity = this.pipeEntities.size() > pipeIndex ? this.pipeEntities.get(pipeIndex) : null;
 
                 if (entity == null || !entity.isEntityAlive()) {
                     entity = new MiningPipeEntity<>(this.mte, this.getOrigin());
@@ -259,9 +253,14 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
                     this.mte.getWorld().spawnEntity(entity);
                 }
 
-                entity.setProperties(y, length, (y -= length) > yEnd);
+                entity.y = y;
+                entity.length = length;
+                entity.end = false;
+                y -= length;
                 pipeIndex++;
             }
+
+            if (entity != null) entity.end = true;
 
             for (int i = this.pipeEntities.size() - 1; i >= pipeIndex; i--) {
                 this.pipeEntities.remove(i).setDead();
@@ -295,11 +294,10 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
         MutableBlockPos pos = this.mpos;
 
         for (int i = MinerUtil.MAX_BLOCK_SCAN; i > 0; i--) {
-            if (!getCurrentBlock(miningArea, pos)) {
+            if (!miningArea.getCurrentBlockPos(pos) || mte.getWorld().isOutsideBuildHeight(pos)) {
                 this.done = true;
                 return;
             }
-
             IBlockState state = world.getBlockState(pos);
             boolean isOrigin = pos.getX() == origin.getX() && pos.getZ() == origin.getZ();
 
@@ -308,17 +306,18 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
                     state.getBlockHardness(world, pos) < 0 ||
                     state.getBlock().hasTileEntity(state) ||
                     state.getMaterial().isLiquid()) {
-                if (isOrigin) {
-                    // center block (where mining pipes goes in) can be skipped by this, it'll probably look kind of janky
-                    // but it's 100x better than voiding bedrock
-                    if (!this.mte.drainMiningResources(MinedBlockType.NOTHING, true, false)) {
-                        return;
-                    }
-                    setPipeLength(this.pipeLength + 1);
-                    this.workDelay /= 2;
-                }
                 miningArea.nextBlock();
-                continue;
+                if (!isOrigin) {
+                    continue;
+                }
+                // center block (where mining pipes goes in) can be skipped by this, it'll probably look kind of janky
+                // but it's 100x better than voiding bedrock
+                if (!this.mte.drainMiningResources(MinedBlockType.NOTHING, true, false)) {
+                    return;
+                }
+                setPipeLength(this.pipeLength + 1);
+                this.workDelay /= 2;
+                return;
             }
 
             boolean isOre = BlockUtility.isOre(state);
@@ -331,17 +330,8 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
                 return;
             }
 
-            NonNullList<ItemStack> blockDrops = NonNullList.create();
-            this.mte.getRegularBlockDrops(blockDrops, world, pos, state);
-
-            if (isOre) {
-                IItemHandlerModifiable exportItems = mte.getExportItems();
-                if (!GTTransferUtils.addItemsToItemHandler(exportItems, true, blockDrops)) {
-                    this.inventoryFull = true;
-                    return;
-                }
-                GTTransferUtils.addItemsToItemHandler(exportItems, false, blockDrops);
-                this.inventoryFull = false;
+            if (isOre && !this.mte.collectBlockDrops(world, pos, state)) {
+                return;
             }
             world.setBlockState(pos, isOrigin ? Blocks.AIR.getDefaultState() : getOreReplacement());
             if (isOrigin) setPipeLength(this.pipeLength + 1);
@@ -349,6 +339,7 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
             this.mte.onMineOperation(pos, isOre, isOrigin);
             this.mte.markDirty();
             return;
+
         }
         this.workDelay = 1; // re-scan next tick
     }
@@ -387,17 +378,6 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
     }
 
     /**
-     * Get the block currently being mined by this miner. This method only works on server environment.
-     *
-     * @param mpos Mutable block position
-     * @return {@code true} if the block exists (in which the {@code mpos} instance gets modified with the value, or
-     * {@code false} if it does not exist
-     */
-    public boolean getCurrentBlock(@Nonnull MiningArea miningArea, @Nonnull MutableBlockPos mpos) {
-        return miningArea.getCurrentBlockPos(mpos) && !mte.getWorld().isOutsideBuildHeight(mpos);
-    }
-
-    /**
      * Write states to NBT. Call this method in {@link MetaTileEntity#writeToNBT(NBTTagCompound)}.
      */
     @Nonnull
@@ -419,7 +399,6 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
      * Read states from NBT. Call this method in {@link MetaTileEntity#readFromNBT(NBTTagCompound)}.
      */
     public void readFromNBT(@Nonnull NBTTagCompound data) {
-        this.inventoryFull = false;
         this.rebuildMiningArea = false;
 
         if (data.hasKey("xPos", Constants.NBT.TAG_INT)) {

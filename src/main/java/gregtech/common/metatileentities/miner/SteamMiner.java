@@ -21,10 +21,12 @@ import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.ConfigHolder;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,6 +34,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -174,6 +177,19 @@ public class SteamMiner extends MetaTileEntity implements Miner, IControllable, 
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
         super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
+    public boolean collectBlockDrops(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        NonNullList<ItemStack> drops = NonNullList.create();
+        IItemHandlerModifiable inventory = getExportItems();
+        state.getBlock().getDrops(drops, world, pos, state, 0);
+        if (GTTransferUtils.addItemsToItemHandler(inventory, true, drops)) {
+            GTTransferUtils.addItemsToItemHandler(inventory, false, drops);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

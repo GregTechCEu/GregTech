@@ -42,6 +42,10 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
             this.done = false;
         }
         super.mine(miningArea);
+        if (this.done && this.repeat) {
+            miningArea.reset();
+            this.done = false;
+        }
     }
 
     @Nonnull
@@ -91,7 +95,6 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     }
 
     public void setCurrentChunkDiameter(int currentChunkDiameter) {
-        if (isWorking()) return;
         currentChunkDiameter = Math.max(1, Math.min(currentChunkDiameter, getMaximumChunkDiameter()));
         setChunkMode(true);
         if (this.currentChunkDiameter != currentChunkDiameter) {
@@ -103,7 +106,6 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
 
     @Override
     public void setCurrentDiameter(int currentDiameter) {
-        if (isWorking()) return;
         setChunkMode(false);
         super.setCurrentDiameter(currentDiameter);
     }
@@ -113,7 +115,7 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     }
 
     public void setChunkMode(boolean chunkMode) {
-        if (isWorking() || this.chunkMode == chunkMode) return;
+        if (this.chunkMode == chunkMode) return;
         this.chunkMode = chunkMode;
         this.rebuildMiningArea = true;
         this.mte.markDirty();
@@ -134,7 +136,7 @@ public class MultiblockMinerLogic extends MinerLogic<MetaTileEntityLargeMiner> {
     }
 
     public void setYLimit(int yLimit) {
-        if (isWorking() || this.yLimit == yLimit) return;
+        if (this.yLimit == yLimit) return;
         this.yLimit = yLimit;
         this.rebuildMiningArea = true;
         this.mte.markDirty();

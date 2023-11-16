@@ -1,8 +1,6 @@
 package gregtech.common.metatileentities.miner;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -23,6 +21,18 @@ public interface Miner {
      */
     boolean drainMiningResources(@Nonnull MinedBlockType minedBlockType, boolean pipeExtended, boolean simulate);
 
+    /**
+     * Try to collect drops from the block. {@code true} is returned if the block drop is successfully collected;
+     * {@code false} means the operation cannot be done (ex. not enough inventory space to store the drops). Returning
+     * {@code false} will momentarily halt the miner operation.
+     *
+     * @param world the {@link WorldServer} the miner is in
+     * @param pos   the {@link BlockPos} of the block being mined
+     * @param state the {@link IBlockState} of the block being mined
+     * @return Whether the action was successful
+     */
+    boolean collectBlockDrops(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state);
+
     @Nonnull
     @SideOnly(Side.CLIENT)
     MiningPipeModel getMiningPipeModel();
@@ -39,18 +49,6 @@ public interface Miner {
      * @param isOrigin whether it was origin (the block mining pipe goes in)
      */
     default void onMineOperation(@Nonnull BlockPos pos, boolean isOre, boolean isOrigin) {}
-
-    /**
-     * Called to handle mining regular ores and blocks
-     *
-     * @param drops the List of items to fill after the operation
-     * @param world the {@link WorldServer} the miner is in
-     * @param pos   the {@link BlockPos} of the block being mined
-     * @param state the {@link IBlockState} of the block being mined
-     */
-    default void getRegularBlockDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
-        state.getBlock().getDrops(drops, world, pos, state, 0); // regular ores do not get fortune applied
-    }
 
     /**
      * Type of the block mined.

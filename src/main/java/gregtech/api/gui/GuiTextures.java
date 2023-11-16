@@ -237,6 +237,7 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_TURBINE_ROTOR_SPEED = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_turbine_rotor_speed.png");
     public static final TextureArea PROGRESS_BAR_TURBINE_ROTOR_DURABILITY = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_turbine_rotor_durability.png");
     public static final TextureArea PROGRESS_BAR_FLUID_RIG_DEPLETION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fluid_rig_depletion.png");
+    public static final TextureArea PROGRESS_BAR_MINER_DRILLING_FLUID = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_miner_drilling_fluid.png");
 
     // Fusion reactor diagram progress bar parts
     public static final TextureArea PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_BL = TextureArea.fullImage("textures/gui/progress_bar/fusion_diagram/bottom_left.png");

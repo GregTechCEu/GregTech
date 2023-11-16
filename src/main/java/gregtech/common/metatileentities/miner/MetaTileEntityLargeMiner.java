@@ -9,25 +9,28 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.core.sound.GTSoundEvents;
@@ -63,13 +66,12 @@ import java.util.Objects;
 
 import static gregtech.api.unification.material.Materials.DrillingFluid;
 
-public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements Miner, IControllable, IDataInfoProvider, IFastRenderMetaTileEntity {
+public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements Miner, IControllable, IDataInfoProvider, IFastRenderMetaTileEntity, IProgressBarMultiblock {
 
     @Nonnull
     public final LargeMinerType type;
     public final int tier;
     public final int drillingFluidConsumePerTick;
-    public final int oreMultiplier;
 
     private final MultiblockMinerLogic minerLogic;
 
@@ -83,13 +85,14 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     // number of ores processed so far
     protected int minedOreCount;
 
+    private boolean inventoryFull;
+
     public MetaTileEntityLargeMiner(ResourceLocation metaTileEntityId, int tier, int speed, int maxChunkDiameter,
-                                    int oreMultiplier, int drillingFluidConsumePerTick, @Nonnull LargeMinerType type) {
+                                    int drillingFluidConsumePerTick, @Nonnull LargeMinerType type) {
         super(metaTileEntityId);
         this.type = Objects.requireNonNull(type, "type == null");
         this.tier = tier;
         this.drillingFluidConsumePerTick = drillingFluidConsumePerTick;
-        this.oreMultiplier = oreMultiplier;
         this.minerLogic = new MultiblockMinerLogic(this, speed, maxChunkDiameter);
     }
 
@@ -97,7 +100,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityLargeMiner(metaTileEntityId, this.tier, this.minerLogic.getWorkFrequency(),
                 this.minerLogic.getMaximumChunkDiameter(),
-                this.oreMultiplier, this.drillingFluidConsumePerTick, this.type);
+                this.drillingFluidConsumePerTick, this.type);
     }
 
     @Override
@@ -152,13 +155,20 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     @Override
-    public void getRegularBlockDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+    public boolean collectBlockDrops(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        NonNullList<ItemStack> drops = NonNullList.create();
+        IItemHandlerModifiable inventory = this.outputInventory;
+
         if (this.minerLogic.isSilkTouchMode()) {
             drops.add(ToolHelper.getSilkTouchDrop(state));
         } else if (MinerUtil.applyTieredHammerDrops(GTUtility.toItem(state), drops,
-                this.getEnergyTier(), RecipeMaps.MACERATOR_RECIPES, this.oreMultiplier) == 0) {
-            Miner.super.getRegularBlockDrops(drops, world, pos, state); // fallback
+                this.getEnergyTier(), RecipeMaps.MACERATOR_RECIPES, 3) == 0) {
+            state.getBlock().getDrops(drops, world, pos, state, 0); // fallback
         }
+        boolean result = GTTransferUtils.addItemsToItemHandler(inventory, true, drops);
+        this.inventoryFull = result;
+        if (result) GTTransferUtils.addItemsToItemHandler(inventory, false, drops);
+        return result;
     }
 
     @Override
@@ -298,10 +308,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             maxArea = this.minerLogic.getMaximumDiameter();
             areaText = new TextComponentTranslation("gregtech.machine.miner.display.working_area", area, area);
         }
-        if (!this.minerLogic.isWorking()) {
-            areaText.appendText(" ").appendSibling(incrButton(area, maxArea, MinerUtil.DISPLAY_CLICK_AREA_INCR))
-                    .appendText(" ").appendSibling(decrButton(area, 1, MinerUtil.DISPLAY_CLICK_AREA_DECR));
-        }
+        areaText.appendText(" ").appendSibling(incrButton(area, maxArea, MinerUtil.DISPLAY_CLICK_AREA_INCR))
+                .appendText(" ").appendSibling(decrButton(area, 1, MinerUtil.DISPLAY_CLICK_AREA_DECR));
         textList.add(areaText.appendText(" ").appendSibling(previewAreaButton(this.minerLogic.isPreviewEnabled())));
 
         int yLimit = this.minerLogic.getYLimit();
@@ -314,13 +322,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             value = new TextComponentTranslation("gregtech.machine.miner.display.y_limit.no_value");
             hoverText = new TextComponentTranslation("gregtech.machine.miner.display.y_limit.value_hover_tooltip.no_value");
         }
-        if (!this.minerLogic.isWorking()) {
-            value = new TextComponentString("")
-                    .appendSibling(incrButton(yLimit, Integer.MAX_VALUE, MinerUtil.DISPLAY_CLICK_Y_LIMIT_INCR))
-                    .appendText(" ").appendSibling(decrButton(yLimit, 0, MinerUtil.DISPLAY_CLICK_Y_LIMIT_DECR))
-                    .appendText(" ").appendSibling(value);
-        }
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.display.y_limit", value)
+        textList.add(new TextComponentTranslation(
+                "gregtech.machine.miner.display.y_limit", new TextComponentString("")
+                .appendSibling(incrButton(yLimit, Integer.MAX_VALUE, MinerUtil.DISPLAY_CLICK_Y_LIMIT_INCR))
+                .appendText(" ").appendSibling(decrButton(yLimit, 0, MinerUtil.DISPLAY_CLICK_Y_LIMIT_DECR))
+                .appendText(" ").appendSibling(value))
                 .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText))));
 
         boolean currentValue = this.minerLogic.isRepeat();
@@ -334,7 +340,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                                 "gregtech.machine.miner.display.toggle.disabled")
                                 .setStyle(button(currentValue ? MinerUtil.DISPLAY_CLICK_REPEAT_DISABLE : MinerUtil.DISPLAY_CLICK_REPEAT_ENABLE))));
 
-        ITextComponent replaceOreText = new TextComponentTranslation(this.minerLogic.getOreReplacement().getBlock().getTranslationKey() + ".name");
+        ITextComponent replaceOreText = new TextComponentTranslation(
+                this.minerLogic.getOreReplacement().getBlock().getTranslationKey() + ".name");
         if (!this.minerLogic.isWorking()) {
             replaceOreText = new TextComponentString("[")
                     .appendSibling(replaceOreText.setStyle(new Style().setColor(TextFormatting.AQUA)))
@@ -344,23 +351,33 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
         textList.add(new TextComponentTranslation("gregtech.machine.miner.display.replace_ore", replaceOreText));
 
-        MutableBlockPos mpos = new MutableBlockPos();
-        if (this.minerLogic.getMiningArea() == null || !this.minerLogic.getCurrentBlock(this.minerLogic.getMiningArea(), mpos)) {
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.display.done")
-                    .setStyle(new Style().setColor(TextFormatting.GREEN)));
-        } else if (this.minerLogic.isWorking()) {
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.display.working",
-                    mpos.getX(), mpos.getY(), mpos.getZ())
-                    .setStyle(new Style().setColor(TextFormatting.GOLD)));
-        } else if (!isWorkingEnabled()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-        }
+        appendWorkingStatus(textList);
 
         textList.add(new TextComponentTranslation("gregtech.machine.miner.display.stats.total_mined", this.minedOreCount));
         if (this.hasLastMinedOre) {
             textList.add(new TextComponentTranslation("gregtech.machine.miner.display.stats.last_mined",
                     this.lastMinedOre.getX(), this.lastMinedOre.getY(), this.lastMinedOre.getZ()));
         }
+    }
+
+    private void appendWorkingStatus(List<ITextComponent> textList) {
+        if (!this.minerLogic.isDone()) {
+            MiningArea miningArea = minerLogic.getMiningArea();
+            if (miningArea != null) {
+                MutableBlockPos mpos = new MutableBlockPos();
+                if (miningArea.getCurrentBlockPos(mpos)) {
+                    if (this.minerLogic.isWorking()) {
+                        textList.add(TextComponentUtil.translationWithColor(TextFormatting.GOLD,
+                                "gregtech.machine.miner.display.working", mpos.getX(), mpos.getY(), mpos.getZ()));
+                    } else if (!isWorkingEnabled()) {
+                        textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
+                    }
+                    return;
+                }
+            }
+        }
+        textList.add(TextComponentUtil.translationWithColor(TextFormatting.GREEN,
+                "gregtech.machine.miner.display.done"));
     }
 
     @Nonnull
@@ -427,21 +444,28 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            if (this.minerLogic.isInventoryFull()) {
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.display.inventory_full")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-            if (!drainFluid(true)) {
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.multi.needsfluid")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-            if (!drainEnergy(true)) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
+                .addMaintenanceProblemLines(getMaintenanceProblems())
+                .addLowPowerLine(isStructureFormed() && !drainEnergy(true))
+                .addCustom(l -> {
+                    if (isStructureFormed()) {
+                        if (inventoryFull) {
+                            l.add(new TextComponentTranslation("gregtech.machine.miner.display.inventory_full")
+                                    .setStyle(new Style().setColor(TextFormatting.RED)));
+                        }
+                    }
+                });
+    }
+
+    @Override
+    protected void addErrorText(List<ITextComponent> textList) {
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .addCustom(l -> {
+                    if (!drainFluid(true)) {
+                        l.add(new TextComponentTranslation("gregtech.machine.miner.multi.needsfluid")
+                                .setStyle(new Style().setColor(TextFormatting.RED)));
+                    }
+                });
     }
 
     @Override
@@ -551,11 +575,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     @Override
-    public IItemHandlerModifiable getExportItems() {
-        return this.outputInventory;
-    }
-
-    @Override
     public SoundEvent getSound() {
         return GTSoundEvents.MINER;
     }
@@ -575,5 +594,23 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     protected boolean shouldShowVoidingModeButton() {
         return false;
+    }
+
+    @Override
+    public double getFillPercentage(int index) {
+        long drillingFluidAmount = 0, fluidCapacity = 0;
+        for (IMultipleTankHandler.MultiFluidTankEntry tank : this.inputFluidInventory.getFluidTanks()) {
+            FluidStack fluid = tank.getFluid();
+            if (fluid != null && CommonFluidFilters.matchesFluid(fluid, Materials.DrillingFluid)) {
+                drillingFluidAmount += tank.getFluidAmount();
+            }
+            fluidCapacity += tank.getCapacity();
+        }
+        return (double) drillingFluidAmount / fluidCapacity;
+    }
+
+    @Override
+    public TextureArea getProgressBarTexture(int index) {
+        return GuiTextures.PROGRESS_BAR_MINER_DRILLING_FLUID;
     }
 }

@@ -23,9 +23,9 @@ public class MiningPipeEntity<MTE extends MetaTileEntity & Miner> extends Entity
     private final MTE mte;
     private final BlockPos origin;
 
-    private int y;
-    private int length;
-    private boolean end;
+    public int y;
+    public int length;
+    public boolean end;
 
     private int prevLength = -1;
 
@@ -61,24 +61,6 @@ public class MiningPipeEntity<MTE extends MetaTileEntity & Miner> extends Entity
         return origin;
     }
 
-    public int getY() {
-        return this.y;
-    }
-
-    public int getLength() {
-        return this.length;
-    }
-
-    public boolean isEnd() {
-        return end;
-    }
-
-    public void setProperties(int y, int length, boolean end) {
-        this.y = y;
-        this.length = length;
-        this.end = end;
-    }
-
     @Override
     protected void entityInit() {}
 
@@ -92,7 +74,7 @@ public class MiningPipeEntity<MTE extends MetaTileEntity & Miner> extends Entity
         int length = this.length;
         if (length != this.prevLength) {
             this.prevLength = length;
-            setPosition(this.posX, getY() - length, this.posZ);
+            setPosition(this.posX, this.y - length, this.posZ);
             setSize(.5f, length);
         }
 

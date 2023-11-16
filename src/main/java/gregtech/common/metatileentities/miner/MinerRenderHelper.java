@@ -53,7 +53,7 @@ public class MinerRenderHelper {
 
     public static <MTE extends MetaTileEntity & Miner> void renderPipe(double x, double y, double z, float partialTicks,
                                                                        @Nonnull MiningPipeEntity<MTE> entity) {
-        if (entity.getMTE() == null || entity.getLength() <= 0) return;
+        if (entity.getMTE() == null || entity.length <= 0) return;
         updateFrustum();
 
         x -= entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks;
@@ -72,8 +72,8 @@ public class MinerRenderHelper {
         GlStateManager.bindTexture(mc.getTextureMapBlocks().getGlTextureId());
         buffer.setTranslation(x, y, z);
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        for (int i = 0, len = entity.getLength(); i < len; i++) {
-            mpos.setY(entity.getY() - len + i);
+        for (int i = 0, len = entity.length; i < len; i++) {
+            mpos.setY(entity.y - len + i);
             // me epicly dodging AABB allocations by plugging in primitive values directly (very epic)
             if (!clippingHelper.isBoxInFrustum(
                     mpos.getX() + .25 + x, mpos.getY() + y, mpos.getZ() + .25 + z,
@@ -82,7 +82,7 @@ public class MinerRenderHelper {
             }
 
             mc.blockRenderDispatcher.getBlockModelRenderer().renderModel(entity.world,
-                    i == (len - 1) && entity.isEnd() ? model.getBottomModel() : model.getBaseModel(),
+                    i == (len - 1) && entity.end ? model.getBottomModel() : model.getBaseModel(),
                     entity.world.getBlockState(mpos), mpos, buffer, false);
         }
         buffer.setTranslation(0, 0, 0);

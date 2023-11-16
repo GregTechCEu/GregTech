@@ -17,10 +17,12 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.core.sound.GTSoundEvents;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -31,6 +33,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -202,6 +205,19 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
             energyContainer.removeEnergy(energyPerTick);
         }
         return true;
+    }
+
+    @Override
+    public boolean collectBlockDrops(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        NonNullList<ItemStack> drops = NonNullList.create();
+        IItemHandlerModifiable inventory = getExportItems();
+        state.getBlock().getDrops(drops, world, pos, state, 0);
+        if (GTTransferUtils.addItemsToItemHandler(inventory, true, drops)) {
+            GTTransferUtils.addItemsToItemHandler(inventory, false, drops);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Nonnull
