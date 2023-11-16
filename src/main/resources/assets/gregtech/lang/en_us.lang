@@ -2855,8 +2855,6 @@ gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
 gregtech.machine.steam_rock_breaker_bronze.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
 gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
 gregtech.machine.steam_rock_breaker_steel.tooltip=Requires §bWater§7 and §cLava§7 horizontally adjacent
-gregtech.machine.steam_miner.name=Steam Miner
-gregtech.machine.steam_miner.tooltip=Mines ores below the Miner!
 
 # Generators
 gregtech.machine.combustion_generator.tooltip=Requires flammable Liquids
@@ -4675,10 +4673,6 @@ gregtech.machine.miner.multi.needsfluid=No Drilling Fluid!
 
 gregtech.machine.miner.working_area=Working Area: %dx%d blocks
 gregtech.machine.miner.working_area_chunks=Working Area: %dx%d chunks
-
-gregtech.machine.steam_miner.vent=Venting Blocked!
-gregtech.machine.steam_miner.steam=Needs Steam!
-gregtech.machine.miner.errorradius=§cCannot change radius while working!
 
 gregtech.machine.miner.display.working_area=Working Area: %sx%s blocks
 gregtech.machine.miner.display.working_area.chunks=Working Area: %sx%s chunks
