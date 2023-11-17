@@ -64,8 +64,6 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IItemHandler> implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity{
 
-
-
     private final int tier;
     protected final long maxStoredItems;
     /** The ItemStack that the Quantum Chest is storing */
