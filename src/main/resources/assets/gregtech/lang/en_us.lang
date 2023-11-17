@@ -5633,6 +5633,8 @@ gregtech.creative.tank.tpc=Ticks per Cycle
 
 gregtech.creative.energy.amperage=Amperage
 gregtech.creative.energy.voltage=Voltage
+gregtech.creative.energy.sink=Sink
+gregtech.creative.energy.source=Source
 
 gregtech.creative.activity.on=Active
 gregtech.creative.activity.off=Not active
