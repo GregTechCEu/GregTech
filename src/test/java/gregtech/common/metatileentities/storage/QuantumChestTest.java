@@ -102,6 +102,26 @@ public class QuantumChestTest {
     }
 
     @Test
+    public void Test_Export_Checking() {
+        for (var quantumChest : createInstances()) {
+            IItemHandler itemHandler = quantumChest.getCombinedInventory();
+            insertItem(itemHandler, GRAVEL.copy(), false);
+
+            ItemStack export = quantumChest.getExportItems().getStackInSlot(0);
+
+            insertItem(itemHandler, SAND.copy(), false);
+            insertItem(itemHandler, SAND.copy(), false);
+
+            insertItem(itemHandler, GRAVEL.copy(), false);
+
+
+            String reason = "The virtualized stack is not the same as the export slot!";
+            boolean isEqual = ItemStack.areItemsEqual(export, quantumChest.virtualItemStack) && export.getMetadata() == quantumChest.virtualItemStack.getMetadata();
+            assertThat(reason, isEqual, is(true));
+        }
+    }
+
+    @Test
     public void Test_Multiple_Insertions() {
         for (var quantumChest : createInstances()) {
             IItemHandler itemInventory = quantumChest.getItemInventory();
