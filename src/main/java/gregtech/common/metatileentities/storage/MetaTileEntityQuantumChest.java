@@ -592,13 +592,17 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 return ItemStack.EMPTY;
             }
 
-            ItemStack exportItems = getExportItems().getStackInSlot(0);
-
             // If there is a virtualized stack and the stack to insert does not match it, do not insert anything
             if (itemsStoredInside > 0L &&
-                    !virtualItemStack.isEmpty() && (
-                    !areItemStackIdentical(virtualItemStack, insertedStack) ||
-                    !areItemStackIdentical(exportItems, insertedStack))) {
+                    !virtualItemStack.isEmpty() &&
+                    !areItemStackIdentical(virtualItemStack, insertedStack)) {
+                return insertedStack;
+            }
+
+            ItemStack exportItems = getExportItems().getStackInSlot(0);
+
+            // if there is an item in the export slot and the inserted stack does not match, do not insert
+            if (!exportItems.isEmpty() && !areItemStackIdentical(exportItems, insertedStack)) {
                 return insertedStack;
             }
 
