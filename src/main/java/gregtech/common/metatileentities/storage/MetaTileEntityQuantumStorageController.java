@@ -7,6 +7,7 @@ import gregtech.api.capability.IDualHandler;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -128,6 +129,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             IQuantumStorage<?> storage = getStorage(pos, false);
             if (storage != null) storage.setDisconnected();
         }
+        handler.invalidate();
     }
 
     @Override
@@ -206,7 +208,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             }
             if (storage != null) storage.setDisconnected();
         }
-        handler.invalidate();
+        handler.rebuildCache();
     }
 
     @Override
@@ -253,17 +255,17 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     private class QuantumControllerHandler implements IDualHandler {
 
         // IFluidHandler saved values
-        private FluidTankList fluidTanks = null;
+        private FluidTankList fluidTanks;
 
         // IItemHandler saved values
-        private List<IItemHandler> itemHandlers = null;
+        private ItemHandlerList itemHandlers;
 
-        private int insertIndex = -1;
-        private int extractIndex = -1;
+//        private int insertIndex = -1;
+//        private int extractIndex = -1;
 
         private void invalidate() {
-            fluidTanks = null;
-            itemHandlers = null;
+            fluidTanks = new FluidTankList(false);
+            itemHandlers = new ItemHandlerList(new ArrayList<>());
         }
 
         private void rebuildCache() {
@@ -280,7 +282,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
             // todo allow this "allowSameFluidFill" to be configured in this controller?
             this.fluidTanks = new FluidTankList(false, fluidTankList);
-            this.itemHandlers = itemHandlerList;
+            this.itemHandlers = new ItemHandlerList(itemHandlerList);
         }
 
         @Override
@@ -290,7 +292,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         @Override
         public boolean hasItemHandlers() {
-            return !getItemHandlers().isEmpty();
+            return !getItemHandlers().getBackingHandlers().isEmpty();
         }
 
         // IFluidHandler
@@ -304,29 +306,29 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         @Override
         public IFluidTankProperties[] getTankProperties() {
-            return getFluidTanks().getTankProperties();
+            return fluidTanks.getTankProperties();
         }
 
         @Override
         public int fill(FluidStack stack, boolean doFill) {
-            return getFluidTanks().fill(stack, doFill);
+            return fluidTanks.fill(stack, doFill);
         }
 
         @Nullable
         @Override
         public FluidStack drain(FluidStack stack, boolean doFill) {
-            return getFluidTanks().drain(stack, doFill);
+            return fluidTanks.drain(stack, doFill);
         }
 
         @Nullable
         @Override
         public FluidStack drain(int maxDrain, boolean doFill) {
-            return getFluidTanks().drain(maxDrain, doFill);
+            return fluidTanks.drain(maxDrain, doFill);
         }
 
         // IItemHandler
 
-        private List<IItemHandler> getItemHandlers() {
+        private ItemHandlerList getItemHandlers() {
             if (itemHandlers == null) {
                 rebuildCache();
             }
@@ -336,74 +338,76 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         @Override
         public int getSlots() {
             // gotta lie to GTTransferUtils
-            return 1;
+            return itemHandlers.getSlots();
         }
 
         @Nonnull
         @Override
         public ItemStack getStackInSlot(int slot) {
             // make GTTransferUtils always think it can insert items
-            return ItemStack.EMPTY;
+            return itemHandlers.getStackInSlot(slot);
         }
 
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            if (getItemHandlers().isEmpty()) return stack;
-            ItemStack remainder = stack;
+            return itemHandlers.insertItem(slot, stack, simulate);
 
-            // check item handlers if the stack to insert matches a stack already in the item handler
-            if (simulate) {
-                ItemStack checkStack;
-                boolean canInsert = false;
-                for (int i = 0; i < getItemHandlers().size(); i++) {
-                    IItemHandler handler = getItemHandlers().get(i);
-                    // try to get a stack in output slot
-                    checkStack = handler.getStackInSlot(2);
-
-                    // if the check stack is empty, or equal to the incoming stack
-                    if (checkStack.isItemEqual(stack) || checkStack.isEmpty()) {
-                        canInsert = true;
-                        this.insertIndex = i;
-                        remainder = handler.insertItem(1, remainder, true);
-                        if (remainder.isEmpty() || remainder.getCount() < stack.getCount()) break;
-                    }
-                }
-                if (!canInsert) this.insertIndex = -1;
-            } else if (this.insertIndex != -1) {
-                remainder = getItemHandlers().get(this.insertIndex).insertItem(1, remainder, false);
-            }
-
-            return remainder;
+//            // check item handlers if the stack to insert matches a stack already in the item handler
+//            if (simulate) {
+//                ItemStack checkStack;
+//                boolean canInsert = false;
+//                for (int i = 0; i < getItemHandlers().getSlots(); i++) {
+//                    IItemHandler handler = getItemHandlers().get(i);
+//                    // try to get a stack in output slot
+//                    checkStack = handler.getStackInSlot(2);
+//
+//                    // if the check stack is empty, or equal to the incoming stack
+//                    if (checkStack.isItemEqual(stack) || checkStack.isEmpty()) {
+//                        canInsert = true;
+//                        this.insertIndex = i;
+//                        GTTransferUtils.insertItem(itemHandlers, stack, simulate) = handler.insertItem(1, GTTransferUtils.insertItem(itemHandlers, stack, simulate), true);
+//                        if (GTTransferUtils.insertItem(itemHandlers, stack, simulate).isEmpty() || GTTransferUtils.insertItem(itemHandlers, stack, simulate).getCount() < stack.getCount()) break;
+//                    }
+//                }
+//                if (!canInsert) this.insertIndex = -1;
+//            } else if (this.insertIndex != -1) {
+//                GTTransferUtils.insertItem(itemHandlers, stack, simulate) = getItemHandlers().get(this.insertIndex).insertItem(1, GTTransferUtils.insertItem(itemHandlers, stack, simulate), false);
+//            }
+//
+//            return GTTransferUtils.insertItem(itemHandlers, stack, simulate);
         }
 
         @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            ItemStack extracted = ItemStack.EMPTY;
+            return itemHandlers.extractItem(slot, amount, simulate);
 
-            if (simulate){
-                boolean canExtract = false;
-                for (int i = 0; i < getItemHandlers().size(); i++) {
-                    IItemHandler handler = getItemHandlers().get(i);
-                    extracted = handler.extractItem(0, amount, true);
-                    if (!extracted.isEmpty()){
-                        canExtract = true;
-                        this.extractIndex = i;
-                        break;
-                    }
-                }
-                if (!canExtract) this.extractIndex = -1;
-            } else if (this.extractIndex != -1) {
-                extracted = getItemHandlers().get(this.extractIndex).extractItem(0, amount, false);
-            }
-
-            return extracted;
+//            ItemStack extracted = ItemStack.EMPTY;
+//
+//            if (simulate){
+//                boolean canExtract = false;
+//                for (int i = 0; i < getItemHandlers().size(); i++) {
+//                    IItemHandler handler = getItemHandlers().get(i);
+//                    extracted = handler.extractItem(0, amount, true);
+//                    if (!extracted.isEmpty()){
+//                        canExtract = true;
+//                        this.extractIndex = i;
+//                        break;
+//                    }
+//                }
+//                if (!canExtract) this.extractIndex = -1;
+//            } else if (this.extractIndex != -1) {
+//                extracted = getItemHandlers().get(this.extractIndex).extractItem(0, amount, false);
+//            }
+//
+//            return extracted;
         }
 
         @Override
         public int getSlotLimit(int slot) {
-            return getItemHandlers().get(slot).getSlotLimit(0);
+            return getItemHandlers().getSlotLimit(slot);
         }
     }
+
 }
