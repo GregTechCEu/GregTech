@@ -100,25 +100,6 @@ public class ReactorRecipes {
                 .duration(240).EUt(96).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, Silicon)
-                .fluidInputs(HydrochloricAcid.getFluid(2000))
-                .fluidInputs(Methanol.getFluid(2000))
-                .output(dust, Polydimethylsiloxane, 3)
-                .fluidOutputs(DilutedHydrochloricAcid.getFluid(2000))
-                .duration(480).EUt(96).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .circuitMeta(2)
-                .input(dust, Silicon)
-                .fluidInputs(Water.getFluid(1000))
-                .fluidInputs(Chlorine.getFluid(4000))
-                .fluidInputs(Methane.getFluid(2000))
-                .output(dust, Polydimethylsiloxane, 3)
-                .fluidOutputs(HydrochloricAcid.getFluid(2000))
-                .fluidOutputs(DilutedHydrochloricAcid.getFluid(2000))
-                .duration(480).EUt(96).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Chlorine.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(1000))
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
@@ -141,14 +122,6 @@ public class ReactorRecipes {
                 .fluidOutputs(Hydrogen.getFluid(3000))
                 .duration(400).EUt(VA[LV])
                 .buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .circuitMeta(3)
-                .fluidInputs(Chlorine.getFluid(2000))
-                .fluidInputs(Methane.getFluid(1000))
-                .fluidOutputs(HydrochloricAcid.getFluid(1000))
-                .fluidOutputs(Chloromethane.getFluid(1000))
-                .duration(80).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Chlorine.getFluid(4000))
@@ -339,6 +312,7 @@ public class ReactorRecipes {
                 .duration(480).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .circuitMeta(1)
                 .input(dust, Aluminium, 4)
                 .fluidInputs(IndiumConcentrate.getFluid(1000))
                 .output(dustSmall, Indium)
@@ -423,7 +397,7 @@ public class ReactorRecipes {
                 .fluidInputs(Methanol.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
                 .fluidOutputs(Chloromethane.getFluid(1000))
-                .duration(160).EUt(VA[LV]).buildAndRegister();
+                .duration(80).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(2)

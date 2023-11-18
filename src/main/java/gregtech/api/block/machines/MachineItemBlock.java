@@ -18,6 +18,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -183,5 +184,11 @@ public class MachineItemBlock extends ItemBlock {
         CreativeTabs[] tabs = ADDITIONAL_CREATIVE_TABS.toArray(new CreativeTabs[ADDITIONAL_CREATIVE_TABS.size() + 1]);
         tabs[tabs.length - 1] = getCreativeTab();
         return tabs;
+    }
+
+    @Override
+    public int getItemStackLimit(@Nonnull ItemStack stack) {
+        MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
+        return metaTileEntity != null ? metaTileEntity.getItemStackLimit(stack) : super.getItemStackLimit(stack);
     }
 }

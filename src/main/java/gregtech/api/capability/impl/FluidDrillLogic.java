@@ -100,6 +100,10 @@ public class FluidDrillLogic {
         return this.veinFluid != null;
     }
 
+    public Fluid getDrilledFluid() {
+        return veinFluid;
+    }
+
     protected void depleteVein() {
         int chance = metaTileEntity.getDepletionChance();
 
@@ -108,7 +112,7 @@ public class FluidDrillLogic {
             BedrockFluidVeinHandler.depleteVein(metaTileEntity.getWorld(), getChunkX(), getChunkZ(), 0, false);
     }
 
-    private int getFluidToProduce() {
+    public int getFluidToProduce() {
         int depletedYield = BedrockFluidVeinHandler.getDepletedFluidYield(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
         int regularYield = BedrockFluidVeinHandler.getFluidYield(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
         int remainingOperations = BedrockFluidVeinHandler.getOperationsRemaining(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
@@ -157,11 +161,11 @@ public class FluidDrillLogic {
         return false;
     }
 
-    private int getChunkX() {
+    public int getChunkX() {
         return metaTileEntity.getPos().getX() / 16;
     }
 
-    private int getChunkZ() {
+    public int getChunkZ() {
         return metaTileEntity.getPos().getZ() / 16;
     }
 

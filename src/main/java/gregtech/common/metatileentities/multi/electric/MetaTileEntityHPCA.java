@@ -7,17 +7,22 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.gui.widgets.SuppliedImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -26,19 +31,20 @@ import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.core.sound.GTSoundEvents;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
@@ -53,15 +59,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
-public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOpticalComputationProvider, IControllable {
+public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOpticalComputationProvider, IControllable, IProgressBarMultiblock {
 
     private static final double IDLE_TEMPERATURE = 200;
     private static final double DAMAGE_TEMPERATURE = 1000;
 
     private IEnergyContainer energyContainer;
     private IFluidHandler coolantHandler;
-    private final HPCAGridHandler hpcaHandler = new HPCAGridHandler();
+    private final HPCAGridHandler hpcaHandler;
 
     private boolean isActive;
     private boolean isWorkingEnabled = true;
@@ -69,9 +76,13 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
 
     private double temperature = IDLE_TEMPERATURE; // start at idle temperature
 
+    private final ProgressWidget.TimedProgressSupplier progressSupplier;
+
     public MetaTileEntityHPCA(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.energyContainer = new EnergyContainerList(new ArrayList<>());
+        this.progressSupplier = new ProgressWidget.TimedProgressSupplier(200, 47, false);
+        this.hpcaHandler = new HPCAGridHandler(this);
     }
 
     @Override
@@ -111,6 +122,19 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         seen.add(this);
         // don't show a problem if the structure is not yet formed
         return !isStructureFormed() || hpcaHandler.hasHPCABridge();
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        // we need to know what components we have on the client
+        if (getWorld().isRemote) {
+            if (isStructureFormed()) {
+                hpcaHandler.tryGatherClientComponents(getWorld(), getPos(), getFrontFacing());
+            } else {
+                hpcaHandler.clearClientComponents();
+            }
+        }
     }
 
     @Override
@@ -319,42 +343,57 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.computation",
-                    hpcaHandler.cachedCWUt, hpcaHandler.getMaxCWUt()));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.energy",
-                    TextFormattingUtil.formatNumbers(hpcaHandler.cachedEUt),
-                    TextFormattingUtil.formatNumbers(hpcaHandler.getMaxEUt()),
-                    GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())]));
+    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
+        ModularUI.Builder builder = super.createUITemplate(entityPlayer);
 
-            int coolantDemand = hpcaHandler.getMaxCoolantDemand();
-            if (coolantDemand > 0 && hpcaHandler.getCoolant() != null) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.coolant", coolantDemand));
-            }
-
-            int coolingDemand = hpcaHandler.getMaxCoolingDemand();
-            int coolingProvided = hpcaHandler.getMaxCoolingAmount();
-            textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.cooling")
-                    .appendText(getDisplayCoolingColor(coolingProvided, coolingDemand) + " " + coolingProvided + " / " + coolingDemand));
-
-            textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.temperature")
-                    .appendText(getDisplayTemperatureColor() + " " + Math.round(temperature / 10.0D) + "°C"));
-
-            if (!isWorkingEnabled()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-            } else if (isActive() && hpcaHandler.cachedCWUt > 0) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-            } else {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
-            }
-
-            if (hasNotEnoughEnergy) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
+        // Create the hover grid
+        builder.widget(new ProgressWidget(
+                () -> hpcaHandler.getAllocatedCWUt() > 0 ? progressSupplier.getAsDouble() : 0,
+                74, 57, 47, 47, GuiTextures.HPCA_COMPONENT_OUTLINE, ProgressWidget.MoveType.HORIZONTAL)
+                .setIgnoreColor(true)
+                .setHoverTextConsumer(hpcaHandler::addInfo));
+        int startX = 76;
+        int startY = 59;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                final int index = i * 3 + j;
+                Supplier<IGuiTexture> textureSupplier = () -> hpcaHandler.getComponentTexture(index);
+                builder.widget(new SuppliedImageWidget(startX + (15 * j), startY + (15 * i), 13, 13, textureSupplier).setIgnoreColor(true));
             }
         }
+        return builder;
+    }
+
+    @Override
+    protected void addDisplayText(List<ITextComponent> textList) {
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(true, hpcaHandler.getAllocatedCWUt() > 0) // transform into two-state system for display
+                .setWorkingStatusKeys(
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.data_bank.providing")
+                .addCustom(tl -> {
+                    if (isStructureFormed()) {
+                        // Energy Usage
+                        ITextComponent voltageName = new TextComponentString(GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())]);
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.hpca.energy",
+                                TextFormattingUtil.formatNumbers(hpcaHandler.cachedEUt),
+                                TextFormattingUtil.formatNumbers(hpcaHandler.getMaxEUt()),
+                                voltageName));
+
+                        // Provided Computation
+                        ITextComponent cwutInfo = TextComponentUtil.stringWithColor(
+                                TextFormatting.AQUA,
+                                hpcaHandler.cachedCWUt + " / " + hpcaHandler.getMaxCWUt() + " CWU/t");
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GRAY,
+                                "gregtech.multiblock.hpca.computation",
+                                cwutInfo));
+                    }
+                })
+                .addWorkingStatusLine();
     }
 
     private TextFormatting getDisplayTemperatureColor() {
@@ -366,33 +405,29 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         return TextFormatting.RED;
     }
 
-    private TextFormatting getDisplayCoolingColor(int provided, int demand) {
-        if (provided >= demand) {
-            return TextFormatting.GREEN;
-        } else if (demand - provided >= 2) {
-            return TextFormatting.YELLOW;
-        }
-        return TextFormatting.RED;
-    }
-
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            if (temperature > 500) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_temperature")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
-                if (hpcaHandler.hasActiveCoolers()) {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_temperature_active_cool")
-                            .setStyle(new Style().setColor(TextFormatting.GRAY)));
-                }
-            }
-            if (hasNotEnoughEnergy) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-            hpcaHandler.addWarnings(textList);
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
+                .addLowPowerLine(hasNotEnoughEnergy)
+                .addCustom(tl -> {
+                    if (isStructureFormed()) {
+                        if (temperature > 500) {
+                            // Temperature warning
+                            tl.add(TextComponentUtil.translationWithColor(
+                                    TextFormatting.YELLOW,
+                                    "gregtech.multiblock.hpca.warning_temperature"));
+
+                            // Active cooler overdrive warning
+                            tl.add(TextComponentUtil.translationWithColor(
+                                    TextFormatting.GRAY,
+                                    "gregtech.multiblock.hpca.warning_temperature_active_cool"));
+                        }
+
+                        // Structure warnings
+                        hpcaHandler.addWarnings(tl);
+                    }
+                })
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     @Override
@@ -400,7 +435,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         super.addErrorText(textList);
         if (isStructureFormed()) {
             if (temperature > 1000) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.error_temperature"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.hpca.error_temperature"));
             }
             hpcaHandler.addErrors(textList);
         }
@@ -465,6 +500,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.isWorkingEnabled = buf.readBoolean();
             scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.CACHED_CWU) {
+            hpcaHandler.cachedCWUt = buf.readInt();
         }
     }
 
@@ -476,11 +513,54 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         return super.getCapability(capability, side);
     }
 
+    @Override
+    public int getNumProgressBars() {
+        return 2;
+    }
+
+    @Override
+    public double getFillPercentage(int index) {
+        return index == 0
+                ? 1.0 * hpcaHandler.cachedCWUt / hpcaHandler.getMaxCWUt()
+                : Math.min(1.0, temperature / DAMAGE_TEMPERATURE);
+    }
+
+    @Override
+    public TextureArea getProgressBarTexture(int index) {
+        return index == 0
+                ? GuiTextures.PROGRESS_BAR_HPCA_COMPUTATION
+                : GuiTextures.PROGRESS_BAR_FUSION_HEAT;
+    }
+
+    @Override
+    public void addBarHoverText(List<ITextComponent> hoverList, int index) {
+        if (index == 0) {
+            ITextComponent cwutInfo = TextComponentUtil.stringWithColor(
+                    TextFormatting.AQUA,
+                    hpcaHandler.cachedCWUt + " / " + hpcaHandler.getMaxCWUt() + " CWU/t");
+            hoverList.add(TextComponentUtil.translationWithColor(
+                    TextFormatting.GRAY,
+                    "gregtech.multiblock.hpca.computation",
+                    cwutInfo));
+        } else {
+            ITextComponent tempInfo = TextComponentUtil.stringWithColor(
+                    getDisplayTemperatureColor(),
+                    Math.round(temperature / 10.0D) + "°C");
+            hoverList.add(TextComponentUtil.translationWithColor(
+                    TextFormatting.GRAY,
+                    "gregtech.multiblock.hpca.temperature",
+                    tempInfo));
+        }
+    }
+
     // Handles the logic of this structure's specific HPCA component grid
     public static class HPCAGridHandler {
 
+        @Nullable // for testing
+        private final MetaTileEntityHPCA controller;
+
         // structure info
-        private final Set<IHPCAComponentHatch> components = new ObjectOpenHashSet<>();
+        private final List<IHPCAComponentHatch> components = new ObjectArrayList<>();
         private final Set<IHPCACoolantProvider> coolantProviders = new ObjectOpenHashSet<>();
         private final Set<IHPCAComputationProvider> computationProviders = new ObjectOpenHashSet<>();
         private int numBridges;
@@ -492,6 +572,10 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         // holding these values past the computation clear because GUI is too "late" to read the state in time
         private int cachedEUt;
         private int cachedCWUt;
+
+        public HPCAGridHandler(@Nullable MetaTileEntityHPCA controller) {
+            this.controller = controller;
+        }
 
         public void onStructureForm(Collection<IHPCAComponentHatch> components) {
             reset();
@@ -526,7 +610,12 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         }
 
         public void tick() {
-            cachedCWUt = allocatedCWUt;
+            if (cachedCWUt != allocatedCWUt) {
+                cachedCWUt = allocatedCWUt;
+                if (controller != null) {
+                    controller.writeCustomData(GregtechDataCodes.CACHED_CWU, buf -> buf.writeInt(cachedCWUt));
+                }
+            }
             cachedEUt = getCurrentEUt();
             if (allocatedCWUt != 0) {
                 allocatedCWUt = 0;
@@ -733,27 +822,95 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
             return maxCoolant;
         }
 
+        public void addInfo(List<ITextComponent> textList) {
+            // Max Computation
+            ITextComponent data = TextComponentUtil.stringWithColor(TextFormatting.AQUA, Integer.toString(getMaxCWUt()));
+            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.hpca.info_max_computation", data));
+
+            // Cooling
+            TextFormatting coolingColor = getMaxCoolingAmount() < getMaxCoolingDemand() ? TextFormatting.RED : TextFormatting.GREEN;
+            data = TextComponentUtil.stringWithColor(coolingColor, Integer.toString(getMaxCoolingDemand()));
+            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.hpca.info_max_cooling_demand", data));
+
+            data = TextComponentUtil.stringWithColor(coolingColor, Integer.toString(getMaxCoolingAmount()));
+            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.hpca.info_max_cooling_available", data));
+
+            // Coolant Required
+            if (getMaxCoolantDemand() > 0) {
+                data = TextComponentUtil.stringWithColor(
+                        TextFormatting.YELLOW,
+                        getMaxCoolantDemand() + "L ");
+                ITextComponent coolantName = TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.hpca.info_coolant_name");
+                data.appendSibling(coolantName);
+            } else {
+                data = TextComponentUtil.stringWithColor(TextFormatting.GREEN, "0");
+            }
+            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.hpca.info_max_coolant_required", data));
+
+            // Bridging
+            if (numBridges > 0) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GREEN, "gregtech.multiblock.hpca.info_bridging_enabled"));
+            } else {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.hpca.info_bridging_disabled"));
+            }
+        }
+
         public void addWarnings(List<ITextComponent> textList) {
             List<ITextComponent> warnings = new ArrayList<>();
             if (numBridges > 1) {
-                warnings.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_multiple_bridges"));
+                warnings.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.hpca.warning_multiple_bridges"));
             }
             if (computationProviders.isEmpty()) {
-                warnings.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_no_computation"));
+                warnings.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.hpca.warning_no_computation"));
             }
             if (getMaxCoolingDemand() > getMaxCoolingAmount()) {
-                warnings.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_low_cooling"));
+                warnings.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.hpca.warning_low_cooling"));
             }
             if (!warnings.isEmpty()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.warning_structure_header"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.hpca.warning_structure_header"));
                 textList.addAll(warnings);
             }
         }
 
         public void addErrors(List<ITextComponent> textList) {
             if (components.stream().anyMatch(IHPCAComponentHatch::isDamaged)) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.hpca.error_damaged"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.hpca.error_damaged"));
             }
+        }
+
+        public TextureArea getComponentTexture(int index) {
+            if (components.size() <= index) {
+                return GuiTextures.BLANK_TRANSPARENT;
+            }
+            return components.get(index).getComponentIcon();
+        }
+
+        public void tryGatherClientComponents(World world, BlockPos pos, EnumFacing facing) {
+            if (components.isEmpty()) {
+                BlockPos testPos = pos
+                        .offset(facing.getOpposite(), 3)
+                        .offset(EnumFacing.UP, 3);
+
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        BlockPos tempPos = testPos.offset(facing, j).offset(EnumFacing.DOWN, i);
+                        TileEntity te = world.getTileEntity(tempPos);
+                        if (te instanceof IHPCAComponentHatch hatch) {
+                            components.add(hatch);
+                        } else if (te instanceof IGregTechTileEntity igtte) {
+                            MetaTileEntity mte = igtte.getMetaTileEntity();
+                            if (mte instanceof IHPCAComponentHatch hatch) {
+                                components.add(hatch);
+                            }
+                        }
+                        // if here without a hatch, something went wrong, better to skip than add a null into the mix.
+                    }
+                }
+            }
+        }
+
+        public void clearClientComponents() {
+            components.clear();
         }
     }
 }

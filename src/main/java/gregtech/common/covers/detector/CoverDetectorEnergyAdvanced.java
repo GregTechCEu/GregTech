@@ -5,8 +5,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
@@ -63,19 +61,19 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     public void update() {
         if (coverHolder.getOffsetTimer() % 20 != 0) return;
 
-        IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
-        if (energyContainer != null) {
-            if (usePercent) {
-                if (energyContainer.getEnergyCapacity() > 0) {
-                    float ratio = (float) energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity();
-                    this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue, this.minValue, isInverted(), this.outputAmount);
-                } else {
-                    this.outputAmount = isInverted() ? 0 : 15;
-                }
+        long storedEnergy = getCoverHolderStored();
+        long energyCapacity = getCoverHolderCapacity();
+
+        if (usePercent) {
+            if (energyCapacity > 0) {
+                float ratio = (float) storedEnergy / energyCapacity;
+                this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue, this.minValue, isInverted(), this.outputAmount);
             } else {
-                this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(energyContainer.getEnergyStored(),
-                        this.maxValue, this.minValue, isInverted(), this.outputAmount);
+                this.outputAmount = isInverted() ? 0 : 15;
             }
+        } else {
+            this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(storedEnergy,
+                    this.maxValue, this.minValue, isInverted(), this.outputAmount);
         }
         setRedstoneSignalOutput(outputAmount);
     }

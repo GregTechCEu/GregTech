@@ -5,17 +5,18 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -30,7 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
@@ -40,7 +41,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockController {
+public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockController implements IProgressBarMultiblock {
 
     private final int tier;
     private final boolean isExtreme;
@@ -61,56 +62,42 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed()) {
-            if (getInputFluidInventory() != null) {
-                FluidStack lubricantStack = getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE), false);
-                FluidStack oxygenStack = getInputFluidInventory().drain(Materials.Oxygen.getFluid(Integer.MAX_VALUE), false);
-                FluidStack liquidOxygenStack = getInputFluidInventory().drain(Materials.LiquidOxygen.getFluid(Integer.MAX_VALUE), false);
-                int lubricantAmount = lubricantStack == null ? 0 : lubricantStack.amount;
-                textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.lubricant_amount", TextFormattingUtil.formatNumbers(lubricantAmount)));
-                if (boostAllowed) {
-                    if (!isExtreme) {
-                        if (((LargeCombustionEngineWorkableHandler) recipeMapWorkable).isOxygenBoosted) {
-                            int oxygenAmount = oxygenStack == null ? 0 : oxygenStack.amount;
-                            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.oxygen_amount", TextFormattingUtil.formatNumbers(oxygenAmount)));
-                            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.oxygen_boosted"));
-                        } else {
-                            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost"));
-                        }
-                    }
-                    else {
-                        if (((LargeCombustionEngineWorkableHandler) recipeMapWorkable).isOxygenBoosted) {
-                            int liquidOxygenAmount = liquidOxygenStack == null ? 0 : liquidOxygenStack.amount;
-                            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount", TextFormattingUtil.formatNumbers((liquidOxygenAmount))));
-                            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted"));
-                        } else {
-                            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost"));
-                        }
-                    }
-                } else {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.boost_disallowed"));
-                }
-            }
-        }
-    }
+        LargeCombustionEngineWorkableHandler recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
 
-    @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            FluidStack lubricantStack = getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE), false);
-            if (lubricantStack == null || lubricantStack.amount == 0) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.no_lubricant"));
-            }
+        MultiblockDisplayText.Builder builder = MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
+
+        if (isExtreme) {
+            builder.addEnergyProductionLine(GTValues.V[tier + 1], recipeLogic.getRecipeEUt());
+        } else {
+            builder.addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3);
         }
+
+        builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
+                .addCustom(tl -> {
+                    if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
+                        String key = isExtreme
+                                ? "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted"
+                                : "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
+                        tl.add(TextComponentUtil.translationWithColor(TextFormatting.AQUA, key));
+                    }
+                })
+                .addWorkingStatusLine();
     }
 
     @Override
     protected void addErrorText(List<ITextComponent> textList) {
         super.addErrorText(textList);
-        if (isStructureFormed() && checkIntakesObstructed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.obstructed"));
+        if (isStructureFormed()) {
+            if (checkIntakesObstructed()) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.large_combustion_engine.obstructed"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
+            }
+
+            FluidStack lubricantStack = getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE), false);
+            if (lubricantStack == null || lubricantStack.amount == 0) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.large_combustion_engine.no_lubricant"));
+            }
         }
     }
 
@@ -218,6 +205,104 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
     public boolean isBoostAllowed() {
         return boostAllowed;
+    }
+
+    @Override
+    public int getNumProgressBars() {
+        return 3;
+    }
+
+    @Override
+    public double getFillPercentage(int index) {
+        if (index == 0) {
+            int[] fuelAmount = new int[2];
+            if (getInputFluidInventory() != null) {
+                MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
+                if (recipeLogic.getInputFluidStack() != null) {
+                    FluidStack testStack = recipeLogic.getInputFluidStack().copy();
+                    testStack.amount = Integer.MAX_VALUE;
+                    fuelAmount = getTotalFluidAmount(testStack, getInputFluidInventory());
+                }
+            }
+            return fuelAmount[1] != 0 ? 1.0 * fuelAmount[0] / fuelAmount[1] : 0;
+        } else if (index == 1) {
+            int[] lubricantAmount = new int[2];
+            if (getInputFluidInventory() != null) {
+                lubricantAmount = getTotalFluidAmount(Materials.Lubricant.getFluid(Integer.MAX_VALUE), getInputFluidInventory());
+            }
+            return lubricantAmount[1] != 0 ? 1.0 * lubricantAmount[0] / lubricantAmount[1] : 0;
+        } else {
+            int[] oxygenAmount = new int[2];
+            if (getInputFluidInventory() != null) {
+                if (isBoostAllowed()) {
+                    Material material = isExtreme ? Materials.LiquidOxygen : Materials.Oxygen;
+                    oxygenAmount = getTotalFluidAmount(material.getFluid(Integer.MAX_VALUE), getInputFluidInventory());
+                }
+            }
+            return oxygenAmount[1] != 0 ? 1.0 * oxygenAmount[0] / oxygenAmount[1] : 0;
+        }
+    }
+
+    @Override
+    public TextureArea getProgressBarTexture(int index) {
+        if (index == 0) {
+            return GuiTextures.PROGRESS_BAR_LCE_FUEL;
+        } else if (index == 1) {
+            return GuiTextures.PROGRESS_BAR_LCE_LUBRICANT;
+        } else {
+            return GuiTextures.PROGRESS_BAR_LCE_OXYGEN;
+        }
+    }
+
+    @Override
+    public void addBarHoverText(List<ITextComponent> hoverList, int index) {
+        if (index == 0) {
+            addFuelText(hoverList);
+        } else if (index == 1) {
+            // Lubricant
+            int lubricantStored = 0;
+            int lubricantCapacity = 0;
+            if (isStructureFormed() && getInputFluidInventory() != null) {
+                // Hunt for tanks with lubricant in them
+                int[] lubricantAmount = getTotalFluidAmount(Materials.Lubricant.getFluid(Integer.MAX_VALUE), getInputFluidInventory());
+                lubricantStored = lubricantAmount[0];
+                lubricantCapacity = lubricantAmount[1];
+            }
+
+            ITextComponent lubricantInfo = TextComponentUtil.stringWithColor(
+                    TextFormatting.GOLD,
+                    TextFormattingUtil.formatNumbers(lubricantStored) + " / " + TextFormattingUtil.formatNumbers(lubricantCapacity) + " L");
+            hoverList.add(TextComponentUtil.translationWithColor(
+                    TextFormatting.GRAY,
+                    "gregtech.multiblock.large_combustion_engine.lubricant_amount",
+                    lubricantInfo));
+        } else {
+            // Oxygen/LOX
+            if (isBoostAllowed()) {
+                int oxygenStored = 0;
+                int oxygenCapacity = 0;
+                if (isStructureFormed() && getInputFluidInventory() != null) {
+                    // Hunt for tanks with Oxygen or LOX (depending on tier) in them
+                    Material material = isExtreme ? Materials.LiquidOxygen : Materials.Oxygen;
+                    int[] oxygenAmount = getTotalFluidAmount(material.getFluid(Integer.MAX_VALUE), getInputFluidInventory());
+                    oxygenStored = oxygenAmount[0];
+                    oxygenCapacity = oxygenAmount[1];
+                }
+
+                ITextComponent oxygenInfo = TextComponentUtil.stringWithColor(
+                        TextFormatting.AQUA,
+                        TextFormattingUtil.formatNumbers(oxygenStored) + " / " + TextFormattingUtil.formatNumbers(oxygenCapacity) + " L");
+                String key = isExtreme
+                        ? "gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount"
+                        : "gregtech.multiblock.large_combustion_engine.oxygen_amount";
+                hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, key, oxygenInfo));
+            } else {
+                String key = isExtreme
+                        ? "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boost_disallowed"
+                        : "gregtech.multiblock.large_combustion_engine.oxygen_boost_disallowed";
+                hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, key));
+            }
+        }
     }
 
     private static class LargeCombustionEngineWorkableHandler extends MultiblockFuelRecipeLogic {

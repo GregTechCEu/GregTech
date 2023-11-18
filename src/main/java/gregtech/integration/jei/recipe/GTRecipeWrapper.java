@@ -15,6 +15,7 @@ import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.recipeproperties.ComputationProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
+import gregtech.api.recipes.recipeproperties.ScanProperty;
 import gregtech.api.recipes.recipeproperties.TotalComputationProperty;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.ClipboardUtil;
@@ -163,7 +164,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 }
             }
             // If we are here, we know this is not the data item, so add the tooltip
-            tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.research_result"));
+            if (recipe.hasProperty(ScanProperty.getInstance())) {
+                tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.research_result"));
+            }
         }
     }
 

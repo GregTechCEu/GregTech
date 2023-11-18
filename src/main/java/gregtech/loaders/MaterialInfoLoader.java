@@ -163,15 +163,20 @@ public class MaterialInfoLoader {
         ));
 
         OreDictUnifier.registerOre(MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.PLASCRETE), new ItemMaterialInfo(
-                new MaterialStack(Materials.Steel, M), // frame / 2
-                new MaterialStack(Materials.Polyethylene, M * 3), // 6 sheets / 2
-                new MaterialStack(Materials.Concrete, M / 2) // 1 block / 2
+                new MaterialStack(Materials.Steel, (M * 2) / ConfigHolder.recipes.casingsPerCraft), // frame / config
+                new MaterialStack(Materials.Polyethylene, (M * 6) / ConfigHolder.recipes.casingsPerCraft), // 6 sheets / config
+                new MaterialStack(Materials.Concrete, M / ConfigHolder.recipes.casingsPerCraft) // 1 block / config
         ));
 
         OreDictUnifier.registerOre(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.CLEANROOM_GLASS), new ItemMaterialInfo(
-                new MaterialStack(Materials.Steel, M), // frame / 2
-                new MaterialStack(Materials.Polyethylene, M * 3), // 6 sheets / 2
-                new MaterialStack(Materials.Glass, M / 2) // 1 block / 2
+                new MaterialStack(Materials.Steel, (M * 2) / ConfigHolder.recipes.casingsPerCraft), // frame / config
+                new MaterialStack(Materials.Polyethylene, (M * 6) / ConfigHolder.recipes.casingsPerCraft), // 6 sheets / config
+                new MaterialStack(Materials.Glass, M / ConfigHolder.recipes.casingsPerCraft) // 1 block / config
+        ));
+
+        OreDictUnifier.registerOre(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING), new ItemMaterialInfo(
+                new MaterialStack(Materials.Steel, (M * 8) / ConfigHolder.recipes.casingsPerCraft), // casing / config
+                new MaterialStack(Materials.Polytetrafluoroethylene, M * 3 / 2) // 1.5 ingots PTFE (fluid in recipe)
         ));
 
         OreDictUnifier.registerOre(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.PRIMITIVE_BRICKS), new ItemMaterialInfo(new MaterialStack(Materials.Fireclay, M * 4)));
@@ -309,13 +314,20 @@ public class MaterialInfoLoader {
                     new MaterialStack(Materials.Obsidian, M * 3),
                     new MaterialStack(Materials.Glass, M * 4)));
 
-            OreDictUnifier.registerOre(new ItemStack(Blocks.ENCHANTING_TABLE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Diamond, M * 4), new MaterialStack(Materials.Obsidian, M * 3), new MaterialStack(Materials.Paper, M * 9)));
+            OreDictUnifier.registerOre(new ItemStack(Blocks.ENCHANTING_TABLE, 1, W), new ItemMaterialInfo(
+                    new MaterialStack(Materials.Diamond, M * 4),
+                    new MaterialStack(Materials.Obsidian, M * 3),
+                    new MaterialStack(Materials.Paper, M * 9)));
+
+            OreDictUnifier.registerOre(new ItemStack(Blocks.ENDER_CHEST, 1, W), new ItemMaterialInfo(
+                    new MaterialStack(Materials.Wood, M * 8), // chest
+                    new MaterialStack(Materials.Obsidian, M * 9 * 6), // 6 dense plates
+                    new MaterialStack(Materials.EnderEye, M)));
         } else {
             OreDictUnifier.registerOre(new ItemStack(Blocks.BEACON, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.NetherStar, M), new MaterialStack(Materials.Obsidian, M * 3), new MaterialStack(Materials.Glass, M * 5)));
             OreDictUnifier.registerOre(new ItemStack(Blocks.ENCHANTING_TABLE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Diamond, M * 2), new MaterialStack(Materials.Obsidian, M * 4), new MaterialStack(Materials.Paper, M * 3)));
+            OreDictUnifier.registerOre(new ItemStack(Blocks.ENDER_CHEST, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.EnderEye, M), new MaterialStack(Materials.Obsidian, M * 8)));
         }
-
-        OreDictUnifier.registerOre(new ItemStack(Blocks.ENDER_CHEST, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.EnderEye, M), new MaterialStack(Materials.Obsidian, M * 8)));
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.FURNACE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M * 8)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONEBRICK, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M)));

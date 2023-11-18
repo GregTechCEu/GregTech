@@ -1,6 +1,8 @@
 package gregtech.common.metatileentities.multi.multiblockpart.hpca;
 
 import gregtech.api.GTValues;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
@@ -31,6 +33,11 @@ public class MetaTileEntityHPCABridge extends MetaTileEntityHPCAComponent {
     @Override
     public SimpleOverlayRenderer getFrontOverlay() {
         return Textures.HPCA_BRIDGE_OVERLAY;
+    }
+
+    @Override
+    public TextureArea getComponentIcon() {
+        return GuiTextures.HPCA_ICON_BRIDGE_COMPONENT;
     }
 
     @Override

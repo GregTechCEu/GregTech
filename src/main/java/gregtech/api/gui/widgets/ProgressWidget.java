@@ -6,8 +6,15 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.ConfigHolder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.ITextComponent;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
 public class ProgressWidget extends Widget {
@@ -22,7 +29,9 @@ public class ProgressWidget extends Widget {
         /** Fills the progress bar clockwise in a circle, starting from the bottom left */
         CIRCULAR,
         /** Fills the progress bar downwards, from the top */
-        VERTICAL_DOWNWARDS
+        VERTICAL_DOWNWARDS,
+        /** Fills the progress bar right to left */
+        HORIZONTAL_BACKWARDS
     }
 
     public final DoubleSupplier progressSupplier;
@@ -31,6 +40,10 @@ public class ProgressWidget extends Widget {
     private TextureArea[] filledBarArea;
 
     private double lastProgressValue;
+
+    private List<ITextComponent> hoverText = new ArrayList<>();
+    private Consumer<List<ITextComponent>> textSupplier;
+    private boolean ignoreColor;
 
     // TODO Clean up these constructors when Steam Machine UIs are cleaned up
     public ProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height) {
@@ -74,10 +87,21 @@ public class ProgressWidget extends Widget {
         return this;
     }
 
+    public ProgressWidget setHoverTextConsumer(Consumer<List<ITextComponent>> supplier) {
+        this.textSupplier = supplier;
+        return this;
+    }
+
+    public ProgressWidget setIgnoreColor(boolean ignore) {
+        this.ignoreColor = ignore;
+        return this;
+    }
+
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         Position pos = getPosition();
         Size size = getSize();
+        if (ignoreColor) GlStateManager.color(1, 1, 1, 1);
         if (emptyBarArea != null) {
             emptyBarArea.draw(pos.x, pos.y, size.width, size.height);
         }
@@ -93,6 +117,19 @@ public class ProgressWidget extends Widget {
                         width,
                         size.height,
                         0.0,
+                        0.0,
+                        drawnWidth,
+                        1.0);
+            } else if (moveType == MoveType.HORIZONTAL_BACKWARDS) {
+                double width = size.width * lastProgressValue;
+                if (!smooth) width = (int) width;
+                double drawnWidth = smooth ? lastProgressValue : width / (size.width * 1.0);
+                filledBarArea[0].drawSubArea(
+                        pos.x + size.width - width,
+                        pos.y,
+                        width,
+                        size.height,
+                        1.0 - drawnWidth,
                         0.0,
                         drawnWidth,
                         1.0);
@@ -217,12 +254,47 @@ public class ProgressWidget extends Widget {
             this.lastProgressValue = actualValue;
             writeUpdateInfo(0, buffer -> buffer.writeDouble(actualValue));
         }
+
+        if (textSupplier != null) {
+            List<ITextComponent> textBuffer = new ArrayList<>();
+            textSupplier.accept(textBuffer);
+            if (!hoverText.equals(textBuffer)) {
+                this.hoverText = textBuffer;
+                writeUpdateInfo(1, buffer -> {
+                    buffer.writeVarInt(hoverText.size());
+                    for (ITextComponent textComponent : hoverText) {
+                        buffer.writeString(ITextComponent.Serializer.componentToJson(textComponent));
+                    }
+                });
+            }
+        }
     }
 
     @Override
     public void readUpdateInfo(int id, PacketBuffer buffer) {
         if (id == 0) {
             this.lastProgressValue = buffer.readDouble();
+        } else if (id == 1) {
+            this.hoverText.clear();
+            int count = buffer.readVarInt();
+            for (int i = 0; i < count; i++) {
+                String jsonText = buffer.readString(32767);
+                this.hoverText.add(ITextComponent.Serializer.jsonToComponent(jsonText));
+            }
+        }
+    }
+
+    @Override
+    public void drawInForeground(int mouseX, int mouseY) {
+        super.drawInForeground(mouseX, mouseY);
+        if (isMouseOverElement(mouseX, mouseY) && hoverText != null && !hoverText.isEmpty()) {
+            List<String> hoverList = new ArrayList<>();
+            for (ITextComponent component : hoverText) {
+                Collections.addAll(hoverList, component.getFormattedText());
+            }
+            if (!hoverList.isEmpty()) {
+                drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
+            }
         }
     }
 
@@ -231,13 +303,17 @@ public class ProgressWidget extends Widget {
         private final int msPerCycle;
         private final int maxValue;
         private final boolean countDown;
-        private final long startTime;
+        private long startTime;
 
         public TimedProgressSupplier(int ticksPerCycle, int maxValue, boolean countDown) {
             this.msPerCycle = ticksPerCycle * 50;
             this.maxValue = maxValue;
             this.countDown = countDown;
             this.startTime = System.currentTimeMillis();
+        }
+
+        public void resetCountdown() {
+            startTime = System.currentTimeMillis();
         }
 
         @Override

@@ -135,11 +135,18 @@ public class GregtechDataCodes {
     // HPCA / Research Station
     public static final int DAMAGE_STATE = 222;
     public static final int LOCK_OBJECT_HOLDER = 223;
+    public static final int CACHED_CWU = 224;
 
     // NBT Keys
 
     // From MetaTileEntityHolder
     public static final String CUSTOM_NAME = "CustomName";
+
+    // From MetaTileEntity
+    public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
+    public static final String TAG_KEY_FRAGILE = "Fragile";
+    public static final String TAG_KEY_MUFFLED = "Muffled";
+
 
     // MTE Trait Names
 

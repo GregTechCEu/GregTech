@@ -1,4 +1,5 @@
 {
+  "name": "gregtech.veins.ore.molybdenum",
   "weight": 5,
   "density": 0.25,
   "min_height": 20,
