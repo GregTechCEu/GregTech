@@ -801,7 +801,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (--playSoundCooldown > 0) {
                 return;
             }
-            GregTechAPI.soundManager.startTileSound(sound.getSoundName(), 1.0F, getPos());
+            GregTechAPI.soundManager.startTileSound(sound.getSoundName(), getVolume(), getPos());
             playSoundCooldown = 20;
         } else {
             GregTechAPI.soundManager.stopTileSound(getPos());
@@ -1502,6 +1502,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         final String[] tools = {ToolClasses.WRENCH, ToolClasses.SCREWDRIVER};
         return ToolHelper.isTool(mainHandStack, tools) ||
                 ToolHelper.isTool(offHandStack, tools);
+    }
+
+    public float getVolume() {
+        return 1.0f;
     }
 
     @Override

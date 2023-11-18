@@ -279,6 +279,7 @@ public class MetaTileEntities {
     public static MetaTileEntity ITEM_IMPORT_BUS_ME;
     public static MetaTileEntityLDItemEndpoint LONG_DIST_ITEM_ENDPOINT;
     public static MetaTileEntityLDFluidEndpoint LONG_DIST_FLUID_ENDPOINT;
+    public static MetaTileEntityAlarm ALARM;
 
     public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[4][GTValues.V.length];
 
@@ -823,6 +824,8 @@ public class MetaTileEntities {
         LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(1749, new MetaTileEntityLDItemEndpoint(gregtechId("ld_item_endpoint")));
         LONG_DIST_FLUID_ENDPOINT = registerMetaTileEntity(1750, new MetaTileEntityLDFluidEndpoint(gregtechId("ld_fluid_endpoint")));
 
+        // Alarm, ID 1751
+        ALARM = registerMetaTileEntity(1751, new MetaTileEntityAlarm(gregtechId("alarm")));
 
         // Multi-Fluid Hatches, IDs 1190, 1191, 1205, 1206, 1780-1799
         // EV hatches separate because of old names/IDs
@@ -838,6 +841,7 @@ public class MetaTileEntities {
             QUADRUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(1790 + index, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_4x." + tierName), i, 4, true));
             NONUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(1795 + index, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x." + tierName), i, 9, true));
         }
+
 
         /*
          * FOR ADDON DEVELOPERS:
