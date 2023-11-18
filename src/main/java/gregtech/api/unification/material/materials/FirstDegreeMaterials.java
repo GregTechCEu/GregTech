@@ -148,7 +148,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Cinnabar = new Material.Builder(268, gregtechId("cinnabar"))
-                .gem(1).ore()
+                .dust(1).ore()
                 .color(0x960000).iconSet(EMERALD)
                 .flags(CRYSTALLIZABLE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Mercury, 1, Sulfur, 1)
@@ -380,7 +380,7 @@ public class FirstDegreeMaterials {
         Obsidian = new Material.Builder(297, gregtechId("obsidian"))
                 .dust(3)
                 .color(0x503264)
-                .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, GENERATE_PLATE)
+                .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, GENERATE_PLATE, GENERATE_DENSE)
                 .components(Magnesium, 1, Iron, 1, Silicon, 2, Oxygen, 4)
                 .build();
 

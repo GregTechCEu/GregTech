@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -31,9 +32,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -216,24 +214,25 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
-        if (isStructureFormed() && isActive()) {
-            var recipeLogic = getRecipeMapWorkable();
-            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.usage", recipeLogic.getCurrentDrawnCWUt()));
-            if (recipeLogic.isHasNotEnoughComputation()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.computation.not_enough_computation")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .setWorkingStatusKeys(
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.work_paused",
+                        "gregtech.machine.research_station.researching")
+                .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
+                .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
+                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addWorkingStatusLine()
+                .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed() && isActive() && getRecipeMapWorkable().isHasNotEnoughComputation()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.computation.not_enough_computation")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
+                .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
+                .addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation())
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     private static class ResearchStationRecipeLogic extends ComputationRecipeLogic {

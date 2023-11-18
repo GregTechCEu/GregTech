@@ -75,6 +75,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -90,9 +91,6 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
-    public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
-    public static final String TAG_KEY_FRAGILE = "Fragile";
-    public static final String TAG_KEY_MUFFLED = "Muffled";
 
     public final ResourceLocation metaTileEntityId;
     IGregTechTileEntity holder;
@@ -1264,6 +1262,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         }
     }
 
+    public int getItemStackLimit(ItemStack stack) {
+        return 64;
+    }
+
     /**
      * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy}
      * <p>
@@ -1297,7 +1299,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return false;
     }
 
-    public EnumFacing getFrontFacing() {
+    public @NotNull EnumFacing getFrontFacing() {
         return frontFacing;
     }
 

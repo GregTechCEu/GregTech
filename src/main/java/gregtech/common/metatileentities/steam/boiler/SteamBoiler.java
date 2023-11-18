@@ -227,9 +227,19 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
 
     protected abstract int getBaseSteamOutput();
 
+    /** Returns the current total steam output every 10 ticks. */
+    public int getTotalSteamOutput() {
+        if (currentTemperature < 100) return 0;
+        return (int) (getBaseSteamOutput() * (currentTemperature / (getMaxTemperate() * 1.0)) / 2);
+    }
+
+    public boolean hasWater() {
+        return !hasNoWater;
+    }
+
     private void generateSteam() {
         if (currentTemperature >= 100) {
-            int fillAmount = (int) (getBaseSteamOutput() * (currentTemperature / (getMaxTemperate() * 1.0)) / 2);
+            int fillAmount = getTotalSteamOutput();
             boolean hasDrainedWater = waterFluidTank.drain(1, true) != null;
             int filledSteam = 0;
             if (hasDrainedWater) {
@@ -258,7 +268,9 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
 
                 steamFluidTank.drain(4000, true);
             }
-        } else this.hasNoWater = false;
+        } else {
+            this.hasNoWater = waterFluidTank.getFluidAmount() == 0;
+        }
     }
 
     public boolean isBurning() {

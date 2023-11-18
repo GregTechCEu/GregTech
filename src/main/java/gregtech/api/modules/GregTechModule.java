@@ -45,7 +45,7 @@ public @interface GregTechModule {
     String version() default "";
 
     /**
-     * A lang key to use for the description of this module in the module configuration file.
+     * A description of this module in the module configuration file.
      */
-    String descriptionKey() default "";
+    String description() default "";
 }

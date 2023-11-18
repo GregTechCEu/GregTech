@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import net.minecraftforge.common.config.Config;
 
-@Config(modid = GTValues.MODID)
+@Config(modid = GTValues.MODID, name = GTValues.MODID + '/' + GTValues.MODID)
 public class ConfigHolder {
 
     @Config.Comment("Config options for client-only features")
@@ -31,6 +31,7 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static RecipeOptions recipes = new RecipeOptions();
 
+    //TODO move to ToolsModule config
     @Config.Comment("Config options for Tools and Armor")
     @Config.Name("Tool and Armor Options")
     @Config.RequiresMcRestart
@@ -238,7 +239,7 @@ public class ConfigHolder {
         @Config.Comment({"Whether to remove Vanilla Block Recipes from the Crafting Table.", "Default: false"})
         public boolean removeVanillaBlockRecipes = false;
 
-        @Config.Comment({"Whether to make crafting recipes for Bricks, Firebricks, and Coke Bricks harder.", "Default: false"})
+        @Config.Comment({"Whether to make crafting recipes for Bricks, Nether Bricks, Firebricks, and Coke Bricks harder.", "Default: false"})
         public boolean harderBrickRecipes = false;
 
         @Config.Comment({"Whether to make the recipe for the EBF Controller harder.", "Default: false"})

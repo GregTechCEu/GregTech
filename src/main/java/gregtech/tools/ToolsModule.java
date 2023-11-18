@@ -1,11 +1,11 @@
 package gregtech.tools;
 
 import gregtech.api.GTValues;
-import gregtech.tools.enchants.EnchantmentEnderDamage;
-import gregtech.tools.enchants.EnchantmentHardHammer;
 import gregtech.api.modules.GregTechModule;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
+import gregtech.tools.enchants.EnchantmentEnderDamage;
+import gregtech.tools.enchants.EnchantmentHardHammer;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -20,7 +20,7 @@ import java.util.List;
         moduleID = GregTechModules.MODULE_TOOLS,
         containerID = GTValues.MODID,
         name = "GregTech Tools",
-        descriptionKey = "gregtech.modules.tools.description"
+        description = "GregTech Tools Module. Cannot be disabled for now."
 )
 public class ToolsModule extends BaseGregTechModule {
 

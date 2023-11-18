@@ -23,6 +23,7 @@ public class GuiTextures {
     public static final TextureArea CLIPBOARD_PAPER_BACKGROUND = TextureArea.fullImage("textures/gui/base/clipboard_paper_background.png");
 
     public static final TextureArea BLANK = AdoptableTextureArea.fullImage("textures/gui/base/blank.png", 1, 1, 0, 0);
+    public static final TextureArea BLANK_TRANSPARENT = AdoptableTextureArea.fullImage("textures/gui/base/blank_transparent.png", 1, 1, 0, 0);
     public static final TextureArea DISPLAY = AdoptableTextureArea.fullImage("textures/gui/base/display.png", 143, 75, 2, 2);
     public static final SteamTexture DISPLAY_STEAM = SteamTexture.fullImage("textures/gui/base/display_%s.png", 143, 75, 2, 2);
     public static final TextureArea FLUID_SLOT = AdoptableTextureArea.fullImage("textures/gui/base/fluid_slot.png", 18, 18, 1, 1);
@@ -225,6 +226,22 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_RESEARCH_STATION_1 = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_research_station_1.png");
     public static final TextureArea PROGRESS_BAR_RESEARCH_STATION_2 = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_research_station_2.png");
     public static final TextureArea PROGRESS_BAR_RESEARCH_STATION_BASE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_research_station_base.png");
+    public static final TextureArea PROGRESS_BAR_FUSION_ENERGY = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fusion_energy.png");
+    public static final TextureArea PROGRESS_BAR_FUSION_HEAT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fusion_heat.png");
+    public static final TextureArea PROGRESS_BAR_MULTI_ENERGY_YELLOW = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_multi_energy_yellow.png");
+    public static final TextureArea PROGRESS_BAR_HPCA_COMPUTATION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_hpca_computation.png");
+    public static final TextureArea PROGRESS_BAR_LCE_FUEL = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_lce_fuel.png");
+    public static final TextureArea PROGRESS_BAR_LCE_LUBRICANT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_lce_lubricant.png");
+    public static final TextureArea PROGRESS_BAR_LCE_OXYGEN = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_lce_oxygen.png");
+    public static final TextureArea PROGRESS_BAR_TURBINE_ROTOR_SPEED = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_turbine_rotor_speed.png");
+    public static final TextureArea PROGRESS_BAR_TURBINE_ROTOR_DURABILITY = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_turbine_rotor_durability.png");
+    public static final TextureArea PROGRESS_BAR_FLUID_RIG_DEPLETION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fluid_rig_depletion.png");
+
+    // Fusion reactor diagram progress bar parts
+    public static final TextureArea PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_BL = TextureArea.fullImage("textures/gui/progress_bar/fusion_diagram/bottom_left.png");
+    public static final TextureArea PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_BR = TextureArea.fullImage("textures/gui/progress_bar/fusion_diagram/bottom_right.png");
+    public static final TextureArea PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_TL = TextureArea.fullImage("textures/gui/progress_bar/fusion_diagram/top_left.png");
+    public static final TextureArea PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_TR = TextureArea.fullImage("textures/gui/progress_bar/fusion_diagram/top_right.png");
 
     //JEI
     public static final TextureArea INFO_ICON = TextureArea.fullImage("textures/gui/widget/information.png");
@@ -282,4 +299,21 @@ public class GuiTextures {
     public static final TextureArea CONFIG_ARROW_DARK = TextureArea.fullImage("textures/gui/widget/config_arrow_dark.png");
     public static final TextureArea SELECT_BOX = TextureArea.fullImage("textures/gui/widget/select_box.png");
 
+    // Fusion Reactor custom images
+    public static final TextureArea FUSION_REACTOR_MK1_TITLE = TextureArea.fullImage("textures/gui/widget/fusion_reactor_mk1_title.png");
+    public static final TextureArea FUSION_REACTOR_MK2_TITLE = TextureArea.fullImage("textures/gui/widget/fusion_reactor_mk2_title.png");
+    public static final TextureArea FUSION_REACTOR_MK3_TITLE = TextureArea.fullImage("textures/gui/widget/fusion_reactor_mk3_title.png");
+    public static final TextureArea FUSION_REACTOR_DIAGRAM = TextureArea.fullImage("textures/gui/widget/fusion_reactor_diagram.png");
+    public static final TextureArea FUSION_REACTOR_LEGEND = TextureArea.fullImage("textures/gui/widget/fusion_reactor_legend.png");
+
+    // HPCA Component icons
+    public static final TextureArea HPCA_COMPONENT_OUTLINE = TextureArea.fullImage("textures/gui/widget/hpca/component_outline.png");
+    public static final TextureArea HPCA_ICON_EMPTY_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/empty_component.png");
+    public static final TextureArea HPCA_ICON_ADVANCED_COMPUTATION_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/advanced_computation_component.png");
+    public static final TextureArea HPCA_ICON_BRIDGE_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/bridge_component.png");
+    public static final TextureArea HPCA_ICON_COMPUTATION_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/computation_component.png");
+    public static final TextureArea HPCA_ICON_ACTIVE_COOLER_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/active_cooler_component.png");
+    public static final TextureArea HPCA_ICON_HEAT_SINK_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/heat_sink_component.png");
+    public static final TextureArea HPCA_ICON_DAMAGED_ADVANCED_COMPUTATION_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/damaged_advanced_computation_component.png");
+    public static final TextureArea HPCA_ICON_DAMAGED_COMPUTATION_COMPONENT = TextureArea.fullImage("textures/gui/widget/hpca/damaged_computation_component.png");
 }

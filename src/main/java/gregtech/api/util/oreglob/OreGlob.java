@@ -2,7 +2,9 @@ package gregtech.api.util.oreglob;
 
 import gregtech.api.unification.OreDictUnifier;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -26,12 +28,14 @@ public abstract class OreGlob {
      * @return Compilation result
      * @throws IllegalStateException If compiler is not provided yet
      */
-    public static OreGlobCompileResult compile(String expression) {
+    @Nonnull
+    public static OreGlobCompileResult compile(@Nonnull String expression) {
         if (compiler == null) throw new IllegalStateException("Compiler unavailable");
         return compiler.apply(expression);
     }
 
-    public static void setCompiler(Function<String, OreGlobCompileResult> compiler) {
+    @ApiStatus.Internal
+    public static void setCompiler(@Nonnull Function<String, OreGlobCompileResult> compiler) {
         OreGlob.compiler = compiler;
     }
 
@@ -42,7 +46,8 @@ public abstract class OreGlob {
      * @param <V>        Type of visualizer
      * @return Visualizer
      */
-    public abstract <V extends Visualizer> V visualize(V visualizer);
+    @Nonnull
+    public abstract <V extends OreGlobTextBuilder> V visualize(@Nonnull V visualizer);
 
     /**
      * Tries to match the given input.
@@ -50,7 +55,7 @@ public abstract class OreGlob {
      * @param input String input
      * @return Whether this instance matches the input
      */
-    public abstract boolean matches(String input);
+    public abstract boolean matches(@Nonnull String input);
 
     /**
      * Tries to match each ore dictionary entries associated with given item.
@@ -62,7 +67,7 @@ public abstract class OreGlob {
      * @param stack Item input
      * @return Whether this instance matches the input
      */
-    public final boolean matches(ItemStack stack) {
+    public final boolean matches(@Nonnull ItemStack stack) {
         Set<String> oreDicts = OreDictUnifier.getOreDictionaryNames(stack);
         if (oreDicts.isEmpty()) {
             return matches("");
@@ -81,8 +86,9 @@ public abstract class OreGlob {
      * @return Formatted visualization
      * @see OreGlob#toFormattedString(String)
      */
+    @Nonnull
     public final List<String> toFormattedString() {
-        return toFormattedString("  ");
+        return visualize(new OreGlobTextBuilder(OreGlobTextFormatting.DEFAULT_FORMATTING)).getLines();
     }
 
     /**
@@ -91,8 +97,9 @@ public abstract class OreGlob {
      * @return Formatted visualization
      * @see OreGlob#toFormattedString()
      */
-    public final List<String> toFormattedString(String indent) {
-        return visualize(new OreGlobFormattedStringVisualizer(indent)).getLines();
+    @Nonnull
+    public final List<String> toFormattedString(@Nonnull String indent) {
+        return visualize(new OreGlobTextBuilder(OreGlobTextFormatting.DEFAULT_FORMATTING, indent)).getLines();
     }
 
     /**
@@ -102,41 +109,6 @@ public abstract class OreGlob {
      */
     @Override
     public final String toString() {
-        return visualize(new OreGlobStringVisualizer()).toString();
-    }
-
-    /**
-     * Visualizer accepts text components from OreGlob implementation to create text representation.
-     */
-    public interface Visualizer {
-
-        void newLine(int indents);
-
-        void text(String text, VisualizationHint hint);
-
-        void number(int number, VisualizationHint hint);
-
-        void text(int codePoint, VisualizationHint hint);
-
-        default void text(String text) {
-            text(text, VisualizationHint.PLAINTEXT);
-        }
-
-        default void number(int number) {
-            number(number, VisualizationHint.VALUE);
-        }
-
-        default void text(int codePoint) {
-            text(codePoint, VisualizationHint.PLAINTEXT);
-        }
-    }
-
-    public enum VisualizationHint {
-        PLAINTEXT, // Plain text
-        NODE, // Text indicating part of a node
-        VALUE, // Text indicating some kind of value, whether it's string or number
-        NEGATION, // Text indicating logical negation of the statement
-        LABEL, // Text indication for each label in group nodes
-        ERROR // Text indicating a syntax error; you shouldn't be able to see this
+        return String.join("\n", visualize(new OreGlobTextBuilder(OreGlobTextFormatting.NO_FORMATTING)).getLines());
     }
 }

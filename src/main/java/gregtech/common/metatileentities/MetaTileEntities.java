@@ -146,6 +146,7 @@ public class MetaTileEntities {
     public static MetaTileEntityMachineHatch MACHINE_HATCH;
     public static MetaTileEntityPassthroughHatchItem PASSTHROUGH_HATCH_ITEM;
     public static MetaTileEntityPassthroughHatchFluid PASSTHROUGH_HATCH_FLUID;
+    public static MetaTileEntityReservoirHatch RESERVOIR_HATCH;
     public static MetaTileEntityDataAccessHatch DATA_ACCESS_HATCH;
     public static MetaTileEntityDataAccessHatch ADVANCED_DATA_ACCESS_HATCH;
     public static MetaTileEntityDataAccessHatch CREATIVE_DATA_HATCH;
@@ -330,7 +331,7 @@ public class MetaTileEntities {
                             case 3 -> 3;
                             default -> 4;
                         },
-                        Textures.MACERATOR_OVERLAY,
+                        tier <= GTValues.MV ? Textures.MACERATOR_OVERLAY : Textures.PULVERIZER_OVERLAY,
                         tier));
 
         // Alloy Smelter, IDs 80-94
@@ -460,19 +461,19 @@ public class MetaTileEntities {
         MINER[2] = registerMetaTileEntity(922, new MetaTileEntityMiner(gregtechId("miner.hv"), 3, 40, 24, 3));
 
         // Diesel Generator, IDs 935-949
-        COMBUSTION_GENERATOR[0] = registerMetaTileEntity(935, new SimpleGeneratorMetaTileEntity(gregtechId("combustion_generator.lv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS, Textures.COMBUSTION_GENERATOR_OVERLAY, 1, GTUtility.genericGeneratorTankSizeFunction));
-        COMBUSTION_GENERATOR[1] = registerMetaTileEntity(936, new SimpleGeneratorMetaTileEntity(gregtechId("combustion_generator.mv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS, Textures.COMBUSTION_GENERATOR_OVERLAY, 2, GTUtility.genericGeneratorTankSizeFunction));
-        COMBUSTION_GENERATOR[2] = registerMetaTileEntity(937, new SimpleGeneratorMetaTileEntity(gregtechId("combustion_generator.hv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS, Textures.COMBUSTION_GENERATOR_OVERLAY, 3, GTUtility.genericGeneratorTankSizeFunction));
+        COMBUSTION_GENERATOR[0] = registerMetaTileEntity(935, new MetaTileEntitySingleCombustion(gregtechId("combustion_generator.lv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS, Textures.COMBUSTION_GENERATOR_OVERLAY, 1, GTUtility.genericGeneratorTankSizeFunction));
+        COMBUSTION_GENERATOR[1] = registerMetaTileEntity(936, new MetaTileEntitySingleCombustion(gregtechId("combustion_generator.mv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS, Textures.COMBUSTION_GENERATOR_OVERLAY, 2, GTUtility.genericGeneratorTankSizeFunction));
+        COMBUSTION_GENERATOR[2] = registerMetaTileEntity(937, new MetaTileEntitySingleCombustion(gregtechId("combustion_generator.hv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS, Textures.COMBUSTION_GENERATOR_OVERLAY, 3, GTUtility.genericGeneratorTankSizeFunction));
 
         // Steam Turbine, IDs 950-964
-        STEAM_TURBINE[0] = registerMetaTileEntity(950, new SimpleGeneratorMetaTileEntity(gregtechId("steam_turbine.lv"), RecipeMaps.STEAM_TURBINE_FUELS, Textures.STEAM_TURBINE_OVERLAY, 1, GTUtility.steamGeneratorTankSizeFunction));
-        STEAM_TURBINE[1] = registerMetaTileEntity(951, new SimpleGeneratorMetaTileEntity(gregtechId("steam_turbine.mv"), RecipeMaps.STEAM_TURBINE_FUELS, Textures.STEAM_TURBINE_OVERLAY, 2, GTUtility.steamGeneratorTankSizeFunction));
-        STEAM_TURBINE[2] = registerMetaTileEntity(952, new SimpleGeneratorMetaTileEntity(gregtechId("steam_turbine.hv"), RecipeMaps.STEAM_TURBINE_FUELS, Textures.STEAM_TURBINE_OVERLAY, 3, GTUtility.steamGeneratorTankSizeFunction));
+        STEAM_TURBINE[0] = registerMetaTileEntity(950, new MetaTileEntitySingleTurbine(gregtechId("steam_turbine.lv"), RecipeMaps.STEAM_TURBINE_FUELS, Textures.STEAM_TURBINE_OVERLAY, 1, GTUtility.steamGeneratorTankSizeFunction));
+        STEAM_TURBINE[1] = registerMetaTileEntity(951, new MetaTileEntitySingleTurbine(gregtechId("steam_turbine.mv"), RecipeMaps.STEAM_TURBINE_FUELS, Textures.STEAM_TURBINE_OVERLAY, 2, GTUtility.steamGeneratorTankSizeFunction));
+        STEAM_TURBINE[2] = registerMetaTileEntity(952, new MetaTileEntitySingleTurbine(gregtechId("steam_turbine.hv"), RecipeMaps.STEAM_TURBINE_FUELS, Textures.STEAM_TURBINE_OVERLAY, 3, GTUtility.steamGeneratorTankSizeFunction));
 
         // Gas Turbine, IDs 965-979
-        GAS_TURBINE[0] = registerMetaTileEntity(965, new SimpleGeneratorMetaTileEntity(gregtechId("gas_turbine.lv"), RecipeMaps.GAS_TURBINE_FUELS, Textures.GAS_TURBINE_OVERLAY, 1, GTUtility.genericGeneratorTankSizeFunction));
-        GAS_TURBINE[1] = registerMetaTileEntity(966, new SimpleGeneratorMetaTileEntity(gregtechId("gas_turbine.mv"), RecipeMaps.GAS_TURBINE_FUELS, Textures.GAS_TURBINE_OVERLAY, 2, GTUtility.genericGeneratorTankSizeFunction));
-        GAS_TURBINE[2] = registerMetaTileEntity(967, new SimpleGeneratorMetaTileEntity(gregtechId("gas_turbine.hv"), RecipeMaps.GAS_TURBINE_FUELS, Textures.GAS_TURBINE_OVERLAY, 3, GTUtility.genericGeneratorTankSizeFunction));
+        GAS_TURBINE[0] = registerMetaTileEntity(965, new MetaTileEntitySingleTurbine(gregtechId("gas_turbine.lv"), RecipeMaps.GAS_TURBINE_FUELS, Textures.GAS_TURBINE_OVERLAY, 1, GTUtility.genericGeneratorTankSizeFunction));
+        GAS_TURBINE[1] = registerMetaTileEntity(966, new MetaTileEntitySingleTurbine(gregtechId("gas_turbine.mv"), RecipeMaps.GAS_TURBINE_FUELS, Textures.GAS_TURBINE_OVERLAY, 2, GTUtility.genericGeneratorTankSizeFunction));
+        GAS_TURBINE[2] = registerMetaTileEntity(967, new MetaTileEntitySingleTurbine(gregtechId("gas_turbine.hv"), RecipeMaps.GAS_TURBINE_FUELS, Textures.GAS_TURBINE_OVERLAY, 3, GTUtility.genericGeneratorTankSizeFunction));
 
         // Item Collector, IDs 980-983
         ITEM_COLLECTOR[0] = registerMetaTileEntity(980, new MetaTileEntityItemCollector(gregtechId("item_collector.lv"), 1, 8));
@@ -662,7 +663,9 @@ public class MetaTileEntities {
         HPCA_HEAT_SINK_COMPONENT = registerMetaTileEntity(1415, new MetaTileEntityHPCACooler(gregtechId("hpca.heat_sink_component"), false));
         HPCA_ACTIVE_COOLER_COMPONENT = registerMetaTileEntity(1416, new MetaTileEntityHPCACooler(gregtechId("hpca.active_cooler_component"), true));
         HPCA_BRIDGE_COMPONENT = registerMetaTileEntity(1417, new MetaTileEntityHPCABridge(gregtechId("hpca.bridge_component")));
-        // Free IDs 1418, 1419
+
+        RESERVOIR_HATCH = registerMetaTileEntity(1418, new MetaTileEntityReservoirHatch(gregtechId("reservoir_hatch")));
+        // Free ID 1419
         endPos = GregTechAPI.isHighTier() ? LASER_INPUT_HATCH_256.length - 1 : Math.min(LASER_INPUT_HATCH_256.length - 1, GTValues.UHV - GTValues.IV);
         for (int i = 0; i < endPos; i++) {
             int v = i + GTValues.IV;
@@ -851,7 +854,7 @@ public class MetaTileEntities {
          * claimed ranges below this comment. Max value is 32767.
          *
          * - Gregicality / Shadows of Greg: 2000-3999
-         * - Gregification: 4000-4499
+         * - Reserved for Integration Modules in GTCEu: 4000-4499
          * - GregTech Food Option: 8500-8999
          * - HtmlTech: 9000-9499
          * - PCM's Ore Addon: 9500-9999
