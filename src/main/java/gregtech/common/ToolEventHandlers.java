@@ -289,6 +289,10 @@ public class ToolEventHandlers {
 
     @SideOnly(Side.CLIENT)
     private static boolean shouldRenderGridOverlays(@Nonnull IBlockState state, TileEntity tile, ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
+        // Cheapest case to check, always show when sneaking with empty hand
+        if (mainHand.isEmpty() && isSneaking) {
+            return true;
+        }
         if (state.getBlock() instanceof BlockPipe) {
             BlockPipe<?, ?, ?> pipe = (BlockPipe<?, ?, ?>) state.getBlock();
             if (isSneaking && mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass()) {
