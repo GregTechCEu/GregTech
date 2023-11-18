@@ -5245,9 +5245,9 @@ gregtech.recipe.computation_per_tick=Min. Computation: %,d CWU/t
 gregtech.recipe.total_computation=Computation: %,d CWU
 gregtech.recipe.research_result=Research result item, not produced by this recipe directly
 
-gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
-gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
-gregtech.fluid.click_to_empty=§7Click with a Fluid Container to §cempty §7the tank (Shift-click for a full stack).
+gregtech.fluid.click_to_fill=§7Left Click with a Fluid Container to §bfill §7the tank (Right Click to process 1 item per click).
+gregtech.fluid.click_combined=§7Left Click with a Fluid Container to §bfill §7or §cempty §7the tank (Right Click to process 1 item per click).
+gregtech.fluid.click_to_empty=§7Left Click with a Fluid Container to §cempty §7the tank (Right Click to process 1 item per click).
 
 gregtech.tool_action.show_tooltips=Hold SHIFT to show Tool Info
 gregtech.tool_action.screwdriver.auto_output_covers=§8Use Screwdriver to Allow Input from Output Side or access Covers
