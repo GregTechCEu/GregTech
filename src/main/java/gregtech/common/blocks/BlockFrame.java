@@ -189,7 +189,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
                 continue;
             }
             if (canPlaceBlockAt(world, blockPos)) {
-                world.setBlockState(blockPos, this.getStateFromMeta(stack.getItem().getMetadata(stack.getItemDamage())));
+                world.setBlockState(blockPos, frameBlock.getStateFromMeta(stack.getItem().getMetadata(stack.getItemDamage())));
                 SoundType type = getSoundType(stack);
                 world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
                 if (!player.capabilities.isCreativeMode) {
