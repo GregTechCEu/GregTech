@@ -350,10 +350,12 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             }
         }
 
-        if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SCREWDRIVER)) {
+        if ((itemStack.isEmpty() && entityPlayer.isSneaking()) || itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SCREWDRIVER)) {
             if (coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
-                ToolHelper.damageItem(itemStack, entityPlayer);
-                ToolHelper.playToolSound(itemStack, entityPlayer);
+                if (!itemStack.isEmpty()) {
+                    ToolHelper.damageItem(itemStack, entityPlayer);
+                    ToolHelper.playToolSound(itemStack, entityPlayer);
+                }
                 return true;
             }
         }

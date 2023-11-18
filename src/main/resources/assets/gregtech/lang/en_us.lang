@@ -4209,6 +4209,9 @@ gregtech.machine.item_collector.ev.name=Advanced Item Collector III
 gregtech.machine.item_collector.gui.collect_range=Collect in %s blocks
 gregtech.machine.item_collector.tooltip=Collects Items around itself when given a Redstone signal
 
+gregtech.machine.alarm.name=Alarm
+gregtech.machine.alarm.tooltip=Plays a Sound when given a Redstone signal
+
 #Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Better than Storage Drawers
 gregtech.machine.super_chest.lv.name=Super Chest I
@@ -5242,9 +5245,9 @@ gregtech.recipe.computation_per_tick=Min. Computation: %,d CWU/t
 gregtech.recipe.total_computation=Computation: %,d CWU
 gregtech.recipe.research_result=Research result item, not produced by this recipe directly
 
-gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
-gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
-gregtech.fluid.click_to_empty=§7Click with a Fluid Container to §cempty §7the tank (Shift-click for a full stack).
+gregtech.fluid.click_to_fill=§7Left Click with a Fluid Container to §bfill §7the tank (Right Click to process 1 item per click).
+gregtech.fluid.click_combined=§7Left Click with a Fluid Container to §bfill §7or §cempty §7the tank (Right Click to process 1 item per click).
+gregtech.fluid.click_to_empty=§7Left Click with a Fluid Container to §cempty §7the tank (Right Click to process 1 item per click).
 
 gregtech.tool_action.show_tooltips=Hold SHIFT to show Tool Info
 gregtech.tool_action.screwdriver.auto_output_covers=§8Use Screwdriver to Allow Input from Output Side or access Covers
@@ -5307,6 +5310,8 @@ gregtech.gui.config_slot=§fConfig Slot§r
 gregtech.gui.config_slot.set=§7Click to §bset/select§7 config slot.§r
 gregtech.gui.config_slot.scroll=§7Scroll wheel to §achange§7 config amount.§r
 gregtech.gui.config_slot.remove=§7Right click to §4clear§7 config slot.§r
+gregtech.gui.alarm.radius=Radius:
+
 
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
@@ -5633,6 +5638,8 @@ gregtech.creative.tank.tpc=Ticks per Cycle
 
 gregtech.creative.energy.amperage=Amperage
 gregtech.creative.energy.voltage=Voltage
+gregtech.creative.energy.sink=Sink
+gregtech.creative.energy.source=Source
 
 gregtech.creative.activity.on=Active
 gregtech.creative.activity.off=Not active

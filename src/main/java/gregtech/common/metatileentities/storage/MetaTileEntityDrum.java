@@ -176,7 +176,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         if (playerIn.getHeldItem(hand).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
             return getWorld().isRemote || (!playerIn.isSneaking() && FluidUtil.interactWithFluidHandler(playerIn, hand, fluidTank));
         }
-        return false;
+        return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override

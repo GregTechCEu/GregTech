@@ -55,6 +55,9 @@ public class GTSoundEvents {
     public static SoundEvent BREAKDOWN_ELECTRICAL;
     public static SoundEvent BREAKDOWN_MECHANICAL;
 
+    // Misc
+    public static SoundEvent DEFAULT_ALARM;
+
     public static void register() {
         FORGE_HAMMER = soundManager.registerSound("tick.forge_hammer");
         MACERATOR = soundManager.registerSound("tick.macerator");
@@ -97,5 +100,7 @@ public class GTSoundEvents {
 
         BREAKDOWN_ELECTRICAL = soundManager.registerSound("maintenance.electrical");
         BREAKDOWN_MECHANICAL = soundManager.registerSound("maintenance.mechanical");
+
+        DEFAULT_ALARM = soundManager.registerSound("alarm");
     }
 }
