@@ -4674,6 +4674,9 @@ gregtech.machine.miner.multi.needsfluid=No Drilling Fluid!
 gregtech.machine.miner.working_area=Working Area: %dx%d blocks
 gregtech.machine.miner.working_area_chunks=Working Area: %dx%d chunks
 
+gregtech.machine.miner.button.tooltip.info=Information
+gregtech.machine.miner.button.tooltip.config=Configuration
+
 gregtech.machine.miner.display.working_area=Working Area: %sx%s blocks
 gregtech.machine.miner.display.working_area.chunks=Working Area: %sx%s chunks
 gregtech.machine.miner.display.working_area.preview=[§bPreview§r]
@@ -4683,7 +4686,9 @@ gregtech.machine.miner.display.y_limit.no_value=No limit
 gregtech.machine.miner.display.y_limit.value_hover_tooltip=Miner will operate in §6%s§r Y layer(s) before halting.
 gregtech.machine.miner.display.y_limit.value_hover_tooltip.no_value=Miner will operate until hitting the bedrock layer.
 gregtech.machine.miner.display.repeat=Repeat after finished: %s
-gregtech.machine.miner.display.replace_ore=Replace mined ore with: %s
+gregtech.machine.miner.display.chunk_mode=Chunk Mode: %s
+gregtech.machine.miner.display.silk_touch=Silk Touch: %s
+gregtech.machine.miner.display.replace_ore=Replace ore with: %s
 gregtech.machine.miner.display.decr=[§b-§r]
 gregtech.machine.miner.display.decr.disabled=[§8-§r]
 gregtech.machine.miner.display.incr=[§b+§r]
@@ -5528,11 +5533,6 @@ gregtech.multiblock.large_boiler.heat_time_tooltip=§7Takes §f%,d seconds §7to
 gregtech.multiblock.large_boiler.explosion_tooltip=Will explode if provided Fuel with no Water
 gregtech.multiblock.large_boiler.water_bar_hover=Water: %s
 gregtech.multiblock.large_boiler.no_water=No Water!
-
-gregtech.multiblock.miner.neither_mode=Chunk Mode: §cDisabled§r/nSilk Touch Mode: §cDisabled§r/n§7Switching requires an idle machine.
-gregtech.multiblock.miner.chunk_mode=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §cDisabled§r/n§7Switching requires an idle machine.
-gregtech.multiblock.miner.silk_touch_mode=Chunk Mode: §cDisabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
-gregtech.multiblock.miner.both_modes=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
 
 gregtech.multiblock.fluid_rig.drilled_fluid=Fluid: %s
 gregtech.multiblock.fluid_rig.fluid_amount=Pumping Rate: %s

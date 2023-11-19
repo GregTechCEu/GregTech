@@ -14,8 +14,10 @@ import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.IDataInfoProvider;
@@ -37,6 +39,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -64,6 +67,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static gregtech.api.unification.material.Materials.DrillingFluid;
 
@@ -285,17 +289,50 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
     }
 
+    @Nullable
+    private AtomicBoolean uiConfigModeStateHolder;
+
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
+    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
+        AtomicBoolean stateHolder = new AtomicBoolean();
+        this.uiConfigModeStateHolder = stateHolder;
+        ModularUI.Builder b = super.createUITemplate(entityPlayer);
+        b.widget(new AdvancedTextWidget(9, 20, l -> addRealDisplayText(l, stateHolder.get()), 0xFFFFFF)
+                .setMaxWidthLimit(181)
+                .setClickHandler(this::handleDisplayClick));
+        this.uiConfigModeStateHolder = null;
+        return b;
+    }
+
+    @Nonnull
+    @Override
+    protected Widget getFlexButton(int x, int y, int width, int height) {
+        AtomicBoolean stateHolder = this.uiConfigModeStateHolder;
+        if (stateHolder == null) return super.getFlexButton(x, y, width, height);
+        return new ImageCycleButtonWidget(x, y, width, height, GuiTextures.BUTTON_MINER_CONFIG_MODE,
+                stateHolder::get, stateHolder::set)
+                .setTooltipHoverString(i -> i == 0 ?
+                        "gregtech.machine.miner.button.tooltip.info" :
+                        "gregtech.machine.miner.button.tooltip.config");
+    }
+
+    @Override
+    protected void addDisplayText(List<ITextComponent> textList) {} // unused
+
+    protected void addRealDisplayText(List<ITextComponent> textList, boolean configMode) {
+        if (!configMode) {
+            super.addDisplayText(textList);
+        }
 
         if (!this.isStructureFormed()) return;
 
-        if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-            int energyContainer = getEnergyTier();
-            long maxVoltage = GTValues.V[energyContainer];
-            String voltageName = GTValues.VNF[energyContainer];
-            textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
+        if (!configMode) {
+            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
+                int energyContainer = getEnergyTier();
+                long maxVoltage = GTValues.V[energyContainer];
+                String voltageName = GTValues.VNF[energyContainer];
+                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
+            }
         }
 
         ITextComponent areaText;
@@ -309,59 +346,69 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             maxArea = this.minerLogic.getMaximumDiameter();
             areaText = new TextComponentTranslation("gregtech.machine.miner.display.working_area", area, area);
         }
-        areaText.appendText(" ").appendSibling(incrButton(area, maxArea, MinerUtil.DISPLAY_CLICK_AREA_INCR))
-                .appendText(" ").appendSibling(decrButton(area, 1, MinerUtil.DISPLAY_CLICK_AREA_DECR));
-        textList.add(areaText.appendText(" ").appendSibling(previewAreaButton(this.minerLogic.isPreviewEnabled())));
 
-        int yLimit = this.minerLogic.getYLimit();
-        ITextComponent value;
-        ITextComponent hoverText;
-        if (yLimit > 0) {
-            value = new TextComponentString(String.format("%,d", yLimit));
-            hoverText = new TextComponentTranslation("gregtech.machine.miner.display.y_limit.value_hover_tooltip", value.createCopy());
+        if (configMode) {
+            areaText.appendText(" ").appendSibling(incrButton(area, maxArea, MinerUtil.DISPLAY_CLICK_AREA_INCR))
+                    .appendText(" ").appendSibling(decrButton(area, 1, MinerUtil.DISPLAY_CLICK_AREA_DECR))
+                    .appendText(" ").appendSibling(previewAreaButton(this.minerLogic.isPreviewEnabled()));
+        }
+
+        textList.add(areaText);
+
+        if (configMode) {
+            int yLimit = this.minerLogic.getYLimit();
+            ITextComponent value;
+            ITextComponent hoverText;
+            if (yLimit > 0) {
+                value = new TextComponentString(String.format("%,d", yLimit));
+                hoverText = new TextComponentTranslation("gregtech.machine.miner.display.y_limit.value_hover_tooltip", value.createCopy());
+            } else {
+                value = new TextComponentTranslation("gregtech.machine.miner.display.y_limit.no_value");
+                hoverText = new TextComponentTranslation("gregtech.machine.miner.display.y_limit.value_hover_tooltip.no_value");
+            }
+            textList.add(new TextComponentTranslation(
+                    "gregtech.machine.miner.display.y_limit", new TextComponentString("")
+                    .appendSibling(incrButton(yLimit, Integer.MAX_VALUE, MinerUtil.DISPLAY_CLICK_Y_LIMIT_INCR))
+                    .appendText(" ").appendSibling(decrButton(yLimit, 0, MinerUtil.DISPLAY_CLICK_Y_LIMIT_DECR))
+                    .appendText(" ").appendSibling(value))
+                    .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText))));
+
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.display.repeat",
+                    toggleButton(this.minerLogic.isRepeat(), this.minerLogic.isWorking(),
+                            MinerUtil.DISPLAY_CLICK_REPEAT_ENABLE, MinerUtil.DISPLAY_CLICK_REPEAT_DISABLE)));
+
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.display.chunk_mode",
+                    toggleButton(this.minerLogic.isRepeat(), this.minerLogic.isWorking(),
+                            MinerUtil.DISPLAY_CLICK_CHUNK_MODE_ENABLE, MinerUtil.DISPLAY_CLICK_CHUNK_MODE_DISABLE)));
+
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.display.silk_touch",
+                    toggleButton(this.minerLogic.isRepeat(), this.minerLogic.isWorking(),
+                            MinerUtil.DISPLAY_CLICK_SILK_TOUCH_ENABLE, MinerUtil.DISPLAY_CLICK_SILK_TOUCH_DISABLE)));
+
+            ITextComponent replaceOreText = new TextComponentTranslation(
+                    this.minerLogic.getOreReplacement().getBlock().getTranslationKey() + ".name");
+            if (!this.minerLogic.isWorking()) {
+                replaceOreText = new TextComponentString("[")
+                        .appendSibling(replaceOreText.setStyle(new Style().setColor(TextFormatting.AQUA)))
+                        .appendText("]").setStyle(button(this.minerLogic.isReplaceOreWithAir() ?
+                                MinerUtil.DISPLAY_CLICK_REPLACE_ORE_DISABLE : MinerUtil.DISPLAY_CLICK_REPLACE_ORE_ENABLE));
+            }
+
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.display.replace_ore", replaceOreText));
         } else {
-            value = new TextComponentTranslation("gregtech.machine.miner.display.y_limit.no_value");
-            hoverText = new TextComponentTranslation("gregtech.machine.miner.display.y_limit.value_hover_tooltip.no_value");
-        }
-        textList.add(new TextComponentTranslation(
-                "gregtech.machine.miner.display.y_limit", new TextComponentString("")
-                .appendSibling(incrButton(yLimit, Integer.MAX_VALUE, MinerUtil.DISPLAY_CLICK_Y_LIMIT_INCR))
-                .appendText(" ").appendSibling(decrButton(yLimit, 0, MinerUtil.DISPLAY_CLICK_Y_LIMIT_DECR))
-                .appendText(" ").appendSibling(value))
-                .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText))));
+            appendWorkingStatus(textList);
 
-        boolean currentValue = this.minerLogic.isRepeat();
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.display.repeat",
-                this.minerLogic.isWorking() ?
-                        new TextComponentTranslation(this.minerLogic.isRepeat() ?
-                                "gregtech.machine.miner.display.enabled" :
-                                "gregtech.machine.miner.display.disabled") :
-                        new TextComponentTranslation(currentValue ?
-                                "gregtech.machine.miner.display.toggle.enabled" :
-                                "gregtech.machine.miner.display.toggle.disabled")
-                                .setStyle(button(currentValue ? MinerUtil.DISPLAY_CLICK_REPEAT_DISABLE : MinerUtil.DISPLAY_CLICK_REPEAT_ENABLE))));
-
-        ITextComponent replaceOreText = new TextComponentTranslation(
-                this.minerLogic.getOreReplacement().getBlock().getTranslationKey() + ".name");
-        if (!this.minerLogic.isWorking()) {
-            replaceOreText = new TextComponentString("[")
-                    .appendSibling(replaceOreText.setStyle(new Style().setColor(TextFormatting.AQUA)))
-                    .appendText("]").setStyle(button(this.minerLogic.isReplaceOreWithAir() ?
-                            MinerUtil.DISPLAY_CLICK_REPLACE_ORE_DISABLE : MinerUtil.DISPLAY_CLICK_REPLACE_ORE_ENABLE));
-        }
-
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.display.replace_ore", replaceOreText));
-
-        appendWorkingStatus(textList);
-
-        textList.add(new TextComponentTranslation("gregtech.machine.miner.display.stats.total_mined", this.minedOreCount));
-        if (this.hasLastMinedOre) {
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.display.stats.last_mined",
-                    this.lastMinedOre.getX(), this.lastMinedOre.getY(), this.lastMinedOre.getZ()));
+            textList.add(new TextComponentTranslation(
+                    "gregtech.machine.miner.display.stats.total_mined", this.minedOreCount));
+            if (this.hasLastMinedOre) {
+                textList.add(new TextComponentTranslation(
+                        "gregtech.machine.miner.display.stats.last_mined",
+                        this.lastMinedOre.getX(), this.lastMinedOre.getY(), this.lastMinedOre.getZ()));
+            }
         }
     }
 
-    private void appendWorkingStatus(List<ITextComponent> textList) {
+    protected void appendWorkingStatus(List<ITextComponent> textList) {
         if (!this.minerLogic.isDone()) {
             MiningArea miningArea = minerLogic.getMiningArea();
             if (miningArea != null) {
@@ -404,6 +451,16 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     @Nonnull
+    protected static ITextComponent toggleButton(boolean currentValue, boolean canInteract, @Nonnull String onEvent, @Nonnull String offEvent) {
+        return canInteract ?
+                new TextComponentTranslation(currentValue ?
+                        "gregtech.machine.miner.display.enabled" : "gregtech.machine.miner.display.disabled") :
+                new TextComponentTranslation(currentValue ?
+                        "gregtech.machine.miner.display.toggle.enabled" : "gregtech.machine.miner.display.toggle.disabled")
+                        .setStyle(button(currentValue ? offEvent : onEvent));
+    }
+
+    @Nonnull
     protected static Style button(@Nonnull String event) {
         return new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "@!" + event));
     }
@@ -440,6 +497,10 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             case MinerUtil.DISPLAY_CLICK_REPEAT_DISABLE -> this.minerLogic.setRepeat(false);
             case MinerUtil.DISPLAY_CLICK_REPLACE_ORE_ENABLE -> this.minerLogic.setReplaceOreWithAir(true);
             case MinerUtil.DISPLAY_CLICK_REPLACE_ORE_DISABLE -> this.minerLogic.setReplaceOreWithAir(false);
+            case MinerUtil.DISPLAY_CLICK_CHUNK_MODE_ENABLE -> this.minerLogic.setChunkMode(true);
+            case MinerUtil.DISPLAY_CLICK_CHUNK_MODE_DISABLE -> this.minerLogic.setChunkMode(false);
+            case MinerUtil.DISPLAY_CLICK_SILK_TOUCH_ENABLE -> this.minerLogic.setSilkTouchMode(true);
+            case MinerUtil.DISPLAY_CLICK_SILK_TOUCH_DISABLE -> this.minerLogic.setSilkTouchMode(false);
         }
     }
 
@@ -531,25 +592,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @SideOnly(Side.CLIENT)
     protected ICubeRenderer getFrontOverlay() {
         return this.type.getFrontOverlay();
-    }
-
-    @Nonnull
-    @Override
-    protected Widget getFlexButton(int x, int y, int width, int height) {
-        return new ImageCycleButtonWidget(x, y, width, height, GuiTextures.BUTTON_MINER_MODES, 4, () -> {
-            int mode = 0;
-            if (minerLogic.isChunkMode()) mode |= 1;
-            if (minerLogic.isSilkTouchMode()) mode |= 2;
-            return mode;
-        }, m -> {
-            minerLogic.setChunkMode((m & 1) != 0);
-            minerLogic.setSilkTouchMode((m & 2) != 0);
-        }).setTooltipHoverString(m -> switch (m) {
-            case 0 -> "gregtech.multiblock.miner.neither_mode";
-            case 1 -> "gregtech.multiblock.miner.chunk_mode";
-            case 2 -> "gregtech.multiblock.miner.silk_touch_mode";
-            default -> "gregtech.multiblock.miner.both_modes";
-        });
     }
 
     @Override

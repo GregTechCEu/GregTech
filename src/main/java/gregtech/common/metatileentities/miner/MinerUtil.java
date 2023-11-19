@@ -39,6 +39,10 @@ public class MinerUtil {
     public static final String DISPLAY_CLICK_REPEAT_DISABLE = "disable_repeat";
     public static final String DISPLAY_CLICK_REPLACE_ORE_ENABLE = "enable_replace_ore";
     public static final String DISPLAY_CLICK_REPLACE_ORE_DISABLE = "disable_replace_ore";
+    public static final String DISPLAY_CLICK_CHUNK_MODE_ENABLE = "enable_chunk_mode";
+    public static final String DISPLAY_CLICK_CHUNK_MODE_DISABLE = "disable_chunk_mode";
+    public static final String DISPLAY_CLICK_SILK_TOUCH_ENABLE = "enable_silk_touch";
+    public static final String DISPLAY_CLICK_SILK_TOUCH_DISABLE = "disable_silk_touch";
 
     public static final AxisAlignedBB EMPTY_AABB = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
