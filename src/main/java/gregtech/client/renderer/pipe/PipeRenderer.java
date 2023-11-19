@@ -257,19 +257,19 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         }
     }
 
-    protected static void renderOpenFace(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
+    protected void renderOpenFace(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
         for (IVertexOperation[] vertexOperations : renderContext.openFaceRenderer) {
             renderFace(renderState, vertexOperations, side, cuboid6);
         }
     }
 
-    protected static void renderPipeSide(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
+    protected void renderPipeSide(CCRenderState renderState, PipeRenderContext renderContext, EnumFacing side, Cuboid6 cuboid6) {
         for (IVertexOperation[] vertexOperations : renderContext.pipeSideRenderer) {
             renderFace(renderState, vertexOperations, side, cuboid6);
         }
     }
 
-    protected static void renderFace(CCRenderState renderState, IVertexOperation[] pipeline, EnumFacing side, Cuboid6 cuboid6) {
+    protected void renderFace(CCRenderState renderState, IVertexOperation[] pipeline, EnumFacing side, Cuboid6 cuboid6) {
         BlockRenderer.BlockFace blockFace = blockFaces.get();
         blockFace.loadCuboidFace(cuboid6, side.getIndex());
         renderState.setPipeline(blockFace, 0, blockFace.verts.length, pipeline);
@@ -374,8 +374,9 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
         private final BlockPos pos;
         private final LightMatrix lightMatrix;
-        private final List<IVertexOperation[]> openFaceRenderer = new ArrayList<>();
-        private final List<IVertexOperation[]> pipeSideRenderer = new ArrayList<>();
+        protected final List<IVertexOperation[]> openFaceRenderer = new ArrayList<>();
+        protected final List<IVertexOperation[]> pipeSideRenderer = new ArrayList<>();
+        // Blocked overlay is used for the pipe connector cube, not the main cube
         private final IVertexOperation[] blockedOverlay;
         private final float pipeThickness;
         private int color;
