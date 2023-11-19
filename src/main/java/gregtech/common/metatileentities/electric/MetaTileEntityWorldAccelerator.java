@@ -40,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.capability.GregtechDataCodes.SYNC_TILE_MODE;
@@ -57,12 +56,18 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     private boolean isActive = false;
     private boolean isPaused = false;
     private int lastTick;
-    private Supplier<Iterable<BlockPos.MutableBlockPos>> range;
+
+    // Variables for Random Tick mode optimization
+    // limit = ((tier - min) / (max - min)) * 2^tier
+    private static final int[] SUCCESS_LIMITS = {1, 8, 27, 64, 125, 216, 343, 512};
+    private final int successLimit;
+    private BlockPos bottomLeftCorner;
 
     public MetaTileEntityWorldAccelerator(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
         this.lastTick = 0;
         this.speed = (int) Math.pow(2, tier);
+        this.successLimit = SUCCESS_LIMITS[tier - 1];
         initializeInventory();
     }
 
@@ -161,35 +166,37 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
         energyContainer.removeEnergy(energyUsage);
 
         World world = getWorld();
-        for (BlockPos.MutableBlockPos pos : getRandomTickArea()) {
-            if (pos.getY() > 256 || pos.getY() < 0) { // Early termination
-                continue;
+        // room for hitting ourselves randomly, or blocks not loaded, or blocks outside of height limits
+        int attempts = successLimit * 3;
+        BlockPos.MutableBlockPos cornerPos = getCornerPos();
+        for (int i = 0, j = 0; i < successLimit && j < attempts; j++) {
+            int x = GTValues.RNG.nextInt(getTier() - 1);
+            int y = GTValues.RNG.nextInt(getTier() - 1);
+            int z = GTValues.RNG.nextInt(getTier() - 1);
+
+            cornerPos.add(x, y, z);
+            if (cornerPos.getY() > 256 || cornerPos.getY() < 0) continue;
+            if (!world.isBlockLoaded(cornerPos)) continue;
+            if (cornerPos.equals(getPos())) continue;
+
+            IBlockState state = world.getBlockState(cornerPos);
+            Block block = state.getBlock();
+            if (block.getTickRandomly()) {
+                block.randomTick(world, cornerPos.toImmutable(), state, world.rand);
             }
-            if (world.isBlockLoaded(pos)) {
-                for (int i = 0; i < speed; i++) {
-                    if (GTValues.RNG.nextInt(100) < getTier()) {
-                        // Rongmario:
-                        // randomTick instead of updateTick since some modders can mistake where to put their code.
-                        // Fresh IBlockState before every randomTick, this could easily change after every randomTick call
-                        IBlockState state = world.getBlockState(pos);
-                        Block block = state.getBlock();
-                        if (block.getTickRandomly()) {
-                            block.randomTick(world, pos.toImmutable(), state, world.rand);
-                        }
-                    }
-                }
-            }
+            i++; // success, whether it actually ticked or not
         }
         return true;
     }
 
-    private Iterable<BlockPos.MutableBlockPos> getRandomTickArea() {
-        if (range == null) {
-            int area = getTier() * 2;
-            BlockPos pos = getPos();
-            range = () -> BlockPos.getAllInBoxMutable(pos.add(-area, -area, -area), pos.add(area, area, area));
+    private BlockPos.MutableBlockPos getCornerPos() {
+        if (bottomLeftCorner == null) {
+            bottomLeftCorner = new BlockPos(
+                    getPos().getX() - getTier(),
+                    getPos().getY() - getTier(),
+                    getPos().getZ() - getTier());
         }
-        return range.get();
+        return new BlockPos.MutableBlockPos(bottomLeftCorner);
     }
 
     @Override
