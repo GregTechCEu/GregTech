@@ -90,10 +90,14 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        if (buf.readBoolean() && this.aeProxy != null) {
+        if (buf.readBoolean()) {
             try {
-                this.aeProxy.readFromNBT(buf.readCompoundTag());
-            } catch (IOException ignore) {
+                NBTTagCompound nbtTagCompound = buf.readCompoundTag();
+                if (this.aeProxy != null) {
+                    this.aeProxy.readFromNBT(nbtTagCompound);
+                }
+            }
+            catch(IOException ignore){
             }
         }
         this.meUpdateTick = buf.readInt();
