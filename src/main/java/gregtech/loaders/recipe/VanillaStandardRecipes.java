@@ -1033,9 +1033,15 @@ public class VanillaStandardRecipes {
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.Iron, 3)
-                .input(OrePrefix.ring, Materials.Iron, 4)
+                .input(IRON_MINECART_WHEELS, 2)
                 .outputs(new ItemStack(Items.MINECART))
-                .duration(100).EUt(4).buildAndRegister();
+                .duration(100).EUt(20).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.Steel, 3)
+                .input(STEEL_MINECART_WHEELS, 2)
+                .outputs(new ItemStack(Items.MINECART))
+                .duration(100).EUt(20).buildAndRegister();
 
         ModHandler.addShapedRecipe("saddle", new ItemStack(Items.SADDLE), "LLL", "LCL", "RSR",
                 'L', new ItemStack(Items.LEATHER),

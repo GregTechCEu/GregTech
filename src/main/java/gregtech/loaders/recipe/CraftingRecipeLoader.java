@@ -80,6 +80,9 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("component_grinder_diamond", COMPONENT_GRINDER_DIAMOND.getStackForm(), "XSX", "SDS", "XSX", 'X', new UnificationEntry(OrePrefix.dust, Materials.Diamond), 'S', new UnificationEntry(OrePrefix.plateDouble, Materials.Steel), 'D', new UnificationEntry(OrePrefix.gem, Materials.Diamond));
         ModHandler.addShapedRecipe("component_grinder_tungsten", COMPONENT_GRINDER_TUNGSTEN.getStackForm(), "WSW", "SDS", "WSW", 'W', new UnificationEntry(OrePrefix.plate, Materials.Tungsten), 'S', new UnificationEntry(OrePrefix.plateDouble, Materials.VanadiumSteel), 'D', new UnificationEntry(OrePrefix.gem, Materials.Diamond));
 
+        ModHandler.addShapedRecipe("minecart_wheels_iron", IRON_MINECART_WHEELS.getStackForm(), " h ", "RSR", " w ", 'R', new UnificationEntry(OrePrefix.ring, Materials.Iron), 'S', new UnificationEntry(OrePrefix.stick, Materials.Iron));
+        ModHandler.addShapedRecipe("minecart_wheels_steel", STEEL_MINECART_WHEELS.getStackForm(), " h ", "RSR", " w ", 'R', new UnificationEntry(OrePrefix.ring, Materials.Steel), 'S', new UnificationEntry(OrePrefix.stick, Materials.Steel));
+
         ModHandler.addShapedRecipe("nano_saber", NANO_SABER.getStackForm(), "PIC", "PIC", "XEX", 'P', new UnificationEntry(OrePrefix.plate, Materials.Platinum), 'I', new UnificationEntry(OrePrefix.plate, Ruridit), 'C', CARBON_FIBER_PLATE.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, Tier.EV), 'E', ENERGIUM_CRYSTAL.getStackForm());
 
         ModHandler.addShapedRecipe("solar_panel_basic", COVER_SOLAR_PANEL.getStackForm(), "WGW", "CPC", 'W', SILICON_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.LV), 'P', CARBON_FIBER_PLATE.getStackForm());
