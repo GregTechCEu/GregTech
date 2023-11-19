@@ -168,13 +168,17 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
         World world = getWorld();
         // room for hitting ourselves randomly, or blocks not loaded, or blocks outside of height limits
         int attempts = successLimit * 3;
-        BlockPos.MutableBlockPos cornerPos = getCornerPos();
+        BlockPos cornerPos = getCornerPos();
+        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(cornerPos);
         for (int i = 0, j = 0; i < successLimit && j < attempts; j++) {
             int x = GTValues.RNG.nextInt(getTier() - 1);
             int y = GTValues.RNG.nextInt(getTier() - 1);
             int z = GTValues.RNG.nextInt(getTier() - 1);
+            mutablePos.setPos(
+                    cornerPos.getX() + x,
+                    cornerPos.getY() + y,
+                    cornerPos.getZ() + z);
 
-            cornerPos.add(x, y, z);
             if (cornerPos.getY() > 256 || cornerPos.getY() < 0) continue;
             if (!world.isBlockLoaded(cornerPos)) continue;
             if (cornerPos.equals(getPos())) continue;
@@ -189,14 +193,14 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
         return true;
     }
 
-    private BlockPos.MutableBlockPos getCornerPos() {
+    private BlockPos getCornerPos() {
         if (bottomLeftCorner == null) {
             bottomLeftCorner = new BlockPos(
                     getPos().getX() - getTier(),
                     getPos().getY() - getTier(),
                     getPos().getZ() - getTier());
         }
-        return new BlockPos.MutableBlockPos(bottomLeftCorner);
+        return bottomLeftCorner;
     }
 
     @Override
