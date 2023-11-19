@@ -84,6 +84,7 @@ public class ClientProxy extends CommonProxy {
         LaserPipeRenderer.INSTANCE.preInit();
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(GTFluidRegistration.INSTANCE::registerSprites);
+        TextureUtils.addIconRegister(PipeRenderer::initializeRestrictor);
     }
 
     @Override
