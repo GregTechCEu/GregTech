@@ -68,6 +68,8 @@ gregtech.top.transform_up=昇圧
 gregtech.top.transform_down=降圧
 gregtech.top.transform_input=入力:
 gregtech.top.transform_output=出力:
+gregtech.top.steam_heating_up=加熱中
+gregtech.top.steam_no_water=水がない
 
 gregtech.top.convert_eu=§eEU§rを§cFE§rに変換中
 gregtech.top.convert_fe=§cFE§rを§eEU§rに変換中
@@ -800,6 +802,8 @@ metaitem.neutron_reflector.name=イリジウム製中性子反射板
 metaitem.neutron_reflector.tooltip=破壊不能
 metaitem.duct_tape.name=ブレインテック航空宇宙発展強化ダクトテープ FAL-84
 metaitem.duct_tape.tooltip=これでも直せない? もっと使おう!
+metaitem.basic_tape.name=テープ
+metaitem.basic_tape.tooltip=修理に使えるほどの強度はない
 
 metaitem.component.grinder.diamond.name=ダイヤモンド製研削ヘッド
 metaitem.component.grinder.tungsten.name=タングステン製研削ヘッド
@@ -2611,6 +2615,7 @@ gregtech.machine.crate.aluminium.name=アルミニウム製クレート
 gregtech.machine.crate.stainless_steel.name=ステンレススチール製クレート
 gregtech.machine.crate.titanium.name=チタン製クレート
 gregtech.machine.crate.tungstensteel.name=タングステンスチール製クレート
+gregtech.crate.tooltip.taped_movement=テープを使うと撤去時に中身を保持できる
 
 # Safe
 gregtech.machine.locked_safe.name=金庫
@@ -5034,6 +5039,9 @@ gregtech.machine.passthrough_hatch_item.name=アイテム通過ハッチ
 gregtech.machine.passthrough_hatch_item.tooltip=一方通行でアイテムを送る
 gregtech.machine.passthrough_hatch_fluid.name=液体通過ハッチ
 gregtech.machine.passthrough_hatch_fluid.tooltip=一方通行で液体を送る
+
+gregtech.machine.reservoir_hatch.name=リザーバーハッチ
+gregtech.machine.reservoir_hatch.tooltip=流しじゃないよ
 
 gregtech.machine.data_access_hatch.name=データアクセスハッチ
 gregtech.machine.data_access_hatch.tooltip.1=マルチブロック用データ搬入出口
