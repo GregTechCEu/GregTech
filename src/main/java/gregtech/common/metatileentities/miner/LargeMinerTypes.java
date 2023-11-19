@@ -66,9 +66,9 @@ public enum LargeMinerTypes implements LargeMinerType {
     @SideOnly(Side.CLIENT)
     public ICubeRenderer getFrontOverlay() {
         return switch (this) {
-            case STEEL -> Textures.LARGE_MINER_OVERLAY_ADVANCED;
-            case TITANIUM -> Textures.LARGE_MINER_OVERLAY_ADVANCED_2;
-            case TUNGSTEN_STEEL -> Textures.LARGE_MINER_OVERLAY_BASIC;
+            case STEEL -> Textures.LARGE_MINER_OVERLAY_BASIC;
+            case TITANIUM -> Textures.LARGE_MINER_OVERLAY_ADVANCED;
+            case TUNGSTEN_STEEL -> Textures.LARGE_MINER_OVERLAY_ADVANCED_2;
         };
     }
 }
