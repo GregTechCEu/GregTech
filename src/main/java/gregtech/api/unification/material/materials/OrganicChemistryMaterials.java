@@ -113,7 +113,7 @@ public class OrganicChemistryMaterials {
                 .color(0xC8C8C8)
                 .flags(GENERATE_FOIL)
                 .components(Carbon, 2, Hydrogen, 4)
-                .fluidPipeProperties(370, 50, true)
+                .fluidPipeProperties(370, 60, true)
                 .fluidTemp(408)
                 .build();
 
