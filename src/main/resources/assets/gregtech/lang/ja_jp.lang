@@ -4174,6 +4174,9 @@ gregtech.machine.item_collector.ev.name=発展型アイテム収集器 III
 gregtech.machine.item_collector.gui.collect_range=%s ブロック内のアイテム収集
 gregtech.machine.item_collector.tooltip=赤石信号入力時に周囲のアイテムを回収する
 
+gregtech.machine.alarm.name=アラーム
+gregtech.machine.alarm.tooltip=赤石信号が入力されているときに音を発する
+
 #Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Storage Drawersよりも良い
 gregtech.machine.super_chest.lv.name=スーパーチェスト I
@@ -5206,9 +5209,9 @@ gregtech.recipe.computation_per_tick=最低計算力: %,d CWU/t
 gregtech.recipe.total_computation=総計算力: %,d
 gregtech.recipe.research_result=このアイテムは研究成果であり、このレシピでは直接クラフトされません。
 
-gregtech.fluid.click_to_fill=§7中身の入った液体容器でクリックすると、§b中身をタンクに移す§7。Shiftクリックで1スタック全て移す。
-gregtech.fluid.click_combined=§7液体容器でクリックすると、液体を§c液体容器§7と§b内部タンク§7間をやり取りできる。Shiftクリックで1スタック全て移す。
-gregtech.fluid.click_to_empty=§7液体容器でクリックすると、液体を§c液体容器§7と§b内部タンク§7間をやり取りできる。Shiftクリックで1スタック全て移す。
+gregtech.fluid.click_to_fill=§7中身の入った液体容器で左クリックすると、§b中身をタンクに移す§7。右クリックで1つずつ移す。
+gregtech.fluid.click_combined=§7液体容器で左クリックすると、液体を§c液体容器§7と§b内部タンク§7間をやり取りできる。右クリックで1つずつ移す。
+gregtech.fluid.click_to_empty=§7液体容器で左クリックすると、液体を§c液体容器§7と§b内部タンク§7間をやり取りできる。右クリックで1つずつ移す。
 
 gregtech.tool_action.show_tooltips=SHIFTでツール情報を表示
 gregtech.tool_action.screwdriver.auto_output_covers=§8スクリュードライバーで搬出面からの搬入やカバーにアクセスできます。
@@ -5271,6 +5274,8 @@ gregtech.gui.config_slot=§f設定スロット§r
 gregtech.gui.config_slot.set=§7クリックで設定スロットを§b設定/選択§7。§r
 gregtech.gui.config_slot.scroll=§7スクロールで設定量を§a変更§7。§r
 gregtech.gui.config_slot.remove=§7右クリックで設定スロットを§4初期化§7。§r
+gregtech.gui.alarm.radius=半径:
+
 
 ore.spawnlocation.name=鉱脈情報
 gregtech.jei.ore.surface_rock_1=地表にある小石は鉱脈の生成位置を示します。
@@ -5597,6 +5602,8 @@ gregtech.creative.tank.tpc=Tick毎サイクル
 
 gregtech.creative.energy.amperage=電流
 gregtech.creative.energy.voltage=電圧
+gregtech.creative.energy.sink=自由設定
+gregtech.creative.energy.source=MAX-V / 21億A
 
 gregtech.creative.activity.on=稼働中
 gregtech.creative.activity.off=停止中
