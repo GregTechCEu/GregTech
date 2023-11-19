@@ -387,19 +387,19 @@ public class ToolRecipeHandler {
 
             if (ModHandler.isMaterialWood(material)) {
                 ModHandler.addMirroredShapedRecipe(String.format("soft_mallet_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 48, 1, 4F, 1F),
+                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 47, 1, 4F, 1F),
                         "II ", "IIS", "II ",
                         'I', new UnificationEntry(OrePrefix.plank, material),
                         'S', stick);
             } else {
                 ModHandler.addMirroredShapedRecipe(String.format("soft_mallet_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 128 * (1 << i), 1, 4F, 1F),
+                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 128 * (1 << i) - 1, 1, 4F, 1F),
                         "II ", "IIS", "II ",
                         'I', new UnificationEntry(OrePrefix.ingot, material),
                         'S', stick);
 
                 ModHandler.addMirroredShapedRecipe(String.format("plunger_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.PLUNGER, material, 128 * (i << 1), 1, 4F, 0F),
+                        ToolHelper.getAndSetToolData(ToolItems.PLUNGER, material, 128 * (i << 1) - 1, 1, 4F, 0F),
                         "xPP", " SP", "S f",
                         'P', new UnificationEntry(OrePrefix.plate, material),
                         'S', stick);

@@ -110,7 +110,7 @@ public final class ToolItems {
                 .sound(GTSoundEvents.SOFT_MALLET_TOOL)
                 .symbol('r')
                 .toolClasses(ToolClasses.SOFT_MALLET)
-                .markerItem(() -> ToolHelper.getAndSetToolData(SOFT_MALLET, Materials.Wood, 48, 1, 4F, 1F)));
+                .markerItem(() -> ToolHelper.getAndSetToolData(SOFT_MALLET, Materials.Wood, 47, 1, 4F, 1F)));
         MINING_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "mining_hammer")
                 .toolStats(b -> b.blockBreaking().aoe(1, 1, 0)
                         .efficiencyMultiplier(0.4F).attackDamage(1.5F).attackSpeed(-3.2F)
@@ -314,7 +314,7 @@ public final class ToolItems {
                 .sound(GTSoundEvents.PLUNGER_TOOL)
                 .oreDict(ToolOreDict.toolPlunger)
                 .toolClasses(ToolClasses.PLUNGER)
-                .markerItem(() -> ToolHelper.getAndSetToolData(PLUNGER, Materials.Rubber, 256, 1, 4F, 0F)));
+                .markerItem(() -> ToolHelper.getAndSetToolData(PLUNGER, Materials.Rubber, 255, 1, 4F, 0F)));
     }
 
     public static IGTTool register(@Nonnull ToolBuilder<?> builder) {
