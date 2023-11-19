@@ -36,7 +36,6 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     public void setConnected(IQuantumController controller) {
         if (getWorld().isRemote) return;
         if (!controller.getPos().equals(controllerPos)) {
-            GTLog.logger.info("Controller added to storage {}", controllerPos);
             this.controller = new WeakReference<>(controller);
             this.controllerPos = controller.getPos();
             if (!getWorld().isRemote) {
@@ -51,7 +50,6 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         if (getWorld().isRemote) return;
         if (controllerPos != null && !tryFindNewNetwork()) {
             // first try to find a new adjacent network
-            GTLog.logger.info("Controller removed from storage {}", getPos());
             controller = null;
             controllerPos = null;
 
