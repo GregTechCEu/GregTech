@@ -302,10 +302,14 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
             renderFace(renderState, vertexOperations, side, cuboid6);
         }
         int blockedConnections = renderContext.getBlockedConnections();
+        int connections = renderContext.getConnections();
         if (blockedConnections != 0) {
             int borderMask = 0;
             for (FluidPipeRenderer.Border border : FluidPipeRenderer.Border.VALUES) {
-                if (TileEntityPipeBase.isFaceBlocked(blockedConnections, getSideAtBorder(side, border))) {
+                EnumFacing borderSide = getSideAtBorder(side, border);
+                if (TileEntityPipeBase.isFaceBlocked(blockedConnections, borderSide)
+                        && TileEntityPipeBase.isConnected(connections, borderSide)) {
+                    // only render when the side is blocked *and* connected
                     borderMask |= border.mask;
                 }
             }
