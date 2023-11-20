@@ -157,7 +157,10 @@ public class GTValues {
             MODID_ET = "extratrees",
             MODID_GENETICS = "genetics",
             MODID_BOP = "biomesoplenty",
-            MODID_TCON = "tconstruct";
+            MODID_TCON = "tconstruct",
+            MODID_TC = "thaumcraft",
+            MODID_THAUMBASES = "thaumicbases",
+            MODID_THAUMADDITIONS = "thaumicadditions";
 
     private static Boolean isClient;
 
