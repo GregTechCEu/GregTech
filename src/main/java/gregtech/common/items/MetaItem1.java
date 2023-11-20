@@ -481,6 +481,9 @@ public class MetaItem1 extends StandardMetaItem {
         COMPONENT_GRINDER_TUNGSTEN = addItem(267, "component.grinder.tungsten")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tungsten, M * 4), new MaterialStack(Materials.VanadiumSteel, M * 8), new MaterialStack(Materials.Diamond, M)));
 
+        IRON_MINECART_WHEELS = addItem(268, "minecart_wheels.iron").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Iron, M)));
+        STEEL_MINECART_WHEELS = addItem(269, "minecart_wheels.steel").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M)));
+
         // Special Eyes/Stars: ID 281-289
         QUANTUM_EYE = addItem(281, "quantumeye");
         QUANTUM_STAR = addItem(282, "quantumstar");

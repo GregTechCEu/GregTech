@@ -412,6 +412,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_TUNGSTEN;
 
+    public static MetaItem<?>.MetaValueItem IRON_MINECART_WHEELS;
+    public static MetaItem<?>.MetaValueItem STEEL_MINECART_WHEELS;
+
     public static MetaItem<?>.MetaValueItem QUANTUM_EYE;
     public static MetaItem<?>.MetaValueItem QUANTUM_STAR;
     public static MetaItem<?>.MetaValueItem GRAVI_STAR;

@@ -802,6 +802,11 @@ metaitem.basic_tape.tooltip=Not strong enough for mechanical issues
 metaitem.component.grinder.diamond.name=Diamond Grinding Head
 metaitem.component.grinder.tungsten.name=Tungsten Grinding Head
 
+metaitem.minecart_wheels.iron.name=Iron Minecart Wheels
+metaitem.minecart_wheels.iron.tooltip=To get things rolling
+metaitem.minecart_wheels.steel.name=Steel Minecart Wheels
+metaitem.minecart_wheels.steel.tooltip=To get things rolling
+
 metaitem.quantumeye.name=Quantum Eye
 metaitem.quantumeye.tooltip=Improved Ender Eye
 metaitem.quantumstar.name=Quantum Star
