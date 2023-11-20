@@ -295,7 +295,7 @@ public class SecondDegreeMaterials {
                 .color(0xc99781).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Copper, 6, Tin, 2, Lead, 1)
-                .fluidPipeProperties(1456, 32, true)
+                .fluidPipeProperties(1456, 40, true)
                 .fluidTemp(1084)
                 .build();
 

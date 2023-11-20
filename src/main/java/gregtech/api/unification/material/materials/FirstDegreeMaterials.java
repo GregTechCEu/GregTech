@@ -599,7 +599,7 @@ public class FirstDegreeMaterials {
                 .toolStats(ToolProperty.Builder.of(5.0F, 3.0F, 512, 3)
                         .enchantability(14).build())
                 .rotorStats(6.0f, 3.0f, 512)
-                .fluidPipeProperties(1855, 75, true)
+                .fluidPipeProperties(1855, 50, true)
                 .cableProperties(V[EV], 2, 2)
                 .blastTemp(1000, null, VA[MV], 800) // no gas tier for steel
                 .fluidTemp(2046)

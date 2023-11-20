@@ -386,7 +386,7 @@ public class ElementMaterials {
                         GENERATE_FINE_WIRE, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Pb)
                 .cableProperties(V[ULV], 2, 2)
-                .fluidPipeProperties(1200, 8, true)
+                .fluidPipeProperties(1200, 32, true)
                 .fluidTemp(600)
                 .build();
 
