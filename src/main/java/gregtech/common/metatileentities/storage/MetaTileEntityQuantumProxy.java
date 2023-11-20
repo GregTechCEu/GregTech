@@ -8,6 +8,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -17,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,12 +37,17 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        // todo make a unique texture
         if (isConnected()) {
-            Textures.ADVANCED_COMPUTER_CASING.render(renderState, translation, pipeline); // testing
+            Textures.QUANTUM_PROXY_ACTIVE.render(renderState, translation, pipeline);
         } else {
-            Textures.SOLID_STEEL_CASING.render(renderState, translation, pipeline);
+            Textures.QUANTUM_PROXY.render(renderState, translation, pipeline);
         }
+
+    }
+
+    @Override
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
+        return Pair.of(Textures.QUANTUM_PROXY.getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override

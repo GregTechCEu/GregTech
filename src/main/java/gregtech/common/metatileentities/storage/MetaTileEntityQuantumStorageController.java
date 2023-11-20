@@ -66,13 +66,13 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.SOLID_STEEL_CASING.render(renderState, translation, pipeline);
+        Textures.QUANTUM_CONTROLLER_ACTIVE.render(renderState, translation, pipeline);
         Textures.QUANTUM_CHEST_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.SOLID_STEEL_CASING.getParticleSprite(), getPaintingColorForRendering());
+        return Pair.of(Textures.QUANTUM_CONTROLLER_ACTIVE.getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override
