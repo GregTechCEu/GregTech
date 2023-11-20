@@ -15,6 +15,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
@@ -763,6 +764,7 @@ public class VanillaStandardRecipes {
     /**
      * + Adds metal related recipes
      * + Adds horse armor and chainmail recipes
+     * + Replaces minecart recipe
      */
     private static void metalRecipes() {
         BENDER_RECIPES.recipeBuilder()
@@ -852,6 +854,16 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Items.IRON_DOOR, 3))
                     .duration(100).EUt(16).buildAndRegister();
         }
+
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:minecart"));
+        ModHandler.addShapedRecipe("minecart_iron", new ItemStack(Items.MINECART), " h ", "PwP", "WPW",
+                'W', MetaItems.IRON_MINECART_WHEELS.getStackForm(),
+                'P', new UnificationEntry(OrePrefix.plate, Materials.Iron)
+        );
+        ModHandler.addShapedRecipe("minecart_steel", new ItemStack(Items.MINECART), " h ", "PwP", "WPW",
+                'W', MetaItems.STEEL_MINECART_WHEELS.getStackForm(),
+                'P', new UnificationEntry(OrePrefix.plate, Materials.Steel)
+        );
     }
 
     /**
