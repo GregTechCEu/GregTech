@@ -8,8 +8,10 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<IDualHandler> {
     public MetaTileEntityQuantumExtender(ResourceLocation metaTileEntityId) {
@@ -23,12 +25,16 @@ public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        // todo make a unique texture
         if (isConnected()) {
-            Textures.ADVANCED_COMPUTER_CASING.render(renderState, translation, pipeline); // testing
+            Textures.QUANTUM_EXTENDER_ACTIVE.render(renderState, translation, pipeline);
         } else {
-            Textures.SOLID_STEEL_CASING.render(renderState, translation, pipeline);
+            Textures.QUANTUM_EXTENDER.render(renderState, translation, pipeline);
         }
+    }
+
+    @Override
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
+        return Pair.of(Textures.QUANTUM_EXTENDER.getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override
