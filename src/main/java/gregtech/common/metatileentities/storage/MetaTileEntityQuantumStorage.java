@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.storage;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
@@ -20,8 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONTROLLER_POS;
 import static gregtech.api.capability.GregtechDataCodes.REMOVE_CONTROLLER;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONTROLLER_POS;
 
 public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity implements IQuantumStorage<T> {
 
