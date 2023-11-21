@@ -28,7 +28,7 @@ public interface CoverableView extends ICapabilityProvider {
      * @param facing the side to get the neighbor at
      * @return the neighbor tile entity at the side
      */
-    @UnknownNullability TileEntity getNeighbor(@NotNull EnumFacing facing);
+    @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing);
 
     /**
      * Mark the CoverableView as needing to be saved to the chunk

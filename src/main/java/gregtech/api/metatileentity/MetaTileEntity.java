@@ -175,10 +175,6 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return holder == null ? 0L : holder.getOffsetTimer();
     }
 
-    public TileEntity getTileEntityHere() {
-        return holder instanceof TileEntity te ? te : getWorld().getTileEntity(getPos());
-    }
-
     @Override
     public @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
         return holder != null ? holder.getNeighbor(facing) : null;
