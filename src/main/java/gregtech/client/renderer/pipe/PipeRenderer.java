@@ -72,7 +72,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     private EnumBlockRenderType blockRenderType;
     protected static final ThreadLocal<BlockRenderer.BlockFace> blockFaces = ThreadLocal.withInitial(BlockRenderer.BlockFace::new);
     private static final Cuboid6 FRAME_RENDER_CUBOID = new Cuboid6(0.001, 0.001, 0.001, 0.999, 0.999, 0.999);
-    private static final EnumMap<EnumFacing, EnumMap<FluidPipeRenderer.Border, EnumFacing>> FACE_BORDER_MAP = new EnumMap<>(EnumFacing.class);
+    private static final EnumMap<EnumFacing, EnumMap<Border, EnumFacing>> FACE_BORDER_MAP = new EnumMap<>(EnumFacing.class);
     private static final Int2ObjectMap<IVertexOperation[]> RESTRICTOR_MAP = new Int2ObjectOpenHashMap<>();
 
     @SuppressWarnings("unused")
@@ -305,7 +305,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         int connections = renderContext.getConnections();
         if (blockedConnections != 0) {
             int borderMask = 0;
-            for (FluidPipeRenderer.Border border : FluidPipeRenderer.Border.VALUES) {
+            for (Border border : Border.VALUES) {
                 EnumFacing borderSide = getSideAtBorder(side, border);
                 if (TileEntityPipeBase.isFaceBlocked(blockedConnections, borderSide)
                         && TileEntityPipeBase.isConnected(connections, borderSide)) {
