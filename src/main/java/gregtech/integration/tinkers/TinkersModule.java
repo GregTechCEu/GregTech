@@ -6,7 +6,9 @@ import gregtech.api.modules.GregTechModule;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.tinkers.book.GTBook;
 import gregtech.integration.tinkers.effect.GTTinkerEffects;
+import gregtech.integration.tinkers.recipe.SmelteryRecipes;
 import gregtech.modules.GregTechModules;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.potion.Potion;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -47,5 +49,12 @@ public class TinkersModule extends IntegrationSubmodule {
     @SubscribeEvent
     public static void registerPotionEffects(RegistryEvent.Register<Potion> event) {
         GTTinkerEffects.registerEffects(event.getRegistry());
+    }
+
+    @SubscribeEvent
+    public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
+        SmelteryRecipes.alloyingRecipes();
+        SmelteryRecipes.castingRecipes();
+        SmelteryRecipes.meltingRecipes();
     }
 }
