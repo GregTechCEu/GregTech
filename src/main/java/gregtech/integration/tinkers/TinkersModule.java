@@ -18,12 +18,11 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_TICON,
+        moduleID = GregTechModules.MODULE_TCON,
         containerID = GTValues.MODID,
-        modDependencies = GTValues.MODID_TICON,
+        modDependencies = GTValues.MODID_TCON,
         name = "GregTech Tinkers' Construct Integration",
-        descriptionKey = "gregtech.modules.ticon_integration.description"
-)
+        description = "Tinkers' Construct Integration Module")
 public class TinkersModule extends IntegrationSubmodule {
 
     @Nonnull
