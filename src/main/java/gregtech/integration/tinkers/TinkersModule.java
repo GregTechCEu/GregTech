@@ -15,8 +15,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 @GregTechModule(
@@ -27,10 +27,10 @@ import java.util.List;
         description = "Tinkers' Construct Integration Module")
 public class TinkersModule extends IntegrationSubmodule {
 
-    @Nonnull
+    @NotNull
     @Override
     public List<Class<?>> getEventBusSubscribers() {
-        return ImmutableList.<Class<?>>builder().add(TinkersEvents.class, TinkersModule.class).build();
+        return ImmutableList.of(TinkersEvents.class, TinkersModule.class);
     }
 
     @Override
@@ -53,8 +53,10 @@ public class TinkersModule extends IntegrationSubmodule {
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        SmelteryRecipes.alloyingRecipes();
-        SmelteryRecipes.castingRecipes();
-        SmelteryRecipes.meltingRecipes();
+        SmelteryRecipes.registerUnification();
+        SmelteryRecipes.registerSmelteryFuels();
+        if (TinkersConfig.enableGTSmeltryAlloys) {
+            SmelteryRecipes.registerAlloyingRecipes();
+        }
     }
 }
