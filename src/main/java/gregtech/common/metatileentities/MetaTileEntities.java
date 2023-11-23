@@ -980,13 +980,13 @@ public class MetaTileEntities {
         PUMP[2] = registerMetaTileEntity(1532, new MetaTileEntityPump(gregtechId("pump.hv"), 3));
         PUMP[3] = registerMetaTileEntity(1533, new MetaTileEntityPump(gregtechId("pump.ev"), 4));
 
-        // Super / Quantum Chests, IDs 1559-1574, 1751, 1753, 1754
+        // Super / Quantum Chests, IDs 1559-1574, 1752, 1754, 1755
         QUANTUM_STORAGE_CONTROLLER = registerMetaTileEntity(1559, new MetaTileEntityQuantumStorageController(gregtechId("quantum_storage_controller")));
-        QUANTUM_STORAGE_PROXY = registerMetaTileEntity(1753, new MetaTileEntityQuantumProxy(gregtechId("quantum_storage_proxy")));
-        QUANTUM_STORAGE_EXTENDER = registerMetaTileEntity(1754, new MetaTileEntityQuantumExtender(gregtechId("quantum_storage_extender")));
+        QUANTUM_STORAGE_PROXY = registerMetaTileEntity(1754, new MetaTileEntityQuantumProxy(gregtechId("quantum_storage_proxy")));
+        QUANTUM_STORAGE_EXTENDER = registerMetaTileEntity(1755, new MetaTileEntityQuantumExtender(gregtechId("quantum_storage_extender")));
 
         QUANTUM_CHEST[10] = new MetaTileEntityQuantumChest(gregtechId("super_chest." + GTValues.VN[GTValues.ULV].toLowerCase()), 0, 1000000L);
-        registerMetaTileEntity(1751, QUANTUM_CHEST[0]);
+        registerMetaTileEntity(1752, QUANTUM_CHEST[10]);
         for (int i = 0; i < 5; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
             QUANTUM_CHEST[i] = new MetaTileEntityQuantumChest(gregtechId("super_chest." + voltageName), i + 1,
@@ -1001,10 +1001,10 @@ public class MetaTileEntities {
             registerMetaTileEntity(1565 + i, QUANTUM_CHEST[i]);
         }
 
-        // Super / Quantum Tanks, IDs 1575-1589, 1752
+        // Super / Quantum Tanks, IDs 1575-1589, 1753
 
         QUANTUM_TANK[10] = new MetaTileEntityQuantumTank(gregtechId("super_tank." + GTValues.VN[GTValues.ULV].toLowerCase()), 0, 1000000);
-        registerMetaTileEntity(1752, QUANTUM_TANK[10]);
+        registerMetaTileEntity(1753, QUANTUM_TANK[10]);
 
         for (int i = 0; i < 5; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
