@@ -16,7 +16,6 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.ConfigHolder;
 import gregtech.common.crafting.ToolHeadReplaceRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
@@ -296,7 +295,7 @@ public class ToolRecipeHandler {
             ItemStack powerUnitStack = powerUnitItems.get(tier).getStackForm();
             IElectricItem powerUnit = powerUnitStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
             ItemStack tool = toolItem.get(material, 0, powerUnit.getMaxCharge());
-            ModHandler.addShapedEnergyTransferRecipe(String.format("%s_%s", toolItem.getId(), material),
+            ModHandler.addShapedEnergyTransferRecipe(String.format("%s_%s", toolItem.getToolId(), material),
                     tool,
                     Ingredient.fromStacks(powerUnitStack), true, true,
                     "wHd", " U ",
@@ -307,10 +306,10 @@ public class ToolRecipeHandler {
 
     public static void addToolRecipe(@Nonnull Material material, @Nonnull IGTTool tool, boolean mirrored, Object... recipe) {
         if (mirrored) {
-            ModHandler.addMirroredShapedRecipe(String.format("%s_%s", tool.getId(), material),
+            ModHandler.addMirroredShapedRecipe(String.format("%s_%s", tool.getToolId(), material),
                     tool.get(material), recipe);
         } else {
-            ModHandler.addShapedRecipe(String.format("%s_%s", tool.getId(), material),
+            ModHandler.addShapedRecipe(String.format("%s_%s", tool.getToolId(), material),
                     tool.get(material), recipe);
         }
     }
@@ -387,19 +386,19 @@ public class ToolRecipeHandler {
 
             if (ModHandler.isMaterialWood(material)) {
                 ModHandler.addMirroredShapedRecipe(String.format("soft_mallet_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 48, 1, 4F, 1F),
+                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 47, 1, 4F, 1F),
                         "II ", "IIS", "II ",
                         'I', new UnificationEntry(OrePrefix.plank, material),
                         'S', stick);
             } else {
                 ModHandler.addMirroredShapedRecipe(String.format("soft_mallet_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 128 * (1 << i), 1, 4F, 1F),
+                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 128 * (1 << i) - 1, 1, 4F, 1F),
                         "II ", "IIS", "II ",
                         'I', new UnificationEntry(OrePrefix.ingot, material),
                         'S', stick);
 
                 ModHandler.addMirroredShapedRecipe(String.format("plunger_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.PLUNGER, material, 128 * (i << 1), 1, 4F, 0F),
+                        ToolHelper.getAndSetToolData(ToolItems.PLUNGER, material, 128 * (i << 1) - 1, 1, 4F, 0F),
                         "xPP", " SP", "S f",
                         'P', new UnificationEntry(OrePrefix.plate, material),
                         'S', stick);

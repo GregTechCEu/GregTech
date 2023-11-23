@@ -104,6 +104,7 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
             @Override
             protected void onContentsChanged(int slot) {
                 ((EnergyContainerBatteryBuffer) energyContainer).notifyEnergyListener(false);
+                MetaTileEntityBatteryBuffer.this.markDirty();
             }
 
             @Nonnull
@@ -122,11 +123,6 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
                 return 1;
             }
         };
-    }
-
-    @Override
-    protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(0);
     }
 
     @Override

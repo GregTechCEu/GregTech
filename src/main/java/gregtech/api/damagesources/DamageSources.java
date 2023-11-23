@@ -54,7 +54,7 @@ public class DamageSources {
         ItemStack stack = source != null ? source.getHeldItemMainhand() : ItemStack.EMPTY;
         if (!stack.isEmpty() && stack.getItem() instanceof IGTTool) {
             IGTTool tool = (IGTTool) stack.getItem();
-            return new DamageSourceTool("player", source, String.format("death.attack.%s", tool.getId()));
+            return new DamageSourceTool("player", source, String.format("death.attack.%s", tool.getToolId()));
         }
         return new EntityDamageSource("player", source);
     }
@@ -65,7 +65,7 @@ public class DamageSources {
         ItemStack stack = source != null ? source.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND) : ItemStack.EMPTY;
         if (!stack.isEmpty() && stack.getItem() instanceof IGTTool) {
             IGTTool tool = (IGTTool) stack.getItem();
-            return new DamageSourceTool("mob", source, String.format("death.attack.%s", tool.getId()));
+            return new DamageSourceTool("mob", source, String.format("death.attack.%s", tool.getToolId()));
         }
         return new EntityDamageSource("mob", source);
     }

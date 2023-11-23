@@ -34,7 +34,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
     public MetaTileEntityMachineHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false);
-        this.machineHandler = new LimitedImportHandler();
+        this.machineHandler = new LimitedImportHandler(this);
         initializeInventory();
     }
 
@@ -111,8 +111,8 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
     private class LimitedImportHandler extends NotifiableItemStackHandler {
 
-        public LimitedImportHandler() {
-            super(1, null, false);
+        public LimitedImportHandler(MetaTileEntity metaTileEntity) {
+            super(metaTileEntity, 1, null, false);
         }
 
         @Nonnull

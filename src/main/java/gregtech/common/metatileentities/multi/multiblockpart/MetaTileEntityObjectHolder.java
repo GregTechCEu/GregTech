@@ -41,7 +41,7 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
 
     public MetaTileEntityObjectHolder(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.ZPM, false);
-        heldItems = new ObjectHolderHandler();
+        heldItems = new ObjectHolderHandler(this);
     }
 
     @Override
@@ -206,8 +206,8 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
 
     private class ObjectHolderHandler extends NotifiableItemStackHandler {
 
-        public ObjectHolderHandler() {
-            super(2, null, false);
+        public ObjectHolderHandler(MetaTileEntity metaTileEntity) {
+            super(metaTileEntity, 2, null, false);
         }
 
         // only allow a single item, no stack size

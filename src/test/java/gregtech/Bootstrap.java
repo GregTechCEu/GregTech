@@ -2,8 +2,9 @@ package gregtech;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.fluids.MetaFluids;
+import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.common.items.MetaItems;
@@ -66,6 +67,7 @@ public final class Bootstrap {
 
         MaterialRegistryManager managerInternal = MaterialRegistryManager.getInstance();
         GregTechAPI.materialManager = managerInternal;
+        GregTechAPI.markerMaterialRegistry = MarkerMaterialRegistry.getInstance();
         managerInternal.unfreezeRegistries();
         Materials.register();
         managerInternal.closeRegistries();
@@ -74,7 +76,7 @@ public final class Bootstrap {
         // loadGregtechLangFile();
 
         OrePrefix.runMaterialHandlers();
-        MetaFluids.init();
+        GTFluidRegistration.INSTANCE.register();
         MetaItems.init();
         bootstrapped = true;
     }

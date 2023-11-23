@@ -67,6 +67,7 @@ public class MachineRecipeLoader {
         BatteryRecipes.init();
         CircuitRecipes.init();
         ComputerRecipes.init();
+        DecorationRecipes.init();
         WoodRecipeLoader.registerRecipes();
 
         registerDecompositionRecipes();
@@ -456,13 +457,6 @@ public class MachineRecipeLoader {
                 .inputs(new ItemStack(Items.IRON_DOOR))
                 .input(OrePrefix.plate, material, 2)
                 .outputs(MetaItems.COVER_SHUTTER.getStackForm(2))
-                .EUt(16).duration(100)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(WORKBENCH.getStackForm())
-                .input(plate, material)
-                .outputs(COVER_CRAFTING.getStackForm())
                 .EUt(16).duration(100)
                 .buildAndRegister();
 

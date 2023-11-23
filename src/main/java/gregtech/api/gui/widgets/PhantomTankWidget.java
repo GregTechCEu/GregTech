@@ -1,6 +1,7 @@
 package gregtech.api.gui.widgets;
 
 import com.google.common.collect.Lists;
+import gregtech.api.fluids.GTFluid;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.util.Position;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -191,12 +193,17 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
         return fluid == null ? "" : fluid.getLocalizedName();
     }
 
-    @Override
-    public String getFluidUnlocalizedName() {
-        if (lastFluidInTank != null) {
-            return lastFluidInTank.getUnlocalizedName();
+    @Nullable
+    public TextComponentTranslation getFluidTextComponent() {
+        if (lastFluidInTank != null && lastFluidInTank.getFluid() instanceof GTFluid.GTMaterialFluid materialFluid) {
+            return materialFluid.toTextComponentTranslation();
         }
-        FluidStack fluid = phantomFluidGetter.get();
-        return fluid == null ? "" : fluid.getUnlocalizedName();
+
+        FluidStack stack = phantomFluidGetter.get();
+        if (stack == null) return null;
+        if (stack.getFluid() instanceof GTFluid.GTMaterialFluid materialFluid) {
+            return materialFluid.toTextComponentTranslation();
+        }
+        return new TextComponentTranslation(stack.getUnlocalizedName());
     }
 }
