@@ -8,10 +8,10 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -67,7 +67,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
         this.inventorySize = (tier + 1) * (tier + 1);
         this.energyPerTick = GTValues.V[tier - 1];
         this.minerLogic = new MinerLogic<>(this, workFrequency, maximumDiameter);
-        this.chargerInventory = new ItemStackHandler(1);
+        this.chargerInventory = new GTItemStackHandler(this, 1);
         initializeInventory();
     }
 
@@ -77,13 +77,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
     }
 
     @Override
-    protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(0, this, false);
-    }
-
-    @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(inventorySize, this, true);
+        return new GTItemStackHandler(this, inventorySize);
     }
 
     @Override
@@ -256,19 +251,19 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements Miner, 
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         this.minerLogic.writeInitialSyncData(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.minerLogic.receiveInitialSyncData(buf);
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         this.minerLogic.receiveCustomData(dataId, buf);
     }

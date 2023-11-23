@@ -450,21 +450,16 @@ public class MinerLogic<MTE extends MetaTileEntity & Miner> {
      * Callback for handling custom data packet sent by miner logic. Call this method in {@link MetaTileEntity#receiveCustomData(int, PacketBuffer)}.
      */
     public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
-        switch (dataId) {
-            case GregtechDataCodes.PUMP_HEAD_LEVEL -> {
-                this.pipeLength = buf.readVarInt();
-            }
-            case GregtechDataCodes.WORKING_ENABLED -> {
-                this.workingEnabled = buf.readBoolean();
-                this.mte.scheduleRenderUpdate();
-            }
-            case GregtechDataCodes.MINER_UPDATE_PREVIEW -> {
-                readPreviewUpdatePacket(buf);
-            }
-            case GregtechDataCodes.MINER_UPDATE_ACTIVE -> {
-                this.active = buf.readBoolean();
-                this.mte.scheduleRenderUpdate();
-            }
+        if (dataId == GregtechDataCodes.PUMP_HEAD_LEVEL) {
+            this.pipeLength = buf.readVarInt();
+        } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+            this.workingEnabled = buf.readBoolean();
+            this.mte.scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.MINER_UPDATE_PREVIEW) {
+            readPreviewUpdatePacket(buf);
+        } else if (dataId == GregtechDataCodes.MINER_UPDATE_ACTIVE) {
+            this.active = buf.readBoolean();
+            this.mte.scheduleRenderUpdate();
         }
     }
 }
