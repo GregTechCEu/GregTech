@@ -1,5 +1,7 @@
 package gregtech.api.util.interpolate;
 
+import org.jetbrains.annotations.ApiStatus;
+
 public enum Eases implements IEase {
     LINEAR {
         @Override
@@ -31,11 +33,15 @@ public enum Eases implements IEase {
     // Deprecated names below - will be removed on future update
 
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public static final Eases EaseLinear = LINEAR;
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public static final Eases EaseQuadIn = QUAD_IN;
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public static final Eases EaseQuadInOut = QUAD_IN_OUT;
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public static final Eases EaseQuadOut = QUAD_OUT;
 }

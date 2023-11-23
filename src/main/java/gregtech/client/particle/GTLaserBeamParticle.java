@@ -111,8 +111,9 @@ public class GTLaserBeamParticle extends GTParticle {
     /**
      * Is 3D beam rendered by two perpendicular quads.
      * <p>
-     * It is not about performance, some textures are suitable for this, some are not, please choose according to the texture used.
-     * </P>
+     * It is not about performance, some textures are suitable for this, some are not, please choose according to the
+     * texture used.
+     * </p>
      */
     public GTLaserBeamParticle setDoubleVertical(boolean doubleVertical) {
         this.doubleVertical = doubleVertical;

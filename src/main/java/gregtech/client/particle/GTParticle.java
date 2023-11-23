@@ -51,7 +51,9 @@ public abstract class GTParticle {
     }
 
     /**
-     * @return {@code true} to
+     * @return {@code true} to render the particle with
+     * {@link net.minecraft.client.renderer.GlStateManager#depthMask(boolean) depth mask} feature disabled; in other
+     * words, render the particle without modifying depth buffer.
      */
     public boolean shouldDisableDepth() {
         return false;
