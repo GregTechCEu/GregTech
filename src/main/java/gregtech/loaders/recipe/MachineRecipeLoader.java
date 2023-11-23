@@ -903,7 +903,7 @@ public class MachineRecipeLoader {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Endstone)
                 .output(dust, Endstone)
-                .chancedOutput(dustTiny, Tungstate, 1200, 280)
+                .chancedOutput(dust, Tungstate, 130, 30)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
@@ -916,7 +916,7 @@ public class MachineRecipeLoader {
             MACERATOR_RECIPES.recipeBuilder()
                     .input(stone, Soapstone)
                     .output(dustImpure, Talc)
-                    .chancedOutput(dustTiny, Chromite, 1000, 280)
+                    .chancedOutput(dust, Chromite, 111, 30)
                     .buildAndRegister();
 
         if (!OreDictionary.getOres("stoneRedrock").isEmpty())
@@ -947,36 +947,38 @@ public class MachineRecipeLoader {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, GraniteRed)
                 .output(dust, GraniteRed)
-                .chancedOutput(dustSmall, Uranium238, 100, 40)
+                .chancedOutput(dust, Uranium238, 10, 5)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Andesite)
                 .output(dust, Andesite)
-                .chancedOutput(dustSmall, Stone, 100, 40)
+                .chancedOutput(dust, Stone, 10, 5)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Diorite)
                 .output(dust, Diorite)
-                .chancedOutput(dustSmall, Stone, 100, 40)
+                .chancedOutput(dust, Stone, 10, 5)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Granite)
                 .output(dust, Granite)
-                .chancedOutput(dustSmall, Stone, 100, 40)
+                .chancedOutput(dust, Stone, 10, 5)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.PORKCHOP))
-                .output(dustSmall, Meat, 6)
+                .output(dust, Meat)
+                .chancedOutput(dust, Meat, 5000, 0)
                 .output(dustTiny, Bone)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.FISH, 1, GTValues.W))
-                .output(dustSmall, Meat, 6)
+                .output(dust, Meat)
+                .chancedOutput(dust, Meat, 5000, 0)
                 .output(dustTiny, Bone)
                 .duration(102).buildAndRegister();
 
@@ -988,13 +990,15 @@ public class MachineRecipeLoader {
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.BEEF))
-                .output(dustSmall, Meat, 6)
+                .output(dust, Meat)
+                .chancedOutput(dust, Meat, 5000, 0)
                 .output(dustTiny, Bone)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.RABBIT))
-                .output(dustSmall, Meat, 6)
+                .output(dust, Meat)
+                .chancedOutput(dust, Meat, 5000, 0)
                 .output(dustTiny, Bone)
                 .duration(102).buildAndRegister();
 
@@ -1003,8 +1007,6 @@ public class MachineRecipeLoader {
                 .output(dust, Meat)
                 .output(dustTiny, Bone)
                 .duration(102).buildAndRegister();
-
-
     }
 
     private static void registerFluidRecipes() {

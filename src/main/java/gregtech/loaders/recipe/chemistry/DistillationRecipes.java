@@ -5,7 +5,8 @@ import gregtech.common.items.MetaItems;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.DISTILLATION_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.api.unification.ore.OrePrefix.dustSmall;
 
 public class DistillationRecipes {
 
@@ -151,7 +152,7 @@ public class DistillationRecipes {
                 .fluidOutputs(SulfurDioxide.getFluid(7500))
                 .fluidOutputs(Helium3.getFluid(2500))
                 .fluidOutputs(Neon.getFluid(500))
-                .chancedOutput(dustSmall, Ash, 9000, 0)
+                .chancedOutput(dust, Ash, 2250, 0)
                 .disableDistilleryRecipes()
                 .duration(2000).EUt(VA[EV]).buildAndRegister();
 
@@ -164,7 +165,7 @@ public class DistillationRecipes {
                 .fluidOutputs(Krypton.getFluid(1000))
                 .fluidOutputs(Xenon.getFluid(1000))
                 .fluidOutputs(Radon.getFluid(1000))
-                .chancedOutput(dustTiny, EnderPearl, 9000, 0)
+                .chancedOutput(dust, EnderPearl, 1000, 0)
                 .disableDistilleryRecipes()
                 .duration(2000).EUt(VA[IV]).buildAndRegister();
     }
