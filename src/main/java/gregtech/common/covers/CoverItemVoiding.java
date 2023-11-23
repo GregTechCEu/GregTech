@@ -6,7 +6,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
@@ -23,6 +24,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -30,21 +32,21 @@ public class CoverItemVoiding extends CoverConveyor {
 
     protected final NullItemHandler nullItemHandler = new NullItemHandler();
 
-    public CoverItemVoiding(ICoverable coverHolder, EnumFacing attachedSide) {
-        super(coverHolder, attachedSide, 0, Integer.MAX_VALUE);
+    public CoverItemVoiding(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                            @NotNull EnumFacing attachedSide) {
+        super(definition, coverableView, attachedSide, 0, Integer.MAX_VALUE);
         this.isWorkingAllowed = false;
     }
 
     @Override
     public void update() {
-        long timer = coverHolder.getOffsetTimer();
-        if (isWorkingAllowed && timer % 20 == 0) {
+        if (isWorkingAllowed && getCoverableView().getOffsetTimer() % 20 == 0) {
             doTransferItems();
         }
     }
 
     protected void doTransferItems() {
-        IItemHandler myItemHandler = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide);
+        IItemHandler myItemHandler = getCoverableView().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getAttachedSide());
         if (myItemHandler == null) {
             return;
         }
@@ -91,15 +93,15 @@ public class CoverItemVoiding extends CoverConveyor {
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.ITEM_VOIDING.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        Textures.ITEM_VOIDING.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override
-    public EnumActionResult onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
         this.isWorkingAllowed = !this.isWorkingAllowed;
         if (!playerIn.world.isRemote) {
-            playerIn.sendMessage(new TextComponentTranslation(isWorkingEnabled() ?
-                    "cover.voiding.message.enabled" : "cover.voiding.message.disabled"));
+            playerIn.sendStatusMessage(new TextComponentTranslation(isWorkingEnabled() ?
+                    "cover.voiding.message.enabled" : "cover.voiding.message.disabled"), true);
         }
         return EnumActionResult.SUCCESS;
     }

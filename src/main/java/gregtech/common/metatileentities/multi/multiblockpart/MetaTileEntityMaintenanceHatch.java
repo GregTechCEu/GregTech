@@ -12,6 +12,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -59,7 +60,7 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
     private final boolean isConfigurable;
-    private ItemStackHandler itemStackHandler;
+    private GTItemStackHandler itemStackHandler;
     private boolean isTaped;
 
     // Used to store state temporarily if the Controller is broken
@@ -102,7 +103,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.itemStackHandler = new TapeItemStackHandler(1);
+        this.itemStackHandler = new TapeItemStackHandler(this, 1);
         this.itemInventory = itemStackHandler;
     }
 

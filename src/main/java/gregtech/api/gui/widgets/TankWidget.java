@@ -1,6 +1,7 @@
 package gregtech.api.gui.widgets;
 
 import gregtech.api.GTValues;
+import gregtech.api.fluids.GTFluid;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
@@ -19,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -27,7 +29,9 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,8 +122,22 @@ public class TankWidget extends Widget implements IIngredientSlot {
         return lastFluidInTank == null ? "" : lastFluidInTank.getLocalizedName();
     }
 
+    /**
+     * @deprecated use {@link #getFluidTextComponent()}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public String getFluidUnlocalizedName() {
         return lastFluidInTank == null ? "" : lastFluidInTank.getUnlocalizedName();
+    }
+
+    @Nullable
+    public TextComponentTranslation getFluidTextComponent() {
+        if (lastFluidInTank == null) return null;
+        if (lastFluidInTank.getFluid() instanceof GTFluid.GTMaterialFluid materialFluid) {
+            return materialFluid.toTextComponentTranslation();
+        }
+        return new TextComponentTranslation(lastFluidInTank.getUnlocalizedName());
     }
 
     @Override

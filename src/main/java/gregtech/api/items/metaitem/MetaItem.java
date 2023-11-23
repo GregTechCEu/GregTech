@@ -25,7 +25,6 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.ToolChargeBarRenderer;
-import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
@@ -572,15 +571,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
             if (fluidHandler instanceof IFilteredFluidContainer filtered &&
                     filtered.getFilter() instanceof IPropertyFluidFilter propertyFilter) {
-                if (TooltipHelper.isShiftDown()) {
-                    lines.add(I18n.format("gregtech.fluid_pipe.max_temperature", propertyFilter.getMaxFluidTemperature()));
-                    if (propertyFilter.isGasProof()) lines.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
-                    if (propertyFilter.isAcidProof()) lines.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
-                    if (propertyFilter.isCryoProof()) lines.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
-                    if (propertyFilter.isPlasmaProof()) lines.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
-                } else if (propertyFilter.isGasProof() || propertyFilter.isAcidProof() || propertyFilter.isCryoProof() || propertyFilter.isPlasmaProof()) {
-                    lines.add(I18n.format("gregtech.tooltip.fluid_pipe_hold_shift"));
-                }
+                propertyFilter.appendTooltips(lines, false, true);
             }
         }
 

@@ -140,7 +140,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         }
 
         if (fuelStack != null) {
-            ITextComponent fuelName = TextComponentUtil.translationWithColor(TextFormatting.GOLD, fuelStack.getUnlocalizedName());
+            ITextComponent fuelName = TextComponentUtil.setColor(GTUtility.getFluidTranslation(fuelStack), TextFormatting.GOLD);
             ITextComponent fuelInfo = new TextComponentTranslation("%s / %s L (%s)",
                     TextFormattingUtil.formatNumbers(fuelStored),
                     TextFormattingUtil.formatNumbers(fuelCapacity),

@@ -49,6 +49,11 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         return new ItemStackHandler(inventorySize) {
+            @Override
+            protected void onContentsChanged(int slot) {
+                MetaTileEntityCharger.this.markDirty();
+            }
+
             @Nonnull
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
@@ -65,11 +70,6 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
                 return 1;
             }
         };
-    }
-
-    @Override
-    protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(0);
     }
 
     @Override

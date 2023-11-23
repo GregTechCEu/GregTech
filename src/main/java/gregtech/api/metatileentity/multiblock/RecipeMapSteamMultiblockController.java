@@ -11,6 +11,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.IndicatorImageWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
@@ -26,7 +27,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.List;
 
@@ -92,8 +92,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     }
 
     private void resetTileAbilities() {
-        this.inputInventory = new ItemStackHandler(0);
-        this.outputInventory = new ItemStackHandler(0);
+        this.inputInventory = new GTItemStackHandler(this, 0);
+        this.outputInventory = new GTItemStackHandler(this, 0);
         this.steamFluidTank = new FluidTankList(true);
     }
 

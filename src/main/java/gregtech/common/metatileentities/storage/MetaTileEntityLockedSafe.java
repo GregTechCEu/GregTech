@@ -15,6 +15,7 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -43,6 +44,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -63,8 +65,8 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     private boolean isSafeUnlocked = false;
 
     private long unlockComponentsSeed = 0L;
-    private final ItemStackHandler unlockComponents = new ItemStackHandler(2);
-    private final ItemStackHandler unlockInventory = new ItemStackHandler(2) {
+    private final ItemStackHandler unlockComponents = new GTItemStackHandler(this, 2);
+    private final ItemStackHandler unlockInventory = new GTItemStackHandler(this, 2) {
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
@@ -85,7 +87,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
             recheckUnlockItemsAndUnlock();
         }
     };
-    private final ItemStackHandler safeLootInventory = new ItemStackHandler(27);
+    private final ItemStackHandler safeLootInventory = new GTItemStackHandler(this, 27);
     private float doorAngle = 0.0f;
     private float prevDoorAngle = 0.0f;
 
@@ -147,7 +149,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     private void updateDisplayUnlockComponents() {
         GTRecipeInput[] unlockComponents = getUnlockComponents();
         for (int i = 0; i < Math.min(this.unlockComponents.getSlots(), unlockComponents.length); i++) {
-            if (unlockComponents[i].isOreDict()){
+            if (unlockComponents[i].isOreDict()) {
                 this.unlockComponents.setStackInSlot(i, OreDictionary.getOres(OreDictionary.getOreName(unlockComponents[i].getOreDict())).get(0));
             } else {
                 this.unlockComponents.setStackInSlot(i, (unlockComponents[i].getInputStacks()[0]));
@@ -160,8 +162,9 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
             ALLOWED_COMPONENTS = new Component[]{CraftingComponent.PUMP, CraftingComponent.CONVEYOR, CraftingComponent.EMITTER, CraftingComponent.SENSOR};
 
         Random random = new Random(unlockComponentsSeed);
-        return new GTRecipeInput[]{GTRecipeOreInput.getOrCreate(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier).toString()),
-                GTRecipeItemInput.getOrCreate((ItemStack) ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)].getIngredient(unlockComponentTier)),
+        return new GTRecipeInput[]{
+                new GTRecipeOreInput(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier).toString()),
+                new GTRecipeItemInput((ItemStack) ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)].getIngredient(unlockComponentTier)),
         };
     }
 
@@ -403,7 +406,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     @Override
-    public boolean canPlaceCoverOnSide(EnumFacing side) {
+    public boolean canPlaceCoverOnSide(@NotNull EnumFacing side) {
         return false;
     }
 

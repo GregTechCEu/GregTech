@@ -57,7 +57,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
                 setRecipeMapIndex(index);
                 this.recipeMapWorkable.forceRecipeRecheck();
             } else {
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.switch_message"));
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.switch_message"), true);
             }
         }
 

@@ -40,7 +40,7 @@ public class OpenComputersModule extends IntegrationSubmodule {
         registerDriver(new DriverWorkable());
         registerDriver(new DriverAbstractRecipeLogic());
         registerDriver(new DriverRecipeMapMultiblockController());
-        registerDriver(new DriverICoverable());
+        registerDriver(new DriverCoverHolder());
         registerDriver(new DriverSimpleMachine());
         registerDriver(new DriverFusionReactor());
         registerDriver(new DriverWorldAccelerator());

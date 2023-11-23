@@ -6,6 +6,8 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.fluids.GTFluid;
+import gregtech.api.items.behavior.CoverItemBehavior;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -16,7 +18,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -36,11 +37,13 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
@@ -50,6 +53,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -414,19 +418,6 @@ public class GTUtility {
     }
 
     /**
-     * @deprecated Ambiguous naming; use either {@link #copy(ItemStack)} or {@link #copyFirst(ItemStack...)}
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    @Nonnull
-    public static ItemStack copy(@Nonnull ItemStack... stacks) {
-        for (ItemStack stack : stacks)
-            if (!stack.isEmpty()) return stack.copy();
-        return ItemStack.EMPTY;
-    }
-
-    /**
      * Copies the ItemStack.
      *
      * @param stack item stack for copying
@@ -493,17 +484,6 @@ public class GTUtility {
         return ItemStack.EMPTY;
     }
 
-    /**
-     * @deprecated Use {@link #copy(int, ItemStack)}
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    @Nonnull
-    public static ItemStack copyAmount(int amount, @Nonnull ItemStack stack) {
-        return copy(amount, stack);
-    }
-
     public static int getExplosionPower(long voltage) {
         return getTierByVoltage(voltage) + 1;
     }
@@ -532,8 +512,8 @@ public class GTUtility {
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
                 for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
-                    if (behaviour instanceof CoverPlaceBehavior) {
-                        return canPlaceCover == null || canPlaceCover.test(((CoverPlaceBehavior) behaviour).coverDefinition);
+                    if (behaviour instanceof CoverItemBehavior coverItemBehavior) {
+                        return canPlaceCover == null || canPlaceCover.test(coverItemBehavior.getDefinition());
                     }
                 }
             }
@@ -668,26 +648,6 @@ public class GTUtility {
         return result.toString();
     }
 
-    /**
-     * @deprecated Use {@link TextFormattingUtil#formatNumbers(long)} instead.
-     *
-     * </p> This class was deprecated in 2.7 and will be removed in 2.8
-     */
-    @Deprecated
-    public static String formatNumbers(long number) {
-        return TextFormattingUtil.formatNumbers(number);
-    }
-
-    /**
-     * @deprecated Use {@link TextFormattingUtil#formatNumbers(double)} instead.
-     *
-     * </p> This class was deprecated in 2.7 and will be removed in 2.8
-     */
-    @Deprecated
-    public static String formatNumbers(double number) {
-        return TextFormattingUtil.formatNumbers(number);
-    }
-
     public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
         if (world == null || pos == null) return null;
         TileEntity te = world.getTileEntity(pos);
@@ -747,39 +707,40 @@ public class GTUtility {
         return color;
     }
 
-    public static boolean isBlockSnowLayer(@Nonnull IBlockState blockState) {
-        return blockState.getBlock() == Blocks.SNOW_LAYER && blockState.getValue(BlockSnow.LAYERS) == 1;
+    /**
+     * @param blockState the blockstate to check
+     * @return if the block is a snow layer or snow block
+     */
+    public static boolean isBlockSnow(@Nonnull IBlockState blockState) {
+        return blockState.getBlock() == Blocks.SNOW_LAYER || blockState.getBlock() == Blocks.SNOW;
     }
 
     /**
      * Attempt to break a (single) snow layer at the given BlockPos.
+     * Will also turn snow blocks into snow layers at height 7.
      *
-     * @return true if the passed IBlockState was a snow layer
+     * @return true if the passed IBlockState was valid snow block
      */
-    public static boolean tryBreakSnowLayer(World world, BlockPos pos, @Nonnull IBlockState blockState, boolean playSound) {
-        if (isBlockSnowLayer(blockState)) {
-            world.destroyBlock(pos, false);
-            if (playSound) {
-                world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+    public static boolean tryBreakSnow(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, boolean playSound) {
+        boolean success = false;
+        if (state.getBlock() == Blocks.SNOW) {
+            world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, 7));
+            success = true;
+        } else if (state.getBlock() == Blocks.SNOW_LAYER) {
+            int layers = state.getValue(BlockSnow.LAYERS);
+            if (layers == 1) {
+                world.destroyBlock(pos, false);
+            } else {
+                world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, layers - 1));
             }
-            return true;
+            success = true;
         }
-        return false;
-    }
 
-    /**
-     * @param stack the stack to retrieve from
-     * @return all the sub-items of an ItemStack
-     * @deprecated Use {@link #getAllSubItems(Item)}
-     *
-     * </p> This method was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Nonnull
-    @Deprecated
-    public static Set<ItemStack> getAllSubItems(@Nonnull ItemStack stack) {
-        //match subtypes only on wildcard damage value items
-        if (stack.getItemDamage() != GTValues.W) return Collections.singleton(stack);
-        return getAllSubItems(stack.getItem());
+        if (success && playSound) {
+            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        }
+
+        return success;
     }
 
     /**
@@ -833,5 +794,24 @@ public class GTUtility {
     @Nonnull
     public static ResourceLocation gregtechId(@Nonnull String path) {
         return new ResourceLocation(GTValues.MODID, path);
+    }
+
+    @Contract("null -> null")
+    public static TextComponentTranslation getFluidTranslation(@Nullable FluidStack stack) {
+        if (stack == null) return null;
+        if (stack.getFluid() instanceof GTFluid.GTMaterialFluid materialFluid) {
+            return materialFluid.toTextComponentTranslation();
+        }
+
+        return new TextComponentTranslation(stack.getUnlocalizedName());
+    }
+
+    @Contract("null -> null")
+    public static TextComponentTranslation getFluidTranslation(@Nullable Fluid fluid) {
+        if (fluid == null) return null;
+        if (fluid instanceof GTFluid.GTMaterialFluid materialFluid) {
+            return materialFluid.toTextComponentTranslation();
+        }
+        return new TextComponentTranslation(fluid.getUnlocalizedName());
     }
 }
