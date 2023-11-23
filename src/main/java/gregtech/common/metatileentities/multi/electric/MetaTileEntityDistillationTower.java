@@ -51,6 +51,11 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     }
 
     @Override
+    public boolean allowsExtendedFacing() {
+        return false;
+    }
+
+    @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         if (isStructureFormed()) {
             FluidStack stackInTank = importFluids.drain(Integer.MAX_VALUE, false);
