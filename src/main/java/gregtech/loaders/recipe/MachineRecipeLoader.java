@@ -714,7 +714,7 @@ public class MachineRecipeLoader {
                 .input(ingot, Iron)
                 .fluidInputs(Oxygen.getFluid(200))
                 .output(ingot, Steel)
-                .output(dustTiny, Ash)
+                .chancedOutput(dust, Ash, 1111, 0)
                 .blastFurnaceTemp(1000)
                 .buildAndRegister();
 
@@ -722,7 +722,7 @@ public class MachineRecipeLoader {
                 .input(dust, Iron)
                 .fluidInputs(Oxygen.getFluid(200))
                 .output(ingot, Steel)
-                .output(dustTiny, Ash)
+                .chancedOutput(dust, Ash, 1111, 0)
                 .circuitMeta(2)
                 .blastFurnaceTemp(1000)
                 .buildAndRegister();
@@ -731,7 +731,7 @@ public class MachineRecipeLoader {
                 .input(ingot, WroughtIron)
                 .fluidInputs(Oxygen.getFluid(200))
                 .output(ingot, Steel)
-                .output(dustTiny, Ash)
+                .chancedOutput(dust, Ash, 1111, 0)
                 .blastFurnaceTemp(1000)
                 .buildAndRegister();
 
@@ -739,7 +739,7 @@ public class MachineRecipeLoader {
                 .input(dust, WroughtIron)
                 .fluidInputs(Oxygen.getFluid(200))
                 .output(ingot, Steel)
-                .output(dustTiny, Ash)
+                .chancedOutput(dust, Ash, 1111, 0)
                 .circuitMeta(2)
                 .blastFurnaceTemp(1000)
                 .buildAndRegister();
@@ -748,7 +748,7 @@ public class MachineRecipeLoader {
                 .input(dust, Iron, 4)
                 .input(dust, Carbon)
                 .output(ingot, Steel, 4)
-                .output(dustTiny, Ash)
+                .chancedOutput(dust, Ash, 1111, 0)
                 .blastFurnaceTemp(2000)
                 .buildAndRegister();
 
@@ -756,15 +756,15 @@ public class MachineRecipeLoader {
                 .input(dust, WroughtIron, 4)
                 .input(dust, Carbon)
                 .output(ingot, Steel, 4)
-                .output(dustTiny, Ash)
+                .chancedOutput(dust, Ash, 1111, 0)
                 .blastFurnaceTemp(2000)
                 .buildAndRegister();
 
         // Aluminium from aluminium oxide gems
-        BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, Ruby).output(nugget, Aluminium, 3).output(dustTiny, DarkAsh).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, Ruby).output(nugget, Aluminium, 3).output(dustTiny, DarkAsh).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, GreenSapphire).output(nugget, Aluminium, 3).output(dustTiny, DarkAsh).blastFurnaceTemp(1200).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, GreenSapphire).output(nugget, Aluminium, 3).output(dustTiny, DarkAsh).blastFurnaceTemp(1200).buildAndRegister();
+        BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, Ruby).output(nugget, Aluminium, 3).chancedOutput(dust, Ash, 1111, 0).blastFurnaceTemp(1200).buildAndRegister();
+        BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, Ruby).output(nugget, Aluminium, 3).chancedOutput(dust, Ash, 1111, 0).blastFurnaceTemp(1200).buildAndRegister();
+        BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, GreenSapphire).output(nugget, Aluminium, 3).chancedOutput(dust, Ash, 1111, 0).blastFurnaceTemp(1200).buildAndRegister();
+        BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, GreenSapphire).output(nugget, Aluminium, 3).chancedOutput(dust, Ash, 1111, 0).blastFurnaceTemp(1200).buildAndRegister();
         BLAST_RECIPES.recipeBuilder().duration(400).EUt(100).input(dust, Sapphire).output(nugget, Aluminium, 3).blastFurnaceTemp(1200).buildAndRegister();
         BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, Sapphire).output(nugget, Aluminium, 3).blastFurnaceTemp(1200).buildAndRegister();
 
@@ -842,7 +842,7 @@ public class MachineRecipeLoader {
                 .input(dust, SiliconDioxide, 3)
                 .input(dust, Carbon, 2)
                 .output(ingotHot, Silicon)
-                .output(dustTiny, Ash)
+                .chancedOutput(dust, Ash, 1111, 0)
                 .fluidOutputs(CarbonMonoxide.getFluid(2000))
                 .buildAndRegister();
     }
@@ -852,7 +852,7 @@ public class MachineRecipeLoader {
                 .input(dust, inputMaterial)
                 .fluidInputs(Oxygen.getFluid(3000))
                 .output(dust, outputMaterial)
-                .output(dustTiny, Ash)
+                .chancedOutput(dust, Ash, 1111, 0)
                 .fluidOutputs(SulfurDioxide.getFluid(sulfurDioxideAmount))
                 .buildAndRegister();
     }
@@ -903,7 +903,7 @@ public class MachineRecipeLoader {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Endstone)
                 .output(dust, Endstone)
-                .chancedOutput(dustTiny, Tungstate, 1200, 280)
+                .chancedOutput(dust, Tungstate, 130, 30)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
@@ -916,7 +916,7 @@ public class MachineRecipeLoader {
             MACERATOR_RECIPES.recipeBuilder()
                     .input(stone, Soapstone)
                     .output(dustImpure, Talc)
-                    .chancedOutput(dustTiny, Chromite, 1000, 280)
+                    .chancedOutput(dust, Chromite, 111, 30)
                     .buildAndRegister();
 
         if (!OreDictionary.getOres("stoneRedrock").isEmpty())
@@ -947,36 +947,38 @@ public class MachineRecipeLoader {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, GraniteRed)
                 .output(dust, GraniteRed)
-                .chancedOutput(dustSmall, Uranium238, 100, 40)
+                .chancedOutput(dust, Uranium238, 10, 5)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Andesite)
                 .output(dust, Andesite)
-                .chancedOutput(dustSmall, Stone, 100, 40)
+                .chancedOutput(dust, Stone, 10, 5)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Diorite)
                 .output(dust, Diorite)
-                .chancedOutput(dustSmall, Stone, 100, 40)
+                .chancedOutput(dust, Stone, 10, 5)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Granite)
                 .output(dust, Granite)
-                .chancedOutput(dustSmall, Stone, 100, 40)
+                .chancedOutput(dust, Stone, 10, 5)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.PORKCHOP))
-                .output(dustSmall, Meat, 6)
+                .output(dust, Meat)
+                .chancedOutput(dust, Meat, 5000, 0)
                 .output(dustTiny, Bone)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.FISH, 1, GTValues.W))
-                .output(dustSmall, Meat, 6)
+                .output(dust, Meat)
+                .chancedOutput(dust, Meat, 5000, 0)
                 .output(dustTiny, Bone)
                 .duration(102).buildAndRegister();
 
@@ -988,13 +990,15 @@ public class MachineRecipeLoader {
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.BEEF))
-                .output(dustSmall, Meat, 6)
+                .output(dust, Meat)
+                .chancedOutput(dust, Meat, 5000, 0)
                 .output(dustTiny, Bone)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.RABBIT))
-                .output(dustSmall, Meat, 6)
+                .output(dust, Meat)
+                .chancedOutput(dust, Meat, 5000, 0)
                 .output(dustTiny, Bone)
                 .duration(102).buildAndRegister();
 
@@ -1003,8 +1007,6 @@ public class MachineRecipeLoader {
                 .output(dust, Meat)
                 .output(dustTiny, Bone)
                 .duration(102).buildAndRegister();
-
-
     }
 
     private static void registerFluidRecipes() {

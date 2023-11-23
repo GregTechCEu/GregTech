@@ -66,7 +66,6 @@ public class MaterialRecipeHandler {
         OreProperty oreProperty = mat.hasProperty(PropertyKey.ORE) ? mat.getProperty(PropertyKey.ORE) : null;
         if (mat.hasProperty(PropertyKey.GEM)) {
             ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, mat);
-            ItemStack smallDarkAshStack = OreDictUnifier.get(OrePrefix.dustSmall, Materials.DarkAsh);
 
             if (mat.hasFlag(CRYSTALLIZABLE)) {
                 RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
@@ -87,13 +86,15 @@ public class MaterialRecipeHandler {
             if (!mat.hasFlag(EXPLOSIVE) && !mat.hasFlag(FLAMMABLE)) {
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
                         .inputs(GTUtility.copy(4, dustStack))
-                        .outputs(GTUtility.copy(3, gemStack), smallDarkAshStack)
+                        .outputs(GTUtility.copy(3, gemStack))
+                        .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
                         .explosivesAmount(2)
                         .buildAndRegister();
 
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
                         .inputs(GTUtility.copy(4, dustStack))
-                        .outputs(GTUtility.copy(3, gemStack), smallDarkAshStack)
+                        .outputs(GTUtility.copy(3, gemStack))
+                        .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
                         .explosivesType(MetaItems.DYNAMITE.getStackForm())
                         .buildAndRegister();
             }
