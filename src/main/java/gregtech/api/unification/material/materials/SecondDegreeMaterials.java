@@ -98,7 +98,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
                 .components(Nickel, 1, BlackBronze, 1, Steel, 3)
                 .cableProperties(V[EV], 3, 2)
-                .blastTemp(1200, GasTier.LOW)
+                .blast(1200, GasTier.LOW)
                 .build();
 
         DamascusSteel = new Material.Builder(2012, gregtechId("damascus_steel"))
@@ -110,7 +110,7 @@ public class SecondDegreeMaterials {
                         .attackSpeed(0.3F).enchantability(33)
                         .enchantment(Enchantments.LOOTING, 3)
                         .enchantment(Enchantments.FORTUNE, 3).build())
-                .blastTemp(1500, GasTier.LOW)
+                .blast(1500, GasTier.LOW)
                 .build();
 
         TungstenSteel = new Material.Builder(2013, gregtechId("tungsten_steel"))
@@ -124,7 +124,10 @@ public class SecondDegreeMaterials {
                 .rotorStats(8.0f, 4.0f, 2560)
                 .fluidPipeProperties(3587, 225, true)
                 .cableProperties(V[IV], 3, 2)
-                .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1000)
+                .blast(b -> b
+                        .temp(3000, GasTier.MID)
+                        .blastStats(VA[EV], 1000)
+                        .vacuumStats(VA[HV]))
                 .build();
 
         CobaltBrass = new Material.Builder(2014, gregtechId("cobalt_brass"))
@@ -288,7 +291,7 @@ public class SecondDegreeMaterials {
                         .attackSpeed(-0.2F).enchantability(5).build())
                 .rotorStats(7.0f, 3.0f, 1920)
                 .fluidPipeProperties(2073, 50, true, true, false, false)
-                .blastTemp(1453, GasTier.LOW)
+                .blast(1453, GasTier.LOW)
                 .build();
 
         Potin = new Material.Builder(2037, gregtechId("potin"))
@@ -329,7 +332,10 @@ public class SecondDegreeMaterials {
                         .attackSpeed(0.3F).enchantability(33).magnetic().build())
                 .rotorStats(8.0f, 5.0f, 5120)
                 .cableProperties(V[UV], 2, 4)
-                .blastTemp(7200, GasTier.HIGH, VA[LuV], 1000)
+                .blast(b -> b
+                        .temp(7200, GasTier.HIGH)
+                        .blastStats(VA[LuV], 1000)
+                        .vacuumStats(VA[IV], 300))
                 .build();
 
         SulfuricNickelSolution = new Material.Builder(2043, gregtechId("sulfuric_nickel_solution"))
@@ -474,7 +480,10 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Palladium, 3, Rhodium, 1)
                 .rotorStats(12.0f, 3.0f, 1024)
-                .blastTemp(4500, GasTier.HIGH, VA[IV], 1200)
+                .blast(b -> b
+                        .temp(4500, GasTier.HIGH)
+                        .blastStats(VA[IV], 1200)
+                        .vacuumStats(VA[EV], 300))
                 .build();
 
         Clay = new Material.Builder(2063, gregtechId("clay"))

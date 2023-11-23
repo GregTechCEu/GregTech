@@ -36,7 +36,7 @@ public class ElementMaterials {
                 .rotorStats(10.0f, 2.0f, 128)
                 .cableProperties(V[EV], 1, 1)
                 .fluidPipeProperties(1166, 100, true)
-                .blastTemp(1700, GasTier.LOW)
+                .blast(1700, GasTier.LOW)
                 .build();
 
         Americium = new Material.Builder(3, gregtechId("americium"))
@@ -168,7 +168,7 @@ public class ElementMaterials {
                 .element(Elements.Cr)
                 .rotorStats(12.0f, 3.0f, 512)
                 .fluidPipeProperties(2180, 35, true, true, false, false)
-                .blastTemp(1700, GasTier.LOW)
+                .blast(1700, GasTier.LOW)
                 .build();
 
         Cobalt = new Material.Builder(23, gregtechId("cobalt"))
@@ -246,7 +246,10 @@ public class ElementMaterials {
                 .element(Elements.Eu)
                 .cableProperties(GTValues.V[GTValues.UHV], 2, 32)
                 .fluidPipeProperties(7750, 300, true)
-                .blastTemp(6000, GasTier.MID, VA[IV], 180)
+                .blast(b -> b
+                        .temp(6000, GasTier.MID)
+                        .blastStats(VA[IV], 180)
+                        .vacuumStats(VA[HV]))
                 .build();
 
         Fermium = new Material.Builder(34, gregtechId("fermium"))
@@ -362,7 +365,10 @@ public class ElementMaterials {
                 .element(Elements.Ir)
                 .rotorStats(7.0f, 3.0f, 2560)
                 .fluidPipeProperties(3398, 250, true, false, true, false)
-                .blastTemp(4500, GasTier.HIGH, VA[IV], 1100)
+                .blast(b -> b
+                        .temp(4500, GasTier.HIGH)
+                        .blastStats(VA[IV], 1100)
+                        .vacuumStats(VA[EV], 250))
                 .build();
 
         Iron = new Material.Builder(51, gregtechId("iron"))
@@ -484,7 +490,7 @@ public class ElementMaterials {
                 .flags(STD_METAL, GENERATE_ROD, GENERATE_BOLT_SCREW)
                 .element(Elements.Nd)
                 .rotorStats(7.0f, 2.0f, 512)
-                .blastTemp(1297, GasTier.MID)
+                .blast(1297, GasTier.MID)
                 .build();
 
         Neon = new Material.Builder(67, gregtechId("neon"))
@@ -519,7 +525,9 @@ public class ElementMaterials {
                 .ingot().fluid()
                 .color(0xBEB4C8).iconSet(METALLIC)
                 .element(Elements.Nb)
-                .blastTemp(2750, GasTier.MID, VA[HV], 900)
+                .blast(b -> b
+                        .temp(2750, GasTier.MID)
+                        .blastStats(VA[HV], 900))
                 .build();
 
         Nitrogen = new Material.Builder(72, gregtechId("nitrogen"))
@@ -547,7 +555,10 @@ public class ElementMaterials {
                 .rotorStats(16.0f, 4.0f, 1280)
                 .cableProperties(V[LuV], 4, 2)
                 .itemPipeProperties(256, 8.0f)
-                .blastTemp(4500, GasTier.HIGH, VA[LuV], 1000)
+                .blast(b -> b
+                        .temp(4500, GasTier.HIGH)
+                        .blastStats(VA[LuV], 1000)
+                        .vacuumStats(VA[EV], 300))
                 .build();
 
         Oxygen = new Material.Builder(76, gregtechId("oxygen"))
@@ -568,7 +579,10 @@ public class ElementMaterials {
                 .color(0x808080).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Pd)
-                .blastTemp(1828, GasTier.LOW, VA[HV], 900)
+                .blast(b -> b
+                        .temp(1828, GasTier.LOW)
+                        .blastStats(VA[HV], 900)
+                        .vacuumStats(VA[HV], 150))
                 .build();
 
         Phosphorus = new Material.Builder(78, gregtechId("phosphorus"))
@@ -652,7 +666,10 @@ public class ElementMaterials {
                 .color(0xDC0C58).iconSet(BRIGHT)
                 .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_FINE_WIRE)
                 .element(Elements.Rh)
-                .blastTemp(2237, GasTier.MID, VA[EV], 1200)
+                .blast(b -> b
+                        .temp(2237, GasTier.MID)
+                        .blastStats(VA[EV], 1200)
+                        .vacuumStats(VA[HV]))
                 .build();
 
         Roentgenium = new Material.Builder(91, gregtechId("roentgenium"))
@@ -670,7 +687,10 @@ public class ElementMaterials {
                 .color(0x50ACCD).iconSet(SHINY)
                 .flags(GENERATE_FOIL, GENERATE_GEAR)
                 .element(Elements.Ru)
-                .blastTemp(2607, GasTier.MID, VA[EV], 900)
+                .blast(b -> b
+                        .temp(2607, GasTier.MID)
+                        .blastStats(VA[EV], 900)
+                        .vacuumStats(VA[HV], 200))
                 .build();
 
         Rutherfordium = new Material.Builder(94, gregtechId("rutherfordium"))
@@ -684,7 +704,10 @@ public class ElementMaterials {
                 .color(0xFFFFCC).iconSet(METALLIC)
                 .flags(GENERATE_LONG_ROD)
                 .element(Elements.Sm)
-                .blastTemp(5400, GasTier.HIGH, VA[EV], 1500)
+                .blast(b -> b
+                        .temp(5400, GasTier.HIGH)
+                        .blastStats(VA[EV], 1500)
+                        .vacuumStats(VA[HV], 200))
                 .build();
 
         Scandium = new Material.Builder(96, gregtechId("scandium"))
@@ -707,7 +730,7 @@ public class ElementMaterials {
                 .color(0x3C3C50).iconSet(METALLIC)
                 .flags(GENERATE_FOIL)
                 .element(Elements.Si)
-                .blastTemp(2273) // no gas tier for silicon
+                .blast(2273) // no gas tier for silicon
                 .build();
 
         Silver = new Material.Builder(100, gregtechId("silver"))
@@ -806,7 +829,10 @@ public class ElementMaterials {
                         .enchantability(14).build())
                 .rotorStats(7.0f, 3.0f, 1600)
                 .fluidPipeProperties(2426, 150, true)
-                .blastTemp(1941, GasTier.MID, VA[HV], 1500)
+                .blast(b -> b
+                        .temp(1941, GasTier.MID)
+                        .blastStats(VA[HV], 1500)
+                        .vacuumStats(VA[HV]))
                 .build();
 
         Tritium = new Material.Builder(114, gregtechId("tritium"))
@@ -825,7 +851,10 @@ public class ElementMaterials {
                 .rotorStats(7.0f, 3.0f, 2560)
                 .cableProperties(V[IV], 2, 2)
                 .fluidPipeProperties(4618, 50, true, true, false, true)
-                .blastTemp(3600, GasTier.MID, VA[EV], 1800)
+                .blast(b -> b
+                        .temp(3600, GasTier.MID)
+                        .blastStats(VA[EV], 1800)
+                        .vacuumStats(VA[HV], 300))
                 .build();
 
         Uranium238 = new Material.Builder(116, gregtechId("uranium"))
@@ -848,7 +877,7 @@ public class ElementMaterials {
                 .ingot().fluid()
                 .color(0x323232).iconSet(METALLIC)
                 .element(Elements.V)
-                .blastTemp(2183, GasTier.MID)
+                .blast(2183, GasTier.MID)
                 .build();
 
         Xenon = new Material.Builder(119, gregtechId("xenon"))
@@ -866,7 +895,7 @@ public class ElementMaterials {
                 .ingot().fluid()
                 .color(0x76524C).iconSet(METALLIC)
                 .element(Elements.Y)
-                .blastTemp(1799)
+                .blast(1799)
                 .build();
 
         Zinc = new Material.Builder(122, gregtechId("zinc"))
@@ -892,7 +921,10 @@ public class ElementMaterials {
                 .rotorStats(6.0f, 4.0f, 1280)
                 .cableProperties(V[ZPM], 2, 2)
                 .fluidPipeProperties(3776, 200, true, false, true, true)
-                .blastTemp(5000, GasTier.HIGH, VA[IV], 600)
+                .blast(b -> b
+                        .temp(5000, GasTier.HIGH)
+                        .blastStats(VA[IV], 600)
+                        .vacuumStats(VA[EV], 150))
                 .build();
 
         NaquadahEnriched = new Material.Builder(125, gregtechId("naquadah_enriched"))
@@ -901,7 +933,10 @@ public class ElementMaterials {
                 .color(0x3C3C3C).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Nq1)
-                .blastTemp(7000, GasTier.HIGH, VA[IV], 1000)
+                .blast(b -> b
+                        .temp(7000, GasTier.HIGH)
+                        .blastStats(VA[IV], 1000)
+                        .vacuumStats(VA[EV], 150))
                 .build();
 
         Naquadria = new Material.Builder(126, gregtechId("naquadria"))
@@ -910,7 +945,10 @@ public class ElementMaterials {
                 .color(0x1E1E1E).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FOIL, GENERATE_GEAR, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW)
                 .element(Elements.Nq2)
-                .blastTemp(9000, GasTier.HIGH, VA[ZPM], 1200)
+                .blast(b -> b
+                        .temp(9000, GasTier.HIGH)
+                        .blastStats(VA[ZPM], 1200)
+                        .vacuumStats(VA[IV], 300))
                 .build();
 
         Neutronium = new Material.Builder(127, gregtechId("neutronium"))
@@ -952,7 +990,10 @@ public class ElementMaterials {
                 .flags(GENERATE_FOIL, GENERATE_BOLT_SCREW, GENERATE_GEAR)
                 .element(Elements.Ke)
                 .cableProperties(V[ZPM], 6, 4)
-                .blastTemp(7200, GasTier.HIGH, VA[LuV], 1500)
+                .blast(b -> b
+                        .temp(7200, GasTier.HIGH)
+                        .blastStats(VA[LuV], 1500)
+                        .vacuumStats(VA[IV], 300))
                 .build();
 
     }

@@ -195,11 +195,15 @@ public class MaterialRecipeHandler {
 
         // Add Vacuum Freezer recipe if required.
         if (ingotHot.doGenerateItem(material)) {
+            int vacuumEUt = property.getVacuumEUtOverride() != -1 ? property.getVacuumEUtOverride() : VA[MV];
+            int vacuumDuration = property.getVacuumDurationOverride() != -1 ? property.getVacuumDurationOverride() : (int) material.getMass() * 3;
+
             if (blastTemp < 5000) {
                 RecipeMaps.VACUUM_RECIPES.recipeBuilder()
                         .input(ingotHot, material)
                         .output(ingot, material)
-                        .duration((int) material.getMass() * 3)
+                        .duration(vacuumDuration)
+                        .EUt(vacuumEUt)
                         .buildAndRegister();
             } else {
                 RecipeMaps.VACUUM_RECIPES.recipeBuilder()
@@ -207,7 +211,8 @@ public class MaterialRecipeHandler {
                         .fluidInputs(Materials.Helium.getFluid(FluidStorageKeys.LIQUID, 500))
                         .output(ingot, material)
                         .fluidOutputs(Materials.Helium.getFluid(250))
-                        .duration((int) material.getMass() * 3)
+                        .duration(vacuumDuration)
+                        .EUt(vacuumEUt)
                         .buildAndRegister();
             }
         }
