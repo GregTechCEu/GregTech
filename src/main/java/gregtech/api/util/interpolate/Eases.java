@@ -16,10 +16,9 @@ public enum Eases implements IEase {
     QUAD_IN_OUT {
         @Override
         public float getInterpolation(float t) {
-            if ((t /= 0.5f) < 1) {
-                return 0.5f * t * t;
-            }
-            return -0.5f * ((--t) * (t - 2) - 1);
+            if (t <= 0.5f) return 2f * t * t;
+            t = -2f * t + 2f;
+            return 1f - t * t * 0.5f;
         }
     },
     QUAD_OUT {
