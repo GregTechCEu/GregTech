@@ -289,13 +289,8 @@ public class ToolEventHandlers {
 
     @SideOnly(Side.CLIENT)
     private static boolean shouldRenderGridOverlays(@Nonnull IBlockState state, TileEntity tile, ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
-        // Cheapest case to check, always show when sneaking with empty hand
-        if (mainHand.isEmpty() && isSneaking) {
-            return true;
-        }
-        if (state.getBlock() instanceof BlockPipe) {
-            BlockPipe<?, ?, ?> pipe = (BlockPipe<?, ?, ?>) state.getBlock();
-            if (isSneaking && mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass()) {
+        if (state.getBlock() instanceof BlockPipe<?, ?, ?> pipe) {
+            if (isSneaking && (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass())) {
                 return true;
             } else {
                 Set<String> mainToolClasses = mainHand.getItem().getToolClasses(mainHand);
@@ -312,9 +307,9 @@ public class ToolEventHandlers {
             }
         }
 
-        if (tile instanceof IGregTechTileEntity) {
-            MetaTileEntity mte = ((IGregTechTileEntity) tile).getMetaTileEntity();
-            if (mte != null && mte.canRenderMachineGrid(mainHand, offHand)) {
+        if (tile instanceof IGregTechTileEntity gtte) {
+            MetaTileEntity mte = gtte.getMetaTileEntity();
+            if (mte != null && (mainHand.isEmpty() || mte.canRenderMachineGrid(mainHand, offHand))) {
                 return true;
             }
         }
