@@ -462,12 +462,6 @@ public class VanillaOverrideRecipes {
                 'T', new ItemStack(Blocks.TRAPDOOR)
         );
 
-        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:minecart"));
-        ModHandler.addShapedRecipe("minecart", new ItemStack(Items.MINECART), "RhR", "PwP", "RPR",
-                'R', new UnificationEntry(OrePrefix.ring, Materials.Iron),
-                'P', new UnificationEntry(OrePrefix.plate, Materials.Iron)
-        );
-
     }
 
     /**

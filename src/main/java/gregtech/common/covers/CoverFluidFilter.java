@@ -6,9 +6,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.CoverBase;
+import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
@@ -29,10 +30,11 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
+public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
@@ -40,8 +42,9 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
     protected FluidFilterMode filterMode;
     protected FluidHandlerFiltered fluidHandler;
 
-    public CoverFluidFilter(ICoverable coverHolder, EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture, FluidFilter fluidFilter) {
-        super(coverHolder, attachedSide);
+    public CoverFluidFilter(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                            @NotNull EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture, FluidFilter fluidFilter) {
+        super(definition, coverableView, attachedSide);
         this.filterMode = FluidFilterMode.FILTER_FILL;
         this.titleLocale = titleLocale;
         this.texture = texture;
@@ -51,7 +54,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
 
     public void setFilterMode(FluidFilterMode filterMode) {
         this.filterMode = filterMode;
-        this.coverHolder.markDirty();
+        this.getCoverableView().markDirty();
     }
 
     public FluidFilterMode getFilterMode() {
@@ -66,8 +69,9 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         return fluidFilter.testFluidStack(stack);
     }
 
-    public boolean canAttach() {
-        return this.coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.attachedSide) != null;
+    @Override
+    public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
+        return coverable.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide()) != null;
     }
 
     @Override
@@ -75,7 +79,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         return true;
     }
 
-    public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
             this.openUI((EntityPlayerMP) playerIn);
         }
@@ -96,11 +100,13 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
                 .build(this, player);
     }
 
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        this.texture.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    @Override
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        this.texture.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
-    public <T> T getCapability(Capability<T> capability, T defaultValue) {
+    @Override
+    public <T> T getCapability(@NotNull Capability<T> capability, T defaultValue) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             IFluidHandler delegate = (IFluidHandler) defaultValue;
             if (fluidHandler == null || fluidHandler.delegate != delegate) {
@@ -111,17 +117,17 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         return defaultValue;
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("FilterMode", this.filterMode.ordinal());
         tagCompound.setBoolean("IsBlacklist", this.fluidFilter.isBlacklistFilter());
         NBTTagCompound filterComponent = new NBTTagCompound();
         this.fluidFilter.getFluidFilter().writeToNBT(filterComponent);
         tagCompound.setTag("Filter", filterComponent);
-
-        return tagCompound;
     }
 
+    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.filterMode = FluidFilterMode.values()[tagCompound.getInteger("FilterMode")];

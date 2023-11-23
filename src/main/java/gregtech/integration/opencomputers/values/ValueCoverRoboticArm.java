@@ -1,6 +1,5 @@
 package gregtech.integration.opencomputers.values;
 
-import gregtech.api.cover.CoverBehavior;
 import gregtech.common.covers.CoverRoboticArm;
 import gregtech.common.covers.TransferMode;
 import gregtech.integration.opencomputers.InputValidator;
@@ -16,14 +15,13 @@ public class ValueCoverRoboticArm extends ValueCoverConveyor {
     }
 
     @Override
-    protected CoverRoboticArm getCoverBehavior() {
-        CoverBehavior cover = super.getCoverBehavior();
-        return cover instanceof CoverRoboticArm ? (CoverRoboticArm) cover : null;
+    protected CoverRoboticArm getCover() {
+        return super.getCover() instanceof CoverRoboticArm roboticArm ? roboticArm : null;
     }
 
     @Callback(doc = "function(mode:number) --  Sets transfer mode. (0:TRANSFER_ANY, 1:TRANSFER_EXACT, 2:KEEP_EXACT)")
     public Object[] setTransferMode(final Context context, final Arguments args) {
-        CoverRoboticArm cover = getCoverBehavior();
+        CoverRoboticArm cover = getCover();
         if (cover == null) {
             return NULL_COVER;
         }
@@ -35,7 +33,7 @@ public class ValueCoverRoboticArm extends ValueCoverConveyor {
 
     @Callback(doc = "function():number --  Gets transfer mode. (0:TRANSFER_ANY, 1:TRANSFER_EXACT, 2:KEEP_EXACT)")
     public Object[] getTransferMode(final Context context, final Arguments args) {
-        CoverRoboticArm cover = getCoverBehavior();
+        CoverRoboticArm cover = getCover();
         if (cover == null) {
             return NULL_COVER;
         }

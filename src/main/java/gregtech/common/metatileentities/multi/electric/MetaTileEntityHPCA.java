@@ -22,6 +22,7 @@ import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -130,7 +131,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
         // we need to know what components we have on the client
         if (getWorld().isRemote) {
             if (isStructureFormed()) {
-                hpcaHandler.tryGatherClientComponents(getWorld(), getPos(), getFrontFacing());
+                hpcaHandler.tryGatherClientComponents(getWorld(), getPos(), getFrontFacing(), getUpwardsFacing(), isFlipped());
             } else {
                 hpcaHandler.clearClientComponents();
             }
@@ -885,15 +886,17 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase implements IOp
             return components.get(index).getComponentIcon();
         }
 
-        public void tryGatherClientComponents(World world, BlockPos pos, EnumFacing facing) {
+        public void tryGatherClientComponents(World world, BlockPos pos, EnumFacing frontFacing, EnumFacing upwardsFacing, boolean flip) {
+            EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(frontFacing, upwardsFacing, flip);
+
             if (components.isEmpty()) {
                 BlockPos testPos = pos
-                        .offset(facing.getOpposite(), 3)
-                        .offset(EnumFacing.UP, 3);
+                        .offset(frontFacing.getOpposite(), 3)
+                        .offset(relativeUp, 3);
 
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
-                        BlockPos tempPos = testPos.offset(facing, j).offset(EnumFacing.DOWN, i);
+                        BlockPos tempPos = testPos.offset(frontFacing, j).offset(relativeUp.getOpposite(), i);
                         TileEntity te = world.getTileEntity(tempPos);
                         if (te instanceof IHPCAComponentHatch hatch) {
                             components.add(hatch);

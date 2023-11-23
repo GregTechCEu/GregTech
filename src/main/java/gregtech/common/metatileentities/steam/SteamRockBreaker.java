@@ -71,12 +71,12 @@ public class SteamRockBreaker extends SteamMetaTileEntity {
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(1, this, false);
+        return new NotifiableItemStackHandler(this, 1, this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(4, this, true);
+        return new NotifiableItemStackHandler(this, 4, this, true);
     }
 
     @Override

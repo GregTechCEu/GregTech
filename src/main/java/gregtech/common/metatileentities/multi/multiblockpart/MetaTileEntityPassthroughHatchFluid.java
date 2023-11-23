@@ -88,12 +88,12 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(TANK_SIZE, getController(), true);
+        return new NotifiableItemStackHandler(this, TANK_SIZE, getController(), true);
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(TANK_SIZE, getController(), false);
+        return new NotifiableItemStackHandler(this, TANK_SIZE, getController(), false);
     }
 
     @Override

@@ -15,6 +15,7 @@ import gregtech.api.gui.widgets.FluidContainerSlotWidget;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.unification.material.Materials;
@@ -87,7 +88,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
         this.isHighPressure = isHighPressure;
         this.bronzeSlotBackgroundTexture = getGuiTexture("slot_%s");
         this.slotFurnaceBackground = getGuiTexture("slot_%s_furnace_background");
-        this.containerInventory = new ItemStackHandler(2);
+        this.containerInventory = new GTItemStackHandler(this, 2);
     }
 
     @Override

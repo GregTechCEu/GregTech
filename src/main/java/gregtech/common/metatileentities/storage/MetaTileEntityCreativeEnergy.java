@@ -7,7 +7,9 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.ILaserContainer;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
@@ -40,7 +42,7 @@ import static gregtech.api.GTValues.MAX;
 import static gregtech.api.GTValues.V;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_IO_SPEED;
 
-public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEnergyContainer {
+public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILaserContainer {
 
     private long voltage = 0;
     private int amps = 1;
@@ -80,9 +82,13 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
+        if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(this);
-        return super.getCapability(capability, side);
+        } else if (capability == GregtechTileCapabilities.CAPABILITY_LASER) {
+            return GregtechTileCapabilities.CAPABILITY_LASER.cast(this);
+        } else {
+            return super.getCapability(capability, side);
+        }
     }
 
     @Override
@@ -129,7 +135,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                 amps = Integer.MAX_VALUE;
                 setTier = 14;
             }
-        }, "Sink", "Source")); //TODO: localisation
+        }, "gregtech.creative.energy.sink", "gregtech.creative.energy.source"));
 
         return builder.build(getHolder(), entityPlayer);
     }
@@ -167,12 +173,16 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         }
         ampsReceived = 0;
         if (!active || !source || voltage <= 0 || amps <= 0) return;
-        int ampsUsed = 0;
+        long ampsUsed = 0;
         for (EnumFacing facing : EnumFacing.values()) {
             EnumFacing opposite = facing.getOpposite();
             TileEntity tile = getWorld().getTileEntity(getPos().offset(facing));
             if (tile != null) {
                 IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, opposite);
+                // Try to get laser capability
+                if (container == null)
+                    container = tile.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, opposite);
+
                 if (container == null || !container.inputsEnergy(opposite) || container.getEnergyCanBeInserted() == 0)
                     continue;
                 ampsUsed += container.acceptEnergyFromNetwork(opposite, voltage, amps - ampsUsed);

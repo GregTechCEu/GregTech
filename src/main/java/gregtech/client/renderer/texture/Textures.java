@@ -84,6 +84,7 @@ public class Textures {
 
     // Simple Oriented Cube Renderers
     public static final SimpleOrientedCubeRenderer CRAFTING_TABLE = new SimpleOrientedCubeRenderer("casings/crafting_table");
+    public static final SimpleOrientedCubeRenderer GRATE_CASING_STEEL_FRONT = new SimpleOrientedCubeRenderer("casings/pipe/grate_steel_front");
 
     // Oriented Overlay Renderers
     public static final OrientedOverlayRenderer COAL_BOILER_OVERLAY = new OrientedOverlayRenderer("generators/boiler/coal");
@@ -186,7 +187,6 @@ public class Textures {
     public static final SimpleOverlayRenderer DETECTOR_ACTIVITY = new SimpleOverlayRenderer("cover/overlay_activity_detector");
     public static final SimpleOverlayRenderer DETECTOR_ACTIVITY_ADVANCED = new SimpleOverlayRenderer("cover/overlay_activity_detector_advanced");
     public static final SimpleOverlayRenderer DETECTOR_MAINTENANCE = new SimpleOverlayRenderer("cover/overlay_maintenance_detector");
-    public static final SimpleOverlayRenderer CRAFTING = new SimpleOverlayRenderer("cover/overlay_crafting");
     public static final SimpleOverlayRenderer SOLAR_PANEL = new SimpleOverlayRenderer("cover/overlay_solar_panel");
     public static final SimpleOverlayRenderer INFINITE_WATER = new SimpleOverlayRenderer("cover/overlay_infinite_water");
     public static final SimpleOverlayRenderer FLUID_VOIDING = new SimpleOverlayRenderer("cover/overlay_fluid_voiding");
@@ -287,8 +287,9 @@ public class Textures {
     public static final SimpleOverlayRenderer HPCA_ADVANCED_DAMAGED_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/damaged_advanced_active");
     public static final SimpleOverlayRenderer HPCA_EMPTY_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/empty");
     public static final SimpleOverlayRenderer HPCA_HEAT_SINK_OVERLAY = new SimpleOverlayRenderer("overlay/machine/hpca/heat_sink");
+    public static final SimpleOverlayRenderer ALARM_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_alarm");
+    public static final SimpleOverlayRenderer ALARM_OVERLAY_ACTIVE = new SimpleOverlayRenderer("overlay/machine/overlay_alarm_active");
     public static final SimpleOverlayRenderer TAPED_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_ducttape");
-
 
     public static final SimpleOverlayRenderer COVER_INTERFACE_FLUID = new SimpleOverlayRenderer("cover/cover_interface_fluid");
     public static final SimpleOverlayRenderer COVER_INTERFACE_FLUID_GLASS = new SimpleOverlayRenderer("cover/cover_interface_fluid_glass");
@@ -326,8 +327,6 @@ public class Textures {
 
     @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite RESTRICTIVE_OVERLAY;
-    @SideOnly(Side.CLIENT)
-    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY;
     @SideOnly(Side.CLIENT)
     public static TextureAtlasSprite PIPE_TINY;
     @SideOnly(Side.CLIENT)
@@ -373,6 +372,37 @@ public class Textures {
     public static TextureAtlasSprite LASER_PIPE_OVERLAY_EMISSIVE;
 
     @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_UP;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_DOWN;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_LEFT;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_RIGHT;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_NU;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_ND;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_NL;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_NR;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_UD;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_UL;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_UR;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_DL;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_DR;
+    @SideOnly(Side.CLIENT)
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY_LR;
+
+    @SideOnly(Side.CLIENT)
     public static ThreadLocal<CubeRendererState> RENDER_STATE;
 
     static {
@@ -393,7 +423,6 @@ public class Textures {
         }
 
         RESTRICTIVE_OVERLAY = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_restrictive"));
-        PIPE_BLOCKED_OVERLAY = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_blocked"));
         PIPE_TINY = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_tiny_in"));
         PIPE_SMALL = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_small_in"));
         PIPE_NORMAL = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in"));
@@ -406,6 +435,23 @@ public class Textures {
         PIPE_NORMAL_WOOD = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in_wood"));
         PIPE_LARGE_WOOD = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in_wood"));
         PIPE_SIDE_WOOD = textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side_wood"));
+
+        // Fluid Pipe Blocked overlay textures
+        PIPE_BLOCKED_OVERLAY = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked"));
+        PIPE_BLOCKED_OVERLAY_UP = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_up"));
+        PIPE_BLOCKED_OVERLAY_DOWN = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_down"));
+        PIPE_BLOCKED_OVERLAY_LEFT = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_left"));
+        PIPE_BLOCKED_OVERLAY_RIGHT = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_right"));
+        PIPE_BLOCKED_OVERLAY_NU = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_nu"));
+        PIPE_BLOCKED_OVERLAY_ND = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_nd"));
+        PIPE_BLOCKED_OVERLAY_NL = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_nl"));
+        PIPE_BLOCKED_OVERLAY_NR = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_nr"));
+        PIPE_BLOCKED_OVERLAY_UD = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_ud"));
+        PIPE_BLOCKED_OVERLAY_UL = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_ul"));
+        PIPE_BLOCKED_OVERLAY_UR = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_ur"));
+        PIPE_BLOCKED_OVERLAY_DL = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_dl"));
+        PIPE_BLOCKED_OVERLAY_DR = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_dr"));
+        PIPE_BLOCKED_OVERLAY_LR = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_lr"));
 
         OPTICAL_PIPE_IN = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_in"));
         OPTICAL_PIPE_SIDE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side"));
@@ -420,6 +466,14 @@ public class Textures {
         for (MaterialIconSet iconSet : MaterialIconSet.ICON_SETS.values()) {
             textureMap.registerSprite(MaterialIconType.frameGt.getBlockTexturePath(iconSet));
         }
+    }
+
+    private static int mask(EnumFacing... facings) {
+        int mask = 0;
+        for (EnumFacing facing : facings) {
+            mask |= (1 << facing.ordinal());
+        }
+        return mask;
     }
 
     @SideOnly(Side.CLIENT)

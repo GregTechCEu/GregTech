@@ -13,10 +13,14 @@ public class AveragingPerTickCounter {
     private boolean dirty = true;
     private double lastAverage = 0;
 
+    public AveragingPerTickCounter() {
+        this(0, 20);
+    }
+
     /**
      * Averages a value over a certain amount of ticks
      *
-     * @param defaultValue self explanatory
+     * @param defaultValue self-explanatory
      * @param length       amount of ticks to average (20 for 1 second)
      */
     public AveragingPerTickCounter(long defaultValue, int length) {
@@ -26,10 +30,11 @@ public class AveragingPerTickCounter {
     }
 
     private void checkValueState(World world) {
+        if (world == null) return;
         long currentWorldTime = world.getTotalWorldTime();
         if (currentWorldTime != lastUpdatedWorldTime) {
             long dif = currentWorldTime - lastUpdatedWorldTime;
-            if (dif >= values.length) {
+            if (dif >= values.length || dif < 0) {
                 Arrays.fill(values, defaultValue);
                 currentIndex = 0;
             } else {

@@ -5,9 +5,9 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.GregTechAPIInternal;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.SimpleCapabilityManager;
-import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverDefinition;
-import gregtech.api.fluids.MetaFluids;
+import gregtech.api.cover.CoverUIFactory;
+import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
@@ -21,6 +21,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.event.MaterialRegistryEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
+import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBind;
@@ -111,7 +112,7 @@ public class CoreModule implements IGregTechModule {
         logger.info("Registering GTCEu UI Factories");
         MetaTileEntityUIFactory.INSTANCE.init();
         PlayerInventoryUIFactory.INSTANCE.init();
-        CoverBehaviorUIFactory.INSTANCE.init();
+        CoverUIFactory.INSTANCE.init();
         logger.info("Registering addon UI Factories");
         MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(UI_FACTORY_REGISTRY, UIFactory.class));
         UI_FACTORY_REGISTRY.freeze();
@@ -120,6 +121,8 @@ public class CoreModule implements IGregTechModule {
         SimpleCapabilityManager.init();
 
         /* Start Material Registration */
+
+        GregTechAPI.markerMaterialRegistry = MarkerMaterialRegistry.getInstance();
 
         // First, register other mods' Registries
         MaterialRegistryManager managerInternal = (MaterialRegistryManager) GregTechAPI.materialManager;
@@ -154,7 +157,7 @@ public class CoreModule implements IGregTechModule {
         MetaBlocks.init();
         MetaItems.init();
         ToolItems.init();
-        MetaFluids.init();
+        GTFluidRegistration.INSTANCE.register();
 
         /* Start MetaTileEntity Registration */
         MTE_REGISTRY.unfreeze();
@@ -249,7 +252,7 @@ public class CoreModule implements IGregTechModule {
 
     @Override
     public void loadComplete(FMLLoadCompleteEvent event) {
-        proxy.onLoadComplete(event);
+        proxy.onLoadComplete();
     }
 
     @Override

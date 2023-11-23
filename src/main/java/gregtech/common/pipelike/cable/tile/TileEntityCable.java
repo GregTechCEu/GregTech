@@ -3,13 +3,11 @@ package gregtech.common.pipelike.cable.tile;
 import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.WireProperties;
-import gregtech.api.util.PerTickLongCounter;
 import gregtech.api.util.TaskScheduler;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.particle.GTOverheatParticle;
@@ -39,16 +37,19 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.CABLE_TEMPERATURE;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONNECTIONS;
+
 public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties> implements IDataInfoProvider {
 
     private static final int meltTemp = 3000;
 
     private final EnumMap<EnumFacing, EnergyNetHandler> handlers = new EnumMap<>(EnumFacing.class);
-    private final PerTickLongCounter maxVoltageCounter = new PerTickLongCounter(0);
-    private final AveragingPerTickCounter averageVoltageCounter = new AveragingPerTickCounter(0, 20);
-    private final AveragingPerTickCounter averageAmperageCounter = new AveragingPerTickCounter(0, 20);
+    private final PerTickLongCounter maxVoltageCounter = new PerTickLongCounter();
+    private final AveragingPerTickCounter averageVoltageCounter = new AveragingPerTickCounter();
+    private final AveragingPerTickCounter averageAmperageCounter = new AveragingPerTickCounter();
     private EnergyNetHandler defaultHandler;
-    // the EnergyNetHandler can only be created on the server so we have a empty placeholder for the client
+    // the EnergyNetHandler can only be created on the server, so we have an empty placeholder for the client
     private final IEnergyContainer clientCapability = IEnergyContainer.DEFAULT;
     private WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);
     @SideOnly(Side.CLIENT)
@@ -56,6 +57,10 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     private int heatQueue;
     private int temperature = getDefaultTemp();
     private boolean isTicking = false;
+
+    public long getWorldTime() {
+        return hasWorld() ? getWorld().getTotalWorldTime() : 0L;
+    }
 
     @Override
     public Class<Insulation> getPipeTypeClass() {
@@ -100,13 +105,13 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
      * @return if the cable should be destroyed
      */
     public boolean incrementAmperage(long amps, long voltage) {
-        if (voltage > maxVoltageCounter.get(world)) {
-            maxVoltageCounter.set(world, voltage);
+        if (voltage > maxVoltageCounter.get(getWorld())) {
+            maxVoltageCounter.set(getWorld(), voltage);
         }
-        averageVoltageCounter.increment(world, voltage);
-        averageAmperageCounter.increment(world, amps);
+        averageVoltageCounter.increment(getWorld(), voltage);
+        averageAmperageCounter.increment(getWorld(), amps);
 
-        int dif = (int) (averageAmperageCounter.getLast(world) - getMaxAmperage());
+        int dif = (int) (averageAmperageCounter.getLast(getWorld()) - getMaxAmperage());
         if (dif > 0) {
             applyHeat(dif * 40);
             return true;
@@ -183,7 +188,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         this.temperature = temperature;
         world.checkLight(pos);
         if (!world.isRemote) {
-            writeCustomData(100, buf -> buf.writeVarInt(temperature));
+            writeCustomData(CABLE_TEMPERATURE, buf -> buf.writeVarInt(temperature));
         } else {
             if (temperature <= getDefaultTemp()) {
                 if (isParticleAlive())
@@ -292,11 +297,11 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     @Override
     public void receiveCustomData(int discriminator, PacketBuffer buf) {
-        if (discriminator == 100) {
+        if (discriminator == CABLE_TEMPERATURE) {
             setTemperature(buf.readVarInt());
         } else {
             super.receiveCustomData(discriminator, buf);
-            if (isParticleAlive() && discriminator == GregtechDataCodes.UPDATE_CONNECTIONS) {
+            if (isParticleAlive() && discriminator == UPDATE_CONNECTIONS) {
                 particle.updatePipeBoxes(getPipeBoxes());
             }
         }

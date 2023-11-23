@@ -66,7 +66,7 @@ public class ItemGTHoe extends ItemHoe implements IGTTool {
     }
 
     @Override
-    public String getId() {
+    public String getToolId() {
         return id;
     }
 

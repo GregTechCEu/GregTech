@@ -542,4 +542,14 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     public boolean hasFrontFacing() {
         return false;
     }
+
+    @Override
+    public boolean allowsExtendedFacing() {
+        return false;
+    }
+
+    @Override
+    public boolean allowsFlip() {
+        return false;
+    }
 }

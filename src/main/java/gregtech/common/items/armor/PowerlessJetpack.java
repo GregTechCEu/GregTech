@@ -84,6 +84,8 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
             }
         }
 
+        // This causes a caching issue. currentRecipe is only set to null in findNewRecipe, so the fuel is never updated
+        // Rewrite in Armor Rework
         if (currentRecipe == null)
             findNewRecipe(stack);
 
@@ -149,8 +151,9 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
     @Override
     public boolean canUseEnergy(ItemStack stack, int amount) {
         FluidStack fuel = getFuel();
-        if (fuel == null)
+        if (fuel == null) {
             return false;
+        }
 
         IFluidHandlerItem fluidHandlerItem = getIFluidHandlerItem(stack);
         if (fluidHandlerItem == null)
@@ -202,9 +205,15 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         currentRecipe = null;
     }
 
+    public void resetRecipe() {
+        currentRecipe = null;
+        previousRecipe = null;
+    }
+
     public FluidStack getFuel() {
-        if (currentRecipe != null)
+        if (currentRecipe != null) {
             return currentRecipe.getFluidInputs().get(0).getInputFluidStack();
+        }
 
         return null;
     }
