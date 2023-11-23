@@ -1,6 +1,6 @@
 {
+  "name": "gregtech.veins.fluid.light_oil",
   "weight": 25,
-  "name": "Overworld Light Oil Deposit",
   "yield": {
     "min": 175,
     "max": 300

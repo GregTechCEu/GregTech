@@ -39,6 +39,8 @@ public final class WoodTypeEntry {
     public final String doorRecipeName;
     @Nonnull
     public final ItemStack slab;
+    @Nullable
+    public final String slabRecipeName;
     public final boolean addSlabCraftingRecipe;
     public final ItemStack fence;
     @Nullable
@@ -77,9 +79,9 @@ public final class WoodTypeEntry {
     private WoodTypeEntry(@Nonnull String modid, @Nonnull String woodName, @Nonnull ItemStack log,
                           boolean removeCharcoalRecipe, boolean addCharcoalRecipe, @Nonnull ItemStack planks,
                           @Nullable String planksRecipeName, @Nonnull ItemStack door, @Nullable String doorRecipeName,
-                          @Nonnull ItemStack slab, boolean addSlabCraftingRecipe, @Nonnull ItemStack fence,
-                          @Nullable String fenceRecipeName, @Nonnull ItemStack fenceGate,
-                          @Nullable String fenceGateRecipeName, @Nonnull ItemStack stairs,
+                          @Nonnull ItemStack slab, @Nullable String slabRecipeName, boolean addSlabCraftingRecipe,
+                          @Nonnull ItemStack fence, @Nullable String fenceRecipeName,
+                          @Nonnull ItemStack fenceGate, @Nullable String fenceGateRecipeName, @Nonnull ItemStack stairs,
                           boolean addStairsCraftingRecipe, @Nonnull ItemStack boat, @Nullable String boatRecipeName,
                           @Nullable Material material, boolean addLogOreDict, boolean addPlanksOreDict,
                           boolean addDoorsOreDict, boolean addSlabsOreDict, boolean addFencesOreDict,
@@ -97,6 +99,7 @@ public final class WoodTypeEntry {
         this.door = door;
         this.doorRecipeName = doorRecipeName;
         this.slab = slab;
+        this.slabRecipeName = slabRecipeName;
         this.addSlabCraftingRecipe = addSlabCraftingRecipe;
         this.fence = fence;
         this.fenceRecipeName = fenceRecipeName;
@@ -142,6 +145,7 @@ public final class WoodTypeEntry {
         private ItemStack door = ItemStack.EMPTY;
         private String doorRecipeName;
         private ItemStack slab = ItemStack.EMPTY;
+        private String slabRecipeName;
         private boolean addSlabsCraftingRecipe;
         private ItemStack fence = ItemStack.EMPTY;
         private String fenceRecipeName;
@@ -244,8 +248,9 @@ public final class WoodTypeEntry {
          * @param slab the slab to add
          * @return this
          */
-        public Builder slab(@Nonnull ItemStack slab) {
+        public Builder slab(@Nonnull ItemStack slab, @Nullable String slabRecipeName) {
             this.slab = slab;
+            this.slabRecipeName = slabRecipeName;
             return this;
         }
 
@@ -403,7 +408,7 @@ public final class WoodTypeEntry {
         public WoodTypeEntry build() {
             Preconditions.checkArgument(!planks.isEmpty(), "Planks cannot be empty.");
             return new WoodTypeEntry(modid, woodName, log, removeCharcoalRecipe, addCharcoalRecipe, planks,
-                    planksRecipeName, door, doorRecipeName, slab, addSlabsCraftingRecipe, fence, fenceRecipeName,
+                    planksRecipeName, door, doorRecipeName, slab, slabRecipeName, addSlabsCraftingRecipe, fence, fenceRecipeName,
                     fenceGate, fenceGateRecipeName, stairs, addStairsCraftingRecipe, boat, boatRecipeName, material,
                     addLogOreDict, addPlanksOreDict, addDoorsOreDict, addSlabsOreDict, addFencesOreDict,
                     addFenceGatesOreDict, addStairsOreDict, addPlanksUnificationInfo, addDoorsUnificationInfo,

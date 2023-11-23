@@ -239,7 +239,8 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                     MultiblockControllerBase entity = (MultiblockControllerBase) holder.getMetaTileEntity();
                     if (entity.isStructureFormed()) {
                         if (!isValid) {
-                            PatternMatchContext result = entity.structurePattern.checkPatternFastAt(entity.getWorld(), entity.getPos(), entity.getFrontFacing().getOpposite());
+                            PatternMatchContext result = entity.structurePattern.checkPatternFastAt(
+                                    entity.getWorld(), entity.getPos(), entity.getFrontFacing().getOpposite(), entity.getUpwardsFacing(), entity.allowsFlip());
                             if (result != null) {
                                 validPos = entity.structurePattern.cache.keySet().stream().map(BlockPos::fromLong).collect(Collectors.toSet());
                                 writePluginData(GregtechDataCodes.UPDATE_ADVANCED_VALID_POS, buf -> {

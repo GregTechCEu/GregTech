@@ -43,7 +43,6 @@ public class MaterialIconSet {
     public static final MaterialIconSet CERTUS = new MaterialIconSet("certus", QUARTZ);
     public static final MaterialIconSet LAPIS = new MaterialIconSet("lapis", QUARTZ);
     public static final MaterialIconSet FLUID = new MaterialIconSet("fluid");
-    public static final MaterialIconSet GAS = new MaterialIconSet("gas");
 
     // Implementation -----------------------------------------------------------------------------------------------
 

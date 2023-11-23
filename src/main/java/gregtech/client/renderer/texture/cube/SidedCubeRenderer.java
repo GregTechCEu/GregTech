@@ -15,6 +15,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
@@ -53,6 +55,7 @@ public class SidedCubeRenderer implements ICubeRenderer {
         this.sprites = new EnumMap<>(OverlayFace.class);
         this.spritesEmissive = new EnumMap<>(OverlayFace.class);
 
+        boolean foundTexture = false;
         for (OverlayFace overlayFace : OverlayFace.VALUES) {
             final String faceName = overlayFace.name().toLowerCase();
             final String overlayPath = String.format(BASE_DIR, basePath, faceName);
@@ -61,9 +64,15 @@ public class SidedCubeRenderer implements ICubeRenderer {
             // require the normal texture to get the rest
             if (normalSprite == null) continue;
 
+            foundTexture = true;
+
             sprites.put(overlayFace, normalSprite);
 
             spritesEmissive.put(overlayFace, ICubeRenderer.getResource(textureMap, modID, overlayPath + EMISSIVE));
+        }
+
+        if (!foundTexture) {
+            FMLClientHandler.instance().trackMissingTexture(new ResourceLocation(modID, "blocks/" + basePath + "/OVERLAY_FACE"));
         }
     }
 

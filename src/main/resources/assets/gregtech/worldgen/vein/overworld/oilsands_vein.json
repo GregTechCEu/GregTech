@@ -1,4 +1,5 @@
 {
+  "name": "gregtech.veins.ore.oilsands",
   "weight": 40,
   "density": 0.3,
   "max_height": 80,

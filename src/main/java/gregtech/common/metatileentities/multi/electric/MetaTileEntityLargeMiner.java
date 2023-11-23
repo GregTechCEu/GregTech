@@ -16,11 +16,13 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -30,6 +32,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
@@ -53,7 +56,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -121,7 +123,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     private void resetTileAbilities() {
         this.inputFluidInventory = new FluidTankList(true);
-        this.outputInventory = new ItemStackHandler(0);
+        this.outputInventory = new GTItemStackHandler(this, 0);
         this.energyContainer = new EnergyContainerList(Lists.newArrayList());
     }
 
@@ -258,17 +260,22 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            if (this.isInventoryFull) {
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-            if (!drainFluid(true)) {
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.multi.needsfluid").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-            if (!drainEnergy(true)) {
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.needspower").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
+                .addLowPowerLine(isStructureFormed() && !drainEnergy(true))
+                .addCustom(tl -> {
+                    if (isStructureFormed() && isInventoryFull) {
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.YELLOW,
+                                "gregtech.machine.miner.invfull"));
+                    }
+                });
+    }
+
+    @Override
+    protected void addErrorText(List<ITextComponent> textList) {
+        super.addErrorText(textList);
+        if (isStructureFormed() && !drainFluid(true)) {
+            textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.machine.miner.multi.needsfluid"));
         }
     }
 
@@ -512,6 +519,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     protected boolean shouldShowVoidingModeButton() {
+        return false;
+    }
+
+    @Override
+    public boolean allowsExtendedFacing() {
         return false;
     }
 }

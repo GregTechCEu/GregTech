@@ -11,6 +11,7 @@ import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTTransferUtils;
@@ -29,7 +30,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
@@ -40,7 +40,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     private int itemsPerCycle = 1;
     private int ticksPerCycle = 1;
 
-    private final ItemStackHandler handler = new ItemStackHandler(1) {
+    private final GTItemStackHandler handler = new GTItemStackHandler(this,1) {
         @Override
         protected int getStackLimit(int slot, ItemStack stack) {
             return 1;
@@ -73,7 +73,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        QuantumStorageRenderer.renderChestStack(x, y, z, this, this.itemStack, 420, partialTicks);
+        QuantumStorageRenderer.renderChestStack(x, y, z, this, this.virtualItemStack, 420, partialTicks);
     }
 
 
@@ -116,7 +116,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void update() {
         ItemStack stack = handler.getStackInSlot(0).copy();
-        this.itemStack = stack; // For rendering purposes
+        this.virtualItemStack = stack; // For rendering purposes
         super.update();
         if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0) return;
         if (getWorld().isRemote || !active || stack.isEmpty()) return;
@@ -150,7 +150,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         handler.deserializeNBT(data.getCompoundTag("ItemStackHandler"));
-        this.itemStack = handler.getStackInSlot(0); // For rendering purposes
+        this.virtualItemStack = handler.getStackInSlot(0); // For rendering purposes
         itemsPerCycle = data.getInteger("ItemsPerCycle");
         ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
@@ -188,6 +188,6 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.handler.setStackInSlot(0, this.itemStack);
+        this.handler.setStackInSlot(0, this.virtualItemStack);
     }
 }

@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "gregtech:items/tools/scoop_overlay",
+    "layer1": "gregtech:items/tools/scoop"
+  }
+}

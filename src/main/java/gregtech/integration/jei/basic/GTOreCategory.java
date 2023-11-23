@@ -13,6 +13,7 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
 
@@ -107,18 +108,18 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
         //Give room for 5 lines of 5 ores each, so 25 unique ores in the vein
         //73 is SLOT_HEIGHT * (NUM_OF_SLOTS - 1) + 1
         if (baseYPos >= SLOT_HEIGHT * NUM_OF_SLOTS) {
-            minecraft.fontRenderer.drawString("Spawn Range: " + minHeight + "-" + maxHeight, baseXPos, baseYPos + 1, 0x111111);
+            minecraft.fontRenderer.drawString(I18n.format("gregtech.jei.ore.spawn_range", minHeight, maxHeight), baseXPos, baseYPos + 1, 0x111111);
         } else {
-            minecraft.fontRenderer.drawString("Spawn Range: " + minHeight + "-" + maxHeight, baseXPos, SLOT_HEIGHT * (NUM_OF_SLOTS - 1) + 1, 0x111111);
+            minecraft.fontRenderer.drawString(I18n.format("gregtech.jei.ore.spawn_range", minHeight, maxHeight), baseXPos, SLOT_HEIGHT * (NUM_OF_SLOTS - 1) + 1, 0x111111);
             //Update the position at which the spawn information ends
             baseYPos = 73;
         }
 
         //Create the Weight
-        minecraft.fontRenderer.drawString("Vein Weight: " + weight, baseXPos, baseYPos + FONT_HEIGHT, 0x111111);
+        minecraft.fontRenderer.drawString(I18n.format("gregtech.jei.ore.vein_weight", weight), baseXPos, baseYPos + FONT_HEIGHT, 0x111111);
 
         //Create the Dimensions
-        minecraft.fontRenderer.drawString("Dimensions: ", baseXPos, baseYPos + (2 * FONT_HEIGHT), 0x111111);
+        minecraft.fontRenderer.drawString(I18n.format("gregtech.jei.ore.dimension"), baseXPos, baseYPos + (2 * FONT_HEIGHT), 0x111111);
 
         JEIResourceDepositCategoryUtils.drawMultiLineCommaSeparatedDimensionList(WorldGenRegistry.getNamedDimensions(),
                 dimension,
@@ -128,6 +129,6 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
                 dimDisplayPos);
 
         //Label the Surface Identifier
-        minecraft.fontRenderer.drawSplitString("SurfaceMaterial", 15, 92, minecraft.fontRenderer.getStringWidth("Surface"), 0x111111);
+        minecraft.fontRenderer.drawSplitString(I18n.format("gregtech.jei.ore.surfacematerial"), 15, 92, baseXPos - 20, 0x111111);
     }
 }

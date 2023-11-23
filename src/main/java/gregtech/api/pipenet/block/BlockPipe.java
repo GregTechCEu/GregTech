@@ -5,10 +5,9 @@ import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
 import gregtech.api.block.BuiltInRenderBlock;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
-import gregtech.api.cover.ICoverable.CoverSideData;
-import gregtech.api.cover.ICoverable.PrimaryBoxData;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverHolder;
+import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -16,6 +15,7 @@ import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -237,7 +237,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return pipeTile == null ? 0 : pipeTile.getCoverableImplementation().getOutputRedstoneSignal(side.getOpposite());
     }
 
-    public void updateActiveNodeStatus(World worldIn, BlockPos pos, IPipeTile<PipeType, NodeDataType> pipeTile) {
+    public void updateActiveNodeStatus(@Nonnull World worldIn, BlockPos pos, IPipeTile<PipeType, NodeDataType> pipeTile) {
+        if (worldIn.isRemote) return;
+
         PipeNet<NodeDataType> pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
         if (pipeNet != null && pipeTile != null) {
             int activeConnections = pipeTile.getConnections(); //remove blocked connections
@@ -269,12 +271,11 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (pipeTile == null) {
             return ItemStack.EMPTY;
         }
-        if (target instanceof CuboidRayTraceResult) {
-            CuboidRayTraceResult result = (CuboidRayTraceResult) target;
-            if (result.cuboid6.data instanceof CoverSideData) {
-                EnumFacing coverSide = ((CoverSideData) result.cuboid6.data).side;
-                CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
-                return coverBehavior == null ? ItemStack.EMPTY : coverBehavior.getPickItem();
+        if (target instanceof CuboidRayTraceResult result) {
+            if (result.cuboid6.data instanceof CoverRayTracer.CoverSideData coverSideData) {
+                EnumFacing coverSide = coverSideData.side;
+                Cover cover = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
+                return cover == null ? ItemStack.EMPTY : cover.getPickItem();
             }
         }
         return getDropItem(pipeTile);
@@ -283,7 +284,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @Override
     public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
-        CuboidRayTraceResult rayTraceResult = (CuboidRayTraceResult) RayTracer.retraceBlock(worldIn, playerIn, pos);
+        CuboidRayTraceResult rayTraceResult = getServerCollisionRayTrace(playerIn, pos, worldIn);
+
         if (rayTraceResult == null || pipeTile == null) {
             return false;
         }
@@ -323,57 +325,60 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             }
         }
 
-        EnumFacing coverSide = ICoverable.traceCoverSide(hit);
+        EnumFacing coverSide = CoverRayTracer.traceCoverSide(hit);
         if (coverSide == null) {
             return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
         }
 
-        if (!(hit.cuboid6.data instanceof CoverSideData)) {
+        if (!(hit.cuboid6.data instanceof CoverRayTracer.CoverSideData)) {
             switch (onPipeToolUsed(world, pos, itemStack, coverSide, pipeTile, entityPlayer, hand)) {
-                case SUCCESS:
+                case SUCCESS -> {
                     return true;
-                case FAIL:
+                }
+                case FAIL -> {
                     return false;
+                }
             }
         }
 
-        CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
-        if (coverBehavior == null) {
+        Cover cover = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
+        if (cover == null) {
             return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
         }
 
         if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SOFT_MALLET)) {
-            if (coverBehavior.onSoftMalletClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
+            if (cover.onSoftMalletClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
                 ToolHelper.damageItem(itemStack, entityPlayer);
                 ToolHelper.playToolSound(itemStack, entityPlayer);
                 return true;
             }
         }
 
-        if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SCREWDRIVER)) {
-            if (coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
-                ToolHelper.damageItem(itemStack, entityPlayer);
-                ToolHelper.playToolSound(itemStack, entityPlayer);
+        if ((itemStack.isEmpty() && entityPlayer.isSneaking()) || itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.SCREWDRIVER)) {
+            if (cover.onScrewdriverClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
+                if (!itemStack.isEmpty()) {
+                    ToolHelper.damageItem(itemStack, entityPlayer);
+                    ToolHelper.playToolSound(itemStack, entityPlayer);
+                }
                 return true;
             }
         }
 
         if (itemStack.getItem().getToolClasses(itemStack).contains(ToolClasses.CROWBAR)) {
             if (!world.isRemote) {
-                if (pipeTile.getCoverableImplementation().removeCover(coverSide)) {
-                    ToolHelper.damageItem(itemStack, entityPlayer);
-                    ToolHelper.playToolSound(itemStack, entityPlayer);
-                    return true;
-                }
+                pipeTile.getCoverableImplementation().removeCover(coverSide);
+                ToolHelper.damageItem(itemStack, entityPlayer);
+                ToolHelper.playToolSound(itemStack, entityPlayer);
+                return true;
             }
         }
 
-        EnumActionResult result = coverBehavior.onRightClick(entityPlayer, hand, hit);
+        EnumActionResult result = cover.onRightClick(entityPlayer, hand, hit);
         if (result == EnumActionResult.PASS) {
             if (activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile)) {
                 return true;
             }
-            return entityPlayer.isSneaking() && entityPlayer.getHeldItemMainhand().isEmpty() && coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) != EnumActionResult.PASS;
+            return entityPlayer.isSneaking() && entityPlayer.getHeldItemMainhand().isEmpty() && cover.onScrewdriverClick(entityPlayer, hand, hit) != EnumActionResult.PASS;
         }
         return true;
     }
@@ -408,6 +413,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 return EnumActionResult.SUCCESS;
             }
             entityPlayer.swingArm(hand);
+            return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.PASS;
     }
@@ -423,11 +429,11 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (pipeTile == null || rayTraceResult == null) {
             return;
         }
-        EnumFacing coverSide = ICoverable.traceCoverSide(rayTraceResult);
-        CoverBehavior coverBehavior = coverSide == null ? null : pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
+        EnumFacing coverSide = CoverRayTracer.traceCoverSide(rayTraceResult);
+        Cover cover = coverSide == null ? null : pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
 
-        if (coverBehavior != null) {
-            coverBehavior.onLeftClick(playerIn, rayTraceResult);
+        if (cover != null) {
+            cover.onLeftClick(playerIn, rayTraceResult);
         }
     }
 
@@ -483,7 +489,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (worldIn.isRemote) {
             return getClientCollisionRayTrace(worldIn, pos, start, end);
         }
-        return RayTracer.rayTraceCuboidsClosest(start, end, pos, FULL_CUBE_COLLISION);
+        return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos, null));
     }
 
     @SideOnly(Side.CLIENT)
@@ -491,9 +497,24 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos, Minecraft.getMinecraft().player));
     }
 
+    /**
+     * This method attempts to properly raytrace the pipe to fix the server not getting the correct raytrace result.
+     */
+    @Nullable
+    public CuboidRayTraceResult getServerCollisionRayTrace(EntityPlayer playerIn, BlockPos pos, World worldIn) {
+        return RayTracer.rayTraceCuboidsClosest(
+                RayTracer.getStartVec(playerIn), RayTracer.getEndVec(playerIn),
+                pos, getCollisionBox(worldIn, pos, playerIn)
+        );
+    }
+
     @Nonnull
     @Override
     public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+        IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
+        if (pipeTile != null && pipeTile.getCoverableImplementation().getCoverAtSide(face) != null) {
+            return BlockFaceShape.SOLID;
+        }
         return BlockFaceShape.UNDEFINED;
     }
 
@@ -531,7 +552,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public boolean canConnect(IPipeTile<PipeType, NodeDataType> selfTile, EnumFacing facing) {
         if (selfTile.getPipeWorld().getBlockState(selfTile.getPipePos().offset(facing)).getBlock() == Blocks.AIR)
             return false;
-        CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
+        Cover cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
         if (cover != null && !cover.canPipePassThrough()) {
             return false;
         }
@@ -563,23 +584,24 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         }
         int actualConnections = getPipeTileEntity(world, pos).getVisualConnections();
         float thickness = pipeType.getThickness();
-        ArrayList<IndexedCuboid6> result = new ArrayList<>();
-        ICoverable coverable = pipeTile.getCoverableImplementation();
+        List<IndexedCuboid6> result = new ArrayList<>();
+        CoverHolder coverHolder = pipeTile.getCoverableImplementation();
 
         // Check if the machine grid is being rendered
-        if (hasPipeCollisionChangingItem(world, pos, entityIn)) {
+        boolean usingGrid = hasPipeCollisionChangingItem(world, pos, entityIn);
+        if (usingGrid) {
             result.add(FULL_CUBE_COLLISION);
         }
 
         // Always add normal collision so player doesn't "fall through" the cable/pipe when
         // a tool is put in hand, and will still be standing where they were before.
-        result.add(new IndexedCuboid6(new PrimaryBoxData(true), getSideBox(null, thickness)));
+        result.add(new IndexedCuboid6(new CoverRayTracer.PrimaryBoxData(usingGrid), getSideBox(null, thickness)));
         for (EnumFacing side : EnumFacing.VALUES) {
             if ((actualConnections & 1 << side.getIndex()) > 0) {
                 result.add(new IndexedCuboid6(new PipeConnectionData(side), getSideBox(side, thickness)));
             }
         }
-        coverable.addCoverCollisionBoundingBox(result);
+        coverHolder.addCoverCollisionBoundingBox(result);
         return result;
     }
 
@@ -595,15 +617,18 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public abstract boolean isHoldingPipe(EntityPlayer player);
 
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
-        return isPipeTool(stack) || ToolHelper.isTool(stack, ToolClasses.SCREWDRIVER) ||
-                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
-                        coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
-    }
+        if (isPipeTool(stack)) return true;
 
-    protected boolean hasCover(IPipeTile<PipeType, NodeDataType> pipeTile) {
-        if (pipeTile == null)
-            return false;
-        return pipeTile.getCoverableImplementation().hasAnyCover();
+        IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(world, pos);
+        if (pipeTile == null) return false;
+
+        PipeCoverableImplementation coverable = pipeTile.getCoverableImplementation();
+        final boolean hasAnyCover = coverable.hasAnyCover();
+
+        if (hasAnyCover && ToolHelper.isTool(stack, ToolClasses.SCREWDRIVER)) return true;
+        final boolean acceptsCovers = coverable.acceptsCovers();
+
+        return GTUtility.isCoverBehaviorItem(stack, () -> hasAnyCover, coverDef -> acceptsCovers);
     }
 
     @Override
@@ -622,9 +647,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
         IPipeTile<?, ?> pipeTileEntity = getPipeTileEntity(world, pos);
         if (pipeTileEntity != null && side != null) {
-            CoverBehavior coverBehavior = pipeTileEntity.getCoverableImplementation().getCoverAtSide(side);
-            if (coverBehavior instanceof IFacadeCover) {
-                return ((IFacadeCover) coverBehavior).getVisualState();
+            Cover cover = pipeTileEntity.getCoverableImplementation().getCoverAtSide(side);
+            if (cover instanceof IFacadeCover) {
+                return ((IFacadeCover) cover).getVisualState();
             }
         }
         return world.getBlockState(pos);

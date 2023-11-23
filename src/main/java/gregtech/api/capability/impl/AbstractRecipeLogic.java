@@ -205,6 +205,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @return the current RecipeMap of the logic
      */
+    @Override
     @Nullable
     public RecipeMap<?> getRecipeMap() {
         return this.recipeMap;
@@ -277,6 +278,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * Invalidate the current state of input inventory contents
      */
+    @Override
     public void invalidateInputs() {
         this.invalidInputsForRecipes = true;
     }
@@ -284,6 +286,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * Invalidate the current state of output inventory contents
      */
+    @Override
     public void invalidateOutputs() {
         this.isOutputsFull = true;
     }
@@ -293,6 +296,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * @param amount the amount to set
      */
+    @Override
     public void setParallelRecipesPerformed(int amount) {
         this.parallelRecipesPerformed = amount;
     }
@@ -437,7 +441,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         // Pass in the trimmed recipe to the parallel logic
         recipe = findParallelRecipe(
-                this,
                 recipe,
                 getInputInventory(),
                 getInputTank(),
@@ -473,8 +476,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * @return the parallel logic type to use for recipes
      */
+    @Override
     @Nonnull
-    public Enum<ParallelLogicType> getParallelLogicType() {
+    public ParallelLogicType getParallelLogicType() {
         return ParallelLogicType.MULTIPLY;
     }
 
@@ -562,7 +566,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
 
         // We have already trimmed fluid outputs at this time
-        if (!metaTileEntity.canVoidRecipeFluidOutputs() && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!metaTileEntity.canVoidRecipeFluidOutputs() && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getAllFluidOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
@@ -750,12 +754,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.progressTime = 1;
         setMaxProgress(overclockResults[1]);
         this.recipeEUt = overclockResults[0];
-        this.fluidOutputs = GTUtility.copyFluidList(recipe.getAllFluidOutputs(metaTileEntity.getFluidOutputLimit()));
-        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(
-                GTUtility.getTierByVoltage(recipe.getEUt()),
-                getOverclockForTier(getMaximumOverclockVoltage()),
-                getRecipeMap())
-        );
+        int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
+        int machineTier = getOverclockForTier(getMaximumOverclockVoltage());
+        this.fluidOutputs = GTUtility.copyFluidList(recipe.getResultFluidOutputs(recipeTier, machineTier, getRecipeMap()));
+        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(recipeTier, machineTier, getRecipeMap()));
 
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;
@@ -963,13 +965,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void writeInitialData(@Nonnull PacketBuffer buf) {
+    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
-    public void receiveInitialData(@Nonnull PacketBuffer buf) {
+    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
         this.isActive = buf.readBoolean();
         this.workingEnabled = buf.readBoolean();
     }

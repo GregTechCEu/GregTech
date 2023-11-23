@@ -13,15 +13,14 @@ import gregtech.common.pipelike.laser.net.LaserPipeNet;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
-import java.util.Collection;
 import java.util.EnumMap;
 
 public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, LaserPipeProperties> {
@@ -42,6 +41,11 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
 
     @Override
     public boolean supportsTicking() {
+        return false;
+    }
+
+    @Override
+    public boolean canHaveBlockedFaces() {
         return false;
     }
 
@@ -118,6 +122,27 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         }
     }
 
+    @Override
+    public void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor) {
+        if (!getWorld().isRemote && connected && !fromNeighbor) {
+            int connections = getConnections();
+            // block connection if any side other than the requested side and its opposite side are already connected.
+            connections &= ~(1 << side.getIndex());
+            connections &= ~(1 << side.getOpposite().getIndex());
+            if (connections != 0) return;
+
+            // check the same for the targeted pipe
+            TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
+            if (tile instanceof IPipeTile<?,?> pipeTile && pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
+                connections = pipeTile.getConnections();
+                connections &= ~(1 << side.getIndex());
+                connections &= ~(1 << side.getOpposite().getIndex());
+                if (connections != 0) return;
+            }
+        }
+        super.setConnection(side, connected, fromNeighbor);
+    }
+
     public boolean isActive() {
         return this.isActive;
     }
@@ -180,18 +205,39 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     }
 
     private static class DefaultLaserContainer implements ILaserContainer {
+
         @Override
-        public long changeEnergy(long amount, @Nonnull Collection<ILaserContainer> seen) {
+        public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
             return 0;
         }
 
         @Override
-        public long getEnergyStored(@Nonnull Collection<ILaserContainer> seen) {
+        public boolean inputsEnergy(EnumFacing side) {
+            return false;
+        }
+
+        @Override
+        public long changeEnergy(long differenceAmount) {
             return 0;
         }
 
         @Override
-        public long getEnergyCapacity(@Nonnull Collection<ILaserContainer> seen) {
+        public long getEnergyStored() {
+            return 0;
+        }
+
+        @Override
+        public long getEnergyCapacity() {
+            return 0;
+        }
+
+        @Override
+        public long getInputAmperage() {
+            return 0;
+        }
+
+        @Override
+        public long getInputVoltage() {
             return 0;
         }
     }

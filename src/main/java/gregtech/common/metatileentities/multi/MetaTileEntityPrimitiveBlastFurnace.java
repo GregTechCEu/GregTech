@@ -45,7 +45,7 @@ import javax.annotation.Nonnull;
 
 public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMultiblockController {
 
-    private static final TraceabilityPredicate IS_SNOW_LAYER = new TraceabilityPredicate(bws -> GTUtility.isBlockSnowLayer(bws.getBlockState()));
+    private static final TraceabilityPredicate SNOW_PREDICATE = new TraceabilityPredicate(bws -> GTUtility.isBlockSnow(bws.getBlockState()));
 
     public MetaTileEntityPrimitiveBlastFurnace(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.PRIMITIVE_BLAST_FURNACE_RECIPES);
@@ -64,7 +64,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
                 .aisle("XXX", "XYX", "XXX", "XXX")
                 .where('X', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PRIMITIVE_BRICKS)))
                 .where('#', air())
-                .where('&', air().or(IS_SNOW_LAYER)) // this won't stay in the structure, and will be broken while running
+                .where('&', air().or(SNOW_PREDICATE)) // this won't stay in the structure, and will be broken while running
                 .where('Y', selfPredicate())
                 .build();
     }
@@ -155,7 +155,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
 
         if (getOffsetTimer() % 10 == 0) {
             IBlockState state = getWorld().getBlockState(middlePos);
-            GTUtility.tryBreakSnowLayer(getWorld(), middlePos, state, true);
+            GTUtility.tryBreakSnow(getWorld(), middlePos, state, true);
         }
     }
 

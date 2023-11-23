@@ -130,13 +130,9 @@ public class MultiblockPreviewRenderer {
         world.setRenderFilter(pos -> pos.getY() + 1 == finalMaxY || finalMaxY == 0);
 
         EnumFacing facing = controllerBase.getFrontFacing();
-        EnumFacing spin = EnumFacing.NORTH;
+        EnumFacing upwardsFacing = controllerBase.getUpwardsFacing();
 
-
-        // TODO SIDEWAYS ONE DAY
-        //  spin = controllerBase.getSpin();
-
-        frontFacing = facing.getYOffset() == 0 ? facing : facing.getYOffset() < 0 ? spin : spin.getOpposite();
+        frontFacing = facing.getYOffset() == 0 ? facing : facing.getYOffset() < 0 ? upwardsFacing : upwardsFacing.getOpposite();
         Rotation rotatePreviewBy = Rotation.values()[(4 + frontFacing.getHorizontalIndex() - previewFacing.getHorizontalIndex()) % 4];
 
         Minecraft mc = Minecraft.getMinecraft();
@@ -158,7 +154,7 @@ public class MultiblockPreviewRenderer {
             GlStateManager.rotate(90, previewFacing.getZOffset(), 0, -previewFacing.getXOffset());
             GlStateManager.translate(-0.5, -0.5, -0.5);
         } else {
-            int degree = 90 * (spin == EnumFacing.EAST ? -1 : spin == EnumFacing.SOUTH ? 2 : spin == EnumFacing.WEST ? 1 : 0);
+            int degree = 90 * (upwardsFacing == EnumFacing.EAST ? -1 : upwardsFacing == EnumFacing.SOUTH ? 2 : upwardsFacing == EnumFacing.WEST ? 1 : 0);
             GlStateManager.translate(0.5, 0.5, 0.5);
             GlStateManager.rotate(degree, previewFacing.getXOffset(), 0, previewFacing.getZOffset());
             GlStateManager.translate(-0.5, -0.5, -0.5);

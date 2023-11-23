@@ -16,6 +16,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -67,7 +68,7 @@ import java.util.stream.Stream;
         containerID = GTValues.MODID,
         modDependencies = GTValues.MODID_JEI,
         name = "GregTech JEI Integration",
-        descriptionKey = "gregtech.modules.jei_integration.description"
+        description = "JustEnoughItems Integration Module"
 )
 public class JustEnoughItemsModule extends IntegrationSubmodule implements IModPlugin {
 
@@ -147,6 +148,15 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                     if (recipeMap.getSmallRecipeMap() != null) {
                         Collection<Recipe> smallRecipes = recipeMap.getSmallRecipeMap().getRecipeList();
                         recipeStream = recipeStream.filter(recipe -> !smallRecipes.contains(recipe));
+                    }
+
+                    if (recipeMap instanceof IScannerRecipeMap scannerMap) {
+                        List<Recipe> scannerRecipes = scannerMap.getRepresentativeRecipes();
+                        if (!scannerRecipes.isEmpty()) {
+                            registry.addRecipes(scannerRecipes.stream()
+                                    .map(r -> new GTRecipeWrapper(recipeMap, r))
+                                    .collect(Collectors.toList()), entry.getKey().getUniqueID());
+                        }
                     }
 
                     registry.addRecipes(recipeStream.map(r -> new GTRecipeWrapper(recipeMap, r))

@@ -1,6 +1,5 @@
 package gregtech.api;
 
-import gregtech.GregTechVersion;
 import gregtech.api.util.XSTR;
 import gregtech.common.ConfigHolder;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -17,16 +16,6 @@ import static net.minecraft.util.text.TextFormatting.*;
  * Made for static imports, this Class is just a Helper.
  */
 public class GTValues {
-
-    /**
-     * Version String for use in addon mods' @Mod(dependencies = "...") block.
-     *
-     * @deprecated use {@link gregtech.GTInternalTags#VERSION}
-     *
-     * </p> This field was deprecated in 2.6 and will be removed in 2.8
-     */
-    @Deprecated
-    public static final String MOD_VERSION_DEP = "required-after:gregtech@[" + GregTechVersion.DEP_VERSION + ",);";
 
     /**
      * <p/>
@@ -146,7 +135,18 @@ public class GTValues {
             MODID_XAERO_MINIMAP = "xaerominimap",
             MODID_HWYLA = "hwyla",
             MODID_BAUBLES = "baubles",
-            MODID_TOP_ADDONS = "topaddons";
+            MODID_TOP_ADDONS = "topaddons",
+            MODID_IC2 = "ic2",
+            MODID_GTFO = "gregtechfoodoption",
+            MODID_BINNIE = "binniecore",
+            MODID_XU2 = "extrautils2",
+            MODID_TR = "techreborn",
+            MODID_MB = "magicbees",
+            MODID_EB = "extrabees",
+            MODID_ET = "extratrees",
+            MODID_GENETICS = "genetics",
+            MODID_BOP = "biomesoplenty",
+            MODID_TCON = "tconstruct";
 
     private static Boolean isClient;
 

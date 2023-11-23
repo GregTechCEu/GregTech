@@ -139,8 +139,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
 
                 FluidStack drainedWater = getBoilerFluidFromContainer(getInputTank(), (int) amount);
                 if (amount != 0 && (drainedWater == null || drainedWater.amount < amount)) {
-                    //noinspection IntegerDivisionInFloatingPointContext
-                    getMetaTileEntity().explodeMultiblock((currentHeat / getMaximumHeat()) * 8);
+                    getMetaTileEntity().explodeMultiblock((1.0f * currentHeat / getMaximumHeat()) * 8.0f);
                 } else {
                     setLastTickSteam(generatedSteam);
                     getOutputTank().fill(Materials.Steam.getFluid(generatedSteam), true);
@@ -257,15 +256,15 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public void writeInitialData(@Nonnull PacketBuffer buf) {
-        super.writeInitialData(buf);
+    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
         buf.writeVarInt(currentHeat);
         buf.writeVarInt(lastTickSteamOutput);
     }
 
     @Override
-    public void receiveInitialData(@Nonnull PacketBuffer buf) {
-        super.receiveInitialData(buf);
+    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
         this.currentHeat = buf.readVarInt();
         this.lastTickSteamOutput = buf.readVarInt();
     }

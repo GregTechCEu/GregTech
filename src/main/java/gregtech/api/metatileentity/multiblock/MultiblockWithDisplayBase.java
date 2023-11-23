@@ -8,7 +8,11 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.IndicatorImageWidget;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
@@ -22,11 +26,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.HoverEvent;
-import net.minecraft.util.text.event.HoverEvent.Action;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -106,7 +105,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      */
     @Override
     public byte getMaintenanceProblems() {
-        return ConfigHolder.machines.enableMaintenance ? maintenance_problems : 0b111111;
+        return ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics() ? maintenance_problems : 0b111111;
     }
 
     /**
@@ -114,7 +113,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      */
     @Override
     public int getNumMaintenanceProblems() {
-        return ConfigHolder.machines.enableMaintenance ? 6 - Integer.bitCount(maintenance_problems) : 0;
+        return ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics() ? 6 - Integer.bitCount(maintenance_problems) : 0;
     }
 
     /**
@@ -122,7 +121,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      */
     @Override
     public boolean hasMaintenanceProblems() {
-        return ConfigHolder.machines.enableMaintenance && this.maintenance_problems < 63;
+        return ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics() && this.maintenance_problems < 63;
     }
 
     /**
@@ -328,13 +327,20 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     public TraceabilityPredicate autoAbilities(boolean checkMaintenance, boolean checkMuffler) {
         TraceabilityPredicate predicate = new TraceabilityPredicate();
         if (checkMaintenance && hasMaintenanceMechanics()) {
-            predicate = predicate.or(abilities(MultiblockAbility.MAINTENANCE_HATCH)
-                    .setMinGlobalLimited(ConfigHolder.machines.enableMaintenance ? 1 : 0).setMaxGlobalLimited(1));
+            predicate = predicate.or(maintenancePredicate());
         }
         if (checkMuffler && hasMufflerMechanics()) {
             predicate = predicate.or(abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1));
         }
         return predicate;
+    }
+
+    protected TraceabilityPredicate maintenancePredicate() {
+        if (hasMaintenanceMechanics()) {
+            return abilities(MultiblockAbility.MAINTENANCE_HATCH)
+                    .setMinGlobalLimited(ConfigHolder.machines.enableMaintenance ? 1 : 0).setMaxGlobalLimited(1);
+        }
+        return new TraceabilityPredicate();
     }
 
     /**
@@ -343,39 +349,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * to use translation, use TextComponentTranslation
      */
     protected void addDisplayText(List<ITextComponent> textList) {
-        if (!isStructureFormed()) {
-            ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.invalid_structure.tooltip");
-            tooltip.setStyle(new Style().setColor(TextFormatting.GRAY));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure")
-                    .setStyle(new Style().setColor(TextFormatting.RED)
-                            .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, tooltip))));
-        }
-    }
-
-    protected void addMaintenanceText(List<ITextComponent> textList) {
-        if (hasMaintenanceProblems()) {
-            ITextComponent hoverEventTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems");
-
-            if (((this.maintenance_problems) & 1) == 0)
-                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.wrench", "\n"));
-
-            if (((this.maintenance_problems >> 1) & 1) == 0)
-                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.screwdriver", "\n"));
-
-            if (((this.maintenance_problems >> 2) & 1) == 0)
-                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.soft_mallet", "\n"));
-
-            if (((this.maintenance_problems >> 3) & 1) == 0)
-                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.hard_hammer", "\n"));
-
-            if (((this.maintenance_problems >> 4) & 1) == 0)
-                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.wire_cutter", "\n"));
-
-            if (((this.maintenance_problems >> 5) & 1) == 0)
-                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.crowbar", "\n"));
-
-            textList.add(hoverEventTranslation.setStyle(new Style().setColor(TextFormatting.RED)));
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed());
     }
 
     /**
@@ -390,7 +364,65 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 198, 208);
 
         // Display
-        builder.image(4, 4, 190, 117, GuiTextures.DISPLAY);
+        if (this instanceof IProgressBarMultiblock progressMulti && progressMulti.showProgressBar()) {
+            builder.image(4, 4, 190, 109, GuiTextures.DISPLAY);
+
+            if (progressMulti.getNumProgressBars() == 3) {
+                // triple bar
+                ProgressWidget progressBar = new ProgressWidget(
+                        () -> progressMulti.getFillPercentage(0),
+                        4, 115, 62, 7,
+                        progressMulti.getProgressBarTexture(0), ProgressWidget.MoveType.HORIZONTAL)
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
+                builder.widget(progressBar);
+
+                progressBar = new ProgressWidget(
+                        () -> progressMulti.getFillPercentage(1),
+                        68, 115, 62, 7,
+                        progressMulti.getProgressBarTexture(1), ProgressWidget.MoveType.HORIZONTAL)
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 1));
+                builder.widget(progressBar);
+
+                progressBar = new ProgressWidget(
+                        () -> progressMulti.getFillPercentage(2),
+                        132, 115, 62, 7,
+                        progressMulti.getProgressBarTexture(2), ProgressWidget.MoveType.HORIZONTAL)
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 2));
+                builder.widget(progressBar);
+            } else if (progressMulti.getNumProgressBars() == 2) {
+                // double bar
+                ProgressWidget progressBar = new ProgressWidget(
+                        () -> progressMulti.getFillPercentage(0),
+                        4, 115, 94, 7,
+                        progressMulti.getProgressBarTexture(0), ProgressWidget.MoveType.HORIZONTAL)
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
+                builder.widget(progressBar);
+
+                progressBar = new ProgressWidget(
+                        () -> progressMulti.getFillPercentage(1),
+                        100, 115, 94, 7,
+                        progressMulti.getProgressBarTexture(1), ProgressWidget.MoveType.HORIZONTAL)
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 1));
+                builder.widget(progressBar);
+            } else {
+                // single bar
+                ProgressWidget progressBar = new ProgressWidget(
+                        () -> progressMulti.getFillPercentage(0),
+                        4, 115, 190, 7,
+                        progressMulti.getProgressBarTexture(0), ProgressWidget.MoveType.HORIZONTAL)
+                        .setHoverTextConsumer(list -> progressMulti.addBarHoverText(list, 0));
+                builder.widget(progressBar);
+            }
+            builder.widget(new IndicatorImageWidget(174, 93, 17, 17, getLogo())
+                    .setWarningStatus(getWarningLogo(), this::addWarningText)
+                    .setErrorStatus(getErrorLogo(), this::addErrorText));
+        } else {
+            builder.image(4, 4, 190, 117, GuiTextures.DISPLAY);
+            builder.widget(new IndicatorImageWidget(174, 101, 17, 17, getLogo())
+                    .setWarningStatus(getWarningLogo(), this::addWarningText)
+                    .setErrorStatus(getErrorLogo(), this::addErrorText));
+        }
+
         builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
         builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(181)
@@ -425,12 +457,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
 
         // Flex Button
-        builder.widget(getFlexButton(173, 124, 18, 18));
-
-        // Logo / Indicator Widget
-        builder.widget(new IndicatorImageWidget(174, 101, 17, 17, getLogo())
-                .setWarningStatus(getWarningLogo(), this::addWarningText)
-                .setErrorStatus(getErrorLogo(), this::addErrorText));
+        builder.widget(getFlexButton(173, 125, 18, 18));
 
         builder.bindPlayerInventory(entityPlayer.inventory, 125);
         return builder;
@@ -466,11 +493,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Recommended to only display warnings if the structure is already formed.
      */
     protected void addWarningText(List<ITextComponent> textList) {
-        if (isStructureFormed()) {
-            if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
-                addMaintenanceText(textList);
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     /**
@@ -478,14 +502,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#addWarningText}.
      */
     protected void addErrorText(List<ITextComponent> textList) {
-        if (!isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure")
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
-        } else {
-            if (hasMufflerMechanics() && !isMufflerFaceFree()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed"));
-            }
-        }
+        MultiblockDisplayText.builder(textList, isStructureFormed())
+                .addMufflerObstructedLine(hasMufflerMechanics() && !isMufflerFaceFree());
     }
 
     protected boolean shouldShowVoidingModeButton() {

@@ -2,7 +2,7 @@ package gregtech.api.pipenet.tile;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.Cover;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
@@ -41,6 +41,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     private PipeType pipeType = getPipeTypeClass().getEnumConstants()[0];
     @Nullable
     private Material frameMaterial;
+    // set when this pipe is replaced with a ticking variant to redirect sync packets
+    private TileEntityPipeBase<PipeType, NodeDataType> tickingPipe;
 
     public TileEntityPipeBase() {
     }
@@ -58,10 +60,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.pipeType = tileEntity.getPipeType();
         this.paintingColor = tileEntity.getPaintingColor();
         this.connections = tileEntity.getConnections();
-        if (tileEntity instanceof TileEntityPipeBase pipeBase) {
-            this.updates.putAll(pipeBase.updates);
+        if (tileEntity instanceof SyncedTileEntityBase pipeBase) {
+            addPacketsFrom(pipeBase);
         }
-        tileEntity.getCoverableImplementation().transferDataTo(coverableImplementation);
+        coverableImplementation.transferDataTo(tileEntity.getCoverableImplementation());
         setFrameMaterial(tileEntity.getFrameMaterial());
     }
 
@@ -121,10 +123,17 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (supportsTicking()) {
             return this;
         }
+        if (this.tickingPipe != null) {
+            // pipe was already set to tick before
+            // reuse ticking pipe
+            return this.tickingPipe;
+        }
         //create new tickable tile entity, transfer data, and replace it
         TileEntityPipeBase<PipeType, NodeDataType> newTile = getPipeBlock().createNewTileEntity(true);
+        if (!newTile.supportsTicking()) throw new IllegalStateException("Expected pipe to be ticking, but isn't!");
         newTile.transferDataFrom(this);
         getWorld().setTileEntity(getPos(), newTile);
+        this.tickingPipe = newTile;
         return newTile;
     }
 
@@ -141,6 +150,17 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public int getConnections() {
         return connections;
+    }
+
+    @Override
+    public int getNumConnections() {
+        int count = 0;
+        int connections = getConnections();
+        while (connections > 0) {
+            count++;
+            connections = connections & (connections - 1);
+        }
+        return count;
     }
 
     @Override
@@ -175,6 +195,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public boolean isConnected(EnumFacing side) {
+        return isConnected(connections, side);
+    }
+
+    public static boolean isConnected(int connections, EnumFacing side) {
         return (connections & 1 << side.getIndex()) > 0;
     }
 
@@ -249,6 +273,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public boolean isFaceBlocked(EnumFacing side) {
+        return isFaceBlocked(blockedConnections, side);
+    }
+
+    public static boolean isFaceBlocked(int blockedConnections, EnumFacing side) {
         return (blockedConnections & (1 << side.getIndex())) > 0;
     }
 
@@ -293,8 +321,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == GregtechTileCapabilities.CAPABILITY_COVERABLE) {
-            return GregtechTileCapabilities.CAPABILITY_COVERABLE.cast(getCoverableImplementation());
+        if (capability == GregtechTileCapabilities.CAPABILITY_COVER_HOLDER) {
+            return GregtechTileCapabilities.CAPABILITY_COVER_HOLDER.cast(getCoverableImplementation());
         }
         return super.getCapability(capability, facing);
     }
@@ -302,8 +330,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Nullable
     @Override
     public final <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        boolean isCoverable = capability == GregtechTileCapabilities.CAPABILITY_COVERABLE;
-        CoverBehavior coverBehavior = facing == null ? null : coverableImplementation.getCoverAtSide(facing);
+        boolean isCoverable = capability == GregtechTileCapabilities.CAPABILITY_COVER_HOLDER;
+        Cover cover = facing == null ? null : coverableImplementation.getCoverAtSide(facing);
         T defaultValue;
         if (getPipeBlock() == null)
             defaultValue = null;
@@ -313,11 +341,11 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (isCoverable) {
             return defaultValue;
         }
-        if (coverBehavior == null && facing != null) {
+        if (cover == null && facing != null) {
             return isConnected(facing) ? defaultValue : null;
         }
-        if (coverBehavior != null) {
-            return coverBehavior.getCapability(capability, defaultValue);
+        if (cover != null) {
+            return cover.getCapability(capability, defaultValue);
         }
         return defaultValue;
     }
@@ -349,6 +377,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public void readFromNBT(@Nonnull NBTTagCompound compound) {
+        if (this.tickingPipe != null) {
+            this.tickingPipe.readFromNBT(compound);
+            return;
+        }
         super.readFromNBT(compound);
         if (compound.hasKey("PipeBlock", NBT.TAG_STRING)) {
             Block block = Block.REGISTRY.getObject(new ResourceLocation(compound.getString("PipeBlock")));
@@ -378,6 +410,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         }
 
         this.coverableImplementation.readFromNBT(compound);
+        if (this.tickingPipe != null && this.coverableImplementation.hasAnyCover()) {
+            // one of the covers set the pipe to ticking, and we need to send over the rest of the covers
+            this.coverableImplementation.transferDataTo(this.tickingPipe.coverableImplementation);
+        }
     }
 
     @Override
@@ -407,6 +443,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
+        if (this.tickingPipe != null) {
+            this.tickingPipe.receiveInitialSyncData(buf);
+            return;
+        }
         readPipeProperties(buf);
         this.connections = buf.readVarInt();
         this.blockedConnections = buf.readVarInt();
@@ -419,10 +459,18 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             this.frameMaterial = null;
         }
         this.coverableImplementation.readInitialSyncData(buf);
+        if (this.tickingPipe != null && this.coverableImplementation.hasAnyCover()) {
+            // one of the covers set the pipe to ticking, and we need to send over the rest of the covers
+            this.coverableImplementation.transferDataTo(this.tickingPipe.coverableImplementation);
+        }
     }
 
     @Override
     public void receiveCustomData(int discriminator, PacketBuffer buf) {
+        if (this.tickingPipe != null) {
+            this.tickingPipe.receiveCustomData(discriminator, buf);
+            return;
+        }
         if (discriminator == UPDATE_INSULATION_COLOR) {
             this.paintingColor = buf.readInt();
             scheduleChunkForRenderUpdate();

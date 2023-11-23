@@ -20,6 +20,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.recipeproperties.ResearchProperty;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.RelativeDirection;
 import gregtech.client.particle.GTLaserBeamParticle;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.ICubeRenderer;
@@ -133,40 +134,34 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     @Override
     protected Function<BlockPos, Integer> multiblockPartSorter() {
-        // ensure the inputs are always in order
-        return switch (getFrontFacing()) {
-            case NORTH -> pos -> -pos.getX();
-            case SOUTH -> BlockPos::getX;
-            case EAST -> pos -> -pos.getZ();
-            case WEST -> BlockPos::getZ;
-            default -> BlockPos::hashCode;
-        };
+        // player's right when looking at the controller, but the controller's left
+        return RelativeDirection.LEFT.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
     }
-
 
     @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        return Textures.SOLID_STEEL_CASING;
+        if (sourcePart != null) {
+            // part rendering
+            if (sourcePart instanceof IDataAccessHatch) {
+                return Textures.GRATE_CASING_STEEL_FRONT;
+            } else {
+                return Textures.SOLID_STEEL_CASING;
+            }
+        } else {
+            // controller rendering
+            if (isStructureFormed()) {
+                return Textures.GRATE_CASING_STEEL_FRONT;
+            } else {
+                return Textures.SOLID_STEEL_CASING;
+            }
+        }
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if (this.isStructureFormed()) {
-            // render the grate on the top, bottom, and left side of the controller
-            Textures.GRATE_CASING.renderSided(EnumFacing.UP, renderState, translation, pipeline);
-            Textures.GRATE_CASING.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
-            Textures.GRATE_CASING.renderSided(getFrontFacing().rotateY(), renderState, translation, pipeline);
-
-            // render the base texture on all other sides
-            ICubeRenderer baseTexture = getBaseTexture(null);
-            baseTexture.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            baseTexture.renderSided(getFrontFacing().rotateYCCW(), renderState, translation, pipeline);
-            baseTexture.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
-            this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
-        } else {
-            super.renderMetaTileEntity(renderState, translation, pipeline);
-        }
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
     }
 
     @Override
@@ -244,22 +239,44 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             beamParticles = new GTLaserBeamParticle[17][2];
         }
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getPos());
+
+        EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
+        EnumFacing relativeLeft = RelativeDirection.LEFT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
+        boolean negativeUp = relativeUp.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE;
+
         for (int i = 0; i < beamParticles.length; i++) {
             GTLaserBeamParticle particle = beamParticles[i][0];
             if (i < beamCount && particle == null) {
                 pos.setPos(getPos());
-                Vector3 startPos = new Vector3().add(
-                                pos.move(getFrontFacing().rotateY().getOpposite(), i))
-                        .add(0.5, 0, 0.5);
-                Vector3 endPos = startPos.copy().subtract(0, 1, 0);
+                if (negativeUp) {
+                    // correct for the position of the block corresponding to its negative side
+                    pos.move(relativeUp.getOpposite());
+                }
+                Vector3 startPos = new Vector3()
+                        .add(pos.move(relativeLeft, i))
+                        .add( // offset by 0.5 in both non-"upwards" directions
+                                relativeUp.getAxis() == EnumFacing.Axis.X ? 0 : 0.5,
+                                relativeUp.getAxis() == EnumFacing.Axis.Y ? 0 : 0.5,
+                                relativeUp.getAxis() == EnumFacing.Axis.Z ? 0 : 0.5);
+                Vector3 endPos = startPos.copy()
+                        .subtract(relativeUp.getXOffset(), relativeUp.getYOffset(), relativeUp.getZOffset());
 
                 beamParticles[i][0] = createALParticles(startPos, endPos);
 
                 pos.setPos(getPos());
-                startPos = new Vector3().add(
-                                pos.move(getFrontFacing().rotateY().getOpposite(), i).move(getFrontFacing().getOpposite(), 2))
-                        .add(0.5, 0, 0.5);
-                endPos = startPos.copy().subtract(0, 1, 0);
+                if (negativeUp) {
+                    pos.move(relativeUp.getOpposite());
+                }
+                startPos = new Vector3()
+                        .add(pos.move(relativeLeft, i)
+                                .move(getFrontFacing().getOpposite(), 2))
+                        .add( // offset by 0.5 in both non-"upwards" directions
+                                relativeUp.getAxis() == EnumFacing.Axis.X ? 0 : 0.5,
+                                relativeUp.getAxis() == EnumFacing.Axis.Y ? 0 : 0.5,
+                                relativeUp.getAxis() == EnumFacing.Axis.Z ? 0 : 0.5);
+                endPos = startPos.copy()
+                        .subtract(relativeUp.getXOffset(), relativeUp.getYOffset(), relativeUp.getZOffset());
+
                 beamParticles[i][1] = createALParticles(startPos, endPos);
 
                 // Don't forget to add particles

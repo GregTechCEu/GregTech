@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.handlers;
 
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
@@ -65,7 +66,6 @@ public class MaterialRecipeHandler {
         OreProperty oreProperty = mat.hasProperty(PropertyKey.ORE) ? mat.getProperty(PropertyKey.ORE) : null;
         if (mat.hasProperty(PropertyKey.GEM)) {
             ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, mat);
-            ItemStack smallDarkAshStack = OreDictUnifier.get(OrePrefix.dustSmall, Materials.DarkAsh);
 
             if (mat.hasFlag(CRYSTALLIZABLE)) {
                 RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
@@ -86,13 +86,15 @@ public class MaterialRecipeHandler {
             if (!mat.hasFlag(EXPLOSIVE) && !mat.hasFlag(FLAMMABLE)) {
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
                         .inputs(GTUtility.copy(4, dustStack))
-                        .outputs(GTUtility.copy(3, gemStack), smallDarkAshStack)
+                        .outputs(GTUtility.copy(3, gemStack))
+                        .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
                         .explosivesAmount(2)
                         .buildAndRegister();
 
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
                         .inputs(GTUtility.copy(4, dustStack))
-                        .outputs(GTUtility.copy(3, gemStack), smallDarkAshStack)
+                        .outputs(GTUtility.copy(3, gemStack))
+                        .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
                         .explosivesType(MetaItems.DYNAMITE.getStackForm())
                         .buildAndRegister();
             }
@@ -203,7 +205,7 @@ public class MaterialRecipeHandler {
             } else {
                 RecipeMaps.VACUUM_RECIPES.recipeBuilder()
                         .input(ingotHot, material)
-                        .fluidInputs(Materials.LiquidHelium.getFluid(500))
+                        .fluidInputs(Materials.Helium.getFluid(FluidStorageKeys.LIQUID, 500))
                         .output(ingot, material)
                         .fluidOutputs(Materials.Helium.getFluid(250))
                         .duration((int) material.getMass() * 3)

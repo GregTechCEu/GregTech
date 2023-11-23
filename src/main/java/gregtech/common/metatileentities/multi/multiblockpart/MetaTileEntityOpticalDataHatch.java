@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
@@ -15,16 +14,13 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityAssemblyLine;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
-import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -56,15 +52,7 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if (getController() instanceof MetaTileEntityAssemblyLine && getController().isStructureFormed()) {
-            IVertexOperation colourMultiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                // render grate texture on all sides if formed
-                Textures.GRATE_CASING.renderSided(facing, renderState, translation, ArrayUtils.add(pipeline, colourMultiplier));
-            }
-        } else {
-            super.renderMetaTileEntity(renderState, translation, pipeline);
-        }
+        super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
             if (isTransmitter()) {
                 Textures.OPTICAL_DATA_ACCESS_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);

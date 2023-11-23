@@ -36,24 +36,28 @@ public class CapesRegistry {
     private static final Map<UUID, List<ResourceLocation>> UNLOCKED_CAPES = new HashMap<>();
     private static final Map<UUID, ResourceLocation> WORN_CAPES = new HashMap<>();
     private static final Map<Advancement, ResourceLocation> CAPE_ADVANCEMENTS = new HashMap<>();
+    private static final Set<ResourceLocation> FREE_CAPES = new HashSet<>();
 
     public static void registerDevCapes() {
-        unlockCape(UUID.fromString("2fa297a6-7803-4629-8360-7059155cf43e"), Textures.GREGTECH_CAPE_TEXTURE); // KilaBash
-        unlockCape(UUID.fromString("a82fb558-64f9-4dd6-a87d-84040e84bb43"), Textures.GREGTECH_CAPE_TEXTURE); // serenibyss
-        unlockCape(UUID.fromString("5c2933b3-5340-4356-81e7-783c53bd7845"), Textures.GREGTECH_CAPE_TEXTURE); // Tech22
-        unlockCape(UUID.fromString("56bd41d0-06ef-4ed7-ab48-926ce45651f9"), Textures.GREGTECH_CAPE_TEXTURE); // Zalgo239
-        unlockCape(UUID.fromString("aaf70ec1-ac70-494f-9966-ea5933712750"), Textures.GREGTECH_CAPE_TEXTURE); // Bruberu
         unlockCape(UUID.fromString("a24a9108-23d2-43fc-8db7-43f809d017db"), Textures.GREGTECH_CAPE_TEXTURE); // ALongStringOfNumbers
         unlockCape(UUID.fromString("77e2129d-8f68-4025-9394-df946f1f3aee"), Textures.GREGTECH_CAPE_TEXTURE); // Brachy84
-        unlockCape(UUID.fromString("5d7073e3-882f-4c4a-94b3-0e5ba1c11e02"), Textures.GREGTECH_CAPE_TEXTURE); // htmlcsjs
-        unlockCape(UUID.fromString("4a57640e-c1b1-4413-a6ab-e9a8b60ec167"), Textures.GREGTECH_CAPE_TEXTURE); // PrototypeTrouser
         unlockCape(UUID.fromString("c1377a67-4585-46b6-b70e-dfaa419f1e71"), Textures.GREGTECH_CAPE_TEXTURE); // BraggestSage833
+        unlockCape(UUID.fromString("aaf70ec1-ac70-494f-9966-ea5933712750"), Textures.GREGTECH_CAPE_TEXTURE); // Bruberu
         unlockCape(UUID.fromString("77c0be85-2619-4ab7-96e8-627b45682e04"), Textures.GREGTECH_CAPE_TEXTURE); // Exaxxion4096
-        unlockCape(UUID.fromString("12892f29-9eef-47ed-b8fb-df3e0e90db0c"), Textures.GREGTECH_CAPE_TEXTURE); // Quarri6343
-        unlockCape(UUID.fromString("44f38ff8-aad7-49c3-acb3-d92317af9078"), Textures.GREGTECH_CAPE_TEXTURE); // LAGIdiot
-        unlockCape(UUID.fromString("e6e784af-bd04-46ad-8141-47b8b9102cb9"), Textures.GREGTECH_CAPE_TEXTURE); // Tictim
-        unlockCape(UUID.fromString("1184eb79-5831-4f7d-b8f4-3a46fccf7a1d"), Textures.GREGTECH_CAPE_TEXTURE); // screret
         unlockCape(UUID.fromString("88374b6a-4710-46cd-bb04-a1580905a918"), Textures.GREGTECH_CAPE_TEXTURE); // Ghzdude
+        unlockCape(UUID.fromString("5d7073e3-882f-4c4a-94b3-0e5ba1c11e02"), Textures.GREGTECH_CAPE_TEXTURE); // htmlcsjs
+        unlockCape(UUID.fromString("30628e4c-f7ac-427f-8ca7-aab2c0572be8"), Textures.GREGTECH_CAPE_TEXTURE); // TheLastKumquat
+        unlockCape(UUID.fromString("44f38ff8-aad7-49c3-acb3-d92317af9078"), Textures.GREGTECH_CAPE_TEXTURE); // LAGIdiot
+        // todo Mikerooni (when he gets a new account)
+        unlockCape(UUID.fromString("4a57640e-c1b1-4413-a6ab-e9a8b60ec167"), Textures.GREGTECH_CAPE_TEXTURE); // PrototypeTrousers
+        unlockCape(UUID.fromString("12892f29-9eef-47ed-b8fb-df3e0e90db0c"), Textures.GREGTECH_CAPE_TEXTURE); // Quarri6343
+        unlockCape(UUID.fromString("1184eb79-5831-4f7d-b8f4-3a46fccf7a1d"), Textures.GREGTECH_CAPE_TEXTURE); // screret
+        unlockCape(UUID.fromString("a82fb558-64f9-4dd6-a87d-84040e84bb43"), Textures.GREGTECH_CAPE_TEXTURE); // serenibyss
+        unlockCape(UUID.fromString("fbd96f69-60f9-481c-b71e-4b190cd5fc72"), Textures.GREGTECH_CAPE_TEXTURE); // Anne-Marie
+        unlockCape(UUID.fromString("5c2933b3-5340-4356-81e7-783c53bd7845"), Textures.GREGTECH_CAPE_TEXTURE); // Tech22
+        unlockCape(UUID.fromString("e6e784af-bd04-46ad-8141-47b8b9102cb9"), Textures.GREGTECH_CAPE_TEXTURE); // Tictim
+        unlockCape(UUID.fromString("2fa297a6-7803-4629-8360-7059155cf43e"), Textures.GREGTECH_CAPE_TEXTURE); // KilaBash
+        unlockCape(UUID.fromString("56bd41d0-06ef-4ed7-ab48-926ce45651f9"), Textures.GREGTECH_CAPE_TEXTURE); // Zalgo239
         save();
     }
 
@@ -148,6 +152,19 @@ public class CapesRegistry {
         for (Tuple<ResourceLocation, ResourceLocation> tuple : ctRegisterCapes) {
             registerCape(tuple.getFirst(), tuple.getSecond(), world);
         }
+        FREE_CAPES.addAll(ctFreeCapes);
+        FREE_CAPES.add(Textures.ACE_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.AGENDER_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.AROMANTIC_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.BI_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.GENDERFLUID_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.GENDERQUEER_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.INTERSEX_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.LESBIAN_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.NONBINARY_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.PAN_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.RAINBOW_CAPE_TEXTURE);
+        FREE_CAPES.add(Textures.TRANS_CAPE_TEXTURE);
     }
 
     /**
@@ -177,12 +194,27 @@ public class CapesRegistry {
         }
     }
 
-    private static List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<>();
+    /**
+     * Adds a cape that will always be unlocked for all players.
+     * @param cape A ResourceLocation pointing to the cape texture.
+     */
+    public static void addFreeCape(ResourceLocation cape) {
+        FREE_CAPES.add(cape);
+    }
+
+    private static final List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<>();
+    private static final List<ResourceLocation> ctFreeCapes = new ArrayList<>();
 
     @Optional.Method(modid = GTValues.MODID_CT)
     @ZenMethod
     public static void registerCape(String advancement, String cape) {
         ctRegisterCapes.add(new Tuple<>(new ResourceLocation(advancement), new ResourceLocation(cape)));
+    }
+
+    @Optional.Method(modid = GTValues.MODID_CT)
+    @ZenMethod
+    public static void registerFreeCape(String cape) {
+        ctFreeCapes.add(new ResourceLocation(cape));
     }
 
     /**
@@ -245,6 +277,12 @@ public class CapesRegistry {
                         ((EntityPlayerMP) player).getAdvancements().getProgress(capeEntry.getKey()).isDone()) {
                     unlockCapeOnAdvancement(player, capeEntry.getKey());
                 }
+            }
+            if (UNLOCKED_CAPES.get(player.getPersistentID()) == null || !new HashSet<>(UNLOCKED_CAPES.get(player.getPersistentID())).containsAll(FREE_CAPES)) {
+                for (ResourceLocation cape : FREE_CAPES) {
+                    unlockCape(player.getPersistentID(), cape);
+                }
+                save();
             }
         }
     }

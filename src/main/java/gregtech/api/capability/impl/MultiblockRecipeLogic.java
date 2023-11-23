@@ -1,7 +1,10 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.*;
+import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMultiblockController;
+import gregtech.api.capability.IMultipleRecipeMaps;
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -255,7 +258,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
 
         recipe = findParallelRecipe(
-                this,
                 recipe,
                 currentDistinctInputBus,
                 getInputTank(),

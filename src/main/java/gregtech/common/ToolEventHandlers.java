@@ -1,23 +1,23 @@
 package gregtech.common;
 
-import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.*;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.cover.CoverDefinition;
-import gregtech.api.cover.ICoverable;
+import gregtech.api.cover.CoverHolder;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
 import net.minecraft.block.Block;
@@ -37,7 +37,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -46,7 +45,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -289,33 +287,49 @@ public class ToolEventHandlers {
 
     @SideOnly(Side.CLIENT)
     private static boolean shouldRenderGridOverlays(@Nonnull IBlockState state, TileEntity tile, ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
-        if (state.getBlock() instanceof BlockPipe) {
-            BlockPipe<?, ?, ?> pipe = (BlockPipe<?, ?, ?>) state.getBlock();
-            if (isSneaking && mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass()) {
+        if (state.getBlock() instanceof BlockPipe<?, ?, ?> pipe) {
+            if (isSneaking && (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass())) {
                 return true;
             } else {
                 Set<String> mainToolClasses = mainHand.getItem().getToolClasses(mainHand);
                 Set<String> offToolClasses = offHand.getItem().getToolClasses(offHand);
-                if (mainToolClasses.contains(ToolClasses.SCREWDRIVER) || offToolClasses.contains(ToolClasses.SCREWDRIVER)) return true;
                 if (mainToolClasses.stream().anyMatch(s -> pipe.isToolEffective(s, state)) ||
                         offToolClasses.stream().anyMatch(s -> pipe.isToolEffective(s, state))) return true;
 
-                BooleanSupplier hasCover = () -> tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getCoverableImplementation().hasAnyCover();
-                Predicate<CoverDefinition> canCover = coverDef -> tile instanceof IPipeTile && ICoverable.canPlaceCover(coverDef, ((IPipeTile<?, ?>) tile).getCoverableImplementation());
-                if (GTUtility.isCoverBehaviorItem(mainHand, hasCover, canCover) || GTUtility.isCoverBehaviorItem(offHand, hasCover, canCover)) {
-                    return true;
+                BooleanSupplier hasCover;
+                Predicate<CoverDefinition> canCover;
+                if (tile instanceof IPipeTile<?, ?> pipeTile) {
+                    final boolean hasAnyCover = pipeTile.getCoverableImplementation().hasAnyCover();
+                    if (hasAnyCover) {
+                        if (mainToolClasses.contains(ToolClasses.SCREWDRIVER)) return true;
+                        if (offToolClasses.contains(ToolClasses.SCREWDRIVER)) return true;
+                    }
+                    hasCover = () -> hasAnyCover;
+
+                    final boolean acceptsCovers = pipeTile.getCoverableImplementation().acceptsCovers();
+                    canCover = coverDefinition -> acceptsCovers;
+
+                    if (GTUtility.isCoverBehaviorItem(mainHand, hasCover, canCover) ||
+                            GTUtility.isCoverBehaviorItem(offHand, hasCover, canCover)) {
+                        return true;
+                    }
                 }
             }
         }
 
-        if (tile instanceof IGregTechTileEntity) {
-            MetaTileEntity mte = ((IGregTechTileEntity) tile).getMetaTileEntity();
-            if (mte != null && mte.canRenderMachineGrid(mainHand, offHand)) {
+        if (tile instanceof IGregTechTileEntity gtte) {
+            MetaTileEntity mte = gtte.getMetaTileEntity();
+            if (mte != null && (mainHand.isEmpty() || mte.canRenderMachineGrid(mainHand, offHand))) {
                 return true;
             }
         }
-        ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
-        return coverable != null && GTUtility.isCoverBehaviorItem(mainHand, coverable::hasAnyCover, coverDef -> ICoverable.canPlaceCover(coverDef, coverable));
+        CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, null);
+        if (coverHolder == null) return false;
+
+        final boolean hasAnyCover = coverHolder.hasAnyCover();
+        final boolean acceptsCovers = coverHolder.acceptsCovers();
+
+        return GTUtility.isCoverBehaviorItem(mainHand, () -> hasAnyCover, coverDefinition -> acceptsCovers);
     }
 
     private static float rColour;
@@ -344,6 +358,29 @@ public class ToolEventHandlers {
             } else if (tile instanceof MetaTileEntityHolder) {
                 MetaTileEntity mte = ((MetaTileEntityHolder) tile).getMetaTileEntity();
                 drawGridOverlays(facing, box, mte::isSideUsed);
+                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing()) {
+                    // set up some render state first
+                    GL11.glPushMatrix();
+                    GL11.glTranslated(pos.getX() - (int) d3, pos.getY() - (int) d4, pos.getZ() - (int) d5);
+                    GL11.glTranslated(0.5D - (d3 - (int) d3), 0.5D - (d4 - (int) d4), 0.5D - (d5 - (int) d5));
+                    Rotation.sideRotations[facing.getIndex()].glApply();
+                    GL11.glTranslated(0, -0.502, 0);
+                    GL11.glLineWidth(2.5F);
+                    if (multi.getFrontFacing() == facing) {
+                        // render in the center of the grid
+                        drawRotationMarker(ROTATION_MARKER_TRANSFORM_CENTER, player.isSneaking());
+                    } else if (multi.getFrontFacing() == facing.getOpposite()) {
+                        // render in the corners of the grid
+                        for (Transformation t : ROTATION_MARKER_TRANSFORMS_CORNER) {
+                            drawRotationMarker(t, player.isSneaking());
+                        }
+                    } else {
+                        // render on the side of the grid
+                        drawRotationMarker(ROTATION_MARKER_TRANSFORMS_SIDES_TRANSFORMS[
+                                ROTATION_MARKER_TRANSFORMS_SIDES[facing.getIndex() * 6 + multi.getFrontFacing().getIndex()]], player.isSneaking());
+                    }
+                    GL11.glPopMatrix();
+                }
             } else {
                 drawGridOverlays(box);
             }
@@ -587,5 +624,58 @@ public class ToolEventHandlers {
     @SideOnly(Side.CLIENT)
     private static void endLine(BufferBuilder buffer, Vector3 vec) {
         buffer.pos(vec.x, vec.y, vec.z).color(rColour, gColour, bColour, 1F).endVertex();
+    }
+
+    // Rotation Marker
+    // do not question these
+    private static final Transformation ROTATION_MARKER_TRANSFORM_CENTER = new Scale(0.5);
+    private static final Transformation[] ROTATION_MARKER_TRANSFORMS_SIDES_TRANSFORMS = {
+            new Scale(0.25).with(new Translation(0, 0, 0.375)).compile(),
+            new Scale(0.25).with(new Translation(0.375, 0, 0)).compile(),
+            new Scale(0.25).with(new Translation(0, 0, -0.375)).compile(),
+            new Scale(0.25).with(new Translation(-0.375, 0, 0)).compile()};
+    private static final int[] ROTATION_MARKER_TRANSFORMS_SIDES = { -1, -1, 2, 0, 3, 1, -1, -1, 0, 2, 3, 1, 0, 2, -1,
+            -1, 3, 1, 2, 0, -1, -1, 3, 1, 1, 3, 2, 0, -1, -1, 3, 1, 2, 0, -1, -1 };
+    private static final Transformation[] ROTATION_MARKER_TRANSFORMS_CORNER = {
+            new Scale(0.25).with(new Translation(0.375, 0, 0.375)).compile(),
+            new Scale(0.25).with(new Translation(-0.375, 0, 0.375)).compile(),
+            new Scale(0.25).with(new Translation(0.375, 0, -0.375)).compile(),
+            new Scale(0.25).with(new Translation(-0.375, 0, -0.375)).compile()};
+    private static int rotationMarkerDisplayList;
+    private static boolean rotationMarkerDisplayListCompiled = false;
+
+    @SideOnly(Side.CLIENT)
+    private static void drawRotationMarker(Transformation transform, boolean flip) {
+        if (!rotationMarkerDisplayListCompiled) {
+            rotationMarkerDisplayList = GLAllocation.generateDisplayLists(1);
+
+            GL11.glNewList(rotationMarkerDisplayList, GL11.GL_COMPILE);
+            GL11.glBegin(GL11.GL_LINE_LOOP);
+            for (int i = 0; i <= 120; i++) {
+                GL11.glVertex3d(
+                        Math.cos(i * Math.PI * 1.75 / 120) * 0.4,
+                        0,
+                        Math.sin(i * Math.PI * 1.75 / 120) * 0.4);
+            }
+            for (int i = 120; i >= 0; i--) {
+                GL11.glVertex3d(
+                        Math.cos(i * Math.PI * 1.75 / 120) * 0.24,
+                        0,
+                        Math.sin(i * Math.PI * 1.75 / 120) * 0.24);
+            }
+            GL11.glVertex3d(0.141114561800, 0, 0);
+            GL11.glVertex3d(0.32, 0, -0.178885438199);
+            GL11.glVertex3d(0.498885438199, 0, 0);
+            GL11.glEnd();
+            GL11.glEndList();
+
+            rotationMarkerDisplayListCompiled = true;
+        }
+        GL11.glPushMatrix();
+        GL11.glColor4f(rColour, gColour, bColour, 1.0f);
+        transform.glApply();
+        if (flip) GL11.glScaled(-1.0, 1.0, 1.0);
+        GL11.glCallList(rotationMarkerDisplayList);
+        GL11.glPopMatrix();
     }
 }

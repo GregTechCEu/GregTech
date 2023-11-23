@@ -8,6 +8,7 @@ import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -30,7 +31,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -38,14 +38,14 @@ import java.util.List;
 public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMufflerHatch>, ITieredMetaTileEntity, IMufflerHatch {
 
     private final int recoveryChance;
-    private final ItemStackHandler inventory;
+    private final GTItemStackHandler inventory;
 
     private boolean frontFaceFree;
 
     public MetaTileEntityMufflerHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
         this.recoveryChance = Math.max(1, tier * 10);
-        this.inventory = new ItemStackHandler((int) Math.pow(tier + 1, 2));
+        this.inventory = new GTItemStackHandler(this, (int) Math.pow(tier + 1, 2));
         this.frontFaceFree = false;
     }
 
@@ -76,7 +76,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     public void recoverItemsTable(List<ItemStack> recoveryItems) {
         for (ItemStack recoveryItem : recoveryItems) {
             if (calculateChance()) {
-                GTTransferUtils.insertItem(inventory, recoveryItem, false);
+                GTTransferUtils.insertItem(inventory, recoveryItem.copy(), false);
             }
         }
     }
@@ -100,12 +100,12 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
 
         // break a snow layer if it exists, and if this machine is running
         if (controller != null && controller.isActive()) {
-            if (GTUtility.tryBreakSnowLayer(getWorld(), frontPos, blockState, true)) {
+            if (GTUtility.tryBreakSnow(getWorld(), frontPos, blockState, true)) {
                 return true;
             }
             return blockState.getBlock().isAir(blockState, getWorld(), frontPos);
         }
-        return blockState.getBlock().isAir(blockState, getWorld(), frontPos) || GTUtility.isBlockSnowLayer(blockState);
+        return blockState.getBlock().isAir(blockState, getWorld(), frontPos) || GTUtility.isBlockSnow(blockState);
     }
 
     @SideOnly(Side.CLIENT)

@@ -1,5 +1,7 @@
 package gregtech.api.capability;
 
+import gregtech.api.gui.resources.TextureArea;
+
 public interface IHPCAComponentHatch {
 
     /**
@@ -41,4 +43,9 @@ public interface IHPCAComponentHatch {
      * If this component allows for bridging HPCAs to Network Switches.
      */
     boolean isBridge();
+
+    /**
+     * The icon for this component in the HPCA's UI. Should be a 13x13 px sprite.
+     */
+    TextureArea getComponentIcon();
 }
