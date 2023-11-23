@@ -30,7 +30,7 @@ public class CoverDetectorEnergy extends CoverDetectorBase implements ITickable 
     }
 
     public long getCoverHolderCapacity() {
-        if (coverHolder instanceof MetaTileEntityPowerSubstation pss) {
+        if (getCoverableView() instanceof MetaTileEntityPowerSubstation pss) {
             return pss.getCapacityLong();
         } else {
             IEnergyContainer energyContainer = getCoverableView().getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
@@ -40,13 +40,14 @@ public class CoverDetectorEnergy extends CoverDetectorBase implements ITickable 
     }
 
     public long getCoverHolderStored() {
-        if (coverHolder instanceof MetaTileEntityPowerSubstation pss) {
+        if (getCoverableView() instanceof MetaTileEntityPowerSubstation pss) {
             return pss.getStoredLong();
         } else {
             IEnergyContainer energyContainer = getCoverableView().getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
             if (energyContainer != null) return energyContainer.getEnergyStored();
         }
         return 0;
+    }
 
     @Override
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {

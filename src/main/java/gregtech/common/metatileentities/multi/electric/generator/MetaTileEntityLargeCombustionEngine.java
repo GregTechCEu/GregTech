@@ -15,7 +15,6 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -236,8 +235,10 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             int[] oxygenAmount = new int[2];
             if (getInputFluidInventory() != null) {
                 if (isBoostAllowed()) {
-                    Material material = isExtreme ? Materials.LiquidOxygen : Materials.Oxygen;
-                    oxygenAmount = getTotalFluidAmount(material.getFluid(Integer.MAX_VALUE), getInputFluidInventory());
+                    FluidStack oxygenStack = isExtreme
+                            ? Materials.Oxygen.getFluid(FluidStorageKeys.LIQUID, Integer.MAX_VALUE)
+                            : Materials.Oxygen.getFluid(Integer.MAX_VALUE);
+                    oxygenAmount = getTotalFluidAmount(oxygenStack, getInputFluidInventory());
                 }
             }
             return oxygenAmount[1] != 0 ? 1.0 * oxygenAmount[0] / oxygenAmount[1] : 0;
@@ -284,8 +285,10 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 int oxygenCapacity = 0;
                 if (isStructureFormed() && getInputFluidInventory() != null) {
                     // Hunt for tanks with Oxygen or LOX (depending on tier) in them
-                    Material material = isExtreme ? Materials.LiquidOxygen : Materials.Oxygen;
-                    int[] oxygenAmount = getTotalFluidAmount(material.getFluid(Integer.MAX_VALUE), getInputFluidInventory());
+                    FluidStack oxygenStack = isExtreme
+                            ? Materials.Oxygen.getFluid(FluidStorageKeys.LIQUID, Integer.MAX_VALUE)
+                            : Materials.Oxygen.getFluid(Integer.MAX_VALUE);
+                    int[] oxygenAmount = getTotalFluidAmount(oxygenStack, getInputFluidInventory());
                     oxygenStored = oxygenAmount[0];
                     oxygenCapacity = oxygenAmount[1];
                 }

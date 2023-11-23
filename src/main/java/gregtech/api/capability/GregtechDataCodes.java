@@ -56,7 +56,7 @@ public class GregtechDataCodes {
     public static final int AMP_INDEX = assignId();
 
     // Facade Cover
-    public static final int UPDATE_FACADE_STACK = 17;
+    public static final int UPDATE_FACADE_STACK = assignId();
 
     // Pipe implementation update codes
     public static final int UPDATE_INSULATION_COLOR = assignId();
@@ -167,6 +167,6 @@ public class GregtechDataCodes {
     public static final String BATTERY_BUFFER_ENERGY_CONTAINER_TRAIT = "BatteryEnergyContainer";
 
     // Alarm
-    public static final int UPDATE_SOUND = 1;
-    public static final int UPDATE_RADIUS = 2;
+    public static final int UPDATE_SOUND = assignId();
+    public static final int UPDATE_RADIUS = assignId();
 }

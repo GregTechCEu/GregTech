@@ -448,23 +448,17 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             // Try to do cover right-click behavior on this specific side first
             EnumFacing hitFacing = hitResult.sideHit;
             Cover cover = hitFacing == null ? null : getCoverAtSide(hitFacing);
-            if (cover == null) {
-                return false;
-            }
-            EnumActionResult result = cover.onRightClick(playerIn, hand, hitResult);
-
-            if (result == EnumActionResult.SUCCESS) {
-                return true;
-            } else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
-                result = cover.onScrewdriverClick(playerIn, hand, hitResult);
+            if (cover != null) {
+                if (cover.onRightClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS) {
+                    return true;
+                }
             }
 
             // Then try to do cover screwdriver-click behavior on the cover grid side next
-            EnumFacing gridSideHit = ICoverable.determineGridSideHit(hitResult);
-            coverBehavior = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
-            if (coverBehavior != null && playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
-                EnumActionResult result = coverBehavior.onScrewdriverClick(playerIn, hand, hitResult);
-                return result == EnumActionResult.SUCCESS;
+            EnumFacing gridSideHit = CoverRayTracer.determineGridSideHit(hitResult);
+            cover = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
+            if (cover != null && playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
+                return cover.onScrewdriverClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS;
             }
         }
 
