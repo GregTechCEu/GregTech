@@ -1,4 +1,4 @@
-package gregtech.integration.tinkers;
+package gregtech.integration.tinkers.material;
 
 import slimeknights.tconstruct.library.materials.Material;
 

@@ -9,6 +9,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import slimeknights.tconstruct.library.events.TinkerRegisterEvent;
+import slimeknights.tconstruct.library.smeltery.CastingRecipe;
+import slimeknights.tconstruct.library.smeltery.ICastingRecipe;
 import slimeknights.tconstruct.shared.TinkerFluids;
 
 public class TinkersEvents {
@@ -61,5 +63,15 @@ public class TinkersEvents {
                 event.setCanceled(true);
             }
         }
+    }
+
+    // lowest so that other event listeners can cancel before we run
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void tinkerTableCastingMirroring(TinkerRegisterEvent.TableCastingRegisterEvent event) {
+        if (event.isCanceled()) return;
+        if (!(event.getRecipe() instanceof CastingRecipe recipe)) return;
+
+        // Probably is a clay cast, can just early exit
+        if (recipe.consumesCast()) return;
     }
 }

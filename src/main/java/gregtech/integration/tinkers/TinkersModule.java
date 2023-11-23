@@ -6,6 +6,7 @@ import gregtech.api.modules.GregTechModule;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.tinkers.book.GTBook;
 import gregtech.integration.tinkers.effect.GTTinkerEffects;
+import gregtech.integration.tinkers.material.TinkersMaterialProcessing;
 import gregtech.integration.tinkers.recipe.SmelteryRecipes;
 import gregtech.modules.GregTechModules;
 import net.minecraft.item.crafting.IRecipe;
@@ -35,6 +36,7 @@ public class TinkersModule extends IntegrationSubmodule {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
+        TinkersMaterialProcessing.init();
         if (event.getSide() == Side.CLIENT) {
             GTBook.register();
         }
@@ -55,7 +57,7 @@ public class TinkersModule extends IntegrationSubmodule {
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         SmelteryRecipes.registerUnification();
         SmelteryRecipes.registerSmelteryFuels();
-        if (TinkersConfig.enableGTSmeltryAlloys) {
+        if (TinkersConfig.enableGTSmelteryAlloys) {
             SmelteryRecipes.registerAlloyingRecipes();
         }
     }
