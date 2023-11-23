@@ -368,16 +368,16 @@ public class ToolEventHandlers {
                     GL11.glLineWidth(2.5F);
                     if (multi.getFrontFacing() == facing) {
                         // render in the center of the grid
-                        drawRotationMarker(ROTATION_MARKER_TRANSFORM_CENTER);
+                        drawRotationMarker(ROTATION_MARKER_TRANSFORM_CENTER, player.isSneaking());
                     } else if (multi.getFrontFacing() == facing.getOpposite()) {
                         // render in the corners of the grid
                         for (Transformation t : ROTATION_MARKER_TRANSFORMS_CORNER) {
-                            drawRotationMarker(t);
+                            drawRotationMarker(t, player.isSneaking());
                         }
                     } else {
                         // render on the side of the grid
                         drawRotationMarker(ROTATION_MARKER_TRANSFORMS_SIDES_TRANSFORMS[
-                                ROTATION_MARKER_TRANSFORMS_SIDES[facing.getIndex() * 6 + multi.getFrontFacing().getIndex()]]);
+                                ROTATION_MARKER_TRANSFORMS_SIDES[facing.getIndex() * 6 + multi.getFrontFacing().getIndex()]], player.isSneaking());
                     }
                     GL11.glPopMatrix();
                 }
@@ -645,7 +645,7 @@ public class ToolEventHandlers {
     private static boolean rotationMarkerDisplayListCompiled = false;
 
     @SideOnly(Side.CLIENT)
-    private static void drawRotationMarker(Transformation transform) {
+    private static void drawRotationMarker(Transformation transform, boolean flip) {
         if (!rotationMarkerDisplayListCompiled) {
             rotationMarkerDisplayList = GLAllocation.generateDisplayLists(1);
 
@@ -674,6 +674,7 @@ public class ToolEventHandlers {
         GL11.glPushMatrix();
         GL11.glColor4f(rColour, gColour, bColour, 1.0f);
         transform.glApply();
+        if (flip) GL11.glScaled(-1.0, 1.0, 1.0);
         GL11.glCallList(rotationMarkerDisplayList);
         GL11.glPopMatrix();
     }

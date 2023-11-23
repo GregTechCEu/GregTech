@@ -46,6 +46,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -137,6 +138,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /** <strong>Should not be called outside of structure formation logic!</strong> */
+    @ApiStatus.Internal
     protected void setFlipped(boolean isFlipped) {
         if (this.isFlipped != isFlipped) {
             this.isFlipped = isFlipped;
@@ -375,7 +377,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         if (data.hasKey("UpwardsFacing")) {
-            this.upwardsFacing = EnumFacing.VALUES[data.getInteger("UpwardsFacing")];
+            this.upwardsFacing = EnumFacing.VALUES[data.getByte("UpwardsFacing")];
         }
         if (data.hasKey("IsFlipped")) {
             this.isFlipped = data.getBoolean("IsFlipped");
@@ -386,7 +388,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setInteger("UpwardsFacing", upwardsFacing.getIndex());
+        data.setByte("UpwardsFacing", (byte) upwardsFacing.getIndex());
         data.setBoolean("IsFlipped", isFlipped);
         return data;
     }
@@ -466,7 +468,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         } else {
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         }
-        tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        if (allowsExtendedFacing()) {
+            tooltip.add(I18n.format("gregtech.tool_action.wrench.extended_facing"));
+        } else {
+            tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
+        }
         super.addToolUsages(stack, world, tooltip, advanced);
     }
 
@@ -484,13 +490,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
-        if (!needsSneakToRotate() || playerIn.isSneaking()) {
-            if (wrenchSide == getFrontFacing() && allowsExtendedFacing()) {
-                if (!getWorld().isRemote) {
-                    setUpwardsFacing(upwardsFacing.rotateAround(EnumFacing.Axis.Y));
-                }
-                return true;
+        if (wrenchSide == getFrontFacing() && allowsExtendedFacing()) {
+            if (!getWorld().isRemote) {
+                setUpwardsFacing(playerIn.isSneaking() ? upwardsFacing.rotateYCCW() : upwardsFacing.rotateY());
             }
+            return true;
         }
         return super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
     }
