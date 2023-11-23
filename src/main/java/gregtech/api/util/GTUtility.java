@@ -43,6 +43,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
@@ -52,6 +53,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -794,7 +796,7 @@ public class GTUtility {
         return new ResourceLocation(GTValues.MODID, path);
     }
 
-    @Nullable
+    @Contract("null -> null")
     public static TextComponentTranslation getFluidTranslation(@Nullable FluidStack stack) {
         if (stack == null) return null;
         if (stack.getFluid() instanceof GTFluid.GTMaterialFluid materialFluid) {
@@ -802,5 +804,14 @@ public class GTUtility {
         }
 
         return new TextComponentTranslation(stack.getUnlocalizedName());
+    }
+
+    @Contract("null -> null")
+    public static TextComponentTranslation getFluidTranslation(@Nullable Fluid fluid) {
+        if (fluid == null) return null;
+        if (fluid instanceof GTFluid.GTMaterialFluid materialFluid) {
+            return materialFluid.toTextComponentTranslation();
+        }
+        return new TextComponentTranslation(fluid.getUnlocalizedName());
     }
 }

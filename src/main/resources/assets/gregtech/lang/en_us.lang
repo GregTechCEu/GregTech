@@ -5613,6 +5613,7 @@ gregtech.multiblock.miner.silk_touch_mode=Chunk Mode: §cDisabled§r/nSilk Touch
 gregtech.multiblock.miner.both_modes=Chunk Mode: §aEnabled§r/nSilk Touch Mode: §aEnabled§r/n§7Switching requires an idle machine.
 
 gregtech.multiblock.fluid_rig.drilled_fluid=Fluid: %s
+gregtech.multiblock.fluid_rig.no_fluid_in_area=None in Area.
 gregtech.multiblock.fluid_rig.fluid_amount=Pumping Rate: %s
 gregtech.multiblock.fluid_rig.vein_depletion=Vein Size: %s
 gregtech.multiblock.fluid_rig.vein_depleted=Vein Depleted.
