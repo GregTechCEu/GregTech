@@ -1,11 +1,13 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.items.behavior.CoverItemBehavior;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,7 +22,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehavior {
+public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverItemBehavior {
     public CoverDigitalInterfaceWirelessPlaceBehaviour(CoverDefinition coverDefinition) {
         super(coverDefinition);
     }
@@ -44,8 +46,8 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehav
 
     @Override
     public void onUpdate(ItemStack itemStack, Entity entity) {
-        if (entity.world.isRemote && entity instanceof EntityPlayer) {
-            ItemStack held = ((EntityPlayer) entity).getHeldItemMainhand();
+        if (entity.world.isRemote && entity instanceof EntityLivingBase) {
+            ItemStack held = ((EntityLivingBase) entity).getHeldItemMainhand();
             if (held == itemStack) {
                 BlockPos pos = getRemotePos(itemStack);
                 int dim = getRemoteDim(itemStack);

@@ -266,11 +266,11 @@ public class MaterialInfoLoader {
         OreDictUnifier.registerOre(new ItemStack(Items.GOLDEN_APPLE, 1, 1), new ItemMaterialInfo(new MaterialStack(Materials.Gold, M * 72))); // block
         OreDictUnifier.registerOre(new ItemStack(Items.GOLDEN_APPLE, 1, 0), new ItemMaterialInfo(new MaterialStack(Materials.Gold, M * 8))); // ingot
 
-        OreDictUnifier.registerOre(new ItemStack(Items.MINECART, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 4)));
-        OreDictUnifier.registerOre(new ItemStack(Items.CHEST_MINECART, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 4), new MaterialStack(Materials.Wood, M * 8)));
-        OreDictUnifier.registerOre(new ItemStack(Items.FURNACE_MINECART, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 4), new MaterialStack(Materials.Stone, M * 8)));
-        OreDictUnifier.registerOre(new ItemStack(Items.TNT_MINECART, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 4)));
-        OreDictUnifier.registerOre(new ItemStack(Items.HOPPER_MINECART, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 9), new MaterialStack(Materials.Wood, M * 8)));
+        OreDictUnifier.registerOre(new ItemStack(Items.MINECART, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 5)));
+        OreDictUnifier.registerOre(new ItemStack(Items.CHEST_MINECART, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 5), new MaterialStack(Materials.Wood, M * 8)));
+        OreDictUnifier.registerOre(new ItemStack(Items.FURNACE_MINECART, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 5), new MaterialStack(Materials.Stone, M * 8)));
+        OreDictUnifier.registerOre(new ItemStack(Items.TNT_MINECART, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 5)));
+        OreDictUnifier.registerOre(new ItemStack(Items.HOPPER_MINECART, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 10), new MaterialStack(Materials.Wood, M * 8)));
 
         OreDictUnifier.registerOre(new ItemStack(Items.CAULDRON, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 7)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.IRON_BARS, 8, W), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 3 / 16)));
@@ -314,13 +314,20 @@ public class MaterialInfoLoader {
                     new MaterialStack(Materials.Obsidian, M * 3),
                     new MaterialStack(Materials.Glass, M * 4)));
 
-            OreDictUnifier.registerOre(new ItemStack(Blocks.ENCHANTING_TABLE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Diamond, M * 4), new MaterialStack(Materials.Obsidian, M * 3), new MaterialStack(Materials.Paper, M * 9)));
+            OreDictUnifier.registerOre(new ItemStack(Blocks.ENCHANTING_TABLE, 1, W), new ItemMaterialInfo(
+                    new MaterialStack(Materials.Diamond, M * 4),
+                    new MaterialStack(Materials.Obsidian, M * 3),
+                    new MaterialStack(Materials.Paper, M * 9)));
+
+            OreDictUnifier.registerOre(new ItemStack(Blocks.ENDER_CHEST, 1, W), new ItemMaterialInfo(
+                    new MaterialStack(Materials.Wood, M * 8), // chest
+                    new MaterialStack(Materials.Obsidian, M * 9 * 6), // 6 dense plates
+                    new MaterialStack(Materials.EnderEye, M)));
         } else {
             OreDictUnifier.registerOre(new ItemStack(Blocks.BEACON, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.NetherStar, M), new MaterialStack(Materials.Obsidian, M * 3), new MaterialStack(Materials.Glass, M * 5)));
             OreDictUnifier.registerOre(new ItemStack(Blocks.ENCHANTING_TABLE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Diamond, M * 2), new MaterialStack(Materials.Obsidian, M * 4), new MaterialStack(Materials.Paper, M * 3)));
+            OreDictUnifier.registerOre(new ItemStack(Blocks.ENDER_CHEST, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.EnderEye, M), new MaterialStack(Materials.Obsidian, M * 8)));
         }
-
-        OreDictUnifier.registerOre(new ItemStack(Blocks.ENDER_CHEST, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.EnderEye, M), new MaterialStack(Materials.Obsidian, M * 8)));
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.FURNACE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M * 8)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONEBRICK, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M)));

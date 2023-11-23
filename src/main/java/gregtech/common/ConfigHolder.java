@@ -239,7 +239,7 @@ public class ConfigHolder {
         @Config.Comment({"Whether to remove Vanilla Block Recipes from the Crafting Table.", "Default: false"})
         public boolean removeVanillaBlockRecipes = false;
 
-        @Config.Comment({"Whether to make crafting recipes for Bricks, Firebricks, and Coke Bricks harder.", "Default: false"})
+        @Config.Comment({"Whether to make crafting recipes for Bricks, Nether Bricks, Firebricks, and Coke Bricks harder.", "Default: false"})
         public boolean harderBrickRecipes = false;
 
         @Config.Comment({"Whether to make the recipe for the EBF Controller harder.", "Default: false"})
@@ -248,6 +248,9 @@ public class ConfigHolder {
         @Config.Comment({"How many Multiblock Casings to make per craft. Either 1, 2, or 3.", "Default: 2"})
         @Config.RangeInt(min = 1, max = 3)
         public int casingsPerCraft = 2;
+
+        @Config.Comment({"Whether to nerf the output amounts of the first circuit in a set to 1 (from 2) and SoC to 2 (from 4).", "Default: false"})
+        public boolean harderCircuitRecipes = false;
     }
 
     public static class CompatibilityOptions {

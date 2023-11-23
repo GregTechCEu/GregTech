@@ -8,6 +8,7 @@ import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -52,9 +53,9 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        itemInventory = itemStackHandler = new ItemStackHandler(getInventorySize());
-        importHandler = new ItemHandlerProxy(itemStackHandler, new ItemStackHandler(0));
-        exportHandler = new ItemHandlerProxy(new ItemStackHandler(0), itemStackHandler);
+        itemInventory = itemStackHandler = new GTItemStackHandler(this, getInventorySize());
+        importHandler = new ItemHandlerProxy(itemStackHandler, new GTItemStackHandler(this, 0));
+        exportHandler = new ItemHandlerProxy(new GTItemStackHandler(this, 0), itemStackHandler);
     }
 
     private int getInventorySize() {
@@ -87,12 +88,12 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(getInventorySize(), getController(), true);
+        return new NotifiableItemStackHandler(this, getInventorySize(), getController(), true);
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(getInventorySize(), getController(), false);
+        return new NotifiableItemStackHandler(this, getInventorySize(), getController(), false);
     }
 
     @Override

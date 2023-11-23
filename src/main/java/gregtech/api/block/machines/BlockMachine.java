@@ -9,13 +9,14 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.block.UnlistedIntegerProperty;
 import gregtech.api.block.UnlistedStringProperty;
-import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.Cover;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.items.MetaItems;
@@ -246,6 +247,16 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             } else {
                 metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
             }
+            if (metaTileEntity instanceof MultiblockControllerBase multi) {
+                if (multi.allowsExtendedFacing()) {
+                    EnumFacing frontFacing = multi.getFrontFacing();
+                    if (frontFacing == EnumFacing.UP) {
+                        multi.setUpwardsFacing(placer.getHorizontalFacing());
+                    } else if (frontFacing == EnumFacing.DOWN) {
+                        multi.setUpwardsFacing(placer.getHorizontalFacing().getOpposite());
+                    }
+                }
+            }
             if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
                 if (metaTileEntity.getProxy() != null) {
                     metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
@@ -445,9 +456,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
         if (metaTileEntity != null && side != null) {
-            CoverBehavior coverBehavior = metaTileEntity.getCoverAtSide(side);
-            if (coverBehavior instanceof IFacadeCover) {
-                return ((IFacadeCover) coverBehavior).getVisualState();
+            Cover cover = metaTileEntity.getCoverAtSide(side);
+            if (cover instanceof IFacadeCover facadeCover) {
+                return facadeCover.getVisualState();
             }
         }
         return world.getBlockState(pos);

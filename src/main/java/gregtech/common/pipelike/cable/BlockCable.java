@@ -3,7 +3,6 @@ package gregtech.common.pipelike.cable;
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.cover.ICoverable;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -152,13 +151,6 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         }
         ItemStack stack = player.getHeldItemMainhand();
         return stack != ItemStack.EMPTY && stack.getItem() instanceof ItemBlockCable;
-    }
-
-    @Override
-    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
-        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER) ||
-                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)),
-                        coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
     }
 
     @Override

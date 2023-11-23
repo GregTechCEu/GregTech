@@ -54,6 +54,10 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     protected void initializeInventory() {
         super.initializeInventory();
 
+        if (!isStructureFormed()) {
+            return;
+        }
+
         FilteredFluidHandler tank = new FilteredFluidHandler(capacity);
         if (!isMetal) {
             tank.setFilter(new PropertyFluidFilter(340, false, false, false, false));

@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.steam.boiler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
@@ -13,7 +14,6 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
@@ -63,12 +63,12 @@ public class SteamCoalBoiler extends SteamBoiler {
 
     @Override
     public IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(1);
+        return new GTItemStackHandler(this, 1);
     }
 
     @Override
     public IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(1) {
+        return new GTItemStackHandler(this, 1) {
             @Nonnull
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {

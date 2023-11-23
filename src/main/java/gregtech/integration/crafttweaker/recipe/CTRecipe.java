@@ -55,14 +55,6 @@ public class CTRecipe {
                 .collect(Collectors.toList());
     }
 
-    @ZenGetter("chancedOutputs")
-    public List<ChancedEntry> getChancedOutputs() {
-        ArrayList<ChancedEntry> result = new ArrayList<>();
-        this.backingRecipe.getChancedOutputs().forEach(chanceEntry ->
-                result.add(new ChancedEntry(new MCItemStack(chanceEntry.getItemStack()), chanceEntry.getChance(), chanceEntry.getBoostPerTier())));
-        return result;
-    }
-
     @ZenGetter("fluidInputs")
     public List<ILiquidStack> getFluidInputs() {
         return this.backingRecipe.getFluidInputs().stream()

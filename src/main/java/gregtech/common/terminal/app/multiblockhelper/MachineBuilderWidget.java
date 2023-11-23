@@ -236,7 +236,8 @@ public class MachineBuilderWidget extends WidgetGroup {
     private void debugButton(ClickData clickData) {
         if (clickData.isClient && controllerBase != null) {
             highLightBlocks.clear();
-            if (controllerBase.structurePattern.checkPatternFastAt(controllerBase.getWorld(), controllerBase.getPos(), controllerBase.getFrontFacing().getOpposite()) == null) {
+            if (controllerBase.structurePattern.checkPatternFastAt(
+                    controllerBase.getWorld(), controllerBase.getPos(), controllerBase.getFrontFacing().getOpposite(), controllerBase.getUpwardsFacing(), controllerBase.allowsFlip()) == null) {
                 PatternError error = controllerBase.structurePattern.getError();
                 highLightBlocks.add(new BlockPos(error.getPos()));
                 List<List<ItemStack>> candidatesItemStack = error.getCandidates();

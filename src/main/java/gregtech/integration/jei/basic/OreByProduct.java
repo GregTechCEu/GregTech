@@ -2,7 +2,7 @@ package gregtech.integration.jei.basic;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
-import gregtech.api.recipes.Recipe.ChanceEntry;
+import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -47,7 +47,7 @@ public class OreByProduct implements IRecipeWrapper {
 
     private static ImmutableList<ItemStack> ALWAYS_MACHINES;
 
-    private final Int2ObjectMap<ChanceEntry> chances = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<ChancedItemOutput> chances = new Int2ObjectOpenHashMap<>();
     private final List<List<ItemStack>> inputs = new ArrayList<>();
     private final List<List<ItemStack>> outputs = new ArrayList<>();
     private final List<List<FluidStack>> fluidInputs = new ArrayList<>();
@@ -178,11 +178,13 @@ public class OreByProduct implements IRecipeWrapper {
 
         // centrifuge impure -> dust
         addToOutputs(material, OrePrefix.dust, 1);
-        addToOutputs(byproducts[0], OrePrefix.dustTiny, 1);
+        addToOutputs(byproducts[0], OrePrefix.dust, 1);
+        addChance(1111, 0);
 
         // ore wash crushed -> crushed purified
         addToOutputs(material, OrePrefix.crushedPurified, 1);
-        addToOutputs(byproducts[0], OrePrefix.dustTiny, 3);
+        addToOutputs(byproducts[0], OrePrefix.dust, 1);
+        addChance(3333, 0);
         List<FluidStack> fluidStacks = new ArrayList<>();
         fluidStacks.add(Materials.Water.getFluid(1000));
         fluidStacks.add(Materials.DistilledWater.getFluid(100));
@@ -190,7 +192,8 @@ public class OreByProduct implements IRecipeWrapper {
 
         // TC crushed/crushed purified -> centrifuged
         addToOutputs(material, OrePrefix.crushedCentrifuged, 1);
-        addToOutputs(byproducts[1], OrePrefix.dustTiny, byproductMultiplier * 3);
+        addToOutputs(byproducts[1], OrePrefix.dust, byproductMultiplier);
+        addChance(3333, 0);
 
         // macerate centrifuged -> dust
         addToOutputs(material, OrePrefix.dust, 1);
@@ -204,7 +207,8 @@ public class OreByProduct implements IRecipeWrapper {
 
         // centrifuge purified -> dust
         addToOutputs(material, OrePrefix.dust, 1);
-        addToOutputs(byproducts[1], OrePrefix.dustTiny, 1);
+        addToOutputs(byproducts[1], OrePrefix.dust, 1);
+        addChance(1111, 0);
 
         // cauldron/simple washer
         addToOutputs(material, OrePrefix.crushed, 1);
@@ -232,16 +236,15 @@ public class OreByProduct implements IRecipeWrapper {
 
         // electromagnetic separator
         if (hasSeparator) {
-            ItemStack separatedStack1 = OreDictUnifier.get(OrePrefix.dustSmall, separatedInto.get(0));
             OrePrefix prefix = (separatedInto.get(separatedInto.size() - 1).getBlastTemperature() == 0 && separatedInto.get(separatedInto.size() - 1).hasProperty(PropertyKey.INGOT))
-                    ? OrePrefix.nugget : OrePrefix.dustSmall;
+                    ? OrePrefix.nugget : OrePrefix.dust;
             ItemStack separatedStack2 = OreDictUnifier.get(prefix, separatedInto.get(separatedInto.size() - 1), prefix == OrePrefix.nugget ? 2 : 1);
 
             addToOutputs(material, OrePrefix.dust, 1);
-            addToOutputs(separatedStack1);
-            addChance(4000, 850);
+            addToOutputs(separatedInto.get(0), OrePrefix.dust, 1);
+            addChance(1000, 250);
             addToOutputs(separatedStack2);
-            addChance(2000, 600);
+            addChance(prefix == OrePrefix.dust ? 500 : 2000, prefix == OrePrefix.dust ? 150 : 600);
         } else {
             addEmptyOutputs(3);
         }
@@ -287,14 +290,14 @@ public class OreByProduct implements IRecipeWrapper {
 
     public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
         if (chances.containsKey(slotIndex)) {
-            ChanceEntry entry = chances.get(slotIndex);
+            ChancedItemOutput entry = chances.get(slotIndex);
             double chance = entry.getChance() / 100.0;
-            double boost = entry.getBoostPerTier() / 100.0;
+            double boost = entry.getChanceBoost() / 100.0;
             tooltip.add(I18n.format("gregtech.recipe.chance", chance, boost));
         }
     }
 
-    public ChanceEntry getChance(int slot) {
+    public ChancedItemOutput getChance(int slot) {
         return chances.get(slot);
     }
 
@@ -339,7 +342,7 @@ public class OreByProduct implements IRecipeWrapper {
 
     private void addChance(int base, int tier) {
         // this is solely for the chance overlay and tooltip, neither of which care about the ItemStack
-        chances.put(currentSlot - 1, new ChanceEntry(ItemStack.EMPTY, base, tier));
+        chances.put(currentSlot - 1, new ChancedItemOutput(ItemStack.EMPTY, base, tier));
     }
 
     // make the code less :weary:

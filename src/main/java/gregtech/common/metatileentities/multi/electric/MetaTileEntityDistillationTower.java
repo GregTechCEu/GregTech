@@ -8,7 +8,9 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
@@ -45,7 +47,12 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
     @Override
     protected Function<BlockPos, Integer> multiblockPartSorter() {
-        return BlockPos::getY; // todo this needs to be "relative up" with Freedom Wrench
+        return RelativeDirection.UP.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
+    }
+
+    @Override
+    public boolean allowsExtendedFacing() {
+        return false;
     }
 
     @Override
@@ -53,7 +60,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
         if (isStructureFormed()) {
             FluidStack stackInTank = importFluids.drain(Integer.MAX_VALUE, false);
             if (stackInTank != null && stackInTank.amount > 0) {
-                ITextComponent fluidName = TextComponentUtil.translationWithColor(TextFormatting.AQUA, stackInTank.getFluid().getUnlocalizedName(stackInTank));
+                ITextComponent fluidName = TextComponentUtil.setColor(GTUtility.getFluidTranslation(stackInTank), TextFormatting.AQUA);
                 textList.add(TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
                         "gregtech.multiblock.distillation_tower.distilling_fluid",

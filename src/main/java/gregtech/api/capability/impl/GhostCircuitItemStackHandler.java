@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.INotifiableHandler;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import net.minecraft.item.ItemStack;
@@ -13,7 +14,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GhostCircuitItemStackHandler implements IItemHandlerModifiable, INotifiableHandler {
+public class GhostCircuitItemStackHandler extends GTItemStackHandler implements IItemHandlerModifiable, INotifiableHandler {
 
     /**
      * Special circuit value indicating no circuit value is set.
@@ -24,6 +25,10 @@ public class GhostCircuitItemStackHandler implements IItemHandlerModifiable, INo
 
     private int circuitValue = NO_CONFIG;
     private ItemStack circuitStack = ItemStack.EMPTY;
+
+    public GhostCircuitItemStackHandler(MetaTileEntity metaTileEntity) {
+        super(metaTileEntity);
+    }
 
     /**
      * Return the circuit value, or {@link GhostCircuitItemStackHandler#NO_CONFIG} if

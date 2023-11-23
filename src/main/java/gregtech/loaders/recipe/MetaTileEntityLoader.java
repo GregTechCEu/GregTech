@@ -275,6 +275,8 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe(true, "steel_tank_valve", MetaTileEntities.STEEL_TANK_VALVE.getStackForm(), " R ", "hCw", " O ", 'O', new UnificationEntry(OrePrefix.rotor, Materials.Steel), 'R', new UnificationEntry(OrePrefix.ring, Materials.Steel), 'C', MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID));
         ModHandler.addShapedRecipe(true, "wood_wall", MetaBlocks.STEAM_CASING.getItemVariant(WOOD_WALL), "W W", "sPh", "W W", 'W', MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK), 'P', new UnificationEntry(OrePrefix.plate, Materials.Lead));
 
+        ModHandler.addShapedRecipe(true, "alarm", MetaTileEntities.ALARM.getStackForm(), "WRW", "CHL", "WPW", 'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin), 'P', MetaItems.ELECTRIC_PUMP_LV, 'L', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'C', new UnificationEntry(OrePrefix.circuit, Tier.LV), 'H', MetaTileEntities.HULL[GTValues.LV].getStackForm(), 'R', new UnificationEntry(OrePrefix.rotor, Materials.Tin));
+
         // MACHINES
         registerMachineRecipe(MetaTileEntities.ALLOY_SMELTER, "ECE", "CMC", "WCW", 'M', HULL, 'E', CIRCUIT, 'W', CABLE, 'C', COIL_HEATING_DOUBLE);
         registerMachineRecipe(MetaTileEntities.ASSEMBLER, "ACA", "VMV", "WCW", 'M', HULL, 'V', CONVEYOR, 'A', ROBOT_ARM, 'C', CIRCUIT, 'W', CABLE);

@@ -8,6 +8,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
+import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.material.Material;
@@ -190,7 +192,7 @@ public class CommandRecipeCheck extends CommandBase {
         }
         output.append("\n");
 
-        if (recipe.getInputs().size() > 0) {
+        if (!recipe.getInputs().isEmpty()) {
             output.append("Item inputs:\n");
             for (GTRecipeInput ingredient : recipe.getInputs()) {
                 output.append("    ")
@@ -199,7 +201,7 @@ public class CommandRecipeCheck extends CommandBase {
             }
         }
 
-        if (recipe.getFluidInputs().size() > 0) {
+        if (!recipe.getFluidInputs().isEmpty()) {
             output.append("Fluid inputs:\n");
             for (GTRecipeInput fluid : recipe.getFluidInputs()) {
                 output.append("    ")
@@ -210,7 +212,7 @@ public class CommandRecipeCheck extends CommandBase {
             }
         }
 
-        if (recipe.getOutputs().size() > 0) {
+        if (!recipe.getOutputs().isEmpty()) {
             output.append("Item outputs:\n");
             for (ItemStack stack : recipe.getOutputs()) {
                 output.append("    ")
@@ -219,20 +221,20 @@ public class CommandRecipeCheck extends CommandBase {
             }
         }
 
-        if (recipe.getChancedOutputs().size() > 0) {
+        if (!recipe.getChancedOutputs().getChancedEntries().isEmpty()) {
             output.append("Item chanced outputs:\n");
-            for (Recipe.ChanceEntry chanceEntry : recipe.getChancedOutputs()) {
+            for (ChancedItemOutput chanceEntry : recipe.getChancedOutputs().getChancedEntries()) {
                 output.append("    ")
-                        .append(prettyPrintItemStack(chanceEntry.getItemStack()))
+                        .append(prettyPrintItemStack(chanceEntry.getIngredient()))
                         .append(" (Chance: ")
                         .append(chanceEntry.getChance())
                         .append(", Boost: ")
-                        .append(chanceEntry.getBoostPerTier())
+                        .append(chanceEntry.getChanceBoost())
                         .append(")\n");
             }
         }
 
-        if (recipe.getFluidOutputs().size() > 0) {
+        if (!recipe.getFluidOutputs().isEmpty()) {
             output.append("Fluid outputs:\n");
             for (FluidStack fluid : recipe.getFluidOutputs()) {
                 output.append("    ")
@@ -240,6 +242,19 @@ public class CommandRecipeCheck extends CommandBase {
                         .append(" * ")
                         .append(fluid.amount)
                         .append("\n");
+            }
+        }
+
+        if (!recipe.getChancedFluidOutputs().getChancedEntries().isEmpty()) {
+            output.append("Fluid chanced outputs:\n");
+            for (ChancedFluidOutput chanceEntry : recipe.getChancedFluidOutputs().getChancedEntries()) {
+                output.append("    ")
+                        .append(chanceEntry.getIngredient().getUnlocalizedName())
+                        .append(" (Chance: ")
+                        .append(chanceEntry.getChance())
+                        .append(", Boost: ")
+                        .append(chanceEntry.getChanceBoost())
+                        .append(")\n");
             }
         }
 

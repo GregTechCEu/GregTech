@@ -11,10 +11,12 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.*;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
@@ -34,7 +36,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -185,12 +186,12 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new FilteredItemHandler(1).setFillPredicate(FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
+        return new FilteredItemHandler(this, 1).setFillPredicate(FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(1);
+        return new GTItemStackHandler(this, 1);
     }
 
     @Override
@@ -262,19 +263,14 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
 
     private Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
         return (list) -> {
-            String fluidName = "";
-            // If there is no fluid in the tank
-            if (tankWidget.getFluidUnlocalizedName().isEmpty()) {
-                // But there is a locked fluid
-                if (this.lockedFluid != null) {
-                    fluidName = this.lockedFluid.getUnlocalizedName();
-                }
-            } else {
-                fluidName = tankWidget.getFluidUnlocalizedName();
+            TextComponentTranslation translation = tankWidget.getFluidTextComponent();
+            // If there is no fluid in the tank, but there is a locked fluid
+            if (translation == null) {
+                translation = GTUtility.getFluidTranslation(this.lockedFluid);
             }
 
-            if (!fluidName.isEmpty()) {
-                list.add(new TextComponentTranslation(fluidName));
+            if (translation != null) {
+                list.add(translation);
             }
         };
     }

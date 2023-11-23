@@ -15,6 +15,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
@@ -295,7 +296,7 @@ public class VanillaStandardRecipes {
                 .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-                .inputs(GTRecipeOreInput.getOrCreate("wool", 1))
+                .inputs(new GTRecipeOreInput("wool", 1))
                 .outputs(new ItemStack(Items.STRING, 1))
                 .chancedOutput(new ItemStack(Items.STRING, 1), 9000, 0)
                 .chancedOutput(new ItemStack(Items.STRING, 1), 5000, 0)
@@ -554,8 +555,8 @@ public class VanillaStandardRecipes {
             }
 
             CUTTER_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
-                    .inputs(new ItemStack(Blocks.WOOL, 2, i))
-                    .outputs(new ItemStack(Blocks.CARPET, 3, i))
+                    .inputs(new ItemStack(Blocks.WOOL, 1, i))
+                    .outputs(new ItemStack(Blocks.CARPET, 2, i))
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(20).EUt(VA[ULV])
@@ -763,6 +764,7 @@ public class VanillaStandardRecipes {
     /**
      * + Adds metal related recipes
      * + Adds horse armor and chainmail recipes
+     * + Replaces minecart recipe
      */
     private static void metalRecipes() {
         BENDER_RECIPES.recipeBuilder()
@@ -852,6 +854,16 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Items.IRON_DOOR, 3))
                     .duration(100).EUt(16).buildAndRegister();
         }
+
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:minecart"));
+        ModHandler.addShapedRecipe("minecart_iron", new ItemStack(Items.MINECART), " h ", "PwP", "WPW",
+                'W', MetaItems.IRON_MINECART_WHEELS.getStackForm(),
+                'P', new UnificationEntry(OrePrefix.plate, Materials.Iron)
+        );
+        ModHandler.addShapedRecipe("minecart_steel", new ItemStack(Items.MINECART), " h ", "PwP", "WPW",
+                'W', MetaItems.STEEL_MINECART_WHEELS.getStackForm(),
+                'P', new UnificationEntry(OrePrefix.plate, Materials.Steel)
+        );
     }
 
     /**
@@ -979,11 +991,11 @@ public class VanillaStandardRecipes {
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV]).inputs(new ItemStack(Blocks.COBBLESTONE, 6)).input(dust, Redstone, 2).input(plate, NetherQuartz).outputs(new ItemStack(Blocks.OBSERVER)).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV]).inputs(new ItemStack(Blocks.COBBLESTONE, 6)).input(dust, Redstone, 2).input(plate, CertusQuartz).outputs(new ItemStack(Blocks.OBSERVER)).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV]).inputs(new ItemStack(Blocks.COBBLESTONE, 6)).input(dust, Redstone, 2).input(plate, Quartzite).outputs(new ItemStack(Blocks.OBSERVER)).buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).inputs(new ItemStack(Blocks.OBSIDIAN, 8)).inputs(new ItemStack(Items.ENDER_EYE)).outputs(new ItemStack(Blocks.ENDER_CHEST)).buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(VA[ULV]).inputs(new ItemStack(Blocks.STONE_SLAB, 1, 0)).inputs(new ItemStack(Items.STICK, 6)).outputs(new ItemStack(Items.ARMOR_STAND)).buildAndRegister();
         }
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).circuitMeta(3).inputs(new ItemStack(Blocks.NETHER_BRICK)).outputs(new ItemStack(Blocks.NETHER_BRICK_FENCE)).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).inputs(new ItemStack(Blocks.OBSIDIAN, 8)).inputs(new ItemStack(Items.ENDER_EYE)).outputs(new ItemStack(Blocks.ENDER_CHEST)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV]).circuitMeta(6).inputs(new ItemStack(Blocks.COBBLESTONE, 1, 0)).outputs(new ItemStack(Blocks.COBBLESTONE_WALL, 1, 0)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV]).circuitMeta(6).inputs(new ItemStack(Blocks.MOSSY_COBBLESTONE, 1, 0)).outputs(new ItemStack(Blocks.COBBLESTONE_WALL, 1, 1)).buildAndRegister();
@@ -997,8 +1009,6 @@ public class VanillaStandardRecipes {
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).input("plankWood", 6).inputs(new ItemStack(Items.STICK)).circuitMeta(9).outputs(new ItemStack(Items.SIGN, 3)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(10).EUt(2).inputs(new ItemStack(Items.BRICK, 3)).outputs(new ItemStack(Items.FLOWER_POT)).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(VA[ULV]).inputs(new ItemStack(Blocks.STONE_SLAB, 1, 0)).inputs(new ItemStack(Items.STICK, 6)).outputs(new ItemStack(Items.ARMOR_STAND)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(16).inputs(new ItemStack(Items.GHAST_TEAR)).inputs(new ItemStack(Items.ENDER_EYE)).outputs(new ItemStack(Items.END_CRYSTAL)).fluidInputs(Glass.getFluid(GTValues.L * 7)).buildAndRegister();
 
@@ -1035,9 +1045,15 @@ public class VanillaStandardRecipes {
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.Iron, 3)
-                .input(OrePrefix.ring, Materials.Iron, 4)
+                .input(IRON_MINECART_WHEELS, 2)
                 .outputs(new ItemStack(Items.MINECART))
-                .duration(100).EUt(4).buildAndRegister();
+                .duration(100).EUt(20).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.Steel, 3)
+                .input(STEEL_MINECART_WHEELS, 2)
+                .outputs(new ItemStack(Items.MINECART))
+                .duration(100).EUt(20).buildAndRegister();
 
         ModHandler.addShapedRecipe("saddle", new ItemStack(Items.SADDLE), "LLL", "LCL", "RSR",
                 'L', new ItemStack(Items.LEATHER),
@@ -1157,6 +1173,25 @@ public class VanillaStandardRecipes {
                 .input(dust, Blaze, 4)
                 .output(stick, Blaze)
                 .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(Blocks.TRIPWIRE_HOOK)
+                .input(Blocks.CHEST)
+                .output(Blocks.TRAPPED_CHEST)
+                .duration(200).EUt(4).buildAndRegister();
+
+        // All 16 bed colors
+        for (int i = 0; i <= 15; i++) {
+            addBedRecipe(i);
+        }
+    }
+
+    private static void addBedRecipe(int meta) {
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.WOOL, 3, meta))
+                .input(plank, Wood, 3)
+                .outputs(new ItemStack(Items.BED, 1, meta))
+                .duration(100).EUt(VA[ULV]).buildAndRegister();
     }
 
     /**

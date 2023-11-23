@@ -34,7 +34,7 @@ public class CoverFluidRegulatorTest {
     public void doKeepExact_does_nothing_if_no_destination_tank_exists() {
 
         // Create a regulator for testing with, and set it to "Keep Exact" mode
-        CoverFluidRegulator cfr = new CoverFluidRegulator(null, EnumFacing.UP, 0, 1000);
+        CoverFluidRegulator cfr = new CoverFluidRegulator(null, null, EnumFacing.UP, 0, 1000);
         cfr.transferMode = TransferMode.KEEP_EXACT;
 
         FluidStack water = new FluidStack(FluidRegistry.WATER, 1234);
@@ -53,7 +53,7 @@ public class CoverFluidRegulatorTest {
     @Test
     public void doKeepExact_moves_one_fluid_into_an_empty_tank() {
         // Create a regulator for testing with, and set it to "Keep Exact" mode
-        CoverFluidRegulator cfr = new CoverFluidRegulator(null, EnumFacing.UP, 0, 1000);
+        CoverFluidRegulator cfr = new CoverFluidRegulator(null, null, EnumFacing.UP, 0, 1000);
         cfr.transferMode = TransferMode.KEEP_EXACT;
 
         FluidStack water = new FluidStack(FluidRegistry.WATER, 1234);
@@ -76,7 +76,7 @@ public class CoverFluidRegulatorTest {
     @Test
     public void doKeepExact_moves_only_as_much_fluid_as_exists_in_the_source() {
         // Create a regulator for testing with, and set it to "Keep Exact" mode
-        CoverFluidRegulator cfr = new CoverFluidRegulator(null, EnumFacing.UP, 0, 1000);
+        CoverFluidRegulator cfr = new CoverFluidRegulator(null, null, EnumFacing.UP, 0, 1000);
         cfr.transferMode = TransferMode.KEEP_EXACT;
 
         IFluidHandler source =
@@ -95,7 +95,7 @@ public class CoverFluidRegulatorTest {
 
     @Test
     public void doKeepExact_moves_only_the_fluid_required_if_more_could_be_moved() {
-        CoverFluidRegulator cfr = new CoverFluidRegulator(null, EnumFacing.UP, 0, 1000);
+        CoverFluidRegulator cfr = new CoverFluidRegulator(null, null, EnumFacing.UP, 0, 1000);
         cfr.transferMode = TransferMode.KEEP_EXACT;
 
         IFluidHandler source =
@@ -118,7 +118,7 @@ public class CoverFluidRegulatorTest {
     @Test
     public void doKeepExact_moves_multiple_valid_fluids() {
         // Create a regulator for testing with, and set it to "Keep Exact" mode
-        CoverFluidRegulator cfr = new CoverFluidRegulator(null, EnumFacing.UP, 0, 1000);
+        CoverFluidRegulator cfr = new CoverFluidRegulator(null, null, EnumFacing.UP, 0, 1000);
         cfr.transferMode = TransferMode.KEEP_EXACT;
 
         IFluidHandler source =
@@ -155,7 +155,7 @@ public class CoverFluidRegulatorTest {
     @Test
     public void doKeepExact_respects_transfer_limit_with_one_fluid() {
         // Create a regulator for testing with, and set it to "Keep Exact" mode
-        CoverFluidRegulator cfr = new CoverFluidRegulator(null, EnumFacing.UP, 0, 1000);
+        CoverFluidRegulator cfr = new CoverFluidRegulator(null, null, EnumFacing.UP, 0, 1000);
         cfr.transferMode = TransferMode.KEEP_EXACT;
 
         // One output tank full of water
@@ -181,7 +181,7 @@ public class CoverFluidRegulatorTest {
     @Test
     public void doKeepExact_respects_transfer_limit_with_multiple_fluids() {
         // Create a regulator for testing with, and set it to "Keep Exact" mode
-        CoverFluidRegulator cfr = new CoverFluidRegulator(null, EnumFacing.UP, 0, 1000);
+        CoverFluidRegulator cfr = new CoverFluidRegulator(null, null, EnumFacing.UP, 0, 1000);
         cfr.transferMode = TransferMode.KEEP_EXACT;
 
         IFluidHandler source =
@@ -209,7 +209,7 @@ public class CoverFluidRegulatorTest {
     @Test
     public void doKeepExact_does_nothing_if_levels_are_already_correct_in_dest() {
         // Create a regulator for testing with, and set it to "Keep Exact" mode
-        CoverFluidRegulator cfr = new CoverFluidRegulator(null, EnumFacing.UP, 0, 1000);
+        CoverFluidRegulator cfr = new CoverFluidRegulator(null, null, EnumFacing.UP, 0, 1000);
         cfr.transferMode = TransferMode.KEEP_EXACT;
 
         IFluidHandler source =
@@ -237,7 +237,7 @@ public class CoverFluidRegulatorTest {
     @Test
     public void doKeepExact_ignores_fluids_not_in_filter() {
         // Create a regulator for testing with, and set it to "Keep Exact" mode
-        CoverFluidRegulator cfr = new CoverFluidRegulator(null, EnumFacing.UP, 0, 1000);
+        CoverFluidRegulator cfr = new CoverFluidRegulator(null, null, EnumFacing.UP, 0, 1000);
         cfr.transferMode = TransferMode.KEEP_EXACT;
 
         IFluidHandler source =

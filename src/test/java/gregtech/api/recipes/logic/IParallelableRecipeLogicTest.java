@@ -7,6 +7,7 @@ import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
@@ -26,6 +27,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.hamcrest.MatcherAssert;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +40,7 @@ import java.lang.reflect.Method;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 
-public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
+public class IParallelableRecipeLogicTest {
 
     private static final ItemStackHashStrategy hashStrategy = ItemStackHashStrategy.comparingAll();
     private static RecipeMapMultiblockController mbt;
@@ -46,7 +49,6 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     private static MetaTileEntityFluidHatch importFluidBus;
     private static MetaTileEntityFluidHatch secondImportFluidBus;
     private static MetaTileEntityFluidHatch exportFluidBus;
-    private static boolean enableBonusOverride = false;
 
     @BeforeAll
     public static void bootstrap() {
@@ -201,13 +203,9 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
         // Create a recipe Map to be used for testing
         RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                1,
                 3,
-                1,
                 2,
-                0,
                 1,
-                0,
                 1,
                 new BlastRecipeBuilder(),
                 false);
@@ -220,11 +218,12 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .EUt(30).duration(100)
                 .build().getResult();
 
+        IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
 
         // Initially populate the input bus
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
-        RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
+        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
                 exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
 
         //Check if the correct number of parallels were done
@@ -255,13 +254,9 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
         // Create a recipe Map to be used for testing
         RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                1,
                 3,
-                1,
                 2,
-                0,
                 1,
-                0,
                 1,
                 new BlastRecipeBuilder(),
                 false);
@@ -274,11 +269,12 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .EUt(30).duration(100)
                 .build().getResult();
 
+        IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
 
         // Initially populate the input bus
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
 
-        RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
+        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
                 exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
 
         //Check if the correct number of parallels were done
@@ -296,8 +292,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getOutputs().get(0)), is(true));
 
         //Check the recipe inputs
-        //assertEquals(CountableIngredient.from(new ItemStack(Blocks.COBBLESTONE), 4), parallelRecipe.getInputs().get(0));
-
+        MatcherAssert.assertThat(parallelRecipe.getInputs().get(0).getAmount(), is(2));
     }
 
     @Test
@@ -309,13 +304,9 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
         // Create a recipe Map to be used for testing
         RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                1,
                 3,
+                2,
                 1,
-                2,
-                0,
-                2,
-                0,
                 1,
                 new BlastRecipeBuilder(),
                 false);
@@ -328,6 +319,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .EUt(480).duration(10)
                 .build().getResult();
 
+        IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
 
         // Initially populate the input buses
         importFluidBus.getImportFluids().fill(Materials.Toluene.getFluid(4000), true);
@@ -335,7 +327,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
         IMultipleTankHandler tankHandler = new FluidTankList(false, importFluidBus.getImportFluids().getTankAt(0), secondImportFluidBus.getImportFluids().getTankAt(0));
 
-        RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), tankHandler,
+        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), tankHandler,
                 exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
 
         //Check if the correct number of parallels were done
@@ -363,13 +355,9 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
         // Create a recipe Map to be used for testing
         RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                1,
                 3,
-                1,
                 2,
-                0,
                 2,
-                0,
                 1,
                 new BlastRecipeBuilder(),
                 false);
@@ -382,6 +370,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .EUt(480).duration(10)
                 .build().getResult();
 
+        IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
 
         // Initially populate the input buses
         importFluidBus.getImportFluids().fill(Materials.Toluene.getFluid(2000), true);
@@ -389,7 +378,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
         IMultipleTankHandler tankHandler = new FluidTankList(false, importFluidBus.getImportFluids().getTankAt(0), secondImportFluidBus.getImportFluids().getTankAt(0));
 
-        RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), tankHandler,
+        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), tankHandler,
                 exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
 
         //Check if the correct number of parallels were done
@@ -432,11 +421,12 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .EUt(30).duration(100)
                 .buildAndRegister();
 
+        IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.APPEND_ITEMS);
 
         // Initially populate the input bus
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
-        RecipeBuilder<?> parallelRecipe = findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
+        RecipeBuilder<?> parallelRecipe = logic.findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
                 exportItemBus.getExportItems(), parallelLimit, 120, EBF);
 
         //Check if the correct number of parallels were done
@@ -478,11 +468,12 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .EUt(30).duration(100)
                 .buildAndRegister();
 
+        IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.APPEND_ITEMS);
 
         // Initially populate the input bus
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
 
-        RecipeBuilder<?> parallelRecipe = findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
+        RecipeBuilder<?> parallelRecipe = logic.findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
                 exportItemBus.getExportItems(), parallelLimit, 120, EBF);
 
         //Check if the correct number of parallels were done
@@ -537,13 +528,9 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
         // Create a recipe Map to be used for testing
         RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                1,
                 3,
-                1,
                 2,
-                0,
                 1,
-                0,
                 1,
                 new BlastRecipeBuilder(),
                 false);
@@ -556,12 +543,13 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .EUt(30).duration(100)
                 .build().getResult();
 
+        IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
 
         // Initially populate the input bus
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
 
-        Recipe outputRecipe = findParallelRecipe(mrl, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
+        Recipe outputRecipe = logic.findParallelRecipe(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
                 exportFluidBus.getExportFluids(), 128, parallelLimit);
 
 
@@ -615,13 +603,9 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
         // Create a recipe Map to be used for testing
         RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                1,
                 3,
-                1,
                 2,
-                0,
                 1,
-                0,
                 1,
                 new BlastRecipeBuilder(),
                 false);
@@ -634,12 +618,13 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .EUt(30).duration(100)
                 .build().getResult();
 
+        IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
 
         // Don't populate the input bus, so the recipe will fail
         //importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
 
-        Recipe outputRecipe = findParallelRecipe(mrl, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
+        Recipe outputRecipe = logic.findParallelRecipe(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
                 exportFluidBus.getExportFluids(), 32, parallelLimit);
 
         MatcherAssert.assertThat(outputRecipe, nullValue());
@@ -682,13 +667,9 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
         // Create a recipe Map to be used for testing
         RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                1,
                 3,
-                1,
                 2,
-                0,
                 1,
-                0,
                 1,
                 new BlastRecipeBuilder(),
                 false);
@@ -701,6 +682,8 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .EUt(30).duration(100)
                 .build().getResult();
 
+        IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY, true);
+
         // Saturate the export bus
         exportItemBus.getExportItems().insertItem(0, new ItemStack(Blocks.BONE_BLOCK, 16), false);
         exportItemBus.getExportItems().insertItem(1, new ItemStack(Blocks.BONE_BLOCK, 16), false);
@@ -708,7 +691,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         exportItemBus.getExportItems().insertItem(3, new ItemStack(Blocks.BONE_BLOCK, 16), false);
 
 
-        Recipe outputRecipe = findParallelRecipe(mrl, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
+        Recipe outputRecipe = logic.findParallelRecipe(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
                 exportFluidBus.getExportFluids(), Integer.MAX_VALUE, parallelLimit);
 
         MatcherAssert.assertThat(outputRecipe, nullValue());
@@ -719,8 +702,6 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         MetaTileEntityElectricBlastFurnace EBF = initEBF(518);
 
         int parallelLimit = 4;
-
-        enableBonusOverride = true;
 
         MultiblockRecipeLogic mrl = new MultiblockRecipeLogic(mbt) {
             @Override
@@ -752,13 +733,9 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
         // Create a recipe Map to be used for testing
         RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
-                1,
                 3,
-                1,
                 2,
-                0,
                 1,
-                0,
                 1,
                 new BlastRecipeBuilder(),
                 false);
@@ -771,11 +748,12 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .EUt(30).duration(100)
                 .build().getResult();
 
+        IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY, true);
 
         // Initially populate the input bus
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
-        Recipe outputRecipe = findParallelRecipe(mrl, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
+        Recipe outputRecipe = logic.findParallelRecipe(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
                 exportFluidBus.getExportFluids(), 128, parallelLimit);
 
 
@@ -789,16 +767,58 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         MatcherAssert.assertThat(outputRecipe.getOutputs().isEmpty(), is(false));
 
         MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), outputRecipe.getOutputs().get(0)), is(true));
-
-        enableBonusOverride = false;
-
     }
 
+    private static class ParallelableTestLogic implements IParallelableRecipeLogic {
 
-    @Override
-    public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
-        if (enableBonusOverride) {
-            builder.EUt(1).duration(50);
+        private final MetaTileEntity metaTileEntity;
+        private final RecipeMap<?> recipeMap;
+        private final ParallelLogicType logicType;
+        private final boolean enableBonusOverride;
+
+        public ParallelableTestLogic(MetaTileEntity metaTileEntity, RecipeMap<?> recipeMap, ParallelLogicType logicType) {
+            this(metaTileEntity, recipeMap, logicType, false);
+        }
+
+        public ParallelableTestLogic(@Nonnull MetaTileEntity metaTileEntity, @Nonnull RecipeMap<?> recipeMap,
+                                     @Nonnull ParallelLogicType logicType, boolean enableBonusOverride) {
+            this.metaTileEntity = metaTileEntity;
+            this.recipeMap = recipeMap;
+            this.logicType = logicType;
+            this.enableBonusOverride = enableBonusOverride;
+        }
+
+        @NotNull
+        @Override
+        public MetaTileEntity getMetaTileEntity() {
+            return this.metaTileEntity;
+        }
+
+        @Nullable
+        @Override
+        public RecipeMap<?> getRecipeMap() {
+            return this.recipeMap;
+        }
+
+        @Override
+        public @NotNull ParallelLogicType getParallelLogicType() {
+            return logicType;
+        }
+
+        @Override
+        public void setParallelRecipesPerformed(int amount) {}
+
+        @Override
+        public void invalidateInputs() {}
+
+        @Override
+        public void invalidateOutputs() {}
+
+        @Override
+        public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
+            if (enableBonusOverride) {
+                builder.EUt(1).duration(50);
+            }
         }
     }
 }

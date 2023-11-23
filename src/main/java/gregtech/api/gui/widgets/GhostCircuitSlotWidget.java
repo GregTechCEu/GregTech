@@ -4,8 +4,6 @@ import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 

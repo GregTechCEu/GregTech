@@ -94,16 +94,16 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void writeInitialData(@Nonnull PacketBuffer buf) {
-        super.writeInitialData(buf);
+    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
         buf.writeByte(getVentingSide().getIndex());
         buf.writeBoolean(needsVenting);
         buf.writeBoolean(ventingStuck);
     }
 
     @Override
-    public void receiveInitialData(@Nonnull PacketBuffer buf) {
-        super.receiveInitialData(buf);
+    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
         this.ventingSide = EnumFacing.VALUES[buf.readByte()];
         this.needsVenting = buf.readBoolean();
         this.ventingStuck = buf.readBoolean();

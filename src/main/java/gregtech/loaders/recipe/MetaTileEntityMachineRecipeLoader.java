@@ -233,6 +233,14 @@ public class MetaTileEntityMachineRecipeLoader {
                 .output(NONUPLE_EXPORT_HATCH[5])
                 .duration(600).EUt(VA[UV]).buildAndRegister();
 
+        // Reservoir Hatch
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_INFINITE_WATER)
+                .input(FLUID_IMPORT_HATCH[EV])
+                .input(ELECTRIC_PUMP_EV)
+                .output(RESERVOIR_HATCH)
+                .duration(300).EUt(VA[EV]).buildAndRegister();
+
         // Item Buses
         registerHatchBusRecipe(ULV, ITEM_IMPORT_BUS[ULV], ITEM_EXPORT_BUS[ULV], new ItemStack(Blocks.CHEST));
         registerHatchBusRecipe(LV, ITEM_IMPORT_BUS[LV], ITEM_EXPORT_BUS[LV], new ItemStack(Blocks.CHEST));

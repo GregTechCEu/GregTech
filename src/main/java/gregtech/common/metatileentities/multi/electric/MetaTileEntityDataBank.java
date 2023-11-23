@@ -195,26 +195,26 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        if (sourcePart instanceof IDataAccessHatch) {
-            return Textures.COMPUTER_CASING;
+        if (sourcePart != null) {
+            // part rendering
+            if (sourcePart instanceof IDataAccessHatch) {
+                return Textures.COMPUTER_CASING;
+            } else {
+                return Textures.HIGH_POWER_CASING;
+            }
+        } else {
+            // controller rendering
+            if (isStructureFormed()) {
+                return Textures.HIGH_POWER_CASING;
+            } else {
+                return Textures.COMPUTER_CASING;
+            }
         }
-        return Textures.HIGH_POWER_CASING;
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        renderTextures(renderState, translation, pipeline);
-    }
-
-    protected void renderTextures(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if (isStructureFormed()) {
-            Textures.HIGH_POWER_CASING.render(renderState, translation, pipeline);
-        } else {
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                Textures.COMPUTER_CASING.renderSided(facing, renderState, translation, pipeline);
-            }
-        }
         getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(), this.isWorkingEnabled());
     }
 

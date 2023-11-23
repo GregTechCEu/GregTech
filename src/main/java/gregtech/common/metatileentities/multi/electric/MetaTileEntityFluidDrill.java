@@ -169,9 +169,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
                         if (minerLogic.getDrilledFluid() != null) {
                             // Fluid name
                             Fluid drilledFluid = minerLogic.getDrilledFluid();
-                            ITextComponent fluidInfo = TextComponentUtil.translationWithColor(
-                                    TextFormatting.GREEN,
-                                    drilledFluid.getUnlocalizedName());
+                            ITextComponent fluidInfo = TextComponentUtil.setColor(GTUtility.getFluidTranslation(drilledFluid), TextFormatting.GREEN);
                             tl.add(TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
                                     "gregtech.multiblock.fluid_rig.drilled_fluid",
@@ -185,6 +183,12 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
                                     TextFormatting.GRAY,
                                     "gregtech.multiblock.fluid_rig.fluid_amount",
                                     amountInfo));
+                        } else {
+                            ITextComponent noFluid = TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.fluid_rig.no_fluid_in_area");
+                            tl.add(TextComponentUtil.translationWithColor(
+                                    TextFormatting.GRAY,
+                                    "gregtech.multiblock.fluid_rig.drilled_fluid",
+                                    noFluid));
                         }
                     }
                 })
@@ -387,5 +391,9 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
                     "gregtech.multiblock.fluid_rig.vein_depletion",
                     veinInfo));
         }
+    }
+
+    public boolean allowsExtendedFacing() {
+        return false;
     }
 }

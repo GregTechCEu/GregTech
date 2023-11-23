@@ -149,6 +149,7 @@ public class MetaTileEntities {
     public static MetaTileEntityMachineHatch MACHINE_HATCH;
     public static MetaTileEntityPassthroughHatchItem PASSTHROUGH_HATCH_ITEM;
     public static MetaTileEntityPassthroughHatchFluid PASSTHROUGH_HATCH_FLUID;
+    public static MetaTileEntityReservoirHatch RESERVOIR_HATCH;
     public static MetaTileEntityDataAccessHatch DATA_ACCESS_HATCH;
     public static MetaTileEntityDataAccessHatch ADVANCED_DATA_ACCESS_HATCH;
     public static MetaTileEntityDataAccessHatch CREATIVE_DATA_HATCH;
@@ -280,6 +281,7 @@ public class MetaTileEntities {
     public static MetaTileEntity ITEM_IMPORT_BUS_ME;
     public static MetaTileEntityLDItemEndpoint LONG_DIST_ITEM_ENDPOINT;
     public static MetaTileEntityLDFluidEndpoint LONG_DIST_FLUID_ENDPOINT;
+    public static MetaTileEntityAlarm ALARM;
 
     public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[4][GTValues.V.length];
 
@@ -661,7 +663,9 @@ public class MetaTileEntities {
         HPCA_HEAT_SINK_COMPONENT = registerMetaTileEntity(1415, new MetaTileEntityHPCACooler(gregtechId("hpca.heat_sink_component"), false));
         HPCA_ACTIVE_COOLER_COMPONENT = registerMetaTileEntity(1416, new MetaTileEntityHPCACooler(gregtechId("hpca.active_cooler_component"), true));
         HPCA_BRIDGE_COMPONENT = registerMetaTileEntity(1417, new MetaTileEntityHPCABridge(gregtechId("hpca.bridge_component")));
-        // Free IDs 1418, 1419
+
+        RESERVOIR_HATCH = registerMetaTileEntity(1418, new MetaTileEntityReservoirHatch(gregtechId("reservoir_hatch")));
+        // Free ID 1419
         endPos = GregTechAPI.isHighTier() ? LASER_INPUT_HATCH_256.length - 1 : Math.min(LASER_INPUT_HATCH_256.length - 1, GTValues.UHV - GTValues.IV);
         for (int i = 0; i < endPos; i++) {
             int v = i + GTValues.IV;
@@ -820,6 +824,8 @@ public class MetaTileEntities {
         LONG_DIST_ITEM_ENDPOINT = registerMetaTileEntity(1749, new MetaTileEntityLDItemEndpoint(gregtechId("ld_item_endpoint")));
         LONG_DIST_FLUID_ENDPOINT = registerMetaTileEntity(1750, new MetaTileEntityLDFluidEndpoint(gregtechId("ld_fluid_endpoint")));
 
+        // Alarm, ID 1751
+        ALARM = registerMetaTileEntity(1751, new MetaTileEntityAlarm(gregtechId("alarm")));
 
         // Multi-Fluid Hatches, IDs 1190, 1191, 1205, 1206, 1780-1799
         // EV hatches separate because of old names/IDs
@@ -835,6 +841,7 @@ public class MetaTileEntities {
             QUADRUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(1790 + index, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_4x." + tierName), i, 4, true));
             NONUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(1795 + index, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x." + tierName), i, 9, true));
         }
+
 
         /*
          * FOR ADDON DEVELOPERS:
