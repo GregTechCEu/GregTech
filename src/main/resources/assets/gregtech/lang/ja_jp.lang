@@ -5335,6 +5335,7 @@ gregtech.tool_action.screwdriver.auto_output=§8スクリュードライバー�
 gregtech.tool_action.screwdriver.auto_output_down=§8スクリュードライバーで下面からの自動搬出を切替できます。
 gregtech.tool_action.screwdriver.toggle_mode=§8スクリュードライバーでモードを切替できます。
 gregtech.tool_action.wrench.set_facing=§8レンチを使うと向きを変更できます。
+gregtech.tool_action.wrench.extended_facing=§8レンチを使うと向きの変更または機械の回転ができます。
 gregtech.tool_action.wrench.connect=§8レンチで接続を設定できます。
 gregtech.tool_action.wrench.connect_and_block=§8レンチで接続を設定でき、スニークで逆流を防止できます。
 gregtech.tool_action.wire_cutter.connect=§8ワイヤーカッターで接続を設定できます。
