@@ -44,6 +44,11 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         return false;
     }
 
+    @Override
+    public boolean canHaveBlockedFaces() {
+        return false;
+    }
+
     private void initHandlers() {
         LaserPipeNet net = getLaserPipeNet();
         if (net == null) return;
