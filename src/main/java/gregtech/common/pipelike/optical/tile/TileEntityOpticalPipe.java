@@ -46,6 +46,11 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
         return false;
     }
 
+    @Override
+    public boolean canHaveBlockedFaces() {
+        return false;
+    }
+
     private void initHandlers() {
         OpticalPipeNet net = getOpticalPipeNet();
         if (net == null) return;
