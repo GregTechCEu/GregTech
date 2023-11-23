@@ -6,7 +6,6 @@ import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.DISTILLATION_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
-import static gregtech.api.unification.ore.OrePrefix.dustSmall;
 
 public class DistillationRecipes {
 
@@ -30,7 +29,7 @@ public class DistillationRecipes {
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(CharcoalByproducts.getFluid(1000))
-                .output(dustSmall, Charcoal)
+                .chancedOutput(dust, Charcoal, 2500, 0)
                 .fluidOutputs(WoodTar.getFluid(250))
                 .fluidOutputs(WoodVinegar.getFluid(400))
                 .fluidOutputs(WoodGas.getFluid(250))
@@ -108,14 +107,14 @@ public class DistillationRecipes {
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(Biomass.getFluid(1000))
-                .output(dustSmall, Wood, 2)
+                .chancedOutput(dust, Wood, 5000, 0)
                 .fluidOutputs(Ethanol.getFluid(600))
                 .fluidOutputs(Water.getFluid(300))
                 .duration(32).EUt(400).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(CoalGas.getFluid(1000))
-                .output(dustSmall, Coke)
+                .chancedOutput(dust, Coke, 2500, 0)
                 .fluidOutputs(CoalTar.getFluid(200))
                 .fluidOutputs(Ammonia.getFluid(300))
                 .fluidOutputs(Ethylbenzene.getFluid(250))
@@ -125,7 +124,7 @@ public class DistillationRecipes {
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(CoalTar.getFluid(1000))
-                .output(dustSmall, Coke)
+                .chancedOutput(dust, Coke, 2500, 0)
                 .fluidOutputs(Naphthalene.getFluid(400))
                 .fluidOutputs(HydrogenSulfide.getFluid(300))
                 .fluidOutputs(Creosote.getFluid(200))
