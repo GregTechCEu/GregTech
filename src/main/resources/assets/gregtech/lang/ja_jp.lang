@@ -808,6 +808,11 @@ metaitem.basic_tape.tooltip=修理に使えるほどの強度はない
 metaitem.component.grinder.diamond.name=ダイヤモンド製研削ヘッド
 metaitem.component.grinder.tungsten.name=タングステン製研削ヘッド
 
+metaitem.minecart_wheels.iron.name=鉄製のトロッコ用車輪
+metaitem.minecart_wheels.iron.tooltip=物事を進めるために
+metaitem.minecart_wheels.steel.name=スチール製のトロッコ用車輪
+metaitem.minecart_wheels.steel.tooltip=物事を進めるために
+
 metaitem.quantumeye.name=クアンタムアイ
 metaitem.quantumeye.tooltip=改善したエンダーアイ
 metaitem.quantumstar.name=クアンタムスター
