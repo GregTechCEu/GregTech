@@ -387,5 +387,15 @@
         "stream" : false
       }
     ]
+  },
+  "alarm" : {
+    "subtitle" : "gregtech.subtitle.alarm",
+    "category" : "block",
+    "sounds" : [
+      {
+        "name" : "gregtech:alarm",
+        "stream" : false
+      }
+    ]
   }
 }

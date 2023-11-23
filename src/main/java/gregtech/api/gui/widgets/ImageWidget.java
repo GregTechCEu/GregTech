@@ -64,8 +64,13 @@ public class ImageWidget extends Widget {
         return this;
     }
 
+    protected IGuiTexture getArea() {
+        return area;
+    }
+
     @Override
     public void updateScreen() {
+        IGuiTexture area = getArea();
         if (area != null) {
             area.updateTick();
         }
@@ -91,6 +96,7 @@ public class ImageWidget extends Widget {
     @Override
     @SideOnly(Side.CLIENT)
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        IGuiTexture area = getArea();
         if (!this.isVisible || area == null) return;
         if (ignoreColor) GlStateManager.color(1, 1, 1, 1);
         Position position = getPosition();
@@ -103,6 +109,7 @@ public class ImageWidget extends Widget {
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
+        IGuiTexture area = getArea();
         if (this.isVisible && tooltipText != null && area != null && isMouseOverElement(mouseX, mouseY)) {
             List<String> hoverList = Arrays.asList(LocalizationUtils.formatLines(tooltipText));
             drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);

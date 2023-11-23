@@ -13,9 +13,9 @@ import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.armor.IStepAssist;
+import gregtech.common.items.armor.PowerlessJetpack;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
-import gregtech.tools.enchants.EnchantmentHardHammer;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -193,6 +193,12 @@ public class EventHandlers {
         if (valueItem.isItemEqual(MetaItems.QUANTUM_CHESTPLATE.getStackForm()) ||
                 valueItem.isItemEqual(MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm())) {
             event.getEntity().isImmuneToFire = false;
+        }
+
+        // Workaround to recipe caching issue with fluid jetpack
+        // TODO, rewrite logic and remove in armor rewrite
+        if (valueItem.isItemEqual(MetaItems.SEMIFLUID_JETPACK.getStackForm())) {
+            ((PowerlessJetpack) valueItem.getArmorLogic()).resetRecipe();
         }
     }
 

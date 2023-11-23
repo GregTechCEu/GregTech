@@ -176,7 +176,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         if (playerIn.getHeldItem(hand).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
             return getWorld().isRemote || (!playerIn.isSneaking() && FluidUtil.interactWithFluidHandler(playerIn, hand, fluidTank));
         }
-        return false;
+        return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
@@ -186,7 +186,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
                 scheduleRenderUpdate();
                 return true;
             }
-            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.drum." + (isAutoOutput ? "disable" : "enable") + "_output"));
+            playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.drum." + (isAutoOutput ? "disable" : "enable") + "_output"), true);
             toggleOutput();
             return true;
         }
@@ -241,22 +241,13 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", tankSize));
+        FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
+        pipeProperties.appendTooltips(tooltip, true, true);
+
         if (TooltipHelper.isShiftDown()) {
-            FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
-            tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", pipeProperties.getMaxFluidTemperature()));
-            if (pipeProperties.isGasProof()) {
-                tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
-            } else {
-                tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
-            }
-            if (pipeProperties.isAcidProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
-            if (pipeProperties.isCryoProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
-            if (pipeProperties.isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_down"));
             tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
-        } else {
-            tooltip.add(I18n.format("gregtech.tooltip.tool_fluid_hold_shift"));
         }
 
         NBTTagCompound tagCompound = stack.getTagCompound();

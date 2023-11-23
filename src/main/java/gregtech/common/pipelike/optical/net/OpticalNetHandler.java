@@ -74,7 +74,7 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     }
 
     private boolean isNetInvalidForTraversal() {
-        return net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing);
+        return net == null || pipe == null || pipe.isInvalid();
     }
 
     private boolean traverseRecipeAvailable(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {

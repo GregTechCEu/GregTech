@@ -1,6 +1,6 @@
 {
+  "name": "gregtech.veins.fluid.natural_gas_nether",
   "weight": 35,
-  "name": "Nether Natural Gas Deposit",
   "yield": {
     "min": 150,
     "max": 300

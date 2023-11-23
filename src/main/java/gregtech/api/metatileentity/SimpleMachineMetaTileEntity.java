@@ -9,12 +9,12 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.impl.*;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.Cover;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
+import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTTransferUtils;
@@ -43,6 +43,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -55,7 +56,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     private final boolean hasFrontFacing;
 
-    protected final ItemStackHandler chargerInventory;
+    protected final GTItemStackHandler chargerInventory;
     @Nullable
     protected GhostCircuitItemStackHandler circuitInventory;
     private EnumFacing outputFacingItems;
@@ -81,7 +82,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                                        Function<Integer, Integer> tankScalingFunction) {
         super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction);
         this.hasFrontFacing = hasFrontFacing;
-        this.chargerInventory = new ItemStackHandler(1);
+        this.chargerInventory = new GTItemStackHandler(this, 1);
     }
 
     @Override
@@ -92,10 +93,10 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.outputItemInventory = new ItemHandlerProxy(new ItemStackHandler(0), exportItems);
+        this.outputItemInventory = new ItemHandlerProxy(new GTItemStackHandler(this, 0), exportItems);
         this.outputFluidInventory = new FluidHandlerProxy(new FluidTankList(false), exportFluids);
         if (this.hasGhostCircuitInventory()) {
-            this.circuitInventory = new GhostCircuitItemStackHandler();
+            this.circuitInventory = new GhostCircuitItemStackHandler(this);
             this.circuitInventory.addNotifiableMetaTileEntity(this);
         }
 
@@ -133,20 +134,16 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     }
 
     @Override
-    public boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition, EntityPlayer player) {
-        boolean coverPlaced = super.placeCoverOnSide(side, itemStack, coverDefinition, player);
-        if (coverPlaced) {
-            CoverBehavior cover = getCoverAtSide(side);
-            if (cover != null && cover.shouldCoverInteractWithOutputside()) {
-                if (getOutputFacingItems() == side) {
-                    setAllowInputFromOutputSideItems(true);
-                }
-                if (getOutputFacingFluids() == side) {
-                    setAllowInputFromOutputSideFluids(true);
-                }
+    public void addCover(@NotNull EnumFacing side, @NotNull Cover cover) {
+        super.addCover(side, cover);
+        if (cover.canInteractWithOutputSide()) {
+            if (getOutputFacingItems() == side) {
+                setAllowInputFromOutputSideItems(true);
+            }
+            if (getOutputFacingFluids() == side) {
+                setAllowInputFromOutputSideFluids(true);
             }
         }
-        return coverPlaced;
     }
 
     @Override
@@ -190,11 +187,11 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             if (isAllowInputFromOutputSideItems()) {
                 setAllowInputFromOutputSideItems(false);
                 setAllowInputFromOutputSideFluids(false);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"), true);
             } else {
                 setAllowInputFromOutputSideItems(true);
                 setAllowInputFromOutputSideFluids(true);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"), true);
             }
         }
         return true;

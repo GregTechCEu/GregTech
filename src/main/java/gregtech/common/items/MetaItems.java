@@ -113,6 +113,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem CARBON_MESH;
     public static MetaItem<?>.MetaValueItem CARBON_FIBER_PLATE;
     public static MetaItem<?>.MetaValueItem DUCT_TAPE;
+    public static MetaItem<?>.MetaValueItem BASIC_TAPE;
 
     public static MetaItem<?>.MetaValueItem NEUTRON_REFLECTOR;
 
@@ -411,6 +412,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_TUNGSTEN;
 
+    public static MetaItem<?>.MetaValueItem IRON_MINECART_WHEELS;
+    public static MetaItem<?>.MetaValueItem STEEL_MINECART_WHEELS;
+
     public static MetaItem<?>.MetaValueItem QUANTUM_EYE;
     public static MetaItem<?>.MetaValueItem QUANTUM_STAR;
     public static MetaItem<?>.MetaValueItem GRAVI_STAR;
@@ -434,7 +438,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_MAINTENANCE_DETECTOR;
 
     public static MetaItem<?>.MetaValueItem COVER_SCREEN;
-    public static MetaItem<?>.MetaValueItem COVER_CRAFTING;
     public static MetaItem<?>.MetaValueItem COVER_INFINITE_WATER;
     public static MetaItem<?>.MetaValueItem COVER_ENDER_FLUID_LINK;
     public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE;

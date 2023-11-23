@@ -35,12 +35,12 @@ public class SteamAlloySmelter extends SteamMetaTileEntity {
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(2, this, false);
+        return new NotifiableItemStackHandler(this, 2, this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(1, this, true);
+        return new NotifiableItemStackHandler(this, 1, this, true);
     }
 
     @Override

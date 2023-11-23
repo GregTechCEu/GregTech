@@ -2,7 +2,6 @@ package gregtech.common.pipelike.fluidpipe;
 
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.block.material.ItemBlockMaterialPipe;
-import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
@@ -33,20 +32,15 @@ public class ItemBlockFluidPipe extends ItemBlockMaterialPipe<FluidPipeType, Flu
         tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", pipeProperties.getMaxFluidTemperature()));
         if (pipeProperties.getTanks() > 1) tooltip.add(I18n.format("gregtech.fluid_pipe.channels", pipeProperties.getTanks()));
 
-        BlockMaterialPipe<?, ?, ?> blockMaterialPipe = (BlockMaterialPipe<?, ?, ?>) blockPipe;
+        pipeProperties.appendTooltips(tooltip, false, false);
+
         if (TooltipHelper.isShiftDown()) {
-            if (pipeProperties.isGasProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
-            else if (ModHandler.isMaterialWood(blockMaterialPipe.getItemMaterial(stack)))
-                tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
-            if (pipeProperties.isAcidProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
-            if (pipeProperties.isCryoProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
-            if (pipeProperties.isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
             tooltip.add(I18n.format("gregtech.tool_action.wrench.connect_and_block"));
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
             tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
-        } else {
-            tooltip.add(I18n.format("gregtech.tooltip.tool_fluid_hold_shift"));
         }
+
+        BlockMaterialPipe<?, ?, ?> blockMaterialPipe = (BlockMaterialPipe<?, ?, ?>) blockPipe;
 
         if (ConfigHolder.misc.debug) {
             tooltip.add("MetaItem Id: " + blockMaterialPipe.getPrefix().name + blockMaterialPipe.getItemMaterial(stack).toCamelCaseString());

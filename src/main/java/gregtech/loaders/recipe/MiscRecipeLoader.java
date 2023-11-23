@@ -463,5 +463,18 @@ public class MiscRecipeLoader {
                 .output(FIRECLAY_BRICK, 4)
                 .duration(300).EUt(2)
                 .buildAndRegister();
+
+        // Minecart wheels
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(stick, Iron)
+                .input(ring, Iron, 2)
+                .output(IRON_MINECART_WHEELS)
+                .duration(100).EUt(20).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(stick, Steel)
+                .input(ring, Steel, 2)
+                .output(STEEL_MINECART_WHEELS)
+                .duration(60).EUt(20).buildAndRegister();
     }
 }

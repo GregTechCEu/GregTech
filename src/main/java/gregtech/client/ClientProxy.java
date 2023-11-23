@@ -2,11 +2,12 @@ package gregtech.client;
 
 import codechicken.lib.texture.TextureUtils;
 import gregtech.api.GTValues;
-import gregtech.api.fluids.MetaFluids;
+import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.IBlockOre;
@@ -82,8 +83,8 @@ public class ClientProxy extends CommonProxy {
         OpticalPipeRenderer.INSTANCE.preInit();
         LaserPipeRenderer.INSTANCE.preInit();
         MetaEntities.initRenderers();
-        MetaFluids.initIconFluidSprites();
-        TextureUtils.addIconRegister(MetaFluids::registerSprites);
+        TextureUtils.addIconRegister(GTFluidRegistration.INSTANCE::registerSprites);
+        TextureUtils.addIconRegister(PipeRenderer::initializeRestrictor);
     }
 
     @Override
@@ -159,9 +160,9 @@ public class ClientProxy extends CommonProxy {
                 }
             }
         } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water and Lava buckets have a separate registry name from other buckets
-            tooltips = FluidTooltipUtil.getWaterTooltip();
+            tooltips = FluidTooltipUtil.getFluidTooltip(Materials.Water.getFluid());
         } else if (itemStack.getItem().equals(Items.LAVA_BUCKET)) {
-            tooltips = FluidTooltipUtil.getLavaTooltip();
+            tooltips = FluidTooltipUtil.getFluidTooltip(Materials.Lava.getFluid());
         }
 
         if (tooltips != null) {

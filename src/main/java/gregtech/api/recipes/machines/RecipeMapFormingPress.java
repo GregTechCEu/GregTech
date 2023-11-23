@@ -62,7 +62,7 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
                 ItemStack output = GTUtility.copy(1, itemStack);
                 output.setStackDisplayName(moldStack.getDisplayName());
                 return this.recipeBuilder()
-                        .notConsumable(GTRecipeItemInput.getOrCreate(moldStack)) //recipe is reusable as long as mold stack matches
+                        .notConsumable(new GTRecipeItemInput(moldStack)) //recipe is reusable as long as mold stack matches
                         .inputs(GTUtility.copy(1, itemStack))
                         .outputs(output)
                         .duration(40).EUt(4)

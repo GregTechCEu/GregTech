@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
         containerID = GTValues.MODID,
         modDependencies = GTValues.MODID_TOP,
         name = "GregTech TheOneProbe Integration",
-        descriptionKey = "gregtech.modules.top_integration.description"
+        description = "TheOneProbe Integration Module"
 )
 public class TheOneProbeModule extends IntegrationSubmodule {
 
@@ -34,6 +34,7 @@ public class TheOneProbeModule extends IntegrationSubmodule {
         oneProbe.registerProvider(new MultiRecipeMapInfoProvider());
         oneProbe.registerProvider(new ConverterInfoProvider());
         oneProbe.registerProvider(new RecipeLogicInfoProvider());
+        oneProbe.registerProvider(new SteamBoilerInfoProvider());
         oneProbe.registerProvider(new PrimitivePumpInfoProvider());
         oneProbe.registerProvider(new CoverInfoProvider());
         oneProbe.registerProvider(new BlockOreInfoProvider());

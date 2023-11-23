@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
@@ -20,13 +19,11 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.util.AssemblyLineManager;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityAssemblyLine;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityDataBank;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -34,7 +31,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -42,7 +38,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -57,7 +52,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         super(metaTileEntityId, tier, false);
         this.isCreative = isCreative;
         this.recipes = isCreative ? Collections.emptySet() : new ObjectOpenHashSet<>();
-        rebuildData();
+        rebuildData(getController() instanceof MetaTileEntityDataBank);
     }
 
     @Override
@@ -68,11 +63,11 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         if (isCreative) return super.createImportItemHandler();
-        return new NotifiableItemStackHandler(getInventorySize(), getController(), false) {
+        return new NotifiableItemStackHandler(this, getInventorySize(), getController(), false) {
             @Override
             public void onContentsChanged(int slot) {
                 super.onContentsChanged(slot);
-                rebuildData();
+                rebuildData(getController() instanceof MetaTileEntityDataBank);
             }
 
             @Nonnull
@@ -90,20 +85,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if (getController() instanceof MetaTileEntityAssemblyLine && getController().isStructureFormed()) {
-            IVertexOperation colourMultiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                // render grate texture on all sides but from if formed
-                if (facing == getFrontFacing()) {
-                    getBaseTexture().renderSided(facing, renderState, translation, ArrayUtils.add(pipeline, colourMultiplier));
-                } else {
-                    Textures.GRATE_CASING.renderSided(facing, renderState, translation, ArrayUtils.add(pipeline, colourMultiplier));
-                }
-            }
-        } else {
-            super.renderMetaTileEntity(renderState, translation, pipeline);
-        }
-
+        super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
             if (isCreative) {
                 Textures.CREATIVE_DATA_ACCESS_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);
@@ -141,10 +123,9 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         return getTier() == GTValues.LuV ? 16 : 9;
     }
 
-    private void rebuildData() {
-        if (isCreative) return;
+    private void rebuildData(boolean isDataBank) {
+        if (isCreative || getWorld() == null || getWorld().isRemote) return;
         recipes.clear();
-        boolean isDataBank = getController() instanceof MetaTileEntityDataBank;
         for (int i = 0; i < this.importItems.getSlots(); i++) {
             ItemStack stack = this.importItems.getStackInSlot(i);
             String researchId = AssemblyLineManager.readResearchId(stack);
@@ -225,9 +206,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+        rebuildData(controllerBase instanceof MetaTileEntityDataBank);
         super.addToMultiBlock(controllerBase);
-        if (!(controllerBase instanceof MetaTileEntityDataBank)) {
-            rebuildData();
-        }
     }
 }

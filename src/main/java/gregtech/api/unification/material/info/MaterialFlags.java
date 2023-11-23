@@ -75,6 +75,11 @@ public class MaterialFlags {
      */
     public static final MaterialFlag STICKY = new MaterialFlag.Builder("sticky").build();
 
+    /**
+     * Add to material if it is some kind of glowing material
+     */
+    public static final MaterialFlag GLOWING = new MaterialFlag.Builder("glowing").build();
+
     //////////////////
     //     DUST     //
     //////////////////
@@ -92,6 +97,11 @@ public class MaterialFlags {
     public static final MaterialFlag GENERATE_DOUBLE_PLATE = new MaterialFlag.Builder("generate_double_plate")
             .requireFlags(GENERATE_PLATE)
             .requireProps(PropertyKey.INGOT)
+            .build();
+
+    public static final MaterialFlag GENERATE_DENSE = new MaterialFlag.Builder("generate_dense")
+            .requireFlags(GENERATE_PLATE)
+            .requireProps(PropertyKey.DUST)
             .build();
 
     public static final MaterialFlag GENERATE_ROD = new MaterialFlag.Builder("generate_rod")
@@ -234,11 +244,6 @@ public class MaterialFlags {
             .requireProps(PropertyKey.INGOT)
             .build();
 
-    public static final MaterialFlag GENERATE_DENSE = new MaterialFlag.Builder("generate_dense")
-            .requireFlags(GENERATE_PLATE)
-            .requireProps(PropertyKey.INGOT)
-            .build();
-
     public static final MaterialFlag GENERATE_ROUND = new MaterialFlag.Builder("generate_round")
             .requireProps(PropertyKey.INGOT)
             .build();
@@ -272,5 +277,12 @@ public class MaterialFlags {
 
     public static final MaterialFlag HIGH_SIFTER_OUTPUT = new MaterialFlag.Builder("high_sifter_output")
             .requireProps(PropertyKey.GEM, PropertyKey.ORE)
+            .build();
+
+    /**
+     * If this material should generate ore processing items, but no ore block.
+     */
+    public static final MaterialFlag DISABLE_ORE_BLOCK = new MaterialFlag.Builder("disable_ore_block")
+            .requireProps(PropertyKey.ORE)
             .build();
 }

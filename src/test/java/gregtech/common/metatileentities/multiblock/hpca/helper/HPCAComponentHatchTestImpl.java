@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multiblock.hpca.helper;
 
 import gregtech.api.capability.IHPCAComponentHatch;
+import gregtech.api.gui.resources.TextureArea;
 
 public class HPCAComponentHatchTestImpl implements IHPCAComponentHatch {
 
@@ -32,5 +33,11 @@ public class HPCAComponentHatchTestImpl implements IHPCAComponentHatch {
     @Override
     public boolean isBridge() {
         return false;
+    }
+
+    // not tested
+    @Override
+    public TextureArea getComponentIcon() {
+        return null;
     }
 }

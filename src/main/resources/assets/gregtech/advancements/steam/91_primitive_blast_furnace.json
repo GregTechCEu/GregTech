@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.steam.91_primitive_blast_furnace.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.steam.91_primitive_blast_furnace.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1000
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1000
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:steam/3_bronze_dust"
+}
