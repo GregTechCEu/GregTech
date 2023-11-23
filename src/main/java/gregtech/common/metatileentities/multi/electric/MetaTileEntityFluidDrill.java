@@ -392,4 +392,8 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
                     veinInfo));
         }
     }
+
+    public boolean allowsExtendedFacing() {
+        return false;
+    }
 }

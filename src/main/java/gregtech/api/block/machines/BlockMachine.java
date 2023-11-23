@@ -16,6 +16,7 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.items.MetaItems;
@@ -245,6 +246,16 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
             } else {
                 metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
+            }
+            if (metaTileEntity instanceof MultiblockControllerBase multi) {
+                if (multi.allowsExtendedFacing()) {
+                    EnumFacing frontFacing = multi.getFrontFacing();
+                    if (frontFacing == EnumFacing.UP) {
+                        multi.setUpwardsFacing(placer.getHorizontalFacing());
+                    } else if (frontFacing == EnumFacing.DOWN) {
+                        multi.setUpwardsFacing(placer.getHorizontalFacing().getOpposite());
+                    }
+                }
             }
             if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
                 if (metaTileEntity.getProxy() != null) {

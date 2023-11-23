@@ -10,6 +10,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
@@ -46,7 +47,12 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
     @Override
     protected Function<BlockPos, Integer> multiblockPartSorter() {
-        return BlockPos::getY; // todo this needs to be "relative up" with Freedom Wrench
+        return RelativeDirection.UP.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
+    }
+
+    @Override
+    public boolean allowsExtendedFacing() {
+        return false;
     }
 
     @Override

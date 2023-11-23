@@ -84,6 +84,7 @@ public class Textures {
 
     // Simple Oriented Cube Renderers
     public static final SimpleOrientedCubeRenderer CRAFTING_TABLE = new SimpleOrientedCubeRenderer("casings/crafting_table");
+    public static final SimpleOrientedCubeRenderer GRATE_CASING_STEEL_FRONT = new SimpleOrientedCubeRenderer("casings/pipe/grate_steel_front");
 
     // Oriented Overlay Renderers
     public static final OrientedOverlayRenderer COAL_BOILER_OVERLAY = new OrientedOverlayRenderer("generators/boiler/coal");
