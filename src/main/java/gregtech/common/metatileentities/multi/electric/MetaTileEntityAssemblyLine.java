@@ -242,11 +242,16 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
         EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
         EnumFacing relativeLeft = RelativeDirection.LEFT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
+        boolean negativeUp = relativeUp.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE;
 
         for (int i = 0; i < beamParticles.length; i++) {
             GTLaserBeamParticle particle = beamParticles[i][0];
             if (i < beamCount && particle == null) {
                 pos.setPos(getPos());
+                if (negativeUp) {
+                    // correct for the position of the block corresponding to its negative side
+                    pos.move(relativeUp.getOpposite());
+                }
                 Vector3 startPos = new Vector3()
                         .add(pos.move(relativeLeft, i))
                         .add( // offset by 0.5 in both non-"upwards" directions
@@ -259,6 +264,9 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 beamParticles[i][0] = createALParticles(getWorld(), startPos, endPos);
 
                 pos.setPos(getPos());
+                if (negativeUp) {
+                    pos.move(relativeUp.getOpposite());
+                }
                 startPos = new Vector3()
                         .add(pos.move(relativeLeft, i)
                                 .move(getFrontFacing().getOpposite(), 2))
