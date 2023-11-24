@@ -7,9 +7,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 
 /**
- * Object representation of GL setup code. Any recurring render setup / cleanup code should probably go here.<p/>
+ * <p>
+ * Object representation of GL setup code. Any recurring render setup / cleanup code should probably go here.
+ * <p/>
+ * <p>
  * During render, render calls with identical render setup instance will be drawn in a batch.
- * Providing proper equality checks and hashes is recommended for non-singleton render setup implementations.
+ * Providing proper {@link Object#equals(Object) equals()} and {@link Object#hashCode() hashCode()} implementation is
+ * recommended for non-singleton render setup implementations.
+ * <p/>
  */
 @SideOnly(Side.CLIENT)
 public interface IRenderSetup {
