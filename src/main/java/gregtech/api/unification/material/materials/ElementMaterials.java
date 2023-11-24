@@ -948,7 +948,7 @@ public class ElementMaterials {
                 .blast(b -> b
                         .temp(9000, GasTier.HIGH)
                         .blastStats(VA[ZPM], 1200)
-                        .vacuumStats(VA[IV], 300))
+                        .vacuumStats(VA[LuV], 200))
                 .build();
 
         Neutronium = new Material.Builder(127, gregtechId("neutronium"))
