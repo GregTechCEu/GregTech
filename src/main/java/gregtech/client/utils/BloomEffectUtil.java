@@ -62,6 +62,7 @@ public class BloomEffectUtil {
      */
     @Nonnull
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public static BlockRenderLayer getRealBloomLayer() {
         return getEffectiveBloomLayer();
     }
