@@ -179,8 +179,8 @@ public class BlockLamp extends Block {
 
     @Override
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        if (layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.CUTOUT) return true;
-        return isLightActive(state) && state.getValue(BLOOM) && layer == BloomEffectUtil.getEffectiveBloomLayer();
+        if (layer == BlockRenderLayer.SOLID) return true;
+        return layer == BloomEffectUtil.getEffectiveBloomLayer(isLightActive(state) && state.getValue(BLOOM));
     }
 
     @SideOnly(Side.CLIENT)
