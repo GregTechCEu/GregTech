@@ -220,8 +220,8 @@ public class Textures {
     public static final ICubeRenderer COMPUTER_CASING = new SidedCubeRenderer("casings/computer/computer_casing");
     public static final ICubeRenderer ADVANCED_COMPUTER_CASING = new SidedCubeRenderer("casings/computer/advanced_computer_casing");
 
-    public static final AlignedOrientedOverlayRenderer LD_ITEM_PIPE = new AlignedOrientedOverlayRenderer("pipe/ld_item_pipe");
-    public static final AlignedOrientedOverlayRenderer LD_FLUID_PIPE = new AlignedOrientedOverlayRenderer("pipe/ld_fluid_pipe");
+    public static final AlignedOrientedOverlayRenderer LD_ITEM_PIPE = new LDPipeOverlayRenderer("pipe/ld_item_pipe");
+    public static final AlignedOrientedOverlayRenderer LD_FLUID_PIPE = new LDPipeOverlayRenderer("pipe/ld_fluid_pipe");
 
     public static final SimpleOverlayRenderer ROTOR_HOLDER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_rotor_holder");
     public static final SimpleOverlayRenderer ADV_PUMP_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_adv_pump");
