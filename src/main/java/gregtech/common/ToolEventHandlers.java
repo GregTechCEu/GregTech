@@ -359,7 +359,7 @@ public class ToolEventHandlers {
             } else if (tile instanceof MetaTileEntityHolder) {
                 MetaTileEntity mte = ((MetaTileEntityHolder) tile).getMetaTileEntity();
                 drawGridOverlays(facing, box, mte::isSideUsed);
-                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing()) {
+                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing() && ToolHelper.isTool(player.getHeldItemMainhand(), ToolClasses.WRENCH)) {
                     // set up some render state first
                     GL11.glPushMatrix();
                     GL11.glTranslated(pos.getX() - (int) d3, pos.getY() - (int) d4, pos.getZ() - (int) d5);
