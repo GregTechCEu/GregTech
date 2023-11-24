@@ -1535,7 +1535,10 @@ public class FirstDegreeMaterials {
                 .components(Ruthenium, 4, Tungsten, 2, Molybdenum, 1)
                 .flags(GENERATE_SPRING)
                 .cableProperties(V[EV], 6, 2)
-                .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1400)
+                .blast(b -> b
+                        .temp(3000, GasTier.MID)
+                        .blastStats(VA[EV], 1400)
+                        .vacuumStats(VA[HV], 250))
                 .build();
     }
 }
