@@ -19,6 +19,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.lwjgl.opengl.GL11;
 
@@ -42,6 +43,7 @@ public class BloomEffectUtil {
      * @deprecated use {@link #getBloomLayer()}
      */
     @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public static BlockRenderLayer BLOOM;
 
     private static BlockRenderLayer bloom;
@@ -352,4 +354,8 @@ public class BloomEffectUtil {
 
     @Desugar
     private record BloomRenderSetup(@Nullable IRenderSetup renderSetup, @Nonnull BloomType bloomType) {}
+
+    private static final class BloomRenderTicket {
+
+    }
 }
