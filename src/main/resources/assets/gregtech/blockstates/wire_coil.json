@@ -40,17 +40,17 @@
             "top_all":"gregtech:blocks/casings/coils/machine_coil_nichrome_bloom"
         }
     },
-    "active=false,variant=tungstensteel": {
+    "active=false,variant=rtm_alloy": {
         "model": "minecraft:cube_all",
         "textures": {
-            "all": "gregtech:blocks/casings/coils/machine_coil_tungstensteel"
+            "all": "gregtech:blocks/casings/coils/machine_coil_rtm_alloy"
         }
     },
-    "active=true,variant=tungstensteel": {
+    "active=true,variant=rtm_alloy": {
         "model": "gregtech:cube_2_layer_all",
         "textures": {
-            "bot_all": "gregtech:blocks/casings/coils/machine_coil_tungstensteel",
-            "top_all":"gregtech:blocks/casings/coils/machine_coil_tungstensteel_bloom"
+            "bot_all": "gregtech:blocks/casings/coils/machine_coil_rtm_alloy",
+            "top_all":"gregtech:blocks/casings/coils/machine_coil_rtm_alloy_bloom"
         }
     },
     "active=false,variant=hss_g": {

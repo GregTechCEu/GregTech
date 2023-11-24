@@ -125,7 +125,7 @@ public class SecondDegreeMaterials {
                 .fluidPipeProperties(3587, 225, true)
                 .cableProperties(V[IV], 3, 2)
                 .blast(b -> b
-                        .temp(3000, GasTier.MID)
+                        .temp(4000, GasTier.MID)
                         .blastStats(VA[EV], 1000)
                         .vacuumStats(VA[HV]))
                 .build();
