@@ -1533,6 +1533,7 @@ public class FirstDegreeMaterials {
                 .ingot().fluid()
                 .color(0x30306B).iconSet(SHINY)
                 .components(Ruthenium, 4, Tungsten, 2, Molybdenum, 1)
+                .flags(GENERATE_SPRING)
                 .cableProperties(V[EV], 6, 2)
                 .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1400)
                 .build();
