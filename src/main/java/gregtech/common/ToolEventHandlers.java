@@ -319,6 +319,10 @@ public class ToolEventHandlers {
 
         if (tile instanceof IGregTechTileEntity gtte) {
             MetaTileEntity mte = gtte.getMetaTileEntity();
+            if (mte != null) {
+                if (mainHand.isEmpty() && isSneaking && mte.hasAnyCover()) return true;
+                if (mte.canRenderMachineGrid(mainHand, offHand)) return true;
+            }
             if (mte != null && (mainHand.isEmpty() || mte.canRenderMachineGrid(mainHand, offHand))) {
                 return true;
             }
