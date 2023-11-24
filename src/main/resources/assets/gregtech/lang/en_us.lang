@@ -1788,7 +1788,7 @@ gregtech.material.antimony_trifluoride=Antimony Trifluoride
 gregtech.material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
 gregtech.material.naquadria_sulfate=Naquadria Sulfate
 gregtech.material.pyrochlore=Pyrochlore
-gregtech.material.rtm_alloy=RTM-Alloy
+gregtech.material.rtm_alloy=RTM Alloy
 
 
 # Organic Chemistry Materials
@@ -2458,7 +2458,7 @@ tile.wire_coil.tooltip_energy_cracking=  §aEnergy Usage: §f%s%%
 tile.wire_coil.cupronickel.name=Cupronickel Coil Block
 tile.wire_coil.kanthal.name=Kanthal Coil Block
 tile.wire_coil.nichrome.name=Nichrome Coil Block
-tile.wire_coil.rtm_alloy.name=RTM-Alloy Coil Block
+tile.wire_coil.rtm_alloy.name=RTM Alloy Coil Block
 tile.wire_coil.hss_g.name=HSS-G Coil Block
 tile.wire_coil.naquadah.name=Naquadah Coil Block
 tile.wire_coil.trinium.name=Trinium Coil Block
@@ -4602,7 +4602,7 @@ gregtech.advancement.insane_voltage.55_qbit_cpu_wafer.desc=Produce a QBit CPU Wa
 gregtech.advancement.insane_voltage.56_quantum_processor.name=Quantum Processor
 gregtech.advancement.insane_voltage.56_quantum_processor.desc=Get Quantum Processors.
 gregtech.advancement.insane_voltage.57_rtm_alloy_coil.name=Upgrade your Coils to Level IV
-gregtech.advancement.insane_voltage.57_rtm_alloy_coil.desc=Craft a RTM-Alloy Heating Coil.
+gregtech.advancement.insane_voltage.57_rtm_alloy_coil.desc=Craft a RTM Alloy Heating Coil.
 gregtech.advancement.insane_voltage.58_hss_g_coil.name=Upgrade your Coils to Level V
 gregtech.advancement.insane_voltage.58_hss_g_coil.desc=Craft an HSS-G Heating Coil.
 gregtech.advancement.root_luv.name=Ludicrous Voltage
