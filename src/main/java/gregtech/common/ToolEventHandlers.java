@@ -323,9 +323,6 @@ public class ToolEventHandlers {
                 if (mainHand.isEmpty() && isSneaking && mte.hasAnyCover()) return true;
                 if (mte.canRenderMachineGrid(mainHand, offHand)) return true;
             }
-            if (mte != null && (mainHand.isEmpty() || mte.canRenderMachineGrid(mainHand, offHand))) {
-                return true;
-            }
         }
         CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, null);
         if (coverHolder == null) return false;
