@@ -1796,6 +1796,7 @@ gregtech.material.antimony_trifluoride=三フッ化アンチモン
 gregtech.material.enriched_naquadah_sulfate=濃縮ナクアダ硫酸塩
 gregtech.material.naquadria_sulfate=ナクアドリア硫酸塩
 gregtech.material.pyrochlore=パイロクロア
+gregtech.material.rtm_alloy=RTM合金
 
 
 # Organic Chemistry Materials
@@ -2465,7 +2466,7 @@ tile.wire_coil.tooltip_energy_cracking=  §aエネルギー使用量: §f%s%%
 tile.wire_coil.cupronickel.name=キュプロニッケルコイルブロック
 tile.wire_coil.kanthal.name=カンタルコイルブロック
 tile.wire_coil.nichrome.name=ニクロムコイルブロック
-tile.wire_coil.tungstensteel.name=タングステンスチールコイルブロック
+tile.wire_coil.rtm_alloy.name=RTM合金コイルブロック
 tile.wire_coil.hss_g.name=HSS-Gコイルブロック
 tile.wire_coil.naquadah.name=ナクアダコイルブロック
 tile.wire_coil.trinium.name=トリニウムコイルブロック
@@ -4607,8 +4608,8 @@ gregtech.advancement.insane_voltage.55_qbit_cpu_wafer.name=ナノCPUを右に90�
 gregtech.advancement.insane_voltage.55_qbit_cpu_wafer.desc=量子ビットCPUウェハーを生産する。
 gregtech.advancement.insane_voltage.56_quantum_processor.name=冷却不要!
 gregtech.advancement.insane_voltage.56_quantum_processor.desc=量子処理装置を入手する。
-gregtech.advancement.insane_voltage.57_tungstensteel_coil.name=コイルをレベル IVにしよう
-gregtech.advancement.insane_voltage.57_tungstensteel_coil.desc=タングステンスチールコイルブロックを作成する。
+gregtech.advancement.insane_voltage.57_rtm_alloy_coil.name=コイルをレベル IVにしよう
+gregtech.advancement.insane_voltage.57_rtm_alloy_coil.desc=RTM合金コイルブロックを作成する。
 gregtech.advancement.insane_voltage.58_hss_g_coil.name=コイルをレベル Vにしよう
 gregtech.advancement.insane_voltage.58_hss_g_coil.desc=HSS-Gコイルブロックを作成する。
 gregtech.advancement.root_luv.name=LuV (Ludicrous Voltage) 時代
