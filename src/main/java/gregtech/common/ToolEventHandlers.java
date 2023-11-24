@@ -319,8 +319,9 @@ public class ToolEventHandlers {
 
         if (tile instanceof IGregTechTileEntity gtte) {
             MetaTileEntity mte = gtte.getMetaTileEntity();
-            if (mte != null && (mainHand.isEmpty() || mte.canRenderMachineGrid(mainHand, offHand))) {
-                return true;
+            if (mte != null) {
+                if (mainHand.isEmpty() && isSneaking && mte.hasAnyCover()) return true;
+                if (mte.canRenderMachineGrid(mainHand, offHand)) return true;
             }
         }
         CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, null);
@@ -358,7 +359,7 @@ public class ToolEventHandlers {
             } else if (tile instanceof MetaTileEntityHolder) {
                 MetaTileEntity mte = ((MetaTileEntityHolder) tile).getMetaTileEntity();
                 drawGridOverlays(facing, box, mte::isSideUsed);
-                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing()) {
+                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing() && ToolHelper.isTool(player.getHeldItemMainhand(), ToolClasses.WRENCH)) {
                     // set up some render state first
                     GL11.glPushMatrix();
                     GL11.glTranslated(pos.getX() - (int) d3, pos.getY() - (int) d4, pos.getZ() - (int) d5);
