@@ -134,13 +134,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     @Override
     protected Function<BlockPos, Integer> multiblockPartSorter() {
-        if (isFlipped()) {
-            // player's left when looking at the controller, but the controller's right
-            return RelativeDirection.RIGHT.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
-        } else {
-            // player's right when looking at the controller, but the controller's left
-            return RelativeDirection.LEFT.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
-        }
+        // player's right when looking at the controller, but the controller's left
+        return RelativeDirection.LEFT.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
     }
 
     @SideOnly(Side.CLIENT)
