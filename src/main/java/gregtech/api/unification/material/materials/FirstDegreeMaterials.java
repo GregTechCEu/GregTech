@@ -351,7 +351,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(V[EV], 4, 4)
                 .blast(b -> b
                         .temp(2700, GasTier.LOW)
-                        .blastStats(VA[EV], 1300)
+                        .blastStats(VA[EV], 1000)
                         .vacuumStats(VA[HV]))
                 .build();
 
@@ -1528,5 +1528,13 @@ public class FirstDegreeMaterials {
                 .build();
 
         // FREE ID 450
+
+        RTMAlloy = new Material.Builder(451, gregtechId("rtm_alloy"))
+                .ingot().fluid()
+                .color(0x30306B).iconSet(SHINY)
+                .components(Ruthenium, 4, Tungsten, 2, Molybdenum, 1)
+                .cableProperties(V[EV], 6, 2)
+                .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1400)
+                .build();
     }
 }
