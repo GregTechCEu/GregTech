@@ -1,6 +1,5 @@
 package gregtech.worldgen;
 
-import gregtech.api.util.XSTR;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
@@ -26,8 +25,7 @@ public final class GTWorldGenerator implements IWorldGenerator {
     @Override
     public void generate(@NotNull Random random, int chunkX, int chunkZ, @NotNull World world,
                          @NotNull IChunkGenerator chunkGenerator, @NotNull IChunkProvider chunkProvider) {
-        WorldgenContainer container = new WorldgenContainer(new XSTR(random.nextInt(Integer.MAX_VALUE) + 1),
-                chunkX, chunkZ, world, chunkGenerator, chunkProvider);
+        WorldgenContainer container = new WorldgenContainer(chunkX, chunkZ, world);
         containers.add(container);
         if (DEBUG) {
             WorldgenModule.logger.info("Added {}", container);

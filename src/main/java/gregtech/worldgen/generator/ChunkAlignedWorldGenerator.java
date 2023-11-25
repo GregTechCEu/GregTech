@@ -1,6 +1,6 @@
 package gregtech.worldgen.generator;
 
-import gregtech.worldgen.OrePlacementResult;
+import gregtech.worldgen.PlacementResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,8 +21,8 @@ public interface ChunkAlignedWorldGenerator extends GeneratorEntry {
      * @param chunkZ the current chunk Z in block coordinates
      * @return the result
      */
-    @NotNull OrePlacementResult generate(@NotNull World world, @NotNull Random random, @NotNull String biome,
-                                         int dimension, int originX, int originZ, int chunkX, int chunkZ);
+    @NotNull PlacementResult generate(@NotNull World world, @NotNull Random random, @NotNull String biome,
+                                      int dimension, int originX, int originZ, int chunkX, int chunkZ);
 
     /**
      * @return the name of this generator

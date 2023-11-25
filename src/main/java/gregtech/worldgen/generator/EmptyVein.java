@@ -1,6 +1,6 @@
 package gregtech.worldgen.generator;
 
-import gregtech.worldgen.OrePlacementResult;
+import gregtech.worldgen.PlacementResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,10 +15,10 @@ public final class EmptyVein implements ChunkAlignedWorldGenerator {
     private EmptyVein() {}
 
     @Override
-    public @NotNull OrePlacementResult generate(@NotNull World world, @NotNull Random random,
-                                                @NotNull String biome, int dimension, int originX, int originZ,
-                                                int chunkX, int chunkZ) {
-        return OrePlacementResult.ORE_PLACED;
+    public @NotNull PlacementResult generate(@NotNull World world, @NotNull Random random,
+                                             @NotNull String biome, int dimension, int originX, int originZ,
+                                             int chunkX, int chunkZ) {
+        return PlacementResult.PLACED;
     }
 
     @Override

@@ -1,56 +1,35 @@
 package gregtech.worldgen.generator;
 
-import com.google.common.base.Preconditions;
-import gregtech.worldgen.OrePlacementResult;
+import gregtech.worldgen.PlacementResult;
 import gregtech.worldgen.WorldgenModule;
 import gregtech.worldgen.WorldgenPlaceable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-public class LayeredVein implements ChunkAlignedWorldGenerator {
+public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorldGenerator {
 
-    private final String name;
-
-    private final int minY;
-    private final int maxY;
-
-    private final int weight;
     private final int density;
-
-    private final int size;
 
     private final WorldgenPlaceable top;
     private final WorldgenPlaceable middle;
     private final WorldgenPlaceable bottom;
     private final WorldgenPlaceable spread;
 
-    private final int[] allowedDimensions;
-    private final String[] allowedBiomes;
-
     public LayeredVein(@NotNull String name, int minY, int maxY, int weight, int density, int size,
-                       @NotNull WorldgenPlaceable top, @NotNull WorldgenPlaceable middle,
-                       @NotNull WorldgenPlaceable bottom, @NotNull WorldgenPlaceable spread,
-                       int @NotNull [] allowedDimensions, @NotNull String @NotNull [] allowedBiomes) {
-        this.name = name;
-        Preconditions.checkArgument(minY < maxY, "minY < maxY");
-        this.minY = minY;
-        this.maxY = maxY;
-        this.weight = weight;
+                       int @NotNull [] allowedDimensions, @NotNull String @NotNull [] allowedBiomes, @NotNull WorldgenPlaceable top, @NotNull WorldgenPlaceable middle,
+                       @NotNull WorldgenPlaceable bottom, @NotNull WorldgenPlaceable spread) {
+        super(name, minY, maxY, weight, size, allowedDimensions, allowedBiomes);
         this.density = density;
-        this.size = size;
         this.top = top;
         this.middle = middle;
         this.bottom = bottom;
         this.spread = spread;
-        this.allowedDimensions = allowedDimensions;
-        this.allowedBiomes = allowedBiomes;
     }
 
     /**
@@ -61,19 +40,19 @@ public class LayeredVein implements ChunkAlignedWorldGenerator {
      * @param pos   the position to check
      * @param left  the left placement bound
      * @param right the right placement bound
-     * @return {@link OrePlacementResult#NON_OVERLAPPING} if the position cannot be reached but could be placed,
-     * {@link OrePlacementResult#NON_OVERLAPPING_AIR_BLOCK} if the position cannot be reached, but cannot be placed,
+     * @return {@link PlacementResult#NON_OVERLAPPING} if the position cannot be reached but could be placed,
+     * {@link PlacementResult#NON_OVERLAPPING_AIR_BLOCK} if the position cannot be reached, but cannot be placed,
      * {@code null} otherwise
      */
-    private static @Nullable OrePlacementResult checkCanPlace(@NotNull IBlockState state, @NotNull World world,
-                                                              @NotNull BlockPos pos, int left, int right) {
+    private static @Nullable PlacementResult checkCanPlace(@NotNull IBlockState state, @NotNull World world,
+                                                           @NotNull BlockPos pos, int left, int right) {
         if (left >= right) {
             if (state.getBlock().isReplaceableOreGen(state, world, pos, WorldgenModule::isOregenReplaceable)) {
                 // Didn't reach, but could place, so save for future use
-                return OrePlacementResult.NON_OVERLAPPING;
+                return PlacementResult.NON_OVERLAPPING;
             } else {
                 // Didn't reach, cannot place in the test spot, so try for another vein
-                return OrePlacementResult.NON_OVERLAPPING_AIR_BLOCK;
+                return PlacementResult.NON_OVERLAPPING_AIR_BLOCK;
             }
         }
         return null;
@@ -111,16 +90,11 @@ public class LayeredVein implements ChunkAlignedWorldGenerator {
     }
 
     @Override
-    public @NotNull OrePlacementResult generate(@NotNull World world, @NotNull Random random,
-                                                @NotNull String biome, int dimension, int originX, int originZ,
-                                                int chunkX, int chunkZ) {
-        if (!canGenerateInDimension(dimension)) {
-            return OrePlacementResult.INCOMPATIBLE_DIMENSION;
-        }
-
-        if (!canGenerateInBiome(biome)) {
-            return OrePlacementResult.INCOMPATIBLE_BIOME;
-        }
+    public @NotNull PlacementResult generate(@NotNull World world, @NotNull Random random,
+                                             @NotNull String biome, int dimension, int originX, int originZ,
+                                             int chunkX, int chunkZ) {
+        if (!canGenerateInDimension(dimension)) return PlacementResult.INCOMPATIBLE_DIMENSION;
+        if (!canGenerateInBiome(biome)) return PlacementResult.INCOMPATIBLE_BIOME;
 
         int startY = this.minY + random.nextInt(maxY - minY - 5);
 
@@ -138,7 +112,7 @@ public class LayeredVein implements ChunkAlignedWorldGenerator {
         pos.setPos(chunkX + 7, startY, chunkZ + 9);
         IBlockState state = world.getBlockState(pos);
 
-        OrePlacementResult result = checkCanPlace(state, world, pos, xLeft, xRight);
+        PlacementResult result = checkCanPlace(state, world, pos, xLeft, xRight);
         if (result != null) return result;
 
         // if the X axis passes, check the Z axis
@@ -174,7 +148,7 @@ public class LayeredVein implements ChunkAlignedWorldGenerator {
             placeSmallOres(world, random, pos, xLeft, xRight, zLeft, zRight, chunkX, chunkZ);
         }
 
-        return OrePlacementResult.ORE_PLACED;
+        return PlacementResult.PLACED;
     }
 
     @Override
@@ -182,43 +156,15 @@ public class LayeredVein implements ChunkAlignedWorldGenerator {
         return this.name;
     }
 
-    @Override
-    public int getWeight() {
-        return this.weight;
-    }
-
-    @Override
-    public int @NotNull [] getDimensions() {
-        return this.allowedDimensions;
-    }
-
-    /**
-     * @param dimension the dimension to check
-     * @return if the vein can generate in the dimension
-     */
-    private boolean canGenerateInDimension(int dimension) {
-        if (allowedDimensions.length == 0) return true;
-        return ArrayUtils.contains(allowedDimensions, dimension);
-    }
-
-    /**
-     * @param biome the biome to check
-     * @return if the vein can generate in the biome
-     */
-    private boolean canGenerateInBiome(@NotNull String biome) {
-        if (allowedBiomes.length == 0) return true;
-        return ArrayUtils.contains(allowedBiomes, biome);
-    }
-
     /**
      * Places the ores in the vein
      *
-     * @return {@link OrePlacementResult#NO_ORE_IN_BOTTOM} if nothing was placed in the bottom, otherwise {@code null}.
+     * @return {@link PlacementResult#CANNOT_GEN_IN_BOTTOM} if nothing was placed in the bottom, otherwise {@code null}.
      */
-    private @Nullable OrePlacementResult placeOres(@NotNull World world, @NotNull Random random,
-                                                   @NotNull BlockPos.MutableBlockPos pos, int localDensity,
-                                                   int startY, int xLeft, int xRight, int zLeft, int zRight,
-                                                   int westBound, int eastBound, int southBound, int northBound) {
+    private @Nullable PlacementResult placeOres(@NotNull World world, @NotNull Random random,
+                                                @NotNull BlockPos.MutableBlockPos pos, int localDensity,
+                                                int startY, int xLeft, int xRight, int zLeft, int zRight,
+                                                int westBound, int eastBound, int southBound, int northBound) {
         int topAmount = 0;
         int middleAmount = 0;
         int bottomAmount = 0;
@@ -282,7 +228,7 @@ public class LayeredVein implements ChunkAlignedWorldGenerator {
                 if (WorldgenModule.DEBUG) {
                     WorldgenModule.logger.info("No ore in bottom layer");
                 }
-                return OrePlacementResult.NO_ORE_IN_BOTTOM;
+                return PlacementResult.CANNOT_GEN_IN_BOTTOM;
             }
         }
 

@@ -8,9 +8,8 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.StoneVariantBlock;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
-import gregtech.worldgen.generator.ChunkAlignedWorldGenerator;
-import gregtech.worldgen.generator.GeneratorRegistry;
-import gregtech.worldgen.generator.LayeredVein;
+import gregtech.worldgen.generator.*;
+import gregtech.worldgen.placeable.BlockStatePlaceable;
 import gregtech.worldgen.placeable.MaterialPlaceable;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -40,6 +39,8 @@ public class WorldgenModule extends BaseGregTechModule {
     public static final boolean DEBUG = false;
 
     public static final GeneratorRegistry<ChunkAlignedWorldGenerator> CHUNK_ALIGNED_REGISTRY = new GeneratorRegistry<>();
+    public static final GeneratorRegistry<StoneBlob> STONE_BLOB_REGISTRY = new GeneratorRegistry<>();
+    public static final GeneratorRegistry<SporadicWorldGenerator> SPORADIC_REGISTRY = new GeneratorRegistry<>();
 
     @Override
     public @NotNull Logger getLogger() {
@@ -51,19 +52,46 @@ public class WorldgenModule extends BaseGregTechModule {
         super.init(event);
         GameRegistry.registerWorldGenerator(GTWorldGenerator.INSTANCE, 1);
 
+        STONE_BLOB_REGISTRY.register(new StoneBlob("blob_tiny", 0, 180, 5, 75,
+                new int[]{0}, new String[0],
+                new BlockStatePlaceable(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH)
+                        .getState(StoneVariantBlock.StoneType.BASALT))));
+
+        STONE_BLOB_REGISTRY.register(new StoneBlob("blob_small", 0, 180, 10, 100,
+                new int[]{0}, new String[0],
+                new BlockStatePlaceable(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH)
+                        .getState(StoneVariantBlock.StoneType.BASALT))));
+
+        STONE_BLOB_REGISTRY.register(new StoneBlob("blob_medium", 0, 180, 10, 200,
+                new int[]{0}, new String[0],
+                new BlockStatePlaceable(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH)
+                        .getState(StoneVariantBlock.StoneType.BASALT))));
+
+        STONE_BLOB_REGISTRY.register(new StoneBlob("blob_large", 0, 120, 70, 300,
+                new int[]{0}, new String[0],
+                new BlockStatePlaceable(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH)
+                        .getState(StoneVariantBlock.StoneType.BASALT))));
+
+        STONE_BLOB_REGISTRY.register(new StoneBlob("blob_huge", 0, 120, 150, 400,
+                new int[]{0}, new String[0],
+                new BlockStatePlaceable(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH)
+                        .getState(StoneVariantBlock.StoneType.BASALT))));
+
         CHUNK_ALIGNED_REGISTRY.register(new LayeredVein("test1", 20, 50, 80, 5, 32,
+                new int[]{0}, new String[0],
                 new MaterialPlaceable(Materials.Diamond),
                 new MaterialPlaceable(Materials.Gold),
                 new MaterialPlaceable(Materials.Copper),
-                new MaterialPlaceable(Materials.TricalciumPhosphate),
-                new int[]{0}, new String[0]));
+                new MaterialPlaceable(Materials.TricalciumPhosphate)
+        ));
 
         CHUNK_ALIGNED_REGISTRY.register(new LayeredVein("test2", 40, 70, 20, 2, 24,
+                new int[]{0}, new String[0],
                 new MaterialPlaceable(Materials.Silver),
                 new MaterialPlaceable(Materials.Redstone),
                 new MaterialPlaceable(Materials.Opal),
-                new MaterialPlaceable(Materials.YellowLimonite),
-                new int[]{0}, new String[0]));
+                new MaterialPlaceable(Materials.YellowLimonite)
+        ));
     }
 
     /**
@@ -111,5 +139,10 @@ public class WorldgenModule extends BaseGregTechModule {
 
     public static int maxOregenPlacementAttempts() {
         return 8;
+    }
+
+    private static final int ORIGIN_CHUNK_DIAMETER = 3;
+    public static boolean isOriginChunk(int chunkX, int chunkZ) {
+        return Math.floorMod(chunkX, ORIGIN_CHUNK_DIAMETER) == 1 && Math.floorMod(chunkZ, ORIGIN_CHUNK_DIAMETER) == 1;
     }
 }
