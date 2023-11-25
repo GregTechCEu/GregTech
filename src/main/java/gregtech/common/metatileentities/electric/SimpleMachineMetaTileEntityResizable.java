@@ -56,7 +56,7 @@ public class SimpleMachineMetaTileEntityResizable extends SimpleMachineMetaTileE
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         if (inputAmount != -1) {
-            return new NotifiableItemStackHandler(inputAmount, this, false);
+            return new NotifiableItemStackHandler(this, inputAmount, this, false);
         }
         return super.createImportItemHandler();
     }
@@ -64,7 +64,7 @@ public class SimpleMachineMetaTileEntityResizable extends SimpleMachineMetaTileE
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
         if (outputAmount != -1) {
-            return new NotifiableItemStackHandler(outputAmount, this, true);
+            return new NotifiableItemStackHandler(this, outputAmount, this, true);
         }
         return super.createExportItemHandler();
     }
