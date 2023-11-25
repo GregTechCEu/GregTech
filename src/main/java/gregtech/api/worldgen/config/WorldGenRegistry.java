@@ -21,7 +21,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
@@ -117,7 +116,7 @@ public class WorldGenRegistry {
         registerVeinPopulator("fluid_spring", FluidSpringPopulator::new);
         registerVeinPopulator("surface_block", SurfaceBlockPopulator::new);
 
-        GameRegistry.registerWorldGenerator(WorldGeneratorImpl.INSTANCE, 1);
+//        GameRegistry.registerWorldGenerator(WorldGeneratorImpl.INSTANCE, 1);
         MinecraftForge.ORE_GEN_BUS.register(WorldGeneratorImpl.class);
         try {
             reinitializeRegisteredVeins();
