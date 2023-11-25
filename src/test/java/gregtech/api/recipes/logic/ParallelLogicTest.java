@@ -14,7 +14,7 @@ import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.OverlayedFluidHandler;
 import gregtech.api.util.OverlayedItemHandler;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.common.metatileentities.electric.MetaTileEntityMacerator;
+import gregtech.common.metatileentities.electric.SimpleMachineMetaTileEntityResizable;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 import net.minecraft.init.Blocks;
@@ -871,9 +871,10 @@ public class ParallelLogicTest {
                 .output(Items.CARROT)
                 .build().getResult();
 
-        MetaTileEntityMacerator macerator = MetaTileEntities.registerMetaTileEntity(1, new MetaTileEntityMacerator(
+        SimpleMachineMetaTileEntityResizable macerator = MetaTileEntities.registerMetaTileEntity(1, new SimpleMachineMetaTileEntityResizable(
                 gregtechId("macerator"),
                 RecipeMaps.MACERATOR_RECIPES,
+                -1,
                 4,
                 null,
                 GTValues.EV));
