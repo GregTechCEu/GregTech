@@ -29,12 +29,12 @@ public class MetaTileEntitySteamSieve extends SteamMetaTileEntity {
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(2, this, false);
+        return new NotifiableItemStackHandler(this, 2, this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new NotifiableItemStackHandler(30, this, true);
+        return new NotifiableItemStackHandler(this, 30, this, true);
     }
 
     @Override

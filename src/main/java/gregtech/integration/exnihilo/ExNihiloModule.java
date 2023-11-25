@@ -1,8 +1,6 @@
 package gregtech.integration.exnihilo;
 
-import exnihilocreatio.registries.manager.ExNihiloRegistryManager;
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.SteamTexture;
 import gregtech.api.gui.widgets.ProgressWidget;
@@ -44,14 +42,12 @@ import static gregtech.api.unification.ore.OrePrefix.Conditions.hasOreProperty;
 import static gregtech.api.unification.ore.OrePrefix.Flags.ENABLE_UNIFICATION;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
 
-
 @GregTechModule(
         moduleID = GregTechModules.MODULE_EN,
         containerID = GTValues.MODID,
         modDependencies = GTValues.MODID_EN,
-        name = "GregTech ExNihiloCreatio integration",
-        descriptionKey = "gregtech.modules.en_integration.description"
-)
+        name = "GregTech Ex Nihilo Creatio Integration",
+        description = "Ex Nihilo Integration Module")
 public class ExNihiloModule extends IntegrationSubmodule {
 
     // Items

@@ -7,6 +7,7 @@ import exnihilocreatio.registries.types.Siftable;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -54,8 +55,8 @@ public class ExNihiloRecipes {
     public static void registerGTRecipes() {
         // Machine Recipes
         MetaTileEntityLoader.registerMachineRecipe(SIEVES, "CPC", "FMF", "OSO", 'M', HULL, 'C', CIRCUIT, 'O', CABLE, 'F', CONVEYOR, 'S', new ItemStack(ModBlocks.sieve), 'P', PISTON);
-        ModHandler.addShapedRecipe("steam_sieve_bronze", STEAM_SIEVE_BRONZE.getStackForm(), "BPB", "BMB", "BSB", 'B', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.Bronze), 'M', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), 'S', new ItemStack(ModBlocks.sieve), 'P', Blocks.PISTON);
-        ModHandler.addShapedRecipe("steam_sieve_steel", STEAM_SIEVE_STEEL.getStackForm(), "BPB", "WMW", "BBB", 'B', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.WroughtIron), 'M', STEAM_SIEVE_BRONZE.getStackForm(), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel));
+        ModHandler.addShapedRecipe(true, "steam_sieve_bronze", STEAM_SIEVE_BRONZE.getStackForm(), "BPB", "BMB", "BSB", 'B', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.Bronze), 'M', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), 'S', new ItemStack(ModBlocks.sieve), 'P', Blocks.PISTON);
+        ModHandler.addShapedRecipe(true, "steam_sieve_steel", STEAM_SIEVE_STEEL.getStackForm(), "BPB", "WMW", "BBB", 'B', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.WroughtIron), 'M', STEAM_SIEVE_BRONZE.getStackForm(), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel));
     }
 
     // Has to be done in init phase because of ExNi registering outside the Registry event
@@ -68,12 +69,15 @@ public class ExNihiloRecipes {
                 SimpleRecipeBuilder builder = SIEVE_RECIPES.recipeBuilder().notConsumable(recipe.getMesh()).inputs(stack);
 
                 for (Siftable siftable : ExNihiloRegistryManager.SIEVE_REGISTRY.getDrops(stack)) {
-                    if (siftable.getMeshLevel() == recipe.getMesh().getMetadata())
-                        if ((int) (siftable.getChance() * (float) Recipe.getMaxChancedValue()) >= Recipe.getMaxChancedValue()) {
+                    if (siftable.getDrop() == null) continue;
+                    if (siftable.getMeshLevel() == recipe.getMesh().getMetadata()) {
+                        int maxChance = ChancedOutputLogic.getMaxChancedValue();
+                        if ((int) (siftable.getChance() * (float) maxChance) >= maxChance) {
                             builder.outputs(siftable.getDrop().getItemStack());
                         } else {
-                            builder.chancedOutput(siftable.getDrop().getItemStack(), (int) (siftable.getChance() * (float) Recipe.getMaxChancedValue()), 200);
+                            builder.chancedOutput(siftable.getDrop().getItemStack(), (int) (siftable.getChance() * (float) maxChance), 200);
                         }
+                    }
                 }
                 builder.buildAndRegister();
             }
