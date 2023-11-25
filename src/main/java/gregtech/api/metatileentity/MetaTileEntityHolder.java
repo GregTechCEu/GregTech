@@ -259,7 +259,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
 
     /**
      * @return double array of length 2, with index 0 being the average time and index 1 the worst time, in ns.
-     *         If there is no tick time, it will return null.
+     * If there is no tick time, it will return null.
      */
     public double[] getTimeStatistics() {
         if (timeStatistics.length > 0) {
@@ -271,7 +271,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                     worstTickTime = tickTime;
                 }
             }
-            return new double[] { averageTickTime, worstTickTime };
+            return new double[]{averageTickTime, worstTickTime};
         }
         return null;
     }

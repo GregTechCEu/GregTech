@@ -4,6 +4,7 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.WireProperties;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,21 +17,21 @@ public class EnergyNet extends PipeNet<WireProperties> {
     private long energyFluxPerSec;
     private long lastTime;
 
-    private final Map<BlockPos, List<RoutePath>> NET_DATA = new HashMap<>();
+    private final Map<BlockPos, List<EnergyRoutePath>> NET_DATA = new Object2ObjectOpenHashMap<>();
 
     protected EnergyNet(WorldPipeNet<WireProperties, EnergyNet> world) {
         super(world);
     }
 
-    public List<RoutePath> getNetData(BlockPos pipePos) {
-        List<RoutePath> data = NET_DATA.get(pipePos);
+    public List<EnergyRoutePath> getNetData(BlockPos pipePos) {
+        List<EnergyRoutePath> data = NET_DATA.get(pipePos);
         if (data == null) {
             data = EnergyNetWalker.createNetData(getWorldData(), pipePos);
             if (data == null) {
                 // walker failed, don't cache so it tries again on next insertion
                 return Collections.emptyList();
             }
-            data.sort(Comparator.comparingInt(RoutePath::getDistance));
+            data.sort(Comparator.comparingInt(EnergyRoutePath::getDistance));
             NET_DATA.put(pipePos, data);
         }
         return data;

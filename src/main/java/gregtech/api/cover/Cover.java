@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -46,6 +47,23 @@ public interface Cover {
      */
     default @UnknownNullability BlockPos getPos() {
         return getCoverableView().getPos();
+    }
+
+    /**
+     * @return the tile entity at the cover's position
+     */
+    default @Nullable TileEntity getTileEntityHere() {
+        CoverableView view = getCoverableView();
+        return view.getWorld().getTileEntity(view.getPos());
+    }
+
+    /**
+     * @param facing the side to get the neighbor at
+     * @return the neighbor tile entity at the side
+     */
+    default @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
+        CoverableView view = getCoverableView();
+        return view.getNeighbor(facing);
     }
 
     /**
@@ -94,7 +112,6 @@ public interface Cover {
      * @return if the cover can attach to the side
      */
     boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side);
-
 
     /**
      * Called when the cover is first attached on the Server Side.
