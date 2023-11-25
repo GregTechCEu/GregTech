@@ -140,9 +140,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     private boolean handleTEMode() {
-        long energyUsage = getTEModeAmperage() * GTValues.V[getTier()];
-        if (energyContainer.getEnergyStored() < energyUsage) return false;
-        energyContainer.removeEnergy(energyUsage);
+        if (!drawEnergy(getTEModeAmperage() * GTValues.V[getTier()])) return false;
 
         World world = getWorld();
         BlockPos pos = getPos();
@@ -161,11 +159,10 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     private boolean handleRandomTickMode() {
-        long energyUsage = getRandomTickModeAmperage() * GTValues.V[getTier()];
-        if (energyContainer.getEnergyStored() < energyUsage) return false;
-        energyContainer.removeEnergy(energyUsage);
+        if (!drawEnergy(getRandomTickModeAmperage() * GTValues.V[getTier()])) return false;
 
         World world = getWorld();
+        int maxHeight = world.getHeight();
         // room for hitting ourselves randomly, or blocks not loaded, or blocks outside of height limits
         int attempts = successLimit * 3;
         BlockPos cornerPos = getCornerPos();
@@ -179,17 +176,23 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
                     cornerPos.getY() + y,
                     cornerPos.getZ() + z);
 
-            if (cornerPos.getY() > 256 || cornerPos.getY() < 0) continue;
-            if (!world.isBlockLoaded(cornerPos)) continue;
-            if (cornerPos.equals(getPos())) continue;
+            if (mutablePos.getY() > maxHeight || mutablePos.getY() < 0) continue;
+            if (!world.isBlockLoaded(mutablePos)) continue;
+            if (mutablePos.equals(getPos())) continue;
 
-            IBlockState state = world.getBlockState(cornerPos);
+            IBlockState state = world.getBlockState(mutablePos);
             Block block = state.getBlock();
             if (block.getTickRandomly()) {
-                block.randomTick(world, cornerPos.toImmutable(), state, world.rand);
+                block.randomTick(world, mutablePos.toImmutable(), state, world.rand);
             }
             i++; // success, whether it actually ticked or not
         }
+        return true;
+    }
+
+    private boolean drawEnergy(long usage) {
+        if (energyContainer.getEnergyStored() < usage) return false;
+        energyContainer.removeEnergy(usage);
         return true;
     }
 
