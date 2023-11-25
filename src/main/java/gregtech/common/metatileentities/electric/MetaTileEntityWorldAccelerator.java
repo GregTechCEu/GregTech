@@ -168,9 +168,9 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
         BlockPos cornerPos = getCornerPos();
         BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(cornerPos);
         for (int i = 0, j = 0; i < successLimit && j < attempts; j++) {
-            int x = GTValues.RNG.nextInt(getTier() - 1);
-            int y = GTValues.RNG.nextInt(getTier() - 1);
-            int z = GTValues.RNG.nextInt(getTier() - 1);
+            int x = GTValues.RNG.nextInt(getTier() << 1);
+            int y = GTValues.RNG.nextInt(getTier() << 1);
+            int z = GTValues.RNG.nextInt(getTier() << 1);
             mutablePos.setPos(
                     cornerPos.getX() + x,
                     cornerPos.getY() + y,
