@@ -360,6 +360,13 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
+        public long getMaxVoltage() {
+            // Allow the PA to use as much power as provided, since tier is gated by the machine anyway.
+            // UI text uses the machine stack's tier instead of the getMaxVoltage() tier as well.
+            return super.getMaximumOverclockVoltage();
+        }
+
+        @Override
         protected int getNumberOfOCs(int recipeEUt) {
             if (!isAllowOverclocking()) return 0;
 
