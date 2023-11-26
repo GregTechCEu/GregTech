@@ -110,7 +110,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * @return the maximum voltage the machine can use/handle for recipe searching
      */
-    protected abstract long getMaxVoltage();
+    public abstract long getMaxVoltage();
 
     /**
      *

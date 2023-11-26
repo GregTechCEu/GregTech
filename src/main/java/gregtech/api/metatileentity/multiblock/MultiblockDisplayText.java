@@ -89,11 +89,32 @@ public class MultiblockDisplayText {
                 // wrap in text component to keep it from being formatted
                 ITextComponent voltageName = new TextComponentString(GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
-                textList.add(TextComponentUtil.translationWithColor(
+                ITextComponent bodyText = TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick",
-                        energyFormatted, voltageName));
+                        energyFormatted, voltageName);
+                ITextComponent hoverText = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.max_energy_per_tick_hover");
+                textList.add(TextComponentUtil.setHover(bodyText, hoverText));
             }
+            return this;
+        }
+
+        /**
+         * Adds the max Recipe Tier that this multiblock can use for recipe lookup.
+         * <br>
+         * Added if the structure is formed and if the passed tier is a valid energy tier index for {@link GTValues#VNF}.
+         */
+        public Builder addEnergyTierLine(int tier) {
+            if (!isStructureFormed) return this;
+            if (tier < GTValues.ULV || tier > GTValues.MAX) return this;
+
+            ITextComponent voltageName = new TextComponentString(GTValues.VNF[tier]);
+            ITextComponent bodyText = TextComponentUtil.translationWithColor(
+                    TextFormatting.GRAY,
+                    "gregtech.multiblock.max_recipe_tier",
+                    voltageName);
+            ITextComponent hoverText = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.max_recipe_tier_hover");
+            textList.add(TextComponentUtil.setHover(bodyText, hoverText));
             return this;
         }
 

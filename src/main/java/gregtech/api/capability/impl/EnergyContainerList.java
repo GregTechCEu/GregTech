@@ -14,17 +14,32 @@ public class EnergyContainerList implements IEnergyContainer {
     private final long inputAmperage;
     private final long outputAmperage;
 
+    /** The highest single energy container's input voltage in the list. */
+    private final long highestInputVoltage;
+    /** The number of energy containers at the highest input voltage in the list. */
+    private final int numHighestInputContainers;
+
     public EnergyContainerList(@Nonnull List<IEnergyContainer> energyContainerList) {
         this.energyContainerList = energyContainerList;
         long totalInputVoltage = 0;
         long totalOutputVoltage = 0;
         long inputAmperage = 0;
         long outputAmperage = 0;
+        long highestInputVoltage = 0;
+        int numHighestInputContainers = 0;
         for (IEnergyContainer container : energyContainerList) {
             totalInputVoltage += container.getInputVoltage() * container.getInputAmperage();
             totalOutputVoltage += container.getOutputVoltage() * container.getOutputAmperage();
             inputAmperage += container.getInputAmperage();
             outputAmperage += container.getOutputAmperage();
+            if (container.getInputVoltage() > highestInputVoltage) {
+                highestInputVoltage = container.getInputVoltage();
+            }
+        }
+        for (IEnergyContainer container : energyContainerList) {
+            if (container.getInputVoltage() == highestInputVoltage) {
+                numHighestInputContainers++;
+            }
         }
 
         long[] voltageAmperage = calculateVoltageAmperage(totalInputVoltage, inputAmperage);
@@ -33,6 +48,8 @@ public class EnergyContainerList implements IEnergyContainer {
         voltageAmperage = calculateVoltageAmperage(totalOutputVoltage, outputAmperage);
         this.outputVoltage = voltageAmperage[0];
         this.outputAmperage = voltageAmperage[1];
+        this.highestInputVoltage = highestInputVoltage;
+        this.numHighestInputContainers = numHighestInputContainers;
     }
 
     /**
@@ -161,6 +178,16 @@ public class EnergyContainerList implements IEnergyContainer {
             energyCapacity += iEnergyContainer.getEnergyCapacity();
         }
         return energyCapacity;
+    }
+
+    /** The highest single voltage of an energy container in this list. */
+    public long getHighestInputVoltage() {
+        return highestInputVoltage;
+    }
+
+    /** The number of parts with voltage specified in {@link EnergyContainerList#getHighestInputVoltage()} in this list. */
+    public int getNumHighestInputContainers() {
+        return numHighestInputContainers;
     }
 
     /**

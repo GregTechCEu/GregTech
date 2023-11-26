@@ -554,7 +554,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         }
 
         @Override
-        protected long getMaxVoltage() {
+        public long getMaxVoltage() {
             return Math.min(GTValues.V[tier], super.getMaxVoltage());
         }
 

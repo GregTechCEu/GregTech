@@ -370,7 +370,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         }
 
         @Override
-        protected long getMaxVoltage() {
+        public long getMaxVoltage() {
             //this multiplies consumption through parallel
             if (isOxygenBoosted)
                 return GTValues.V[tier] * 2;

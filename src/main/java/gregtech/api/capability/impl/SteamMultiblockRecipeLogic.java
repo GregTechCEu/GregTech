@@ -111,7 +111,7 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected long getMaxVoltage() {
+    public long getMaxVoltage() {
         return GTValues.V[GTValues.LV];
     }
 

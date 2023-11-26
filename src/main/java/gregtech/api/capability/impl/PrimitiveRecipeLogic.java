@@ -39,7 +39,7 @@ public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected long getMaxVoltage() {
+    public long getMaxVoltage() {
         return GTValues.LV;
     }
 

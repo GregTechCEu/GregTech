@@ -306,7 +306,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected long getMaxVoltage() {
+    public long getMaxVoltage() {
         GTLog.logger.error("Large Boiler called getMaxVoltage(), this should not be possible!");
         return 0;
     }

@@ -107,12 +107,14 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
+        ProcessingArrayWorkable logic = (ProcessingArrayWorkable) recipeMapWorkable;
+
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
+                .addEnergyTierLine(logic.currentMachineStack == ItemStack.EMPTY ? -1 : logic.machineTier)
                 .addCustom(tl -> {
                     if (isStructureFormed()) {
-                        ProcessingArrayWorkable logic = (ProcessingArrayWorkable) recipeMapWorkable;
 
                         // Machine mode text
                         // Shared text components for both states
@@ -355,6 +357,13 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         @Override
         protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
             return super.findRecipe(Math.min(super.getMaxVoltage(), this.machineVoltage), inputs, fluidInputs);
+        }
+
+        @Override
+        public long getMaxVoltage() {
+            // Allow the PA to use as much power as provided, since tier is gated by the machine anyway.
+            // UI text uses the machine stack's tier instead of the getMaxVoltage() tier as well.
+            return super.getMaximumOverclockVoltage();
         }
 
         @Override
