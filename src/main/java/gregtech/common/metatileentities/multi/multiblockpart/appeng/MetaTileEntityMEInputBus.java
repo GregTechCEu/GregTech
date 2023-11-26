@@ -1,12 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
-import appeng.api.config.Actionable;
-import appeng.api.storage.IMEMonitor;
-import appeng.api.storage.data.IAEItemStack;
-import appeng.me.GridAccessException;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -20,6 +13,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -33,17 +27,27 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import appeng.api.config.Actionable;
+import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.data.IAEItemStack;
+import appeng.me.GridAccessException;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
 import java.util.List;
 import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @Author GlodBlock
  * @Description The Input Bus that can auto fetch item ME storage network.
  * @Date 2023/4/22-13:34
  */
-public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
+                                      implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
     public final static String ITEM_BUFFER_TAG = "ItemSlots";
     public final static String WORKING_TAG = "WorkingEnabled";
@@ -83,7 +87,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
                         IAEItemStack exceedItem = aeSlot.exceedStack();
                         if (exceedItem != null) {
                             long total = exceedItem.getStackSize();
-                            IAEItemStack notInserted = aeNetwork.injectItems(exceedItem, Actionable.MODULATE, this.getActionSource());
+                            IAEItemStack notInserted = aeNetwork.injectItems(exceedItem, Actionable.MODULATE,
+                                    this.getActionSource());
                             if (notInserted != null && notInserted.getStackSize() > 0) {
                                 aeSlot.extractItem(0, (int) (total - notInserted.getStackSize()), false);
                                 continue;
@@ -94,14 +99,14 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
                         // Fill it
                         IAEItemStack reqItem = aeSlot.requestStack();
                         if (reqItem != null) {
-                            IAEItemStack extracted = aeNetwork.extractItems(reqItem, Actionable.MODULATE, this.getActionSource());
+                            IAEItemStack extracted = aeNetwork.extractItems(reqItem, Actionable.MODULATE,
+                                    this.getActionSource());
                             if (extracted != null) {
                                 aeSlot.addStack(extracted);
                             }
                         }
                     }
-                } catch (GridAccessException ignore) {
-                }
+                } catch (GridAccessException ignore) {}
             }
         }
     }
@@ -119,8 +124,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
                     aeNetwork.injectItems(stock, Actionable.MODULATE, this.getActionSource());
                 }
             }
-        } catch (GridAccessException ignore) {
-        }
+        } catch (GridAccessException ignore) {}
         super.onRemoval();
     }
 
@@ -136,8 +140,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
                 .label(10, 5, getMetaFullName());
         // ME Network status
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
-                        I18n.format("gregtech.gui.me_network.online") :
-                        I18n.format("gregtech.gui.me_network.offline"),
+                I18n.format("gregtech.gui.me_network.online") :
+                I18n.format("gregtech.gui.me_network.offline"),
                 0xFFFFFFFF);
 
         // Config slots
@@ -186,7 +190,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         super.writeToNBT(data);
         data.setBoolean(WORKING_TAG, this.workingEnabled);
         NBTTagList slots = new NBTTagList();
-        for (int i = 0; i < CONFIG_SIZE; i ++) {
+        for (int i = 0; i < CONFIG_SIZE; i++) {
             ExportOnlyAEItem slot = this.aeItemHandler.inventory[i];
             NBTTagCompound slotTag = new NBTTagCompound();
             slotTag.setInteger("slot", i);
@@ -223,7 +227,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.item_import.tooltip"));
@@ -244,11 +249,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
 
         ExportOnlyAEItem[] inventory;
 
-
         public ExportOnlyAEItemList(MetaTileEntity holder, int slots, MetaTileEntity entityToNotify) {
             super(holder, slots, entityToNotify, false);
             this.inventory = new ExportOnlyAEItem[CONFIG_SIZE];
-            for (int i = 0; i < CONFIG_SIZE; i ++) {
+            for (int i = 0; i < CONFIG_SIZE; i++) {
                 this.inventory[i] = new ExportOnlyAEItem(null, null);
             }
             for (ExportOnlyAEItem slot : this.inventory) {
@@ -258,7 +262,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
-            for (int index = 0; index < CONFIG_SIZE; index ++) {
+            for (int index = 0; index < CONFIG_SIZE; index++) {
                 if (nbt.hasKey("#" + index)) {
                     NBTTagCompound slotTag = nbt.getCompoundTag("#" + index);
                     this.inventory[index].deserializeNBT(slotTag);
@@ -269,7 +273,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         @Override
         public NBTTagCompound serializeNBT() {
             NBTTagCompound nbt = new NBTTagCompound();
-            for (int index = 0; index < CONFIG_SIZE; index ++) {
+            for (int index = 0; index < CONFIG_SIZE; index++) {
                 NBTTagCompound slot = this.inventory[index].serializeNBT();
                 nbt.setTag("#" + index, slot);
             }
@@ -319,10 +323,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
             return Integer.MAX_VALUE;
         }
-
     }
 
     public static class ExportOnlyAEItem extends ExportOnlyAESlot<IAEItemStack> implements IItemHandlerModifiable {
+
         private Consumer<Integer> trigger;
 
         public ExportOnlyAEItem(IAEItemStack config, IAEItemStack stock) {
@@ -347,8 +351,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
         public ExportOnlyAEItem copy() {
             return new ExportOnlyAEItem(
                     this.config == null ? null : this.config.copy(),
-                    this.stock == null ? null : this.stock.copy()
-            );
+                    this.stock == null ? null : this.stock.copy());
         }
 
         @Override
@@ -432,5 +435,4 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart imple
             return Integer.MAX_VALUE;
         }
     }
-
 }

@@ -2,6 +2,7 @@ package gregtech.api.pipenet.longdist;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -16,13 +17,15 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
 
@@ -37,7 +40,8 @@ public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
     }
 
     @Override
-    public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
+    public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state,
+                                @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
         if (worldIn.isRemote) return;
         // first find all neighbouring networks
@@ -61,7 +65,8 @@ public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
                             network.getPipeType() + " is not valid for network type " + network.getPipeType());
                 }
                 ILDEndpoint endpoint = ILDEndpoint.tryGet(worldIn, offsetPos);
-                // only count the network as connected if it's not an endpoint or the endpoints input or output face is connected
+                // only count the network as connected if it's not an endpoint or the endpoints input or output face is
+                // connected
                 if (endpoint == null || endpoint.getFrontFacing().getAxis() == facing.getAxis()) {
                     networks.add(network);
                 }
@@ -104,12 +109,14 @@ public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos,
+                                    @Nonnull EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip,
+                               @Nonnull ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         tooltip.add(I18n.format("gregtech.block.tooltip.no_mob_spawning"));
     }

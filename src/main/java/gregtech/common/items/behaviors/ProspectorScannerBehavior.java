@@ -15,6 +15,7 @@ import gregtech.common.terminal.app.prospector.ProspectorMode;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.SearchComponent;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,11 +28,12 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
 
 public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory, SearchComponent.IWidgetSearch<String> {
 
@@ -112,11 +114,13 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         this.widgetOreList = new WidgetOreList(32 * radius - 6, 18, 332 - 32 * radius, 176);
         builder.widget(this.widgetOreList);
         builder.widget(new WidgetProspectingMap(6, 18, radius, this.widgetOreList, mode, 1));
-        //Cardinal directions
+        // Cardinal directions
         builder.widget(new LabelWidget(3 + (16 * (radius * 2 - 1)) / 2, 14, "N", 0xAAAAAA).setShadow(true));
-        builder.widget(new LabelWidget(3 + (16 * (radius * 2 - 1)) / 2, 14 + 16 * (radius * 2 - 1), "S", 0xAAAAAA).setShadow(true));
+        builder.widget(new LabelWidget(3 + (16 * (radius * 2 - 1)) / 2, 14 + 16 * (radius * 2 - 1), "S", 0xAAAAAA)
+                .setShadow(true));
         builder.widget(new LabelWidget(3, 15 + (16 * (radius * 2 - 1)) / 2, "W", 0xAAAAAA).setShadow(true));
-        builder.widget(new LabelWidget(3 + 16 * (radius * 2 - 1), 15 + (16 * (radius * 2 - 1)) / 2, "E", 0xAAAAAA).setShadow(true));
+        builder.widget(new LabelWidget(3 + 16 * (radius * 2 - 1), 15 + (16 * (radius * 2 - 1)) / 2, "E", 0xAAAAAA)
+                .setShadow(true));
         return builder.label(6, 6, getTranslationKey()).build(holder, entityPlayer);
     }
 
@@ -170,7 +174,8 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
             if (player.openContainer instanceof ModularUIContainer) {
                 ModularUIContainer modularUIContainer = (ModularUIContainer) player.openContainer;
                 if (modularUIContainer.getModularUI().holder instanceof PlayerInventoryHolder) {
-                    if (((PlayerInventoryHolder) (modularUIContainer).getModularUI().holder).getCurrentItem() == itemStack) {
+                    if (((PlayerInventoryHolder) (modularUIContainer).getModularUI().holder).getCurrentItem() ==
+                            itemStack) {
                         if (!player.isCreative()) {
                             if (checkCanUseScanner(itemStack, player, true))
                                 drainEnergy(itemStack, GTValues.V[tier] / VOLTAGE_FACTOR, false);

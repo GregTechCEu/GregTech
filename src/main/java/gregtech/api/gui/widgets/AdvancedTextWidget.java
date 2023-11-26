@@ -4,6 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -19,20 +20,23 @@ import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.lwjgl.input.Mouse;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 /**
  * Represents a text-component based widget, which obtains
  * text from server and automatically synchronizes it with clients
  */
 public class AdvancedTextWidget extends Widget {
+
     protected int maxWidthLimit;
 
     @SideOnly(Side.CLIENT)
@@ -52,7 +56,7 @@ public class AdvancedTextWidget extends Widget {
     public static ITextComponent withButton(ITextComponent textComponent, String componentData) {
         Style style = textComponent.getStyle();
         style.setClickEvent(new ClickEvent(Action.OPEN_URL, "@!" + componentData));
-        if(style.getColor() == null) {
+        if (style.getColor() == null) {
             style.setColor(TextFormatting.YELLOW);
         }
         return textComponent;
@@ -90,7 +94,8 @@ public class AdvancedTextWidget extends Widget {
     @SideOnly(Side.CLIENT)
     private void resizeWrapScreen() {
         if (sizes != null) {
-            getWrapScreen().setWorldAndResolution(Minecraft.getMinecraft(), sizes.getScreenWidth(), sizes.getScreenHeight());
+            getWrapScreen().setWorldAndResolution(Minecraft.getMinecraft(), sizes.getScreenWidth(),
+                    sizes.getScreenHeight());
         }
     }
 
@@ -164,7 +169,8 @@ public class AdvancedTextWidget extends Widget {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         int maxTextWidthResult = maxWidthLimit == 0 ? Integer.MAX_VALUE : maxWidthLimit;
         this.displayText = displayText.stream()
-                .flatMap(c -> GuiUtilRenderComponents.splitText(c, maxTextWidthResult, fontRenderer, true, true).stream())
+                .flatMap(c -> GuiUtilRenderComponents.splitText(c, maxTextWidthResult, fontRenderer, true, true)
+                        .stream())
                 .collect(Collectors.toList());
     }
 
@@ -234,7 +240,8 @@ public class AdvancedTextWidget extends Widget {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         Position position = getPosition();
         for (int i = 0; i < displayText.size(); i++) {
-            fontRenderer.drawString(displayText.get(i).getFormattedText(), position.x, position.y + i * (fontRenderer.FONT_HEIGHT + 2), color);
+            fontRenderer.drawString(displayText.get(i).getFormattedText(), position.x,
+                    position.y + i * (fontRenderer.FONT_HEIGHT + 2), color);
         }
     }
 
@@ -254,6 +261,7 @@ public class AdvancedTextWidget extends Widget {
      */
     @SideOnly(Side.CLIENT)
     private static class WrapScreen extends GuiScreen {
+
         @Override
         public void handleComponentHover(@Nonnull ITextComponent component, int x, int y) {
             super.handleComponentHover(component, x, y);

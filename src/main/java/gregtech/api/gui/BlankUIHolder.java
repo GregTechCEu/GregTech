@@ -13,6 +13,5 @@ public class BlankUIHolder implements IUIHolder {
     }
 
     @Override
-    public void markAsDirty() {
-    }
+    public void markAsDirty() {}
 }

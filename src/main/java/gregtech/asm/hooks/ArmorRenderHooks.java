@@ -1,6 +1,7 @@
 package gregtech.asm.hooks;
 
 import gregtech.api.items.armor.IArmorItem;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
@@ -28,7 +29,9 @@ public class ArmorRenderHooks {
         return (itemStack.getItem() instanceof IArmorItem && itemStack.getItem().getEquipmentSlot(itemStack) == slot);
     }
 
-    public static void renderArmorLayer(LayerArmorBase<ModelBase> layer, EntityLivingBase entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale, EntityEquipmentSlot slotIn) {
+    public static void renderArmorLayer(LayerArmorBase<ModelBase> layer, EntityLivingBase entity, float limbSwing,
+                                        float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw,
+                                        float headPitch, float scale, EntityEquipmentSlot slotIn) {
         ItemStack itemStack = entity.getItemStackFromSlot(slotIn);
 
         if (isArmorItem(itemStack, slotIn)) {
@@ -56,7 +59,8 @@ public class ArmorRenderHooks {
                 armorModel.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
             }
             if (itemStack.hasEffect()) {
-                LayerArmorBase.renderEnchantedGlint(layer.renderer, entity, armorModel, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
+                LayerArmorBase.renderEnchantedGlint(layer.renderer, entity, armorModel, limbSwing, limbSwingAmount,
+                        partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
             }
         }
     }
@@ -65,13 +69,16 @@ public class ArmorRenderHooks {
         return equipmentSlot == EntityEquipmentSlot.LEGS;
     }
 
-    private static ResourceLocation getArmorTexture(EntityLivingBase entity, ItemStack itemStack, EntityEquipmentSlot slot, String type) {
+    private static ResourceLocation getArmorTexture(EntityLivingBase entity, ItemStack itemStack,
+                                                    EntityEquipmentSlot slot, String type) {
         ResourceLocation registryName = itemStack.getItem().getRegistryName();
         if (registryName == null) {
-            throw new IllegalArgumentException("ItemStack " + itemStack.getTranslationKey() + "has a null registry name");
+            throw new IllegalArgumentException(
+                    "ItemStack " + itemStack.getTranslationKey() + "has a null registry name");
         }
 
-        String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", registryName.getNamespace(), registryName.getPath(),
+        String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", registryName.getNamespace(),
+                registryName.getPath(),
                 (isLegSlot(slot) ? 2 : 1), type == null ? "" : String.format("_%s", type));
         return new ResourceLocation(ForgeHooksClient.getArmorTexture(entity, itemStack, s1, slot, type));
     }

@@ -1,16 +1,18 @@
 package gregtech.client.renderer;
 
-import codechicken.lib.vec.Cuboid6;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import codechicken.lib.vec.Cuboid6;
+
 import java.util.Arrays;
 
 @SideOnly(Side.CLIENT)
 public class CubeRendererState {
+
     public final BlockRenderLayer layer;
     public final boolean[] sideMask;
     public final IBlockAccess world;

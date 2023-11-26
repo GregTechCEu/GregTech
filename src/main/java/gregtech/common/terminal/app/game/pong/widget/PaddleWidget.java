@@ -3,10 +3,12 @@ package gregtech.common.terminal.app.game.pong.widget;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
+
 import java.awt.*;
 import java.util.function.Function;
 
 public class PaddleWidget extends Widget {
+
     Function<PaddleWidget, Integer> controlSupplier;
 
     public PaddleWidget(int x, int y, int width, int height, Function<PaddleWidget, Integer> controlSupplier) {
@@ -16,7 +18,9 @@ public class PaddleWidget extends Widget {
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        drawSolidRect(this.toRectangleBox().x - this.toRectangleBox().width / 2, this.toRectangleBox().y - this.toRectangleBox().height / 2, this.toRectangleBox().width, this.toRectangleBox().height, 0xFFFFFFFF);
+        drawSolidRect(this.toRectangleBox().x - this.toRectangleBox().width / 2,
+                this.toRectangleBox().y - this.toRectangleBox().height / 2, this.toRectangleBox().width,
+                this.toRectangleBox().height, 0xFFFFFFFF);
     }
 
     @Override
@@ -40,12 +44,11 @@ public class PaddleWidget extends Widget {
                 speed = 0;
         }
         this.addSelfPosition(0, speed);
-
     }
 
     public Rectangle toSelfRectangleBox() {
-        return new Rectangle(this.getSelfPosition().x - this.toRectangleBox().width / 2 - 2, this.getSelfPosition().y - this.toRectangleBox().height / 2,
+        return new Rectangle(this.getSelfPosition().x - this.toRectangleBox().width / 2 - 2,
+                this.getSelfPosition().y - this.toRectangleBox().height / 2,
                 this.toRectangleBox().width, this.toRectangleBox().height);
     }
-
 }

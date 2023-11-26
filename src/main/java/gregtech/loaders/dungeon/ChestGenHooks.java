@@ -1,12 +1,10 @@
 package gregtech.loaders.dungeon;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -19,6 +17,10 @@ import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -42,7 +44,7 @@ public final class ChestGenHooks {
     @SubscribeEvent
     public static void onWorldLoad(@NotNull LootTableLoadEvent event) {
         LootPool mainPool = event.getTable().getPool("main");
-        //noinspection ConstantValue
+        // noinspection ConstantValue
         if (mainPool == null) return;
 
         ResourceLocation name = event.getName();
@@ -64,11 +66,13 @@ public final class ChestGenHooks {
         if (rollValues.containsKey(event.getName())) {
             RandomValueRange rangeAdd = rollValues.get(event.getName());
             RandomValueRange range = mainPool.getRolls();
-            mainPool.setRolls(new RandomValueRange(range.getMin() + rangeAdd.getMin(), range.getMax() + rangeAdd.getMax()));
+            mainPool.setRolls(
+                    new RandomValueRange(range.getMin() + rangeAdd.getMin(), range.getMax() + rangeAdd.getMax()));
         }
     }
 
-    public static void addItem(@NotNull ResourceLocation lootTable, @NotNull ItemStack stack, int minAmount, int maxAmount, int weight) {
+    public static void addItem(@NotNull ResourceLocation lootTable, @NotNull ItemStack stack, int minAmount,
+                               int maxAmount, int weight) {
         RandomWeightLootFunction lootFunction = new RandomWeightLootFunction(stack, minAmount, maxAmount);
         String modid = Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace();
         String entryName = createEntryName(stack, modid, weight, lootFunction);
@@ -88,7 +92,8 @@ public final class ChestGenHooks {
 
     private static @NotNull String createEntryName(@NotNull ItemStack stack, @NotNull String modid, int weight,
                                                    @NotNull RandomWeightLootFunction function) {
-        int hashCode = Objects.hash(HASH_STRATEGY.hashCode(stack), modid, weight, function.getMinAmount(), function.getMaxAmount());
+        int hashCode = Objects.hash(HASH_STRATEGY.hashCode(stack), modid, weight, function.getMinAmount(),
+                function.getMaxAmount());
         return String.format("#%s:loot_%s", modid, hashCode);
     }
 
@@ -96,8 +101,9 @@ public final class ChestGenHooks {
 
         private final ItemStack stack;
 
-        public GTLootEntryItem(@NotNull ItemStack stack, int weight, LootFunction lootFunction, @NotNull String entryName) {
-            super(stack.getItem(), weight, 1, new LootFunction[]{lootFunction}, NO_CONDITIONS, entryName);
+        public GTLootEntryItem(@NotNull ItemStack stack, int weight, LootFunction lootFunction,
+                               @NotNull String entryName) {
+            super(stack.getItem(), weight, 1, new LootFunction[] { lootFunction }, NO_CONDITIONS, entryName);
             this.stack = stack;
         }
 
@@ -130,7 +136,8 @@ public final class ChestGenHooks {
         }
 
         @Override
-        public @NotNull ItemStack apply(@NotNull ItemStack itemStack, @NotNull Random rand, @NotNull LootContext context) {
+        public @NotNull ItemStack apply(@NotNull ItemStack itemStack, @NotNull Random rand,
+                                        @NotNull LootContext context) {
             itemStack.setItemDamage(stack.getItemDamage());
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound != null) {

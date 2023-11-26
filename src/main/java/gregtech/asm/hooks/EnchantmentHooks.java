@@ -1,6 +1,7 @@
 package gregtech.asm.hooks;
 
 import gregtech.api.items.toolitem.IGTTool;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 

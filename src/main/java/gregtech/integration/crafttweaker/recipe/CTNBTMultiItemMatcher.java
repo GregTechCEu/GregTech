@@ -1,18 +1,21 @@
 package gregtech.integration.crafttweaker.recipe;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.util.GTLog;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.base.Preconditions;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class CTNBTMultiItemMatcher implements NBTMatcher {
 
@@ -31,7 +34,8 @@ public class CTNBTMultiItemMatcher implements NBTMatcher {
     @Override
     public boolean evaluate(@Nullable NBTTagCompound nbtTagCompound, @Nullable NBTCondition nbtCondition) {
         // should never get called
-        GTLog.logger.warn("CTNBTMultiItemMatcher#evaluate(NBTTagCompound, NBTCondition) was called. This should not happen.");
+        GTLog.logger.warn(
+                "CTNBTMultiItemMatcher#evaluate(NBTTagCompound, NBTCondition) was called. This should not happen.");
         return false;
     }
 

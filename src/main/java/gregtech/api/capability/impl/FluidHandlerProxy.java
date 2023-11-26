@@ -1,13 +1,15 @@
 package gregtech.api.capability.impl;
 
-import com.google.common.collect.Lists;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nullable;
+import com.google.common.collect.Lists;
+
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class FluidHandlerProxy implements IFluidHandler {
 

@@ -9,6 +9,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,13 +22,15 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
     private boolean hasValidFluids;
 
-    public MetaTileEntityRockBreaker(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
+    public MetaTileEntityRockBreaker(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer,
+                                     int tier) {
         super(metaTileEntityId, recipeMap, renderer, tier, true);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityRockBreaker(metaTileEntityId, RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, getTier());
+        return new MetaTileEntityRockBreaker(metaTileEntityId, RecipeMaps.ROCK_BREAKER_RECIPES,
+                Textures.ROCK_BREAKER_OVERLAY, getTier());
     }
 
     @Override
@@ -94,7 +97,8 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
     protected class RockBreakerRecipeLogic extends RecipeLogicEnergy {
 
-        public RockBreakerRecipeLogic(MetaTileEntity metaTileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
+        public RockBreakerRecipeLogic(MetaTileEntity metaTileEntity, RecipeMap<?> recipeMap,
+                                      Supplier<IEnergyContainer> energyContainer) {
             super(metaTileEntity, recipeMap, energyContainer);
         }
 
@@ -105,7 +109,7 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
     }
 
     @Override
-    public boolean getIsWeatherOrTerrainResistant(){
+    public boolean getIsWeatherOrTerrainResistant() {
         return true;
     }
 }

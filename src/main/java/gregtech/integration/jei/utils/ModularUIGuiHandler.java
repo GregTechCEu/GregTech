@@ -6,6 +6,9 @@ import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
+
+import net.minecraft.entity.player.EntityPlayer;
+
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mezz.jei.api.gui.IAdvancedGuiHandler;
 import mezz.jei.api.gui.IGhostIngredientHandler;
@@ -13,16 +16,17 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
-import net.minecraft.entity.player.EntityPlayer;
+
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
-import java.util.List;
-import java.util.*;
-import java.util.function.Predicate;
 
-public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, IGhostIngredientHandler<ModularUIGui>, IRecipeTransferHandler<ModularUIContainer> {
+public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, IGhostIngredientHandler<ModularUIGui>,
+                                 IRecipeTransferHandler<ModularUIContainer> {
 
     private final IRecipeTransferHandlerHelper transferHelper;
     private Predicate<IRecipeTransferHandlerWidget> validHandlers = widget -> true;
@@ -50,7 +54,9 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
 
     @Nullable
     @Override
-    public IRecipeTransferError transferRecipe(@Nonnull ModularUIContainer container, @Nonnull IRecipeLayout recipeLayout, @Nonnull EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
+    public IRecipeTransferError transferRecipe(@Nonnull ModularUIContainer container,
+                                               @Nonnull IRecipeLayout recipeLayout, @Nonnull EntityPlayer player,
+                                               boolean maxTransfer, boolean doTransfer) {
         if (this.recipeTransferCategoryBlacklist.contains(recipeLayout.getRecipeCategory().getUid())) {
             return this.transferHelper.createInternalError();
         }
@@ -63,7 +69,8 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
         if (!transferHandler.isPresent()) {
             return transferHelper.createInternalError();
         }
-        String errorTooltip = transferHandler.get().transferRecipe(container, recipeLayout, player, maxTransfer, doTransfer);
+        String errorTooltip = transferHandler.get().transferRecipe(container, recipeLayout, player, maxTransfer,
+                doTransfer);
         if (errorTooltip == null) {
             return null;
         }
@@ -97,7 +104,7 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
         for (Widget widget : widgets) {
             if (widget instanceof IGhostIngredientTarget ghostTarget) {
                 List<Target<?>> widgetTargets = ghostTarget.getPhantomTargets(ingredient);
-                //noinspection unchecked
+                // noinspection unchecked
                 targets.addAll((List<Target<I>>) (Object) widgetTargets);
             }
         }
@@ -111,6 +118,5 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
     }
 
     @Override
-    public void onComplete() {
-    }
+    public void onComplete() {}
 }

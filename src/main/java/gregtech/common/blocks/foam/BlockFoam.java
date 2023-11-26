@@ -2,6 +2,7 @@ package gregtech.common.blocks.foam;
 
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.SoundType;
@@ -23,9 +24,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import java.util.Random;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Random;
 
 public class BlockFoam extends BlockColored {
 
@@ -43,7 +45,9 @@ public class BlockFoam extends BlockColored {
     }
 
     @Override
-    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state,
+                                    EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing,
+                                    float hitX, float hitY, float hitZ) {
         ItemStack stackInHand = playerIn.getHeldItem(hand);
         if (!stackInHand.isEmpty() && OreDictUnifier.hasOreDictionary(stackInHand, "sand")) {
             worldIn.setBlockState(pos, getPetrifiedBlock(state));
@@ -78,7 +82,8 @@ public class BlockFoam extends BlockColored {
     @Nullable
     @Override
     @SuppressWarnings("deprecation")
-    public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn,
+                                                 @Nonnull BlockPos pos) {
         return null;
     }
 
@@ -100,7 +105,6 @@ public class BlockFoam extends BlockColored {
         return false;
     }
 
-
     @Override
     @SuppressWarnings("deprecation")
     public boolean isFullCube(@Nonnull IBlockState state) {
@@ -110,7 +114,8 @@ public class BlockFoam extends BlockColored {
     @Nonnull
     @Override
     @SuppressWarnings("deprecation")
-    public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+    public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state,
+                                            @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
     }
 }

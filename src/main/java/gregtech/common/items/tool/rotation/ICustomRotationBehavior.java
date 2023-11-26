@@ -9,7 +9,10 @@ import net.minecraft.world.World;
 
 public interface ICustomRotationBehavior {
 
-    /** Custom implementation of {@link Block#rotateBlock(World, BlockPos, EnumFacing)} for when that behavior isn't ideal. */
+    /**
+     * Custom implementation of {@link Block#rotateBlock(World, BlockPos, EnumFacing)} for when that behavior isn't
+     * ideal.
+     */
     boolean customRotate(IBlockState state, World world, BlockPos pos, RayTraceResult hitResult);
 
     /** Whether to show the 9-sectioned highlight grid when looking at this block while holding a Wrench. */

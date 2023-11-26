@@ -9,21 +9,26 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.UniversalDistillationRecipeBuilder;
+
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationRecipeBuilder> {
 
-    public RecipeMapDistillationTower(String unlocalizedName, int maxInputs, boolean modifyItemInputs, int maxOutputs, boolean modifyItemOutputs,
-                                 int maxFluidInputs, boolean modifyFluidInputs, int maxFluidOutputs, boolean modifyFluidOutputs, UniversalDistillationRecipeBuilder defaultRecipe, boolean isHidden) {
-        super(unlocalizedName, maxInputs, modifyItemInputs, maxOutputs, modifyItemOutputs, maxFluidInputs, modifyFluidInputs, maxFluidOutputs, modifyFluidOutputs, defaultRecipe, isHidden);
+    public RecipeMapDistillationTower(String unlocalizedName, int maxInputs, boolean modifyItemInputs, int maxOutputs,
+                                      boolean modifyItemOutputs,
+                                      int maxFluidInputs, boolean modifyFluidInputs, int maxFluidOutputs,
+                                      boolean modifyFluidOutputs, UniversalDistillationRecipeBuilder defaultRecipe,
+                                      boolean isHidden) {
+        super(unlocalizedName, maxInputs, modifyItemInputs, maxOutputs, modifyItemOutputs, maxFluidInputs,
+                modifyFluidInputs, maxFluidOutputs, modifyFluidOutputs, defaultRecipe, isHidden);
     }
 
     @Override
-    protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
+    protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
+                           FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
         if (isFluid) {
             TankWidget tankWidget = new TankWidget(fluidHandler.getTankAt(slotIndex), x, y, 18, 18);
             TextureArea base = GuiTextures.FLUID_SLOT;
-
 
             if (!isOutputs)
                 tankWidget.setBackgroundTexture(base, GuiTextures.BEAKER_OVERLAY_1);
@@ -47,10 +52,12 @@ public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationR
     }
 
     @Override
-    //this DOES NOT include machine control widgets or binds player inventory
-    public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+    // this DOES NOT include machine control widgets or binds player inventory
+    public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
+                                                 FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
-        builder.widget(new ProgressWidget(200, 47, 8, 66, 58, GuiTextures.PROGRESS_BAR_DISTILLATION_TOWER, ProgressWidget.MoveType.HORIZONTAL));
+        builder.widget(new ProgressWidget(200, 47, 8, 66, 58, GuiTextures.PROGRESS_BAR_DISTILLATION_TOWER,
+                ProgressWidget.MoveType.HORIZONTAL));
         addInventorySlotGroup(builder, importItems, importFluids, false, 9);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, 9);
         if (this.specialTexture != null && this.specialTexturePosition != null)
@@ -59,7 +66,8 @@ public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationR
     }
 
     @Override
-    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
+    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler,
+                                         FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
         int itemInputsCount = itemHandler.getSlots();
         int fluidInputsCount = fluidHandler.getTanks();
         boolean invertFluids = false;
@@ -78,9 +86,11 @@ public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationR
         if (wasGroupOutput && isOutputs) startInputsY -= 9;
         if (itemHandler.getSlots() == 6 && fluidHandler.getTanks() == 2 && !isOutputs) startInputsY -= 9;
         if (!isOutputs)
-            addSlot(builder, 40, startInputsY + (itemSlotsToDown - 1) * 18 - 18, 0, itemHandler, fluidHandler, invertFluids, false);
+            addSlot(builder, 40, startInputsY + (itemSlotsToDown - 1) * 18 - 18, 0, itemHandler, fluidHandler,
+                    invertFluids, false);
         else
-            addSlot(builder, 94, startInputsY + (itemSlotsToDown - 1) * 18, 0, itemHandler, fluidHandler, invertFluids, true);
+            addSlot(builder, 94, startInputsY + (itemSlotsToDown - 1) * 18, 0, itemHandler, fluidHandler, invertFluids,
+                    true);
 
         if (wasGroupOutput) startInputsY += 2;
 

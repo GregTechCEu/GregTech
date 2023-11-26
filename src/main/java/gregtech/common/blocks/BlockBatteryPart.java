@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -15,6 +16,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,12 +35,14 @@ public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartT
     }
 
     @Override
-    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EntityLiving.SpawnPlacementType placementType) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull EntityLiving.SpawnPlacementType placementType) {
         return false;
     }
 
     @Override
-    public void addInformation(@NotNull ItemStack stack, @Nullable World world, List<String> tooltip, @NotNull ITooltipFlag advanced) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, List<String> tooltip,
+                               @NotNull ITooltipFlag advanced) {
         super.addInformation(stack, world, tooltip, advanced);
 
         BatteryPartType batteryType = getState(stack);
@@ -50,6 +54,7 @@ public class BlockBatteryPart extends VariantBlock<BlockBatteryPart.BatteryPartT
     }
 
     public enum BatteryPartType implements IStringSerializable, IBatteryData {
+
         EMPTY_TIER_I,
         LAPOTRONIC_EV(GTValues.EV, 25_000_000L * 6),      // Lapotron Crystal * 6
         LAPOTRONIC_IV(GTValues.IV, 250_000_000L * 6),     // Lapotronic Orb * 6

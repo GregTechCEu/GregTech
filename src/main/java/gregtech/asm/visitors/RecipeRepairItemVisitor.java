@@ -1,6 +1,7 @@
 package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -33,7 +34,8 @@ public class RecipeRepairItemVisitor implements Opcodes {
             if (m.name.equals(MATCHES_METHOD.s_name) && m.desc.equals(MATCHES_METHOD.s_desc)) {
                 InsnList insns = new InsnList();
                 insns.add(new VarInsnNode(ALOAD, 1));
-                insns.add(new MethodInsnNode(INVOKESTATIC, HOOK_CLASS_NAME, MATCHES_HOOK_METHOD_NAME, MATCHES_HOOK_SIGNATURE, false));
+                insns.add(new MethodInsnNode(INVOKESTATIC, HOOK_CLASS_NAME, MATCHES_HOOK_METHOD_NAME,
+                        MATCHES_HOOK_SIGNATURE, false));
                 insns.add(new InsnNode(IRETURN));
                 AbstractInsnNode first = m.instructions.getFirst();
                 m.instructions.insertBefore(first, insns);
@@ -44,7 +46,8 @@ public class RecipeRepairItemVisitor implements Opcodes {
             if (m.name.equals(RESULT_METHOD.s_name) && m.desc.equals(RESULT_METHOD.s_desc)) {
                 InsnList insns = new InsnList();
                 insns.add(new VarInsnNode(ALOAD, 1));
-                insns.add(new MethodInsnNode(INVOKESTATIC, HOOK_CLASS_NAME, RESULT_HOOK_METHOD_NAME, RESULT_HOOK_SIGNATURE, false));
+                insns.add(new MethodInsnNode(INVOKESTATIC, HOOK_CLASS_NAME, RESULT_HOOK_METHOD_NAME,
+                        RESULT_HOOK_SIGNATURE, false));
                 insns.add(new InsnNode(ARETURN));
                 AbstractInsnNode first = m.instructions.getFirst();
                 m.instructions.insertBefore(first, insns);
@@ -55,7 +58,8 @@ public class RecipeRepairItemVisitor implements Opcodes {
             if (m.name.equals(REMAINING_METHOD.s_name) && m.desc.equals(REMAINING_METHOD.s_desc)) {
                 InsnList insns = new InsnList();
                 insns.add(new VarInsnNode(ALOAD, 1));
-                insns.add(new MethodInsnNode(INVOKESTATIC, HOOK_CLASS_NAME, REMAINING_HOOK_METHOD_NAME, REMAINING_HOOK_SIGNATURE, false));
+                insns.add(new MethodInsnNode(INVOKESTATIC, HOOK_CLASS_NAME, REMAINING_HOOK_METHOD_NAME,
+                        REMAINING_HOOK_SIGNATURE, false));
                 insns.add(new InsnNode(ARETURN));
                 AbstractInsnNode first = m.instructions.getFirst();
                 m.instructions.insertBefore(first, insns);

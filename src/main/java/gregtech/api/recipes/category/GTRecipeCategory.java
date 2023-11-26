@@ -1,11 +1,13 @@
 package gregtech.api.recipes.category;
 
 import gregtech.api.recipes.RecipeMap;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Map;
 
 public final class GTRecipeCategory {
 
@@ -28,8 +30,10 @@ public final class GTRecipeCategory {
      * @return the new category
      */
     @Nonnull
-    public static GTRecipeCategory create(@Nonnull String modid, @Nonnull String categoryName, @Nonnull String translationKey, @Nonnull RecipeMap<?> recipeMap) {
-        return categories.computeIfAbsent(categoryName, (k) -> new GTRecipeCategory(modid, categoryName, translationKey, recipeMap));
+    public static GTRecipeCategory create(@Nonnull String modid, @Nonnull String categoryName,
+                                          @Nonnull String translationKey, @Nonnull RecipeMap<?> recipeMap) {
+        return categories.computeIfAbsent(categoryName,
+                (k) -> new GTRecipeCategory(modid, categoryName, translationKey, recipeMap));
     }
 
     /**
@@ -41,7 +45,8 @@ public final class GTRecipeCategory {
         return categories.get(categoryName);
     }
 
-    private GTRecipeCategory(@Nonnull String modid, @Nonnull String name, @Nonnull String translationKey, @Nonnull RecipeMap<?> recipeMap) {
+    private GTRecipeCategory(@Nonnull String modid, @Nonnull String name, @Nonnull String translationKey,
+                             @Nonnull RecipeMap<?> recipeMap) {
         this.modid = modid;
         this.name = name;
         this.uniqueID = modid + ':' + this.name;

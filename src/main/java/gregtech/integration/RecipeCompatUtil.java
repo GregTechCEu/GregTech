@@ -16,10 +16,12 @@ import gregtech.core.unification.material.internal.MaterialRegistryManager;
 import gregtech.integration.crafttweaker.CTRecipeHelper;
 import gregtech.integration.groovy.GrSRecipeHelper;
 import gregtech.modules.GregTechModules;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
@@ -60,7 +62,8 @@ public final class RecipeCompatUtil {
             if (item.getItem() instanceof MachineItemBlock) {
                 MetaTileEntity mte = GTUtility.getMetaTileEntity(item);
                 if (mte != null) {
-                    return (mte.metaTileEntityId.getNamespace().equals(GTValues.MODID) ? mte.metaTileEntityId.getPath() : mte.metaTileEntityId.toString());
+                    return (mte.metaTileEntityId.getNamespace().equals(GTValues.MODID) ?
+                            mte.metaTileEntityId.getPath() : mte.metaTileEntityId.toString());
                 }
             }
             if (block instanceof BlockCompressed) {
@@ -119,6 +122,7 @@ public final class RecipeCompatUtil {
     }
 
     public enum TweakerType {
+
         CRAFTTWEAKER("CraftTweaker"),
         GROOVYSCRIPT("GroovyScript"),
         NONE("");

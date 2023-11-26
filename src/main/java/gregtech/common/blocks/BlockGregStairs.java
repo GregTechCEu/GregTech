@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
@@ -20,7 +21,8 @@ public class BlockGregStairs extends BlockStairs {
     }
 
     @Override
-    public boolean doesSideBlockChestOpening(@Nonnull IBlockState blockState, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    public boolean doesSideBlockChestOpening(@Nonnull IBlockState blockState, @Nonnull IBlockAccess world,
+                                             @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
         return false;
     }
 }

@@ -1,8 +1,7 @@
 package gregtech.api.recipes.chance.output;
 
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.chance.BaseChanceEntry;
-import net.minecraftforge.items.IItemHandler;
+
 import org.jetbrains.annotations.NotNull;
 
 /**

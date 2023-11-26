@@ -15,7 +15,7 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
+
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -32,12 +32,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class MetaPrefixItem extends StandardMetaItem {
 
@@ -125,7 +128,8 @@ public class MetaPrefixItem extends StandardMetaItem {
 
             short registrationKey = (short) (prefix.id + materialIconSet.id);
             if (!alreadyRegistered.containsKey(registrationKey)) {
-                ResourceLocation resourceLocation = Objects.requireNonNull(prefix.materialIconType).getItemModelPath(materialIconSet);
+                ResourceLocation resourceLocation = Objects.requireNonNull(prefix.materialIconType)
+                        .getItemModelPath(materialIconSet);
                 ModelBakery.registerItemVariants(this, resourceLocation);
                 alreadyRegistered.put(registrationKey, new ModelResourceLocation(resourceLocation, "inventory"));
             }
@@ -136,7 +140,8 @@ public class MetaPrefixItem extends StandardMetaItem {
         // Make some default models for meta prefix items without any materials associated
         if (metaItems.keySet().isEmpty()) {
             MaterialIconSet defaultIcon = MaterialIconSet.DULL;
-            ResourceLocation defaultLocation = Objects.requireNonNull(OrePrefix.ingot.materialIconType).getItemModelPath(defaultIcon);
+            ResourceLocation defaultLocation = Objects.requireNonNull(OrePrefix.ingot.materialIconType)
+                    .getItemModelPath(defaultIcon);
             ModelBakery.registerItemVariants(this, defaultLocation);
         }
     }
@@ -148,7 +153,8 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     @Override
-    public void onUpdate(@Nonnull ItemStack itemStack, @Nonnull World worldIn, @Nonnull Entity entityIn, int itemSlot, boolean isSelected) {
+    public void onUpdate(@Nonnull ItemStack itemStack, @Nonnull World worldIn, @Nonnull Entity entityIn, int itemSlot,
+                         boolean isSelected) {
         super.onUpdate(itemStack, worldIn, entityIn, itemSlot, isSelected);
         if (metaItems.containsKey((short) itemStack.getItemDamage()) && entityIn instanceof EntityLivingBase entity) {
             if (entityIn.ticksExisted % 20 == 0) {
@@ -160,7 +166,8 @@ public class MetaPrefixItem extends StandardMetaItem {
                 float heatDamage = prefix.heatDamageFunction.apply(material.getBlastTemperature());
                 ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
                 if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
-                    ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
+                    ArmorMetaItem<?>.ArmorMetaValueItem metaValueItem = ((ArmorMetaItem<?>) armor.getItem())
+                            .getItem(armor);
                     if (metaValueItem != null) heatDamage *= metaValueItem.getArmorLogic().getHeatResistance();
                 }
 
@@ -175,7 +182,8 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, @Nonnull List<String> lines, @Nonnull ITooltipFlag tooltipFlag) {
+    public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, @Nonnull List<String> lines,
+                               @Nonnull ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
         Material material = getMaterial(itemStack);
         if (prefix == null || material == null) return;
@@ -226,7 +234,6 @@ public class MetaPrefixItem extends StandardMetaItem {
         DustProperty property = material == null ? null : material.getProperty(PropertyKey.DUST);
         if (property != null) return (int) (property.getBurnTime() * prefix.getMaterialAmount(material) / GTValues.M);
         return super.getItemBurnTime(itemStack);
-
     }
 
     @Override

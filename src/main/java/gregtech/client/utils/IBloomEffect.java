@@ -2,6 +2,7 @@ package gregtech.client.utils;
 
 import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.shader.postprocessing.BloomType;
+
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -26,7 +27,7 @@ public interface IBloomEffect {
     /**
      * @param context render context
      * @return if this effect should be rendered; returning {@code false} skips {@link #renderBloomEffect(BufferBuilder,
-     * EffectRenderContext)} call.
+     *         EffectRenderContext)} call.
      */
     @SideOnly(Side.CLIENT)
     default boolean shouldRenderBloomEffect(@Nonnull EffectRenderContext context) {

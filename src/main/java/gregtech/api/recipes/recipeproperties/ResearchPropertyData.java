@@ -2,10 +2,11 @@ package gregtech.api.recipes.recipeproperties;
 
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
+import javax.annotation.Nonnull;
 
 public final class ResearchPropertyData implements Iterable<ResearchPropertyData.ResearchEntry> {
 
@@ -38,7 +39,7 @@ public final class ResearchPropertyData implements Iterable<ResearchPropertyData
 
         /**
          * @param researchId the id of the research
-         * @param dataItem the item allowed to contain the research
+         * @param dataItem   the item allowed to contain the research
          */
         public ResearchEntry(@Nonnull String researchId, @Nonnull ItemStack dataItem) {
             this.researchId = researchId;

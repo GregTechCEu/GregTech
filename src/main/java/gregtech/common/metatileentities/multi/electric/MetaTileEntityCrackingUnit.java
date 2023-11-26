@@ -19,6 +19,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -30,9 +31,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
 
@@ -85,7 +87,8 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
                 .addCustom(tl -> {
                     // Coil energy discount line
                     if (isStructureFormed()) {
-                        ITextComponent energyDiscount = TextComponentUtil.stringWithColor(TextFormatting.AQUA, (100 - 10 * coilTier) + "%");
+                        ITextComponent energyDiscount = TextComponentUtil.stringWithColor(TextFormatting.AQUA,
+                                (100 - 10 * coilTier) + "%");
 
                         ITextComponent base = TextComponentUtil.translationWithColor(
                                 TextFormatting.GRAY,
@@ -153,7 +156,8 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
             if (coilTier <= 0)
                 return;
 
-            resultOverclock[0] *= 1.0f - coilTier * 0.1; // each coil above cupronickel (coilTier = 0) uses 10% less energy
+            resultOverclock[0] *= 1.0f - coilTier * 0.1; // each coil above cupronickel (coilTier = 0) uses 10% less
+                                                         // energy
             resultOverclock[0] = Math.max(1, resultOverclock[0]);
         }
     }

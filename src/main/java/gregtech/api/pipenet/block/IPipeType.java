@@ -9,5 +9,4 @@ public interface IPipeType<NodeDataType> extends IStringSerializable {
     NodeDataType modifyProperties(NodeDataType baseProperties);
 
     boolean isPaintable();
-
 }

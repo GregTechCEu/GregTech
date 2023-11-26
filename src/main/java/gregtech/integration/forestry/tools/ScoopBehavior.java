@@ -1,11 +1,9 @@
 package gregtech.integration.forestry.tools;
 
-import forestry.api.lepidopterology.EnumFlutterType;
-import forestry.api.lepidopterology.IAlleleButterflySpecies;
-import forestry.api.lepidopterology.IEntityButterfly;
 import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
@@ -16,6 +14,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.Loader;
+
+import forestry.api.lepidopterology.EnumFlutterType;
+import forestry.api.lepidopterology.IAlleleButterflySpecies;
+import forestry.api.lepidopterology.IEntityButterfly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,16 +30,19 @@ public class ScoopBehavior implements IToolBehavior {
     private ScoopBehavior() {/**/}
 
     @Override
-    public void hitEntity(@NotNull ItemStack stack, @NotNull EntityLivingBase target, @NotNull EntityLivingBase attacker) {
+    public void hitEntity(@NotNull ItemStack stack, @NotNull EntityLivingBase target,
+                          @NotNull EntityLivingBase attacker) {
         if (!Loader.isModLoaded(GTValues.MODID_FR)) return;
         if (!(target instanceof IEntityButterfly butterfly)) return;
         if (!(attacker instanceof EntityPlayer player)) return;
         if (attacker.world == null || attacker.world.isRemote) return;
 
         IAlleleButterflySpecies species = butterfly.getButterfly().getGenome().getPrimary();
-        species.getRoot().getBreedingTracker(target.world, player.getGameProfile()).registerCatch(butterfly.getButterfly());
+        species.getRoot().getBreedingTracker(target.world, player.getGameProfile())
+                .registerCatch(butterfly.getButterfly());
 
-        ItemStack memberStack = species.getRoot().getMemberStack(butterfly.getButterfly().copy(), EnumFlutterType.BUTTERFLY);
+        ItemStack memberStack = species.getRoot().getMemberStack(butterfly.getButterfly().copy(),
+                EnumFlutterType.BUTTERFLY);
         EntityItem entityItem = new EntityItem(player.world, target.posX, target.posY, target.posZ, memberStack);
         target.setDead();
         NBTTagCompound behaviorTag = ToolHelper.getBehaviorsTag(stack);
@@ -49,7 +54,8 @@ public class ScoopBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, @NotNull ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         tooltip.add(I18n.format("item.gt.tool.behavior.scoop"));
     }
 }

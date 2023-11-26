@@ -3,8 +3,8 @@ package gregtech.common.pipelike.laser.net;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.pipenet.IRoutePath;
-import gregtech.common.pipelike.laser.LaserPipeProperties;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
+
 import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nonnull;
@@ -32,7 +32,6 @@ public class LaserRoutePath implements IRoutePath<TileEntityLaserPipe> {
     public EnumFacing getFaceToHandler() {
         return faceToHandler;
     }
-
 
     @Nonnull
     @Override

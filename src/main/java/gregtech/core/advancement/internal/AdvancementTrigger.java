@@ -1,17 +1,20 @@
 package gregtech.core.advancement.internal;
 
-import com.google.common.collect.Maps;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
 import gregtech.api.advancement.IAdvancementCriterion;
 import gregtech.api.advancement.IAdvancementTrigger;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.Maps;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
+
 import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 public class AdvancementTrigger<T extends IAdvancementCriterion> implements IAdvancementTrigger<T> {
 

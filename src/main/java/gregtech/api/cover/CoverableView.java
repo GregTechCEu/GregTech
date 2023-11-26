@@ -6,6 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
@@ -17,18 +18,21 @@ public interface CoverableView extends ICapabilityProvider {
     /**
      * @return the world containing the CoverableView
      */
-    @UnknownNullability World getWorld();
+    @UnknownNullability
+    World getWorld();
 
     /**
      * @return the pos of the block containing the CoverableView
      */
-    @UnknownNullability BlockPos getPos();
+    @UnknownNullability
+    BlockPos getPos();
 
     /**
      * @param facing the side to get the neighbor at
      * @return the neighbor tile entity at the side
      */
-    @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing);
+    @Nullable
+    TileEntity getNeighbor(@NotNull EnumFacing facing);
 
     /**
      * Mark the CoverableView as needing to be saved to the chunk
@@ -59,7 +63,8 @@ public interface CoverableView extends ICapabilityProvider {
      * @param side the side to retrieve a cover from
      * @return the cover at the side
      */
-    @Nullable Cover getCoverAtSide(@NotNull EnumFacing side);
+    @Nullable
+    Cover getCoverAtSide(@NotNull EnumFacing side);
 
     /**
      * @param side the side to check
@@ -75,7 +80,7 @@ public interface CoverableView extends ICapabilityProvider {
     boolean hasAnyCover();
 
     /**
-     * @param side the side to get the redstone from
+     * @param side        the side to get the redstone from
      * @param ignoreCover if the cover is being ignored
      * @return the redstone signal being input at the side
      */

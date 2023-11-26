@@ -9,21 +9,24 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.function.BooleanConsumer;
 import gregtech.api.util.oreglob.OreGlob;
-import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
-import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
-import it.unimi.dsi.fastutil.objects.Object2BooleanMaps;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.objects.Object2BooleanAVLTreeMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanMaps;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 /**
  * @author brachy84
@@ -177,8 +180,8 @@ public abstract class OreFilterTestSlot extends WidgetGroup {
                     list = this.testResult.object2BooleanEntrySet().stream().map(
                             e -> I18n.format(e.getBooleanValue() ?
                                     "cover.ore_dictionary_filter.test_slot.matches" :
-                                    "cover.ore_dictionary_filter.test_slot.matches_not", e.getKey())
-                    ).collect(Collectors.toList());
+                                    "cover.ore_dictionary_filter.test_slot.matches_not", e.getKey()))
+                            .collect(Collectors.toList());
                     break;
                 case INVALID:
                 default:

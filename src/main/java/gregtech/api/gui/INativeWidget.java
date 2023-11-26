@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
  * Rendering is still handled by widget via helpers in {@link gregtech.api.gui.IRenderContext}
  */
 public interface INativeWidget {
+
     /**
      * You should return MC slot handle instance you created earlier
      *
@@ -44,6 +45,7 @@ public interface INativeWidget {
     ItemStack slotClick(int dragType, ClickType clickTypeIn, EntityPlayer player);
 
     class SlotLocationInfo {
+
         public final boolean isPlayerInventory;
         public final boolean isHotbarSlot;
 

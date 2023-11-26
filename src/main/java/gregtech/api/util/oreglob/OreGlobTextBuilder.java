@@ -1,10 +1,11 @@
 package gregtech.api.util.oreglob;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
 
 /**
  * Builder for OreGlob instance visualization.
@@ -54,5 +55,4 @@ public class OreGlobTextBuilder {
         finishLine();
         return Collections.unmodifiableList(finishedLines);
     }
-
 }

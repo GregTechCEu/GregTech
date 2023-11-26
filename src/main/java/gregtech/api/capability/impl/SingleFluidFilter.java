@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IFilter;
+
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;

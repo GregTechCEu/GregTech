@@ -1,6 +1,7 @@
 package gregtech.api.unification.stack;
 
 import gregtech.api.GTValues;
+
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 

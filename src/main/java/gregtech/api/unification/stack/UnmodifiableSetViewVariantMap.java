@@ -1,9 +1,10 @@
 package gregtech.api.unification.stack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Unmodifiable view of another {@link ItemVariantMap} with {@link Set} of elements as values.

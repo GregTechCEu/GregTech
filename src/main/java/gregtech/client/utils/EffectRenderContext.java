@@ -4,9 +4,10 @@ import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 /**
  * Collection of various information for rendering purposes.
@@ -38,9 +39,12 @@ public final class EffectRenderContext {
         this.renderViewEntity = renderViewEntity;
         this.partialTicks = partialTicks;
 
-        this.cameraX = renderViewEntity.lastTickPosX + (renderViewEntity.posX - renderViewEntity.lastTickPosX) * partialTicks;
-        this.cameraY = renderViewEntity.lastTickPosY + (renderViewEntity.posY - renderViewEntity.lastTickPosY) * partialTicks;
-        this.cameraZ = renderViewEntity.lastTickPosZ + (renderViewEntity.posZ - renderViewEntity.lastTickPosZ) * partialTicks;
+        this.cameraX = renderViewEntity.lastTickPosX +
+                (renderViewEntity.posX - renderViewEntity.lastTickPosX) * partialTicks;
+        this.cameraY = renderViewEntity.lastTickPosY +
+                (renderViewEntity.posY - renderViewEntity.lastTickPosY) * partialTicks;
+        this.cameraZ = renderViewEntity.lastTickPosZ +
+                (renderViewEntity.posZ - renderViewEntity.lastTickPosZ) * partialTicks;
         this.cameraViewDir = renderViewEntity.getLook(partialTicks);
 
         this.rotationX = ActiveRenderInfo.getRotationX();

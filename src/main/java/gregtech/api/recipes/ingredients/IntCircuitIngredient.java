@@ -4,12 +4,14 @@ import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 public class IntCircuitIngredient extends GTRecipeInput {
 
@@ -72,7 +74,7 @@ public class IntCircuitIngredient extends GTRecipeInput {
     @Override
     public ItemStack[] getInputStacks() {
         if (this.inputStacks == null) {
-            this.inputStacks = new ItemStack[]{getIntegratedCircuit(this.matchingConfigurations)};
+            this.inputStacks = new ItemStack[] { getIntegratedCircuit(this.matchingConfigurations) };
         }
         return this.inputStacks;
     }

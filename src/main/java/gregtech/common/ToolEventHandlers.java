@@ -1,6 +1,5 @@
 package gregtech.common;
 
-import codechicken.lib.vec.*;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -22,6 +21,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
 import gregtech.common.items.tool.rotation.CustomBlockRotations;
 import gregtech.common.items.tool.rotation.ICustomRotationBehavior;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -55,14 +55,17 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.vec.*;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class ToolEventHandlers {
@@ -80,7 +83,8 @@ public class ToolEventHandlers {
             // Transfer over remaining charge to power units
             if (brokenStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null) && def.isElectric()) {
                 long remainingCharge = def.getCharge(event.getOriginal());
-                IElectricItem electricStack = brokenStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                IElectricItem electricStack = brokenStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM,
+                        null);
                 if (electricStack != null) {
                     // update the max charge of the item, if possible
                     // applies to items like power units, which can have different max charges depending on their recipe
@@ -104,14 +108,13 @@ public class ToolEventHandlers {
         }
     }
 
-
     @SubscribeEvent
     public static void onPlayerEntityInteract(@Nonnull PlayerInteractEvent.EntityInteract event) {
         ItemStack itemStack = event.getItemStack();
         Item item = itemStack.getItem();
 
         /*
-        Handle item frame power unit duping
+         * Handle item frame power unit duping
          */
         if (item instanceof IGTTool) {
             Entity entity = event.getTarget();
@@ -143,11 +146,13 @@ public class ToolEventHandlers {
                 return;
             }
             if (!event.isSilkTouching()) {
-                ToolHelper.applyHammerDropConversion(stack, event.getState(), event.getDrops(), event.getFortuneLevel(), event.getDropChance(), player.getRNG());
+                ToolHelper.applyHammerDropConversion(stack, event.getState(), event.getDrops(), event.getFortuneLevel(),
+                        event.getDropChance(), player.getRNG());
             }
             NBTTagCompound behaviorTag = ToolHelper.getBehaviorsTag(stack);
             Block block = event.getState().getBlock();
-            if (!event.isSilkTouching() && (block == Blocks.ICE || block == Blocks.PACKED_ICE) && behaviorTag.getBoolean(ToolHelper.HARVEST_ICE_KEY)) {
+            if (!event.isSilkTouching() && (block == Blocks.ICE || block == Blocks.PACKED_ICE) &&
+                    behaviorTag.getBoolean(ToolHelper.HARVEST_ICE_KEY)) {
                 Item iceBlock = Item.getItemFromBlock(block);
                 if (event.getDrops().stream().noneMatch(drop -> drop.getItem() == iceBlock)) {
                     event.getDrops().add(new ItemStack(iceBlock));
@@ -172,7 +177,8 @@ public class ToolEventHandlers {
                     EntityItem drop = new EntityItem(event.getWorld());
                     drop.setItem(dropStack);
 
-                    if (ForgeEventFactory.onItemPickup(drop, player) == -1 || player.addItemStackToInventory(dropStack)) {
+                    if (ForgeEventFactory.onItemPickup(drop, player) == -1 ||
+                            player.addItemStackToInventory(dropStack)) {
                         dropItr.remove();
                     }
                 }
@@ -205,7 +211,7 @@ public class ToolEventHandlers {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public static void onDrawHighlightEvent(@Nonnull DrawBlockHighlightEvent event) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         if (event.getTarget().getBlockPos() == null) return;
 
         EntityPlayer player = event.getPlayer();
@@ -225,13 +231,16 @@ public class ToolEventHandlers {
         // AoE selection box and block damage overlay
         if (!sneaking && stack.getItem() instanceof IGTTool tool) {
             state = state.getActualState(player.world, pos);
-            if (!ToolHelper.isToolEffective(state, tool.getToolClasses(stack), tool.getTotalHarvestLevel(stack))) return;
-            Set<BlockPos> validPositions = ToolHelper.getHarvestableBlocks(stack, player.world, player, event.getTarget());
+            if (!ToolHelper.isToolEffective(state, tool.getToolClasses(stack), tool.getTotalHarvestLevel(stack)))
+                return;
+            Set<BlockPos> validPositions = ToolHelper.getHarvestableBlocks(stack, player.world, player,
+                    event.getTarget());
             if (validPositions.isEmpty()) return;
 
             float partialTicks = event.getPartialTicks();
             for (BlockPos validPosition : validPositions) {
-                event.getContext().drawSelectionBox(player, new RayTraceResult(Vec3d.ZERO, player.getHorizontalFacing(), validPosition), 0, partialTicks);
+                event.getContext().drawSelectionBox(player,
+                        new RayTraceResult(Vec3d.ZERO, player.getHorizontalFacing(), validPosition), 0, partialTicks);
             }
 
             DestroyBlockProgress progress = event.getContext().damagedBlocks.get(player.getEntityId());
@@ -252,7 +261,8 @@ public class ToolEventHandlers {
                         TileEntity tileEntity = mc.world.getTileEntity(validPosition);
                         if (tileEntity == null || tileEntity.canRenderBreaking()) {
                             TextureAtlasSprite sprite = event.getContext().destroyBlockIcons[damage];
-                            rendererDispatcher.renderBlockDamage(mc.world.getBlockState(validPosition), validPosition, sprite, mc.world);
+                            rendererDispatcher.renderBlockDamage(mc.world.getBlockState(validPosition), validPosition,
+                                    sprite, mc.world);
                         }
                     }
                     Tessellator.getInstance().draw();
@@ -267,7 +277,8 @@ public class ToolEventHandlers {
      * Sets up for rendering blocks with break progress
      */
     private static void preRenderDamagedBlocks() {
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.SRC_COLOR,
+                GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.enableBlend();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
         GlStateManager.doPolygonOffset(-3.0F, -3.0F);
@@ -291,19 +302,22 @@ public class ToolEventHandlers {
     }
 
     @SideOnly(Side.CLIENT)
-    private static boolean shouldRenderGridOverlays(@Nonnull IBlockState state, @Nullable TileEntity tile, ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
-        if (state.getBlock() instanceof BlockPipe<?, ?, ?> pipe) {
-            if (isSneaking && (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass())) {
+    private static boolean shouldRenderGridOverlays(@Nonnull IBlockState state, @Nullable TileEntity tile,
+                                                    ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
+        if (state.getBlock() instanceof BlockPipe<?, ?, ?>pipe) {
+            if (isSneaking &&
+                    (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass())) {
                 return true;
             } else {
                 Set<String> mainToolClasses = mainHand.getItem().getToolClasses(mainHand);
                 Set<String> offToolClasses = offHand.getItem().getToolClasses(offHand);
                 if (mainToolClasses.stream().anyMatch(s -> pipe.isToolEffective(s, state)) ||
-                        offToolClasses.stream().anyMatch(s -> pipe.isToolEffective(s, state))) return true;
+                        offToolClasses.stream().anyMatch(s -> pipe.isToolEffective(s, state)))
+                    return true;
 
                 BooleanSupplier hasCover;
                 Predicate<CoverDefinition> canCover;
-                if (tile instanceof IPipeTile<?, ?> pipeTile) {
+                if (tile instanceof IPipeTile<?, ?>pipeTile) {
                     final boolean hasAnyCover = pipeTile.getCoverableImplementation().hasAnyCover();
                     if (hasAnyCover) {
                         if (mainToolClasses.contains(ToolClasses.SCREWDRIVER)) return true;
@@ -352,10 +366,13 @@ public class ToolEventHandlers {
     private static float bColour;
 
     @SideOnly(Side.CLIENT)
-    private static boolean renderGridOverlays(@Nonnull EntityPlayer player, BlockPos pos, IBlockState state, EnumFacing facing, TileEntity tile, float partialTicks) {
+    private static boolean renderGridOverlays(@Nonnull EntityPlayer player, BlockPos pos, IBlockState state,
+                                              EnumFacing facing, TileEntity tile, float partialTicks) {
         if (player.world.getWorldBorder().contains(pos)) {
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                    GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                    GlStateManager.DestFactor.ZERO);
             GlStateManager.glLineWidth(2.0F);
             GlStateManager.disableTexture2D();
             GlStateManager.depthMask(false);
@@ -365,15 +382,18 @@ public class ToolEventHandlers {
             AxisAlignedBB box = state.getSelectedBoundingBox(player.world, pos).grow(0.002D).offset(-d3, -d4, -d5);
             RenderGlobal.drawSelectionBoundingBox(box, 1, 1, 1, 0.4F);
 
-            rColour = gColour = bColour = 0.2F + (float) Math.sin((float) (System.currentTimeMillis() % (Math.PI * 800)) / 800) / 2;
+            rColour = gColour = bColour = 0.2F +
+                    (float) Math.sin((float) (System.currentTimeMillis() % (Math.PI * 800)) / 800) / 2;
 
             if (tile instanceof TileEntityPipeBase) {
                 TileEntityPipeBase<?, ?> tepb = (TileEntityPipeBase<?, ?>) tile;
-                drawGridOverlays(facing, box, face -> tepb.isConnected(face) || tepb.getCoverableImplementation().getCoverAtSide(face) != null);
+                drawGridOverlays(facing, box, face -> tepb.isConnected(face) ||
+                        tepb.getCoverableImplementation().getCoverAtSide(face) != null);
             } else if (tile instanceof MetaTileEntityHolder) {
                 MetaTileEntity mte = ((MetaTileEntityHolder) tile).getMetaTileEntity();
                 drawGridOverlays(facing, box, mte::isSideUsed);
-                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing() && ToolHelper.isTool(player.getHeldItemMainhand(), ToolClasses.WRENCH)) {
+                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing() &&
+                        ToolHelper.isTool(player.getHeldItemMainhand(), ToolClasses.WRENCH)) {
                     // set up some render state first
                     GL11.glPushMatrix();
                     GL11.glTranslated(pos.getX() - (int) d3, pos.getY() - (int) d4, pos.getZ() - (int) d5);
@@ -391,8 +411,10 @@ public class ToolEventHandlers {
                         }
                     } else {
                         // render on the side of the grid
-                        drawRotationMarker(ROTATION_MARKER_TRANSFORMS_SIDES_TRANSFORMS[
-                                ROTATION_MARKER_TRANSFORMS_SIDES[facing.getIndex() * 6 + multi.getFrontFacing().getIndex()]], player.isSneaking());
+                        drawRotationMarker(
+                                ROTATION_MARKER_TRANSFORMS_SIDES_TRANSFORMS[ROTATION_MARKER_TRANSFORMS_SIDES[facing
+                                        .getIndex() * 6 + multi.getFrontFacing().getIndex()]],
+                                player.isSneaking());
                     }
                     GL11.glPopMatrix();
                 }
@@ -622,14 +644,20 @@ public class ToolEventHandlers {
                 Vector3 localXShiftVert = new Vector3(0, 0, 0);
                 for (int j = 0; j < 2; j++) {
                     startLine(buffer, topLeft.copy().add(localXShift).add(localXShiftVert));
-                    endLine(buffer, topLeft.copy().add(localXShift).add(localXShiftVert).add(shift).subtract(shiftVert));
+                    endLine(buffer,
+                            topLeft.copy().add(localXShift).add(localXShiftVert).add(shift).subtract(shiftVert));
 
                     startLine(buffer, topLeft.copy().add(localXShift).add(localXShiftVert).add(shift));
                     endLine(buffer, topLeft.copy().add(localXShift).add(localXShiftVert).subtract(shiftVert));
 
-                    localXShiftVert.add(bottomLeft.copy().subtract(topLeft).add(shiftVert)); // Move by the vector from the top to the bottom, minus the shift from the edge.
+                    localXShiftVert.add(bottomLeft.copy().subtract(topLeft).add(shiftVert)); // Move by the vector from
+                                                                                             // the top to the bottom,
+                                                                                             // minus the shift from the
+                                                                                             // edge.
                 }
-                localXShift.add(topRight.copy().subtract(topLeft).subtract(shift)); // Move by the vector from the left to the right, minus the shift from the edge.
+                localXShift.add(topRight.copy().subtract(topLeft).subtract(shift)); // Move by the vector from the left
+                                                                                    // to the right, minus the shift
+                                                                                    // from the edge.
             }
         }
 
@@ -653,14 +681,14 @@ public class ToolEventHandlers {
             new Scale(0.25).with(new Translation(0, 0, 0.375)).compile(),
             new Scale(0.25).with(new Translation(0.375, 0, 0)).compile(),
             new Scale(0.25).with(new Translation(0, 0, -0.375)).compile(),
-            new Scale(0.25).with(new Translation(-0.375, 0, 0)).compile()};
+            new Scale(0.25).with(new Translation(-0.375, 0, 0)).compile() };
     private static final int[] ROTATION_MARKER_TRANSFORMS_SIDES = { -1, -1, 2, 0, 3, 1, -1, -1, 0, 2, 3, 1, 0, 2, -1,
             -1, 3, 1, 2, 0, -1, -1, 3, 1, 1, 3, 2, 0, -1, -1, 3, 1, 2, 0, -1, -1 };
     private static final Transformation[] ROTATION_MARKER_TRANSFORMS_CORNER = {
             new Scale(0.25).with(new Translation(0.375, 0, 0.375)).compile(),
             new Scale(0.25).with(new Translation(-0.375, 0, 0.375)).compile(),
             new Scale(0.25).with(new Translation(0.375, 0, -0.375)).compile(),
-            new Scale(0.25).with(new Translation(-0.375, 0, -0.375)).compile()};
+            new Scale(0.25).with(new Translation(-0.375, 0, -0.375)).compile() };
     private static int rotationMarkerDisplayList;
     private static boolean rotationMarkerDisplayListCompiled = false;
 

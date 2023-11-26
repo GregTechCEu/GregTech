@@ -18,13 +18,13 @@ public enum NBTTagType {
     NUMBER(99);
 
     public static boolean isNumeric(NBTTagType type) {
-        return type == BYTE || type == SHORT || type == INT || type == LONG || type == FLOAT || type == DOUBLE || type == NUMBER;
+        return type == BYTE || type == SHORT || type == INT || type == LONG || type == FLOAT || type == DOUBLE ||
+                type == NUMBER;
     }
-    
+
     public final int typeId;
-    
+
     NBTTagType(int typeId) {
         this.typeId = typeId;
     }
-    
 }

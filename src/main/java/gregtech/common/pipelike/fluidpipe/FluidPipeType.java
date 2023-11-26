@@ -30,7 +30,8 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
         this(name, thickness, capacityMultiplier, orePrefix, opaque, 1);
     }
 
-    FluidPipeType(String name, float thickness, int capacityMultiplier, OrePrefix orePrefix, boolean opaque, int channels) {
+    FluidPipeType(String name, float thickness, int capacityMultiplier, OrePrefix orePrefix, boolean opaque,
+                  int channels) {
         this.name = name;
         this.thickness = thickness;
         this.capacityMultiplier = capacityMultiplier;

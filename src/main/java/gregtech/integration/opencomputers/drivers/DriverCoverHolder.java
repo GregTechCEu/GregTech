@@ -7,15 +7,17 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.covers.*;
 import gregtech.integration.opencomputers.InputValidator;
 import gregtech.integration.opencomputers.values.*;
+
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 public class DriverCoverHolder extends DriverSidedTileEntity {
 
@@ -55,22 +57,22 @@ public class DriverCoverHolder extends DriverSidedTileEntity {
             EnumFacing side = EnumFacing.VALUES[index];
             Cover cover = tileEntity.getCoverAtSide(side);
             if (cover instanceof CoverRoboticArm robotArm)
-                return new Object[]{new ValueCoverRoboticArm(robotArm, side)};
+                return new Object[] { new ValueCoverRoboticArm(robotArm, side) };
             if (cover instanceof CoverConveyor conveyor)
-                return new Object[]{new ValueCoverConveyor(conveyor, side)};
+                return new Object[] { new ValueCoverConveyor(conveyor, side) };
             if (cover instanceof CoverFluidRegulator regulator)
-                return new Object[]{new ValueCoverFluidRegulator(regulator, side)};
+                return new Object[] { new ValueCoverFluidRegulator(regulator, side) };
             if (cover instanceof CoverPump pump)
-                return new Object[]{new ValueCoverPump(pump, side)};
+                return new Object[] { new ValueCoverPump(pump, side) };
             if (cover instanceof CoverFluidFilter filter)
-                return new Object[]{new ValueCoverFluidFilter(filter, side)};
+                return new Object[] { new ValueCoverFluidFilter(filter, side) };
             if (cover instanceof CoverItemFilter filter)
-                return new Object[]{new ValueCoverItemFilter(filter, side)};
+                return new Object[] { new ValueCoverItemFilter(filter, side) };
             if (cover instanceof CoverEnderFluidLink efl)
-                return new Object[]{new ValueCoverEnderFluidLink(efl, side)};
+                return new Object[] { new ValueCoverEnderFluidLink(efl, side) };
             if (cover != null)
-                return new Object[]{new ValueCoverBehavior(cover, side)};
-            return new Object[]{null};
+                return new Object[] { new ValueCoverBehavior(cover, side) };
+            return new Object[] { null };
         }
     }
 }

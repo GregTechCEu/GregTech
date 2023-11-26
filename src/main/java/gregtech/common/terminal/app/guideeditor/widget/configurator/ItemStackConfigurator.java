@@ -1,8 +1,5 @@
 package gregtech.common.terminal.app.guideeditor.widget.configurator;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.ImageWidget;
@@ -14,12 +11,18 @@ import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.terminal.app.guide.widget.SlotListWidget;
+
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidget.ItemStackInfo>>{
+public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidget.ItemStackInfo>> {
+
     DraggableScrollableWidgetGroup container;
     List<SlotListWidget.ItemStackInfo> slots;
 
@@ -28,11 +31,11 @@ public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidge
     }
 
     protected void init() {
-        container = new DraggableScrollableWidgetGroup(0, 27,116, 100);
+        container = new DraggableScrollableWidgetGroup(0, 27, 116, 100);
         this.addWidget(container);
         this.addWidget(new RectButtonWidget(0, 15, 116, 10, 1)
                 .setIcon(new TextTexture("terminal.guide_editor.add_slot", -1))
-                .setClickListener(cd->{
+                .setClickListener(cd -> {
                     addSlot(container, new SlotListWidget.ItemStackInfo("minecraft:air", 0, 0));
                     updateValue();
                 })
@@ -49,14 +52,15 @@ public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidge
     }
 
     private void addSlot(DraggableScrollableWidgetGroup container, SlotListWidget.ItemStackInfo itemStackInfo) {
-        WidgetGroup group = new WidgetGroup(0,slots.size() * 20, 116, 20);
+        WidgetGroup group = new WidgetGroup(0, slots.size() * 20, 116, 20);
         slots.add(itemStackInfo);
         IItemHandlerModifiable handler = new SingleItemStackHandler(1);
         handler.setStackInSlot(0, itemStackInfo.getInstance());
-        group.addWidget(new PhantomSlotWidget(handler, 0, 1, 1).setBackgroundTexture(TerminalTheme.COLOR_B_2).setChangeListener(()->{
-            itemStackInfo.update(handler.getStackInSlot(0));
-            updateValue();
-        }));
+        group.addWidget(new PhantomSlotWidget(handler, 0, 1, 1).setBackgroundTexture(TerminalTheme.COLOR_B_2)
+                .setChangeListener(() -> {
+                    itemStackInfo.update(handler.getStackInSlot(0));
+                    updateValue();
+                }));
         group.addWidget(new RectButtonWidget(20, 0, 20, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),

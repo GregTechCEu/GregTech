@@ -48,15 +48,18 @@ public class FluidReplaceRecipe extends GTShapedOreRecipe {
     @Override
     public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
         IFluidHandlerItem recipeCap = output.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-        if (recipeCap == null) throw new IllegalStateException("FluidReplaceRecipe output did not have an IFluidHandlerItem capability");
+        if (recipeCap == null)
+            throw new IllegalStateException("FluidReplaceRecipe output did not have an IFluidHandlerItem capability");
 
         FluidStack outputFluid = recipeCap.drain(Integer.MAX_VALUE, false);
         if (outputFluid == null) throw new IllegalStateException("FluidReplaceRecipe output did not have a fluid");
-        if (outputFluid.amount != 1000) throw new IllegalStateException("FluidReplaceRecipe output must have exactly 1000mB of fluid");
+        if (outputFluid.amount != 1000)
+            throw new IllegalStateException("FluidReplaceRecipe output must have exactly 1000mB of fluid");
 
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack input = inv.getStackInSlot(i);
-            IFluidHandlerItem inputCap = input.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem inputCap = input.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+                    null);
             if (inputCap == null) continue;
 
             // if the input has a fluid, it must only hold 1000mB
@@ -73,7 +76,8 @@ public class FluidReplaceRecipe extends GTShapedOreRecipe {
                 isBucket = false;
             }
 
-            IFluidHandlerItem outputCap = output.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem outputCap = output.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+                    null);
             if (outputCap == null) return ItemStack.EMPTY;
             outputCap.drain(Integer.MAX_VALUE, true); // ensure the output is empty
 
@@ -98,6 +102,7 @@ public class FluidReplaceRecipe extends GTShapedOreRecipe {
     }
 
     private static boolean isBucket(@Nonnull Item item) {
-        return item == Items.WATER_BUCKET || item == Items.LAVA_BUCKET || item == Items.MILK_BUCKET || item == ForgeModContainer.getInstance().universalBucket;
+        return item == Items.WATER_BUCKET || item == Items.LAVA_BUCKET || item == Items.MILK_BUCKET ||
+                item == ForgeModContainer.getInstance().universalBucket;
     }
 }

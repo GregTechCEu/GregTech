@@ -1,9 +1,9 @@
 package gregtech.common.blocks.wood;
 
-import com.google.common.collect.Lists;
 import gregtech.api.GregTechAPI;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.core.CoreModule;
+
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockPlanks.EnumType;
 import net.minecraft.block.state.BlockStateContainer;
@@ -18,9 +18,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.Lists;
+
 import java.util.List;
 import java.util.Random;
+
+import javax.annotation.Nonnull;
 
 public class BlockRubberLeaves extends BlockLeaves {
 
@@ -46,7 +49,8 @@ public class BlockRubberLeaves extends BlockLeaves {
 
     @SuppressWarnings("deprecation")
     @Override
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY,
+                                            float hitZ, int meta, EntityLivingBase placer) {
         return this.getDefaultState().withProperty(DECAYABLE, false).withProperty(CHECK_DECAY, false);
     }
 
@@ -101,7 +105,8 @@ public class BlockRubberLeaves extends BlockLeaves {
     }
 
     @Override
-    public boolean shouldSideBeRendered(@Nonnull IBlockState blockState, @Nonnull IBlockAccess blockAccess, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    public boolean shouldSideBeRendered(@Nonnull IBlockState blockState, @Nonnull IBlockAccess blockAccess,
+                                        @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
         if (!fancyLeaves()) {
             return super.shouldSideBeRendered(blockState, blockAccess, pos, side);
         }

@@ -4,18 +4,21 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.GTStringUtils;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.integration.jei.utils.JEIResourceDepositCategoryUtils;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
+
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GTFluidVeinInfo> {
 
@@ -44,11 +47,13 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
                 guiHelper.createBlankDrawable(176, 166),
                 guiHelper);
 
-        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
+        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18)
+                .build();
     }
 
     @Override
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, GTFluidVeinInfo gtFluidVeinInfo, @Nonnull IIngredients ingredients) {
+    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, GTFluidVeinInfo gtFluidVeinInfo,
+                          @Nonnull IIngredients ingredients) {
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
 
         fluidStackGroup.init(0, true, SLOT_CENTER, 19, 16, 16, 1, false, null);
@@ -97,12 +102,14 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
         // Vein Depletion Chance information
         String veinDepletionChance = I18n.format("gregtech.jei.fluid.depletion_chance", depletionChance);
         depletionChanceLength = minecraft.fontRenderer.getStringWidth(veinDepletionChance);
-        minecraft.fontRenderer.drawString(veinDepletionChance, TEXT_START_X, START_POS_Y + 3 * FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinDepletionChance, TEXT_START_X, START_POS_Y + 3 * FONT_HEIGHT + 1,
+                0x111111);
 
         // Vein Depletion Amount information
         String veinDepletionAmount = I18n.format("gregtech.jei.fluid.depletion_amount", depletionAmount);
         depletionAmountLength = minecraft.fontRenderer.getStringWidth(veinDepletionAmount);
-        minecraft.fontRenderer.drawString(veinDepletionAmount, TEXT_START_X, START_POS_Y + 4 * FONT_HEIGHT + 1, 0x111111);
+        minecraft.fontRenderer.drawString(veinDepletionAmount, TEXT_START_X, START_POS_Y + 4 * FONT_HEIGHT + 1,
+                0x111111);
 
         // Vein Depleted Yield information
         String veinDepletedYield = I18n.format("gregtech.jei.fluid.depleted_rate", depletedYield);
@@ -127,17 +134,26 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         if (isPointWithinRange(TEXT_START_X, START_POS_Y, weightLength, FONT_HEIGHT, mouseX, mouseY)) {
             return Collections.singletonList(I18n.format("gregtech.jei.fluid.weight_hover"));
-        } else if (isPointWithinRange(TEXT_START_X, START_POS_Y + FONT_HEIGHT + 1, minYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
-            return Collections.singletonList(I18n.format("gregtech.jei.fluid.min_hover"));
-        } else if (isPointWithinRange(TEXT_START_X, START_POS_Y + 2 * FONT_HEIGHT + 1, maxYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
-            return Collections.singletonList(I18n.format("gregtech.jei.fluid.max_hover"));
-        } else if (isPointWithinRange(TEXT_START_X, START_POS_Y + 3 * FONT_HEIGHT + 1, depletionChanceLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
-            return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_chance_hover"));
-        } else if (isPointWithinRange(TEXT_START_X, START_POS_Y + 4 * FONT_HEIGHT + 1, depletionAmountLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
-            return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_amount_hover"));
-        } else if (isPointWithinRange(TEXT_START_X, START_POS_Y + 5 * FONT_HEIGHT + 1, depletedYieldLength, FONT_HEIGHT + 1, mouseX, mouseY)) {
-            return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_yield_hover"));
-        }
+        } else if (isPointWithinRange(TEXT_START_X, START_POS_Y + FONT_HEIGHT + 1, minYieldLength, FONT_HEIGHT + 1,
+                mouseX, mouseY)) {
+                    return Collections.singletonList(I18n.format("gregtech.jei.fluid.min_hover"));
+                } else
+            if (isPointWithinRange(TEXT_START_X, START_POS_Y + 2 * FONT_HEIGHT + 1, maxYieldLength, FONT_HEIGHT + 1,
+                    mouseX, mouseY)) {
+                        return Collections.singletonList(I18n.format("gregtech.jei.fluid.max_hover"));
+                    } else
+                if (isPointWithinRange(TEXT_START_X, START_POS_Y + 3 * FONT_HEIGHT + 1, depletionChanceLength,
+                        FONT_HEIGHT + 1, mouseX, mouseY)) {
+                            return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_chance_hover"));
+                        } else
+                    if (isPointWithinRange(TEXT_START_X, START_POS_Y + 4 * FONT_HEIGHT + 1, depletionAmountLength,
+                            FONT_HEIGHT + 1, mouseX, mouseY)) {
+                                return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_amount_hover"));
+                            } else
+                        if (isPointWithinRange(TEXT_START_X, START_POS_Y + 5 * FONT_HEIGHT + 1, depletedYieldLength,
+                                FONT_HEIGHT + 1, mouseX, mouseY)) {
+                                    return Collections.singletonList(I18n.format("gregtech.jei.fluid.dep_yield_hover"));
+                                }
 
         return Collections.emptyList();
     }
@@ -153,7 +169,8 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
      * @param pointY   The Y value of the point to check
      * @return True if the provided (X,Y) point is within the described box, else false
      */
-    private static boolean isPointWithinRange(int initialX, int initialY, int width, int height, int pointX, int pointY) {
+    private static boolean isPointWithinRange(int initialX, int initialY, int width, int height, int pointX,
+                                              int pointY) {
         return initialX <= pointX && pointX <= initialX + width && initialY <= pointY && pointY <= initialY + height;
     }
 }

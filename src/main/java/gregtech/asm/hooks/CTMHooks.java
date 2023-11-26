@@ -2,6 +2,7 @@ package gregtech.asm.hooks;
 
 import gregtech.client.shader.Shaders;
 import gregtech.client.utils.BloomEffectUtil;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -24,13 +25,15 @@ public class CTMHooks {
                 if (layer == BloomEffectUtil.getBloomLayer()) return false;
             } else if ((layers >> BloomEffectUtil.getBloomLayer().ordinal() & 1) == 1 &&
                     layer == BloomEffectUtil.getEffectiveBloomLayer()) {
-                return true;
-            }
+                        return true;
+                    }
         }
         return canRenderInLayer;
     }
 
-    public static List<BakedQuad> getQuadsWithOptiFine(List<BakedQuad> ret, BlockRenderLayer layer, IBakedModel bakedModel, IBlockState state, EnumFacing side, long rand) {
+    public static List<BakedQuad> getQuadsWithOptiFine(List<BakedQuad> ret, BlockRenderLayer layer,
+                                                       IBakedModel bakedModel, IBlockState state, EnumFacing side,
+                                                       long rand) {
         if (Shaders.isOptiFineShaderPackLoaded() && CTMHooks.ENABLE.get() == null) {
             if (layer == BloomEffectUtil.getBloomLayer()) {
                 return Collections.emptyList();

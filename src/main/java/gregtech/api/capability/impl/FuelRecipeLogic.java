@@ -6,19 +6,21 @@ import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 
-import javax.annotation.Nonnull;
 import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
 
 public class FuelRecipeLogic extends RecipeLogicEnergy {
 
-    public FuelRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
+    public FuelRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap,
+                           Supplier<IEnergyContainer> energyContainer) {
         super(tileEntity, recipeMap, energyContainer);
     }
 
     @Nonnull
     @Override
     public ParallelLogicType getParallelLogicType() {
-        return ParallelLogicType.MULTIPLY; //TODO APPEND_FLUIDS
+        return ParallelLogicType.MULTIPLY; // TODO APPEND_FLUIDS
     }
 
     @Override

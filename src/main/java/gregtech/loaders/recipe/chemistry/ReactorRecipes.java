@@ -4,6 +4,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -18,7 +19,6 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 public class ReactorRecipes {
 
     public static void init() {
-
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .fluidInputs(Isoprene.getFluid(144))
@@ -75,8 +75,6 @@ public class ReactorRecipes {
                 .output(dust, Salt, 4)
                 .fluidOutputs(PolyphenyleneSulfide.getFluid(1500))
                 .duration(240).EUt(360).buildAndRegister();
-
-
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Polydimethylsiloxane, 9)

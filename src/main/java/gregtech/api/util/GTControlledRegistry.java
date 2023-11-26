@@ -1,6 +1,7 @@
 package gregtech.api.util;
 
 import gregtech.api.GTValues;
+
 import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -58,8 +59,9 @@ public class GTControlledRegistry<K, V> extends RegistryNamespaced<K, V> {
 
         V objectWithId = getObjectById(id);
         if (objectWithId != null) {
-            throw new IllegalArgumentException(String.format("Tried to reassign id %d to %s (%s), but it is already assigned to %s (%s)!",
-                    id, value, key, objectWithId, getNameForObject(objectWithId)));
+            throw new IllegalArgumentException(
+                    String.format("Tried to reassign id %d to %s (%s), but it is already assigned to %s (%s)!",
+                            id, value, key, objectWithId, getNameForObject(objectWithId)));
         }
         underlyingIntegerMap.put(value, id);
     }

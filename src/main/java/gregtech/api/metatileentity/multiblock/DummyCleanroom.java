@@ -1,8 +1,9 @@
 package gregtech.api.metatileentity.multiblock;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
+
+import javax.annotation.Nonnull;
 
 public final class DummyCleanroom implements ICleanroomProvider {
 
@@ -11,6 +12,7 @@ public final class DummyCleanroom implements ICleanroomProvider {
 
     /**
      * Create a Dummy Cleanroom that provides specific types
+     * 
      * @param types the types to provide
      */
     @Nonnull

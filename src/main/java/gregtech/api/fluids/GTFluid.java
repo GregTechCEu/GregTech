@@ -3,7 +3,7 @@ package gregtech.api.fluids;
 import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.unification.material.Material;
-import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -11,6 +11,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -22,7 +24,8 @@ public class GTFluid extends Fluid implements AttributedFluid {
     private final Collection<FluidAttribute> attributes = new ObjectLinkedOpenHashSet<>();
     private final FluidState state;
 
-    public GTFluid(@NotNull String fluidName, ResourceLocation still, ResourceLocation flowing, @NotNull FluidState state) {
+    public GTFluid(@NotNull String fluidName, ResourceLocation still, ResourceLocation flowing,
+                   @NotNull FluidState state) {
         super(fluidName, still, flowing);
         setGaseous(state != FluidState.LIQUID);
         this.state = state;
@@ -42,7 +45,6 @@ public class GTFluid extends Fluid implements AttributedFluid {
     public void addAttribute(@NotNull FluidAttribute attribute) {
         attributes.add(attribute);
     }
-
 
     public static class GTMaterialFluid extends GTFluid {
 

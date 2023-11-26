@@ -2,9 +2,9 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IFilter;
 import gregtech.api.capability.IFilteredFluidContainer;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStackSimple;
 
@@ -63,7 +63,7 @@ public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple i
     @Override
     public IFluidTankProperties[] getTankProperties() {
         if (properties == null) {
-            return properties = new IFluidTankProperties[]{new GTSimpleFluidHandlerItemStack.TankProperties()};
+            return properties = new IFluidTankProperties[] { new GTSimpleFluidHandlerItemStack.TankProperties() };
         }
         return properties;
     }

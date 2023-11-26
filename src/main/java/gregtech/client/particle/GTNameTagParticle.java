@@ -2,6 +2,7 @@ package gregtech.client.particle;
 
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.client.utils.EffectRenderContext;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -9,14 +10,16 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
 
 public class GTNameTagParticle extends GTParticle {
 
     private final MetaTileEntityHolder metaTileEntityHolder;
 
-    public GTNameTagParticle(@Nonnull MetaTileEntityHolder metaTileEntityHolder, double posX, double posY, double posZ) {
+    public GTNameTagParticle(@Nonnull MetaTileEntityHolder metaTileEntityHolder, double posX, double posY,
+                             double posZ) {
         super(posX, posY, posZ);
         this.metaTileEntityHolder = Objects.requireNonNull(metaTileEntityHolder);
         this.setRenderRange(64);
@@ -37,8 +40,10 @@ public class GTNameTagParticle extends GTParticle {
         if (name.isEmpty()) return;
 
         Entity renderViewEntity = context.renderViewEntity();
-        float rotationYaw = renderViewEntity.prevRotationYaw + (renderViewEntity.rotationYaw - renderViewEntity.prevRotationYaw) * context.partialTicks();
-        float rotationPitch = renderViewEntity.prevRotationPitch + (renderViewEntity.rotationPitch - renderViewEntity.prevRotationPitch) * context.partialTicks();
+        float rotationYaw = renderViewEntity.prevRotationYaw +
+                (renderViewEntity.rotationYaw - renderViewEntity.prevRotationYaw) * context.partialTicks();
+        float rotationPitch = renderViewEntity.prevRotationPitch +
+                (renderViewEntity.rotationPitch - renderViewEntity.prevRotationPitch) * context.partialTicks();
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(posX - context.cameraX(), posY - context.cameraY(), posZ - context.cameraZ());
@@ -48,7 +53,9 @@ public class GTNameTagParticle extends GTParticle {
         GlStateManager.scale(-0.025F, -0.025F, 0.025F);
         GlStateManager.depthMask(false);
 
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO);
         int width = Minecraft.getMinecraft().fontRenderer.getStringWidth(name) / 2;
         GlStateManager.disableTexture2D();
         Tessellator tessellator = Tessellator.getInstance();

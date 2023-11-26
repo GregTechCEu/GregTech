@@ -2,6 +2,7 @@ package gregtech.common.pipelike.optical.net;
 
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.common.pipelike.optical.OpticalPipeProperties;
+
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;

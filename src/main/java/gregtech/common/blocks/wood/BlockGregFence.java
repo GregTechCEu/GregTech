@@ -2,6 +2,7 @@ package gregtech.common.blocks.wood;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;

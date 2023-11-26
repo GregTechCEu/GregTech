@@ -11,6 +11,7 @@ import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.common.terminal.app.game.maze.widget.EnemyWidget;
 import gregtech.common.terminal.app.game.maze.widget.MazeWidget;
 import gregtech.common.terminal.app.game.maze.widget.PlayerWidget;
+
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MazeApp extends AbstractApplication {
+
     private int gameState = 0;
     private PlayerWidget player;
     private EnemyWidget enemy;
@@ -48,7 +50,8 @@ public class MazeApp extends AbstractApplication {
             this.setOs(os);
             this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
             // enemy 0: Title
-            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "terminal.maze.title", 0xFFFFFFFF).setXCentered(true), 0);
+            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "terminal.maze.title", 0xFFFFFFFF).setXCentered(true),
+                    0);
             this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 30, 30, "terminal.maze.play",
                     (clickData -> {
                         this.setGameState(1);
@@ -60,19 +63,27 @@ public class MazeApp extends AbstractApplication {
             this.setEnemy(new EnemyWidget(-100, -100, this));
             // GameState 2: Pause
             this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, new ColorRectTexture(0xFF000000)), 2, 3);
-            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 50, 20, "terminal.maze.continue", (clickData) -> this.setGameState(1)).setShouldClientCallback(true), 2);
-            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "terminal.maze.pause", 0xFFFFFFFF).setXCentered(true), 2);
+            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 50, 20, "terminal.maze.continue",
+                    (clickData) -> this.setGameState(1)).setShouldClientCallback(true), 2);
+            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "terminal.maze.pause", 0xFFFFFFFF).setXCentered(true),
+                    2);
             // GameState 3: Death
-            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 40, "", 0xFFFFFFFF, () -> "terminal.maze.death.1", true), 3);
-            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 28, "terminal.maze.death.2", 0xFFFFFFFF, () -> String.valueOf(this.getMazesSolved()),true), 3);
-            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 16, "", 0xFFFFFFFF, () -> "terminal.maze.death.3", true), 3);
-            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 + 10, 40, 20, "terminal.maze.retry", (clickData -> {
-                this.setGameState(1);
-                this.setMazesSolved(0);
-                MAZE_SIZE = 9;
-                speed = 25;
-                this.resetGame();
-            })).setShouldClientCallback(true), 3);
+            this.addWidget(
+                    new SimpleTextWidget(333 / 2, 232 / 2 - 40, "", 0xFFFFFFFF, () -> "terminal.maze.death.1", true),
+                    3);
+            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 28, "terminal.maze.death.2", 0xFFFFFFFF,
+                    () -> String.valueOf(this.getMazesSolved()), true), 3);
+            this.addWidget(
+                    new SimpleTextWidget(333 / 2, 232 / 2 - 16, "", 0xFFFFFFFF, () -> "terminal.maze.death.3", true),
+                    3);
+            this.addWidget(
+                    new ClickButtonWidget(323 / 2 - 10, 222 / 2 + 10, 40, 20, "terminal.maze.retry", (clickData -> {
+                        this.setGameState(1);
+                        this.setMazesSolved(0);
+                        MAZE_SIZE = 9;
+                        speed = 25;
+                        this.resetGame();
+                    })).setShouldClientCallback(true), 3);
         }
         return this;
     }
@@ -82,7 +93,7 @@ public class MazeApp extends AbstractApplication {
         for (int state : visibleStates) {
             FSM[state].add(widget);
         }
-        widget.setVisible(Arrays.stream(visibleStates).allMatch(state->state==gameState));
+        widget.setVisible(Arrays.stream(visibleStates).allMatch(state -> state == gameState));
     }
 
     public void setPlayer(PlayerWidget player) {
@@ -142,9 +153,9 @@ public class MazeApp extends AbstractApplication {
             }
         }
         if (gameState == 2) {
-            if(!Keyboard.isKeyDown(Keyboard.KEY_P))
+            if (!Keyboard.isKeyDown(Keyboard.KEY_P))
                 lastPausePress = false;
-            if(Keyboard.isKeyDown(Keyboard.KEY_P) && !lastPausePress)
+            if (Keyboard.isKeyDown(Keyboard.KEY_P) && !lastPausePress)
                 gameState = 1;
         }
         if (gameState != lastState) {

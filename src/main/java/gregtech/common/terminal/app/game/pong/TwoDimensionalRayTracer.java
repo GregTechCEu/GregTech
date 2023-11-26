@@ -9,7 +9,9 @@ import static net.minecraft.util.math.MathHelper.clamp;
 
 // Huge thanks to https://noonat.github.io/intersect!
 public class TwoDimensionalRayTracer {
+
     public static class TwoDimensionalRayTraceResult {
+
         public Vector2f pos = new Vector2f();
         public Vector2f delta = new Vector2f();
         public Vector2f normal = new Vector2f();
@@ -25,7 +27,8 @@ public class TwoDimensionalRayTracer {
      * @param boxSize The half-width and half-height of the box
      * @return The resulting intersection between a segment and a box, or else null
      */
-    public static TwoDimensionalRayTraceResult intersectBoxSegment(Vector2f pos, Vector2f delta, Vector2f boxCenter, Vector2f boxSize) {
+    public static TwoDimensionalRayTraceResult intersectBoxSegment(Vector2f pos, Vector2f delta, Vector2f boxCenter,
+                                                                   Vector2f boxSize) {
         float scaleX = (float) (1.0 / delta.x);
         float scaleY = (float) (1.0 / delta.y);
         float signX = Math.signum(scaleX);
@@ -63,7 +66,8 @@ public class TwoDimensionalRayTracer {
         return result;
     }
 
-    public static TwoDimensionalRayTraceResult nearestBoxSegmentCollision(Vector2f pos, Vector2f delta, List<Rectangle> boxes, Vector2f padding) {
+    public static TwoDimensionalRayTraceResult nearestBoxSegmentCollision(Vector2f pos, Vector2f delta,
+                                                                          List<Rectangle> boxes, Vector2f padding) {
         TwoDimensionalRayTraceResult result = new TwoDimensionalRayTraceResult();
         result.time = 1;
         result.pos.x = pos.x + delta.x;
@@ -79,5 +83,4 @@ public class TwoDimensionalRayTracer {
         }
         return result;
     }
-
 }

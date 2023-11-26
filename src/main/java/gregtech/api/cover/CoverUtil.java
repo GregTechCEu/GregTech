@@ -1,8 +1,9 @@
 package gregtech.api.cover;
 
+import net.minecraft.util.EnumFacing;
+
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.vec.Cuboid6;
-import net.minecraft.util.EnumFacing;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

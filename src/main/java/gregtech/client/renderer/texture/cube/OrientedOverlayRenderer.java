@@ -1,10 +1,5 @@
 package gregtech.client.renderer.texture.cube;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
-import codechicken.lib.vec.Rotation;
 import gregtech.api.GTValues;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.LightMapOperation;
@@ -12,6 +7,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
@@ -20,6 +16,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+import codechicken.lib.vec.Rotation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +32,12 @@ import java.util.Map;
 public class OrientedOverlayRenderer implements ICubeRenderer {
 
     public enum OverlayFace {
-        FRONT, BACK, TOP, BOTTOM, SIDE;
+
+        FRONT,
+        BACK,
+        TOP,
+        BOTTOM,
+        SIDE;
 
         public static final OverlayFace[] VALUES = values();
 
@@ -69,7 +76,6 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
                                @Nullable TextureAtlasSprite normalSpriteEmissive,
                                @Nullable TextureAtlasSprite activeSpriteEmissive,
                                @Nullable TextureAtlasSprite pausedSpriteEmissive) {
-
             this.normalSprite = normalSprite;
             this.activeSprite = activeSprite;
             this.pausedSprite = pausedSprite;
@@ -137,7 +143,8 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             TextureAtlasSprite activeSprite = ICubeRenderer.getResource(textureMap, modID, active);
 
             if (activeSprite == null) {
-                FMLClientHandler.instance().trackMissingTexture(new ResourceLocation(modID, "blocks/" + basePath + "/overlay_" + overlayFace.toString().toLowerCase() + "_active"));
+                FMLClientHandler.instance().trackMissingTexture(new ResourceLocation(modID,
+                        "blocks/" + basePath + "/overlay_" + overlayFace.toString().toLowerCase() + "_active"));
                 continue;
             }
 
@@ -146,7 +153,8 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
 
             // emissive
 
-            TextureAtlasSprite normalSpriteEmissive = ICubeRenderer.getResource(textureMap, modID, overlayPath + EMISSIVE);
+            TextureAtlasSprite normalSpriteEmissive = ICubeRenderer.getResource(textureMap, modID,
+                    overlayPath + EMISSIVE);
 
             TextureAtlasSprite activeSpriteEmissive = ICubeRenderer.getResource(textureMap, modID, active + EMISSIVE);
 
@@ -157,7 +165,8 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
         }
 
         if (!foundTexture) {
-            FMLClientHandler.instance().trackMissingTexture(new ResourceLocation(modID, "blocks/" + basePath + "/overlay_OVERLAY_FACE"));
+            FMLClientHandler.instance()
+                    .trackMissingTexture(new ResourceLocation(modID, "blocks/" + basePath + "/overlay_OVERLAY_FACE"));
         }
     }
 
@@ -173,7 +182,9 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
+    public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
+                                    Cuboid6 bounds, EnumFacing frontFacing, boolean isActive,
+                                    boolean isWorkingEnabled) {
         for (EnumFacing renderSide : EnumFacing.VALUES) {
 
             ActivePredicate predicate = sprites.get(OverlayFace.bySide(renderSide, frontFacing));
@@ -188,16 +199,20 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
                 renderTranslation = RenderUtil.adjustTrans(renderTranslation, renderSide, 1);
                 renderTranslation.apply(rotation);
 
-                Textures.renderFace(renderState, renderTranslation, ArrayUtils.addAll(pipeline, rotation), renderSide, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
+                Textures.renderFace(renderState, renderTranslation, ArrayUtils.addAll(pipeline, rotation), renderSide,
+                        bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
 
                 TextureAtlasSprite emissiveSprite = predicate.getEmissiveSprite(isActive, isWorkingEnabled);
                 if (emissiveSprite != null) {
                     if (ConfigHolder.client.machinesEmissiveTextures) {
-                        IVertexOperation[] lightPipeline = ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), rotation);
-                        Textures.renderFace(renderState, renderTranslation, lightPipeline, renderSide, bounds, emissiveSprite, BloomEffectUtil.getEffectiveBloomLayer());
+                        IVertexOperation[] lightPipeline = ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240),
+                                rotation);
+                        Textures.renderFace(renderState, renderTranslation, lightPipeline, renderSide, bounds,
+                                emissiveSprite, BloomEffectUtil.getEffectiveBloomLayer());
                     } else {
                         // have to still render both overlays or else textures will be broken
-                        Textures.renderFace(renderState, renderTranslation, ArrayUtils.addAll(pipeline, rotation), renderSide, bounds, emissiveSprite, BlockRenderLayer.CUTOUT_MIPPED);
+                        Textures.renderFace(renderState, renderTranslation, ArrayUtils.addAll(pipeline, rotation),
+                                renderSide, bounds, emissiveSprite, BlockRenderLayer.CUTOUT_MIPPED);
                     }
                 }
             }

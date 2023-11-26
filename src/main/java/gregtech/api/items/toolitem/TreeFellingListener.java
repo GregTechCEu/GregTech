@@ -1,6 +1,5 @@
 package gregtech.api.items.toolitem;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,9 +11,12 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import java.util.*;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 public final class TreeFellingListener {
 
@@ -28,7 +30,8 @@ public final class TreeFellingListener {
         this.orderedBlocks = orderedBlocks;
     }
 
-    public static void start(@Nonnull IBlockState state, ItemStack tool, BlockPos start, @Nonnull EntityPlayerMP player) {
+    public static void start(@Nonnull IBlockState state, ItemStack tool, BlockPos start,
+                             @Nonnull EntityPlayerMP player) {
         World world = player.world;
         Block block = state.getBlock();
         BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();

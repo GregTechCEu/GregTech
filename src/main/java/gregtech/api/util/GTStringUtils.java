@@ -11,6 +11,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
@@ -30,7 +31,8 @@ public final class GTStringUtils {
                 if (metaItem instanceof MetaPrefixItem metaPrefixItem) {
                     Material material = metaPrefixItem.getMaterial(stack);
                     OrePrefix orePrefix = metaPrefixItem.getOrePrefix();
-                    return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material + " * " + stack.getCount();
+                    return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material + " * " +
+                            stack.getCount();
                 }
             } else {
                 if (MetaItems.INTEGRATED_CIRCUIT.isItemEqual(stack)) {
@@ -61,8 +63,9 @@ public final class GTStringUtils {
                 return "(MetaBlock) " + id + " * " + stack.getCount();
             }
         }
-        //noinspection ConstantConditions
-        return stack.getItem().getRegistryName().toString() + " * " + stack.getCount() + " (Meta " + stack.getItemDamage() + ")";
+        // noinspection ConstantConditions
+        return stack.getItem().getRegistryName().toString() + " * " + stack.getCount() + " (Meta " +
+                stack.getItemDamage() + ")";
     }
 
     /**
@@ -89,7 +92,7 @@ public final class GTStringUtils {
         int seconds = ticks / 20;
         int minutes = seconds / 60;
         seconds = seconds % 60;
-        //noinspection StringConcatenationMissingWhitespace
+        // noinspection StringConcatenationMissingWhitespace
         return seconds < 10 ? minutes + ":0" + seconds : minutes + ":" + seconds;
     }
 
@@ -102,13 +105,12 @@ public final class GTStringUtils {
      * @param maxLength    The maximum width of the String
      */
     public static void drawCenteredStringWithCutoff(String stringToDraw, FontRenderer fontRenderer, int maxLength) {
-
-        //Account for really long names
+        // Account for really long names
         if (fontRenderer.getStringWidth(stringToDraw) > maxLength) {
             stringToDraw = fontRenderer.trimStringToWidth(stringToDraw, maxLength - 3, false) + "...";
         }
 
-        //Ensure that the string is centered
+        // Ensure that the string is centered
         int startPosition = (maxLength - fontRenderer.getStringWidth(stringToDraw)) / 2;
 
         fontRenderer.drawString(stringToDraw, startPosition, 1, 0x111111);

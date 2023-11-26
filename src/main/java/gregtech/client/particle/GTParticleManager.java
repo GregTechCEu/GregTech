@@ -3,7 +3,7 @@ package gregtech.client.particle;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.utils.EffectRenderContext;
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -17,11 +17,14 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
 import java.util.*;
+
+import javax.annotation.Nonnull;
 
 /**
  * Singleton class responsible for managing, updating and rendering {@link GTParticle} instances.
@@ -54,7 +57,8 @@ public class GTParticleManager {
             for (GTParticle particle : newParticleQueue) {
                 var queue = particle.shouldDisableDepth() ? depthDisabledParticles : depthEnabledParticles;
 
-                ArrayDeque<GTParticle> particles = queue.computeIfAbsent(particle.getRenderSetup(), setup -> new ArrayDeque<>());
+                ArrayDeque<GTParticle> particles = queue.computeIfAbsent(particle.getRenderSetup(),
+                        setup -> new ArrayDeque<>());
 
                 if (particles.size() > 6000) {
                     particles.removeFirst().setExpired();

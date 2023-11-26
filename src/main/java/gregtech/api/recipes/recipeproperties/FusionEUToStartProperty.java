@@ -1,8 +1,10 @@
 package gregtech.api.recipes.recipeproperties;
 
 import gregtech.api.util.TextFormattingUtil;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+
 import org.apache.commons.lang3.Validate;
 
 import java.util.Map;
@@ -31,7 +33,8 @@ public class FusionEUToStartProperty extends RecipeProperty<Long> {
     @Override
     public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value) {
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.eu_to_start",
-                TextFormattingUtil.formatLongToCompactString(castValue(value))) + getFusionTier(castValue(value)), x, y, color);
+                TextFormattingUtil.formatLongToCompactString(castValue(value))) + getFusionTier(castValue(value)), x, y,
+                color);
     }
 
     private static String getFusionTier(Long eu) {
@@ -48,6 +51,5 @@ public class FusionEUToStartProperty extends RecipeProperty<Long> {
         Validate.notNull(shortName);
         long maxEU = 16 * 10000000L * (long) Math.pow(2, tier - 6);
         registeredFusionTiers.put(maxEU, shortName);
-
     }
 }

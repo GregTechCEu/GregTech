@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.items.toolitem.IGTTool;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -11,17 +12,20 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Predicate;
+
+import javax.annotation.Nonnull;
 
 public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
 
     private final Predicate<ItemStack> chargePredicate;
     private final boolean transferMaxCharge;
 
-    public ShapedOreEnergyTransferRecipe(ResourceLocation group, @Nonnull ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, Object... recipe) {
+    public ShapedOreEnergyTransferRecipe(ResourceLocation group, @Nonnull ItemStack result,
+                                         Predicate<ItemStack> chargePredicate, boolean overrideCharge,
+                                         boolean transferMaxCharge, Object... recipe) {
         super(group, result, CraftingHelper.parseShaped(recipe));
         this.chargePredicate = chargePredicate;
         this.transferMaxCharge = transferMaxCharge;
@@ -30,7 +34,7 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
         }
     }
 
-    //transfer initial max charge for correct display in JEI
+    // transfer initial max charge for correct display in JEI
     private void fixOutputItemMaxCharge() {
         long totalMaxCharge = getIngredients().stream()
                 .mapToLong(it -> Arrays.stream(it.getMatchingStacks())
@@ -38,7 +42,8 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
                         .map(stack -> stack.copy().getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null))
                         .filter(Objects::nonNull)
                         .mapToLong(IElectricItem::getMaxCharge)
-                        .max().orElse(0L)).sum();
+                        .max().orElse(0L))
+                .sum();
         IElectricItem electricItem = output.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (totalMaxCharge > 0L && electricItem instanceof ElectricItem) {
             ((ElectricItem) electricItem).setMaxChargeOverride(totalMaxCharge);
@@ -53,7 +58,8 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
         return resultStack;
     }
 
-    public static void chargeStackFromComponents(ItemStack toolStack, IInventory ingredients, Predicate<ItemStack> chargePredicate, boolean transferMaxCharge) {
+    public static void chargeStackFromComponents(ItemStack toolStack, IInventory ingredients,
+                                                 Predicate<ItemStack> chargePredicate, boolean transferMaxCharge) {
         IElectricItem electricItem = toolStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         long totalMaxCharge = 0L;
         long toCharge = 0L;
@@ -63,7 +69,8 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
                 if (!chargePredicate.test(stackInSlot)) {
                     continue;
                 }
-                IElectricItem batteryItem = stackInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                IElectricItem batteryItem = stackInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM,
+                        null);
                 if (batteryItem == null) {
                     continue;
                 }
@@ -74,7 +81,7 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
         if (electricItem instanceof ElectricItem && transferMaxCharge) {
             ((ElectricItem) electricItem).setMaxChargeOverride(totalMaxCharge);
         }
-        //noinspection DataFlowIssue
+        // noinspection DataFlowIssue
         electricItem.charge(toCharge, Integer.MAX_VALUE, true, false);
     }
 }

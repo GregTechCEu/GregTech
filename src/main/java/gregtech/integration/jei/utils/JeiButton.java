@@ -1,6 +1,7 @@
 package gregtech.integration.jei.utils;
 
 import gregtech.api.gui.resources.IGuiTexture;
+
 import net.minecraft.client.Minecraft;
 
 import java.util.List;
@@ -52,7 +53,8 @@ public class JeiButton {
     }
 
     public boolean isHovering(int mouseX, int mouseY) {
-        return mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height && activeSupplier.getAsBoolean();
+        return mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height &&
+                activeSupplier.getAsBoolean();
     }
 
     public void render(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
@@ -69,6 +71,7 @@ public class JeiButton {
 
     @FunctionalInterface
     public interface ClickAction {
+
         boolean click(Minecraft minecraft, int mouseX, int mouseY, int mouseButton);
     }
 }

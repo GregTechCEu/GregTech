@@ -5,6 +5,7 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.KeyBind;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,8 +17,9 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 public class NightvisionGoggles extends ArmorLogicSuite {
 
@@ -43,13 +45,15 @@ public class NightvisionGoggles extends ArmorLogicSuite {
                 if (!nightvision && item.getCharge() >= energyPerUse) {
                     nightvision = true;
                     if (!world.isRemote)
-                        player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.enabled"), true);
+                        player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.enabled"),
+                                true);
                 } else if (nightvision) {
                     nightvision = false;
                     disableNightVision(world, player, true);
                 } else {
                     if (!world.isRemote) {
-                        player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.error"), true);
+                        player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.error"),
+                                true);
                     }
                 }
 
@@ -74,7 +78,8 @@ public class NightvisionGoggles extends ArmorLogicSuite {
     public static void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {
         if (!world.isRemote) {
             player.removePotionEffect(MobEffects.NIGHT_VISION);
-            if (sendMsg) player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.disabled"), true);
+            if (sendMsg)
+                player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.disabled"), true);
         }
     }
 

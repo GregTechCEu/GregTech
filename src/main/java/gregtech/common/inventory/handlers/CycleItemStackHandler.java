@@ -1,6 +1,5 @@
 package gregtech.common.inventory.handlers;
 
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemStackHandler;
@@ -16,6 +15,7 @@ public class CycleItemStackHandler extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack getStackInSlot(int slot) {
-        return stacks.isEmpty() ? ItemStack.EMPTY : super.getStackInSlot(Math.abs((int)(System.currentTimeMillis() / 1000) % stacks.size()));
+        return stacks.isEmpty() ? ItemStack.EMPTY :
+                super.getStackInSlot(Math.abs((int) (System.currentTimeMillis() / 1000) % stacks.size()));
     }
 }

@@ -13,8 +13,7 @@ public class Elements {
 
     private static final Map<String, Element> elements = new HashMap<>();
 
-    private Elements() {
-    }
+    private Elements() {}
 
     public static final Element H = add(1, 0, -1, null, "Hydrogen", "H", false);
     public static final Element D = add(1, 1, -1, "H", "Deuterium", "D", true);
@@ -142,7 +141,7 @@ public class Elements {
     public static final Element Ts = add(117, 177, -1, null, "Tennessine", "Ts", false);
     public static final Element Og = add(118, 176, -1, null, "Oganesson", "Og", false);
 
-    //fantasy todo Naquadah element names
+    // fantasy todo Naquadah element names
     public static final Element Tr = add(119, 178, -1, null, "Tritanium", "Tr", false);
     public static final Element Dr = add(120, 180, -1, null, "Duranium", "Dr", false);
     public static final Element Ke = add(125, 198, -1, null, "Trinium", "Ke", false);
@@ -156,12 +155,12 @@ public class Elements {
     // TODO Cosmic Neutronium, other Gregicality Elements
 
     @ZenMethod
-    public static Element add(long protons, long neutrons, long halfLifeSeconds, String decayTo, String name, String symbol, boolean isIsotope) {
+    public static Element add(long protons, long neutrons, long halfLifeSeconds, String decayTo, String name,
+                              String symbol, boolean isIsotope) {
         Element element = new Element(protons, neutrons, halfLifeSeconds, decayTo, name, symbol, isIsotope);
         elements.put(name, element);
         return element;
     }
-
 
     public static List<Element> getAllElements() {
         return Collections.unmodifiableList(new ArrayList<>(elements.values()));

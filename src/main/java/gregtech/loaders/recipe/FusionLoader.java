@@ -8,7 +8,6 @@ import static gregtech.api.GTValues.*;
 public class FusionLoader {
 
     public static void init() {
-
         RecipeMaps.FUSION_RECIPES.recipeBuilder()
                 .fluidInputs(Materials.Deuterium.getFluid(125))
                 .fluidInputs(Materials.Tritium.getFluid(125))
@@ -206,6 +205,5 @@ public class FusionLoader {
                 .EUt(VA[LuV])
                 .EUToStart(200_000_000)
                 .buildAndRegister();
-
     }
 }

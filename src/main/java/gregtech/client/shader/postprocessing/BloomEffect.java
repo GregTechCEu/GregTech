@@ -4,10 +4,12 @@ import gregtech.client.shader.PingPongBuffer;
 import gregtech.client.shader.Shaders;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
@@ -108,7 +110,8 @@ public class BloomEffect {
             renderDownSampling(downSampleFBO[i], downSampleFBO[i + 1]);
         }
 
-        renderUpSampling(downSampleFBO[downSampleFBO.length - 1], downSampleFBO[downSampleFBO.length - 2], upSampleFBO[downSampleFBO.length - 2]);
+        renderUpSampling(downSampleFBO[downSampleFBO.length - 1], downSampleFBO[downSampleFBO.length - 2],
+                upSampleFBO[downSampleFBO.length - 2]);
         for (int i = upSampleFBO.length - 2; i > 0; i--) {
             renderUpSampling(upSampleFBO[i], downSampleFBO[i - 1], upSampleFBO[i - 1]);
         }
@@ -125,7 +128,8 @@ public class BloomEffect {
 
     private static void renderDownSampling(Framebuffer U, Framebuffer D) {
         U.bindFramebufferTexture();
-        Shaders.renderFullImageInFBO(D, Shaders.DOWN_SAMPLING, uniformCache -> uniformCache.glUniform2F("u_resolution2", U.framebufferWidth, U.framebufferHeight));
+        Shaders.renderFullImageInFBO(D, Shaders.DOWN_SAMPLING,
+                uniformCache -> uniformCache.glUniform2F("u_resolution2", U.framebufferWidth, U.framebufferHeight));
     }
 
     private static void renderUpSampling(Framebuffer U, Framebuffer D, Framebuffer T) {
@@ -148,7 +152,7 @@ public class BloomEffect {
         cleanUP(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
 
         // blur all mips
-        int[] kernelSizeArray = new int[]{3, 5, 7, 9, 11};
+        int[] kernelSizeArray = new int[] { 3, 5, 7, 9, 11 };
         highLightFBO.bindFramebufferTexture();
         for (int i = 0; i < downSampleFBO.length; i++) {
             Framebuffer buffer_h = downSampleFBO[i];

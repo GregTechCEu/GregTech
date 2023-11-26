@@ -9,15 +9,18 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.LocalizationUtils;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants.NBT;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
-public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, IItemDurabilityManager, IItemColorProvider, IItemNameProvider {
+import javax.annotation.Nonnull;
+
+public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, IItemDurabilityManager,
+                                                   IItemColorProvider, IItemNameProvider {
 
     protected static NBTTagCompound getPartStatsTag(ItemStack itemStack) {
         return itemStack.getSubCompound("GT.PartStats");

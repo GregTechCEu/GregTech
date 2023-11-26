@@ -1,13 +1,14 @@
 package gregtech.common.terminal.app.guide;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import gregtech.api.GregTechAPI;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.MetaTileEntities;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class MultiBlockGuideApp extends GuideApp<MetaTileEntity> {
 
@@ -17,7 +18,7 @@ public class MultiBlockGuideApp extends GuideApp<MetaTileEntity> {
 
     @Override
     public MetaTileEntity ofJson(JsonObject json) {
-        String[] valids = {"multiblock", "metatileentity"};
+        String[] valids = { "multiblock", "metatileentity" };
         if (json.isJsonObject()) {
             for (String valid : valids) {
                 JsonElement id = json.getAsJsonObject().get(valid);

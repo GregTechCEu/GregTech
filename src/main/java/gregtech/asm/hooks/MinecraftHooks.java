@@ -2,6 +2,7 @@ package gregtech.asm.hooks;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentTranslation;
+
 import org.lwjgl.input.Keyboard;
 
 @SuppressWarnings("unused")

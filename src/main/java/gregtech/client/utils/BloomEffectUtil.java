@@ -1,12 +1,11 @@
 package gregtech.client.utils;
 
-import com.github.bsideup.jabel.Desugar;
 import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.shader.Shaders;
 import gregtech.client.shader.postprocessing.BloomEffect;
 import gregtech.client.shader.postprocessing.BloomType;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.*;
@@ -20,20 +19,24 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import com.github.bsideup.jabel.Desugar;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
 public class BloomEffectUtil {
@@ -78,7 +81,7 @@ public class BloomEffectUtil {
      * disabled, {@link BlockRenderLayer#CUTOUT} is returned instead.
      *
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if
-     * bloom layer is disabled
+     *         bloom layer is disabled
      * @see #getEffectiveBloomLayer(BlockRenderLayer)
      */
     @Nonnull
@@ -93,7 +96,7 @@ public class BloomEffectUtil {
      *
      * @param fallback Block render layer to be returned when bloom layer is disabled
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@code fallback} if bloom layer is
-     * disabled
+     *         disabled
      * @see #getEffectiveBloomLayer(boolean, BlockRenderLayer)
      */
     @Contract("null -> _; !null -> !null")
@@ -109,7 +112,7 @@ public class BloomEffectUtil {
      * @param isBloomActive Whether bloom layer should be active. If this value is {@code false}, {@code fallback} layer
      *                      will be returned. Has no effect if Optifine is present.
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@link BlockRenderLayer#CUTOUT} if
-     * bloom layer is disabled
+     *         bloom layer is disabled
      * @see #getEffectiveBloomLayer(boolean, BlockRenderLayer)
      */
     @Nonnull
@@ -126,7 +129,7 @@ public class BloomEffectUtil {
      *                      will be returned. Has no effect if Optifine is present.
      * @param fallback      Block render layer to be returned when bloom layer is disabled
      * @return {@link BlockRenderLayer} instance for the bloom render layer, or {@code fallback} if bloom layer is
-     * disabled
+     *         disabled
      */
     @Contract("_, null -> _; _, !null -> !null")
     public static BlockRenderLayer getEffectiveBloomLayer(boolean isBloomActive, BlockRenderLayer fallback) {
@@ -171,7 +174,8 @@ public class BloomEffectUtil {
     }
 
     /**
-     * @deprecated use ticket-based bloom render hook {@link #registerBloomRender(IRenderSetup, BloomType, IBloomEffect)}
+     * @deprecated use ticket-based bloom render hook
+     *             {@link #registerBloomRender(IRenderSetup, BloomType, IBloomEffect)}
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
@@ -180,15 +184,17 @@ public class BloomEffectUtil {
         registerBloomRender(handler, bloomType, (b, c) -> render.accept(b)).legacy = true;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void init() {
-        bloom = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[]{String.class}, "Bloom");
+        bloom = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[] { String.class }, "Bloom");
         BLOOM = bloom;
         if (Loader.isModLoaded("nothirium")) {
             try {
-                //Nothirium hard copies the BlockRenderLayer enum into a ChunkRenderPass enum. Add our BLOOM layer to that too.
-                Class crp = Class.forName("meldexun.nothirium.api.renderer.chunk.ChunkRenderPass", false, Launch.classLoader);
-                EnumHelper.addEnum(crp, "BLOOM", new Class[]{});
+                // Nothirium hard copies the BlockRenderLayer enum into a ChunkRenderPass enum. Add our BLOOM layer to
+                // that too.
+                Class crp = Class.forName("meldexun.nothirium.api.renderer.chunk.ChunkRenderPass", false,
+                        Launch.classLoader);
+                EnumHelper.addEnum(crp, "BLOOM", new Class[] {});
                 Field all = FieldUtils.getField(crp, "ALL", false);
                 FieldUtils.removeFinalModifier(all);
                 FieldUtils.writeStaticField(all, crp.getEnumConstants());
@@ -326,7 +332,7 @@ public class BloomEffectUtil {
         GlStateManager.disableBlend();
         Shaders.renderFullImageInFBO(fbo, Shaders.IMAGE_F, null);
 
-        //********** render custom bloom ************
+        // ********** render custom bloom ************
 
         if (!BLOOM_RENDERS.isEmpty()) {
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
@@ -419,7 +425,7 @@ public class BloomEffectUtil {
     }
 
     private static void postDraw() {
-        for (var it = BLOOM_RENDERS.values().iterator(); it.hasNext(); ) {
+        for (var it = BLOOM_RENDERS.values().iterator(); it.hasNext();) {
             List<BloomRenderTicket> list = it.next();
 
             if (!list.isEmpty()) {
@@ -447,7 +453,8 @@ public class BloomEffectUtil {
          */
         private boolean legacy;
 
-        BloomRenderTicket(@Nullable IRenderSetup renderSetup, @Nonnull BloomType bloomType, @Nonnull IBloomEffect render) {
+        BloomRenderTicket(@Nullable IRenderSetup renderSetup, @Nonnull BloomType bloomType,
+                          @Nonnull IBloomEffect render) {
             this.renderSetup = renderSetup;
             this.bloomType = Objects.requireNonNull(bloomType, "bloomType == null");
             this.render = Objects.requireNonNull(render, "render == null");
@@ -473,7 +480,8 @@ public class BloomEffectUtil {
     }
 
     /**
-     * @deprecated use ticket-based bloom render hook {@link #registerBloomRender(IRenderSetup, BloomType, IBloomEffect)}
+     * @deprecated use ticket-based bloom render hook
+     *             {@link #registerBloomRender(IRenderSetup, BloomType, IBloomEffect)}
      */
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
@@ -483,12 +491,12 @@ public class BloomEffectUtil {
          * Custom Bloom Style.
          *
          * @return 0 - Simple Gaussian Blur Bloom
-         * <p>
-         * 1 - Unity Bloom
-         * </p>
-         * <p>
-         * 2 - Unreal Bloom
-         * </p>
+         *         <p>
+         *         1 - Unity Bloom
+         *         </p>
+         *         <p>
+         *         2 - Unreal Bloom
+         *         </p>
          */
         int customBloomStyle();
     }

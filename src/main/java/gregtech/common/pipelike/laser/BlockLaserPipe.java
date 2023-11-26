@@ -11,6 +11,7 @@ import gregtech.client.renderer.pipe.LaserPipeRenderer;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -25,6 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -96,7 +98,8 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    public void setTileEntityData(TileEntityPipeBase<LaserPipeType, LaserPipeProperties> pipeTile, ItemStack itemStack) {
+    public void setTileEntityData(TileEntityPipeBase<LaserPipeType, LaserPipeProperties> pipeTile,
+                                  ItemStack itemStack) {
         pipeTile.setPipeData(this, pipeType);
     }
 
@@ -111,13 +114,16 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<LaserPipeType, LaserPipeProperties> selfTile, EnumFacing side, IPipeTile<LaserPipeType, LaserPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<LaserPipeType, LaserPipeProperties> selfTile, EnumFacing side,
+                                   IPipeTile<LaserPipeType, LaserPipeProperties> sideTile) {
         return selfTile instanceof TileEntityLaserPipe && sideTile instanceof TileEntityLaserPipe;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<LaserPipeType, LaserPipeProperties> selfTile, EnumFacing side, @Nullable TileEntity tile) {
-        return tile != null && tile.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, side.getOpposite()) != null;
+    public boolean canPipeConnectToBlock(IPipeTile<LaserPipeType, LaserPipeProperties> selfTile, EnumFacing side,
+                                         @Nullable TileEntity tile) {
+        return tile != null &&
+                tile.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, side.getOpposite()) != null;
     }
 
     @Override

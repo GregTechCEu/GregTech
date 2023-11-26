@@ -26,6 +26,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
@@ -37,13 +38,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityResearchStation extends RecipeMapMultiblockController implements IOpticalComputationReceiver {
+public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
+                                           implements IOpticalComputationReceiver {
 
     private IOpticalComputationProvider computationProvider;
     private IObjectHolder objectHolder;
@@ -156,7 +159,10 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                 .where('P', getCasingState())
                 .where('O', MetaTileEntities.COMPUTATION_HATCH_RECEIVER, EnumFacing.NORTH)
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LuV], EnumFacing.NORTH)
-                .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : getCasingState(), EnumFacing.NORTH)
+                .where('M',
+                        () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
+                                getCasingState(),
+                        EnumFacing.NORTH)
                 .where('H', MetaTileEntities.OBJECT_HOLDER, EnumFacing.NORTH)
                 .build());
     }
@@ -205,7 +211,8 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.research_station.tooltip.2"));
@@ -255,9 +262,10 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         }
 
         @Override
-        protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe, @NotNull IItemHandlerModifiable importInventory) {
+        protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
+                                                      @NotNull IItemHandlerModifiable importInventory) {
             // this machine cannot overclock, so don't bother calling it
-            this.overclockResults = new int[]{recipe.getEUt(), recipe.getDuration()};
+            this.overclockResults = new int[] { recipe.getEUt(), recipe.getDuration() };
             if (!hasEnoughPower(overclockResults)) {
                 return false;
             }

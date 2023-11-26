@@ -2,14 +2,17 @@ package gregtech.common.covers.filter.oreglob.impl;
 
 import gregtech.api.util.oreglob.OreGlobTextBuilder;
 import gregtech.api.util.oreglob.VisualizationHint;
+
 import net.minecraft.util.text.TextFormatting;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 final class NodeVisualXMLHandler extends DefaultHandler {
 

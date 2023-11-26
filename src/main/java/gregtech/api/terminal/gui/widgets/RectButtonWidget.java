@@ -4,23 +4,25 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.network.PacketBuffer;
+
 import org.lwjgl.input.Mouse;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class RectButtonWidget extends CircleButtonWidget{
+public class RectButtonWidget extends CircleButtonWidget {
+
     private IGuiTexture pressedIcon;
     private BiConsumer<ClickData, Boolean> onPressed;
     private boolean isPressed;
     private Supplier<Boolean> supplier;
     private boolean isClient;
 
-
     public RectButtonWidget(int x, int y, int width, int height) {
-        this(x, y, width, height,2);
+        this(x, y, width, height, 2);
     }
 
     public RectButtonWidget(int x, int y, int width, int height, int border) {
@@ -38,7 +40,7 @@ public class RectButtonWidget extends CircleButtonWidget{
 
     public RectButtonWidget setToggleButton(IGuiTexture pressedIcon, Consumer<Boolean> onPressed) {
         this.pressedIcon = pressedIcon;
-        this.onPressed = onPressed != null ? (c, p)-> onPressed.accept(p) : null;
+        this.onPressed = onPressed != null ? (c, p) -> onPressed.accept(p) : null;
         return this;
     }
 
@@ -64,7 +66,7 @@ public class RectButtonWidget extends CircleButtonWidget{
     @Override
     public void detectAndSendChanges() {
         if (!isClient && supplier != null) {
-            if(supplier.get() != isPressed) {
+            if (supplier.get() != isPressed) {
                 isPressed = !isPressed;
                 writeUpdateInfo(1, buffer -> buffer.writeBoolean(isPressed));
             }
@@ -123,7 +125,7 @@ public class RectButtonWidget extends CircleButtonWidget{
         drawBorder(x + border, y + border, width - 2 * border, height - 2 * border, colors[0], border);
         isHover = this.isMouseOverElement(mouseX, mouseY);
         if (isHover || hoverTick != 0) {
-            float per = Math. min ((hoverTick + partialTicks) / 8, 1);
+            float per = Math.min((hoverTick + partialTicks) / 8, 1);
             drawSolidRect(x, y, (int) (width * per), border, colors[1]);
             drawSolidRect(x + width - border, y, border, (int) (height * per), colors[1]);
             drawSolidRect((int) ((1 - per) * width) + x, y + height - border, (int) (width * per), border, colors[1]);

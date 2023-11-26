@@ -5,6 +5,7 @@ import gregtech.api.pipenet.block.IPipeType;
 import javax.annotation.Nonnull;
 
 public enum OpticalPipeType implements IPipeType<OpticalPipeProperties> {
+
     NORMAL;
 
     @Override

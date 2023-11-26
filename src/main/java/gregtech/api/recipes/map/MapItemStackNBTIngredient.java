@@ -1,14 +1,18 @@
 package gregtech.api.recipes.map;
 
 import gregtech.api.recipes.ingredients.GTRecipeInput;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 public class MapItemStackNBTIngredient extends MapItemStackIngredient {
+
     protected GTRecipeInput gtRecipeInput = null;
 
     public MapItemStackNBTIngredient(ItemStack stack, int meta, NBTTagCompound tag) {

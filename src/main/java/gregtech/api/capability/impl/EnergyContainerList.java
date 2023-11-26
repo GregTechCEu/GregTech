@@ -1,10 +1,12 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
+
 import net.minecraft.util.EnumFacing;
 
-import javax.annotation.Nonnull;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 public class EnergyContainerList implements IEnergyContainer {
 
@@ -55,7 +57,7 @@ public class EnergyContainerList implements IEnergyContainer {
     /**
      * Computes the correct max voltage and amperage values
      *
-     * @param voltage the sum of voltage * amperage for each hatch
+     * @param voltage  the sum of voltage * amperage for each hatch
      * @param amperage the total amperage of all hatches
      *
      * @return [newVoltage, newAmperage]
@@ -89,7 +91,7 @@ public class EnergyContainerList implements IEnergyContainer {
                 amperage = 1;
             }
         }
-        return new long[]{voltage, amperage};
+        return new long[] { voltage, amperage };
     }
 
     private static boolean hasPrimeFactorGreaterThanTwo(long l) {
@@ -185,7 +187,9 @@ public class EnergyContainerList implements IEnergyContainer {
         return highestInputVoltage;
     }
 
-    /** The number of parts with voltage specified in {@link EnergyContainerList#getHighestInputVoltage()} in this list. */
+    /**
+     * The number of parts with voltage specified in {@link EnergyContainerList#getHighestInputVoltage()} in this list.
+     */
     public int getNumHighestInputContainers() {
         return numHighestInputContainers;
     }

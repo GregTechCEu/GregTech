@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
@@ -25,7 +26,9 @@ public class TraceabilityPredicate {
     // Allow any block.
     public static TraceabilityPredicate ANY = new TraceabilityPredicate((state) -> true);
     // Allow the air block.
-    public static TraceabilityPredicate AIR = new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(), blockWorldState.getWorld(), blockWorldState.getPos()));
+    public static TraceabilityPredicate AIR = new TraceabilityPredicate(
+            blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(),
+                    blockWorldState.getWorld(), blockWorldState.getPos()));
     // Allow all heating coils, and require them to have the same type.
     public static Supplier<TraceabilityPredicate> HEATING_COILS = () -> new TraceabilityPredicate(blockWorldState -> {
         IBlockState blockState = blockWorldState.getBlockState();
@@ -45,7 +48,7 @@ public class TraceabilityPredicate {
             .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
             .map(entry -> new BlockInfo(entry.getKey(), null))
             .toArray(BlockInfo[]::new))
-            .addTooltips("gregtech.multiblock.pattern.error.coils");
+                    .addTooltips("gregtech.multiblock.pattern.error.coils");
 
     public final List<SimplePredicate> common = new ArrayList<>();
     public final List<SimplePredicate> limited = new ArrayList<>();
@@ -53,8 +56,7 @@ public class TraceabilityPredicate {
     protected boolean hasAir = false;
     protected boolean isSingle = true;
 
-    public TraceabilityPredicate() {
-    }
+    public TraceabilityPredicate() {}
 
     public TraceabilityPredicate(TraceabilityPredicate predicate) {
         common.addAll(predicate.common);
@@ -81,7 +83,8 @@ public class TraceabilityPredicate {
     }
 
     /**
-     * Mark it as the controller of this multi. Normally you won't call it yourself. Use {@link MultiblockControllerBase#selfPredicate()} plz.
+     * Mark it as the controller of this multi. Normally you won't call it yourself. Use
+     * {@link MultiblockControllerBase#selfPredicate()} plz.
      */
     public TraceabilityPredicate setCenter() {
         isCenter = true;
@@ -238,6 +241,7 @@ public class TraceabilityPredicate {
     }
 
     public static class SimplePredicate {
+
         public final Supplier<BlockInfo[]> candidates;
 
         public final Predicate<BlockWorldState> predicate;
@@ -266,7 +270,8 @@ public class TraceabilityPredicate {
             if (minGlobalCount == maxGlobalCount && maxGlobalCount != -1) {
                 result.add(I18n.format("gregtech.multiblock.pattern.error.limited_exact", minGlobalCount));
             } else if (minGlobalCount != maxGlobalCount && minGlobalCount != -1 && maxGlobalCount != -1) {
-                result.add(I18n.format("gregtech.multiblock.pattern.error.limited_within", minGlobalCount, maxGlobalCount));
+                result.add(I18n.format("gregtech.multiblock.pattern.error.limited_within", minGlobalCount,
+                        maxGlobalCount));
             } else {
                 if (minGlobalCount != -1) {
                     result.add(I18n.format("gregtech.multiblock.pattern.error.limited.1", minGlobalCount));
@@ -322,19 +327,23 @@ public class TraceabilityPredicate {
         }
 
         public List<ItemStack> getCandidates() {
-            return candidates == null ? Collections.emptyList() : Arrays.stream(this.candidates.get()).filter(info -> info.getBlockState().getBlock() != Blocks.AIR).map(info -> {
-                IBlockState blockState = info.getBlockState();
-                MetaTileEntity metaTileEntity = info.getTileEntity() instanceof IGregTechTileEntity ? ((IGregTechTileEntity) info.getTileEntity()).getMetaTileEntity() : null;
-                if (metaTileEntity != null) {
-                    return metaTileEntity.getStackForm();
-                } else {
-                    return new ItemStack(Item.getItemFromBlock(blockState.getBlock()), 1, blockState.getBlock().damageDropped(blockState));
-                }
-            }).collect(Collectors.toList());
+            return candidates == null ? Collections.emptyList() : Arrays.stream(this.candidates.get())
+                    .filter(info -> info.getBlockState().getBlock() != Blocks.AIR).map(info -> {
+                        IBlockState blockState = info.getBlockState();
+                        MetaTileEntity metaTileEntity = info.getTileEntity() instanceof IGregTechTileEntity ?
+                                ((IGregTechTileEntity) info.getTileEntity()).getMetaTileEntity() : null;
+                        if (metaTileEntity != null) {
+                            return metaTileEntity.getStackForm();
+                        } else {
+                            return new ItemStack(Item.getItemFromBlock(blockState.getBlock()), 1,
+                                    blockState.getBlock().damageDropped(blockState));
+                        }
+                    }).collect(Collectors.toList());
         }
     }
 
     public static class SinglePredicateError extends PatternError {
+
         public final SimplePredicate predicate;
         public final int type;
 
@@ -359,5 +368,4 @@ public class TraceabilityPredicate {
             return I18n.format("gregtech.multiblock.pattern.error.limited." + type, number);
         }
     }
-
 }

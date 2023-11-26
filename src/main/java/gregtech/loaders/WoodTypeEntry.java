@@ -1,11 +1,13 @@
 package gregtech.loaders;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+
 import net.minecraft.item.ItemStack;
+
+import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -408,7 +410,8 @@ public final class WoodTypeEntry {
         public WoodTypeEntry build() {
             Preconditions.checkArgument(!planks.isEmpty(), "Planks cannot be empty.");
             return new WoodTypeEntry(modid, woodName, log, removeCharcoalRecipe, addCharcoalRecipe, planks,
-                    planksRecipeName, door, doorRecipeName, slab, slabRecipeName, addSlabsCraftingRecipe, fence, fenceRecipeName,
+                    planksRecipeName, door, doorRecipeName, slab, slabRecipeName, addSlabsCraftingRecipe, fence,
+                    fenceRecipeName,
                     fenceGate, fenceGateRecipeName, stairs, addStairsCraftingRecipe, boat, boatRecipeName, material,
                     addLogOreDict, addPlanksOreDict, addDoorsOreDict, addSlabsOreDict, addFencesOreDict,
                     addFenceGatesOreDict, addStairsOreDict, addPlanksUnificationInfo, addDoorsUnificationInfo,

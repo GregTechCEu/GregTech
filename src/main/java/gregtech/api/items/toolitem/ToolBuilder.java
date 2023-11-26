@@ -1,13 +1,15 @@
 package gregtech.api.items.toolitem;
 
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+
+import javax.annotation.Nonnull;
 
 public abstract class ToolBuilder<T extends IGTTool> {
 
@@ -102,11 +104,11 @@ public abstract class ToolBuilder<T extends IGTTool> {
         }
         IGTTool existing = ToolHelper.getToolFromSymbol(this.symbol);
         if (existing != null) {
-            throw new IllegalArgumentException(String.format("Symbol %s has been taken by %s already!", symbol, existing));
+            throw new IllegalArgumentException(
+                    String.format("Symbol %s has been taken by %s already!", symbol, existing));
         }
         T supplied = supply().get();
         ToolHelper.registerToolSymbol(this.symbol, supplied);
         return supplied;
     }
-
 }

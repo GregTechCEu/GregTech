@@ -7,16 +7,13 @@ import javax.annotation.Nonnull;
 
 public class DummyContainer extends Container {
 
-    public DummyContainer() {
-    }
+    public DummyContainer() {}
 
     @Override
-    public void detectAndSendChanges() {
-    }
+    public void detectAndSendChanges() {}
 
     @Override
     public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
         return true;
     }
-
 }

@@ -1,6 +1,7 @@
 package gregtech.api.worldgen.generator;
 
 import gregtech.api.worldgen.config.OreDepositDefinition;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 
@@ -20,5 +21,4 @@ public interface GridEntryInfo {
     BlockPos getCenterPos(OreDepositDefinition definition);
 
     Collection<IBlockState> getGeneratedBlocks(OreDepositDefinition definition, int chunkX, int chunkZ);
-
 }

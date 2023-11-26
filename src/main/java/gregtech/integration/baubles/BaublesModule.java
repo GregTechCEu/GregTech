@@ -1,31 +1,32 @@
 package gregtech.integration.baubles;
 
-import baubles.api.BaubleType;
-import baubles.api.BaublesApi;
-import baubles.api.cap.IBaublesItemHandler;
 import gregtech.api.GTValues;
 import gregtech.api.modules.GregTechModule;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.modules.GregTechModules;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import baubles.api.BaubleType;
+import baubles.api.BaublesApi;
+import baubles.api.cap.IBaublesItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_BAUBLES,
-        containerID = GTValues.MODID,
-        modDependencies = GTValues.MODID_BAUBLES,
-        name = "GregTech Baubles Integration",
-        description = "Baubles Integration Module"
-)
+                moduleID = GregTechModules.MODULE_BAUBLES,
+                containerID = GTValues.MODID,
+                modDependencies = GTValues.MODID_BAUBLES,
+                name = "GregTech Baubles Integration",
+                description = "Baubles Integration Module")
 public class BaublesModule extends IntegrationSubmodule {
 
     @NotNull

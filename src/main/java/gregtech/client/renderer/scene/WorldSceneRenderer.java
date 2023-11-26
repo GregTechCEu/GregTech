@@ -1,10 +1,10 @@
 package gregtech.client.renderer.scene;
 
-import codechicken.lib.vec.Vector3;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;
 import gregtech.api.util.Size;
 import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -23,10 +23,11 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.vec.Vector3;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
-import javax.vecmath.Vector3f;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -35,6 +36,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import javax.vecmath.Vector3f;
 
 /**
  * Created with IntelliJ IDEA.
@@ -45,11 +48,17 @@ import java.util.function.Consumer;
  */
 @SideOnly(Side.CLIENT)
 public abstract class WorldSceneRenderer {
-    protected static final FloatBuffer MODELVIEW_MATRIX_BUFFER = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-    protected static final FloatBuffer PROJECTION_MATRIX_BUFFER = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-    protected static final IntBuffer VIEWPORT_BUFFER = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
-    protected static final FloatBuffer PIXEL_DEPTH_BUFFER = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-    protected static final FloatBuffer OBJECT_POS_BUFFER = ByteBuffer.allocateDirect(3 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+
+    protected static final FloatBuffer MODELVIEW_MATRIX_BUFFER = ByteBuffer.allocateDirect(16 * 4)
+            .order(ByteOrder.nativeOrder()).asFloatBuffer();
+    protected static final FloatBuffer PROJECTION_MATRIX_BUFFER = ByteBuffer.allocateDirect(16 * 4)
+            .order(ByteOrder.nativeOrder()).asFloatBuffer();
+    protected static final IntBuffer VIEWPORT_BUFFER = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder())
+            .asIntBuffer();
+    protected static final FloatBuffer PIXEL_DEPTH_BUFFER = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder())
+            .asFloatBuffer();
+    protected static final FloatBuffer OBJECT_POS_BUFFER = ByteBuffer.allocateDirect(3 * 4)
+            .order(ByteOrder.nativeOrder()).asFloatBuffer();
 
     public final World world;
     public final Map<Collection<BlockPos>, ISceneRenderHook> renderedBlocksMap;
@@ -99,7 +108,7 @@ public abstract class WorldSceneRenderer {
 
     public void render(float x, float y, float width, float height, int mouseX, int mouseY) {
         // setupCamera
-        PositionedRect positionedRect = getPositionedRect((int)x, (int)y, (int)width, (int)height);
+        PositionedRect positionedRect = getPositionedRect((int) x, (int) y, (int) width, (int) height);
         PositionedRect mouse = getPositionedRect(mouseX, mouseY, 0, 0);
         mouseX = mouse.position.x;
         mouseY = mouse.position.y;
@@ -108,8 +117,9 @@ public abstract class WorldSceneRenderer {
         drawWorld();
         // check lookingAt
         this.lastTraceResult = null;
-        if (onLookingAt != null && mouseX > positionedRect.position.x && mouseX < positionedRect.position.x + positionedRect.size.width
-                && mouseY > positionedRect.position.y && mouseY < positionedRect.position.y + positionedRect.size.height) {
+        if (onLookingAt != null && mouseX > positionedRect.position.x &&
+                mouseX < positionedRect.position.x + positionedRect.size.width && mouseY > positionedRect.position.y &&
+                mouseY < positionedRect.position.y + positionedRect.size.height) {
             Vector3f hitPos = unProject(mouseX, mouseY);
             RayTraceResult result = rayTrace(hitPos);
             if (result != null) {
@@ -143,7 +153,7 @@ public abstract class WorldSceneRenderer {
     public void setCameraLookAt(Vector3f lookAt, double radius, double rotationPitch, double rotationYaw) {
         this.lookAt = lookAt;
         Vector3 vecX = new Vector3(Math.cos(rotationPitch), 0, Math.sin(rotationPitch));
-        Vector3 vecY = new Vector3(0, Math.tan(rotationYaw) * vecX.mag(),0);
+        Vector3 vecY = new Vector3(0, Math.tan(rotationYaw) * vecX.mag(), 0);
         Vector3 pos = vecX.copy().add(vecY).normalize().multiply(radius);
         this.eyePos = pos.add(lookAt.x, lookAt.y, lookAt.z).vector3f();
     }
@@ -165,12 +175,12 @@ public abstract class WorldSceneRenderer {
         GlStateManager.enableDepth();
         GlStateManager.enableBlend();
 
-        //setup viewport and clear GL buffers
+        // setup viewport and clear GL buffers
         GlStateManager.viewport(x, y, width, height);
 
         clearView(x, y, width, height);
 
-        //setup projection matrix to perspective
+        // setup projection matrix to perspective
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
@@ -178,7 +188,7 @@ public abstract class WorldSceneRenderer {
         float aspectRatio = width / (height * 1.0f);
         GLU.gluPerspective(60.0f, aspectRatio, 0.1f, 10000.0f);
 
-        //setup modelview matrix
+        // setup modelview matrix
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
@@ -191,22 +201,22 @@ public abstract class WorldSceneRenderer {
     }
 
     protected static void resetCamera() {
-        //reset viewport
+        // reset viewport
         Minecraft minecraft = Minecraft.getMinecraft();
         GlStateManager.viewport(0, 0, minecraft.displayWidth, minecraft.displayHeight);
 
-        //reset projection matrix
+        // reset projection matrix
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.popMatrix();
 
-        //reset modelview matrix
+        // reset modelview matrix
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.popMatrix();
 
         GlStateManager.disableBlend();
         GlStateManager.disableDepth();
 
-        //reset attributes
+        // reset attributes
         GlStateManager.popAttrib();
     }
 
@@ -231,7 +241,7 @@ public abstract class WorldSceneRenderer {
                 ForgeHooksClient.setRenderLayer(layer);
                 int pass = layer == BlockRenderLayer.TRANSLUCENT ? 1 : 0;
 
-                renderedBlocksMap.forEach((renderedBlocks, hook)->{
+                renderedBlocksMap.forEach((renderedBlocks, hook) -> {
                     if (hook != null) {
                         hook.apply(false, pass, layer);
                     } else {
@@ -267,7 +277,7 @@ public abstract class WorldSceneRenderer {
         for (int pass = 0; pass < 2; pass++) {
             ForgeHooksClient.setRenderPass(pass);
             int finalPass = pass;
-            renderedBlocksMap.forEach((renderedBlocks, hook)->{
+            renderedBlocksMap.forEach((renderedBlocks, hook) -> {
                 if (hook != null) {
                     hook.apply(true, finalPass, null);
                 } else {
@@ -314,85 +324,89 @@ public abstract class WorldSceneRenderer {
     }
 
     public static Vector3f project(BlockPos pos) {
-        //read current rendering parameters
+        // read current rendering parameters
         GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, MODELVIEW_MATRIX_BUFFER);
         GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, PROJECTION_MATRIX_BUFFER);
         GL11.glGetInteger(GL11.GL_VIEWPORT, VIEWPORT_BUFFER);
 
-        //rewind buffers after write by OpenGL glGet calls
+        // rewind buffers after write by OpenGL glGet calls
         MODELVIEW_MATRIX_BUFFER.rewind();
         PROJECTION_MATRIX_BUFFER.rewind();
         VIEWPORT_BUFFER.rewind();
 
-        //call gluProject with retrieved parameters
-        GLU.gluProject(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, MODELVIEW_MATRIX_BUFFER, PROJECTION_MATRIX_BUFFER, VIEWPORT_BUFFER, OBJECT_POS_BUFFER);
+        // call gluProject with retrieved parameters
+        GLU.gluProject(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, MODELVIEW_MATRIX_BUFFER,
+                PROJECTION_MATRIX_BUFFER, VIEWPORT_BUFFER, OBJECT_POS_BUFFER);
 
-        //rewind buffers after read by gluProject
+        // rewind buffers after read by gluProject
         VIEWPORT_BUFFER.rewind();
         PROJECTION_MATRIX_BUFFER.rewind();
         MODELVIEW_MATRIX_BUFFER.rewind();
 
-        //rewind buffer after write by gluProject
+        // rewind buffer after write by gluProject
         OBJECT_POS_BUFFER.rewind();
 
-        //obtain position in Screen
+        // obtain position in Screen
         float winX = OBJECT_POS_BUFFER.get();
         float winY = OBJECT_POS_BUFFER.get();
         float winZ = OBJECT_POS_BUFFER.get();
 
-        //rewind buffer after read
+        // rewind buffer after read
         OBJECT_POS_BUFFER.rewind();
 
         return new Vector3f(winX, winY, winZ);
     }
 
     public static Vector3f unProject(int mouseX, int mouseY) {
-        //read depth of pixel under mouse
+        // read depth of pixel under mouse
         GL11.glReadPixels(mouseX, mouseY, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, PIXEL_DEPTH_BUFFER);
 
-        //rewind buffer after write by glReadPixels
+        // rewind buffer after write by glReadPixels
         PIXEL_DEPTH_BUFFER.rewind();
 
-        //retrieve depth from buffer (0.0-1.0f)
+        // retrieve depth from buffer (0.0-1.0f)
         float pixelDepth = PIXEL_DEPTH_BUFFER.get();
 
-        //rewind buffer after read
+        // rewind buffer after read
         PIXEL_DEPTH_BUFFER.rewind();
 
-        //read current rendering parameters
+        // read current rendering parameters
         GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, MODELVIEW_MATRIX_BUFFER);
         GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, PROJECTION_MATRIX_BUFFER);
         GL11.glGetInteger(GL11.GL_VIEWPORT, VIEWPORT_BUFFER);
 
-        //rewind buffers after write by OpenGL glGet calls
+        // rewind buffers after write by OpenGL glGet calls
         MODELVIEW_MATRIX_BUFFER.rewind();
         PROJECTION_MATRIX_BUFFER.rewind();
         VIEWPORT_BUFFER.rewind();
 
-        //call gluUnProject with retrieved parameters
-        GLU.gluUnProject(mouseX, mouseY, pixelDepth, MODELVIEW_MATRIX_BUFFER, PROJECTION_MATRIX_BUFFER, VIEWPORT_BUFFER, OBJECT_POS_BUFFER);
+        // call gluUnProject with retrieved parameters
+        GLU.gluUnProject(mouseX, mouseY, pixelDepth, MODELVIEW_MATRIX_BUFFER, PROJECTION_MATRIX_BUFFER, VIEWPORT_BUFFER,
+                OBJECT_POS_BUFFER);
 
-        //rewind buffers after read by gluUnProject
+        // rewind buffers after read by gluUnProject
         VIEWPORT_BUFFER.rewind();
         PROJECTION_MATRIX_BUFFER.rewind();
         MODELVIEW_MATRIX_BUFFER.rewind();
 
-        //rewind buffer after write by gluUnProject
+        // rewind buffer after write by gluUnProject
         OBJECT_POS_BUFFER.rewind();
 
-        //obtain absolute position in world
+        // obtain absolute position in world
         float posX = OBJECT_POS_BUFFER.get();
         float posY = OBJECT_POS_BUFFER.get();
         float posZ = OBJECT_POS_BUFFER.get();
 
-        //rewind buffer after read
+        // rewind buffer after read
         OBJECT_POS_BUFFER.rewind();
 
         return new Vector3f(posX, posY, posZ);
     }
 
     /***
-     * For better performance, You'd better handle the event {@link #setOnLookingAt(Consumer)} or {@link #getLastTraceResult()}
+     * For better performance, You'd better handle the event {@link #setOnLookingAt(Consumer)} or
+     * {@link #getLastTraceResult()}
+     * 
      * @param mouseX xPos in Texture
      * @param mouseY yPos in Texture
      * @return RayTraceResult Hit
@@ -414,11 +428,12 @@ public abstract class WorldSceneRenderer {
 
     /***
      * For better performance, You'd better do project in {@link #setAfterWorldRender(Consumer)}
-     * @param pos BlockPos
+     * 
+     * @param pos   BlockPos
      * @param depth should pass Depth Test
      * @return x, y, z
      */
-    protected Vector3f blockPos2ScreenPos(BlockPos pos, boolean depth, int x, int y, int width, int height){
+    protected Vector3f blockPos2ScreenPos(BlockPos pos, boolean depth, int x, int y, int width, int height) {
         // render a frame
         GlStateManager.enableDepth();
         setupCamera(getPositionedRect(x, y, width, height));
@@ -430,5 +445,4 @@ public abstract class WorldSceneRenderer {
 
         return winPos;
     }
-
 }

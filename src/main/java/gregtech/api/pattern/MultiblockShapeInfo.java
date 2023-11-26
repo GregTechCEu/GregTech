@@ -4,16 +4,18 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.BlockInfo;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
 
 public class MultiblockShapeInfo {
 
@@ -75,7 +77,8 @@ public class MultiblockShapeInfo {
                 return where(symbol, (IBlockState) part);
             } else if (part instanceof MetaTileEntity) {
                 return where(symbol, (MetaTileEntity) part, frontSideIfTE);
-            } else throw new IllegalArgumentException("Supplier must supply either a MetaTileEntity or an IBlockState! Actual: " + part.getClass());
+            } else throw new IllegalArgumentException(
+                    "Supplier must supply either a MetaTileEntity or an IBlockState! Actual: " + part.getClass());
         }
 
         @Nonnull
@@ -118,7 +121,5 @@ public class MultiblockShapeInfo {
         public MultiblockShapeInfo build() {
             return new MultiblockShapeInfo(bakeArray());
         }
-
     }
-
 }

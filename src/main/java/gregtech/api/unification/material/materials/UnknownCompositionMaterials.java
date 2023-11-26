@@ -12,7 +12,6 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class UnknownCompositionMaterials {
 
     public static void register() {
-
         WoodGas = new Material.Builder(1500, gregtechId("wood_gas"))
                 .gas().color(0xDECD87).build();
 
@@ -328,7 +327,7 @@ public class UnknownCompositionMaterials {
                 .flags(FLAMMABLE)
                 .build();
 
-        //Free IDs 1560-1575
+        // Free IDs 1560-1575
 
         LPG = new Material.Builder(1576, gregtechId("lpg"))
                 .liquid(new FluidBuilder().customStill())
@@ -513,7 +512,8 @@ public class UnknownCompositionMaterials {
         Wood = new Material.Builder(1617, gregtechId("wood"))
                 .wood()
                 .color(0x896727).iconSet(WOOD)
-                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, GENERATE_GEAR, GENERATE_FRAME)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, GENERATE_GEAR,
+                        GENERATE_FRAME)
                 .fluidPipeProperties(340, 5, false)
                 .build();
 

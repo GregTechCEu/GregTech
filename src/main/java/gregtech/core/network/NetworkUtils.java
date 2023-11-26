@@ -1,7 +1,5 @@
 package gregtech.core.network;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -9,6 +7,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 public class NetworkUtils {
 
@@ -33,6 +34,7 @@ public class NetworkUtils {
     }
 
     public static NetworkRegistry.TargetPoint blockPoint(World world, BlockPos blockPos) {
-        return new NetworkRegistry.TargetPoint(world.provider.getDimension(), blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5, 128.0);
+        return new NetworkRegistry.TargetPoint(world.provider.getDimension(), blockPos.getX() + 0.5,
+                blockPos.getY() + 0.5, blockPos.getZ() + 0.5, 128.0);
     }
 }

@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -20,8 +21,7 @@ public class DefaultSubItemHandler implements ISubItemHandler {
 
     public static final DefaultSubItemHandler INSTANCE = new DefaultSubItemHandler();
 
-    private DefaultSubItemHandler() {
-    }
+    private DefaultSubItemHandler() {}
 
     @Override
     public String getItemSubType(ItemStack itemStack) {
@@ -46,7 +46,8 @@ public class DefaultSubItemHandler implements ISubItemHandler {
     }
 
     public static String getFluidContainerSubType(ItemStack itemStack) {
-        IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+                null);
         if (fluidHandler != null) {
             IFluidTankProperties fluidTankProperties = fluidHandler.getTankProperties()[0];
             FluidStack fluid = fluidTankProperties.getContents();
@@ -58,7 +59,8 @@ public class DefaultSubItemHandler implements ISubItemHandler {
     public static void addFluidContainerVariants(ItemStack itemStack, List<ItemStack> subItems) {
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
             ItemStack containerStack = itemStack.copy();
-            IFluidHandlerItem fluidContainer = containerStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem fluidContainer = containerStack
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidContainer != null) {
                 fluidContainer.fill(new FluidStack(fluid, Integer.MAX_VALUE), true);
                 if (fluidContainer.drain(Integer.MAX_VALUE, false) == null)

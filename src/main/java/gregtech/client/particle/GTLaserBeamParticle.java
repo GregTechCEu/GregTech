@@ -1,10 +1,10 @@
 package gregtech.client.particle;
 
-import codechicken.lib.vec.Vector3;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.renderer.fx.LaserBeamRenderer;
 import gregtech.client.utils.EffectRenderContext;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,6 +14,8 @@ import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
+
+import codechicken.lib.vec.Vector3;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -148,7 +150,7 @@ public class GTLaserBeamParticle extends GTParticle {
         ITextureObject bodyTexture = null;
         if (body != null) {
             bodyTexture = renderEngine.getTexture(body);
-            //noinspection ConstantValue
+            // noinspection ConstantValue
             if (bodyTexture == null) {
                 bodyTexture = new SimpleTexture(body);
                 renderEngine.loadTexture(body, bodyTexture);
@@ -157,7 +159,7 @@ public class GTLaserBeamParticle extends GTParticle {
         ITextureObject headTexture = null;
         if (head != null) {
             headTexture = renderEngine.getTexture(head);
-            //noinspection ConstantValue
+            // noinspection ConstantValue
             if (headTexture == null) {
                 headTexture = new SimpleTexture(head);
                 renderEngine.loadTexture(head, headTexture);
@@ -165,8 +167,10 @@ public class GTLaserBeamParticle extends GTParticle {
         }
         float offset = -emit * (Minecraft.getMinecraft().player.ticksExisted + context.partialTicks());
         LaserBeamRenderer.renderRawBeam(bodyTexture == null ? -1 :
-                bodyTexture.getGlTextureId(), headTexture == null ? -1 :
-                headTexture.getGlTextureId(), direction, cameraDirection, beamHeight, headWidth, alpha, offset);
+                bodyTexture.getGlTextureId(),
+                headTexture == null ? -1 :
+                        headTexture.getGlTextureId(),
+                direction, cameraDirection, beamHeight, headWidth, alpha, offset);
         GlStateManager.translate(context.cameraX() - posX, context.cameraY() - posY, context.cameraZ() - posZ);
     }
 
@@ -214,7 +218,8 @@ public class GTLaserBeamParticle extends GTParticle {
             GlStateManager.enableCull();
             GlStateManager.disableRescaleNormal();
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
-            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
+                    GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         }
     };
 }

@@ -20,16 +20,17 @@ import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
@@ -121,7 +122,9 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                 .aisle("XXX", "C#C", "XMX")
                 .aisle("XSX", "CCC", "XXX")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(9).or(autoAbilities(true, true, true, true, true, true, false)))
+                .where('X',
+                        states(getCasingState()).setMinGlobalLimited(9)
+                                .or(autoAbilities(true, true, true, true, true, true, false)))
                 .where('M', abilities(MultiblockAbility.MUFFLER_HATCH))
                 .where('C', heatingCoils())
                 .where('#', air())
@@ -173,7 +176,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     /**
-     * @param parallel the amount of parallel recipes
+     * @param parallel      the amount of parallel recipes
      * @param parallelLimit the maximum limit on parallel recipes
      * @return the un-overclocked duration for an amount of parallel recipes
      */

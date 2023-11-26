@@ -1,17 +1,19 @@
 package gregtech.integration.crafttweaker.material;
 
-import crafttweaker.CraftTweakerAPI;
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.enchantments.IEnchantment;
-import crafttweaker.api.liquid.ILiquidDefinition;
-import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
+
 import net.minecraft.enchantment.Enchantment;
+
+import crafttweaker.CraftTweakerAPI;
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.enchantments.IEnchantment;
+import crafttweaker.api.liquid.ILiquidDefinition;
+import crafttweaker.api.minecraft.CraftTweakerMC;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenExpansion;
 import stanhebben.zenscript.annotations.ZenGetter;
@@ -26,7 +28,7 @@ import static gregtech.integration.crafttweaker.material.CTMaterialHelpers.logEr
 public class MaterialExpansion {
 
     ////////////////////////////////////
-    //        Material Methods        //
+    // Material Methods //
     ////////////////////////////////////
 
     @ZenMethod
@@ -52,7 +54,7 @@ public class MaterialExpansion {
     }
 
     ////////////////////////////////////
-    //         Fluid Property         //
+    // Fluid Property //
     ////////////////////////////////////
 
     @ZenGetter
@@ -73,7 +75,7 @@ public class MaterialExpansion {
     }
 
     ///////////////////////////////////
-    //         Dust Property         //
+    // Dust Property //
     ///////////////////////////////////
 
     @ZenGetter("harvestLevel")
@@ -113,7 +115,7 @@ public class MaterialExpansion {
     }
 
     ///////////////////////////////////
-    //         Tool Property         //
+    // Tool Property //
     ///////////////////////////////////
 
     @ZenGetter("toolSpeed")
@@ -203,14 +205,15 @@ public class MaterialExpansion {
     // Wire/Item Pipe/Fluid Pipe stuff?
 
     ////////////////////////////////////
-    //         Blast Property         //
+    // Blast Property //
     ////////////////////////////////////
 
     @ZenMethod
     public static void setBlastTemp(Material m, int blastTemp) {
         if (checkFrozen("set blast temperature")) return;
         if (blastTemp <= 0) {
-            CraftTweakerAPI.logError("Blast Temperature must be greater than zero! Material: " + m.getUnlocalizedName());
+            CraftTweakerAPI
+                    .logError("Blast Temperature must be greater than zero! Material: " + m.getUnlocalizedName());
             return;
         }
         BlastProperty prop = m.getProperty(PropertyKey.BLAST);
@@ -228,7 +231,7 @@ public class MaterialExpansion {
     }
 
     ////////////////////////////////////
-    //          Ore Property          //
+    // Ore Property //
     ////////////////////////////////////
 
     @ZenGetter

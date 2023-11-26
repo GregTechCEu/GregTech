@@ -22,20 +22,23 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBla
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import org.hamcrest.MatcherAssert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import javax.annotation.Nonnull;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -73,9 +76,7 @@ public class IParallelableRecipeLogicTest {
                     }
 
                     @Override
-                    public void reinitializeStructurePattern() {
-
-                    }
+                    public void reinitializeStructurePattern() {}
 
                     // function checks for the temperature of the recipe against the coils
                     @Override
@@ -91,11 +92,13 @@ public class IParallelableRecipeLogicTest {
                 });
 
         try {
-            Field field = MetaTileEntityElectricBlastFurnace.class.getSuperclass().getDeclaredField("recipeMapWorkable");
+            Field field = MetaTileEntityElectricBlastFurnace.class.getSuperclass()
+                    .getDeclaredField("recipeMapWorkable");
             field.setAccessible(true);
 
             Object recipeMapWorkableField = field.get(mbt);
-            Method setParallelLimitMethod = recipeMapWorkableField.getClass().getSuperclass().getSuperclass().getDeclaredMethod("setParallelLimit", int.class);
+            Method setParallelLimitMethod = recipeMapWorkableField.getClass().getSuperclass().getSuperclass()
+                    .getDeclaredMethod("setParallelLimit", int.class);
             setParallelLimitMethod.setAccessible(true);
 
             setParallelLimitMethod.invoke(recipeMapWorkableField, 4);
@@ -103,7 +106,7 @@ public class IParallelableRecipeLogicTest {
             e.printStackTrace();
         }
 
-        //isValid() check in the dirtying logic requires both a metatileentity and a holder
+        // isValid() check in the dirtying logic requires both a metatileentity and a holder
         try {
             Field field = MetaTileEntity.class.getDeclaredField("holder");
             field.setAccessible(true);
@@ -122,8 +125,9 @@ public class IParallelableRecipeLogicTest {
 
         ((MetaTileEntityHolder) mbt.getHolder()).setWorld(world);
 
-        //Controller and isAttachedToMultiBlock need the world so we fake it here.
+        // Controller and isAttachedToMultiBlock need the world so we fake it here.
         importItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -135,6 +139,7 @@ public class IParallelableRecipeLogicTest {
             }
         };
         exportItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, true) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -146,6 +151,7 @@ public class IParallelableRecipeLogicTest {
             }
         };
         importFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1, false) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -157,6 +163,7 @@ public class IParallelableRecipeLogicTest {
             }
         };
         secondImportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.zpm"), 7, false) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -168,6 +175,7 @@ public class IParallelableRecipeLogicTest {
             }
         };
         exportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.export.uhv"), 9, true) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -179,7 +187,7 @@ public class IParallelableRecipeLogicTest {
             }
         };
 
-        //Controller is a private field but we need that information
+        // Controller is a private field but we need that information
         try {
             Field field = MetaTileEntityMultiblockPart.class.getDeclaredField("controllerTile");
             field.setAccessible(true);
@@ -196,7 +204,6 @@ public class IParallelableRecipeLogicTest {
 
     @Test
     public void findMultipliedRecipe_AtMaxParallelsTest() {
-
         MetaTileEntityElectricBlastFurnace EBF = initEBF(511);
 
         int parallelLimit = 4;
@@ -223,31 +230,33 @@ public class IParallelableRecipeLogicTest {
         // Initially populate the input bus
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
-        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
-                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
+        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe,
+                importItemBus.getImportItems(), importFluidBus.getImportFluids(),
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE,
+                EBF);
 
-        //Check if the correct number of parallels were done
+        // Check if the correct number of parallels were done
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(4));
 
-        //Check that the EUt of the recipe was multiplied correctly
+        // Check that the EUt of the recipe was multiplied correctly
         MatcherAssert.assertThat(parallelRecipe.getEUt(), is(120));
 
-        //Check if the recipe duration was not modified
+        // Check if the recipe duration was not modified
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(100));
 
-        //Check the recipe outputs
+        // Check the recipe outputs
         MatcherAssert.assertThat(parallelRecipe.getOutputs().isEmpty(), is(false));
 
-        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), parallelRecipe.getOutputs().get(0)), is(true));
+        MatcherAssert.assertThat(
+                hashStrategy.equals(new ItemStack(Blocks.STONE, 4), parallelRecipe.getOutputs().get(0)), is(true));
 
-        //Check the recipe inputs
-        //assertEquals(CountableIngredient.from(new ItemStack(Blocks.COBBLESTONE), 4), parallelRecipe.getInputs().get(0));
-
+        // Check the recipe inputs
+        // assertEquals(CountableIngredient.from(new ItemStack(Blocks.COBBLESTONE), 4),
+        // parallelRecipe.getInputs().get(0));
     }
 
     @Test
     public void findMultipliedRecipe_LessThanMaxParallelsTest() {
-
         MetaTileEntityElectricBlastFurnace EBF = initEBF(512);
 
         int parallelLimit = 4;
@@ -274,30 +283,32 @@ public class IParallelableRecipeLogicTest {
         // Initially populate the input bus
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
 
-        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
-                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
+        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe,
+                importItemBus.getImportItems(), importFluidBus.getImportFluids(),
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE,
+                EBF);
 
-        //Check if the correct number of parallels were done
+        // Check if the correct number of parallels were done
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(2));
 
-        //Check that the EUt of the recipe was multiplied correctly
+        // Check that the EUt of the recipe was multiplied correctly
         MatcherAssert.assertThat(parallelRecipe.getEUt(), is(60));
 
-        //Check if the recipe duration was not modified
+        // Check if the recipe duration was not modified
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(100));
 
-        //Check the recipe outputs
+        // Check the recipe outputs
         MatcherAssert.assertThat(parallelRecipe.getOutputs().isEmpty(), is(false));
 
-        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getOutputs().get(0)), is(true));
+        MatcherAssert.assertThat(
+                hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getOutputs().get(0)), is(true));
 
-        //Check the recipe inputs
+        // Check the recipe inputs
         MatcherAssert.assertThat(parallelRecipe.getInputs().get(0).getAmount(), is(2));
     }
 
     @Test
     public void findMultipliedRecipe_FluidOnlyMaxParallelTest() {
-
         MetaTileEntityElectricBlastFurnace EBF = initEBF(519);
 
         int parallelLimit = 4;
@@ -325,30 +336,32 @@ public class IParallelableRecipeLogicTest {
         importFluidBus.getImportFluids().fill(Materials.Toluene.getFluid(4000), true);
         secondImportFluidBus.getImportFluids().fill(Materials.RawGasoline.getFluid(50000), true);
 
-        IMultipleTankHandler tankHandler = new FluidTankList(false, importFluidBus.getImportFluids().getTankAt(0), secondImportFluidBus.getImportFluids().getTankAt(0));
+        IMultipleTankHandler tankHandler = new FluidTankList(false, importFluidBus.getImportFluids().getTankAt(0),
+                secondImportFluidBus.getImportFluids().getTankAt(0));
 
-        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), tankHandler,
-                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
+        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe,
+                importItemBus.getImportItems(), tankHandler,
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE,
+                EBF);
 
-        //Check if the correct number of parallels were done
+        // Check if the correct number of parallels were done
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(4));
 
-        //Check that the EUt of the recipe was multiplied correctly
+        // Check that the EUt of the recipe was multiplied correctly
         MatcherAssert.assertThat(parallelRecipe.getEUt(), is(1920));
 
-        //Check if the recipe duration was not modified
+        // Check if the recipe duration was not modified
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(10));
 
-        //Check the recipe outputs
+        // Check the recipe outputs
         MatcherAssert.assertThat(parallelRecipe.getFluidOutputs().isEmpty(), is(false));
 
-        MatcherAssert.assertThat(Materials.Gasoline.getFluid(44000).equals(parallelRecipe.getFluidOutputs().get(0)), is(true));
-
+        MatcherAssert.assertThat(Materials.Gasoline.getFluid(44000).equals(parallelRecipe.getFluidOutputs().get(0)),
+                is(true));
     }
 
     @Test
     public void findMultipliedRecipe_FluidOnlyLessThanMaxParallelTest() {
-
         MetaTileEntityElectricBlastFurnace EBF = initEBF(520);
 
         int parallelLimit = 4;
@@ -376,31 +389,33 @@ public class IParallelableRecipeLogicTest {
         importFluidBus.getImportFluids().fill(Materials.Toluene.getFluid(2000), true);
         secondImportFluidBus.getImportFluids().fill(Materials.RawGasoline.getFluid(50000), true);
 
-        IMultipleTankHandler tankHandler = new FluidTankList(false, importFluidBus.getImportFluids().getTankAt(0), secondImportFluidBus.getImportFluids().getTankAt(0));
+        IMultipleTankHandler tankHandler = new FluidTankList(false, importFluidBus.getImportFluids().getTankAt(0),
+                secondImportFluidBus.getImportFluids().getTankAt(0));
 
-        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), tankHandler,
-                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, EBF);
+        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe,
+                importItemBus.getImportItems(), tankHandler,
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE,
+                EBF);
 
-        //Check if the correct number of parallels were done
+        // Check if the correct number of parallels were done
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(2));
 
-        //Check that the EUt of the recipe was multiplied correctly
+        // Check that the EUt of the recipe was multiplied correctly
         MatcherAssert.assertThat(parallelRecipe.getEUt(), is(960));
 
-        //Check if the recipe duration was not modified
+        // Check if the recipe duration was not modified
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(10));
 
-        //Check the recipe outputs
+        // Check the recipe outputs
         MatcherAssert.assertThat(parallelRecipe.getFluidOutputs().isEmpty(), is(false));
 
-        MatcherAssert.assertThat(Materials.Gasoline.getFluid(22000).equals(parallelRecipe.getFluidOutputs().get(0)), is(true));
-
+        MatcherAssert.assertThat(Materials.Gasoline.getFluid(22000).equals(parallelRecipe.getFluidOutputs().get(0)),
+                is(true));
     }
 
     @Test
     public void findAppendedParallelItemRecipe_AtMaxParallelsTest() {
         MetaTileEntityElectricBlastFurnace EBF = initEBF(513);
-
 
         int parallelLimit = 4;
 
@@ -429,25 +444,25 @@ public class IParallelableRecipeLogicTest {
         RecipeBuilder<?> parallelRecipe = logic.findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
                 exportItemBus.getExportItems(), parallelLimit, 120, EBF);
 
-        //Check if the correct number of parallels were done
+        // Check if the correct number of parallels were done
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(4));
 
-        //Check that the EUt of the recipe was not modified
+        // Check that the EUt of the recipe was not modified
         MatcherAssert.assertThat(parallelRecipe.getEUt(), is(30));
 
-        //Check if the recipe duration was multiplied correctly
+        // Check if the recipe duration was multiplied correctly
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(400));
 
-        //Check the recipe outputs
+        // Check the recipe outputs
         MatcherAssert.assertThat(parallelRecipe.getOutputs().isEmpty(), is(false));
 
-        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), parallelRecipe.getOutputs().get(0)), is(true));
+        MatcherAssert.assertThat(
+                hashStrategy.equals(new ItemStack(Blocks.STONE, 4), parallelRecipe.getOutputs().get(0)), is(true));
     }
 
     @Test
     public void findAppendedParallelItemRecipe_LessThanMaxParallelsTest() {
         MetaTileEntityElectricBlastFurnace EBF = initEBF(514);
-
 
         int parallelLimit = 4;
 
@@ -476,19 +491,20 @@ public class IParallelableRecipeLogicTest {
         RecipeBuilder<?> parallelRecipe = logic.findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
                 exportItemBus.getExportItems(), parallelLimit, 120, EBF);
 
-        //Check if the correct number of parallels were done
+        // Check if the correct number of parallels were done
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(2));
 
-        //Check that the EUt of the recipe was not modified
+        // Check that the EUt of the recipe was not modified
         MatcherAssert.assertThat(parallelRecipe.getEUt(), is(30));
 
-        //Check if the recipe duration was multiplied correctly
+        // Check if the recipe duration was multiplied correctly
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(200));
 
-        //Check the recipe outputs
+        // Check the recipe outputs
         MatcherAssert.assertThat(parallelRecipe.getOutputs().isEmpty(), is(false));
 
-        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getOutputs().get(0)), is(true));
+        MatcherAssert.assertThat(
+                hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getOutputs().get(0)), is(true));
     }
 
     // An end-to-end test for finding parallel recipes
@@ -499,6 +515,7 @@ public class IParallelableRecipeLogicTest {
         int parallelLimit = 4;
 
         MultiblockRecipeLogic mrl = new MultiblockRecipeLogic(mbt) {
+
             @Override
             protected long getEnergyStored() {
                 return Long.MAX_VALUE;
@@ -548,22 +565,21 @@ public class IParallelableRecipeLogicTest {
         // Initially populate the input bus
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
-
-        Recipe outputRecipe = logic.findParallelRecipe(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
+        Recipe outputRecipe = logic.findParallelRecipe(recipe, importItemBus.getImportItems(),
+                importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
                 exportFluidBus.getExportFluids(), 128, parallelLimit);
 
-
-        //Check that the EUt of the recipe was multiplied correctly
+        // Check that the EUt of the recipe was multiplied correctly
         MatcherAssert.assertThat(outputRecipe.getEUt(), is(120));
 
-        //Check if the recipe duration was not modified
+        // Check if the recipe duration was not modified
         MatcherAssert.assertThat(outputRecipe.getDuration(), is(100));
 
-        //Check the recipe outputs
+        // Check the recipe outputs
         MatcherAssert.assertThat(outputRecipe.getOutputs().isEmpty(), is(false));
 
-        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), outputRecipe.getOutputs().get(0)), is(true));
-
+        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), outputRecipe.getOutputs().get(0)),
+                is(true));
     }
 
     // An end-to-end test for finding parallel recipes
@@ -574,6 +590,7 @@ public class IParallelableRecipeLogicTest {
         int parallelLimit = 4;
 
         MultiblockRecipeLogic mrl = new MultiblockRecipeLogic(mbt) {
+
             @Override
             protected long getEnergyStored() {
                 return Long.MAX_VALUE;
@@ -621,10 +638,10 @@ public class IParallelableRecipeLogicTest {
         IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
 
         // Don't populate the input bus, so the recipe will fail
-        //importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
+        // importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
-
-        Recipe outputRecipe = logic.findParallelRecipe(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
+        Recipe outputRecipe = logic.findParallelRecipe(recipe, importItemBus.getImportItems(),
+                importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
                 exportFluidBus.getExportFluids(), 32, parallelLimit);
 
         MatcherAssert.assertThat(outputRecipe, nullValue());
@@ -638,6 +655,7 @@ public class IParallelableRecipeLogicTest {
         int parallelLimit = 4;
 
         MultiblockRecipeLogic mrl = new MultiblockRecipeLogic(mbt) {
+
             @Override
             protected long getEnergyStored() {
                 return Long.MAX_VALUE;
@@ -690,8 +708,8 @@ public class IParallelableRecipeLogicTest {
         exportItemBus.getExportItems().insertItem(2, new ItemStack(Blocks.BONE_BLOCK, 16), false);
         exportItemBus.getExportItems().insertItem(3, new ItemStack(Blocks.BONE_BLOCK, 16), false);
 
-
-        Recipe outputRecipe = logic.findParallelRecipe(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
+        Recipe outputRecipe = logic.findParallelRecipe(recipe, importItemBus.getImportItems(),
+                importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
                 exportFluidBus.getExportFluids(), Integer.MAX_VALUE, parallelLimit);
 
         MatcherAssert.assertThat(outputRecipe, nullValue());
@@ -704,6 +722,7 @@ public class IParallelableRecipeLogicTest {
         int parallelLimit = 4;
 
         MultiblockRecipeLogic mrl = new MultiblockRecipeLogic(mbt) {
+
             @Override
             protected long getEnergyStored() {
                 return Long.MAX_VALUE;
@@ -753,20 +772,21 @@ public class IParallelableRecipeLogicTest {
         // Initially populate the input bus
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
-        Recipe outputRecipe = logic.findParallelRecipe(recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
+        Recipe outputRecipe = logic.findParallelRecipe(recipe, importItemBus.getImportItems(),
+                importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
                 exportFluidBus.getExportFluids(), 128, parallelLimit);
 
-
-        //Check that the EUt of the recipe was not modified
+        // Check that the EUt of the recipe was not modified
         MatcherAssert.assertThat(outputRecipe.getEUt(), is(1));
 
-        //Check if the recipe duration was multiplied correctly
+        // Check if the recipe duration was multiplied correctly
         MatcherAssert.assertThat(outputRecipe.getDuration(), is(50));
 
-        //Check the recipe outputs
+        // Check the recipe outputs
         MatcherAssert.assertThat(outputRecipe.getOutputs().isEmpty(), is(false));
 
-        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), outputRecipe.getOutputs().get(0)), is(true));
+        MatcherAssert.assertThat(hashStrategy.equals(new ItemStack(Blocks.STONE, 4), outputRecipe.getOutputs().get(0)),
+                is(true));
     }
 
     private static class ParallelableTestLogic implements IParallelableRecipeLogic {
@@ -776,7 +796,8 @@ public class IParallelableRecipeLogicTest {
         private final ParallelLogicType logicType;
         private final boolean enableBonusOverride;
 
-        public ParallelableTestLogic(MetaTileEntity metaTileEntity, RecipeMap<?> recipeMap, ParallelLogicType logicType) {
+        public ParallelableTestLogic(MetaTileEntity metaTileEntity, RecipeMap<?> recipeMap,
+                                     ParallelLogicType logicType) {
             this(metaTileEntity, recipeMap, logicType, false);
         }
 

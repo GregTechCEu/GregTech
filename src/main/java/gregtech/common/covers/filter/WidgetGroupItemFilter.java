@@ -2,6 +2,7 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.util.Position;
+
 import net.minecraft.network.PacketBuffer;
 
 import java.util.function.Supplier;

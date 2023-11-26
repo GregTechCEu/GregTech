@@ -1,6 +1,5 @@
 package gregtech.client.particle;
 
-import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GTValues;
 import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.shader.postprocessing.BloomEffect;
@@ -10,6 +9,7 @@ import gregtech.client.utils.RenderBufferHelper;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
+
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -19,11 +19,14 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.vec.Cuboid6;
 import org.lwjgl.opengl.GL11;
+
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 /**
  * @author brachy84
@@ -153,7 +156,8 @@ public class GTOverheatParticle extends GTBloomParticle {
     protected float alpha = 0;
     protected int color = blackBodyColors[0];
 
-    public GTOverheatParticle(@Nonnull TileEntityCable tileEntity, int meltTemp, @Nonnull List<Cuboid6> pipeBoxes, boolean insulated) {
+    public GTOverheatParticle(@Nonnull TileEntityCable tileEntity, int meltTemp, @Nonnull List<Cuboid6> pipeBoxes,
+                              boolean insulated) {
         super(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
         this.tileEntity = tileEntity;
         this.meltTemp = meltTemp;

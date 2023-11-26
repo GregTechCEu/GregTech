@@ -9,6 +9,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -18,10 +19,11 @@ import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static gregtech.api.capability.GregtechDataCodes.BOILER_HEAT;
 import static gregtech.api.capability.GregtechDataCodes.BOILER_LAST_TICK_STEAM;
@@ -54,13 +56,15 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected boolean canProgressRecipe() {
-        return super.canProgressRecipe() && !(metaTileEntity instanceof IMultiblockController && ((IMultiblockController) metaTileEntity).isStructureObstructed());
+        return super.canProgressRecipe() && !(metaTileEntity instanceof IMultiblockController &&
+                ((IMultiblockController) metaTileEntity).isStructureObstructed());
     }
 
     @Override
     protected void trySearchNewRecipe() {
         MetaTileEntityLargeBoiler boiler = (MetaTileEntityLargeBoiler) metaTileEntity;
-        if (ConfigHolder.machines.enableMaintenance && boiler.hasMaintenanceMechanics() && boiler.getNumMaintenanceProblems() > 5) {
+        if (ConfigHolder.machines.enableMaintenance && boiler.hasMaintenanceMechanics() &&
+                boiler.getNumMaintenanceProblems() > 5) {
             return;
         }
 
@@ -77,10 +81,12 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             Recipe dieselRecipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(
                     GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack));
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
-            if (dieselRecipe != null && fuelStack.amount >= dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
+            if (dieselRecipe != null &&
+                    fuelStack.amount >= dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
                 fluidTank.drain(dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
                 // divide by 2, as it is half burntime for combustion
-                setMaxProgress(adjustBurnTimeForThrottle(Math.max(1, boiler.boilerType.runtimeBoost((Math.abs(dieselRecipe.getEUt()) * dieselRecipe.getDuration()) / FLUID_BURNTIME_TO_EU / 2))));
+                setMaxProgress(adjustBurnTimeForThrottle(Math.max(1, boiler.boilerType.runtimeBoost(
+                        (Math.abs(dieselRecipe.getEUt()) * dieselRecipe.getDuration()) / FLUID_BURNTIME_TO_EU / 2))));
                 didStartRecipe = true;
                 break;
             }
@@ -88,10 +94,13 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             Recipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(
                     GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack));
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
-            if (denseFuelRecipe != null && fuelStack.amount >= denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
+            if (denseFuelRecipe != null &&
+                    fuelStack.amount >= denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
                 fluidTank.drain(denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
                 // multiply by 2, as it is 2x burntime for semi-fluid
-                setMaxProgress(adjustBurnTimeForThrottle(Math.max(1, boiler.boilerType.runtimeBoost((Math.abs(denseFuelRecipe.getEUt()) * denseFuelRecipe.getDuration() / FLUID_BURNTIME_TO_EU * 2)))));
+                setMaxProgress(adjustBurnTimeForThrottle(
+                        Math.max(1, boiler.boilerType.runtimeBoost((Math.abs(denseFuelRecipe.getEUt()) *
+                                denseFuelRecipe.getDuration() / FLUID_BURNTIME_TO_EU * 2)))));
                 didStartRecipe = true;
                 break;
             }
@@ -107,7 +116,8 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
                     this.excessFuel += fuelBurnTime % 80;
                     int excessProgress = this.excessFuel / 80;
                     this.excessFuel %= 80;
-                    setMaxProgress(excessProgress + adjustBurnTimeForThrottle(boiler.boilerType.runtimeBoost(fuelBurnTime / 80)));
+                    setMaxProgress(excessProgress +
+                            adjustBurnTimeForThrottle(boiler.boilerType.runtimeBoost(fuelBurnTime / 80)));
                     stack.shrink(1);
                     didStartRecipe = true;
                     break;
@@ -157,7 +167,8 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
 
     private int getMaximumHeatFromMaintenance() {
         if (ConfigHolder.machines.enableMaintenance) {
-            return (int) Math.min(currentHeat, (1 - 0.1 * getMetaTileEntity().getNumMaintenanceProblems()) * getMaximumHeat());
+            return (int) Math.min(currentHeat,
+                    (1 - 0.1 * getMetaTileEntity().getNumMaintenanceProblems()) * getMaximumHeat());
         } else return currentHeat;
     }
 

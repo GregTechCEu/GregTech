@@ -6,6 +6,7 @@ import net.minecraft.util.math.ChunkPos;
 import javax.annotation.Nonnull;
 
 public class ChunkPosDimension extends ChunkPos {
+
     public int dimension;
 
     public ChunkPosDimension(int dimension, int x, int z) {

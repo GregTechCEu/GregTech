@@ -23,7 +23,8 @@ public interface ISpecialArmorLogic extends IArmorLogic {
      * same priority, damage will be distributed between them based on there
      * absorption ratio.
      */
-    ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot);
+    ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage,
+                                  EntityEquipmentSlot equipmentSlot);
 
     /**
      * Get the displayed effective armor.
@@ -40,7 +41,8 @@ public interface ISpecialArmorLogic extends IArmorLogic {
      * Returning true here means that the armor is able to meaningfully respond
      * to this damage source. Otherwise, no interaction is allowed.
      */
-    default boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
+    default boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source,
+                                            double damage, EntityEquipmentSlot equipmentSlot) {
         return false;
     }
 }

@@ -7,13 +7,15 @@ import gregtech.api.cover.CoverHolder;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.*;
 import gregtech.common.covers.filter.*;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.TextStyleClass;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
+
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.TextStyleClass;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +34,9 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull CoverHolder capability, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@Nonnull CoverHolder capability, @Nonnull IProbeInfo probeInfo,
+                                @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity,
+                                @Nonnull IProbeHitData data) {
         Cover cover = capability.getCoverAtSide(data.getSideHit());
         if (cover instanceof CoverConveyor conveyor) {
             conveyorInfo(probeInfo, conveyor);
@@ -58,14 +62,16 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
 
         if (conveyor instanceof CoverItemVoiding) {
             itemVoidingInfo(probeInfo, (CoverItemVoiding) conveyor);
-        } else if (!(conveyor instanceof CoverRoboticArm) || ((CoverRoboticArm) conveyor).getTransferMode() == TransferMode.TRANSFER_ANY) {
-            // only display the regular rate if the cover does not have a specialized rate
-            transferRateText(probeInfo, conveyor.getConveyorMode(), rateUnit, conveyor.getTransferRate());
-        }
+        } else if (!(conveyor instanceof CoverRoboticArm) ||
+                ((CoverRoboticArm) conveyor).getTransferMode() == TransferMode.TRANSFER_ANY) {
+                    // only display the regular rate if the cover does not have a specialized rate
+                    transferRateText(probeInfo, conveyor.getConveyorMode(), rateUnit, conveyor.getTransferRate());
+                }
 
         ItemFilterContainer filter = conveyor.getItemFilterContainer();
         if (conveyor instanceof CoverRoboticArm roboticArm) {
-            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, filter.getTransferStackSize(), filter.getFilterWrapper().getItemFilter() != null);
+            transferModeText(probeInfo, roboticArm.getTransferMode(), rateUnit, filter.getTransferStackSize(),
+                    filter.getFilterWrapper().getItemFilter() != null);
         }
         itemFilterText(probeInfo, filter.getFilterWrapper().getItemFilter());
     }
@@ -82,7 +88,8 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
         ItemFilterContainer container = voiding.getItemFilterContainer();
         if (voiding instanceof CoverItemVoidingAdvanced advanced) {
             VoidingMode mode = advanced.getVoidingMode();
-            voidingText(probeInfo, mode, unit, container.getTransferStackSize(), container.getFilterWrapper().getItemFilter() != null);
+            voidingText(probeInfo, mode, unit, container.getTransferStackSize(),
+                    container.getFilterWrapper().getItemFilter() != null);
         }
     }
 
@@ -97,14 +104,18 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
 
         if (pump instanceof CoverFluidVoiding) {
             fluidVoidingInfo(probeInfo, (CoverFluidVoiding) pump);
-        } else if (!(pump instanceof CoverFluidRegulator) || ((CoverFluidRegulator) pump).getTransferMode() == TransferMode.TRANSFER_ANY) {
-            // do not display the regular rate if the cover has a specialized rate
-            transferRateText(probeInfo, pump.getPumpMode(), " " + rateUnit, pump.getBucketMode() == CoverPump.BucketMode.BUCKET ? pump.getTransferRate() / 1000 : pump.getTransferRate());
-        }
+        } else if (!(pump instanceof CoverFluidRegulator) ||
+                ((CoverFluidRegulator) pump).getTransferMode() == TransferMode.TRANSFER_ANY) {
+                    // do not display the regular rate if the cover has a specialized rate
+                    transferRateText(probeInfo, pump.getPumpMode(), " " + rateUnit,
+                            pump.getBucketMode() == CoverPump.BucketMode.BUCKET ? pump.getTransferRate() / 1000 :
+                                    pump.getTransferRate());
+                }
 
         FluidFilterContainer filter = pump.getFluidFilterContainer();
         if (pump instanceof CoverFluidRegulator regulator) {
-            transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator.getTransferAmount(), filter.getFilterWrapper().getFluidFilter() != null);
+            transferModeText(probeInfo, regulator.getTransferMode(), rateUnit, regulator.getTransferAmount(),
+                    filter.getFilterWrapper().getFluidFilter() != null);
         }
         fluidFilterText(probeInfo, filter.getFilterWrapper().getFluidFilter());
     }
@@ -116,12 +127,16 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      * @param voiding   the voiding cover to get data from
      */
     private static void fluidVoidingInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverFluidVoiding voiding) {
-        String unit = voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? " {*gregtech.top.unit.fluid_buckets*}" : " {*gregtech.top.unit.fluid_milibuckets*}";
+        String unit = voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? " {*gregtech.top.unit.fluid_buckets*}" :
+                " {*gregtech.top.unit.fluid_milibuckets*}";
 
         if (voiding instanceof CoverFluidVoidingAdvanced advanced) {
             VoidingMode mode = advanced.getVoidingMode();
             // do not display amount in overflow when a filter is present
-            voidingText(probeInfo, mode, unit, voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? advanced.getTransferAmount() / 1000 : advanced.getTransferAmount(), voiding.getFluidFilterContainer().getFilterWrapper().getFluidFilter() != null);
+            voidingText(probeInfo, mode, unit,
+                    voiding.getBucketMode() == CoverPump.BucketMode.BUCKET ? advanced.getTransferAmount() / 1000 :
+                            advanced.getTransferAmount(),
+                    voiding.getFluidFilterContainer().getFilterWrapper().getFluidFilter() != null);
         }
     }
 
@@ -154,14 +169,14 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      * @param enderFluidLink the ender fluid link cover to get data from
      */
     private static void enderFluidLinkInfo(@Nonnull IProbeInfo probeInfo, @Nonnull CoverEnderFluidLink enderFluidLink) {
-        transferRateText(probeInfo, enderFluidLink.getPumpMode(), " {*cover.bucket.mode.milli_bucket*}", enderFluidLink.isIOEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
+        transferRateText(probeInfo, enderFluidLink.getPumpMode(), " {*cover.bucket.mode.milli_bucket*}",
+                enderFluidLink.isIOEnabled() ? CoverEnderFluidLink.TRANSFER_RATE : 0);
         fluidFilterText(probeInfo, enderFluidLink.getFluidFilterContainer().getFilterWrapper().getFluidFilter());
 
         if (!enderFluidLink.getColorStr().isEmpty()) {
             probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.link_cover.color*} " + enderFluidLink.getColorStr());
         }
     }
-
 
     /**
      * Displays text for {@link IIOMode} covers
@@ -171,9 +186,11 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      * @param rateUnit  the unit of what is transferred
      * @param rate      the transfer rate of the mode
      */
-    private static void transferRateText(@Nonnull IProbeInfo probeInfo, @Nonnull IIOMode mode, @Nonnull String rateUnit, int rate) {
+    private static void transferRateText(@Nonnull IProbeInfo probeInfo, @Nonnull IIOMode mode, @Nonnull String rateUnit,
+                                         int rate) {
         String modeText = mode.isImport() ? "{*gregtech.top.mode.import*} " : "{*gregtech.top.mode.export*} ";
-        probeInfo.text(TextStyleClass.OK + modeText + TextStyleClass.LABEL + TextFormattingUtil.formatNumbers(rate) + rateUnit);
+        probeInfo.text(TextStyleClass.OK + modeText + TextStyleClass.LABEL + TextFormattingUtil.formatNumbers(rate) +
+                rateUnit);
     }
 
     /**
@@ -185,7 +202,8 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      * @param rate      the transfer rate of the mode
      * @param hasFilter whether the cover has a filter installed
      */
-    private static void transferModeText(@Nonnull IProbeInfo probeInfo, @Nonnull TransferMode mode, @Nonnull String rateUnit, int rate, boolean hasFilter) {
+    private static void transferModeText(@Nonnull IProbeInfo probeInfo, @Nonnull TransferMode mode,
+                                         @Nonnull String rateUnit, int rate, boolean hasFilter) {
         String text = TextStyleClass.OK + IProbeInfo.STARTLOC + mode.getName() + IProbeInfo.ENDLOC;
         if (!hasFilter && mode != TransferMode.TRANSFER_ANY) text += TextStyleClass.LABEL + " " + rate + rateUnit;
         probeInfo.text(text);
@@ -200,7 +218,8 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
      * @param amount    the transfer rate of the mode
      * @param hasFilter whether the cover has a filter in it or not
      */
-    private static void voidingText(@Nonnull IProbeInfo probeInfo, @Nonnull VoidingMode mode, @Nonnull String unit, int amount, boolean hasFilter) {
+    private static void voidingText(@Nonnull IProbeInfo probeInfo, @Nonnull VoidingMode mode, @Nonnull String unit,
+                                    int amount, boolean hasFilter) {
         String text = TextFormatting.RED + IProbeInfo.STARTLOC + mode.getName() + IProbeInfo.ENDLOC;
         if (mode != VoidingMode.VOID_ANY && !hasFilter) text += " " + amount + unit;
         probeInfo.text(text);
@@ -228,7 +247,8 @@ public class CoverInfoProvider extends CapabilityInfoProvider<CoverHolder> {
             String expression = ((OreDictionaryItemFilter) filter).getExpression();
             if (!expression.isEmpty()) probeInfo.text(label + expression);
         } else if (filter instanceof SmartItemFilter) {
-            probeInfo.text(label + IProbeInfo.STARTLOC + ((SmartItemFilter) filter).getFilteringMode().getName() + IProbeInfo.ENDLOC);
+            probeInfo.text(label + IProbeInfo.STARTLOC + ((SmartItemFilter) filter).getFilteringMode().getName() +
+                    IProbeInfo.ENDLOC);
         }
     }
 

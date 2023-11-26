@@ -3,12 +3,15 @@ package gregtech.integration;
 import gregtech.api.util.GTUtility;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
+
 import net.minecraft.util.ResourceLocation;
+
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 /**
  * Abstract class meant to be used by mod-specific compatibility modules.

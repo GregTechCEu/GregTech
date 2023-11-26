@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -25,7 +26,8 @@ public class BlockMultiblockCasing extends VariantActiveBlock<BlockMultiblockCas
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos,
+                                    @Nonnull SpawnPlacementType type) {
         return false;
     }
 
@@ -48,7 +50,5 @@ public class BlockMultiblockCasing extends VariantActiveBlock<BlockMultiblockCas
         public String getName() {
             return this.name;
         }
-
     }
-
 }

@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.stack.UnificationEntry;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
@@ -15,8 +16,8 @@ import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
 import static gregtech.api.unification.material.MarkerMaterials.Tier;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.common.blocks.MetaBlocks.LD_ITEM_PIPE;
 import static gregtech.common.blocks.MetaBlocks.LD_FLUID_PIPE;
+import static gregtech.common.blocks.MetaBlocks.LD_ITEM_PIPE;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.items.MetaItems.SENSOR_UV;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
@@ -24,7 +25,6 @@ import static gregtech.common.metatileentities.MetaTileEntities.*;
 public class MetaTileEntityMachineRecipeLoader {
 
     public static void init() {
-
         // Fluid Hatches
         registerHatchBusRecipe(ULV, FLUID_IMPORT_HATCH[ULV], FLUID_EXPORT_HATCH[ULV], new ItemStack(Blocks.GLASS));
         registerHatchBusRecipe(LV, FLUID_IMPORT_HATCH[LV], FLUID_EXPORT_HATCH[LV], new ItemStack(Blocks.GLASS));
@@ -33,7 +33,8 @@ public class MetaTileEntityMachineRecipeLoader {
         registerHatchBusRecipe(EV, FLUID_IMPORT_HATCH[EV], FLUID_EXPORT_HATCH[EV], ALUMINIUM_DRUM.getStackForm());
         registerHatchBusRecipe(IV, FLUID_IMPORT_HATCH[IV], FLUID_EXPORT_HATCH[IV], STAINLESS_STEEL_DRUM.getStackForm());
         registerHatchBusRecipe(LuV, FLUID_IMPORT_HATCH[LuV], FLUID_EXPORT_HATCH[LuV], TITANIUM_DRUM.getStackForm());
-        registerHatchBusRecipe(ZPM, FLUID_IMPORT_HATCH[ZPM], FLUID_EXPORT_HATCH[ZPM], TUNGSTENSTEEL_DRUM.getStackForm());
+        registerHatchBusRecipe(ZPM, FLUID_IMPORT_HATCH[ZPM], FLUID_EXPORT_HATCH[ZPM],
+                TUNGSTENSTEEL_DRUM.getStackForm());
         registerHatchBusRecipe(UV, FLUID_IMPORT_HATCH[UV], FLUID_EXPORT_HATCH[UV], QUANTUM_TANK[0].getStackForm());
         registerHatchBusRecipe(UHV, FLUID_IMPORT_HATCH[UHV], FLUID_EXPORT_HATCH[UHV], QUANTUM_TANK[1].getStackForm());
 
@@ -511,7 +512,6 @@ public class MetaTileEntityMachineRecipeLoader {
                         .CWUt(128)
                         .EUt(VA[UV]))
                 .duration(1000).EUt(VA[UHV]).buildAndRegister();
-
 
         // Power Transformers
 
@@ -1025,7 +1025,8 @@ public class MetaTileEntityMachineRecipeLoader {
         }
     }
 
-    private static void registerHatchBusRecipe(int tier, MetaTileEntity inputBus, MetaTileEntity outputBus, ItemStack extra) {
+    private static void registerHatchBusRecipe(int tier, MetaTileEntity inputBus, MetaTileEntity outputBus,
+                                               ItemStack extra) {
         // Glue recipe for ULV and LV
         // 250L for ULV, 500L for LV
         if (tier <= GTValues.LV) {
@@ -1115,23 +1116,32 @@ public class MetaTileEntityMachineRecipeLoader {
 
     private static int getFluidAmount(int offsetTier) {
         switch (offsetTier) {
-            case 0: return 4;
-            case 1: return 9;
-            case 2: return 18;
-            case 3: return 36;
-            case 4: return 72;
-            case 5: return 144;
-            case 6: return 288;
-            case 7: return 432;
-            case 8: return 576;
+            case 0:
+                return 4;
+            case 1:
+                return 9;
+            case 2:
+                return 18;
+            case 3:
+                return 36;
+            case 4:
+                return 72;
+            case 5:
+                return 144;
+            case 6:
+                return 288;
+            case 7:
+                return 432;
+            case 8:
+                return 576;
             case 9:
-            default: return 720;
+            default:
+                return 720;
         }
     }
 
     // TODO clean this up with a CraftingComponent rework
     private static void registerLaserRecipes() {
-
         // 256A Laser Source Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[IV])

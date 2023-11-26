@@ -1,15 +1,17 @@
 package gregtech.integration.crafttweaker.recipe;
 
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.item.IItemStack;
-import crafttweaker.api.liquid.ILiquidStack;
-import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.recipes.GTRecipeHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.item.IItemStack;
+import crafttweaker.api.liquid.ILiquidStack;
+import crafttweaker.api.minecraft.CraftTweakerMC;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -27,7 +29,8 @@ public class CTRecipeUtils {
     // TODO YEET
 
     @ZenMethod("removeRecipeByOutput")
-    public static void removeRecipeByOutput(RecipeMap<?> recipeMap, IItemStack[] outputs, ILiquidStack[] fluidOutputs, boolean useAmounts) {
+    public static void removeRecipeByOutput(RecipeMap<?> recipeMap, IItemStack[] outputs, ILiquidStack[] fluidOutputs,
+                                            boolean useAmounts) {
         List<Recipe> recipesToRemove = new ArrayList<>();
         List<ItemStack> mcItemOutputs = outputs == null ? Collections.emptyList() :
                 Arrays.stream(outputs)

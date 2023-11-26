@@ -18,6 +18,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
+
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
@@ -30,8 +31,7 @@ import static gregtech.api.util.DyeUtil.determineDyeColor;
 
 public class PartsRecipeHandler {
 
-    private PartsRecipeHandler() {
-    }
+    private PartsRecipeHandler() {}
 
     public static void register() {
         OrePrefix.stick.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processStick);
@@ -213,8 +213,10 @@ public class PartsRecipeHandler {
 
         if (material.hasFlag(GENERATE_PLATE) && material.hasFlag(GENERATE_ROD)) {
             if (gearPrefix == OrePrefix.gearSmall) {
-                ModHandler.addShapedRecipe(String.format("small_gear_%s", material), OreDictUnifier.get(gearSmall, material),
-                        " R ", "hPx", " R ", 'R', new UnificationEntry(stick, material), 'P', new UnificationEntry(plate, material));
+                ModHandler.addShapedRecipe(String.format("small_gear_%s", material),
+                        OreDictUnifier.get(gearSmall, material),
+                        " R ", "hPx", " R ", 'R', new UnificationEntry(stick, material), 'P',
+                        new UnificationEntry(plate, material));
 
                 RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                         .input(OrePrefix.ingot, material)

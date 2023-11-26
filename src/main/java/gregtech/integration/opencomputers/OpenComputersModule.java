@@ -11,18 +11,19 @@ import gregtech.integration.opencomputers.drivers.specific.DriverFusionReactor;
 import gregtech.integration.opencomputers.drivers.specific.DriverPowerSubstation;
 import gregtech.integration.opencomputers.drivers.specific.DriverWorldAccelerator;
 import gregtech.modules.GregTechModules;
-import li.cil.oc.api.Driver;
-import li.cil.oc.api.driver.DriverBlock;
+
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import li.cil.oc.api.Driver;
+import li.cil.oc.api.driver.DriverBlock;
+
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_OC,
-        containerID = GTValues.MODID,
-        modDependencies = GTValues.MODID_OC,
-        name = "GregTech OpenComputers Integration",
-        description = "OpenComputers Integration Module"
-)
+                moduleID = GregTechModules.MODULE_OC,
+                containerID = GTValues.MODID,
+                modDependencies = GTValues.MODID_OC,
+                name = "GregTech OpenComputers Integration",
+                description = "OpenComputers Integration Module")
 public class OpenComputersModule extends IntegrationSubmodule {
 
     private static final String MODID_GTCE2OC = "gtce2oc";

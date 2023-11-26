@@ -2,15 +2,17 @@ package gregtech.client.model;
 
 import gregtech.client.model.lamp.LampBakedModel;
 import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.EnumFacing;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class BorderlessLampBakedModel extends LampBakedModel {
 

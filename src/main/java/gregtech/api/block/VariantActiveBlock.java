@@ -4,10 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.client.model.ActiveVariantBlockBakedModel;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -28,15 +25,21 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import team.chisel.ctm.client.state.CTMExtendedState;
 
-import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> {
 
@@ -121,19 +124,21 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         Class<T> enumClass = getActualTypeParameter(getClass(), VariantActiveBlock.class, 0);
         this.VARIANT = PropertyEnum.create("variant", enumClass);
         this.VALUES = enumClass.getEnumConstants();
-        return new ExtendedBlockState(this, new IProperty[]{VARIANT, ACTIVE_DEPRECATED}, new IUnlistedProperty[]{ACTIVE});
+        return new ExtendedBlockState(this, new IProperty[] { VARIANT, ACTIVE_DEPRECATED },
+                new IUnlistedProperty[] { ACTIVE });
     }
 
     @Nonnull
     @Override
-    public IExtendedBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+    public IExtendedBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world,
+                                                @Nonnull BlockPos pos) {
         IExtendedBlockState ext = ((IExtendedBlockState) state)
                 .withProperty(ACTIVE, Minecraft.getMinecraft().world != null &&
                         isBlockActive(Minecraft.getMinecraft().world.provider.getDimension(), pos));
 
         if (Loader.isModLoaded(GTValues.MODID_CTM)) {
-            //if the Connected Textures Mod is loaded we wrap our IExtendedBlockState with their wrapper,
-            //so that the CTM renderer can render the block properly.
+            // if the Connected Textures Mod is loaded we wrap our IExtendedBlockState with their wrapper,
+            // so that the CTM renderer can render the block properly.
             return new CTMExtendedState(ext, world, pos);
         }
         return ext;
@@ -146,17 +151,18 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
             ModelResourceLocation inactiveModel = model(false, value);
             ModelResourceLocation activeModel = model(true, value);
 
-            ActiveVariantBlockBakedModel model = new ActiveVariantBlockBakedModel(inactiveModel, activeModel, () -> isBloomEnabled(value));
+            ActiveVariantBlockBakedModel model = new ActiveVariantBlockBakedModel(inactiveModel, activeModel,
+                    () -> isBloomEnabled(value));
             models.put(value, model.getModelLocation());
 
             Item item = Item.getItemFromBlock(this);
             ModelLoader.setCustomModelResourceLocation(item, value.ordinal(), inactiveModel);
             ModelLoader.registerItemVariants(item, activeModel);
         }
-        ModelLoader.setCustomStateMapper(this, b -> b.getBlockState().getValidStates().stream().collect(Collectors.toMap(
-                s -> s,
-                s -> models.get(s.getValue(VARIANT))
-        )));
+        ModelLoader.setCustomStateMapper(this,
+                b -> b.getBlockState().getValidStates().stream().collect(Collectors.toMap(
+                        s -> s,
+                        s -> models.get(s.getValue(VARIANT)))));
     }
 
     private ModelResourceLocation model(boolean active, T variant) {

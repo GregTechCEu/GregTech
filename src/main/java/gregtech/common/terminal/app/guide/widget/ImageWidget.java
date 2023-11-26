@@ -1,6 +1,5 @@
 package gregtech.common.terminal.app.guide.widget;
 
-import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
@@ -8,21 +7,25 @@ import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.resources.URLTexture;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
+import gregtech.api.util.Position;
+import gregtech.api.util.Size;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.NumberConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.SelectorConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.StringConfigurator;
-import gregtech.api.util.Position;
-import gregtech.api.util.Size;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
+import com.google.gson.JsonObject;
+
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-public class ImageWidget extends GuideWidget{
+public class ImageWidget extends GuideWidget {
+
     public final static String NAME = "image";
-    //config
+    // config
     public String form;
     public String source;
     public int width;
@@ -46,12 +49,14 @@ public class ImageWidget extends GuideWidget{
     }
 
     @Override
-    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
+    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed,
+                                 Consumer<String> needUpdate) {
         if (!isFixed) {
             group.addWidget(new NumberConfigurator(group, config, "width").setOnUpdated(needUpdate));
             group.addWidget(new NumberConfigurator(group, config, "height").setOnUpdated(needUpdate));
         }
-        group.addWidget(new SelectorConfigurator(group, config, "form", Arrays.asList("url", "item", "resource")).setOnUpdated(needUpdate));
+        group.addWidget(new SelectorConfigurator(group, config, "form", Arrays.asList("url", "item", "resource"))
+                .setOnUpdated(needUpdate));
         group.addWidget(new StringConfigurator(group, config, "source").setOnUpdated(needUpdate));
         super.loadConfigurator(group, config, isFixed, needUpdate);
     }
@@ -98,8 +103,8 @@ public class ImageWidget extends GuideWidget{
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         if (image != null) {
-            super.drawInBackground(mouseX, mouseY, partialTicks,context);
-            GlStateManager.color(1,1,1,1);
+            super.drawInBackground(mouseX, mouseY, partialTicks, context);
+            GlStateManager.color(1, 1, 1, 1);
             Position position = getPosition();
             image.draw(position.x, position.y, getSize().width, getSize().height);
         }

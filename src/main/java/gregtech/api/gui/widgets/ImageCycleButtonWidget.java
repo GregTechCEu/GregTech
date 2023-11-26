@@ -9,6 +9,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.BooleanConsumer;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -35,7 +36,8 @@ public class ImageCycleButtonWidget extends Widget {
     protected boolean shouldUseBaseBackground = false;
     protected boolean singleTexture = false;
 
-    public ImageCycleButtonWidget(int xPosition, int yPosition, int width, int height, TextureArea buttonTexture, int optionCount, IntSupplier currentOptionSupplier, IntConsumer setOptionExecutor) {
+    public ImageCycleButtonWidget(int xPosition, int yPosition, int width, int height, TextureArea buttonTexture,
+                                  int optionCount, IntSupplier currentOptionSupplier, IntConsumer setOptionExecutor) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.buttonTexture = buttonTexture;
         this.currentOptionSupplier = currentOptionSupplier;
@@ -44,8 +46,8 @@ public class ImageCycleButtonWidget extends Widget {
         this.currentOption = currentOptionSupplier.getAsInt();
     }
 
-
-    public ImageCycleButtonWidget(int xPosition, int yPosition, int width, int height, TextureArea buttonTexture, BooleanSupplier supplier, BooleanConsumer updater) {
+    public ImageCycleButtonWidget(int xPosition, int yPosition, int width, int height, TextureArea buttonTexture,
+                                  BooleanSupplier supplier, BooleanConsumer updater) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.buttonTexture = buttonTexture;
         this.currentOptionSupplier = () -> supplier.getAsBoolean() ? 1 : 0;
@@ -94,9 +96,11 @@ public class ImageCycleButtonWidget extends Widget {
             buttonTexture.draw(pos.x, pos.y, size.width, size.height);
         } else {
             if (buttonTexture instanceof SizedTextureArea) {
-                ((SizedTextureArea) buttonTexture).drawHorizontalCutSubArea(pos.x, pos.y, size.width, size.height, (float) currentOption / optionCount, (float) 1 / optionCount);
+                ((SizedTextureArea) buttonTexture).drawHorizontalCutSubArea(pos.x, pos.y, size.width, size.height,
+                        (float) currentOption / optionCount, (float) 1 / optionCount);
             } else {
-                buttonTexture.drawSubArea(pos.x, pos.y, size.width, size.height, 0.0, (float) currentOption / optionCount, 1.0, (float) 1 / optionCount);
+                buttonTexture.drawSubArea(pos.x, pos.y, size.width, size.height, 0.0,
+                        (float) currentOption / optionCount, 1.0, (float) 1 / optionCount);
             }
         }
     }
@@ -104,7 +108,8 @@ public class ImageCycleButtonWidget extends Widget {
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         if (isMouseOverElement(mouseX, mouseY) && tooltipHoverString != null) {
-            List<String> hoverList = Arrays.asList(LocalizationUtils.formatLines(tooltipHoverString.apply(currentOption)));
+            List<String> hoverList = Arrays
+                    .asList(LocalizationUtils.formatLines(tooltipHoverString.apply(currentOption)));
             drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
         }
     }
@@ -131,9 +136,9 @@ public class ImageCycleButtonWidget extends Widget {
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         super.mouseClicked(mouseX, mouseY, button);
         if (isMouseOverElement(mouseX, mouseY)) {
-            //Allow only the RMB to reverse cycle
+            // Allow only the RMB to reverse cycle
             if (button == RIGHT_MOUSE) {
-                //Wrap from the first option to the last if needed
+                // Wrap from the first option to the last if needed
                 this.currentOption = currentOption == 0 ? optionCount - 1 : currentOption - 1;
             } else {
                 this.currentOption = (currentOption + 1) % optionCount;
@@ -145,7 +150,6 @@ public class ImageCycleButtonWidget extends Widget {
         }
         return false;
     }
-
 
     @Override
     public void handleClientAction(int id, PacketBuffer buffer) {

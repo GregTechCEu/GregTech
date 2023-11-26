@@ -17,14 +17,14 @@ import static gregtech.api.unification.material.info.MaterialFlags.*;
  * All Material Builders should follow this general formatting:
  * <p>
  * material = new MaterialBuilder(id, name)
- * .ingot().fluid().ore()                <--- types
- * .color().iconSet()                    <--- appearance
- * .flags()                              <--- special generation
- * .element() / .components()            <--- composition
- * .toolStats()                          <---
- * .oreByProducts()                         | additional properties
- * ...                                   <---
- * .blastTemp()                          <--- blast temperature
+ * .ingot().fluid().ore() <--- types
+ * .color().iconSet() <--- appearance
+ * .flags() <--- special generation
+ * .element() / .components() <--- composition
+ * .toolStats() <---
+ * .oreByProducts() | additional properties
+ * ... <---
+ * .blastTemp() <--- blast temperature
  * .build();
  * <p>
  * Use defaults to your advantage! Some defaults:
@@ -99,7 +99,7 @@ public class Materials {
          * - Reserved for CraftTweaker: 32000-32767
          */
 
-        CHEMICAL_DYES = new Material[]{
+        CHEMICAL_DYES = new Material[] {
                 Materials.DyeWhite, Materials.DyeOrange,
                 Materials.DyeMagenta, Materials.DyeLightBlue,
                 Materials.DyeYellow, Materials.DyeLime,
@@ -339,7 +339,6 @@ public class Materials {
     public static Material AluminiumSulfite;
     public static Material Tantalite;
     public static Material Coke;
-
 
     public static Material SolderingAlloy;
     public static Material Spessartine;

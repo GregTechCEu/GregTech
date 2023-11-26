@@ -7,6 +7,7 @@ import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -15,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
@@ -38,7 +40,8 @@ public final class ToolChargeBarRenderer {
     private static final Color colorBarLeftDepleted = new Color(122, 0, 0, 255);
     private static final Color colorBarRightDepleted = new Color(255, 27, 27, 255);
 
-    public static void render(double level, int xPosition, int yPosition, int offset, boolean shadow, Color left, Color right, boolean doDepletedColor) {
+    public static void render(double level, int xPosition, int yPosition, int offset, boolean shadow, Color left,
+                              Color right, boolean doDepletedColor) {
         double width = level * BAR_W;
         if (doDepletedColor && level <= 0.25) {
             left = colorBarLeftDepleted;
@@ -71,23 +74,38 @@ public final class ToolChargeBarRenderer {
 
     private static void drawGrad(BufferBuilder renderer, int x, int y, double width, Color left, Color right) {
         renderer.pos(x, y, 0.0D).color(left.getRed(), left.getGreen(), left.getBlue(), left.getAlpha()).endVertex();
-        renderer.pos(x, y + (double) 1, 0.0D).color(left.getRed(), left.getGreen(), left.getBlue(), left.getAlpha()).endVertex();
-        renderer.pos(x + width, y + (double) 1, 0.0D).color(right.getRed(), right.getGreen(), right.getBlue(), right.getAlpha()).endVertex();
-        renderer.pos(x + width, y, 0.0D).color(right.getRed(), right.getGreen(), right.getBlue(), right.getAlpha()).endVertex();
+        renderer.pos(x, y + (double) 1, 0.0D).color(left.getRed(), left.getGreen(), left.getBlue(), left.getAlpha())
+                .endVertex();
+        renderer.pos(x + width, y + (double) 1, 0.0D)
+                .color(right.getRed(), right.getGreen(), right.getBlue(), right.getAlpha()).endVertex();
+        renderer.pos(x + width, y, 0.0D).color(right.getRed(), right.getGreen(), right.getBlue(), right.getAlpha())
+                .endVertex();
     }
 
     private static void drawShadow(BufferBuilder renderer, int x, int y, double width, double height) {
-        renderer.pos(x, y, 0.0D).color(colorShadow.getRed(), colorShadow.getGreen(), colorShadow.getBlue(), colorShadow.getAlpha()).endVertex();
-        renderer.pos(x, y + height, 0.0D).color(colorShadow.getRed(), colorShadow.getGreen(), colorShadow.getBlue(), colorShadow.getAlpha()).endVertex();
-        renderer.pos(x + width, y + height, 0.0D).color(colorShadow.getRed(), colorShadow.getGreen(), colorShadow.getBlue(), colorShadow.getAlpha()).endVertex();
-        renderer.pos(x + width, y, 0.0D).color(colorShadow.getRed(), colorShadow.getGreen(), colorShadow.getBlue(), colorShadow.getAlpha()).endVertex();
+        renderer.pos(x, y, 0.0D)
+                .color(colorShadow.getRed(), colorShadow.getGreen(), colorShadow.getBlue(), colorShadow.getAlpha())
+                .endVertex();
+        renderer.pos(x, y + height, 0.0D)
+                .color(colorShadow.getRed(), colorShadow.getGreen(), colorShadow.getBlue(), colorShadow.getAlpha())
+                .endVertex();
+        renderer.pos(x + width, y + height, 0.0D)
+                .color(colorShadow.getRed(), colorShadow.getGreen(), colorShadow.getBlue(), colorShadow.getAlpha())
+                .endVertex();
+        renderer.pos(x + width, y, 0.0D)
+                .color(colorShadow.getRed(), colorShadow.getGreen(), colorShadow.getBlue(), colorShadow.getAlpha())
+                .endVertex();
     }
 
     private static void drawBG(BufferBuilder renderer, int x, int y, double width) {
-        renderer.pos(x - width, y, 0.0D).color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), colorBG.getAlpha()).endVertex();
-        renderer.pos(x - width, y + (double) 1, 0.0D).color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), colorBG.getAlpha()).endVertex();
-        renderer.pos(x, y + (double) 1, 0.0D).color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), colorBG.getAlpha()).endVertex();
-        renderer.pos(x, y, 0.0D).color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), colorBG.getAlpha()).endVertex();
+        renderer.pos(x - width, y, 0.0D)
+                .color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), colorBG.getAlpha()).endVertex();
+        renderer.pos(x - width, y + (double) 1, 0.0D)
+                .color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), colorBG.getAlpha()).endVertex();
+        renderer.pos(x, y + (double) 1, 0.0D)
+                .color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), colorBG.getAlpha()).endVertex();
+        renderer.pos(x, y, 0.0D).color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), colorBG.getAlpha())
+                .endVertex();
     }
 
     private static void overpaintVanillaRenderBug(BufferBuilder worldrenderer, int xPosition, int yPosition) {
@@ -98,10 +116,12 @@ public final class ToolChargeBarRenderer {
         boolean renderedDurability = false;
         NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(stack);
         if (!tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {
-            renderedDurability = renderDurabilityBar(stack.getItem().getDurabilityForDisplay(stack), xPosition, yPosition);
+            renderedDurability = renderDurabilityBar(stack.getItem().getDurabilityForDisplay(stack), xPosition,
+                    yPosition);
         }
         if (tool.isElectric()) {
-            renderElectricBar(tool.getCharge(stack), tool.getMaxCharge(stack), xPosition, yPosition, renderedDurability);
+            renderElectricBar(tool.getCharge(stack), tool.getMaxCharge(stack), xPosition, yPosition,
+                    renderedDurability);
         }
     }
 
@@ -114,18 +134,22 @@ public final class ToolChargeBarRenderer {
 
         IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null) {
-            renderElectricBar(electricItem.getCharge(), electricItem.getMaxCharge(), xPosition, yPosition, renderedDurability);
+            renderElectricBar(electricItem.getCharge(), electricItem.getMaxCharge(), xPosition, yPosition,
+                    renderedDurability);
         }
     }
 
-    private static void renderElectricBar(long charge, long maxCharge, int xPosition, int yPosition, boolean renderedDurability) {
+    private static void renderElectricBar(long charge, long maxCharge, int xPosition, int yPosition,
+                                          boolean renderedDurability) {
         if (charge > 0 && maxCharge > 0) {
             double level = (double) charge / (double) maxCharge;
-            render(level, xPosition, yPosition, renderedDurability ? 2 : 0, true, colorBarLeftEnergy, colorBarRightEnergy, true);
+            render(level, xPosition, yPosition, renderedDurability ? 2 : 0, true, colorBarLeftEnergy,
+                    colorBarRightEnergy, true);
         }
     }
 
-    private static boolean renderDurabilityBar(ItemStack stack, IItemDurabilityManager manager, int xPosition, int yPosition) {
+    private static boolean renderDurabilityBar(ItemStack stack, IItemDurabilityManager manager, int xPosition,
+                                               int yPosition) {
         double level = manager.getDurabilityForDisplay(stack);
         if (level == 0.0 && !manager.showEmptyBar(stack)) return false;
         if (level == 1.0 && !manager.showFullBar(stack)) return false;
@@ -142,6 +166,5 @@ public final class ToolChargeBarRenderer {
         return true;
     }
 
-    private ToolChargeBarRenderer() {
-    }
+    private ToolChargeBarRenderer() {}
 }

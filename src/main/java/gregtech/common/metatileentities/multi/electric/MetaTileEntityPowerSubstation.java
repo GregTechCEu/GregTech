@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
@@ -26,6 +23,7 @@ import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -40,6 +38,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -51,7 +53,8 @@ import java.util.function.Supplier;
 
 import static gregtech.api.util.RelativeDirection.*;
 
-public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase implements IControllable, IProgressBarMultiblock {
+public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
+                                           implements IControllable, IProgressBarMultiblock {
 
     // Structure Constants
     public static final int MAX_BATTERY_LAYERS = 18;
@@ -107,7 +110,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
 
         List<IBatteryData> parts = new ArrayList<>();
         for (Map.Entry<String, Object> battery : context.entrySet()) {
-            if (battery.getKey().startsWith(PMC_BATTERY_HEADER) && battery.getValue() instanceof BatteryMatchWrapper wrapper) {
+            if (battery.getKey().startsWith(PMC_BATTERY_HEADER) &&
+                    battery.getValue() instanceof BatteryMatchWrapper wrapper) {
                 for (int i = 0; i < wrapper.amount; i++) {
                     parts.add(wrapper.partType);
                 }
@@ -160,7 +164,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 netIOLastSec -= energyPassiveDrained;
 
                 // Debank to Dynamo Hatches
-                long energyDebanked = energyBank.drain(outputHatches.getEnergyCapacity() - outputHatches.getEnergyStored());
+                long energyDebanked = energyBank
+                        .drain(outputHatches.getEnergyCapacity() - outputHatches.getEnergyStored());
                 outputHatches.changeEnergy(energyDebanked);
                 netIOLastSec -= energyDebanked;
             }
@@ -222,10 +227,12 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 .aisle("GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG")
                 .where('S', selfPredicate())
                 .where('C', states(getCasingState()))
-                .where('X' ,states(getCasingState()).setMinGlobalLimited(MIN_CASINGS)
+                .where('X', states(getCasingState()).setMinGlobalLimited(MIN_CASINGS)
                         .or(maintenancePredicate())
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY, MultiblockAbility.INPUT_LASER).setMinGlobalLimited(1))
-                        .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY, MultiblockAbility.OUTPUT_LASER).setMinGlobalLimited(1)))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY,
+                                MultiblockAbility.INPUT_LASER).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY,
+                                MultiblockAbility.OUTPUT_LASER).setMinGlobalLimited(1)))
                 .where('G', states(getGlassState()))
                 .where('B', BATTERY_PREDICATE.get())
                 .build();
@@ -247,9 +254,9 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
                 .where('N', MetaTileEntities.SUBSTATION_ENERGY_INPUT_HATCH[0], EnumFacing.SOUTH)
                 .where('O', MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
                 .where('T', MetaTileEntities.SUBSTATION_ENERGY_OUTPUT_HATCH[0], EnumFacing.SOUTH)
-                .where('M', () -> ConfigHolder.machines.enableMaintenance
-                        ? MetaTileEntities.MAINTENANCE_HATCH
-                        : MetaBlocks.METAL_CASING.getState(MetalCasingType.PALLADIUM_SUBSTATION),
+                .where('M',
+                        () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
+                                MetaBlocks.METAL_CASING.getState(MetalCasingType.PALLADIUM_SUBSTATION),
                         EnumFacing.SOUTH);
 
         GregTechAPI.PSS_BATTERIES.entrySet().stream()
@@ -270,26 +277,27 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
         return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.LAMINATED_GLASS);
     }
 
-    protected static final Supplier<TraceabilityPredicate> BATTERY_PREDICATE = () -> new TraceabilityPredicate(blockWorldState -> {
-        IBlockState state = blockWorldState.getBlockState();
-        if (GregTechAPI.PSS_BATTERIES.containsKey(state)) {
-            IBatteryData battery = GregTechAPI.PSS_BATTERIES.get(state);
-            // Allow unfilled batteries in the structure, but do not add them to match context.
-            // This lets you use empty batteries as "filler slots" for convenience if desired.
-            if (battery.getTier() != -1 && battery.getCapacity() > 0) {
-                String key = PMC_BATTERY_HEADER + battery.getBatteryName();
-                BatteryMatchWrapper wrapper = blockWorldState.getMatchContext().get(key);
-                if (wrapper == null) wrapper = new BatteryMatchWrapper(battery);
-                blockWorldState.getMatchContext().set(key, wrapper.increment());
-            }
-            return true;
-        }
-        return false;
-    }, () -> GregTechAPI.PSS_BATTERIES.entrySet().stream()
-            .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
-            .map(entry -> new BlockInfo(entry.getKey(), null))
-            .toArray(BlockInfo[]::new))
-            .addTooltips("gregtech.multiblock.pattern.error.batteries");
+    protected static final Supplier<TraceabilityPredicate> BATTERY_PREDICATE = () -> new TraceabilityPredicate(
+            blockWorldState -> {
+                IBlockState state = blockWorldState.getBlockState();
+                if (GregTechAPI.PSS_BATTERIES.containsKey(state)) {
+                    IBatteryData battery = GregTechAPI.PSS_BATTERIES.get(state);
+                    // Allow unfilled batteries in the structure, but do not add them to match context.
+                    // This lets you use empty batteries as "filler slots" for convenience if desired.
+                    if (battery.getTier() != -1 && battery.getCapacity() > 0) {
+                        String key = PMC_BATTERY_HEADER + battery.getBatteryName();
+                        BatteryMatchWrapper wrapper = blockWorldState.getMatchContext().get(key);
+                        if (wrapper == null) wrapper = new BatteryMatchWrapper(battery);
+                        blockWorldState.getMatchContext().set(key, wrapper.increment());
+                    }
+                    return true;
+                }
+                return false;
+            }, () -> GregTechAPI.PSS_BATTERIES.entrySet().stream()
+                    .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
+                    .map(entry -> new BlockInfo(entry.getKey(), null))
+                    .toArray(BlockInfo[]::new))
+                            .addTooltips("gregtech.multiblock.pattern.error.batteries");
 
     @SideOnly(Side.CLIENT)
     @Override
@@ -307,7 +315,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(), this.isWorkingEnabled());
+        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(),
+                this.isWorkingEnabled());
     }
 
     @Override
@@ -378,14 +387,16 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
 
                         // Time to fill/drain line
                         if (averageIOLastSec > 0) {
-                            ITextComponent timeToFill = getTimeToFillDrainText(energyCapacity.subtract(energyStored).divide(BigInteger.valueOf(averageIOLastSec * 20)));
+                            ITextComponent timeToFill = getTimeToFillDrainText(energyCapacity.subtract(energyStored)
+                                    .divide(BigInteger.valueOf(averageIOLastSec * 20)));
                             TextComponentUtil.setColor(timeToFill, TextFormatting.GREEN);
                             tl.add(TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
                                     "gregtech.multiblock.power_substation.time_to_fill",
                                     timeToFill));
                         } else if (averageIOLastSec < 0) {
-                            ITextComponent timeToDrain = getTimeToFillDrainText(energyStored.divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20)));
+                            ITextComponent timeToDrain = getTimeToFillDrainText(
+                                    energyStored.divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20)));
                             TextComponentUtil.setColor(timeToDrain, TextFormatting.RED);
                             tl.add(TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
@@ -402,7 +413,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
         super.addWarningText(textList);
         if (isStructureFormed()) {
             if (averageIOLastSec < 0) { // decreasing
-                BigInteger timeToDrainSeconds = energyBank.getStored().divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20));
+                BigInteger timeToDrainSeconds = energyBank.getStored()
+                        .divide(BigInteger.valueOf(Math.abs(averageIOLastSec) * 20));
                 if (timeToDrainSeconds.compareTo(BigInteger.valueOf(60 * 60)) < 0) { // less than 1 hour left
                     textList.add(TextComponentUtil.translationWithColor(
                             TextFormatting.YELLOW,
@@ -499,14 +511,15 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase imp
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip1"));
         tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip2"));
         tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip3", MAX_BATTERY_LAYERS));
         tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip4"));
         tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip5", PASSIVE_DRAIN_MAX_PER_STORAGE));
-        tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip6")
-                + TooltipHelper.RAINBOW_SLOW + I18n.format("gregtech.machine.power_substation.tooltip6.5"));
+        tooltip.add(I18n.format("gregtech.machine.power_substation.tooltip6") + TooltipHelper.RAINBOW_SLOW +
+                I18n.format("gregtech.machine.power_substation.tooltip6.5"));
     }
 
     public String getStored() {

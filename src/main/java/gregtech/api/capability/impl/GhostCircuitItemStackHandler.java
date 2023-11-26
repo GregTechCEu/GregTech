@@ -4,17 +4,20 @@ import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GhostCircuitItemStackHandler extends GTItemStackHandler implements IItemHandlerModifiable, INotifiableHandler {
+import javax.annotation.Nonnull;
+
+public class GhostCircuitItemStackHandler extends GTItemStackHandler
+                                          implements IItemHandlerModifiable, INotifiableHandler {
 
     /**
      * Special circuit value indicating no circuit value is set.
@@ -166,7 +169,8 @@ public class GhostCircuitItemStackHandler extends GTItemStackHandler implements 
     }
 
     public void read(@Nonnull NBTTagCompound tag) {
-        int circuitValue = tag.hasKey("GhostCircuit", Constants.NBT.TAG_ANY_NUMERIC) ? tag.getInteger("GhostCircuit") : NO_CONFIG;
+        int circuitValue = tag.hasKey("GhostCircuit", Constants.NBT.TAG_ANY_NUMERIC) ? tag.getInteger("GhostCircuit") :
+                NO_CONFIG;
         if (circuitValue < IntCircuitIngredient.CIRCUIT_MIN || circuitValue > IntCircuitIngredient.CIRCUIT_MAX)
             circuitValue = NO_CONFIG;
         setCircuitValue(circuitValue);

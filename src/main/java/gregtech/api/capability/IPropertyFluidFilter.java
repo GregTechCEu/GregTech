@@ -4,15 +4,18 @@ import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.client.utils.TooltipHelper;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import static gregtech.api.fluids.FluidConstants.CRYOGENIC_FLUID_THRESHOLD;
 
@@ -75,12 +78,14 @@ public interface IPropertyFluidFilter extends IFilter<FluidStack> {
     /**
      * Set the container as able to contain an attribute
      *
-     * @param attribute the attribute to change containment status for
+     * @param attribute  the attribute to change containment status for
      * @param canContain whether the attribute can be contained
      */
     void setCanContain(@NotNull FluidAttribute attribute, boolean canContain);
 
-    @NotNull @UnmodifiableView Collection<@NotNull FluidAttribute> getContainedAttributes();
+    @NotNull
+    @UnmodifiableView
+    Collection<@NotNull FluidAttribute> getContainedAttributes();
 
     /**
      * Append tooltips about containment info
@@ -91,7 +96,8 @@ public interface IPropertyFluidFilter extends IFilter<FluidStack> {
      */
     default void appendTooltips(@NotNull List<String> tooltip, boolean showToolsInfo, boolean showTemperatureInfo) {
         if (TooltipHelper.isShiftDown()) {
-            if (showTemperatureInfo) tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", getMaxFluidTemperature()));
+            if (showTemperatureInfo)
+                tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", getMaxFluidTemperature()));
             if (isGasProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
             else tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
             if (isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
