@@ -6,7 +6,6 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolHelper;
-import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -96,9 +95,13 @@ public final class ToolChargeBarRenderer {
 
     public static void renderBarsTool(IGTTool tool, ItemStack stack, int xPosition, int yPosition) {
         boolean renderedDurability = false;
-        NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(stack);
-        if (!tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {
-            renderedDurability = renderDurabilityBar(stack.getItem().getDurabilityForDisplay(stack), xPosition, yPosition);
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag == null || !tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {
+            double durability = stack.getItem().getDurabilityForDisplay(stack);
+            if (durability != 0.0) {
+                render(1.0 - durability, xPosition, yPosition, 0, true, colorBarLeftDurability, colorBarRightDurability, true);
+                renderedDurability = true;
+            }
         }
         if (tool.isElectric()) {
             renderElectricBar(tool.getCharge(stack), tool.getMaxCharge(stack), xPosition, yPosition, renderedDurability);
@@ -134,11 +137,6 @@ public final class ToolChargeBarRenderer {
         Color left = colors != null ? colors.getLeft() : colorBarLeftDurability;
         Color right = colors != null ? colors.getRight() : colorBarRightDurability;
         render(level, xPosition, yPosition, 0, true, left, right, doDepletedColor);
-        return true;
-    }
-
-    private static boolean renderDurabilityBar(double level, int xPosition, int yPosition) {
-        render(level, xPosition, yPosition, 0, true, colorBarLeftDurability, colorBarRightDurability, true);
         return true;
     }
 
