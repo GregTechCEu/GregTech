@@ -4,6 +4,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.client.renderer.handler.LampItemOverlayRenderer;
 import gregtech.client.utils.ToolChargeBarRenderer;
+
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;

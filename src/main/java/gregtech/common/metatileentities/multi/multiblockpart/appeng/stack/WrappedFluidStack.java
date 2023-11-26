@@ -1,5 +1,11 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng.stack;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+
 import appeng.api.AEApi;
 import appeng.api.config.FuzzyMode;
 import appeng.api.storage.IStorageChannel;
@@ -7,14 +13,10 @@ import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.fluids.util.AEFluidStack;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
+
+import java.nio.charset.StandardCharsets;
 
 import javax.annotation.Nonnull;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @Author GlodBlock
@@ -141,7 +143,7 @@ public class WrappedFluidStack implements IAEFluidStack {
     @Override
     public void writeToPacket(ByteBuf buffer) {
         byte[] name = this.delegate.getFluid().getName().getBytes(StandardCharsets.UTF_8);
-        buffer.writeByte((byte)name.length);
+        buffer.writeByte((byte) name.length);
         buffer.writeBytes(name);
         buffer.writeInt(this.delegate.amount);
     }
@@ -189,7 +191,8 @@ public class WrappedFluidStack implements IAEFluidStack {
             return ((WrappedFluidStack) other).delegate.isFluidEqual(this.delegate);
         } else if (other instanceof FluidStack) {
             return ((FluidStack) other).isFluidEqual(this.delegate);
-        } return false;
+        }
+        return false;
     }
 
     @Override

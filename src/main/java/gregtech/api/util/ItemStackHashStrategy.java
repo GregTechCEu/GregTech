@@ -1,16 +1,19 @@
 package gregtech.api.util;
 
-import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.Hash;
+
 import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 /**
  * A configurable generator of hashing strategies, allowing for consideration of select properties of ItemStacks when
  * considering equality.
  */
 public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
+
     /**
      * @return a builder object for producing a custom ItemStackHashStrategy.
      */
@@ -55,6 +58,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
      * Builder pattern class for generating customized ItemStackHashStrategy
      */
     class ItemStackHashStrategyBuilder {
+
         private boolean item, count, damage, tag;
 
         /**
@@ -106,14 +110,14 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
          */
         public ItemStackHashStrategy build() {
             return new ItemStackHashStrategy() {
+
                 @Override
                 public int hashCode(@Nullable ItemStack o) {
                     return o == null || o.isEmpty() ? 0 : Objects.hash(
                             item ? o.getItem() : null,
                             count ? o.getCount() : null,
                             damage ? o.getItemDamage() : null,
-                            tag ? o.getTagCompound() : null
-                    );
+                            tag ? o.getTagCompound() : null);
                 }
 
                 @Override

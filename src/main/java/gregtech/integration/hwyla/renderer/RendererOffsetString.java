@@ -6,8 +6,9 @@ import mcp.mobius.waila.config.OverlayConfig;
 import mcp.mobius.waila.overlay.DisplayUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.awt.*;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /** Adapted from Jade 1.12.2, a HWYLA addon mod. */
 @ParametersAreNonnullByDefault

@@ -2,6 +2,7 @@ package gregtech.common.items.behaviors;
 
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.common.entities.DynamiteEntity;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;

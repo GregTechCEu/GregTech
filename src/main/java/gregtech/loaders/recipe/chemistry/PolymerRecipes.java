@@ -18,7 +18,6 @@ public class PolymerRecipes {
     }
 
     private static void polyethyleneProcess() {
-
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .fluidInputs(Ethanol.getFluid(1000))
@@ -65,7 +64,6 @@ public class PolymerRecipes {
     }
 
     private static void polyvinylChlorideProcess() {
-
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(3)
                 .fluidInputs(Oxygen.getFluid(1000))
@@ -121,7 +119,6 @@ public class PolymerRecipes {
     }
 
     private static void ptfeProcess() {
-
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .fluidInputs(Chlorine.getFluid(6000))
@@ -178,7 +175,6 @@ public class PolymerRecipes {
     }
 
     private static void epoxyProcess() {
-
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dustTiny, SodiumHydroxide)
                 .fluidInputs(SeedOil.getFluid(6000))
@@ -326,7 +322,6 @@ public class PolymerRecipes {
     }
 
     private static void styreneButadieneProcess() {
-
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Ethylene.getFluid(1000))
                 .fluidInputs(Benzene.getFluid(1000))
@@ -503,6 +498,5 @@ public class PolymerRecipes {
                 .fluidInputs(Nitrogen.getFluid(1000))
                 .output(ingot, Polycaprolactam, 1)
                 .buildAndRegister();
-
     }
 }

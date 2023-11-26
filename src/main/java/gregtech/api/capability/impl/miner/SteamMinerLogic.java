@@ -14,7 +14,8 @@ public class SteamMinerLogic extends MinerLogic {
      * @param speed          the speed in ticks per block mined
      * @param maximumRadius  the maximum radius (square shaped) the miner can mine in
      */
-    public SteamMinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture) {
+    public SteamMinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius,
+                           ICubeRenderer pipeTexture) {
         super(metaTileEntity, fortune, speed, maximumRadius, pipeTexture);
     }
 

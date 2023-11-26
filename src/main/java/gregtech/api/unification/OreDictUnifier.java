@@ -1,7 +1,5 @@
 package gregtech.api.unification;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
@@ -12,8 +10,7 @@ import gregtech.api.unification.stack.*;
 import gregtech.api.util.CustomModPriorityComparator;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -22,13 +19,19 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.AbstractMap.SimpleEntry;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import java.util.*;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static gregtech.api.GTValues.M;
 
@@ -49,7 +52,7 @@ public class OreDictUnifier {
         if (stackComparator == null) {
             List<String> modPriorities = Arrays.asList(ConfigHolder.compat.modPriorities);
             if (modPriorities.isEmpty()) {
-                //noinspection ConstantConditions
+                // noinspection ConstantConditions
                 Function<ItemAndMetadata, String> modIdExtractor = stack -> stack.item.getRegistryName().getNamespace();
                 stackComparator = Comparator.comparing(modIdExtractor);
             } else {
@@ -96,7 +99,7 @@ public class OreDictUnifier {
     @SubscribeEvent
     public static void onItemRegistration(OreRegisterEvent event) {
         String oreName = event.getName();
-        //cache this registration by name
+        // cache this registration by name
         ItemVariantMap.Mutable<Set<String>> entry = stackOreDictName.computeIfAbsent(event.getOre().getItem(),
                 item -> item.getHasSubtypes() ? new MultiItemVariantMap<>() : new SingleItemVariantMap<>());
         Set<String> set = entry.get(event.getOre());
@@ -105,15 +108,16 @@ public class OreDictUnifier {
             entry.put(event.getOre(), set);
         }
         set.add(oreName);
-        List<ItemStack> itemStackListForOreDictName = oreDictNameStacks.computeIfAbsent(oreName, k -> new ArrayList<>());
+        List<ItemStack> itemStackListForOreDictName = oreDictNameStacks.computeIfAbsent(oreName,
+                k -> new ArrayList<>());
         addAndSort(itemStackListForOreDictName, event.getOre().copy(), getItemStackComparator());
 
-        //and try to transform registration name into OrePrefix + Material pair
+        // and try to transform registration name into OrePrefix + Material pair
         OrePrefix orePrefix = OrePrefix.getPrefix(oreName);
         Material material = null;
         if (orePrefix == null) {
-            //split ore dict name to parts
-            //oreBasalticMineralSand -> ore, Basaltic, Mineral, Sand
+            // split ore dict name to parts
+            // oreBasalticMineralSand -> ore, Basaltic, Mineral, Sand
             ArrayList<String> splits = new ArrayList<>();
             StringBuilder builder = new StringBuilder();
             for (char character : oreName.toCharArray()) {
@@ -128,17 +132,17 @@ public class OreDictUnifier {
                 splits.add(builder.toString());
             }
             for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
-                //try to combine in different manners
-                //oreBasaltic MineralSand , ore BasalticMineralSand
+                // try to combine in different manners
+                // oreBasaltic MineralSand , ore BasalticMineralSand
                 StringBuilder buffer = new StringBuilder();
                 for (int i = 0; i < splits.size(); i++) {
                     buffer.append(splits.get(i));
-                    OrePrefix maybePrefix = OrePrefix.getPrefix(buffer.toString()); //ore -> OrePrefix.ore
-                    String possibleMaterialName = Joiner.on("").join(splits.subList(i + 1, splits.size())); //BasalticMineralSand
-                    String underscoreName = GTUtility.toLowerCaseUnderscore(possibleMaterialName); //basaltic_mineral_sand
-                    Material possibleMaterial = registry.getObject(underscoreName); //Materials.BasalticSand
+                    OrePrefix maybePrefix = OrePrefix.getPrefix(buffer.toString()); // ore -> OrePrefix.ore
+                    String possibleMaterialName = Joiner.on("").join(splits.subList(i + 1, splits.size())); // BasalticMineralSand
+                    String underscoreName = GTUtility.toLowerCaseUnderscore(possibleMaterialName); // basaltic_mineral_sand
+                    Material possibleMaterial = registry.getObject(underscoreName); // Materials.BasalticSand
                     if (possibleMaterial == null) {
-                        //if we didn't find real material, try using marker material registry
+                        // if we didn't find real material, try using marker material registry
                         possibleMaterial = GregTechAPI.markerMaterialRegistry.getMarkerMaterial(underscoreName);
                     }
                     if (maybePrefix != null && possibleMaterial != null) {
@@ -151,11 +155,12 @@ public class OreDictUnifier {
             }
         }
 
-        //finally register item
+        // finally register item
         if (orePrefix != null && (material != null || orePrefix.isSelfReferencing)) {
             ItemAndMetadata key = new ItemAndMetadata(event.getOre());
             UnificationEntry unificationEntry = new UnificationEntry(orePrefix, material);
-            ArrayList<ItemAndMetadata> itemListForUnifiedEntry = stackUnificationItems.computeIfAbsent(unificationEntry, p -> new ArrayList<>());
+            ArrayList<ItemAndMetadata> itemListForUnifiedEntry = stackUnificationItems.computeIfAbsent(unificationEntry,
+                    p -> new ArrayList<>());
             addAndSort(itemListForUnifiedEntry, key, getSimpleItemStackComparator());
 
             if (!unificationEntry.orePrefix.isMarkerPrefix()) {
@@ -259,7 +264,8 @@ public class OreDictUnifier {
     public static ItemStack getUnificated(ItemStack itemStack) {
         if (itemStack.isEmpty()) return ItemStack.EMPTY;
         UnificationEntry unificationEntry = getUnificationEntry(itemStack);
-        if (unificationEntry == null || !stackUnificationItems.containsKey(unificationEntry) || !unificationEntry.orePrefix.isUnificationEnabled)
+        if (unificationEntry == null || !stackUnificationItems.containsKey(unificationEntry) ||
+                !unificationEntry.orePrefix.isUnificationEnabled)
             return itemStack;
         ArrayList<ItemAndMetadata> keys = stackUnificationItems.get(unificationEntry);
         return keys.size() > 0 ? keys.get(0).toItemStack(itemStack.getCount()) : itemStack;
@@ -347,9 +353,8 @@ public class OreDictUnifier {
     }
 
     public static ItemStack getGem(MaterialStack materialStack) {
-        if (materialStack.material.hasProperty(PropertyKey.GEM)
-                && !OrePrefix.gem.isIgnored(materialStack.material)
-                && materialStack.amount == OrePrefix.gem.getMaterialAmount(materialStack.material)) {
+        if (materialStack.material.hasProperty(PropertyKey.GEM) && !OrePrefix.gem.isIgnored(materialStack.material) &&
+                materialStack.amount == OrePrefix.gem.getMaterialAmount(materialStack.material)) {
             return get(OrePrefix.gem, materialStack.material, (int) (materialStack.amount / M));
         }
         return getDust(materialStack);

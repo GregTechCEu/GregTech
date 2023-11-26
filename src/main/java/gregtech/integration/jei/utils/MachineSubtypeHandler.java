@@ -2,12 +2,15 @@ package gregtech.integration.jei.utils;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
-import mezz.jei.api.ISubtypeRegistry.ISubtypeInterpreter;
+
 import net.minecraft.item.ItemStack;
+
+import mezz.jei.api.ISubtypeRegistry.ISubtypeInterpreter;
 
 import javax.annotation.Nonnull;
 
 public class MachineSubtypeHandler implements ISubtypeInterpreter {
+
     @Nonnull
     @Override
     public String apply(@Nonnull ItemStack itemStack) {

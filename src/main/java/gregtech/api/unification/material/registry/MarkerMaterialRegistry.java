@@ -1,6 +1,7 @@
 package gregtech.api.unification.material.registry;
 
 import gregtech.api.unification.material.MarkerMaterial;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

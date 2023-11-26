@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
-import codechicken.lib.vec.Vector3;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDataAccessHatch;
@@ -33,6 +29,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -47,17 +44,24 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import codechicken.lib.vec.Vector3;
+
 import java.util.List;
 import java.util.function.Function;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     private static final ResourceLocation LASER_LOCATION = GTUtility.gregtechId("textures/fx/laser/laser.png");
-    private static final ResourceLocation LASER_HEAD_LOCATION = GTUtility.gregtechId("textures/fx/laser/laser_start.png");
+    private static final ResourceLocation LASER_HEAD_LOCATION = GTUtility
+            .gregtechId("textures/fx/laser/laser_start.png");
 
     @SideOnly(Side.CLIENT)
     private GTLaserBeamParticle[][] beamParticles;
@@ -91,9 +95,13 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                                 .setMaxGlobalLimited(3)))
                 .where('I', metaTileEntities(MetaTileEntities.ITEM_IMPORT_BUS[GTValues.ULV]))
                 .where('G', states(getGrateState()))
-                .where('A', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_CONTROL)))
+                .where('A',
+                        states(MetaBlocks.MULTIBLOCK_CASING
+                                .getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_CONTROL)))
                 .where('R', states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.LAMINATED_GLASS)))
-                .where('T', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING)))
+                .where('T',
+                        states(MetaBlocks.MULTIBLOCK_CASING
+                                .getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING)))
                 .where('D', dataHatchPredicate())
                 .where(' ', any());
         return pattern.build();
@@ -116,7 +124,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             return metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.IMPORT_FLUIDS).stream()
                     .filter(mte -> !(mte instanceof MetaTileEntityMultiFluidHatch))
                     .toArray(MetaTileEntity[]::new))
-                    .setMaxGlobalLimited(4);
+                            .setMaxGlobalLimited(4);
         }
         return abilities(MultiblockAbility.IMPORT_FLUIDS);
     }
@@ -161,7 +169,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
+        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
+                recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
     }
 
     @Override
@@ -233,6 +242,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         buf.writeVarInt(beamCount);
     }
 
+    @SideOnly(Side.CLIENT)
     private void readParticles(@Nonnull PacketBuffer buf) {
         beamCount = buf.readVarInt();
         if (beamParticles == null) {
@@ -240,8 +250,10 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getPos());
 
-        EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
-        EnumFacing relativeLeft = RelativeDirection.LEFT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
+        EnumFacing relativeUp = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
+                isFlipped());
+        EnumFacing relativeLeft = RelativeDirection.LEFT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
+                isFlipped());
         boolean negativeUp = relativeUp.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE;
 
         for (int i = 0; i < beamParticles.length; i++) {
@@ -261,7 +273,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 Vector3 endPos = startPos.copy()
                         .subtract(relativeUp.getXOffset(), relativeUp.getYOffset(), relativeUp.getZOffset());
 
-                beamParticles[i][0] = createALParticles(getWorld(), startPos, endPos);
+                beamParticles[i][0] = createALParticles(startPos, endPos);
 
                 pos.setPos(getPos());
                 if (negativeUp) {
@@ -277,10 +289,11 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 endPos = startPos.copy()
                         .subtract(relativeUp.getXOffset(), relativeUp.getYOffset(), relativeUp.getZOffset());
 
-                beamParticles[i][1] = createALParticles(getWorld(), startPos, endPos);
+                beamParticles[i][1] = createALParticles(startPos, endPos);
 
                 // Don't forget to add particles
-                GTParticleManager.INSTANCE.addEffect(beamParticles[i][0], beamParticles[i][1]);
+                GTParticleManager.INSTANCE.addEffect(beamParticles[i][0]);
+                GTParticleManager.INSTANCE.addEffect(beamParticles[i][1]);
 
             } else if (i >= beamCount && particle != null) {
                 particle.setExpired();
@@ -292,8 +305,9 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Nonnull
-    private GTLaserBeamParticle createALParticles(World world, Vector3 startPos, Vector3 endPos) {
-        GTLaserBeamParticle particle = new GTLaserBeamParticle(world, startPos, endPos)
+    @SideOnly(Side.CLIENT)
+    private GTLaserBeamParticle createALParticles(Vector3 startPos, Vector3 endPos) {
+        return new GTLaserBeamParticle(this, startPos, endPos)
                 .setBody(LASER_LOCATION)
                 .setBeamHeight(0.125f)
                 // Try commenting or adjusting on the next four lines to see what happens
@@ -301,14 +315,6 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .setHead(LASER_HEAD_LOCATION)
                 .setHeadWidth(0.1f)
                 .setEmit(0.2f);
-
-        particle.setOnUpdate(p -> {
-            if (!isValid() || !getWorld().isBlockLoaded(getPos(), false) || getWorld().getTileEntity(getPos()) != this.getHolder()) {
-                p.setExpired();
-            }
-        });
-
-        return particle;
     }
 
     @Override
@@ -352,7 +358,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 isRecipeAvailable(getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), recipe);
     }
 
-    private static boolean isRecipeAvailable(@Nonnull Iterable<? extends IDataAccessHatch> hatches, @Nonnull Recipe recipe) {
+    private static boolean isRecipeAvailable(@Nonnull Iterable<? extends IDataAccessHatch> hatches,
+                                             @Nonnull Recipe recipe) {
         for (IDataAccessHatch hatch : hatches) {
             // creative hatches do not need to check, they always have the recipe
             if (hatch.isCreative()) return true;
@@ -364,7 +371,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
+                               boolean advanced) {
         if (ConfigHolder.machines.orderedAssembly && ConfigHolder.machines.orderedFluidAssembly) {
             tooltip.add(I18n.format("gregtech.machine.assembly_line.tooltip_ordered_both"));
         } else if (ConfigHolder.machines.orderedAssembly) {

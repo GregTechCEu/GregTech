@@ -2,8 +2,9 @@ package gregtech.api.capability;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
 import java.util.Comparator;
+
+import javax.annotation.Nullable;
 
 /**
  * Interface for fluid containers ({@link net.minecraftforge.fluids.IFluidTank IFluidTank} or
@@ -15,12 +16,11 @@ public interface IFilteredFluidContainer {
      * Compare logic for filtered instances.
      */
     Comparator<IFilteredFluidContainer> COMPARATOR = Comparator.nullsLast(
-            Comparator.comparing(IFilteredFluidContainer::getFilter, IFilter.FILTER_COMPARATOR)
-    );
+            Comparator.comparing(IFilteredFluidContainer::getFilter, IFilter.FILTER_COMPARATOR));
 
     /**
      * @return instance of {@link IFilter} associated to this object, or {@code null} if there's no filter
-     * associated.
+     *         associated.
      */
     @Nullable
     IFilter<FluidStack> getFilter();

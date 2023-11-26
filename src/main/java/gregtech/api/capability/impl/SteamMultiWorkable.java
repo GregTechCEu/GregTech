@@ -6,7 +6,6 @@ import gregtech.api.recipes.RecipeBuilder;
 
 import javax.annotation.Nonnull;
 
-
 /**
  * General Recipe Handler for Steam Multiblocks.
  * Will do up to the passed value of items in one process.

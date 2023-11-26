@@ -1,10 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -27,6 +22,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,19 +43,26 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
-
+public class MetaTileEntityQuantumChest extends MetaTileEntity
+                                        implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
 
     private final int tier;
     protected final long maxStoredItems;
@@ -95,11 +98,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         return new MetaTileEntityQuantumChest(metaTileEntityId, tier, maxStoredItems);
     }
 
-
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
-                ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
+                ArrayUtils.add(pipeline,
+                        new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
                 this.getFrontFacing(), this.tier);
         Textures.QUANTUM_CHEST_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (outputFacing != null) {
@@ -128,7 +131,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             if (itemsStoredInside < maxStoredItems) {
                 ItemStack inputStack = importItems.getStackInSlot(0);
                 ItemStack outputStack = exportItems.getStackInSlot(0);
-                if (!inputStack.isEmpty() && (virtualItemStack.isEmpty() || areItemStackIdentical(outputStack, inputStack))) {
+                if (!inputStack.isEmpty() &&
+                        (virtualItemStack.isEmpty() || areItemStackIdentical(outputStack, inputStack))) {
                     GTTransferUtils.moveInventoryItems(importItems, combinedInventory);
 
                     markDirty();
@@ -137,7 +141,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             if (itemsStoredInside > 0 && !virtualItemStack.isEmpty()) {
                 ItemStack outputStack = exportItems.getStackInSlot(0);
                 int maxStackSize = virtualItemStack.getMaxStackSize();
-                if (outputStack.isEmpty() || (areItemStackIdentical(virtualItemStack, outputStack) && outputStack.getCount() < maxStackSize)) {
+                if (outputStack.isEmpty() || (areItemStackIdentical(virtualItemStack, outputStack) &&
+                        outputStack.getCount() < maxStackSize)) {
                     GTTransferUtils.moveInventoryItems(itemInventory, exportItems);
 
                     markDirty();
@@ -173,7 +178,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         textList.add(new TextComponentString(String.format("%,d", itemsStoredInside)));
         ItemStack export = exportItems.getStackInSlot(0);
         if (!export.isEmpty()) {
-            textList.add(new TextComponentString(TextFormattingUtil.formatStringWithNewlines(export.getDisplayName(), 14)));
+            textList.add(
+                    new TextComponentString(TextFormattingUtil.formatStringWithNewlines(export.getDisplayName(), 14)));
         }
     }
 
@@ -219,7 +225,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         temp.add(this.itemInventory);
         this.combinedInventory = new ItemHandlerList(temp);
         this.outputItemInventory = new ItemHandlerProxy(new GTItemStackHandler(this, 0), combinedInventory);
-
     }
 
     @Override
@@ -242,7 +247,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                     outStackMatch = areItemStackIdentical(stack, outStack);
                 }
                 if (compound == null) return true;
-                return outStackMatch && !(compound.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) || compound.hasKey("Fluid", NBT.TAG_COMPOUND)); //prevents inserting items with NBT to the Quantum Chest
+                return outStackMatch && !(compound.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) ||
+                        compound.hasKey("Fluid", NBT.TAG_COMPOUND)); // prevents inserting items with NBT to the Quantum
+                                                                     // Chest
             }
         };
     }
@@ -278,7 +285,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 this.itemsStoredInside = data.getLong(NBT_ITEMCOUNT);
             }
         }
-        if (data.hasKey(IS_VOIDING)){
+        if (data.hasKey(IS_VOIDING)) {
             this.voiding = data.getBoolean(IS_VOIDING);
         }
     }
@@ -313,7 +320,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             itemStack.setTag(NBT_PARTIALSTACK, partialStack.writeToNBT(new NBTTagCompound()));
         }
 
-
         if (this.voiding) {
             itemStack.setBoolean(IS_VOIDING, true);
         }
@@ -334,12 +340,13 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 .widget(new SlotWidget(exportItems, 0, 90, 44, true, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
                 .widget(new ToggleButtonWidget(7, 64, 18, 18,
-                        GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems).shouldUseBaseBackground()
-                        .setTooltipText("gregtech.gui.item_auto_output.tooltip"))
+                        GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
+                                .shouldUseBaseBackground()
+                                .setTooltipText("gregtech.gui.item_auto_output.tooltip"))
                 .widget(new ToggleButtonWidget(25, 64, 18, 18,
                         GuiTextures.BUTTON_ITEM_VOID, this::isVoiding, this::setVoiding)
-                        .setTooltipText("gregtech.gui.item_voiding.tooltip")
-                        .shouldUseBaseBackground())
+                                .setTooltipText("gregtech.gui.item_voiding.tooltip")
+                                .shouldUseBaseBackground())
                 .bindPlayerInventory(entityPlayer.inventory);
 
         return builder.build(getHolder(), entityPlayer);
@@ -359,7 +366,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     }
 
     @Override
-    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                 CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
             if (getOutputFacing() == facing || getFrontFacing() == facing) {
                 return false;
@@ -390,7 +398,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         try {
             this.virtualItemStack = buf.readItemStack();
         } catch (IOException ignored) {
-            GTLog.logger.warn("Failed to load item from NBT in a quantum chest at " + this.getPos() + " on initial server/client sync");
+            GTLog.logger.warn("Failed to load item from NBT in a quantum chest at " + this.getPos() +
+                    " on initial server/client sync");
         }
         this.itemsStoredInside = buf.readLong();
         this.voiding = buf.readBoolean();
@@ -398,8 +407,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     @Override
     public boolean isValidFrontFacing(EnumFacing facing) {
-        //use direct outputFacing field instead of getter method because otherwise
-        //it will just return SOUTH for null output facing
+        // use direct outputFacing field instead of getter method because otherwise
+        // it will just return SOUTH for null output facing
         return super.isValidFrontFacing(facing) && facing != outputFacing;
     }
 
@@ -458,7 +467,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             if (side == null) return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(combinedInventory);
 
             // try fix being able to insert through output hole when input on output is disabled
-            IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSideItems()) ? outputItemInventory : combinedInventory;
+            IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSideItems()) ?
+                    outputItemInventory : combinedInventory;
             if (itemHandler.getSlots() > 0) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
             }
@@ -479,7 +489,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     public void setFrontFacing(EnumFacing frontFacing) {
         super.setFrontFacing(frontFacing);
         if (this.outputFacing == null) {
-            //set initial output facing as opposite to front
+            // set initial output facing as opposite to front
             setOutputFacing(frontFacing.getOpposite());
         }
     }
@@ -509,16 +519,20 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     }
 
     @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                      CuboidRayTraceResult hitResult) {
         EnumFacing hitFacing = CoverRayTracer.determineGridSideHit(hitResult);
         if (facing == getOutputFacing() || (hitFacing == getOutputFacing() && playerIn.isSneaking())) {
             if (!getWorld().isRemote) {
                 if (isAllowInputFromOutputSideItems()) {
                     setAllowInputFromOutputSide(false);
-                    playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"), true);
+                    playerIn.sendStatusMessage(
+                            new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"),
+                            true);
                 } else {
                     setAllowInputFromOutputSide(true);
-                    playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"), true);
+                    playerIn.sendStatusMessage(
+                            new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"), true);
                 }
             }
             return true;

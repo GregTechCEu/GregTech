@@ -3,6 +3,7 @@ package gregtech.common.blocks.wood;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
@@ -13,8 +14,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
 import java.util.Random;
+
+import javax.annotation.Nonnull;
 
 public class BlockRubberLog extends BlockLog {
 
@@ -49,7 +51,8 @@ public class BlockRubberLog extends BlockLog {
     }
 
     @Override
-    public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, IBlockState state, int fortune) {
+    public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos,
+                         IBlockState state, int fortune) {
         Random rand = world instanceof World ? ((World) world).rand : RANDOM;
         if (state.getValue(NATURAL)) {
             if (rand.nextDouble() <= .85D) {

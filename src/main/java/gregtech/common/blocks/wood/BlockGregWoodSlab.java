@@ -3,6 +3,7 @@ package gregtech.common.blocks.wood;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -18,12 +19,14 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
 import java.util.Random;
+
+import javax.annotation.Nonnull;
 
 public abstract class BlockGregWoodSlab extends BlockSlab {
 
-    private static final PropertyEnum<BlockGregPlanks.BlockType> VARIANT = PropertyEnum.create("variant", BlockGregPlanks.BlockType.class);
+    private static final PropertyEnum<BlockGregPlanks.BlockType> VARIANT = PropertyEnum.create("variant",
+            BlockGregPlanks.BlockType.class);
 
     public BlockGregWoodSlab() {
         super(Material.WOOD);
@@ -114,7 +117,8 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
         }
 
         @Override
-        public boolean doesSideBlockChestOpening(@Nonnull IBlockState blockState, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+        public boolean doesSideBlockChestOpening(@Nonnull IBlockState blockState, @Nonnull IBlockAccess world,
+                                                 @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
             return false;
         }
     }

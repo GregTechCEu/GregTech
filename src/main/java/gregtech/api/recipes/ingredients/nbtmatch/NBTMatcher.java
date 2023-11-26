@@ -5,9 +5,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagLongArray;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 /**
  * This class is used to match NBT tags. Used to match a MapItemStackNBTIngredient NBT tag to a given NBT tag value.
@@ -107,7 +108,8 @@ public interface NBTMatcher {
                     return tag.getString(condition.nbtKey).equals(condition.value);
                 case LIST:
                     if (condition instanceof ListNBTCondition) {
-                        return tag.getTagList(condition.nbtKey, ((ListNBTCondition) condition).listTagType.typeId).tagList.equals(condition.value);
+                        return tag.getTagList(condition.nbtKey,
+                                ((ListNBTCondition) condition).listTagType.typeId).tagList.equals(condition.value);
                     } else {
                         return false;
                     }
@@ -127,8 +129,9 @@ public interface NBTMatcher {
      * If NBTTagCompound is found, evaluates recursively.
      */
     NBTMatcher RECURSIVE_EQUAL_TO = new NBTMatcher() {
+
         @Override
-        public boolean evaluate(@Nullable NBTTagCompound tag, @Nullable NBTCondition condition)  {
+        public boolean evaluate(@Nullable NBTTagCompound tag, @Nullable NBTCondition condition) {
             if (condition == null || condition.tagType == null) {
                 return false;
             }
@@ -145,7 +148,8 @@ public interface NBTMatcher {
                         return tag.getString(condition.nbtKey).equals(condition.value);
                     case LIST:
                         if (condition instanceof ListNBTCondition) {
-                            return tag.getTagList(condition.nbtKey, ((ListNBTCondition) condition).listTagType.typeId).tagList.equals(condition.value);
+                            return tag.getTagList(condition.nbtKey,
+                                    ((ListNBTCondition) condition).listTagType.typeId).tagList.equals(condition.value);
                         } else {
                             return false;
                         }
@@ -184,7 +188,8 @@ public interface NBTMatcher {
                 return tag.getString(condition.nbtKey).isEmpty();
             case LIST:
                 if (condition instanceof ListNBTCondition) {
-                    return tag.getTagList(condition.nbtKey, ((ListNBTCondition) condition).listTagType.typeId).isEmpty();
+                    return tag.getTagList(condition.nbtKey, ((ListNBTCondition) condition).listTagType.typeId)
+                            .isEmpty();
                 } else {
                     return false;
                 }
@@ -218,5 +223,4 @@ public interface NBTMatcher {
     default boolean evaluate(@Nonnull FluidStack stack, @Nullable NBTCondition nbtCondition) {
         return evaluate(stack.tag, nbtCondition);
     }
-
 }

@@ -9,6 +9,7 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import javax.annotation.Nullable;
 
 public class GTFluidCraftingIngredient extends Ingredient {
+
     private final FluidStack fluidStack;
 
     GTFluidCraftingIngredient(ItemStack... stacks) {

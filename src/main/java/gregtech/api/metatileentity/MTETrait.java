@@ -1,12 +1,14 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
-import it.unimi.dsi.fastutil.objects.Object2IntFunction;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+
+import it.unimi.dsi.fastutil.objects.Object2IntFunction;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,19 +66,16 @@ public abstract class MTETrait implements ISyncedTileEntity {
 
     public abstract <T> T getCapability(Capability<T> capability);
 
-    public void onFrontFacingSet(EnumFacing newFrontFacing) {
-    }
+    public void onFrontFacingSet(EnumFacing newFrontFacing) {}
 
-    public void update() {
-    }
+    public void update() {}
 
     @NotNull
     public NBTTagCompound serializeNBT() {
         return new NBTTagCompound();
     }
 
-    public void deserializeNBT(@NotNull NBTTagCompound compound) {
-    }
+    public void deserializeNBT(@NotNull NBTTagCompound compound) {}
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {}

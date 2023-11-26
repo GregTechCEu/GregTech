@@ -1,11 +1,12 @@
 package gregtech.integration.crafttweaker.material;
 
-import com.google.common.collect.ImmutableList;
-import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.MaterialStack;
+
+import com.google.common.collect.ImmutableList;
+import crafttweaker.CraftTweakerAPI;
 
 public class CTMaterialHelpers {
 
@@ -28,13 +29,16 @@ public class CTMaterialHelpers {
 
     protected static boolean checkFrozen(String description) {
         if (!GregTechAPI.materialManager.canModifyMaterials()) {
-            CraftTweakerAPI.logError("Cannot " + description + " now, must be done in a file labeled with \"#loader gregtech\"");
+            CraftTweakerAPI.logError(
+                    "Cannot " + description + " now, must be done in a file labeled with \"#loader gregtech\"");
             return true;
-        } return false;
+        }
+        return false;
     }
 
     protected static void logError(Material m, String cause, String type) {
-        CraftTweakerAPI.logError("Cannot " + cause + " of a Material with no " + type + "! Try calling \"add" + type + "\" in your \"#loader gregtech\" file first if this is intentional. Material: " + m.getUnlocalizedName());
+        CraftTweakerAPI.logError("Cannot " + cause + " of a Material with no " + type + "! Try calling \"add" + type +
+                "\" in your \"#loader gregtech\" file first if this is intentional. Material: " +
+                m.getUnlocalizedName());
     }
-
 }

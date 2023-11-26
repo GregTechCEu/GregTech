@@ -6,6 +6,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.util.Position;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory.MemorizedRecipe;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +25,8 @@ public class MemorizedRecipeWidget extends SlotWidget {
     private boolean recipeLocked = false;
     private final IItemHandlerModifiable craftingGrid;
 
-    public MemorizedRecipeWidget(CraftingRecipeMemory recipeMemory, int index, IItemHandlerModifiable craftingGrid, int xPosition, int yPosition) {
+    public MemorizedRecipeWidget(CraftingRecipeMemory recipeMemory, int index, IItemHandlerModifiable craftingGrid,
+                                 int xPosition, int yPosition) {
         super(new ItemStackHandler(1), 0, xPosition, yPosition, false, false);
         this.recipeMemory = recipeMemory;
         this.recipeIndex = index;
@@ -95,5 +97,4 @@ public class MemorizedRecipeWidget extends SlotWidget {
         }
         return ItemStack.EMPTY;
     }
-
 }

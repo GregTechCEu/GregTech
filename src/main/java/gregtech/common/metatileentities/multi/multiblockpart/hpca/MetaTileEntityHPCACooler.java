@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+
 import net.minecraft.util.ResourceLocation;
 
 public class MetaTileEntityHPCACooler extends MetaTileEntityHPCAComponent implements IHPCACoolantProvider {

@@ -1,13 +1,16 @@
 package gregtech.api.capability.impl;
 
-import com.google.common.collect.Iterables;
 import gregtech.api.capability.IFilter;
+
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.Iterables;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 /**
  * Basic filter with multiple fluid templates. Can be either whitelist or blacklist.

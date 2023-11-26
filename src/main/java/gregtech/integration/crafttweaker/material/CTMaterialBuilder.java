@@ -1,7 +1,5 @@
 package gregtech.integration.crafttweaker.material;
 
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.enchantments.IEnchantment;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidState;
@@ -16,7 +14,11 @@ import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.enchantment.Enchantment;
+
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.enchantments.IEnchantment;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenConstructor;
@@ -53,7 +55,8 @@ public class CTMaterialBuilder {
     @ZenMethod
     public CTMaterialBuilder fluid(@Optional String type, @Optional boolean hasBlock) {
         FluidState state = validateFluidState(type);
-        FluidStorageKey key = state == FluidState.GAS ? FluidStorageKeys.GAS : state == FluidState.PLASMA ? FluidStorageKeys.PLASMA : FluidStorageKeys.LIQUID;
+        FluidStorageKey key = state == FluidState.GAS ? FluidStorageKeys.GAS :
+                state == FluidState.PLASMA ? FluidStorageKeys.PLASMA : FluidStorageKeys.LIQUID;
         FluidBuilder builder = new FluidBuilder().state(state);
         if (hasBlock) builder.block();
         backingBuilder.fluid(key, builder);
@@ -79,7 +82,6 @@ public class CTMaterialBuilder {
         backingBuilder.ingot(harvestLevel, burnTime);
         return this;
     }
-
 
     @ZenMethod
     public CTMaterialBuilder gem(@Optional int harvestLevel, @Optional int burnTime) {
@@ -148,11 +150,14 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder toolStats(float speed, float damage, int durability, int harvestLevel, @Optional int enchantability) {
+    public CTMaterialBuilder toolStats(float speed, float damage, int durability, int harvestLevel,
+                                       @Optional int enchantability) {
         if (enchantability == 0) enchantability = 10;
-        backingBuilder.toolStats(ToolProperty.Builder.of(speed, damage, durability, harvestLevel).enchantability(enchantability).build());
+        backingBuilder.toolStats(ToolProperty.Builder.of(speed, damage, durability, harvestLevel)
+                .enchantability(enchantability).build());
         return this;
     }
+
     @ZenMethod
     public CTMaterialBuilder rotorStats(float speed, float damage, int durability) {
         backingBuilder.rotorStats(speed, damage, durability);
@@ -160,7 +165,9 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder blastTemp(int temp, @Optional String gasTier, @Optional int eutOverride, @Optional int durationOverride, @Optional int vacuumEUtOverride, @Optional int vacuumDurationOverride) {
+    public CTMaterialBuilder blastTemp(int temp, @Optional String gasTier, @Optional int eutOverride,
+                                       @Optional int durationOverride, @Optional int vacuumEUtOverride,
+                                       @Optional int vacuumDurationOverride) {
         BlastProperty.GasTier tier = BlastProperty.validateGasTier(gasTier);
         final int blastEUt = eutOverride != 0 ? eutOverride : -1;
         final int blastDuration = durationOverride != 0 ? durationOverride : -1;
@@ -174,7 +181,8 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder ore(@Optional int oreMultiplier, @Optional int byproductMultiplier, @Optional boolean emissive) {
+    public CTMaterialBuilder ore(@Optional int oreMultiplier, @Optional int byproductMultiplier,
+                                 @Optional boolean emissive) {
         if (oreMultiplier == 0) oreMultiplier = 1;
         if (byproductMultiplier == 0) byproductMultiplier = 1;
         backingBuilder.ore(oreMultiplier, byproductMultiplier, emissive);
@@ -243,7 +251,8 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
+    public CTMaterialBuilder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof,
+                                                 boolean cryoProof, boolean plasmaProof) {
         backingBuilder.fluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof);
         return this;
     }

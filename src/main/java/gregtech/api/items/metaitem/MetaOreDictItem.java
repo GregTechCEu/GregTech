@@ -1,21 +1,23 @@
 package gregtech.api.items.metaitem;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.SmallDigits;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import com.google.common.base.CaseFormat;
+import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +30,8 @@ public class MetaOreDictItem extends StandardMetaItem {
     private static final List<MaterialIconType> DISALLOWED_TYPES = ImmutableList.of(
             MaterialIconType.block, MaterialIconType.ore, MaterialIconType.oreSmall,
             MaterialIconType.frameGt);
-    private static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
+    private static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing",
+            "inventory");
 
     public MetaOreDictItem(short metaItemOffset) {
         super(metaItemOffset);
@@ -74,11 +77,14 @@ public class MetaOreDictItem extends StandardMetaItem {
     }
 
     @SuppressWarnings("unused")
-    public OreDictValueItem addOreDictItem(int id, String materialName, int rgb, MaterialIconSet materialIconSet, OrePrefix orePrefix) {
+    public OreDictValueItem addOreDictItem(int id, String materialName, int rgb, MaterialIconSet materialIconSet,
+                                           OrePrefix orePrefix) {
         return this.addOreDictItem(id, materialName, rgb, materialIconSet, orePrefix, null);
     }
 
-    public OreDictValueItem addOreDictItem(int id, String materialName, int materialRGB, MaterialIconSet materialIconSet, OrePrefix orePrefix, String chemicalFormula) {
+    public OreDictValueItem addOreDictItem(int id, String materialName, int materialRGB,
+                                           MaterialIconSet materialIconSet, OrePrefix orePrefix,
+                                           String chemicalFormula) {
         return new OreDictValueItem((short) id, materialName, materialRGB, materialIconSet, orePrefix, chemicalFormula);
     }
 
@@ -92,7 +98,8 @@ public class MetaOreDictItem extends StandardMetaItem {
 
         protected String chemicalFormula;
 
-        private OreDictValueItem(short id, String materialName, int materialRGB, MaterialIconSet materialIconSet, OrePrefix orePrefix, String chemicalFormula) {
+        private OreDictValueItem(short id, String materialName, int materialRGB, MaterialIconSet materialIconSet,
+                                 OrePrefix orePrefix, String chemicalFormula) {
             this.id = id;
             this.materialName = materialName;
             this.materialRGB = materialRGB;
@@ -142,5 +149,4 @@ public class MetaOreDictItem extends StandardMetaItem {
             return materialRGB;
         }
     }
-
 }

@@ -4,14 +4,16 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.metatileentities.electric.MetaTileEntityDiode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import mcp.mobius.waila.api.IWailaRegistrar;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import mcp.mobius.waila.api.IWailaRegistrar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -43,10 +45,10 @@ public class DiodeDataProvider extends ElectricContainerDataProvider {
     }
 
     @Override
-    public @NotNull List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        if (!config.getConfig("gregtech.diode")
-                || !(accessor.getTileEntity() instanceof IGregTechTileEntity gtte)
-                || !(gtte.getMetaTileEntity() instanceof MetaTileEntityDiode)) {
+    public @NotNull List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor,
+                                              IWailaConfigHandler config) {
+        if (!config.getConfig("gregtech.diode") || !(accessor.getTileEntity() instanceof IGregTechTileEntity gtte) ||
+                !(gtte.getMetaTileEntity() instanceof MetaTileEntityDiode)) {
             return tooltip;
         }
 

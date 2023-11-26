@@ -6,6 +6,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.ITextComponent;
@@ -36,7 +37,8 @@ public class IndicatorImageWidget extends Widget {
     }
 
     /** Widget displays warning status if the supplied List is nonnull and not empty */
-    public IndicatorImageWidget setWarningStatus(TextureArea texture, Consumer<List<ITextComponent>> warningTextSupplier) {
+    public IndicatorImageWidget setWarningStatus(TextureArea texture,
+                                                 Consumer<List<ITextComponent>> warningTextSupplier) {
         this.warningTexture = texture;
         this.warningTextSupplier = warningTextSupplier;
         return this;

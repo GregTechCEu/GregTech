@@ -7,5 +7,4 @@ public interface IMultiblockAbilityPart<T> extends IMultiblockPart {
     MultiblockAbility<T> getAbility();
 
     void registerAbilities(List<T> abilityList);
-
 }

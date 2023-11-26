@@ -1,13 +1,5 @@
 package gregtech.integration.crafttweaker.recipe;
 
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.data.DataMap;
-import crafttweaker.api.data.IData;
-import crafttweaker.api.item.IIngredient;
-import crafttweaker.api.item.IItemStack;
-import crafttweaker.api.liquid.ILiquidStack;
-import crafttweaker.api.minecraft.CraftTweakerMC;
-import crafttweaker.api.oredict.IOreDictEntry;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -16,19 +8,30 @@ import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.util.ItemStackHashStrategy;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.data.DataMap;
+import crafttweaker.api.data.IData;
+import crafttweaker.api.item.IIngredient;
+import crafttweaker.api.item.IItemStack;
+import crafttweaker.api.liquid.ILiquidStack;
+import crafttweaker.api.minecraft.CraftTweakerMC;
+import crafttweaker.api.oredict.IOreDictEntry;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @ZenClass("mods.gregtech.recipe.RecipeBuilder")
 @ZenRegister
@@ -113,7 +116,8 @@ public class CTRecipeBuilder {
             return tryConstructNBTInput(new GTRecipeItemInput(stack, ingredient.getAmount()), tagCompound);
         } else {
             // multiple inputs for a single input entry
-            final Map<ItemStack, List<NBTTagCompound>> map = new Object2ObjectOpenCustomHashMap<>(ItemStackHashStrategy.comparingItemDamageCount());
+            final Map<ItemStack, List<NBTTagCompound>> map = new Object2ObjectOpenCustomHashMap<>(
+                    ItemStackHashStrategy.comparingItemDamageCount());
 
             ItemStack[] stacks = new ItemStack[items.size()];
             for (int i = 0; i < stacks.length; i++) {
@@ -165,7 +169,8 @@ public class CTRecipeBuilder {
      * @return the nbt matching input if successful, otherwise the original recipe input
      */
     @Nonnull
-    private static GTRecipeInput tryConstructNBTInput(@Nonnull GTRecipeInput input, @Nonnull Map<ItemStack, List<NBTTagCompound>> map) {
+    private static GTRecipeInput tryConstructNBTInput(@Nonnull GTRecipeInput input,
+                                                      @Nonnull Map<ItemStack, List<NBTTagCompound>> map) {
         if (map.isEmpty()) return input; // do not use nbt matching, if there are no tags to check
         return input.setNBTMatchingCondition(new CTNBTMultiItemMatcher(map), null);
     }
@@ -182,7 +187,7 @@ public class CTRecipeBuilder {
         return this;
     }
 
-    //note that fluid input predicates are not supported
+    // note that fluid input predicates are not supported
     @ZenMethod
     public CTRecipeBuilder fluidInputs(ILiquidStack... ingredients) {
         this.backingBuilder.fluidInputs(Arrays.stream(ingredients)
@@ -275,7 +280,8 @@ public class CTRecipeBuilder {
         if (!applied) {
             throw new IllegalArgumentException("Property " +
                     key + " cannot be applied to recipe type " +
-                    backingBuilder.getClass().getSimpleName() + " for Item " + CraftTweakerMC.getItemStack(item).getDisplayName());
+                    backingBuilder.getClass().getSimpleName() + " for Item " +
+                    CraftTweakerMC.getItemStack(item).getDisplayName());
         }
         return this;
     }
@@ -290,5 +296,4 @@ public class CTRecipeBuilder {
     public String toString() {
         return this.backingBuilder.toString();
     }
-
 }

@@ -6,5 +6,4 @@ import gregtech.api.unification.material.Material;
 public interface IOreRegistrationHandler {
 
     void processMaterial(OrePrefix orePrefix, Material material);
-
 }

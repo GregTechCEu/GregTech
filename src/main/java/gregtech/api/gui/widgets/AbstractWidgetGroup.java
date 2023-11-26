@@ -9,10 +9,12 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.ConfigHolder;
-import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+
+import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +28,6 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     private transient final boolean isDynamicSized;
     private transient boolean initialized = false;
     protected transient List<Widget> waitToRemoved;
-
 
     public AbstractWidgetGroup(Position position) {
         super(position, Size.ZERO);
@@ -284,7 +285,8 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
         for (Widget widget : widgets) {
             if (widget.isVisible()) {
                 widget.drawInBackground(mouseX, mouseY, partialTicks, context);
-                GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
+                GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(),
+                        1.0F);
             }
         }
     }
@@ -293,7 +295,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible() && widget.isActive() && widget.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
+            if (widget.isVisible() && widget.isActive() && widget.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
                 return true;
             }
         }
@@ -304,7 +306,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible() && widget.isActive() && widget.mouseClicked(mouseX, mouseY, button)) {
+            if (widget.isVisible() && widget.isActive() && widget.mouseClicked(mouseX, mouseY, button)) {
                 return true;
             }
         }
@@ -315,7 +317,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible() && widget.isActive() && widget.mouseDragged(mouseX, mouseY, button, timeDragged)) {
+            if (widget.isVisible() && widget.isActive() && widget.mouseDragged(mouseX, mouseY, button, timeDragged)) {
                 return true;
             }
         }
@@ -326,7 +328,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     public boolean mouseReleased(int mouseX, int mouseY, int button) {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible() && widget.isActive() && widget.mouseReleased(mouseX, mouseY, button)) {
+            if (widget.isVisible() && widget.isActive() && widget.mouseReleased(mouseX, mouseY, button)) {
                 return true;
             }
         }
@@ -337,7 +339,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     public boolean keyTyped(char charTyped, int keyCode) {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible() && widget.isActive() && widget.keyTyped(charTyped, keyCode)) {
+            if (widget.isVisible() && widget.isActive() && widget.keyTyped(charTyped, keyCode)) {
                 return true;
             }
         }
@@ -426,6 +428,5 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
                 dataWriter.accept(buffer);
             });
         }
-
     }
 }

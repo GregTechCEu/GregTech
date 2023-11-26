@@ -1,6 +1,7 @@
 package gregtech.api.recipes.recipeproperties;
 
 import gregtech.api.util.GTLog;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 import java.util.HashSet;
@@ -131,5 +132,4 @@ public class RecipePropertyStorage implements IRecipePropertyStorage {
 
         return null;
     }
-
 }

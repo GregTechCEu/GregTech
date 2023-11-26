@@ -1,6 +1,7 @@
 package gregtech.common.inventory;
 
 import gregtech.api.util.ItemStackHashStrategy;
+
 import net.minecraft.item.ItemStack;
 
 public class SimpleItemInfo implements IItemInfo {

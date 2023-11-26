@@ -7,6 +7,7 @@ import gregtech.api.cover.CoverHolder;
 import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.core.advancement.AdvancementTriggers;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -16,6 +17,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,7 +35,8 @@ public class CoverItemBehavior implements IItemBehaviour {
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, @NotNull World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(EntityPlayer player, @NotNull World world, BlockPos pos, EnumFacing side,
+                                           float hitX, float hitY, float hitZ, EnumHand hand) {
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity == null) return EnumActionResult.PASS;
 

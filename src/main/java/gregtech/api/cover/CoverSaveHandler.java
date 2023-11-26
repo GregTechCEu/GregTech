@@ -1,12 +1,14 @@
 package gregtech.api.cover;
 
 import gregtech.api.util.GTLog;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
@@ -59,7 +61,8 @@ public final class CoverSaveHandler {
             CoverDefinition definition = CoverDefinition.getCoverByNetworkId(id);
 
             if (definition == null) {
-                GTLog.logger.warn("Unable to find CoverDefinition for Network ID {} at position {}", id, coverHolder.getPos());
+                GTLog.logger.warn("Unable to find CoverDefinition for Network ID {} at position {}", id,
+                        coverHolder.getPos());
             } else {
                 Cover cover = definition.createCover(coverHolder, facing);
                 cover.readInitialSyncData(buf);
@@ -92,12 +95,13 @@ public final class CoverSaveHandler {
      * @param coverHolder the CoverHolder the cover is placed on
      */
     public static void readCoverPlacement(@NotNull PacketBuffer buf, @NotNull CoverHolder coverHolder) {
-        //cover placement event
+        // cover placement event
         EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
         int id = buf.readVarInt();
         CoverDefinition coverDefinition = CoverDefinition.getCoverByNetworkId(id);
         if (coverDefinition == null) {
-            GTLog.logger.warn("Unable to find CoverDefinition for Network ID {} at position {}", id, coverHolder.getPos());
+            GTLog.logger.warn("Unable to find CoverDefinition for Network ID {} at position {}", id,
+                    coverHolder.getPos());
         } else {
             Cover cover = coverDefinition.createCover(coverHolder, placementSide);
             coverHolder.addCover(placementSide, cover);

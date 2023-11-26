@@ -36,23 +36,40 @@ public class DyeUtil {
     @Nonnull
     public static String getOredictColorName(@Nonnull EnumDyeColor dyeColor) {
         switch (dyeColor) {
-            case WHITE: return "dyeWhite";
-            case ORANGE: return "dyeOrange";
-            case MAGENTA: return "dyeMagenta";
-            case LIGHT_BLUE: return "dyeLightBlue";
-            case YELLOW: return "dyeYellow";
-            case LIME: return "dyeLime";
-            case PINK: return "dyePink";
-            case GRAY: return "dyeGray";
-            case SILVER: return "dyeLightGray";
-            case CYAN: return "dyeCyan";
-            case PURPLE: return "dyePurple";
-            case BLUE: return "dyeBlue";
-            case BROWN: return "dyeBrown";
-            case GREEN: return "dyeGreen";
-            case RED: return "dyeRed";
-            case BLACK: return "dyeBlack";
-            default: throw new IllegalStateException("Unreachable");
+            case WHITE:
+                return "dyeWhite";
+            case ORANGE:
+                return "dyeOrange";
+            case MAGENTA:
+                return "dyeMagenta";
+            case LIGHT_BLUE:
+                return "dyeLightBlue";
+            case YELLOW:
+                return "dyeYellow";
+            case LIME:
+                return "dyeLime";
+            case PINK:
+                return "dyePink";
+            case GRAY:
+                return "dyeGray";
+            case SILVER:
+                return "dyeLightGray";
+            case CYAN:
+                return "dyeCyan";
+            case PURPLE:
+                return "dyePurple";
+            case BLUE:
+                return "dyeBlue";
+            case BROWN:
+                return "dyeBrown";
+            case GREEN:
+                return "dyeGreen";
+            case RED:
+                return "dyeRed";
+            case BLACK:
+                return "dyeBlack";
+            default:
+                throw new IllegalStateException("Unreachable");
         }
     }
 }

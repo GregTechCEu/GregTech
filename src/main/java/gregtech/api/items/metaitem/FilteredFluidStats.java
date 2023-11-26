@@ -6,6 +6,7 @@ import gregtech.api.capability.impl.GTSimpleFluidHandlerItemStack;
 import gregtech.api.capability.impl.PropertyFluidFilter;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.items.metaitem.stats.IItemComponent;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
@@ -27,7 +28,8 @@ public class FilteredFluidStats implements IItemComponent, IItemCapabilityProvid
 
     public FilteredFluidStats(int capacity, int maxFluidTemperature, boolean gasProof, boolean acidProof,
                               boolean cryoProof, boolean plasmaProof, boolean allowPartialFill) {
-        this(capacity, allowPartialFill, new PropertyFluidFilter(maxFluidTemperature, gasProof, acidProof, cryoProof, plasmaProof));
+        this(capacity, allowPartialFill,
+                new PropertyFluidFilter(maxFluidTemperature, gasProof, acidProof, cryoProof, plasmaProof));
     }
 
     @Override

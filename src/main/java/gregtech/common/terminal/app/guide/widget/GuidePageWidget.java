@@ -1,9 +1,5 @@
 package gregtech.common.terminal.app.guide.widget;
 
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
@@ -12,19 +8,26 @@ import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
 public class GuidePageWidget extends DraggableScrollableWidgetGroup {
+
     public static final Map<String, IGuideWidget> REGISTER_WIDGETS = new HashMap<>();
-    static { //register guide widgets
+
+    static { // register guide widgets
         REGISTER_WIDGETS.put(TextBoxWidget.NAME, new TextBoxWidget());
         REGISTER_WIDGETS.put(ImageWidget.NAME, new ImageWidget());
         REGISTER_WIDGETS.put(CardWidget.NAME, new CardWidget());
         REGISTER_WIDGETS.put(SlotListWidget.NAME, new SlotListWidget());
         REGISTER_WIDGETS.put(TankListWidget.NAME, new TankListWidget());
     }
+
     protected TextBoxWidget title;
     protected List<Widget> stream = new ArrayList<>();
     protected List<Widget> fixed = new ArrayList<>();
@@ -40,7 +43,6 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
                 .setYBarStyle(new ColorRectTexture(new Color(142, 142, 142)),
                         new ColorRectTexture(new Color(148, 226, 193)));
         this.setUseScissor(false);
-
     }
 
     public int getPageWidth() {
@@ -106,7 +108,8 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
             int y = title.getSize().height + 10;
             for (JsonElement element : config.getAsJsonArray("stream")) {
                 JsonObject widgetConfig = element.getAsJsonObject();
-                Widget widget = REGISTER_WIDGETS.get(widgetConfig.get("type").getAsString()).updateOrCreateStreamWidget(margin, y, pageWidth - 2 * margin, widgetConfig);
+                Widget widget = REGISTER_WIDGETS.get(widgetConfig.get("type").getAsString())
+                        .updateOrCreateStreamWidget(margin, y, pageWidth - 2 * margin, widgetConfig);
                 y += widget.getSize().height + 5;
                 stream.add(widget);
                 this.addWidget(widget);
@@ -150,7 +153,7 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
     }
 
     protected int getStreamBottom() {
-        if (stream!= null && stream.size() > 0) {
+        if (stream != null && stream.size() > 0) {
             Widget widget = stream.get(stream.size() - 1);
             return widget.getSize().height + widget.getSelfPosition().y + scrollYOffset;
         } else {
@@ -164,13 +167,14 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
         super.updateScreen();
     }
 
-    public void jumpToRef(String ref){
+    public void jumpToRef(String ref) {
         if (interpolator != null && !interpolator.isFinish()) return;
         for (Widget widget : widgets) {
             if (widget instanceof IGuideWidget && ref.equals(((IGuideWidget) widget).getRef())) {
-                interpolator = new Interpolator(scrollYOffset, widget.getSelfPosition().y + scrollYOffset, 20, Eases.EaseQuadOut,
-                        value-> setScrollYOffset(value.intValue()),
-                        value-> interpolator = null);
+                interpolator = new Interpolator(scrollYOffset, widget.getSelfPosition().y + scrollYOffset, 20,
+                        Eases.QUAD_OUT,
+                        value -> setScrollYOffset(value.intValue()),
+                        value -> interpolator = null);
                 interpolator.start();
             }
         }

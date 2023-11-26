@@ -1,7 +1,9 @@
 package gregtech.client;
 
 import gregtech.Bootstrap;
+
 import net.minecraft.client.resources.I18n;
+
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

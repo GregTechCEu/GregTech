@@ -3,6 +3,7 @@ package gregtech.common.inventory.handlers;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;

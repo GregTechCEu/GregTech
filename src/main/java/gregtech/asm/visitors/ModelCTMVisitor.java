@@ -1,6 +1,7 @@
 package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -19,7 +20,6 @@ public class ModelCTMVisitor extends MethodVisitor implements Opcodes {
             "gregtech/asm/hooks/CTMModHooks",
             "canRenderInLayer",
             "(Lteam/chisel/ctm/api/model/IModelCTM;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/BlockRenderLayer;)Z");
-
 
     public ModelCTMVisitor(MethodVisitor mv) {
         super(ASM5, mv);

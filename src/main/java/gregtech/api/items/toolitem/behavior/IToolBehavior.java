@@ -16,9 +16,10 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 /**
  * Describes generic behaviour attachable to tools. Multiple behaviours can be attached to one tool.
@@ -30,8 +31,8 @@ public interface IToolBehavior {
      * @param target   the entity being hit
      * @param attacker the entity hitting the other
      */
-    default void hitEntity(@Nonnull ItemStack stack, @Nonnull EntityLivingBase target, @Nonnull EntityLivingBase attacker) {
-    }
+    default void hitEntity(@Nonnull ItemStack stack, @Nonnull EntityLivingBase target,
+                           @Nonnull EntityLivingBase attacker) {}
 
     /**
      * Called before a block is broken.
@@ -42,8 +43,7 @@ public interface IToolBehavior {
      * @param pos    Block's position in world
      * @param player The Player that is wielding the item
      */
-    default void onBlockStartBreak(@Nonnull ItemStack stack, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
-    }
+    default void onBlockStartBreak(@Nonnull ItemStack stack, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {}
 
     /**
      * Called when a Block is destroyed using this Item.
@@ -54,8 +54,8 @@ public interface IToolBehavior {
      * @param pos          The position of the destroyed block
      * @param entityLiving the entity destroying the block
      */
-    default void onBlockDestroyed(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EntityLivingBase entityLiving) {
-    }
+    default void onBlockDestroyed(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull IBlockState state,
+                                  @Nonnull BlockPos pos, @Nonnull EntityLivingBase entityLiving) {}
 
     /**
      * Called when an entity tries to play the 'swing' animation.
@@ -63,18 +63,18 @@ public interface IToolBehavior {
      * @param entityLiving The entity swinging the item.
      * @param stack        The Item stack
      */
-    default void onEntitySwing(@Nonnull EntityLivingBase entityLiving, @Nonnull ItemStack stack) {
-    }
+    default void onEntitySwing(@Nonnull EntityLivingBase entityLiving, @Nonnull ItemStack stack) {}
 
     /**
      *
-     * @param stack  the tool
-     * @param shield the shield to disable
-     * @param entity the entity holding the shield
+     * @param stack    the tool
+     * @param shield   the shield to disable
+     * @param entity   the entity holding the shield
      * @param attacker the entity attacking the shield
      * @return if the tool can disable shields
      */
-    default boolean canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker) {
+    default boolean canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity,
+                                     EntityLivingBase attacker) {
         return false;
     }
 
@@ -90,7 +90,9 @@ public interface IToolBehavior {
      * @param hitZ   the z location of the block hit
      * @param hand   the hand holding the item
      */
-    default EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
+    default EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos,
+                                            @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ,
+                                            @Nonnull EnumHand hand) {
         return EnumActionResult.PASS;
     }
 
@@ -107,7 +109,9 @@ public interface IToolBehavior {
      * @param hitZ   the z location of the block hit
      */
     @Nonnull
-    default EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    default EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos,
+                                       @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY,
+                                       float hitZ) {
         return EnumActionResult.PASS;
     }
 
@@ -119,25 +123,27 @@ public interface IToolBehavior {
      * @param hand   the hand holding the item
      */
     @Nonnull
-    default ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
+    default ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player,
+                                                     @Nonnull EnumHand hand) {
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 
     @SideOnly(Side.CLIENT)
-    default void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-    }
+    default void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
+                                @Nonnull ITooltipFlag flag) {}
 
     /**
      * Add the necessary NBT information to the tool
+     * 
      * @param stack the tool
      * @param tag   the nbt tag to add to
      */
-    default void addBehaviorNBT(@Nonnull ItemStack stack, @Nonnull NBTTagCompound tag) {
-    }
+    default void addBehaviorNBT(@Nonnull ItemStack stack, @Nonnull NBTTagCompound tag) {}
 
     /**
      * Add a capability to a tool.
      * Recommended to only use this if no other options exist.
+     * 
      * @param stack the tool
      * @param tag   the capability nbt of the item
      */

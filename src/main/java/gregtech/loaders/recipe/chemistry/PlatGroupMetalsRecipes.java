@@ -9,7 +9,6 @@ import static gregtech.api.unification.ore.OrePrefix.dust;
 public class PlatGroupMetalsRecipes {
 
     public static void init() {
-
         // Primary Chain
 
         // Platinum Group Sludge Production
@@ -68,16 +67,16 @@ public class PlatGroupMetalsRecipes {
         // MODIFY THIS RECIPE TO RE-BALANCE THE LINE
         //
         // Current Losses of Materials per recipe (update this if rebalanced):
-        // H:  Loses
-        // N:  Loses
-        // O:  Loses
+        // H: Loses
+        // N: Loses
+        // O: Loses
         // Cl: Perfectly Conserved
         //
         // If modified, this is how much 1 of each product will change the above losses by:
-        // Pt:    266L of Cl
+        // Pt: 266L of Cl
         //
         // These numbers are not correct:
-        // Pd:    200L of N, 600L of H
+        // Pd: 200L of N, 600L of H
         // Ru/Rh: 667L of O
         // Ir/Os: 620L of O, 100L of H
         //
@@ -93,7 +92,6 @@ public class PlatGroupMetalsRecipes {
                 .output(dust, PlatinumSludgeResidue, 2)
                 .buildAndRegister();
 
-
         // PLATINUM
 
         ELECTROLYZER_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
@@ -101,7 +99,6 @@ public class PlatGroupMetalsRecipes {
                 .output(dust, Platinum)
                 .fluidOutputs(Chlorine.getFluid(800))
                 .buildAndRegister();
-
 
         // PALLADIUM
 
@@ -111,7 +108,6 @@ public class PlatGroupMetalsRecipes {
                 .output(dust, Palladium)
                 .output(dust, AmmoniumChloride, 2)
                 .buildAndRegister();
-
 
         // RHODIUM / RUTHENIUM
 
@@ -136,7 +132,6 @@ public class PlatGroupMetalsRecipes {
                 .output(dust, Ruthenium)
                 .fluidOutputs(CarbonDioxide.getFluid(2000))
                 .buildAndRegister();
-
 
         // OSMIUM / IRIDIUM
 

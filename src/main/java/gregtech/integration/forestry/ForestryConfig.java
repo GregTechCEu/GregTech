@@ -1,6 +1,7 @@
 package gregtech.integration.forestry;
 
 import gregtech.api.GTValues;
+
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.*;
 
@@ -8,11 +9,11 @@ import net.minecraftforge.common.config.Config.*;
 @Config(modid = GTValues.MODID, name = GTValues.MODID + "/forestry_integration", category = "Forestry")
 public class ForestryConfig {
 
-    @Comment({"Enable GregTech Electron Tubes.", "Default: true"})
+    @Comment({ "Enable GregTech Electron Tubes.", "Default: true" })
     @RequiresMcRestart
     public static boolean enableGTElectronTubes = true;
 
-    @Comment({"Enable the GregTech Scoop.", "Default: true"})
+    @Comment({ "Enable the GregTech Scoop.", "Default: true" })
     @RequiresMcRestart
     public static boolean enableGTScoop = true;
 

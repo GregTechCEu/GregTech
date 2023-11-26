@@ -1,11 +1,11 @@
 package gregtech.common.metatileentities.storage;
 
-import com.google.common.collect.Lists;
 import gregtech.api.storage.ICraftingStorage;
 import gregtech.api.util.DummyContainer;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.itemsource.ItemSources;
 import gregtech.common.inventory.itemsource.sources.TileItemSource;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -20,6 +20,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.ItemStackHandler;
+
+import com.google.common.collect.Lists;
 
 import java.util.Collections;
 import java.util.Map;
@@ -93,10 +95,10 @@ public class CraftingRecipeLogic {
                 craftingGridChanged = true;
             } else if (!ItemStack.areItemsEqual(oldStack, newStack) ||
                     !ItemStack.areItemStackTagsEqual(oldStack, newStack)) {
-                oldCraftingGrid[i] = newStack;
-                inventoryCrafting.setInventorySlotContents(i, newStack.copy());
-                craftingGridChanged = true;
-            }
+                        oldCraftingGrid[i] = newStack;
+                        inventoryCrafting.setInventorySlotContents(i, newStack.copy());
+                        craftingGridChanged = true;
+                    }
         }
         return craftingGridChanged;
     }
@@ -109,7 +111,9 @@ public class CraftingRecipeLogic {
             return false;
         }
         ForgeHooks.setCraftingPlayer(player);
-        NonNullList<ItemStack> remainingItems = cachedRecipe.getRemainingItems(inventoryCrafting); // todo right here is where tools get damaged (in UI)
+        NonNullList<ItemStack> remainingItems = cachedRecipe.getRemainingItems(inventoryCrafting); // todo right here is
+                                                                                                   // where tools get
+                                                                                                   // damaged (in UI)
         ForgeHooks.setCraftingPlayer(null);
         for (int i = 0; i < remainingItems.size(); i++) {
             ItemStack itemStack = remainingItems.get(i);
@@ -119,11 +123,12 @@ public class CraftingRecipeLogic {
 
             ItemStack current = inventoryCrafting.getStackInSlot(i);
             inventoryCrafting.setInventorySlotContents(i, itemStack);
-            if (!cachedRecipe.matches(inventoryCrafting, itemSources.getWorld())){
+            if (!cachedRecipe.matches(inventoryCrafting, itemSources.getWorld())) {
                 inventoryCrafting.setInventorySlotContents(i, current);
             }
 
-            int remainingAmount = itemStack.getCount() - itemSources.insertItem(itemStack, itemStack.getCount(), false, IItemList.InsertMode.HIGHEST_PRIORITY);
+            int remainingAmount = itemStack.getCount() - itemSources.insertItem(itemStack, itemStack.getCount(), false,
+                    IItemList.InsertMode.HIGHEST_PRIORITY);
             if (remainingAmount > 0) {
                 itemStack.setCount(remainingAmount);
                 player.addItemStackToInventory(itemStack);
@@ -138,7 +143,7 @@ public class CraftingRecipeLogic {
     public void handleItemCraft(ItemStack itemStack, EntityPlayer player) {
         itemStack.onCrafting(world, player, 1);
         itemStack.getItem().onCreated(itemStack, world, player);
-        //if we're not simulated, fire the event, unlock recipe and add crafted items, and play sounds
+        // if we're not simulated, fire the event, unlock recipe and add crafted items, and play sounds
         FMLCommonHandler.instance().firePlayerCraftingEvent(player, itemStack, inventoryCrafting);
 
         if (cachedRecipe != null && !cachedRecipe.isDynamic()) {
@@ -160,11 +165,13 @@ public class CraftingRecipeLogic {
     }
 
     public boolean isRecipeValid() {
-        return cachedRecipeData.getRecipe() != null && cachedRecipeData.matches(inventoryCrafting, this.world) && cachedRecipeData.attemptMatchRecipe() == ALL_INGREDIENTS_PRESENT;
+        return cachedRecipeData.getRecipe() != null && cachedRecipeData.matches(inventoryCrafting, this.world) &&
+                cachedRecipeData.attemptMatchRecipe() == ALL_INGREDIENTS_PRESENT;
     }
 
     private void updateCurrentRecipe() {
-        if (!cachedRecipeData.matches(inventoryCrafting, world) || !ItemStack.areItemStacksEqual(oldResult, cachedRecipe.getCraftingResult(inventoryCrafting))) {
+        if (!cachedRecipeData.matches(inventoryCrafting, world) ||
+                !ItemStack.areItemStacksEqual(oldResult, cachedRecipe.getCraftingResult(inventoryCrafting))) {
             IRecipe newRecipe = CraftingManager.findMatchingRecipe(inventoryCrafting, world);
             this.cachedRecipe = newRecipe;
             ItemStack resultStack = ItemStack.EMPTY;
@@ -178,12 +185,11 @@ public class CraftingRecipeLogic {
     }
 
     public void update() {
-        //update item sources every tick for fast tinting updates
+        // update item sources every tick for fast tinting updates
         itemSources.update();
         if (getCachedRecipeData().getRecipe() != null) {
             tintLocation = getCachedRecipeData().attemptMatchRecipe();
-        }
-        else {
+        } else {
             tintLocation = ALL_INGREDIENTS_PRESENT;
         }
         if (hasCraftingGridUpdated()) {

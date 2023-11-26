@@ -8,6 +8,7 @@ import gregtech.common.covers.CoverItemFilter;
 import gregtech.common.covers.CoverShutter;
 import gregtech.common.covers.ItemFilterMode;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -16,11 +17,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
 
 public class ItemNetWalker extends PipeNetWalker<TileEntityItemPipe> {
 
@@ -42,14 +44,16 @@ public class ItemNetWalker extends PipeNetWalker<TileEntityItemPipe> {
     private BlockPos sourcePipe;
     private EnumFacing facingToHandler;
 
-    protected ItemNetWalker(World world, BlockPos sourcePipe, int distance, List<ItemRoutePath> inventories, ItemPipeProperties properties) {
+    protected ItemNetWalker(World world, BlockPos sourcePipe, int distance, List<ItemRoutePath> inventories,
+                            ItemPipeProperties properties) {
         super(world, sourcePipe, distance);
         this.inventories = inventories;
         this.minProperties = properties;
     }
 
     @Override
-    protected PipeNetWalker<TileEntityItemPipe> createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks) {
+    protected PipeNetWalker<TileEntityItemPipe> createSubWalker(World world, EnumFacing facingToNextPos,
+                                                                BlockPos nextPos, int walkedBlocks) {
         ItemNetWalker walker = new ItemNetWalker(world, nextPos, walkedBlocks, inventories, minProperties);
         walker.facingToHandler = facingToHandler;
         walker.sourcePipe = sourcePipe;
@@ -73,16 +77,20 @@ public class ItemNetWalker extends PipeNetWalker<TileEntityItemPipe> {
         if (minProperties == null) {
             minProperties = pipeProperties;
         } else {
-            minProperties = new ItemPipeProperties(minProperties.getPriority() + pipeProperties.getPriority(), Math.min(minProperties.getTransferRate(), pipeProperties.getTransferRate()));
+            minProperties = new ItemPipeProperties(minProperties.getPriority() + pipeProperties.getPriority(),
+                    Math.min(minProperties.getTransferRate(), pipeProperties.getTransferRate()));
         }
     }
 
     @Override
-    protected void checkNeighbour(TileEntityItemPipe pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
-        if (neighbourTile == null || (GTUtility.arePosEqual(pipePos, sourcePipe) && faceToNeighbour == facingToHandler)) {
+    protected void checkNeighbour(TileEntityItemPipe pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour,
+                                  @Nullable TileEntity neighbourTile) {
+        if (neighbourTile == null ||
+                (GTUtility.arePosEqual(pipePos, sourcePipe) && faceToNeighbour == facingToHandler)) {
             return;
         }
-        IItemHandler handler = neighbourTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, faceToNeighbour.getOpposite());
+        IItemHandler handler = neighbourTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                faceToNeighbour.getOpposite());
         if (handler != null) {
             List<Predicate<ItemStack>> filters = new ArrayList<>(this.filters);
             List<Predicate<ItemStack>> moreFilters = nextFilters.get(faceToNeighbour);
@@ -99,20 +107,23 @@ public class ItemNetWalker extends PipeNetWalker<TileEntityItemPipe> {
     }
 
     @Override
-    protected boolean isValidPipe(TileEntityItemPipe currentPipe, TileEntityItemPipe neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
+    protected boolean isValidPipe(TileEntityItemPipe currentPipe, TileEntityItemPipe neighbourPipe, BlockPos pipePos,
+                                  EnumFacing faceToNeighbour) {
         Cover thisCover = currentPipe.getCoverableImplementation().getCoverAtSide(faceToNeighbour);
         Cover neighbourCover = neighbourPipe.getCoverableImplementation().getCoverAtSide(faceToNeighbour.getOpposite());
         List<Predicate<ItemStack>> filters = new ArrayList<>();
         if (thisCover instanceof CoverShutter) {
-            filters.add(stack ->  !((CoverShutter) thisCover).isWorkingEnabled());
-        } else if (thisCover instanceof CoverItemFilter && ((CoverItemFilter) thisCover).getFilterMode() != ItemFilterMode.FILTER_INSERT) {
-            filters.add(((CoverItemFilter) thisCover)::testItemStack);
-        }
+            filters.add(stack -> !((CoverShutter) thisCover).isWorkingEnabled());
+        } else if (thisCover instanceof CoverItemFilter &&
+                ((CoverItemFilter) thisCover).getFilterMode() != ItemFilterMode.FILTER_INSERT) {
+                    filters.add(((CoverItemFilter) thisCover)::testItemStack);
+                }
         if (neighbourCover instanceof CoverShutter) {
             filters.add(stack -> !((CoverShutter) neighbourCover).isWorkingEnabled());
-        } else if (neighbourCover instanceof CoverItemFilter && ((CoverItemFilter) neighbourCover).getFilterMode() != ItemFilterMode.FILTER_EXTRACT) {
-            filters.add(((CoverItemFilter) neighbourCover)::testItemStack);
-        }
+        } else if (neighbourCover instanceof CoverItemFilter &&
+                ((CoverItemFilter) neighbourCover).getFilterMode() != ItemFilterMode.FILTER_EXTRACT) {
+                    filters.add(((CoverItemFilter) neighbourCover)::testItemStack);
+                }
         if (!filters.isEmpty()) {
             nextFilters.put(faceToNeighbour, filters);
         }

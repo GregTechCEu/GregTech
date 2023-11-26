@@ -1,8 +1,8 @@
 package gregtech.api.items.toolitem;
 
-import com.google.common.collect.Multimap;
 import gregtech.api.GregTechAPI;
 import gregtech.api.util.LocalizationUtils;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -22,12 +22,15 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.collect.Multimap;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ItemGTAxe extends ItemAxe implements IGTTool {
 
@@ -42,7 +45,9 @@ public class ItemGTAxe extends ItemAxe implements IGTTool {
     protected final boolean playSoundOnBlockDestroy;
     protected final Supplier<ItemStack> markerItem;
 
-    protected ItemGTAxe(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict, List<String> secondaryOreDicts, Supplier<ItemStack> markerItem) {
+    protected ItemGTAxe(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound,
+                        boolean playSoundOnBlockDestroy, Set<String> toolClasses, String oreDict,
+                        List<String> secondaryOreDicts, Supplier<ItemStack> markerItem) {
         super(ToolMaterial.STONE, 0F, 0F);
         this.domain = domain;
         this.id = id;
@@ -130,17 +135,20 @@ public class ItemGTAxe extends ItemAxe implements IGTTool {
     }
 
     @Override
-    public boolean hitEntity(@Nonnull ItemStack stack, @Nonnull EntityLivingBase target, @Nonnull EntityLivingBase attacker) {
+    public boolean hitEntity(@Nonnull ItemStack stack, @Nonnull EntityLivingBase target,
+                             @Nonnull EntityLivingBase attacker) {
         return definition$hitEntity(stack, target, attacker);
     }
 
     @Override
-    public boolean onBlockStartBreak(@Nonnull ItemStack itemstack, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    public boolean onBlockStartBreak(@Nonnull ItemStack itemstack, @Nonnull BlockPos pos,
+                                     @Nonnull EntityPlayer player) {
         return definition$onBlockStartBreak(itemstack, pos, player);
     }
 
     @Override
-    public boolean onBlockDestroyed(@Nonnull ItemStack stack, @Nonnull World worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EntityLivingBase entityLiving) {
+    public boolean onBlockDestroyed(@Nonnull ItemStack stack, @Nonnull World worldIn, @Nonnull IBlockState state,
+                                    @Nonnull BlockPos pos, @Nonnull EntityLivingBase entityLiving) {
         return definition$onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
     }
 
@@ -156,12 +164,14 @@ public class ItemGTAxe extends ItemAxe implements IGTTool {
 
     @Nonnull
     @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(@Nonnull EntityEquipmentSlot slot, @Nonnull ItemStack stack) {
+    public Multimap<String, AttributeModifier> getAttributeModifiers(@Nonnull EntityEquipmentSlot slot,
+                                                                     @Nonnull ItemStack stack) {
         return definition$getAttributeModifiers(slot, stack);
     }
 
     @Override
-    public int getHarvestLevel(@Nonnull ItemStack stack, @Nonnull String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
+    public int getHarvestLevel(@Nonnull ItemStack stack, @Nonnull String toolClass, @Nullable EntityPlayer player,
+                               @Nullable IBlockState blockState) {
         return definition$getHarvestLevel(stack, toolClass, player, blockState);
     }
 
@@ -172,12 +182,14 @@ public class ItemGTAxe extends ItemAxe implements IGTTool {
     }
 
     @Override
-    public boolean canDisableShield(@Nonnull ItemStack stack, @Nonnull ItemStack shield, @Nonnull EntityLivingBase entity, @Nonnull EntityLivingBase attacker) {
+    public boolean canDisableShield(@Nonnull ItemStack stack, @Nonnull ItemStack shield,
+                                    @Nonnull EntityLivingBase entity, @Nonnull EntityLivingBase attacker) {
         return definition$canDisableShield(stack, shield, entity, attacker);
     }
 
     @Override
-    public boolean doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    public boolean doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull IBlockAccess world, @Nonnull BlockPos pos,
+                                      @Nonnull EntityPlayer player) {
         return definition$doesSneakBypassUse(stack, world, pos, player);
     }
 
@@ -203,12 +215,14 @@ public class ItemGTAxe extends ItemAxe implements IGTTool {
     }
 
     @Override
-    public boolean canDestroyBlockInCreative(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
+    public boolean canDestroyBlockInCreative(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull ItemStack stack,
+                                             @Nonnull EntityPlayer player) {
         return definition$canDestroyBlockInCreative(world, pos, stack, player);
     }
 
     @Override
-    public boolean shouldCauseReequipAnimation(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack, boolean slotChanged) {
+    public boolean shouldCauseReequipAnimation(@Nonnull ItemStack oldStack, @Nonnull ItemStack newStack,
+                                               boolean slotChanged) {
         return definition$shouldCauseReequipAnimation(oldStack, newStack, slotChanged);
     }
 
@@ -250,25 +264,31 @@ public class ItemGTAxe extends ItemAxe implements IGTTool {
 
     @Nonnull
     @Override
-    public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
+    public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos,
+                                           @Nonnull EnumFacing side, float hitX, float hitY, float hitZ,
+                                           @Nonnull EnumHand hand) {
         return definition$onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
     }
 
     @Nonnull
     @Override
-    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos,
+                                      @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY,
+                                      float hitZ) {
         return definition$onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
     }
 
     @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player,
+                                                    @Nonnull EnumHand hand) {
         return definition$onItemRightClick(world, player, hand);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
+                               @Nonnull ITooltipFlag flag) {
         definition$addInformation(stack, world, tooltip, flag);
     }
 
@@ -295,7 +315,8 @@ public class ItemGTAxe extends ItemAxe implements IGTTool {
 
         @Override
         public Supplier<ItemGTAxe> supply() {
-            return () -> new ItemGTAxe(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses, oreDict, secondaryOreDicts, markerItem);
+            return () -> new ItemGTAxe(domain, id, tier, toolStats, sound, playSoundOnBlockDestroy, toolClasses,
+                    oreDict, secondaryOreDicts, markerItem);
         }
     }
 }

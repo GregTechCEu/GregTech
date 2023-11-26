@@ -12,6 +12,7 @@ import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.StoneVariantBlock;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -36,23 +37,27 @@ public class OreDictionaryLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.BRICK_BLOCK), OrePrefix.block, Materials.Brick);
         OreDictUnifier.registerOre(new ItemStack(Items.CLAY_BALL), OrePrefix.ingot, Materials.Clay);
         OreDictUnifier.registerOre(new ItemStack(Items.FLINT), OrePrefix.gem, Materials.Flint);
-        OreDictUnifier.registerOre(new ItemStack(Blocks.HARDENED_CLAY, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Clay, M * 4)));
-        OreDictUnifier.registerOre(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Clay, M * 4)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.HARDENED_CLAY, 1, W),
+                new ItemMaterialInfo(new MaterialStack(Materials.Clay, M * 4)));
+        OreDictUnifier.registerOre(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, W),
+                new ItemMaterialInfo(new MaterialStack(Materials.Clay, M * 4)));
 
-        for (Material material : new Material[]{Materials.Wood, Materials.TreatedWood}) {
+        for (Material material : new Material[] { Materials.Wood, Materials.TreatedWood }) {
             for (ItemStack woodPlateStack : OreDictUnifier.getAll(new UnificationEntry(OrePrefix.plate, material))) {
                 OreDictUnifier.registerOre(woodPlateStack, OrePrefix.plank, material);
             }
         }
 
-        for (Material material : new Material[]{Materials.Lapis, Materials.Lazurite, Materials.Sodalite}) {
+        for (Material material : new Material[] { Materials.Lapis, Materials.Lazurite, Materials.Sodalite }) {
             OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.gem, material), OrePrefix.dye, Color.Blue);
             OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.dust, material), OrePrefix.dye, Color.Blue);
         }
 
-        OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.dust, Materials.MetalMixture), OrePrefix.dye, Color.Brown);
+        OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.dust, Materials.MetalMixture), OrePrefix.dye,
+                Color.Brown);
 
-        OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.lens, Materials.Glass), OrePrefix.craftingLens, MarkerMaterials.Color.White);
+        OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.lens, Materials.Glass), OrePrefix.craftingLens,
+                MarkerMaterials.Color.White);
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.COAL_ORE), OrePrefix.ore, Materials.Coal);
         OreDictUnifier.registerOre(new ItemStack(Blocks.IRON_ORE), OrePrefix.ore, Materials.Iron);

@@ -1,6 +1,7 @@
 package gregtech.client.utils;
 
 import gregtech.api.pipenet.IBlockAppearance;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -30,7 +31,6 @@ public class FacadeBlockAccess implements IBlockAccess {
     public final IBlockState state;
 
     public FacadeBlockAccess(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
-
         this.world = world;
         this.pos = pos;
         this.side = side;
@@ -38,7 +38,11 @@ public class FacadeBlockAccess implements IBlockAccess {
     }
 
     public enum Result {
-        ORIGINAL, AIR, BASE, BEDROCK, COVER
+        ORIGINAL,
+        AIR,
+        BASE,
+        BEDROCK,
+        COVER
     }
 
     public Result getAction(BlockPos pos) {

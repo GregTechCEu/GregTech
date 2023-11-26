@@ -5,6 +5,7 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import javax.annotation.Nonnull;
 
 public class UnlistedBooleanProperty implements IUnlistedProperty<Boolean> {
+
     private final String name;
 
     public UnlistedBooleanProperty(@Nonnull String name) {

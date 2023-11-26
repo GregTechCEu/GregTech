@@ -1,14 +1,15 @@
 package gregtech.common.inventory.appeng;
 
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.INBTSerializable;
+
 import appeng.api.config.FuzzyMode;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
 import appeng.util.item.AEItemStack;
 import appeng.util.item.ItemList;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -22,8 +23,7 @@ public class SerializableItemList implements IItemList<IAEItemStack>, INBTSerial
 
     private final ItemList parent = new ItemList();
 
-    public SerializableItemList() {
-    }
+    public SerializableItemList() {}
 
     @Override
     public void addStorage(IAEItemStack stack) {
@@ -104,5 +104,4 @@ public class SerializableItemList implements IItemList<IAEItemStack>, INBTSerial
             }
         }
     }
-
 }

@@ -1,16 +1,18 @@
 package gregtech.integration.crafttweaker.recipe;
 
+import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
+import gregtech.api.metatileentity.MetaTileEntity;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.BracketHandler;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.zenscript.IBracketHandler;
-import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
-import gregtech.api.metatileentity.MetaTileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
 import stanhebben.zenscript.expression.ExpressionString;
@@ -18,8 +20,9 @@ import stanhebben.zenscript.parser.Token;
 import stanhebben.zenscript.symbols.IZenSymbol;
 import stanhebben.zenscript.type.natives.IJavaMethod;
 
-import javax.annotation.Nullable;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 @BracketHandler
 @ZenRegister
@@ -31,7 +34,8 @@ public class MetaTileEntityBracketHandler implements IBracketHandler {
     private final IJavaMethod method;
 
     public MetaTileEntityBracketHandler() {
-        this.method = CraftTweakerAPI.getJavaMethod(MetaTileEntityBracketHandler.class, "getCtMetaTileEntityItem", String.class);
+        this.method = CraftTweakerAPI.getJavaMethod(MetaTileEntityBracketHandler.class, "getCtMetaTileEntityItem",
+                String.class);
     }
 
     @Nullable
@@ -46,7 +50,7 @@ public class MetaTileEntityBracketHandler implements IBracketHandler {
     }
 
     public static String[] splitObjectName(String toSplit) {
-        String[] resultSplit = new String[]{GTValues.MODID, toSplit};
+        String[] resultSplit = new String[] { GTValues.MODID, toSplit };
         int i = toSplit.indexOf(':');
         if (i >= 0) {
             resultSplit[1] = toSplit.substring(i + 1);
@@ -69,5 +73,4 @@ public class MetaTileEntityBracketHandler implements IBracketHandler {
         return position -> new ExpressionCallStatic(position, environment, method,
                 new ExpressionString(position, nameBuilder.toString()));
     }
-
 }

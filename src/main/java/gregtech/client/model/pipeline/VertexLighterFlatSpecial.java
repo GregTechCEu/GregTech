@@ -1,14 +1,16 @@
 package gregtech.client.model.pipeline;
 
 import gregtech.client.shader.Shaders;
+
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 
-import javax.vecmath.Vector3f;
 import java.util.Objects;
+
+import javax.vecmath.Vector3f;
 
 public class VertexLighterFlatSpecial extends VertexLighterFlat {
 
@@ -21,7 +23,6 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
 
     @Override
     public void setVertexFormat(VertexFormat format) {
-
         if (!Objects.equals(format, baseFormat)) {
             baseFormat = format;
 
@@ -35,10 +36,10 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
 
             updateIndices();
         }
-
     }
 
-    //This was copied over from VertexLighterFlat because it was private and thus inaccessible from this extended implementation
+    // This was copied over from VertexLighterFlat because it was private and thus inaccessible from this extended
+    // implementation
     private void updateIndices() {
         for (int i = 0; i < getVertexFormat().getElementCount(); i++) {
             switch (getVertexFormat().getElement(i).getUsage()) {
@@ -70,19 +71,16 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
         }
     }
 
-    //This was copied over from VertexLighterFlat because it needed tweaks to the color handling
+    // This was copied over from VertexLighterFlat because it needed tweaks to the color handling
     @Override
     protected void processQuad() {
-
         float[][] position = quadData[posIndex];
         float[][] normal = null;
         float[][] lightmap = quadData[lightmapIndex];
         float[][] color = quadData[colorIndex];
 
-        if (dataLength[normalIndex] >= 3
-                && (quadData[normalIndex][0][0] != -1
-                || quadData[normalIndex][0][1] != -1
-                || quadData[normalIndex][0][2] != -1)) {
+        if (dataLength[normalIndex] >= 3 && (quadData[normalIndex][0][0] != -1 || quadData[normalIndex][0][1] != -1 ||
+                quadData[normalIndex][0][2] != -1)) {
             normal = quadData[normalIndex];
         } else { // normals must be generated
             normal = new float[4][4];
@@ -102,7 +100,7 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
             }
         }
 
-        int multiplier = 0xFFFFFFFF;//white
+        int multiplier = 0xFFFFFFFF;// white
         if (tint != -1) {
             multiplier = blockInfo.getColorMultiplier(tint);
         }
@@ -123,7 +121,7 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
             y += normal[v][1] * .5f;
             z += normal[v][2] * .5f;
 
-            color[v][0] = color[v][1] = color[v][2] = color[v][3] = 1.0f;//Default to white
+            color[v][0] = color[v][1] = color[v][2] = color[v][3] = 1.0f;// Default to white
 
             float blockLight = lightmap[v][0];
             float skyLight = lightmap[v][1];
@@ -135,7 +133,7 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
 
             updateColor(normal[v], color[v], x, y, z, tint, multiplier);
 
-            //When enabled this causes the rendering to be black with Optifine
+            // When enabled this causes the rendering to be black with Optifine
             if (!Shaders.isOptiFineShaderPackLoaded() && diffuse) {
                 float d = LightUtil.diffuseLight(normal[v][0], normal[v][1], normal[v][2]);
                 for (int i = 0; i < 3; i++) {
@@ -156,7 +154,7 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
                             break;
                         }
                     case COLOR:
-                        //color[v][0] = color[v][1] = color[v][2] = color[v][3] = 1.0f;//Default to white
+                        // color[v][0] = color[v][1] = color[v][2] = color[v][3] = 1.0f;//Default to white
                         parent.put(e, color[v]);
                         break;
                     case UV:
@@ -172,8 +170,9 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
         tint = -1;
     }
 
-    //This was copied over from VertexLighterFlat because the tint parameter shouldn't be a float
-    protected static void updateColor(float[] normal, float[] color, float x, float y, float z, int tint, int multiplier) {
+    // This was copied over from VertexLighterFlat because the tint parameter shouldn't be a float
+    protected static void updateColor(float[] normal, float[] color, float x, float y, float z, int tint,
+                                      int multiplier) {
         if (tint != -1) {
             color[0] *= (float) (multiplier >> 0x10 & 0xFF) / 0xFF;
             color[1] *= (float) (multiplier >> 0x8 & 0xFF) / 0xFF;
@@ -190,5 +189,4 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
     public void setApplyDiffuseLighting(boolean diffuse) {
         this.diffuse = diffuse;
     }
-
 }

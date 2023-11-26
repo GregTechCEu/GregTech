@@ -12,12 +12,14 @@ import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.util.ResourceLocation;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class ThemeSettings extends AbstractWidgetGroup {
+
     private final WidgetGroup textureGroup;
     final TerminalOSWidget os;
 
@@ -48,32 +50,40 @@ public class ThemeSettings extends AbstractWidgetGroup {
                         "terminal.settings.theme.wallpaper.color",
                         "terminal.settings.theme.wallpaper.file"),
                 -1, this::getLocalizedWallpaperTypeName, true)
-                .setIsUp(true)
-                .setOnChanged(this::onModifyTextureChanged)
-                .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(), TerminalTheme.COLOR_B_2.getColor())
-                .setBackground(TerminalTheme.COLOR_6));
+                        .setIsUp(true)
+                        .setOnChanged(this::onModifyTextureChanged)
+                        .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(),
+                                TerminalTheme.COLOR_B_2.getColor())
+                        .setBackground(TerminalTheme.COLOR_6));
         textureGroup = new WidgetGroup((int) (x + 170), 122, (int) (x * 11 - 170), 65);
         this.addWidget(textureGroup);
     }
 
-    private String getLocalizedWallpaperTypeName(){
-        switch(TerminalTheme.WALL_PAPER.getTypeName()){
-            case "resource": return "terminal.settings.theme.wallpaper.resource";
-            case "url": return "terminal.settings.theme.wallpaper.url";
-            case "color": return "terminal.settings.theme.wallpaper.color";
-            case "file": return "terminal.settings.theme.wallpaper.file";
+    private String getLocalizedWallpaperTypeName() {
+        switch (TerminalTheme.WALL_PAPER.getTypeName()) {
+            case "resource":
+                return "terminal.settings.theme.wallpaper.resource";
+            case "url":
+                return "terminal.settings.theme.wallpaper.url";
+            case "color":
+                return "terminal.settings.theme.wallpaper.color";
+            case "file":
+                return "terminal.settings.theme.wallpaper.file";
         }
         return null;
     }
 
     private void addColorButton(ColorRectTexture texture, String name, int x, int y) {
-        CircleButtonWidget buttonWidget = new CircleButtonWidget(x, y, 8, 1, 0).setFill(texture.getColor()).setStrokeAnima(-1).setHoverText(name);
+        CircleButtonWidget buttonWidget = new CircleButtonWidget(x, y, 8, 1, 0).setFill(texture.getColor())
+                .setStrokeAnima(-1).setHoverText(name);
         buttonWidget.setClickListener(cd -> TerminalDialogWidget.showColorDialog(os, name, color -> {
             if (color != null) {
                 buttonWidget.setFill(color);
                 texture.setColor(color);
                 if (!TerminalTheme.saveConfig()) {
-                    TerminalDialogWidget.showInfoDialog(os, "terminal.component.error", "terminal.component.save_file.error").setClientSide().open();
+                    TerminalDialogWidget
+                            .showInfoDialog(os, "terminal.component.error", "terminal.component.save_file.error")
+                            .setClientSide().open();
                 }
             }
         }, texture.color).setClientSide().open());
@@ -85,12 +95,15 @@ public class ThemeSettings extends AbstractWidgetGroup {
         switch (type) {
             case "terminal.settings.theme.wallpaper.resource":
                 if (!(TerminalTheme.WALL_PAPER.getTexture() instanceof TextureArea)) {
-                    TerminalTheme.WALL_PAPER.setTexture(new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/terminal_background.png"), 0.0, 0.0, 1.0, 1.0));
+                    TerminalTheme.WALL_PAPER.setTexture(new TextureArea(
+                            new ResourceLocation("gregtech:textures/gui/terminal/terminal_background.png"), 0.0, 0.0,
+                            1.0, 1.0));
                     TerminalTheme.saveConfig();
                 }
-                addStringSetting(((TextureArea)TerminalTheme.WALL_PAPER.getTexture()).imageLocation.toString(),
+                addStringSetting(((TextureArea) TerminalTheme.WALL_PAPER.getTexture()).imageLocation.toString(),
                         s -> {
-                            TerminalTheme.WALL_PAPER.setTexture(new TextureArea(new ResourceLocation(s), 0.0, 0.0, 1.0, 1.0));
+                            TerminalTheme.WALL_PAPER
+                                    .setTexture(new TextureArea(new ResourceLocation(s), 0.0, 0.0, 1.0, 1.0));
                             TerminalTheme.saveConfig();
                         });
                 break;
@@ -99,7 +112,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
                     TerminalTheme.WALL_PAPER.setTexture(new URLTexture(null));
                     TerminalTheme.saveConfig();
                 }
-                addStringSetting(((URLTexture)TerminalTheme.WALL_PAPER.getTexture()).url, s -> {
+                addStringSetting(((URLTexture) TerminalTheme.WALL_PAPER.getTexture()).url, s -> {
                     TerminalTheme.WALL_PAPER.setTexture(new URLTexture(s));
                     TerminalTheme.saveConfig();
                 });
@@ -126,12 +139,13 @@ public class ThemeSettings extends AbstractWidgetGroup {
                         .setColors(TerminalTheme.COLOR_B_1.getColor(),
                                 TerminalTheme.COLOR_1.getColor(),
                                 TerminalTheme.COLOR_B_1.getColor())
-                        .setClickListener(cd-> TerminalDialogWidget.showFileDialog(os, "terminal.settings.theme.image", TerminalRegistry.TERMINAL_PATH, true, file->{
-                            if (file != null && file.isFile()) {
-                                TerminalTheme.WALL_PAPER.setTexture(new FileTexture(file));
-                                TerminalTheme.saveConfig();
-                            }
-                        }).setClientSide().open())
+                        .setClickListener(cd -> TerminalDialogWidget.showFileDialog(os, "terminal.settings.theme.image",
+                                TerminalRegistry.TERMINAL_PATH, true, file -> {
+                                    if (file != null && file.isFile()) {
+                                        TerminalTheme.WALL_PAPER.setTexture(new FileTexture(file));
+                                        TerminalTheme.saveConfig();
+                                    }
+                                }).setClientSide().open())
                         .setIcon(new TextTexture("terminal.settings.theme.select", -1)));
                 break;
         }
@@ -147,7 +161,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
                         TerminalTheme.COLOR_B_1.getColor())
-                .setClickListener(cd->callback.accept(textFieldWidget.getCurrentString()))
+                .setClickListener(cd -> callback.accept(textFieldWidget.getCurrentString()))
                 .setIcon(new TextTexture("terminal.guide_editor.update", -1)));
     }
 }

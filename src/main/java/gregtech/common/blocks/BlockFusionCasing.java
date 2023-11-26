@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
@@ -24,7 +25,8 @@ public class BlockFusionCasing extends VariantActiveBlock<BlockFusionCasing.Casi
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos,
+                                    @Nonnull EntityLiving.SpawnPlacementType type) {
         return false;
     }
 

@@ -9,6 +9,7 @@ import gregtech.client.model.MaterialStateMapper;
 import gregtech.client.model.modelfactories.MaterialBlockModelLoader;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.properties.PropertyMaterial;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -21,15 +22,17 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 public abstract class BlockCompressed extends BlockMaterialBase {
 
     public static BlockCompressed create(Material[] materials) {
         PropertyMaterial property = PropertyMaterial.create("variant", materials);
         return new BlockCompressed() {
+
             @Nonnull
             @Override
             public PropertyMaterial getVariantProperty() {
@@ -63,7 +66,8 @@ public abstract class BlockCompressed extends BlockMaterialBase {
 
     @Nonnull
     @Override
-    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
+    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos,
+                                  @Nullable Entity entity) {
         Material material = getGtMaterial(state);
         if (material.hasProperty(PropertyKey.GEM)) {
             return SoundType.STONE;

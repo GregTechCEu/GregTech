@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.fluidpipe;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
@@ -15,6 +14,7 @@ import gregtech.client.renderer.pipe.PipeRenderer;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -32,13 +32,16 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import javax.annotation.Nonnull;
 
 public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
 
@@ -53,7 +56,8 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     public void addPipeMaterial(Material material, FluidPipeProperties fluidPipeProperties) {
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(fluidPipeProperties, "material %s fluidPipeProperties was null", material);
-        Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null, "material %s is not registered", material);
+        Preconditions.checkArgument(material.getRegistry().getNameForObject(material) != null,
+                "material %s is not registered", material);
         this.enabledMaterials.put(material, fluidPipeProperties);
     }
 
@@ -98,17 +102,20 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         super.breakBlock(worldIn, pos, state);
-        //TODO insert to neighbours
+        // TODO insert to neighbours
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side,
+                                   IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
         return selfTile instanceof TileEntityFluidPipe && sideTile instanceof TileEntityFluidPipe;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, TileEntity tile) {
-        return tile != null && tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite()) != null;
+    public boolean canPipeConnectToBlock(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side,
+                                         TileEntity tile) {
+        return tile != null &&
+                tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite()) != null;
     }
 
     @Override
@@ -121,10 +128,12 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
+    public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state,
+                                  @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return;
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
-        if (pipe instanceof TileEntityFluidPipeTickable && pipe.getFrameMaterial() == null && ((TileEntityFluidPipeTickable) pipe).getOffsetTimer() % 10 == 0) {
+        if (pipe instanceof TileEntityFluidPipeTickable && pipe.getFrameMaterial() == null &&
+                ((TileEntityFluidPipeTickable) pipe).getOffsetTimer() % 10 == 0) {
             if (entityIn instanceof EntityLivingBase) {
                 if (((TileEntityFluidPipeTickable) pipe).getFluidTanks().length > 1) {
                     // apply temperature damage for the hottest and coldest pipe (multi fluid pipes)
@@ -132,8 +141,10 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
                     int minTemperature = Integer.MAX_VALUE;
                     for (FluidTank tank : ((TileEntityFluidPipeTickable) pipe).getFluidTanks()) {
                         if (tank.getFluid() != null && tank.getFluid().amount > 0) {
-                            maxTemperature = Math.max(maxTemperature, tank.getFluid().getFluid().getTemperature(tank.getFluid()));
-                            minTemperature = Math.min(minTemperature, tank.getFluid().getFluid().getTemperature(tank.getFluid()));
+                            maxTemperature = Math.max(maxTemperature,
+                                    tank.getFluid().getFluid().getTemperature(tank.getFluid()));
+                            minTemperature = Math.min(minTemperature,
+                                    tank.getFluid().getFluid().getTemperature(tank.getFluid()));
                         }
                     }
                     if (maxTemperature != Integer.MIN_VALUE) {
@@ -146,7 +157,8 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
                     FluidTank tank = ((TileEntityFluidPipeTickable) pipe).getFluidTanks()[0];
                     if (tank.getFluid() != null && tank.getFluid().amount > 0) {
                         // Apply temperature damage for the pipe (single fluid pipes)
-                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn, tank.getFluid().getFluid().getTemperature(), 1.0F, 5);
+                        EntityDamageUtil.applyTemperatureDamage((EntityLivingBase) entityIn,
+                                tank.getFluid().getFluid().getTemperature(), 1.0F, 5);
                     }
                 }
             }

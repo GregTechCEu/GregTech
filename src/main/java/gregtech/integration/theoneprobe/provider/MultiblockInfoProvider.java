@@ -3,13 +3,15 @@ package gregtech.integration.theoneprobe.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.TextStyleClass;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
+
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.TextStyleClass;
 
 import javax.annotation.Nonnull;
 
@@ -27,7 +29,9 @@ public class MultiblockInfoProvider extends CapabilityInfoProvider<IMultiblockCo
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull IMultiblockController capability, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@Nonnull IMultiblockController capability, @Nonnull IProbeInfo probeInfo,
+                                @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity,
+                                @Nonnull IProbeHitData data) {
         if (capability.isStructureFormed()) {
             probeInfo.text(TextStyleClass.OK + "{*gregtech.top.valid_structure*}");
             if (capability.isStructureObstructed()) {

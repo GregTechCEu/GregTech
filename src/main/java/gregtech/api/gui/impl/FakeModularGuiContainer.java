@@ -1,18 +1,21 @@
 package gregtech.api.gui.impl;
 
-import com.google.common.collect.Lists;
 import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.WidgetUIAccess;
+
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 
+import com.google.common.collect.Lists;
+
 import java.util.List;
 
 public abstract class FakeModularGuiContainer implements WidgetUIAccess {
+
     protected final NonNullList<ItemStack> inventoryItemStacks = NonNullList.create();
     public final List<Slot> inventorySlots = Lists.newArrayList();
     public final ModularUI modularUI;
@@ -22,7 +25,8 @@ public abstract class FakeModularGuiContainer implements WidgetUIAccess {
         this.modularUI = modularUI;
         modularUI.initWidgets();
         modularUI.guiWidgets.values().forEach(widget -> widget.setUiAccess(this));
-        modularUI.guiWidgets.values().stream().flatMap(widget -> widget.getNativeWidgets().stream()).forEach(nativeWidget -> addSlotToContainer(nativeWidget.getHandle()));
+        modularUI.guiWidgets.values().stream().flatMap(widget -> widget.getNativeWidgets().stream())
+                .forEach(nativeWidget -> addSlotToContainer(nativeWidget.getHandle()));
         modularUI.triggerOpenListeners();
     }
 
@@ -38,7 +42,7 @@ public abstract class FakeModularGuiContainer implements WidgetUIAccess {
             for (int i = 0; i < size; i++) {
                 inventorySlots.get(updateData.readVarInt()).putStack(updateData.readItemStack());
             }
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
     }
@@ -58,14 +62,10 @@ public abstract class FakeModularGuiContainer implements WidgetUIAccess {
     public abstract void detectAndSendChanges();
 
     @Override
-    public void notifySizeChange() {
-
-    }
+    public void notifySizeChange() {}
 
     @Override
-    public void notifyWidgetChange() {
-
-    }
+    public void notifyWidgetChange() {}
 
     @Override
     public boolean attemptMergeStack(ItemStack itemStack, boolean b, boolean b1) {
@@ -73,10 +73,8 @@ public abstract class FakeModularGuiContainer implements WidgetUIAccess {
     }
 
     @Override
-    public void sendSlotUpdate(INativeWidget iNativeWidget) {
-    }
+    public void sendSlotUpdate(INativeWidget iNativeWidget) {}
 
     @Override
-    public void sendHeldItemUpdate() {
-    }
+    public void sendHeldItemUpdate() {}
 }

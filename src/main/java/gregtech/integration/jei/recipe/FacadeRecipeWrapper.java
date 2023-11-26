@@ -1,12 +1,14 @@
 package gregtech.integration.jei.recipe;
 
-import com.google.common.collect.Lists;
 import gregtech.common.items.behaviors.FacadeItem;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+
+import com.google.common.collect.Lists;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.wrapper.ICraftingRecipeWrapper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 

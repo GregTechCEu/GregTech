@@ -8,7 +8,7 @@ import static gregtech.api.unification.material.Materials.*;
 public class FuelRecipes {
 
     public static void registerFuels() {
-        //diesel generator fuels
+        // diesel generator fuels
         RecipeMaps.COMBUSTION_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Naphtha.getFluid(1))
                 .duration(10)
@@ -99,7 +99,7 @@ public class FuelRecipes {
                 .EUt((int) V[LV])
                 .buildAndRegister();
 
-        //steam generator fuels
+        // steam generator fuels
         RecipeMaps.STEAM_TURBINE_FUELS.recipeBuilder()
                 .fluidInputs(Steam.getFluid(640))
                 .fluidOutputs(DistilledWater.getFluid(4))
@@ -107,7 +107,7 @@ public class FuelRecipes {
                 .EUt((int) V[LV])
                 .buildAndRegister();
 
-        //gas turbine fuels
+        // gas turbine fuels
         RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
                 .fluidInputs(NaturalGas.getFluid(8))
                 .duration(5)
@@ -216,7 +216,7 @@ public class FuelRecipes {
                 .EUt((int) V[LV])
                 .buildAndRegister();
 
-        //semi-fluid fuels, like creosote
+        // semi-fluid fuels, like creosote
         RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Creosote.getFluid(16))
                 .duration(1)
@@ -259,7 +259,7 @@ public class FuelRecipes {
                 .EUt((int) V[LV])
                 .buildAndRegister();
 
-        //plasma turbine
+        // plasma turbine
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Helium.getPlasma(1))
                 .fluidOutputs(Helium.getFluid(1))

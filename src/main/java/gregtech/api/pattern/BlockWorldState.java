@@ -7,8 +7,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class BlockWorldState {
 
@@ -23,7 +24,10 @@ public class BlockWorldState {
     protected TraceabilityPredicate predicate;
     protected PatternError error;
 
-    public void update(World worldIn, BlockPos posIn, PatternMatchContext matchContext, Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount, Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount, TraceabilityPredicate predicate) {
+    public void update(World worldIn, BlockPos posIn, PatternMatchContext matchContext,
+                       Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount,
+                       Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount,
+                       TraceabilityPredicate predicate) {
         this.world = worldIn;
         this.pos = posIn;
         this.state = null;

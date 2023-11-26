@@ -3,6 +3,7 @@ package gregtech.api.fluids;
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFire;
 import net.minecraft.block.material.MaterialLiquid;
@@ -16,6 +17,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +67,10 @@ public class GTFluidBlock extends BlockFluidClassic {
 
     @Nullable
     @Override
-    public Boolean isEntityInsideMaterial(@NotNull IBlockAccess world, @NotNull BlockPos blockpos, @NotNull IBlockState iblockstate, @NotNull Entity entity, double yToTest, @NotNull net.minecraft.block.material.Material materialIn, boolean testingHead) {
+    public Boolean isEntityInsideMaterial(@NotNull IBlockAccess world, @NotNull BlockPos blockpos,
+                                          @NotNull IBlockState iblockstate, @NotNull Entity entity, double yToTest,
+                                          @NotNull net.minecraft.block.material.Material materialIn,
+                                          boolean testingHead) {
         return materialIn == net.minecraft.block.material.Material.WATER ? true : null;
     }
 
@@ -85,16 +90,19 @@ public class GTFluidBlock extends BlockFluidClassic {
     }
 
     @Override
-    public void neighborChanged(@NotNull IBlockState state, @NotNull World world, @NotNull BlockPos pos, @NotNull Block neighborBlock, @NotNull BlockPos neighbourPos) {
+    public void neighborChanged(@NotNull IBlockState state, @NotNull World world, @NotNull BlockPos pos,
+                                @NotNull Block neighborBlock, @NotNull BlockPos neighbourPos) {
         super.neighborChanged(state, world, pos, neighborBlock, neighbourPos);
-        if (this.isExplosive && this.isFlammable && neighborBlock instanceof BlockFire && GTValues.RNG.nextInt(5) == 0) {
+        if (this.isExplosive && this.isFlammable && neighborBlock instanceof BlockFire &&
+                GTValues.RNG.nextInt(5) == 0) {
             world.setBlockToAir(pos);
             world.createExplosion(null, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, 1.5F, true);
         }
     }
 
     @Override
-    public void onEntityCollision(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state, @NotNull Entity entityIn) {
+    public void onEntityCollision(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
+                                  @NotNull Entity entityIn) {
         if (this.isSticky) {
             if (entityIn instanceof EntityPlayer && ((EntityPlayer) entityIn).isCreative()) {
                 return;

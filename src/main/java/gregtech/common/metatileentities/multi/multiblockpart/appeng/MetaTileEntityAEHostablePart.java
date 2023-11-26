@@ -1,5 +1,20 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
+import gregtech.api.GTValues;
+import gregtech.api.capability.IControllable;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockNotifiablePart;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+
 import appeng.api.AEApi;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.security.IActionHost;
@@ -15,34 +30,25 @@ import appeng.me.helpers.AENetworkProxy;
 import appeng.me.helpers.BaseActionSource;
 import appeng.me.helpers.IGridProxyable;
 import appeng.me.helpers.MachineSource;
-import gregtech.api.GTValues;
-import gregtech.api.capability.IControllable;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.texture.Textures;
-import gregtech.common.ConfigHolder;
-import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockNotifiablePart;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+
+import java.io.IOException;
+import java.util.EnumSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
-import java.util.EnumSet;
 
 /**
  * @Author GlodBlock
  * @Description It can connect to ME network.
  * @Date 2023/4/18-23:17
  */
-public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultiblockNotifiablePart implements IControllable {
+public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultiblockNotifiablePart
+                                                   implements IControllable {
 
-    protected static final IStorageChannel<IAEItemStack> ITEM_NET = AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class);
-    protected static final IStorageChannel<IAEFluidStack> FLUID_NET = AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class);
+    protected static final IStorageChannel<IAEItemStack> ITEM_NET = AEApi.instance().storage()
+            .getStorageChannel(IItemStorageChannel.class);
+    protected static final IStorageChannel<IAEFluidStack> FLUID_NET = AEApi.instance().storage()
+            .getStorageChannel(IFluidStorageChannel.class);
 
     private final static int ME_UPDATE_INTERVAL = ConfigHolder.compat.ae2.updateIntervals;
     private AENetworkProxy aeProxy;
@@ -166,6 +172,7 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
 
     /**
      * Update me network connection status.
+     * 
      * @return the updated status.
      */
     public boolean updateMEStatus() {
@@ -192,7 +199,8 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
     @Nullable
     private AENetworkProxy createProxy() {
         if (this.getHolder() instanceof IGridProxyable) {
-            AENetworkProxy proxy = new AENetworkProxy((IGridProxyable) this.getHolder(), "mte_proxy", this.getStackForm(), true);
+            AENetworkProxy proxy = new AENetworkProxy((IGridProxyable) this.getHolder(), "mte_proxy",
+                    this.getStackForm(), true);
             proxy.setFlags(GridFlags.REQUIRE_CHANNEL);
             proxy.setIdlePowerUsage(ConfigHolder.compat.ae2.meHatchEnergyUsage);
             proxy.setValidSides(EnumSet.of(this.getFrontFacing()));
@@ -200,5 +208,4 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         }
         return null;
     }
-
 }

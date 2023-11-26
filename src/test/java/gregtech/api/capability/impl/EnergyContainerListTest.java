@@ -4,14 +4,17 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import static gregtech.api.GTValues.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -21,6 +24,7 @@ public class EnergyContainerListTest {
     @Nonnull
     private static MetaTileEntity createDummyMTE() {
         return new MetaTileEntity(new ResourceLocation("")) {
+
             @Override
             public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
                 return null;

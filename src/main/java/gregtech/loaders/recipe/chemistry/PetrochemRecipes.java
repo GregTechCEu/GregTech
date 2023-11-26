@@ -65,7 +65,6 @@ public class PetrochemRecipes {
     }
 
     private static void desulfurizationRecipes() {
-
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(SulfuricHeavyFuel.getFluid(8000))
                 .fluidInputs(Hydrogen.getFluid(2000))
@@ -103,7 +102,6 @@ public class PetrochemRecipes {
     }
 
     private static void distillationRecipes() {
-
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(RefineryGas.getFluid(1000))
                 .fluidOutputs(Butane.getFluid(60))

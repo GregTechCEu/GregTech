@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity.interfaces;
 
 import gregtech.api.util.IDirtyNotifiable;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 

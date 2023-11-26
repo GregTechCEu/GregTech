@@ -5,18 +5,21 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
 
     public static final int RECIPE_EUT = 4;
     public static final int RECIPE_DURATION = 128;
 
-    public RecipeMapFurnace(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs, int maxFluidOutputs, SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
+    public RecipeMapFurnace(String unlocalizedName, int maxInputs, int maxOutputs, int maxFluidInputs,
+                            int maxFluidOutputs, SimpleRecipeBuilder defaultRecipe, boolean isHidden) {
         super(unlocalizedName, maxInputs, maxOutputs, maxFluidInputs, maxFluidOutputs, defaultRecipe, isHidden);
     }
 

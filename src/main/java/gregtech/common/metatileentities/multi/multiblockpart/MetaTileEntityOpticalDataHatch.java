@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataAccessHatch;
@@ -16,17 +13,24 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.Recipe;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
 import java.util.Collection;
 import java.util.List;
 
-public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IOpticalDataAccessHatch>, IOpticalDataAccessHatch {
+import javax.annotation.Nonnull;
+
+public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNotifiablePart implements
+                                            IMultiblockAbilityPart<IOpticalDataAccessHatch>, IOpticalDataAccessHatch {
 
     private final boolean isTransmitter;
 
@@ -71,13 +75,15 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
                 if (!controller.isActive()) return false;
 
                 return isRecipeAvailable(controller.getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), seen, recipe) ||
-                        isRecipeAvailable(controller.getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), seen, recipe);
+                        isRecipeAvailable(controller.getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), seen,
+                                recipe);
             } else {
                 TileEntity tileEntity = getNeighbor(getFrontFacing());
                 if (tileEntity == null) return false;
 
                 if (tileEntity instanceof TileEntityOpticalPipe) {
-                    IDataAccessHatch cap = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, getFrontFacing().getOpposite());
+                    IDataAccessHatch cap = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS,
+                            getFrontFacing().getOpposite());
                     return cap != null && cap.isRecipeAvailable(recipe, seen);
                 }
             }

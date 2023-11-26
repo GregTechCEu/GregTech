@@ -1,15 +1,17 @@
 package gregtech.common.gui.widget.appeng.slot;
 
-import appeng.api.storage.data.IAEStack;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.gui.widget.appeng.AEConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
-import mezz.jei.api.gui.IGhostIngredientHandler;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+
+import appeng.api.storage.data.IAEStack;
+import mezz.jei.api.gui.IGhostIngredientHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,5 +69,4 @@ public class AEConfigSlot<T extends IAEStack<T>> extends Widget implements IGhos
     public List<IGhostIngredientHandler.Target<?>> getPhantomTargets(Object ingredient) {
         return Collections.emptyList();
     }
-
 }

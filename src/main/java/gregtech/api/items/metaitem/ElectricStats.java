@@ -8,6 +8,7 @@ import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.items.metaitem.stats.*;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.baubles.BaublesModule;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -30,7 +31,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
-public class ElectricStats implements IItemComponent, IItemCapabilityProvider, IItemMaxStackSizeProvider, IItemBehaviour, ISubItemHandler {
+public class ElectricStats implements IItemComponent, IItemCapabilityProvider, IItemMaxStackSizeProvider,
+                           IItemBehaviour, ISubItemHandler {
 
     public static final ElectricStats EMPTY = new ElectricStats(0, 0, false, false);
 
@@ -79,7 +81,8 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
 
             for (int i = 0; i < inventoryPlayer.getSizeInventory(); i++) {
                 ItemStack itemInSlot = inventoryPlayer.getStackInSlot(i);
-                IElectricItem slotElectricItem = itemInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                IElectricItem slotElectricItem = itemInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM,
+                        null);
                 IEnergyStorage feEnergyItem = itemInSlot.getCapability(CapabilityEnergy.ENERGY, null);
                 if (slotElectricItem != null && !slotElectricItem.canProvideChargeExternally()) {
 
@@ -93,7 +96,8 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
                         int energyMissing = feEnergyItem.getMaxEnergyStored() - feEnergyItem.getEnergyStored();
                         long euToCharge = FeCompat.toEu(energyMissing, ConfigHolder.compat.energy.feToEuRatio);
                         long energyToTransfer = Math.min(euToCharge, transferLimit);
-                        long maxDischargeAmount = Math.min(energyToTransfer, electricItem.discharge(energyToTransfer, electricItem.getTier(), false, true, true));
+                        long maxDischargeAmount = Math.min(energyToTransfer,
+                                electricItem.discharge(energyToTransfer, electricItem.getTier(), false, true, true));
                         FeCompat.insertEu(feEnergyItem, maxDischargeAmount);
                         electricItem.discharge(maxDischargeAmount, electricItem.getTier(), false, true, false);
                     }
@@ -172,7 +176,8 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
 
     @Override
     public int getMaxStackSize(ItemStack itemStack, int defaultValue) {
-        ElectricItem electricItem = (ElectricItem) itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        ElectricItem electricItem = (ElectricItem) itemStack
+                .getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem == null || electricItem.getCharge() == 0) {
             return defaultValue;
         }

@@ -1,10 +1,8 @@
 package gregtech.client.model.customtexture;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import gregtech.api.util.GTLog;
 import gregtech.asm.hooks.CTMHooks;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BlockPart;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -20,16 +18,22 @@ import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.function.Function;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 @SideOnly(Side.CLIENT)
 public class CustomTextureModel implements IModel {
+
     private final ModelBlock modelInfo;
     private final IModel vanillaModel;
     private Boolean uvLock;
@@ -51,14 +55,16 @@ public class CustomTextureModel implements IModel {
     }
 
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        boolean flag = (layers < 0 && state.getBlock().getRenderLayer() == layer) || ((layers >> layer.ordinal()) & 1) == 1;
-        return CTMHooks.checkLayerWithOptiFine(flag, layers, layer);
+        boolean canRenderInLayer = (layers < 0 && state.getBlock().getRenderLayer() == layer) ||
+                ((layers >> layer.ordinal()) & 1) == 1;
+        return CTMHooks.checkLayerWithOptiFine(canRenderInLayer, layers, layer);
     }
 
     @Override
     @ParametersAreNonnullByDefault
     @Nonnull
-    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+    public IBakedModel bake(IModelState state, VertexFormat format,
+                            Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         IBakedModel parent = vanillaModel.bake(state, format, rl -> {
             TextureAtlasSprite sprite = bakedTextureGetter.apply(rl);
             MetadataSectionCTM meta = null;
@@ -157,7 +163,8 @@ public class CustomTextureModel implements IModel {
         }
     }
 
-    private static final MethodHandle _asVanillaModel; static {
+    private static final MethodHandle _asVanillaModel;
+    static {
         MethodHandle mh;
         try {
             mh = MethodHandles.lookup().unreflect(IModel.class.getMethod("asVanillaModel"));
@@ -195,11 +202,13 @@ public class CustomTextureModel implements IModel {
         // Deep copy logic taken from ModelLoader$VanillaModelWrapper
         List<BlockPart> parts = new ArrayList<>();
         for (BlockPart part : modelInfo.getElements()) {
-            parts.add(new BlockPart(part.positionFrom, part.positionTo, Maps.newHashMap(part.mapFaces), part.partRotation, part.shade));
+            parts.add(new BlockPart(part.positionFrom, part.positionTo, Maps.newHashMap(part.mapFaces),
+                    part.partRotation, part.shade));
         }
 
         ModelBlock newModel = new ModelBlock(modelInfo.getParentLocation(), parts,
-                Maps.newHashMap(modelInfo.textures), ao == null ? modelInfo.isAmbientOcclusion() : ao, gui3d == null ? modelInfo.isGui3d() : gui3d,
+                Maps.newHashMap(modelInfo.textures), ao == null ? modelInfo.isAmbientOcclusion() : ao,
+                gui3d == null ? modelInfo.isGui3d() : gui3d,
                 modelInfo.getAllTransforms(), Lists.newArrayList(modelInfo.getOverrides()));
 
         newModel.name = modelInfo.name;

@@ -3,6 +3,7 @@ package gregtech.common.items.behaviors;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.common.entities.GTBoatEntity;
 import gregtech.common.entities.GTBoatEntity.GTBoatType;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +28,8 @@ public class GTBoatBehavior implements IItemBehaviour {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+                                             EnumFacing facing, float hitX, float hitY, float hitZ) {
         // almost exact copy of ItemBoat#onItemRightClick
         ItemStack stack = player.getHeldItem(hand);
         float realPitch = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch);
@@ -68,7 +70,8 @@ public class GTBoatBehavior implements IItemBehaviour {
 
         Block block = world.getBlockState(ray.getBlockPos()).getBlock();
         boolean rayHitWater = block == Blocks.WATER || block == Blocks.FLOWING_WATER;
-        GTBoatEntity boat = new GTBoatEntity(world, ray.hitVec.x, rayHitWater ? ray.hitVec.y - 0.12 : ray.hitVec.y, ray.hitVec.z);
+        GTBoatEntity boat = new GTBoatEntity(world, ray.hitVec.x, rayHitWater ? ray.hitVec.y - 0.12 : ray.hitVec.y,
+                ray.hitVec.z);
         boat.setGTBoatType(this.type);
         boat.rotationYaw = player.rotationYaw;
 

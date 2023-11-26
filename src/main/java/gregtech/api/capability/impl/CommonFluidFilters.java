@@ -4,6 +4,7 @@ import gregtech.api.capability.IFilter;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.ConfigHolder;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -14,7 +15,9 @@ import javax.annotation.Nonnull;
  * Common fluid filter implementations.
  */
 public enum CommonFluidFilters implements IFilter<FluidStack> {
+
     ALLOW_ALL {
+
         @Override
         public boolean test(@Nonnull FluidStack fluid) {
             return true;
@@ -31,6 +34,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
         }
     },
     DISALLOW_ALL {
+
         @Override
         public boolean test(@Nonnull FluidStack fluid) {
             return false;
@@ -47,6 +51,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
         }
     },
     BOILER_FLUID {
+
         @Override
         public boolean test(@Nonnull FluidStack fluid) {
             if (matchesFluid(fluid, FluidRegistry.WATER) || matchesFluid(fluid, Materials.DistilledWater)) {
@@ -68,6 +73,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
         }
     },
     STEAM {
+
         @Override
         public boolean test(@Nonnull FluidStack fluid) {
             return matchesFluid(fluid, Materials.Steam);
@@ -79,6 +85,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
         }
     },
     LIGHTER_FUEL {
+
         @Override
         public boolean test(@Nonnull FluidStack fluidStack) {
             return matchesFluid(fluidStack, Materials.Butane) || matchesFluid(fluidStack, Materials.Propane);

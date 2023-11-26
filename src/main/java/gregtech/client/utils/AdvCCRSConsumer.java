@@ -1,8 +1,5 @@
 package gregtech.client.utils;
 
-import codechicken.lib.colour.Colour;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.vec.Matrix4;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -10,6 +7,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.colour.Colour;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.vec.Matrix4;
 
 import javax.annotation.Nonnull;
 
@@ -71,14 +72,11 @@ public class AdvCCRSConsumer implements IVertexConsumer {
     }
 
     @Override
-    public void setQuadTint(int tint) {
-    }
+    public void setQuadTint(int tint) {}
 
     @Override
-    public void setQuadOrientation(@Nonnull EnumFacing orientation) {
-    }
+    public void setQuadOrientation(@Nonnull EnumFacing orientation) {}
 
     @Override
-    public void setApplyDiffuseLighting(boolean diffuse) {
-    }
+    public void setApplyDiffuseLighting(boolean diffuse) {}
 }

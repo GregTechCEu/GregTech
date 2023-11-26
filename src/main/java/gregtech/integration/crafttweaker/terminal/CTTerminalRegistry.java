@@ -1,15 +1,17 @@
 package gregtech.integration.crafttweaker.terminal;
 
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.item.IItemStack;
-import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.util.GTLog;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.EnumHelper;
+
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.item.IItemStack;
+import crafttweaker.api.minecraft.CraftTweakerMC;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -36,7 +38,8 @@ public class CTTerminalRegistry {
         ItemStack itemStack = CraftTweakerMC.getItemStack(device).copy();
         if (!itemStack.isEmpty()) {
             itemStack.setCount(1);
-            EnumHelper.addEnum(DeviceHardware.DEVICE.class, name.toUpperCase(), new Class[]{ItemStack.class, String.class}, itemStack, name.toLowerCase());
+            EnumHelper.addEnum(DeviceHardware.DEVICE.class, name.toUpperCase(),
+                    new Class[] { ItemStack.class, String.class }, itemStack, name.toLowerCase());
         }
     }
 
@@ -95,6 +98,7 @@ public class CTTerminalRegistry {
     @ZenClass("mods.gregtech.AppRegistryBuilder")
     @ZenRegister
     public static class CTAppRegistryBuilder {
+
         final String appName;
         Boolean isDefaultApp;
         Map<Integer, BatteryHardware> battery;
@@ -128,14 +132,16 @@ public class CTTerminalRegistry {
 
         @ZenMethod
         public CTAppRegistryBuilder device(String... device) {
-            Hardware[] hw = Arrays.stream(device).map(DeviceHardware.DeviceDemand::new).filter(deviceDemand -> deviceDemand.getDevice() != null).toArray(Hardware[]::new);
+            Hardware[] hw = Arrays.stream(device).map(DeviceHardware.DeviceDemand::new)
+                    .filter(deviceDemand -> deviceDemand.getDevice() != null).toArray(Hardware[]::new);
             hardware(hw);
             return this;
         }
 
         @ZenMethod
         public CTAppRegistryBuilder device(int tier, String... device) {
-            this.hardware(tier, Arrays.stream(device).map(DeviceHardware.DeviceDemand::new).filter(deviceDemand -> deviceDemand.getDevice() != null).toArray(Hardware[]::new));
+            this.hardware(tier, Arrays.stream(device).map(DeviceHardware.DeviceDemand::new)
+                    .filter(deviceDemand -> deviceDemand.getDevice() != null).toArray(Hardware[]::new));
             return this;
         }
 
@@ -159,7 +165,8 @@ public class CTTerminalRegistry {
         @ZenMethod
         public CTAppRegistryBuilder upgrade(int tier, IItemStack... upgrades) {
             this.upgrade.put(tier, new LinkedList<>());
-            for (ItemStack up : Arrays.stream(upgrades).map(CraftTweakerMC::getItemStack).filter(itemStack -> !itemStack.isEmpty()).toArray(ItemStack[]::new)) {
+            for (ItemStack up : Arrays.stream(upgrades).map(CraftTweakerMC::getItemStack)
+                    .filter(itemStack -> !itemStack.isEmpty()).toArray(ItemStack[]::new)) {
                 this.upgrade.get(tier).add(up);
             }
             return this;

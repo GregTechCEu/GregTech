@@ -2,14 +2,16 @@ package gregtech.api.util;
 
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IMultipleTankHandler.MultiFluidTankEntry;
+
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Simulates consecutive fills to {@link IMultipleTankHandler} instance.

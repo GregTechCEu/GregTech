@@ -5,6 +5,7 @@ import gregtech.api.capability.impl.EUToFEProvider;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.converter.ConverterTrait;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;

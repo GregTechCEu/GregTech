@@ -1,6 +1,7 @@
 package gregtech.api.items.itemhandlers;
 
 import gregtech.api.metatileentity.MetaTileEntity;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemStackHandler;

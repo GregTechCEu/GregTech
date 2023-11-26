@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.PatternError;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -21,13 +22,15 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 public class MultiblockBuilderBehavior implements IItemBehaviour {
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
+                                           float hitY, float hitZ, EnumHand hand) {
         // Initial checks
         TileEntity tileEntity = world.getTileEntity(pos);
         if (!(tileEntity instanceof IGregTechTileEntity)) return EnumActionResult.PASS;
@@ -50,7 +53,8 @@ public class MultiblockBuilderBehavior implements IItemBehaviour {
             if (!multiblock.isStructureFormed()) {
                 PatternError error = multiblock.structurePattern.getError();
                 if (error != null) {
-                    player.sendMessage(new TextComponentTranslation("gregtech.multiblock.pattern.error_message_header"));
+                    player.sendMessage(
+                            new TextComponentTranslation("gregtech.multiblock.pattern.error_message_header"));
                     player.sendMessage(new TextComponentString(error.getErrorInfo()));
                     return EnumActionResult.SUCCESS;
                 }

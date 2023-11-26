@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.steam.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FilteredItemHandler;
@@ -25,6 +22,7 @@ import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -35,10 +33,16 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
 import java.util.List;
 
-public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
+import javax.annotation.Nullable;
+
+public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
+                                      implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int INVENTORY_SIZE = 64000;
     private static final boolean IS_STEEL = ConfigHolder.machines.steelSteamMultiblocks;
@@ -56,7 +60,8 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         if (data.hasKey("ContainerInventory")) {
-            MetaTileEntityQuantumTank.legacyTankItemHandlerNBTReading(this, data.getCompoundTag("ContainerInventory"), 0, 1);
+            MetaTileEntityQuantumTank.legacyTankItemHandlerNBTReading(this, data.getCompoundTag("ContainerInventory"),
+                    0, 1);
         }
     }
 
@@ -100,7 +105,8 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new FilteredItemHandler(this, 1).setFillPredicate(FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
+        return new FilteredItemHandler(this, 1).setFillPredicate(
+                FilteredItemHandler.getCapabilityFilter(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY));
     }
 
     @Override
@@ -136,10 +142,12 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
         builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
         return builder.label(6, 6, title)
                 .widget(new FluidContainerSlotWidget(importItems, 0, 90, 17, false)
-                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(IS_STEEL), GuiTextures.IN_SLOT_OVERLAY_STEAM.get(IS_STEEL)))
+                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(IS_STEEL),
+                                GuiTextures.IN_SLOT_OVERLAY_STEAM.get(IS_STEEL)))
                 .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON)) // todo tank icon
                 .widget(new SlotWidget(exportItems, 0, 90, 54, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(IS_STEEL), GuiTextures.OUT_SLOT_OVERLAY_STEAM.get(IS_STEEL)))
+                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(IS_STEEL),
+                                GuiTextures.OUT_SLOT_OVERLAY_STEAM.get(IS_STEEL)))
                 .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(IS_STEEL), 7, 83);
     }
 

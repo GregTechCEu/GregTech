@@ -13,6 +13,7 @@ import gregtech.api.worldgen.config.OreConfigUtils;
 import gregtech.client.model.OreBakedModel;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.properties.PropertyStoneType;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
@@ -32,11 +33,12 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BlockOre extends Block implements IBlockOre {
 
@@ -107,7 +109,8 @@ public class BlockOre extends Block implements IBlockOre {
 
     @Nonnull
     @Override
-    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
+    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos,
+                                  @Nullable Entity entity) {
         StoneType stoneType = state.getValue(STONE_TYPE);
         return stoneType.soundType;
     }
@@ -122,7 +125,8 @@ public class BlockOre extends Block implements IBlockOre {
     @Override
     public int getHarvestLevel(IBlockState state) {
         // this is save because ore blocks and stone types only generate for materials with dust property
-        return Math.max(state.getValue(STONE_TYPE).stoneMaterial.getBlockHarvestLevel(), material.getBlockHarvestLevel());
+        return Math.max(state.getValue(STONE_TYPE).stoneMaterial.getBlockHarvestLevel(),
+                material.getBlockHarvestLevel());
     }
 
     @Nonnull
@@ -152,7 +156,8 @@ public class BlockOre extends Block implements IBlockOre {
 
     @Nonnull
     @Override
-    public ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    public ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world,
+                                  @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
         // Still get correct block even if shouldBeDroppedAsItem is false
         return GTUtility.toItem(state);
     }
@@ -177,7 +182,8 @@ public class BlockOre extends Block implements IBlockOre {
 
     @Override
     public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.CUTOUT_MIPPED || (material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomEffectUtil.getRealBloomLayer());
+        return layer == BlockRenderLayer.CUTOUT_MIPPED ||
+                material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomEffectUtil.getEffectiveBloomLayer();
     }
 
     private BlockStateContainer createStateContainer() {
@@ -194,8 +200,7 @@ public class BlockOre extends Block implements IBlockOre {
         ModelLoader.setCustomStateMapper(this, b -> b.getBlockState().getValidStates().stream()
                 .collect(Collectors.toMap(
                         s -> s,
-                        s -> OreBakedModel.registerOreEntry(s.getValue(STONE_TYPE), this.material)
-                )));
+                        s -> OreBakedModel.registerOreEntry(s.getValue(STONE_TYPE), this.material))));
         for (IBlockState state : this.getBlockState().getValidStates()) {
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state),
                     OreBakedModel.registerOreEntry(state.getValue(STONE_TYPE), this.material));

@@ -8,6 +8,7 @@ import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.MachineSceneWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
+
 import net.minecraft.tileentity.TileEntity;
 
 public class ConsoleApp extends AbstractApplication {
@@ -31,7 +32,7 @@ public class ConsoleApp extends AbstractApplication {
         IGregTechTileEntity mteResult = getMTE();
 
         if (mteResult == null ||
-            mteResult.getMetaTileEntity() instanceof MetaTileEntityWorkbench) // Remove Crafting Station compat
+                mteResult.getMetaTileEntity() instanceof MetaTileEntityWorkbench) // Remove Crafting Station compat
         { // 333 232
             TerminalDialogWidget.showInfoDialog(os,
                     "terminal.dialog.notice",
@@ -42,7 +43,8 @@ public class ConsoleApp extends AbstractApplication {
         MachineConsoleWidget consoleWidget = new MachineConsoleWidget(200, 16, 133, 200);
         this.addWidget(consoleWidget);
         if (isClient) {
-            this.addWidget(0, new MachineSceneWidget(0, 16, 200, 200, os.clickPos).setOnSelected(consoleWidget::setFocus));
+            this.addWidget(0,
+                    new MachineSceneWidget(0, 16, 200, 200, os.clickPos).setOnSelected(consoleWidget::setFocus));
             this.addWidget(new ImageWidget(0, 0, 333, 16, GuiTextures.UI_FRAME_SIDE_UP));
             this.addWidget(new ImageWidget(0, 216, 333, 16, GuiTextures.UI_FRAME_SIDE_DOWN));
         } else {

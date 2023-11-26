@@ -7,15 +7,17 @@ import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.ToolItems;
-import mcjty.theoneprobe.api.ElementAlignment;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.TextStyleClass;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
+
+import mcjty.theoneprobe.api.ElementAlignment;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.TextStyleClass;
 
 import javax.annotation.Nonnull;
 
@@ -40,17 +42,20 @@ public class MaintenanceInfoProvider extends CapabilityInfoProvider<IMaintenance
     }
 
     @Override
-    protected void addProbeInfo(IMaintenance capability, IProbeInfo probeInfo, EntityPlayer player, TileEntity tileEntity, IProbeHitData data) {
+    protected void addProbeInfo(IMaintenance capability, IProbeInfo probeInfo, EntityPlayer player,
+                                TileEntity tileEntity, IProbeHitData data) {
         if (ConfigHolder.machines.enableMaintenance && capability.hasMaintenanceMechanics()) {
             if (tileEntity.hasCapability(GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER, null)) {
-                //noinspection ConstantConditions
-                if (tileEntity.getCapability(GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER, null).isStructureFormed()) {
+                // noinspection ConstantConditions
+                if (tileEntity.getCapability(GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER, null)
+                        .isStructureFormed()) {
                     if (capability.hasMaintenanceProblems()) {
                         if (player.isSneaking()) {
                             int problems = capability.getMaintenanceProblems();
                             for (byte i = 0; i < 6; i++) {
                                 if (((problems >> i) & 1) == 0) {
-                                    IProbeInfo horizontal = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
+                                    IProbeInfo horizontal = probeInfo.horizontal(
+                                            probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
                                     ItemStack stack = ItemStack.EMPTY;
                                     String text = "";
                                     switch (i) {
@@ -85,7 +90,8 @@ public class MaintenanceInfoProvider extends CapabilityInfoProvider<IMaintenance
                                             break;
                                         }
                                     }
-                                    horizontal.item(stack).text(TextFormatting.RED + IProbeInfo.STARTLOC + text + IProbeInfo.ENDLOC);
+                                    horizontal.item(stack)
+                                            .text(TextFormatting.RED + IProbeInfo.STARTLOC + text + IProbeInfo.ENDLOC);
                                 }
                             }
                         } else {

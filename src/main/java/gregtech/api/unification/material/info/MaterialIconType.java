@@ -1,17 +1,20 @@
 package gregtech.api.unification.material.info;
 
+import gregtech.api.gui.resources.ResourceHelper;
+import gregtech.api.util.GTUtility;
+
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import gregtech.api.gui.resources.ResourceHelper;
-import gregtech.api.util.GTUtility;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 public class MaterialIconType {
 
@@ -99,9 +102,12 @@ public class MaterialIconType {
     public static final MaterialIconType crop = new MaterialIconType("crop");
     public static final MaterialIconType essence = new MaterialIconType("essence");
 
-    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> ITEM_MODEL_CACHE = HashBasedTable.create();
-    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> BLOCK_TEXTURE_CACHE = HashBasedTable.create();
-    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> BLOCK_MODEL_CACHE = HashBasedTable.create();
+    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> ITEM_MODEL_CACHE = HashBasedTable
+            .create();
+    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> BLOCK_TEXTURE_CACHE = HashBasedTable
+            .create();
+    private static final Table<MaterialIconType, MaterialIconSet, ResourceLocation> BLOCK_MODEL_CACHE = HashBasedTable
+            .create();
 
     private static final String BLOCK_TEXTURE_PATH_FULL = "textures/blocks/material_sets/%s/%s.png";
     private static final String BLOCK_TEXTURE_PATH = "blocks/material_sets/%s/%s";
@@ -117,7 +123,8 @@ public class MaterialIconType {
 
     public MaterialIconType(String name) {
         this.name = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name);
-        Preconditions.checkArgument(!ICON_TYPES.containsKey(this.name), "MaterialIconType " + this.name + " already registered!");
+        Preconditions.checkArgument(!ICON_TYPES.containsKey(this.name),
+                "MaterialIconType " + this.name + " already registered!");
         this.id = idCounter++;
         ICON_TYPES.put(this.name, this);
     }

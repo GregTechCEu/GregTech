@@ -5,6 +5,7 @@ import gregtech.api.items.behavior.CoverItemBehavior;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,6 +24,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverItemBehavior {
+
     public CoverDigitalInterfaceWirelessPlaceBehaviour(CoverDefinition coverDefinition) {
         super(coverDefinition);
     }
@@ -59,9 +61,11 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverItemBehavi
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
+                                           float hitY, float hitZ, EnumHand hand) {
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
+        if (tileEntity instanceof IGregTechTileEntity &&
+                ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
             ItemStack itemStack = player.getHeldItem(hand);
             itemStack.setTagCompound(NBTUtil.createPosTag(pos));
             NBTTagCompound tag = itemStack.getTagCompound();

@@ -5,12 +5,13 @@ import gregtech.api.gui.resources.picturetexture.OrdinaryTexture;
 import gregtech.api.gui.resources.picturetexture.PictureTexture;
 import gregtech.api.gui.resources.picturetexture.VideoTexture;
 import gregtech.api.util.GTLog;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.logging.log4j.Logger;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -24,8 +25,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
 @SideOnly(Side.CLIENT)
 public class DownloadThread extends Thread {
+
     public static final Logger LOGGER = GTLog.logger;
 
     public static final TextureCache TEXTURE_CACHE = new TextureCache();
@@ -134,7 +138,8 @@ public class DownloadThread extends Thread {
         TextureCache.CacheEntry entry = TEXTURE_CACHE.getEntry(url);
         long requestTime = System.currentTimeMillis();
         URLConnection connection = new URL(url).openConnection();
-        connection.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
+        connection.addRequestProperty("User-Agent",
+                "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
         int responseCode = -1;
         if (connection instanceof HttpURLConnection) {
             HttpURLConnection httpConnection = (HttpURLConnection) connection;

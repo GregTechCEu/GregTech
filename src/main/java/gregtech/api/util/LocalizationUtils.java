@@ -3,8 +3,9 @@ package gregtech.api.util;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
 import java.util.regex.Pattern;
+
+import javax.annotation.Nonnull;
 
 @SuppressWarnings("deprecation")
 public class LocalizationUtils {
@@ -13,12 +14,16 @@ public class LocalizationUtils {
 
     /**
      * This function calls {@link net.minecraft.client.resources.I18n#format(String, Object...)} when called on client
-     * or {@link net.minecraft.util.text.translation.I18n#translateToLocalFormatted(String, Object...)} when called on server.
+     * or {@link net.minecraft.util.text.translation.I18n#translateToLocalFormatted(String, Object...)} when called on
+     * server.
      * <ul>
-     *  <li>It is intended that translations should be done using {@link net.minecraft.client.resources.I18n} on the client.</li>
-     *  <li>For setting up translations on the server you should use {@link net.minecraft.util.text.TextComponentTranslation}.</li>
-     *  <li>{@code LocalizationUtils} is only for cases where some kind of translation is required on the server and there is no client/player in context.</li>
-     *  <li>{@code LocalizationUtils} is "best effort" and will probably only work properly with {@code en-us}.</li>
+     * <li>It is intended that translations should be done using {@link net.minecraft.client.resources.I18n} on the
+     * client.</li>
+     * <li>For setting up translations on the server you should use
+     * {@link net.minecraft.util.text.TextComponentTranslation}.</li>
+     * <li>{@code LocalizationUtils} is only for cases where some kind of translation is required on the server and
+     * there is no client/player in context.</li>
+     * <li>{@code LocalizationUtils} is "best effort" and will probably only work properly with {@code en-us}.</li>
      * </ul>
      *
      * @param key the localization key passed to the underlying hasKey function
@@ -36,10 +41,13 @@ public class LocalizationUtils {
      * This function calls {@link net.minecraft.client.resources.I18n#hasKey(String)} when called on client
      * or {@link net.minecraft.util.text.translation.I18n#canTranslate(String)} when called on server.
      * <ul>
-     *  <li>It is intended that translations should be done using {@link net.minecraft.client.resources.I18n} on the client.</li>
-     *  <li>For setting up translations on the server you should use {@link net.minecraft.util.text.TextComponentTranslation}.</li>
-     *  <li>{@code LocalizationUtils} is only for cases where some kind of translation is required on the server and there is no client/player in context.</li>
-     *  <li>{@code LocalizationUtils} is "best effort" and will probably only work properly with {@code en-us}.</li>
+     * <li>It is intended that translations should be done using {@link net.minecraft.client.resources.I18n} on the
+     * client.</li>
+     * <li>For setting up translations on the server you should use
+     * {@link net.minecraft.util.text.TextComponentTranslation}.</li>
+     * <li>{@code LocalizationUtils} is only for cases where some kind of translation is required on the server and
+     * there is no client/player in context.</li>
+     * <li>{@code LocalizationUtils} is "best effort" and will probably only work properly with {@code en-us}.</li>
      * </ul>
      *
      * @param key the localization key passed to the underlying hasKey function

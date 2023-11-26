@@ -10,13 +10,15 @@ import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.UnaryOperator;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeBuilder> {
 
@@ -62,13 +64,15 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         }
 
         if (!generatingRecipes) {
-            GTLog.logger.error("Cannot generate recipes when using researchWithoutRecipe()", new IllegalArgumentException());
+            GTLog.logger.error("Cannot generate recipes when using researchWithoutRecipe()",
+                    new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
             return false;
         }
 
         if (recipePropertyStorage != null && recipePropertyStorage.hasRecipeProperty(ResearchProperty.getInstance())) {
-            ResearchPropertyData property = recipePropertyStorage.getRecipePropertyValue(ResearchProperty.getInstance(), null);
+            ResearchPropertyData property = recipePropertyStorage.getRecipePropertyValue(ResearchProperty.getInstance(),
+                    null);
             if (property == null) throw new IllegalStateException("Property storage has a null property");
             property.add(researchEntry);
             return true;
@@ -97,7 +101,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * Does not generate a research recipe.
      *
      * @param researchId the researchId for the recipe
-     * @param dataStack     the stack to hold the data. Must have the {@link IDataItem} behavior.
+     * @param dataStack  the stack to hold the data. Must have the {@link IDataItem} behavior.
      * @return this
      */
     public AssemblyLineRecipeBuilder researchWithoutRecipe(@Nonnull String researchId, @Nonnull ItemStack dataStack) {
@@ -156,14 +160,15 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         private final int CWUt;
 
         /**
-         * @param researchId the id of the research to store
+         * @param researchId    the id of the research to store
          * @param researchStack the stack to scan for research
-         * @param dataStack the stack to contain the data
-         * @param duration the duration of the recipe
-         * @param EUt the EUt of the recipe
-         * @param CWUt how much computation per tick this recipe needs if in Research Station
+         * @param dataStack     the stack to contain the data
+         * @param duration      the duration of the recipe
+         * @param EUt           the EUt of the recipe
+         * @param CWUt          how much computation per tick this recipe needs if in Research Station
          */
-        public ResearchRecipeEntry(@Nonnull String researchId, @Nonnull ItemStack researchStack, @Nonnull ItemStack dataStack, int duration, int EUt, int CWUt) {
+        public ResearchRecipeEntry(@Nonnull String researchId, @Nonnull ItemStack researchStack,
+                                   @Nonnull ItemStack dataStack, int duration, int EUt, int CWUt) {
             this.researchId = researchId;
             this.researchStack = researchStack;
             this.dataStack = dataStack;

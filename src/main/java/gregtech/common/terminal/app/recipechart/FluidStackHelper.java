@@ -3,6 +3,7 @@ package gregtech.common.terminal.app.recipechart;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.terminal.os.TerminalTheme;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -44,7 +45,8 @@ public class FluidStackHelper implements IngredientHelper<FluidStack> {
     @Override
     public Widget createWidget(FluidStack fluidStack) {
         FluidTank tank = new FluidTank(fluidStack, Integer.MAX_VALUE);
-        return new TankWidget(tank, 0, 0, 18, 18).setAlwaysShowFull(true).setBackgroundTexture(TerminalTheme.COLOR_B_2).setClient();
+        return new TankWidget(tank, 0, 0, 18, 18).setAlwaysShowFull(true).setBackgroundTexture(TerminalTheme.COLOR_B_2)
+                .setClient();
     }
 
     @Override

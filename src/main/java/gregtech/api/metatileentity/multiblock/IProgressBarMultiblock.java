@@ -2,6 +2,7 @@ package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextureArea;
+
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.List;
@@ -12,7 +13,9 @@ public interface IProgressBarMultiblock {
         return true;
     }
 
-    /** Can optionally have two progress bars side-by-side. Can support up to 3 bars. Any other values will default to 1. */
+    /**
+     * Can optionally have two progress bars side-by-side. Can support up to 3 bars. Any other values will default to 1.
+     */
     default int getNumProgressBars() {
         return 1;
     }
@@ -30,6 +33,5 @@ public interface IProgressBarMultiblock {
      *
      * @param index The index, 0, 1, or 2, of your progress bar. Only relevant if you have multiple bars.
      */
-    default void addBarHoverText(List<ITextComponent> hoverList, int index) {
-    }
+    default void addBarHoverText(List<ITextComponent> hoverList, int index) {}
 }

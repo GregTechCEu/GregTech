@@ -14,16 +14,19 @@ import gregtech.api.recipes.machines.RecipeMapScanner;
 import gregtech.api.recipes.recipeproperties.ScanProperty;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
 
 public final class AssemblyLineManager {
 
@@ -80,7 +83,7 @@ public final class AssemblyLineManager {
      * @return if the stack is a data item
      */
     public static boolean isStackDataItem(@Nonnull ItemStack stack, boolean isDataBank) {
-        if (stack.getItem() instanceof MetaItem<?> metaItem) {
+        if (stack.getItem() instanceof MetaItem<?>metaItem) {
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(stack);
             if (valueItem == null) return false;
             for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
@@ -102,7 +105,7 @@ public final class AssemblyLineManager {
 
     /**
      * @param compound the compound to check
-     * @return if the tag has  the research NBTTagCompound
+     * @return if the tag has the research NBTTagCompound
      */
     private static boolean hasResearchTag(@Nullable NBTTagCompound compound) {
         if (compound == null || compound.isEmpty()) return false;
@@ -118,11 +121,13 @@ public final class AssemblyLineManager {
         if (!ConfigHolder.machines.enableResearch) return;
 
         for (AssemblyLineRecipeBuilder.ResearchRecipeEntry entry : builder.getRecipeEntries()) {
-            createDefaultResearchRecipe(entry.getResearchId(), entry.getResearchStack(), entry.getDataStack(), entry.getDuration(), entry.getEUt(), entry.getCWUt());
+            createDefaultResearchRecipe(entry.getResearchId(), entry.getResearchStack(), entry.getDataStack(),
+                    entry.getDuration(), entry.getEUt(), entry.getCWUt());
         }
     }
 
-    public static void createDefaultResearchRecipe(@Nonnull String researchId, @Nonnull ItemStack researchItem, @Nonnull ItemStack dataItem, int duration, int EUt, int CWUt) {
+    public static void createDefaultResearchRecipe(@Nonnull String researchId, @Nonnull ItemStack researchItem,
+                                                   @Nonnull ItemStack dataItem, int duration, int EUt, int CWUt) {
         if (!ConfigHolder.machines.enableResearch) return;
 
         NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(dataItem);
@@ -155,7 +160,8 @@ public final class AssemblyLineManager {
         private static final int DURATION = 100;
 
         @Override
-        public Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, boolean exactVoltage) {
+        public Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs,
+                                         boolean exactVoltage) {
             if (inputs.size() > 1) {
                 // try the data recipe both ways, prioritizing overwriting the first
                 Recipe recipe = createDataRecipe(inputs.get(0), inputs.get(1));

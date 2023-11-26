@@ -10,7 +10,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.PerTickIntCounter;
 import gregtech.core.network.packets.PacketUIClientAction;
 import gregtech.core.network.packets.PacketUIWidgetUpdate;
-import io.netty.buffer.Unpooled;
+
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,10 +19,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketSetSlot;
 
-import javax.annotation.Nonnull;
+import io.netty.buffer.Unpooled;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 public class ModularUIContainer extends Container implements WidgetUIAccess {
 
@@ -46,11 +49,10 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
     }
 
     @Override
-    public void notifySizeChange() {
-    }
+    public void notifySizeChange() {}
 
-    //WARNING! WIDGET CHANGES SHOULD BE *STRICTLY* SYNCHRONIZED BETWEEN SERVER AND CLIENT,
-    //OTHERWISE ID MISMATCH CAN HAPPEN BETWEEN ASSIGNED SLOTS!
+    // WARNING! WIDGET CHANGES SHOULD BE *STRICTLY* SYNCHRONIZED BETWEEN SERVER AND CLIENT,
+    // OTHERWISE ID MISMATCH CAN HAPPEN BETWEEN ASSIGNED SLOTS!
     @Override
     public void notifyWidgetChange() {
         List<INativeWidget> nativeWidgets = modularUI.guiWidgets.values().stream()
@@ -63,7 +65,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
             for (INativeWidget removedWidget : removedWidgets) {
                 Slot slotHandle = removedWidget.getHandle();
                 this.slotMap.remove(slotHandle);
-                //replace removed slot with empty placeholder to avoid list index shift
+                // replace removed slot with empty placeholder to avoid list index shift
                 EmptySlotPlaceholder emptySlotPlaceholder = new EmptySlotPlaceholder();
                 emptySlotPlaceholder.slotNumber = slotHandle.slotNumber;
                 this.inventorySlots.set(slotHandle.slotNumber, emptySlotPlaceholder);
@@ -80,7 +82,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
             int currentIndex = 0;
             for (INativeWidget addedWidget : addedWidgets) {
                 Slot slotHandle = addedWidget.getHandle();
-                //add or replace empty slot in inventory
+                // add or replace empty slot in inventory
                 this.slotMap.put(slotHandle, addedWidget);
                 if (currentIndex < emptySlotIndexes.length) {
                     int slotIndex = emptySlotIndexes[currentIndex++];
@@ -187,7 +189,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
             return ItemStack.EMPTY;
         }
         if (!slot.getHasStack()) {
-            //return empty if we can't transfer it
+            // return empty if we can't transfer it
             return ItemStack.EMPTY;
         }
         ItemStack stackInSlot = slot.getStack();
@@ -200,17 +202,17 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         if (stackToMerge.isEmpty() || slotMap.get(slot).canMergeSlot(stackToMerge)) {
             itemsMerged = stackInSlot.getCount() - stackToMerge.getCount();
         } else {
-            //if we can't have partial stack merge, we have to use all the stack
+            // if we can't have partial stack merge, we have to use all the stack
             itemsMerged = stackInSlot.getCount();
         }
         int itemsToExtract = itemsMerged;
         itemsMerged += transferredPerTick.get(player.world);
         if (itemsMerged > stackInSlot.getMaxStackSize()) {
-            //we can merge at most one stack at a time
+            // we can merge at most one stack at a time
             return ItemStack.EMPTY;
         }
         transferredPerTick.increment(player.world, itemsToExtract);
-        //otherwise, perform extraction and merge
+        // otherwise, perform extraction and merge
         ItemStack extractedStack = stackInSlot.splitStack(itemsToExtract);
         if (stackInSlot.isEmpty()) {
             slot.putStack(ItemStack.EMPTY);
@@ -281,8 +283,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         }
 
         @Override
-        public void putStack(@Nonnull ItemStack stack) {
-        }
+        public void putStack(@Nonnull ItemStack stack) {}
 
         @Override
         public boolean isItemValid(@Nonnull ItemStack stack) {

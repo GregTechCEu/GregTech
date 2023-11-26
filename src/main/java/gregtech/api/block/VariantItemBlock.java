@@ -32,5 +32,4 @@ public class VariantItemBlock<R extends Enum<R> & IStringSerializable, T extends
     public String getTranslationKey(@Nonnull ItemStack stack) {
         return super.getTranslationKey(stack) + '.' + genericBlock.getState(getBlockState(stack)).getName();
     }
-
 }

@@ -1,6 +1,7 @@
 package gregtech.core.advancement.criterion;
 
 import gregtech.api.advancement.IAdvancementCriterion;
+
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;

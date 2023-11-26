@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.block.IStateHarvestLevel;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -15,10 +16,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.CasingType> implements IStateHarvestLevel {
@@ -33,7 +35,8 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos,
+                                    EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
@@ -74,9 +77,12 @@ public class BlockCleanroomCasing extends VariantBlock<BlockCleanroomCasing.Casi
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag advanced) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+                               @Nonnull ITooltipFlag advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        if (stack.isItemEqual(getItemVariant(CasingType.FILTER_CASING))) tooltip.add(I18n.format("tile.cleanroom_casing.filter.tooltip"));
-        if (stack.isItemEqual(getItemVariant(CasingType.FILTER_CASING_STERILE))) tooltip.add(I18n.format("tile.cleanroom_casing.filter_sterile.tooltip"));
+        if (stack.isItemEqual(getItemVariant(CasingType.FILTER_CASING)))
+            tooltip.add(I18n.format("tile.cleanroom_casing.filter.tooltip"));
+        if (stack.isItemEqual(getItemVariant(CasingType.FILTER_CASING_STERILE)))
+            tooltip.add(I18n.format("tile.cleanroom_casing.filter_sterile.tooltip"));
     }
 }

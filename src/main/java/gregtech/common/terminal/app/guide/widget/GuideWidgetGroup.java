@@ -1,7 +1,5 @@
 package gregtech.common.terminal.app.guide.widget;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.WidgetGroup;
@@ -12,14 +10,19 @@ import gregtech.common.terminal.app.guideeditor.widget.configurator.ColorConfigu
 import gregtech.common.terminal.app.guideeditor.widget.configurator.NumberConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.StringConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.TextListConfigurator;
+
 import net.minecraft.item.ItemStack;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class GuideWidgetGroup extends WidgetGroup implements IGuideWidget {
-    //config
+
+    // config
     public String ref;
     public int fill;
     public int stroke;
@@ -35,7 +38,7 @@ public abstract class GuideWidgetGroup extends WidgetGroup implements IGuideWidg
         super(x, y, width, height);
     }
 
-    public GuideWidgetGroup(){
+    public GuideWidgetGroup() {
         super(Position.ORIGIN, Size.ZERO);
     }
 
@@ -92,7 +95,8 @@ public abstract class GuideWidgetGroup extends WidgetGroup implements IGuideWidg
     }
 
     @Override
-    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
+    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed,
+                                 Consumer<String> needUpdate) {
         group.addWidget(new ColorConfigurator(group, config, "fill", 0).setOnUpdated(needUpdate));
         group.addWidget(new ColorConfigurator(group, config, "stroke", 0).setOnUpdated(needUpdate));
         group.addWidget(new NumberConfigurator(group, config, "stroke_width", 1).setOnUpdated(needUpdate));
@@ -172,7 +176,7 @@ public abstract class GuideWidgetGroup extends WidgetGroup implements IGuideWidg
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         Position position = getPosition();
         Size size = getSize();
-        if(stroke != 0) {
+        if (stroke != 0) {
             drawBorder(position.x, position.y, size.width, size.height, stroke, stroke_width);
         }
         if (fill != 0) {
@@ -189,5 +193,4 @@ public abstract class GuideWidgetGroup extends WidgetGroup implements IGuideWidg
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
-
 }

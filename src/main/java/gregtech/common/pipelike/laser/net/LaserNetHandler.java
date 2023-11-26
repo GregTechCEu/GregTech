@@ -2,6 +2,7 @@ package gregtech.common.pipelike.laser.net;
 
 import gregtech.api.capability.ILaserContainer;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 

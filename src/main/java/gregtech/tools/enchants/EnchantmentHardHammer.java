@@ -2,6 +2,7 @@ package gregtech.tools.enchants;
 
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Enchantments;
@@ -15,7 +16,7 @@ public class EnchantmentHardHammer extends Enchantment {
     public static final EnchantmentHardHammer INSTANCE = new EnchantmentHardHammer();
 
     private EnchantmentHardHammer() {
-        super(Rarity.UNCOMMON, EnumEnchantmentType.DIGGER, new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
+        super(Rarity.UNCOMMON, EnumEnchantmentType.DIGGER, new EntityEquipmentSlot[] { EntityEquipmentSlot.MAINHAND });
         this.setRegistryName(GTUtility.gregtechId("hard_hammer"));
         this.setName("hard_hammer");
     }
@@ -36,9 +37,9 @@ public class EnchantmentHardHammer extends Enchantment {
 
     @Override
     public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack) {
-        return super.canApplyAtEnchantingTable(stack)
-                && stack.getItem().getToolClasses(stack).contains(ToolClasses.PICKAXE)
-                && !stack.getItem().getToolClasses(stack).contains(ToolClasses.HARD_HAMMER);
+        return super.canApplyAtEnchantingTable(stack) &&
+                stack.getItem().getToolClasses(stack).contains(ToolClasses.PICKAXE) &&
+                !stack.getItem().getToolClasses(stack).contains(ToolClasses.HARD_HAMMER);
     }
 
     @Override
@@ -46,4 +47,3 @@ public class EnchantmentHardHammer extends Enchantment {
         return super.canApplyTogether(ench) && ench != Enchantments.SILK_TOUCH && ench != Enchantments.FORTUNE;
     }
 }
-

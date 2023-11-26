@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.unification.ore.StoneType;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;

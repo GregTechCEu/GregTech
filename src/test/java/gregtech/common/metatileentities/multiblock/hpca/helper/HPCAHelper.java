@@ -16,7 +16,8 @@ public class HPCAHelper {
         return b.apply(new GridHandlerBuilder()).build();
     }
 
-    public static IHPCAComputationProvider getComputation(int cwuPerTick, int coolingPerTick, int upkeepEUt, int maxEUt) {
+    public static IHPCAComputationProvider getComputation(int cwuPerTick, int coolingPerTick, int upkeepEUt,
+                                                          int maxEUt) {
         return new HPCAComputationProviderTestImpl(upkeepEUt, maxEUt, cwuPerTick, coolingPerTick);
     }
 

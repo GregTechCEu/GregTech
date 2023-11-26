@@ -5,6 +5,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -29,7 +30,6 @@ import static gregtech.common.items.MetaItems.STICKY_RESIN;
 public class SeparationRecipes {
 
     public static void init() {
-
         // Centrifuge
         CENTRIFUGE_RECIPES.recipeBuilder()
                 .fluidInputs(RefineryGas.getFluid(8000))
@@ -97,7 +97,8 @@ public class SeparationRecipes {
                     int healAmount = itemFood.getHealAmount(itemStack);
                     float saturationModifier = itemFood.getSaturationModifier(itemStack);
                     if (healAmount > 0) {
-                        FluidStack outputStack = Methane.getFluid(Math.round(9 * healAmount * (1.0f + saturationModifier)));
+                        FluidStack outputStack = Methane
+                                .getFluid(Math.round(9 * healAmount * (1.0f + saturationModifier)));
 
                         CENTRIFUGE_RECIPES.recipeBuilder().duration(144).EUt(5)
                                 .inputs(itemStack)
@@ -570,7 +571,6 @@ public class SeparationRecipes {
                 .inputs(new ItemStack(Blocks.BOOKSHELF))
                 .outputs(new ItemStack(Items.BOOK, 3))
                 .duration(300).EUt(2).buildAndRegister();
-
     }
 
     @SuppressWarnings("unchecked")

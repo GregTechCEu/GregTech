@@ -1,15 +1,17 @@
 package gregtech.api.items.toolitem;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
-import it.unimi.dsi.fastutil.objects.*;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.item.ItemStack;
+
+import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.objects.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -190,7 +192,6 @@ public class ToolDefinitionBuilder {
         return this;
     }
 
-
     public IGTToolDefinition build() {
         return new IGTToolDefinition() {
 
@@ -229,9 +230,11 @@ public class ToolDefinitionBuilder {
                             effectiveStatePredicate.or(state -> effectiveMaterials.contains(state.getMaterial()));
                 }
                 if (effectiveStates != null) {
-                    effectiveStatePredicate = effectiveStatePredicate == null ? effectiveStates : effectiveStatePredicate.or(effectiveStates);
+                    effectiveStatePredicate = effectiveStatePredicate == null ? effectiveStates :
+                            effectiveStatePredicate.or(effectiveStates);
                 }
-                this.effectiveStatePredicate = effectiveStatePredicate == null ? state -> false : effectiveStatePredicate;
+                this.effectiveStatePredicate = effectiveStatePredicate == null ? state -> false :
+                        effectiveStatePredicate;
             }
 
             @Override
@@ -335,5 +338,4 @@ public class ToolDefinitionBuilder {
             }
         };
     }
-
 }

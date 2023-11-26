@@ -1,8 +1,9 @@
 package gregtech.client.renderer.texture.cube;
 
+import net.minecraft.util.EnumFacing;
+
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
-import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nonnull;
 

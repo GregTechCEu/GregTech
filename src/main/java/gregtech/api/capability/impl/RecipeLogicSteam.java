@@ -10,6 +10,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.core.advancement.AdvancementTriggers;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -32,13 +33,14 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
 
     private final IFluidTank steamFluidTank;
     private final boolean isHighPressure;
-    private final double conversionRate; //energy units per millibucket
+    private final double conversionRate; // energy units per millibucket
 
     private boolean needsVenting;
     private boolean ventingStuck;
     private EnumFacing ventingSide;
 
-    public RecipeLogicSteam(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, boolean isHighPressure, IFluidTank steamFluidTank, double conversionRate) {
+    public RecipeLogicSteam(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, boolean isHighPressure,
+                            IFluidTank steamFluidTank, double conversionRate) {
         super(tileEntity, recipeMap);
         this.steamFluidTank = steamFluidTank;
         this.conversionRate = conversionRate;
@@ -139,7 +141,8 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
 
     private void performVentingAnimation(BlockPos ventingBlockPos, BlockPos machinePos) {
         metaTileEntity.getWorld()
-                .getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(ventingBlockPos), EntitySelectors.CAN_AI_TARGET)
+                .getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(ventingBlockPos),
+                        EntitySelectors.CAN_AI_TARGET)
                 .forEach(entity -> {
                     entity.attackEntityFrom(DamageSources.getHeatDamage(), this.isHighPressure ? 12.0f : 6.0f);
                     if (entity instanceof EntityPlayerMP) {
@@ -156,11 +159,11 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
                 ventingSide.getXOffset() / 2.0,
                 ventingSide.getYOffset() / 2.0,
                 ventingSide.getZOffset() / 2.0, 0.1);
-        if (ConfigHolder.machines.machineSounds && !metaTileEntity.isMuffled()){
-            world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        if (ConfigHolder.machines.machineSounds && !metaTileEntity.isMuffled()) {
+            world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f,
+                    1.0f);
         }
         setNeedsVenting(false);
-
     }
 
     @Override
@@ -188,8 +191,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     @Nonnull
     @Override
     protected int[] calculateOverclock(@Nonnull Recipe recipe) {
-
-        //EUt, Duration
+        // EUt, Duration
         int[] result = new int[2];
 
         result[0] = isHighPressure ? recipe.getEUt() * 2 : recipe.getEUt();
@@ -221,7 +223,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    protected long getMaxVoltage() {
+    public long getMaxVoltage() {
         return GTValues.V[GTValues.LV];
     }
 

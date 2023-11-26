@@ -2,19 +2,22 @@ package gregtech.api.gui.resources;
 
 import gregtech.api.GTValues;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.apache.commons.io.IOUtils;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 /**
  * Original copied from com.brandon3055.draconicevolution.helpers;
@@ -69,7 +72,8 @@ public final class ResourceHelper {
      * @return if the resource exists
      */
     @SideOnly(Side.CLIENT)
-    public static boolean doResourcepacksHaveTexture(@Nonnull String modid, @Nonnull String textureResource, boolean format) {
+    public static boolean doResourcepacksHaveTexture(@Nonnull String modid, @Nonnull String textureResource,
+                                                     boolean format) {
         if (format) textureResource = String.format(DIR_FORMAT, textureResource);
         return doResourcepacksHaveResource(modid, textureResource);
     }

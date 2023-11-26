@@ -1,22 +1,25 @@
 package gregtech.client.renderer.texture.custom;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils.IIconRegister;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.texture.TextureUtils.IIconRegister;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 
 public class CrateRenderer implements IIconRegister {
+
     private final String basePath;
 
     @SideOnly(Side.CLIENT)
@@ -34,11 +37,11 @@ public class CrateRenderer implements IIconRegister {
     }
 
     public void render(CCRenderState renderState, Matrix4 translation, int baseColor, IVertexOperation[] pipeline) {
-
         IVertexOperation[] basePipeline = ArrayUtils.add(pipeline, new ColourMultiplier(baseColor));
 
         for (EnumFacing renderSide : EnumFacing.VALUES) {
-            Textures.renderFace(renderState, translation, basePipeline, renderSide, Cuboid6.full, sideSprite, BlockRenderLayer.CUTOUT_MIPPED);
+            Textures.renderFace(renderState, translation, basePipeline, renderSide, Cuboid6.full, sideSprite,
+                    BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
 

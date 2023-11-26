@@ -1,6 +1,5 @@
 package gregtech.integration.jei.utils;
 
-import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
@@ -8,9 +7,12 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
-import javax.annotation.Nonnull;
+import mezz.jei.api.recipe.IRecipeWrapper;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 public abstract class AdvancedRecipeWrapper implements IRecipeWrapper {
 
@@ -45,8 +47,10 @@ public abstract class AdvancedRecipeWrapper implements IRecipeWrapper {
     @Override
     public boolean handleClick(@Nonnull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
         for (JeiButton button : buttons) {
-            if (button.isHovering(mouseX, mouseY) && button.getClickAction().click(minecraft, mouseX, mouseY, mouseButton)) {
-                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            if (button.isHovering(mouseX, mouseY) &&
+                    button.getClickAction().click(minecraft, mouseX, mouseY, mouseButton)) {
+                Minecraft.getMinecraft().getSoundHandler()
+                        .playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 return true;
             }
         }

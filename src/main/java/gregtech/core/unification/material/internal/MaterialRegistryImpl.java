@@ -4,9 +4,10 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.core.CoreModule;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
+
+import javax.annotation.Nonnull;
 
 public class MaterialRegistryImpl extends MaterialRegistry {
 
@@ -31,7 +32,9 @@ public class MaterialRegistryImpl extends MaterialRegistry {
     @Override
     public void register(int id, @Nonnull String key, @Nonnull Material value) {
         if (isRegistryClosed) {
-            CoreModule.logger.error("Materials cannot be registered in the PostMaterialEvent (or after)! Must be added in the MaterialEvent. Skipping material {}...", key);
+            CoreModule.logger.error(
+                    "Materials cannot be registered in the PostMaterialEvent (or after)! Must be added in the MaterialEvent. Skipping material {}...",
+                    key);
             return;
         }
         super.register(id, key, value);

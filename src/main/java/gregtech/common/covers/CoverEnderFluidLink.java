@@ -1,10 +1,5 @@
 package gregtech.common.covers;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBase;
@@ -19,6 +14,7 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -28,6 +24,12 @@ import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +52,8 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
     private final FluidTankSwitchShim linkedTank;
     protected final FluidFilterContainer fluidFilter;
 
-    protected CoverEnderFluidLink(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+    protected CoverEnderFluidLink(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                                  @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
         this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName(), null));
         this.fluidFilter = new FluidFilterContainer(this);
@@ -78,12 +81,14 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
     }
 
     @Override
-    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.ENDER_FLUID_LINK.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override
-    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
+                                                        @NotNull CuboidRayTraceResult hitResult) {
         if (!getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
@@ -91,7 +96,8 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
     }
 
     @Override
-    public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
+    public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
+                             @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
         if (player != null) {
             this.playerUUID = player.getUniqueID();
@@ -111,7 +117,8 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
     }
 
     protected void transferFluids() {
-        IFluidHandler fluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide());
+        IFluidHandler fluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                getAttachedSide());
         if (fluidHandler == null) return;
         if (pumpMode == CoverPump.PumpMode.IMPORT) {
             GTTransferUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE, fluidFilter::testFluidStack);
@@ -141,13 +148,13 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
         widgetGroup.addWidget(new LabelWidget(10, 5, "cover.ender_fluid_link.title"));
         widgetGroup.addWidget(new ToggleButtonWidget(12, 18, 18, 18, GuiTextures.BUTTON_PUBLIC_PRIVATE,
                 this::isPrivate, this::setPrivate)
-                .setTooltipText("cover.ender_fluid_link.private.tooltip"));
+                        .setTooltipText("cover.ender_fluid_link.private.tooltip"));
         widgetGroup.addWidget(new SyncableColorRectWidget(35, 18, 18, 18, () -> color)
                 .setBorderWidth(1)
                 .drawCheckerboard(4, 4));
         widgetGroup.addWidget(new TextFieldWidget(58, 13, 58, 18, true,
                 this::getColorStr, this::updateColor, 8)
-                .setValidator(str -> COLOR_INPUT_PATTERN.matcher(str).matches()));
+                        .setValidator(str -> COLOR_INPUT_PATTERN.matcher(str).matches()));
         widgetGroup.addWidget(new TankWidget(this.linkedTank, 123, 18, 18, 18)
                 .setContainerClicking(true, true)
                 .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true));
@@ -159,7 +166,8 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
         widgetGroup.addWidget(new CycleButtonWidget(10, 42, 75, 18,
                 CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode));
         widgetGroup.addWidget(new CycleButtonWidget(92, 42, 75, 18,
-                this::isIoEnabled, this::setIoEnabled, "cover.ender_fluid_link.iomode.disabled", "cover.ender_fluid_link.iomode.enabled"));
+                this::isIoEnabled, this::setIoEnabled, "cover.ender_fluid_link.iomode.disabled",
+                "cover.ender_fluid_link.iomode.enabled"));
         this.fluidFilter.initUI(65, widgetGroup::addWidget);
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
                 .widget(widgetGroup)
@@ -226,10 +234,10 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
         this.color = packetBuffer.readInt();
-        //does client even need uuid info? just in case
+        // does client even need uuid info? just in case
         String uuidStr = packetBuffer.readString(36);
         this.playerUUID = uuidStr.equals("null") ? null : UUID.fromString(uuidStr);
-        //client does not need the actual tank reference, the default one will do just fine
+        // client does not need the actual tank reference, the default one will do just fine
     }
 
     @Override

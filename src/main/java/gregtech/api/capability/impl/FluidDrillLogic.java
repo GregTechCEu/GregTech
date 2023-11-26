@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.Fluid;
@@ -47,7 +48,6 @@ public class FluidDrillLogic {
         if (veinFluid == null)
             if (!acquireNewFluid())
                 return; // stop if we still have no fluid
-
 
         // drills that cannot work do nothing
         if (!this.isWorkingEnabled)
@@ -113,11 +113,14 @@ public class FluidDrillLogic {
     }
 
     public int getFluidToProduce() {
-        int depletedYield = BedrockFluidVeinHandler.getDepletedFluidYield(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
+        int depletedYield = BedrockFluidVeinHandler.getDepletedFluidYield(metaTileEntity.getWorld(), getChunkX(),
+                getChunkZ());
         int regularYield = BedrockFluidVeinHandler.getFluidYield(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
-        int remainingOperations = BedrockFluidVeinHandler.getOperationsRemaining(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
+        int remainingOperations = BedrockFluidVeinHandler.getOperationsRemaining(metaTileEntity.getWorld(), getChunkX(),
+                getChunkZ());
 
-        int produced = Math.max(depletedYield, regularYield * remainingOperations / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS);
+        int produced = Math.max(depletedYield,
+                regularYield * remainingOperations / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS);
         produced *= metaTileEntity.getRigMultiplier();
 
         // Overclocks produce 50% more fluid
@@ -144,7 +147,8 @@ public class FluidDrillLogic {
             return false;
         }
 
-        if (this.hasNotEnoughEnergy && metaTileEntity.getEnergyInputPerSecond() > 19L * GTValues.VA[metaTileEntity.getEnergyTier()]) {
+        if (this.hasNotEnoughEnergy &&
+                metaTileEntity.getEnergyInputPerSecond() > 19L * GTValues.VA[metaTileEntity.getEnergyTier()]) {
             this.hasNotEnoughEnergy = false;
         }
 
@@ -200,7 +204,8 @@ public class FluidDrillLogic {
             this.isWorkingEnabled = isWorkingEnabled;
             metaTileEntity.markDirty();
             if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
-                this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(isWorkingEnabled));
+                this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKING_ENABLED,
+                        buf -> buf.writeBoolean(isWorkingEnabled));
             }
         }
     }
@@ -261,7 +266,8 @@ public class FluidDrillLogic {
 
     /**
      * reads all needed values from NBT
-     * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#readFromNBT(NBTTagCompound)} method
+     * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#readFromNBT(NBTTagCompound)}
+     * method
      */
     public void readFromNBT(@Nonnull NBTTagCompound data) {
         this.isActive = data.getBoolean("isActive");
@@ -274,7 +280,8 @@ public class FluidDrillLogic {
 
     /**
      * writes all needed values to InitialSyncData
-     * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#writeInitialSyncData(PacketBuffer)} method
+     * This MUST be called and returned in the MetaTileEntity's
+     * {@link MetaTileEntity#writeInitialSyncData(PacketBuffer)} method
      */
     public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
@@ -286,7 +293,8 @@ public class FluidDrillLogic {
 
     /**
      * reads all needed values from InitialSyncData
-     * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#receiveInitialSyncData(PacketBuffer)} method
+     * This MUST be called and returned in the MetaTileEntity's
+     * {@link MetaTileEntity#receiveInitialSyncData(PacketBuffer)} method
      */
     public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
         setActive(buf.readBoolean());
@@ -298,7 +306,8 @@ public class FluidDrillLogic {
 
     /**
      * reads all needed values from CustomData
-     * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#receiveCustomData(int, PacketBuffer)} method
+     * This MUST be called and returned in the MetaTileEntity's
+     * {@link MetaTileEntity#receiveCustomData(int, PacketBuffer)} method
      */
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {

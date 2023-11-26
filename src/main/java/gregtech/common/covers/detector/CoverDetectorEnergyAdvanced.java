@@ -1,12 +1,5 @@
 package gregtech.common.covers.detector;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
@@ -16,6 +9,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,6 +18,12 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -41,17 +41,20 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     private boolean usePercent = false;
     private WidgetGroup widgetsToUpdate;
 
-    public CoverDetectorEnergyAdvanced(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+    public CoverDetectorEnergyAdvanced(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                                       @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
     }
 
     @Override
-    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.DETECTOR_ENERGY_ADVANCED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override
-    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
+                                                        @NotNull CuboidRayTraceResult hitResult) {
         if (!getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
@@ -68,7 +71,8 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         if (usePercent) {
             if (energyCapacity > 0) {
                 float ratio = (float) storedEnergy / energyCapacity;
-                this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue, this.minValue, isInverted(), this.outputAmount);
+                this.outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(ratio * 100, this.maxValue,
+                        this.minValue, isInverted(), this.outputAmount);
             } else {
                 this.outputAmount = isInverted() ? 0 : 15;
             }
@@ -98,17 +102,17 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
 
         // change modes between percent and discrete EU
         group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.advanced_energy_detector.modes_label"));
-        group.addWidget(new CycleButtonWidget(72, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isUsePercent, this::setUsePercent,
-                "cover.advanced_energy_detector.mode_eu", "cover.advanced_energy_detector.mode_percent")
-                .setTooltipHoverString("cover.advanced_energy_detector.modes_tooltip")
-        );
+        group.addWidget(
+                new CycleButtonWidget(72, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isUsePercent, this::setUsePercent,
+                        "cover.advanced_energy_detector.mode_eu", "cover.advanced_energy_detector.mode_percent")
+                                .setTooltipHoverString("cover.advanced_energy_detector.modes_tooltip"));
 
         // invert logic button
         group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING), "cover.generic.advanced_detector.invert_label"));
-        group.addWidget(new CycleButtonWidget(72, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
-                "cover.machine_controller.normal", "cover.machine_controller.inverted")
-                .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip")
-        );
+        group.addWidget(
+                new CycleButtonWidget(72, 4 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
+                        "cover.machine_controller.normal", "cover.machine_controller.inverted")
+                                .setTooltipHoverString("cover.advanced_energy_detector.invert_tooltip"));
 
         return ModularUI.builder(GuiTextures.BACKGROUND, 176 + (3 * SIZE), 108 + (SIZE))
                 .widget(group)
@@ -119,14 +123,16 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
     private WidgetGroup constructWidgetsToUpdate() {
         WidgetGroup sync = new WidgetGroup();
 
-        sync.addWidget(new TextFieldWidget2(76, 5 + (SIZE + PADDING), 8 * SIZE, SIZE, this::getMinValue, this::setMinValue)
-                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                .setMaxLength(this.getLength())
-                .setPostFix(this.getPostFix()));
-        sync.addWidget(new TextFieldWidget2(76, 5 + 2 * (SIZE + PADDING), 8 * SIZE, SIZE, this::getMaxValue, this::setMaxValue)
-                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                .setMaxLength(this.getLength())
-                .setPostFix(this.getPostFix()));
+        sync.addWidget(
+                new TextFieldWidget2(76, 5 + (SIZE + PADDING), 8 * SIZE, SIZE, this::getMinValue, this::setMinValue)
+                        .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                        .setMaxLength(this.getLength())
+                        .setPostFix(this.getPostFix()));
+        sync.addWidget(
+                new TextFieldWidget2(76, 5 + 2 * (SIZE + PADDING), 8 * SIZE, SIZE, this::getMaxValue, this::setMaxValue)
+                        .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                        .setMaxLength(this.getLength())
+                        .setPostFix(this.getPostFix()));
         return sync;
     }
 
@@ -206,7 +212,7 @@ public class CoverDetectorEnergyAdvanced extends CoverDetectorEnergy implements 
         readDeprecatedInvertedKeyFromNBT(tagCompound);
     }
 
-    //inverted here was saved using different key, now it is normalized but construction is for compatibility
+    // inverted here was saved using different key, now it is normalized but construction is for compatibility
     private void readDeprecatedInvertedKeyFromNBT(@Nonnull NBTTagCompound tagCompound) {
         String oldInvertedKey = "inverted";
         if (!tagCompound.hasKey(NBT_KEY_IS_INVERTED) && tagCompound.hasKey(oldInvertedKey)) {

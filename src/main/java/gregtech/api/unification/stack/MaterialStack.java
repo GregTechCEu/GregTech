@@ -1,8 +1,9 @@
 package gregtech.api.unification.stack;
 
-import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.SmallDigits;
+
+import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenProperty;

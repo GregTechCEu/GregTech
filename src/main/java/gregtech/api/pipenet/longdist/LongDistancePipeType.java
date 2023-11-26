@@ -2,12 +2,15 @@ package gregtech.api.pipenet.longdist;
 
 import gregtech.common.pipelike.fluidpipe.longdistance.LDFluidPipeType;
 import gregtech.common.pipelike.itempipe.longdistance.LDItemPipeType;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
 
 /**
  * This class defines a long distance pipe type. This class MUST be a singleton class!
