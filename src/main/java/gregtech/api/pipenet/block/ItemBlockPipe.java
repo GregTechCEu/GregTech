@@ -2,6 +2,7 @@ package gregtech.api.pipenet.block;
 
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -29,8 +30,10 @@ public class ItemBlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     }
 
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState newState) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull World world,
+                                @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ,
+                                @Nonnull IBlockState newState) {
         boolean superVal = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
         if (superVal && !world.isRemote) {
             IPipeTile selfTile = (IPipeTile) world.getTileEntity(pos);
@@ -48,9 +51,10 @@ public class ItemBlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
                             otherPipe.setConnection(facing.getOpposite(), false, true);
                         }
                     }
-                } else if (!ConfigHolder.machines.gt6StylePipesCables && selfTile.getPipeBlock().canPipeConnectToBlock(selfTile, facing, te)) {
-                    selfTile.setConnection(facing, true, false);
-                }
+                } else if (!ConfigHolder.machines.gt6StylePipesCables &&
+                        selfTile.getPipeBlock().canPipeConnectToBlock(selfTile, facing, te)) {
+                            selfTile.setConnection(facing, true, false);
+                        }
             }
         }
         return superVal;

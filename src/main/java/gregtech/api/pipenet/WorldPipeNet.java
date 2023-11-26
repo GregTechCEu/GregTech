@@ -9,9 +9,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
 
-import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.util.*;
+
+import javax.annotation.Nonnull;
 
 public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>> extends WorldSavedData {
 

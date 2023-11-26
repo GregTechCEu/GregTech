@@ -1,10 +1,12 @@
 package gregtech.common.gui.widget.appeng;
 
-import appeng.api.storage.data.IAEStack;
-import appeng.api.storage.data.IItemList;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ScrollableListWidget;
+
 import net.minecraft.network.PacketBuffer;
+
+import appeng.api.storage.data.IAEStack;
+import appeng.api.storage.data.IItemList;
 
 /**
  * @Author GlodBlock
@@ -74,5 +76,4 @@ public abstract class AEListGridWidget<T extends IAEStack<T>> extends Scrollable
     }
 
     protected abstract void readListChange(PacketBuffer buffer);
-
 }

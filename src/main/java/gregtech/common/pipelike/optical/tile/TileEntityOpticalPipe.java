@@ -13,16 +13,18 @@ import gregtech.common.pipelike.optical.OpticalPipeType;
 import gregtech.common.pipelike.optical.net.OpticalNetHandler;
 import gregtech.common.pipelike.optical.net.OpticalPipeNet;
 import gregtech.common.pipelike.optical.net.WorldOpticalPipeNet;
+
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.EnumMap;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> {
 
@@ -82,7 +84,8 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
             if (handlers.isEmpty()) initHandlers();
 
             checkNetwork();
-            return GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER.cast(handlers.getOrDefault(facing, defaultHandler));
+            return GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER
+                    .cast(handlers.getOrDefault(facing, defaultHandler));
         }
         return super.getCapabilityInternal(capability, facing);
     }
@@ -104,7 +107,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
             return null;
         OpticalPipeNet currentPipeNet = this.currentPipeNet.get();
         if (currentPipeNet != null && currentPipeNet.isValid() && currentPipeNet.containsNode(getPipePos()))
-            return currentPipeNet; //if current net is valid and does contain position, return it
+            return currentPipeNet; // if current net is valid and does contain position, return it
         WorldOpticalPipeNet worldNet = (WorldOpticalPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
         currentPipeNet = worldNet.getNetFromPos(getPipePos());
         if (currentPipeNet != null) {
@@ -139,7 +142,8 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
 
             // also check the other pipe
             TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
-            if (tile instanceof IPipeTile<?,?> pipeTile && pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
+            if (tile instanceof IPipeTile<?, ?>pipeTile &&
+                    pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
                 if (pipeTile.getNumConnections() >= 2) return;
             }
         }

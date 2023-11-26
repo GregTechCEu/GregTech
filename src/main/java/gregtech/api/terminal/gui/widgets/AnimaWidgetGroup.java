@@ -6,6 +6,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.function.Consumer;
 
 public abstract class AnimaWidgetGroup extends WidgetGroup {
+
     @SideOnly(Side.CLIENT)
     protected Interpolator interpolator;
     protected float scale = 1;
@@ -37,9 +39,9 @@ public abstract class AnimaWidgetGroup extends WidgetGroup {
     public final void maximizeWidget(Consumer<AnimaWidgetGroup> callback) {
         this.scale = 0;
         setVisible(true);
-        interpolator = new Interpolator(0, 1, 10, Eases.EaseLinear,
-                value-> scale = value.floatValue(),
-                value-> {
+        interpolator = new Interpolator(0, 1, 10, Eases.LINEAR,
+                value -> scale = value.floatValue(),
+                value -> {
                     interpolator = null;
                     if (callback != null) {
                         callback.accept(this);
@@ -51,9 +53,9 @@ public abstract class AnimaWidgetGroup extends WidgetGroup {
     @SideOnly(Side.CLIENT)
     public final void minimizeWidget(Consumer<AnimaWidgetGroup> callback) {
         this.scale = 1;
-        interpolator = new Interpolator(1, 0, 10, Eases.EaseLinear,
-                value-> scale = value.floatValue(),
-                value-> {
+        interpolator = new Interpolator(1, 0, 10, Eases.LINEAR,
+                value -> scale = value.floatValue(),
+                value -> {
                     setVisible(false);
                     interpolator = null;
                     if (callback != null) {
@@ -77,7 +79,8 @@ public abstract class AnimaWidgetGroup extends WidgetGroup {
     public final void drawInForeground(int mouseX, int mouseY) {
         if (scale == 0) {
             return;
-        } if (scale != 1) {
+        }
+        if (scale != 1) {
             GlStateManager.pushMatrix();
             GlStateManager.translate((this.gui.getScreenWidth() - this.gui.getScreenWidth() * scale) / 2,
                     (this.gui.getScreenHeight() - this.gui.getScreenHeight() * scale) / 2, 0);
@@ -93,7 +96,8 @@ public abstract class AnimaWidgetGroup extends WidgetGroup {
     public final void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         if (scale == 0) {
             return;
-        }if (scale != 1) {
+        }
+        if (scale != 1) {
             GlStateManager.pushMatrix();
             GlStateManager.translate((this.gui.getScreenWidth() - this.gui.getScreenWidth() * scale) / 2,
                     (this.gui.getScreenHeight() - this.gui.getScreenHeight() * scale) / 2, 0);

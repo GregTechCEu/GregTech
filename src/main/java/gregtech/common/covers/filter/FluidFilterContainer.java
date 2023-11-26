@@ -5,15 +5,17 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.util.IDirtyNotifiable;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
 
 public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
 
@@ -23,6 +25,7 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
     public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, int capacity) {
         this.filterWrapper = new FluidFilterWrapper(dirtyNotifiable, capacity);
         this.filterInventory = new ItemStackHandler(1) {
+
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 return FilterTypeRegistry.getFluidFilterForStack(stack) != null;
@@ -74,7 +77,7 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
         this.filterWrapper.initUI(y + 15, widgetGroup);
-        this.filterWrapper.blacklistUI(y + 15, widgetGroup, ()-> true);
+        this.filterWrapper.blacklistUI(y + 15, widgetGroup, () -> true);
     }
 
     protected void onFilterSlotChange(boolean notify) {
@@ -88,9 +91,9 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
             }
         } else if (currentFluidFilter == null ||
                 newFluidFilter.getClass() != currentFluidFilter.getClass()) {
-            filterWrapper.setFluidFilter(newFluidFilter);
-            if (notify) filterWrapper.onFilterInstanceChange();
-        }
+                    filterWrapper.setFluidFilter(newFluidFilter);
+                    if (notify) filterWrapper.onFilterInstanceChange();
+                }
     }
 
     public boolean testFluidStack(FluidStack fluidStack) {

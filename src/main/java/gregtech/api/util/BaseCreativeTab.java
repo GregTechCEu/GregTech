@@ -4,8 +4,9 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
 import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
 
 public class BaseCreativeTab extends CreativeTabs {
 

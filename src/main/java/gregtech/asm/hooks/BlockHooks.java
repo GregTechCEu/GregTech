@@ -1,6 +1,7 @@
 package gregtech.asm.hooks;
 
 import gregtech.client.model.customtexture.CustomTextureBakedModel;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -18,12 +19,12 @@ public class BlockHooks {
         if (ENABLE) {
             IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(state);
             if (model instanceof WeightedBakedModel) {
-                model = ((WeightedBakedModel)model).baseModel;
+                model = ((WeightedBakedModel) model).baseModel;
             }
 
             Boolean ret;
             if (model instanceof CustomTextureBakedModel) {
-                ret = ((CustomTextureBakedModel)model).getModel().canRenderInLayer(state, layer);
+                ret = ((CustomTextureBakedModel) model).getModel().canRenderInLayer(state, layer);
             } else {
                 ret = null;
             }

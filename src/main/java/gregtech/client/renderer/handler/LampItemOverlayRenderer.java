@@ -2,6 +2,7 @@ package gregtech.client.renderer.handler;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.common.blocks.BlockLamp;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
@@ -55,6 +56,7 @@ public class LampItemOverlayRenderer {
     }
 
     public enum OverlayType {
+
         NONE,
         NO_BLOOM,
         NO_LIGHT,

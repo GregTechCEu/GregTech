@@ -5,7 +5,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import javax.annotation.Nonnull;
 
 /**
- * Logic from EnderIO: https://github.com/SleepyTrousers/EnderIO/blob/d6dfb9d3964946ceb9fd72a66a3cff197a51a1fe/enderio-base/src/main/java/crazypants/enderio/base/handler/darksteel/DarkSteelController.java
+ * Logic from EnderIO:
+ * https://github.com/SleepyTrousers/EnderIO/blob/d6dfb9d3964946ceb9fd72a66a3cff197a51a1fe/enderio-base/src/main/java/crazypants/enderio/base/handler/darksteel/DarkSteelController.java
  */
 public interface IStepAssist {
 

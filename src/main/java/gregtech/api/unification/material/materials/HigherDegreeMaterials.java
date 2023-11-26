@@ -15,7 +15,6 @@ import static gregtech.api.util.GTUtility.gregtechId;
 public class HigherDegreeMaterials {
 
     public static void register() {
-
         Electrotine = new Material.Builder(2507, gregtechId("electrotine"))
                 .dust().ore(5, 1, true)
                 .color(0x3CB4C8).iconSet(SHINY)
@@ -86,7 +85,8 @@ public class HigherDegreeMaterials {
         HSSG = new Material.Builder(2516, gregtechId("hssg"))
                 .ingot(3).fluid()
                 .color(0x999900).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_SPRING, GENERATE_FINE_WIRE, GENERATE_FOIL, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_SPRING, GENERATE_FINE_WIRE,
+                        GENERATE_FOIL, GENERATE_GEAR)
                 .components(TungstenSteel, 5, Chrome, 1, Molybdenum, 2, Vanadium, 1)
                 .rotorStats(10.0f, 5.5f, 4000)
                 .cableProperties(V[LuV], 4, 2)
@@ -129,7 +129,8 @@ public class HigherDegreeMaterials {
         HSSS = new Material.Builder(2520, gregtechId("hsss"))
                 .ingot(4).fluid()
                 .color(0x660033).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME, GENERATE_ROTOR, GENERATE_ROUND, GENERATE_FOIL, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME, GENERATE_ROTOR, GENERATE_ROUND,
+                        GENERATE_FOIL, GENERATE_GEAR)
                 .components(HSSG, 6, Iridium, 2, Osmium, 1)
                 .rotorStats(15.0f, 7.0f, 3000)
                 .blast(b -> b

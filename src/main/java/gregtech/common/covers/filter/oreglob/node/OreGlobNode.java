@@ -55,7 +55,8 @@ public abstract class OreGlobNode {
     /**
      * Whether this node shares same structure and content with given node.
      * The check includes types, type specific states, negation flag and
-     * the next node's structural equality.<p>
+     * the next node's structural equality.
+     * <p>
      * Note that this check does not account for logical equivalency outside
      * structural equality.
      *
@@ -107,4 +108,3 @@ public abstract class OreGlobNode {
         return node1.isStructurallyEqualTo(node2);
     }
 }
-

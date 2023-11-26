@@ -1,6 +1,7 @@
 package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -30,7 +31,8 @@ public class EntityRendererVisitor extends MethodVisitor implements Opcodes {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        if (opcode == INVOKEVIRTUAL && (METHOD_RENDER_BLOCK_LAYER.matches(name, desc) || METHOD_RENDER_BLOCK_LAYER2.matches(name, desc))) {
+        if (opcode == INVOKEVIRTUAL &&
+                (METHOD_RENDER_BLOCK_LAYER.matches(name, desc) || METHOD_RENDER_BLOCK_LAYER2.matches(name, desc))) {
             time++;
             if (time == 4) {
                 METHOD_BLOOM_HOOKS.visitMethodInsn(this, INVOKESTATIC);
@@ -39,5 +41,4 @@ public class EntityRendererVisitor extends MethodVisitor implements Opcodes {
         }
         super.visitMethodInsn(opcode, owner, name, desc, itf);
     }
-
 }

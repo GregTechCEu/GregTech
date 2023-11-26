@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe.handlers;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
@@ -19,16 +18,20 @@ import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.crafting.ToolHeadReplaceRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.LATHE_RECIPES;
@@ -67,12 +70,16 @@ public class ToolRecipeHandler {
         powerUnitItems.put(GTValues.IV, MetaItems.POWER_UNIT_IV);
 
         batteryItems.put(GTValues.ULV, Collections.singletonList(MetaItems.BATTERY_ULV_TANTALUM));
-        batteryItems.put(GTValues.LV, ImmutableList.of(MetaItems.BATTERY_LV_LITHIUM, MetaItems.BATTERY_LV_CADMIUM, MetaItems.BATTERY_LV_SODIUM));
-        batteryItems.put(GTValues.MV, ImmutableList.of(MetaItems.BATTERY_MV_LITHIUM, MetaItems.BATTERY_MV_CADMIUM, MetaItems.BATTERY_MV_SODIUM));
-        batteryItems.put(GTValues.HV, ImmutableList.of(MetaItems.BATTERY_HV_LITHIUM, MetaItems.BATTERY_HV_CADMIUM, MetaItems.BATTERY_HV_SODIUM, MetaItems.ENERGIUM_CRYSTAL));
+        batteryItems.put(GTValues.LV, ImmutableList.of(MetaItems.BATTERY_LV_LITHIUM, MetaItems.BATTERY_LV_CADMIUM,
+                MetaItems.BATTERY_LV_SODIUM));
+        batteryItems.put(GTValues.MV, ImmutableList.of(MetaItems.BATTERY_MV_LITHIUM, MetaItems.BATTERY_MV_CADMIUM,
+                MetaItems.BATTERY_MV_SODIUM));
+        batteryItems.put(GTValues.HV, ImmutableList.of(MetaItems.BATTERY_HV_LITHIUM, MetaItems.BATTERY_HV_CADMIUM,
+                MetaItems.BATTERY_HV_SODIUM, MetaItems.ENERGIUM_CRYSTAL));
         batteryItems.put(GTValues.EV, ImmutableList.of(MetaItems.BATTERY_EV_VANADIUM, MetaItems.LAPOTRON_CRYSTAL));
         batteryItems.put(GTValues.IV, ImmutableList.of(MetaItems.BATTERY_IV_VANADIUM, MetaItems.ENERGY_LAPOTRONIC_ORB));
-        batteryItems.put(GTValues.LuV, ImmutableList.of(MetaItems.BATTERY_LUV_VANADIUM, MetaItems.ENERGY_LAPOTRONIC_ORB_CLUSTER));
+        batteryItems.put(GTValues.LuV,
+                ImmutableList.of(MetaItems.BATTERY_LUV_VANADIUM, MetaItems.ENERGY_LAPOTRONIC_ORB_CLUSTER));
         batteryItems.put(GTValues.ZPM, ImmutableList.of(MetaItems.BATTERY_ZPM_NAQUADRIA, MetaItems.ENERGY_MODULE));
         batteryItems.put(GTValues.UV, ImmutableList.of(MetaItems.BATTERY_UV_NAQUADRIA, MetaItems.ENERGY_CLUSTER));
 
@@ -88,7 +95,8 @@ public class ToolRecipeHandler {
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadBuzzSaw, ToolItems.BUZZSAW);
         ToolHeadReplaceRecipe.setToolHeadForTool(OrePrefix.toolHeadScrewdriver, ToolItems.SCREWDRIVER_LV);
 
-        ForgeRegistries.RECIPES.register(new ToolHeadReplaceRecipe().setRegistryName(new ResourceLocation(MODID, "replacetoolhead")));
+        ForgeRegistries.RECIPES
+                .register(new ToolHeadReplaceRecipe().setRegistryName(new ResourceLocation(MODID, "replacetoolhead")));
     }
 
     public static void registerPowerUnitRecipes() {
@@ -96,9 +104,11 @@ public class ToolRecipeHandler {
             List<MetaValueItem> tieredBatteryItems = batteryItems.get(tier);
             for (MetaValueItem batteryItem : tieredBatteryItems) {
                 ItemStack batteryStack = batteryItem.getStackForm();
-                long maxCharge = batteryStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null).getMaxCharge();
+                long maxCharge = batteryStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)
+                        .getMaxCharge();
                 ItemStack powerUnitStack = powerUnitItems.get(tier).getMaxChargeOverrideStack(maxCharge);
-                String recipeName = String.format("%s_%s", powerUnitItems.get(tier).unlocalizedName, batteryItem.unlocalizedName);
+                String recipeName = String.format("%s_%s", powerUnitItems.get(tier).unlocalizedName,
+                        batteryItem.unlocalizedName);
 
                 ModHandler.addShapedEnergyTransferRecipe(recipeName, powerUnitStack,
                         Ingredient.fromStacks(batteryStack), true, false,
@@ -115,7 +125,8 @@ public class ToolRecipeHandler {
     private static void processTool(OrePrefix prefix, Material material, ToolProperty property) {
         UnificationEntry stick = new UnificationEntry(OrePrefix.stick, Materials.Wood);
         UnificationEntry plate = new UnificationEntry(OrePrefix.plate, material);
-        UnificationEntry ingot = new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot, material);
+        UnificationEntry ingot = new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot,
+                material);
 
         if (material.hasFlag(GENERATE_PLATE)) {
             addToolRecipe(material, ToolItems.MINING_HAMMER, true,
@@ -234,7 +245,8 @@ public class ToolRecipeHandler {
                     'X', plate,
                     'S', steelPlate);
 
-            addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.DRILL_LV, ToolItems.DRILL_MV, ToolItems.DRILL_HV, ToolItems.DRILL_EV, ToolItems.DRILL_IV});
+            addElectricToolRecipe(toolPrefix, material, new IGTTool[] { ToolItems.DRILL_LV, ToolItems.DRILL_MV,
+                    ToolItems.DRILL_HV, ToolItems.DRILL_EV, ToolItems.DRILL_IV });
 
             // chainsaw
             toolPrefix = OrePrefix.toolHeadChainsaw;
@@ -245,11 +257,12 @@ public class ToolRecipeHandler {
                     'S', steelPlate,
                     'R', steelRing);
 
-            addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.CHAINSAW_LV});
+            addElectricToolRecipe(toolPrefix, material, new IGTTool[] { ToolItems.CHAINSAW_LV });
 
             // wrench
             toolPrefix = OrePrefix.toolHeadWrench;
-            addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.WRENCH_LV, ToolItems.WRENCH_HV, ToolItems.WRENCH_IV});
+            addElectricToolRecipe(toolPrefix, material,
+                    new IGTTool[] { ToolItems.WRENCH_LV, ToolItems.WRENCH_HV, ToolItems.WRENCH_IV });
 
             ModHandler.addShapedRecipe(String.format("wrench_head_%s", material),
                     OreDictUnifier.get(toolPrefix, material),
@@ -260,7 +273,7 @@ public class ToolRecipeHandler {
 
             // buzzsaw
             toolPrefix = OrePrefix.toolHeadBuzzSaw;
-            addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.BUZZSAW});
+            addElectricToolRecipe(toolPrefix, material, new IGTTool[] { ToolItems.BUZZSAW });
 
             ModHandler.addShapedRecipe(String.format("buzzsaw_blade_%s", material),
                     OreDictUnifier.get(toolPrefix, material),
@@ -280,7 +293,7 @@ public class ToolRecipeHandler {
         // screwdriver
         if (material.hasFlag(GENERATE_LONG_ROD)) {
             toolPrefix = OrePrefix.toolHeadScrewdriver;
-            addElectricToolRecipe(toolPrefix, material, new IGTTool[]{ToolItems.SCREWDRIVER_LV});
+            addElectricToolRecipe(toolPrefix, material, new IGTTool[] { ToolItems.SCREWDRIVER_LV });
 
             ModHandler.addShapedRecipe(String.format("screwdriver_tip_%s", material),
                     OreDictUnifier.get(toolPrefix, material),
@@ -304,7 +317,8 @@ public class ToolRecipeHandler {
         }
     }
 
-    public static void addToolRecipe(@Nonnull Material material, @Nonnull IGTTool tool, boolean mirrored, Object... recipe) {
+    public static void addToolRecipe(@Nonnull Material material, @Nonnull IGTTool tool, boolean mirrored,
+                                     Object... recipe) {
         if (mirrored) {
             ModHandler.addMirroredShapedRecipe(String.format("%s_%s", tool.getToolId(), material),
                     tool.get(material), recipe);
@@ -362,7 +376,7 @@ public class ToolRecipeHandler {
     }
 
     private static void registerMortarRecipes() {
-        for (Material material : new Material[]{
+        for (Material material : new Material[] {
                 Materials.Bronze, Materials.Iron, Materials.Invar, Materials.Steel,
                 Materials.DamascusSteel, Materials.CobaltBrass, Materials.WroughtIron }) {
 
@@ -374,7 +388,7 @@ public class ToolRecipeHandler {
     }
 
     private static void registerSoftToolRecipes() {
-        final Material[] softMaterials = new Material[]{
+        final Material[] softMaterials = new Material[] {
                 Materials.Wood, Materials.Rubber, Materials.Polyethylene,
                 Materials.Polytetrafluoroethylene, Materials.Polybenzimidazole
         };
@@ -408,7 +422,8 @@ public class ToolRecipeHandler {
 
     private static void registerElectricRecipes() {
         for (MetaValueItem batteryItem : batteryItems.get(LV)) {
-            ModHandler.addShapedEnergyTransferRecipe("prospector_lv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LV.getStackForm(),
+            ModHandler.addShapedEnergyTransferRecipe("prospector_lv_" + batteryItem.unlocalizedName,
+                    MetaItems.PROSPECTOR_LV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",
                     'E', MetaItems.EMITTER_LV.getStackForm(),
@@ -418,7 +433,8 @@ public class ToolRecipeHandler {
                     'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.LV),
                     'B', batteryItem.getStackForm());
 
-            ModHandler.addShapedEnergyTransferRecipe("magnet_lv_" + batteryItem.unlocalizedName, MetaItems.ITEM_MAGNET_LV.getStackForm(),
+            ModHandler.addShapedEnergyTransferRecipe("magnet_lv_" + batteryItem.unlocalizedName,
+                    MetaItems.ITEM_MAGNET_LV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "MwM", "MBM", "CPC",
                     'M', new UnificationEntry(OrePrefix.stick, Materials.SteelMagnetic),
@@ -428,7 +444,8 @@ public class ToolRecipeHandler {
         }
 
         for (MetaValueItem batteryItem : batteryItems.get(MV)) {
-            ModHandler.addShapedEnergyTransferRecipe("tricorder_" + batteryItem.unlocalizedName, MetaItems.TRICORDER_SCANNER.getStackForm(),
+            ModHandler.addShapedEnergyTransferRecipe("tricorder_" + batteryItem.unlocalizedName,
+                    MetaItems.TRICORDER_SCANNER.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",
                     'E', MetaItems.EMITTER_MV.getStackForm(),
@@ -440,7 +457,8 @@ public class ToolRecipeHandler {
         }
 
         for (MetaValueItem batteryItem : batteryItems.get(HV)) {
-            ModHandler.addShapedEnergyTransferRecipe("prospector_hv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_HV.getStackForm(),
+            ModHandler.addShapedEnergyTransferRecipe("prospector_hv_" + batteryItem.unlocalizedName,
+                    MetaItems.PROSPECTOR_HV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",
                     'E', MetaItems.EMITTER_HV.getStackForm(),
@@ -450,7 +468,8 @@ public class ToolRecipeHandler {
                     'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV),
                     'B', batteryItem.getStackForm());
 
-            ModHandler.addShapedEnergyTransferRecipe("magnet_hv_" + batteryItem.unlocalizedName, MetaItems.ITEM_MAGNET_HV.getStackForm(),
+            ModHandler.addShapedEnergyTransferRecipe("magnet_hv_" + batteryItem.unlocalizedName,
+                    MetaItems.ITEM_MAGNET_HV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "MwM", "MBM", "CPC",
                     'M', new UnificationEntry(OrePrefix.stick, Materials.NeodymiumMagnetic),
@@ -460,7 +479,8 @@ public class ToolRecipeHandler {
         }
 
         for (MetaValueItem batteryItem : batteryItems.get(LuV)) {
-            ModHandler.addShapedEnergyTransferRecipe("prospector_luv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LUV.getStackForm(),
+            ModHandler.addShapedEnergyTransferRecipe("prospector_luv_" + batteryItem.unlocalizedName,
+                    MetaItems.PROSPECTOR_LUV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",
                     'E', MetaItems.EMITTER_LuV.getStackForm(),

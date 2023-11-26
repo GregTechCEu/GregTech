@@ -2,20 +2,23 @@ package gregtech.common.inventory.itemsource.sources;
 
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.inventory.itemsource.ItemSource;
-import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenCustomHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMaps;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.EmptyHandler;
+
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 
 public class InventoryItemSource extends ItemSource {
 
     protected final World world;
     protected final int priority;
     protected IItemHandler itemHandler = EmptyHandler.INSTANCE;
-    private Object2IntMap<ItemStack> itemStackByAmountMap = new Object2IntLinkedOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+    private Object2IntMap<ItemStack> itemStackByAmountMap = new Object2IntLinkedOpenCustomHashMap<>(
+            ItemStackHashStrategy.comparingAllButCount());
 
     public InventoryItemSource(World world, int priority) {
         this.world = world;
@@ -27,8 +30,7 @@ public class InventoryItemSource extends ItemSource {
         this.itemHandler = itemHandler1;
     }
 
-    public void computeItemHandler() {
-    }
+    public void computeItemHandler() {}
 
     @Override
     public int getPriority() {
@@ -91,7 +93,8 @@ public class InventoryItemSource extends ItemSource {
     }
 
     private void recomputeItemStackCount() {
-        Object2IntMap<ItemStack> amountMap = new Object2IntLinkedOpenCustomHashMap<>(ItemStackHashStrategy.comparingAllButCount());
+        Object2IntMap<ItemStack> amountMap = new Object2IntLinkedOpenCustomHashMap<>(
+                ItemStackHashStrategy.comparingAllButCount());
         if (itemHandler == null) {
             this.itemStackByAmountMap = amountMap;
             return;
@@ -104,4 +107,3 @@ public class InventoryItemSource extends ItemSource {
         this.itemStackByAmountMap = amountMap;
     }
 }
-

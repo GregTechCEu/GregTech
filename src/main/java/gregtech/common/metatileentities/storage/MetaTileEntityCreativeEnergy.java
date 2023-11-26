@@ -1,10 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -21,6 +16,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,12 +27,19 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Function;
+
+import javax.annotation.Nullable;
 
 import static gregtech.api.GTValues.MAX;
 import static gregtech.api.GTValues.V;
@@ -63,7 +66,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+        IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         Textures.VOLTAGE_CASINGS[14].render(renderState, translation, renderPipeline, Cuboid6.full);
         for (EnumFacing face : EnumFacing.VALUES) {
             Textures.INFINITE_EMITTER_FACE.renderSided(face, renderState, translation, pipeline);
@@ -123,7 +127,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
 
         builder.dynamicLabel(7, 110, () -> "Energy I/O per sec: " + this.lastEnergyIOPerSec, 0x232323);
 
-        builder.widget(new CycleButtonWidget(7, 139, 77, 20, () -> active, value -> active = value, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
+        builder.widget(new CycleButtonWidget(7, 139, 77, 20, () -> active, value -> active = value,
+                "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
         builder.widget(new CycleButtonWidget(85, 139, 77, 20, () -> source, value -> {
             source = value;
             if (source) {
@@ -148,9 +153,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.creative_tooltip.1")
-                + TooltipHelper.RAINBOW + I18n.format("gregtech.creative_tooltip.2")
-                + I18n.format("gregtech.creative_tooltip.3"));
+        tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
+                I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
     }
 
     @Override
@@ -178,7 +182,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
             EnumFacing opposite = facing.getOpposite();
             TileEntity tile = getNeighbor(facing);
             if (tile != null) {
-                IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, opposite);
+                IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
+                        opposite);
                 // Try to get laser capability
                 if (container == null)
                     container = tile.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, opposite);
@@ -317,5 +322,4 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
             return val;
         };
     }
-
 }

@@ -2,8 +2,9 @@ package gregtech.common.inventory;
 
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nullable;
 import java.util.Set;
+
+import javax.annotation.Nullable;
 
 public interface IItemList {
 

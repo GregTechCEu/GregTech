@@ -5,14 +5,16 @@ import gregtech.api.util.oreglob.OreGlobCompileResult.Report;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import static gregtech.common.covers.filter.oreglob.impl.OreGlobParser.TokenType.*;
 
 /**
  * Top-down parser for oreGlob expression.
+ * 
  * <pre>
  * oreGlob = [ FLAG ], [ or ], EOF
  *
@@ -185,8 +187,7 @@ public final class OreGlobParser {
                 }
             }
             default -> warn(OreGlobMessages.compileErrorUnknownCompilationFlag(
-                    new StringBuilder().appendCodePoint(flag).toString()
-            ), index, 1);
+                    new StringBuilder().appendCodePoint(flag).toString()), index, 1);
         }
     }
 
@@ -219,7 +220,7 @@ public final class OreGlobParser {
             // Eat through OR tokens as much as we can, to prevent scenario where
             // a disgusting C like lang users type || and complain their filter is broken
             // noinspection StatementWithEmptyBody
-            while (advanceIf(OR)) ;
+            while (advanceIf(OR));
             nodes.add(and());
         } while (advanceIf(OR));
         return OreGlobNodes.or(nodes);
@@ -234,7 +235,7 @@ public final class OreGlobParser {
             // Eat through AND tokens as much as we can, to prevent scenario where
             // a disgusting C like lang users type && and complain their filter is broken
             // noinspection StatementWithEmptyBody
-            while (advanceIf(AND)) ;
+            while (advanceIf(AND));
             nodes.add(xor());
         } while (advanceIf(AND));
         return OreGlobNodes.and(nodes);
@@ -282,7 +283,8 @@ public final class OreGlobParser {
                 int tokenStart = this.tokenStart;
                 OreGlobNode node = not(nested || not);
                 if (OreGlobNodes.isNegatedMatch(root) && OreGlobNodes.isNegatedMatch(node)) {
-                    warn(OreGlobMessages.compileWarnConsecutiveNegation(), tokenStart, tokenStart + tokenLength - tokenStart);
+                    warn(OreGlobMessages.compileWarnConsecutiveNegation(), tokenStart,
+                            tokenStart + tokenLength - tokenStart);
                 }
                 root = OreGlobNodes.append(root, node);
             }
@@ -311,11 +313,12 @@ public final class OreGlobParser {
                         advance();
                         yield OreGlobNodes.empty();
                     }
-                    // To preserve consistency between grouped expression below, enclosing parenthesis of nothing match is also optional
+                    // To preserve consistency between grouped expression below, enclosing parenthesis of nothing match
+                    // is also optional
                     // For example, this is totally valid ore expression
-                    //    (
+                    // (
                     // ...in the same logic the ore expression below is valid
-                    //    ( ore* | ingot*
+                    // ( ore* | ingot*
                     case EOF -> OreGlobNodes.empty();
                     default -> {
                         OreGlobNode result = or();

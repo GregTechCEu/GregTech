@@ -6,16 +6,18 @@ import gregtech.api.util.oreglob.OreGlobTextBuilder;
 import gregtech.common.covers.filter.oreglob.node.BranchType;
 import gregtech.common.covers.filter.oreglob.node.NodeVisitor;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
+
 import org.xml.sax.SAXException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 class NodeVisualizer implements NodeVisitor {
 
@@ -62,7 +64,8 @@ class NodeVisualizer implements NodeVisitor {
 
     @Override
     public void charsOrMore(int amount, boolean not) {
-        appendNodeXML(visualizer, not ? OreGlobMessages.PREVIEW_CHARS_OR_MORE_NOT : OreGlobMessages.PREVIEW_CHARS_OR_MORE, amount);
+        appendNodeXML(visualizer,
+                not ? OreGlobMessages.PREVIEW_CHARS_OR_MORE_NOT : OreGlobMessages.PREVIEW_CHARS_OR_MORE, amount);
     }
 
     @Override
@@ -84,7 +87,8 @@ class NodeVisualizer implements NodeVisitor {
                 for (int i = 0; i < nodes.size(); i++) {
                     OreGlobNode node = nodes.get(i);
                     visualizer.newLine(indents);
-                    appendNodeXML(visualizer, i == 0 ? OreGlobMessages.PREVIEW_OR_ENTRY_START : OreGlobMessages.PREVIEW_OR_ENTRY);
+                    appendNodeXML(visualizer,
+                            i == 0 ? OreGlobMessages.PREVIEW_OR_ENTRY_START : OreGlobMessages.PREVIEW_OR_ENTRY);
                     new NodeVisualizer(visualizer, indents + 1).visit(node);
                 }
             }
@@ -93,7 +97,8 @@ class NodeVisualizer implements NodeVisitor {
                 for (int i = 0; i < nodes.size(); i++) {
                     OreGlobNode node = nodes.get(i);
                     visualizer.newLine(indents);
-                    appendNodeXML(visualizer, i == 0 ? OreGlobMessages.PREVIEW_AND_ENTRY_START : OreGlobMessages.PREVIEW_AND_ENTRY);
+                    appendNodeXML(visualizer,
+                            i == 0 ? OreGlobMessages.PREVIEW_AND_ENTRY_START : OreGlobMessages.PREVIEW_AND_ENTRY);
                     new NodeVisualizer(visualizer, indents + 1).visit(node);
                 }
             }

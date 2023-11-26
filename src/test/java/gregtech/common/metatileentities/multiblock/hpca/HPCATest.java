@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multiblock.hpca;
 import gregtech.Bootstrap;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA.HPCAGridHandler;
 import gregtech.common.metatileentities.multiblock.hpca.helper.HPCAHelper;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +39,7 @@ public class HPCATest {
 
         assertThat(maxCWUt, is(0));
         assertThat(upkeepEUt, is(32 * 4));
-        assertThat(maxEUt, is (128 * 4));
+        assertThat(maxEUt, is(128 * 4));
         assertThat(maxCoolingDemand, is(0));
         assertThat(maxCoolingAmount, is(4 * 4));
 

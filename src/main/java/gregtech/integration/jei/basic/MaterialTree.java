@@ -1,20 +1,23 @@
 package gregtech.integration.jei.basic;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
+
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+
+import com.google.common.collect.ImmutableList;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MaterialTree implements IRecipeWrapper {
+
     private final static ImmutableList<OrePrefix> PREFIXES = ImmutableList.of(
             OrePrefix.dustTiny,
             OrePrefix.dust,
@@ -45,8 +48,7 @@ public class MaterialTree implements IRecipeWrapper {
             OrePrefix.ring,
             // fluid,
             OrePrefix.lens,
-            OrePrefix.foil
-    );
+            OrePrefix.foil);
 
     private final List<List<ItemStack>> itemInputs = new ArrayList<>();
     private final List<List<FluidStack>> fluidInputs = new ArrayList<>();

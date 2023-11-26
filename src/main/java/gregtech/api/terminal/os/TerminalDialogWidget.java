@@ -15,6 +15,7 @@ import gregtech.api.terminal.util.FileTree;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.IInventory;
@@ -31,13 +32,18 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class TerminalDialogWidget extends AnimaWidgetGroup {
-    private static final IGuiTexture DIALOG_BACKGROUND = TextureArea.fullImage("textures/gui/terminal/terminal_dialog.png");
+
+    private static final IGuiTexture DIALOG_BACKGROUND = TextureArea
+            .fullImage("textures/gui/terminal/terminal_dialog.png");
     private static final IGuiTexture OK_NORMAL = TextureArea.fullImage("textures/gui/terminal/icon/ok_normal.png");
     private static final IGuiTexture OK_HOVER = TextureArea.fullImage("textures/gui/terminal/icon/ok_hover.png");
-//    private static final IGuiTexture OK_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/ok_disable.png");
-    private static final IGuiTexture CANCEL_NORMAL = TextureArea.fullImage("textures/gui/terminal/icon/cancel_normal.png");
-    private static final IGuiTexture CANCEL_HOVER = TextureArea.fullImage("textures/gui/terminal/icon/cancel_hover.png");
-//    private static final IGuiTexture CANCEL_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/cancel_disable.png");
+    // private static final IGuiTexture OK_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/ok_disable.png");
+    private static final IGuiTexture CANCEL_NORMAL = TextureArea
+            .fullImage("textures/gui/terminal/icon/cancel_normal.png");
+    private static final IGuiTexture CANCEL_HOVER = TextureArea
+            .fullImage("textures/gui/terminal/icon/cancel_hover.png");
+    // private static final IGuiTexture CANCEL_DISABLE =
+    // TextureArea.fullImage("textures/gui/terminal/icon/cancel_disable.png");
     private static final int HEIGHT = 128;
     private static final int WIDTH = 184;
 
@@ -131,16 +137,19 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     }
 
     public TerminalDialogWidget addInfo(String info) {
-        this.addWidget(new LabelWidget(WIDTH / 2, HEIGHT / 2, info, -1).setWidth(WIDTH - 16).setYCentered(true).setXCentered(true));
+        this.addWidget(new LabelWidget(WIDTH / 2, HEIGHT / 2, info, -1).setWidth(WIDTH - 16).setYCentered(true)
+                .setXCentered(true));
         return this;
     }
 
     public static TerminalDialogWidget createEmptyTemplate(TerminalOSWidget os) {
         Size size = os.getSize();
-        return new TerminalDialogWidget(os, (size.width - WIDTH) / 2, (size.height - HEIGHT) / 2, WIDTH, HEIGHT).setBackground(DIALOG_BACKGROUND);
+        return new TerminalDialogWidget(os, (size.width - WIDTH) / 2, (size.height - HEIGHT) / 2, WIDTH, HEIGHT)
+                .setBackground(DIALOG_BACKGROUND);
     }
 
-    public static TerminalDialogWidget showInfoDialog(TerminalOSWidget os, String title, String info, Runnable callback) {
+    public static TerminalDialogWidget showInfoDialog(TerminalOSWidget os, String title, String info,
+                                                      Runnable callback) {
         return createEmptyTemplate(os).addTitle(title).addInfo(info).addOkButton(callback);
     }
 
@@ -148,12 +157,15 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return createEmptyTemplate(os).addTitle(title).addInfo(info).addOkButton(null);
     }
 
-    public static TerminalDialogWidget showConfirmDialog(TerminalOSWidget os, String title, String info, Consumer<Boolean> result) {
+    public static TerminalDialogWidget showConfirmDialog(TerminalOSWidget os, String title, String info,
+                                                         Consumer<Boolean> result) {
         return createEmptyTemplate(os).addConfirmButton(result).addTitle(title).addInfo(info);
     }
 
-    public static TerminalDialogWidget showTextFieldDialog(TerminalOSWidget os, String title, Predicate<String> validator, Consumer<String> result) {
-        TextFieldWidget textFieldWidget = new TextFieldWidget(WIDTH / 2 - 50, HEIGHT / 2 - 15, 100, 20, new ColorRectTexture(0x2fffffff), null, null).setValidator(validator);
+    public static TerminalDialogWidget showTextFieldDialog(TerminalOSWidget os, String title,
+                                                           Predicate<String> validator, Consumer<String> result) {
+        TextFieldWidget textFieldWidget = new TextFieldWidget(WIDTH / 2 - 50, HEIGHT / 2 - 15, 100, 20,
+                new ColorRectTexture(0x2fffffff), null, null).setValidator(validator);
         TerminalDialogWidget dialog = createEmptyTemplate(os).addTitle(title).addConfirmButton(b -> {
             if (b) {
                 if (result != null)
@@ -169,9 +181,11 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
 
     /**
      * Show Color Dialog
+     * 
      * @return color (rgba)
      */
-    public static TerminalDialogWidget showColorDialog(TerminalOSWidget os, String title, Consumer<Integer> result, int startColor) {
+    public static TerminalDialogWidget showColorDialog(TerminalOSWidget os, String title, Consumer<Integer> result,
+                                                       int startColor) {
         TerminalDialogWidget dialog = createEmptyTemplate(os).addTitle(title);
         ColorWidget colorWidget = new ColorWidget(WIDTH / 2 - 60, HEIGHT / 2 - 35, 80, 10);
         colorWidget.setStartColor(startColor);
@@ -190,11 +204,13 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
 
     /**
      * Show FileDialog
-     * @param dir root directory
+     * 
+     * @param dir        root directory
      * @param isSelector select a file or save a file
-     * @param result selected file or (saved)
+     * @param result     selected file or (saved)
      */
-    public static TerminalDialogWidget showFileDialog(TerminalOSWidget os, String title, File dir, boolean isSelector, Consumer<File> result) {
+    public static TerminalDialogWidget showFileDialog(TerminalOSWidget os, String title, File dir, boolean isSelector,
+                                                      Consumer<File> result) {
         Size size = os.getSize();
         TerminalDialogWidget dialog = new TerminalDialogWidget(os, 0, 0, size.width, size.height)
                 .setBackground(new ColorRectTexture(0x4f000000));
@@ -205,9 +221,11 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         }
         AtomicReference<File> selected = new AtomicReference<>();
         selected.set(dir);
-        dialog.addWidget(new TreeListWidget<>(0, 0, 130, size.height, new FileTree(dir), node -> selected.set(node.getKey())).setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
-                .canSelectNode(true)
-                .setLeafTexture(GuiTextures.SLOT_DARKENED));
+        dialog.addWidget(
+                new TreeListWidget<>(0, 0, 130, size.height, new FileTree(dir), node -> selected.set(node.getKey()))
+                        .setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
+                        .canSelectNode(true)
+                        .setLeafTexture(GuiTextures.SLOT_DARKENED));
         int x = 130 + (size.width - 133 - WIDTH) / 2;
         int y = (size.height - HEIGHT) / 2;
         dialog.addWidget(new ImageWidget(x, y, WIDTH, HEIGHT, DIALOG_BACKGROUND));
@@ -237,25 +255,26 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 return "terminal.dialog.no_file_selected";
             }, true).setWidth(WIDTH - 16));
         } else {
-            dialog.addWidget(new TextFieldWidget(x + WIDTH / 2 - 38, y + HEIGHT / 2 - 10, 76, 20, new ColorRectTexture(0x4f000000), null, null)
-                    .setTextResponder(res->{
-                        File file = selected.get();
-                        if (file == null) return;
-                        if (file.isDirectory()) {
-                            selected.set(new File(file, res));
-                        } else {
-                            selected.set(new File(file.getParent(), res));
-                        }
-                    },true)
-                    .setTextSupplier(()->{
-                        File file = selected.get();
-                        if (file != null && !file.isDirectory()) {
-                            return selected.get().getName();
-                        }
-                        return "";
-                    }, true)
-                    .setMaxStringLength(Integer.MAX_VALUE)
-                    .setValidator(s->true));
+            dialog.addWidget(new TextFieldWidget(x + WIDTH / 2 - 38, y + HEIGHT / 2 - 10, 76, 20,
+                    new ColorRectTexture(0x4f000000), null, null)
+                            .setTextResponder(res -> {
+                                File file = selected.get();
+                                if (file == null) return;
+                                if (file.isDirectory()) {
+                                    selected.set(new File(file, res));
+                                } else {
+                                    selected.set(new File(file.getParent(), res));
+                                }
+                            }, true)
+                            .setTextSupplier(() -> {
+                                File file = selected.get();
+                                if (file != null && !file.isDirectory()) {
+                                    return selected.get().getName();
+                                }
+                                return "";
+                            }, true)
+                            .setMaxStringLength(Integer.MAX_VALUE)
+                            .setValidator(s -> true));
         }
         dialog.addWidget(new CircleButtonWidget(x + 17, y + 15, 10, 1, 16)
                 .setClickListener(cd -> {
@@ -278,7 +297,8 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return dialog.setClientSide();
     }
 
-    public static TerminalDialogWidget showItemSelector(TerminalOSWidget os, String title, boolean cost, Predicate<ItemStack> filter, Consumer<ItemStack> result) {
+    public static TerminalDialogWidget showItemSelector(TerminalOSWidget os, String title, boolean cost,
+                                                        Predicate<ItemStack> filter, Consumer<ItemStack> result) {
         TerminalDialogWidget dialog = createEmptyTemplate(os);
         dialog.addWidget(new LabelWidget(WIDTH / 2, -7, title, -1).setShadow(true).setXCentered(true));
         IInventory inventoryPlayer = os.getModularUI().entityPlayer.inventory;
@@ -287,11 +307,13 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         }
         int x = 11;
         int y = 30;
-        final SlotWidget[] selected = {null};
+        final SlotWidget[] selected = { null };
         for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 9; col++) {
                 boolean pass = filter == null || filter.test(inventoryPlayer.getStackInSlot(col + row * 9));
-                SlotWidget slotWidget = new SlotWidget(inventoryPlayer, col + row * 9, x + col * 18, (int) (y + (row == 0 ? -1.2 : (row - 1)) * 18), false, false) {
+                SlotWidget slotWidget = new SlotWidget(inventoryPlayer, col + row * 9, x + col * 18,
+                        (int) (y + (row == 0 ? -1.2 : (row - 1)) * 18), false, false) {
+
                     @Override
                     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
                         super.drawInBackground(mouseX, mouseY, partialTicks, context);
@@ -329,7 +351,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 dialog.iNativeWidgets.add(slotWidget);
             }
         }
-        dialog.addConfirmButton(confirm->{
+        dialog.addConfirmButton(confirm -> {
             if (result != null && confirm && selected[0] != null && !selected[0].getHandle().getStack().isEmpty()) {
                 ItemStack stack = selected[0].getHandle().getStack().copy();
                 if (cost) {
@@ -357,7 +379,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
             if (widget.isVisible()) {
-                if(widget.mouseClicked(mouseX, mouseY, button)){
+                if (widget.mouseClicked(mouseX, mouseY, button)) {
                     return true;
                 }
             }
@@ -393,6 +415,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     }
 
     public void onOSSizeUpdate(int width, int height) {
-        setSelfPosition(Position.ORIGIN.add(new Position((width - getSize().width) / 2, (height - getSize().height) / 2)));
+        setSelfPosition(
+                Position.ORIGIN.add(new Position((width - getSize().width) / 2, (height - getSize().height) / 2)));
     }
 }

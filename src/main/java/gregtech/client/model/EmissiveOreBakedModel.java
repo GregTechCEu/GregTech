@@ -4,6 +4,7 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -11,10 +12,11 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class EmissiveOreBakedModel extends OreBakedModel {
 
@@ -35,7 +37,7 @@ public class EmissiveOreBakedModel extends OreBakedModel {
             return quads;
         } else if (layer == BlockRenderLayer.CUTOUT_MIPPED) {
             return getBaseModel().getQuads(null, side, 0);
-        } else if (layer == BloomEffectUtil.getRealBloomLayer()) {
+        } else if (layer == BloomEffectUtil.getEffectiveBloomLayer()) {
             return getOverlayQuads(side, rand);
         } else {
             return Collections.emptyList();

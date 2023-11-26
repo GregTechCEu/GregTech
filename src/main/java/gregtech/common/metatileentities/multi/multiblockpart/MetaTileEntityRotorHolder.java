@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IRotorHolder;
 import gregtech.api.damagesources.DamageSources;
@@ -19,6 +15,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.core.advancement.AdvancementTriggers;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,11 +30,18 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
 import java.util.List;
 
-public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
+                                       implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
 
     static final int SPEED_INCREMENT = 1;
     static final int SPEED_DECREMENT = 3;
@@ -257,17 +261,20 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                CuboidRayTraceResult hitResult) {
         return onRotorHolderInteract(playerIn) || super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
-    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                 CuboidRayTraceResult hitResult) {
         return onRotorHolderInteract(playerIn) || super.onWrenchClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                      CuboidRayTraceResult hitResult) {
         return onRotorHolderInteract(playerIn);
     }
 
@@ -382,35 +389,34 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
 
         private int getRotorColor() {
             if (!hasRotor()) return -1;
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             return getTurbineBehavior().getPartMaterial(getStackInSlot(0)).getMaterialRGB();
-
         }
 
         private int getRotorDurabilityPercent() {
             if (!hasRotor()) return 0;
 
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             return getTurbineBehavior().getRotorDurabilityPercent(getStackInSlot(0));
         }
 
         private int getRotorEfficiency() {
             if (!hasRotor()) return -1;
 
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             return getTurbineBehavior().getRotorEfficiency(getTurbineStack());
         }
 
         private int getRotorPower() {
             if (!hasRotor()) return -1;
 
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             return getTurbineBehavior().getRotorPower(getTurbineStack());
         }
 
         private void damageRotor(int damageAmount) {
             if (!hasRotor()) return;
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             getTurbineBehavior().applyRotorDamage(getStackInSlot(0), damageAmount);
         }
 

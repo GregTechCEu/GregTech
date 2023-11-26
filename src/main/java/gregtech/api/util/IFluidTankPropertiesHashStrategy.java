@@ -1,16 +1,19 @@
 package gregtech.api.util;
 
-import it.unimi.dsi.fastutil.Hash;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.Hash;
+
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
 
 public interface IFluidTankPropertiesHashStrategy extends Hash.Strategy<IFluidTankProperties> {
 
     @Nonnull
     static IFluidTankPropertiesHashStrategy create() {
         return new IFluidTankPropertiesHashStrategy() {
+
             @Override
             public int hashCode(IFluidTankProperties o) {
                 int result = 17;
@@ -27,7 +30,6 @@ public interface IFluidTankPropertiesHashStrategy extends Hash.Strategy<IFluidTa
                 if (b == null || a.getClass() != b.getClass()) return false;
                 return a.getCapacity() == b.getCapacity() && a.canFill() == b.canFill() &&
                         a.canDrain() == b.canDrain() && Objects.equals(a.getContents(), b.getContents());
-
             }
         };
     }

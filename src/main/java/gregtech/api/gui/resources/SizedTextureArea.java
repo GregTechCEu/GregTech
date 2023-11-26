@@ -1,6 +1,7 @@
 package gregtech.api.gui.resources;
 
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.util.ResourceLocation;
 
 public class SizedTextureArea extends TextureArea {
@@ -8,7 +9,8 @@ public class SizedTextureArea extends TextureArea {
     public final double pixelImageWidth;
     public final double pixelImageHeight;
 
-    public SizedTextureArea(ResourceLocation imageLocation, double offsetX, double offsetY, double width, double height, double pixelImageWidth, double pixelImageHeight) {
+    public SizedTextureArea(ResourceLocation imageLocation, double offsetX, double offsetY, double width, double height,
+                            double pixelImageWidth, double pixelImageHeight) {
         super(imageLocation, offsetX, offsetY, width, height);
         this.pixelImageWidth = pixelImageWidth;
         this.pixelImageHeight = pixelImageHeight;

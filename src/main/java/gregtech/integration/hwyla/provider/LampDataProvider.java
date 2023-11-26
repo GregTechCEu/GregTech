@@ -2,13 +2,15 @@ package gregtech.integration.hwyla.provider;
 
 import gregtech.api.GTValues;
 import gregtech.common.blocks.BlockLamp;
+
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
+
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaDataProvider;
 import mcp.mobius.waila.api.IWailaRegistrar;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -24,7 +26,8 @@ public class LampDataProvider implements IWailaDataProvider {
 
     @NotNull
     @Override
-    public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+    public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor,
+                                     IWailaConfigHandler config) {
         if (!config.getConfig("gregtech.block_lamp")) {
             return tooltip;
         }

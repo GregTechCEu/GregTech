@@ -1,6 +1,7 @@
 package gregtech.api.recipes.recipeproperties;
 
 import gregtech.api.metatileentity.multiblock.CleanroomType;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 

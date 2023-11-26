@@ -1,6 +1,7 @@
 package gregtech.api.worldgen.generator;
 
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -15,9 +16,10 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.concurrent.Callable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.concurrent.Callable;
 
 @EventBusSubscriber
 public class GTWorldGenCapability {
@@ -65,13 +67,16 @@ public class GTWorldGenCapability {
     public static final Callable<GTWorldGenCapability> FACTORY = GTWorldGenCapability::new;
 
     public static final IStorage<GTWorldGenCapability> STORAGE = new IStorage<GTWorldGenCapability>() {
+
         @Override
-        public NBTBase writeNBT(Capability<GTWorldGenCapability> capability, GTWorldGenCapability instance, EnumFacing side) {
+        public NBTBase writeNBT(Capability<GTWorldGenCapability> capability, GTWorldGenCapability instance,
+                                EnumFacing side) {
             return instance.writeToNBT();
         }
 
         @Override
-        public void readNBT(Capability<GTWorldGenCapability> capability, GTWorldGenCapability instance, EnumFacing side, NBTBase nbt) {
+        public void readNBT(Capability<GTWorldGenCapability> capability, GTWorldGenCapability instance, EnumFacing side,
+                            NBTBase nbt) {
             instance.readFromNBT((NBTTagCompound) nbt);
         }
     };

@@ -2,8 +2,9 @@ package gregtech.api.recipes.ingredients.nbtmatch;
 
 import gregtech.api.util.GTLog;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 /**
  * This class is used to check if a NBT tag matches a condition, not necessarily matching the original item tag

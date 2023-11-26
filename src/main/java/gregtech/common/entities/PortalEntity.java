@@ -3,6 +3,7 @@ package gregtech.common.entities;
 import gregtech.api.util.GTTeleporter;
 import gregtech.api.util.TeleportHandler;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -23,22 +24,22 @@ public class PortalEntity extends Entity {
 
     private int timeToDespawn = 200;
 
-    public PortalEntity(World worldIn){
+    public PortalEntity(World worldIn) {
         super(worldIn);
         rideCooldown = -1;
     }
 
-    public PortalEntity(World worldIn, double x, double y, double z){
+    public PortalEntity(World worldIn, double x, double y, double z) {
         super(worldIn);
         this.setPosition(x, y, z);
         rideCooldown = -1;
     }
 
     @Override
-    protected void entityInit(){}
+    protected void entityInit() {}
 
     @Override
-    public void readEntityFromNBT(NBTTagCompound nbtTagCompound){
+    public void readEntityFromNBT(NBTTagCompound nbtTagCompound) {
         this.targetX = nbtTagCompound.getDouble("targetX");
         this.targetY = nbtTagCompound.getDouble("targetY");
         this.targetZ = nbtTagCompound.getDouble("targetZ");
@@ -46,7 +47,7 @@ public class PortalEntity extends Entity {
     }
 
     @Override
-    public void writeEntityToNBT(NBTTagCompound nbtTagCompound){
+    public void writeEntityToNBT(NBTTagCompound nbtTagCompound) {
         nbtTagCompound.setDouble("targetX", this.targetX);
         nbtTagCompound.setDouble("targetY", this.targetY);
         nbtTagCompound.setDouble("targetZ", this.targetZ);
@@ -55,27 +56,29 @@ public class PortalEntity extends Entity {
 
     @Override
     public void onUpdate() {
-        if(timeToDespawn <= 0){
+        if (timeToDespawn <= 0) {
             this.setDead();
         }
         if (!this.world.isRemote) {
             this.setFlag(6, this.isGlowing());
         }
 
-        if(timeToDespawn == 200){
+        if (timeToDespawn == 200) {
             this.playSound(GTSoundEvents.PORTAL_OPENING, 0.7F, 1.F);
-        }else if(timeToDespawn == 10){
+        } else if (timeToDespawn == 10) {
             this.playSound(GTSoundEvents.PORTAL_CLOSING, 0.7F, 1.F);
         }
 
         this.onEntityUpdate();
 
-        if(!this.world.isRemote) {
+        if (!this.world.isRemote) {
             List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox(), null);
             for (Entity entity : list) {
                 if (!(entity instanceof PortalEntity)) {
-                    GTTeleporter teleporter = new GTTeleporter(TeleportHandler.getWorldByDimensionID(targetDim), targetX, targetY, targetZ);
-                    TeleportHandler.teleport(entity, targetDim, teleporter, targetX + entity.getLookVec().x, targetY, targetZ + entity.getLookVec().z);
+                    GTTeleporter teleporter = new GTTeleporter(TeleportHandler.getWorldByDimensionID(targetDim),
+                            targetX, targetY, targetZ);
+                    TeleportHandler.teleport(entity, targetDim, teleporter, targetX + entity.getLookVec().x, targetY,
+                            targetZ + entity.getLookVec().z);
                 }
             }
         }
@@ -83,7 +86,7 @@ public class PortalEntity extends Entity {
     }
 
     @Override
-    public void setRotation(float yaw, float pitch){
+    public void setRotation(float yaw, float pitch) {
         super.setRotation(yaw, pitch);
     }
 
@@ -99,11 +102,11 @@ public class PortalEntity extends Entity {
         return pass == RENDER_PASS_TRANSLUCENT;
     }
 
-    public boolean isOpening(){
+    public boolean isOpening() {
         return timeToDespawn >= 190;
     }
 
-    public boolean isClosing(){
+    public boolean isClosing() {
         return timeToDespawn <= 10;
     }
 
@@ -113,7 +116,7 @@ public class PortalEntity extends Entity {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public int getBrightnessForRender(){
+    public int getBrightnessForRender() {
         return 15728880;
     }
 }

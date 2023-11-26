@@ -1,6 +1,7 @@
 package gregtech.api.unification.stack;
 
 import gregtech.api.GTValues;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 

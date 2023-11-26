@@ -7,6 +7,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.XSTR;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.core.network.packets.PacketFluidVeinList;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,12 +17,13 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BedrockFluidVeinHandler {
 
@@ -35,7 +37,6 @@ public class BedrockFluidVeinHandler {
      * 2: Fixed interpretation of coordinates around axes
      */
     public static int saveDataVersion;
-
 
     public static final int MAX_FLUID_SAVE_DATA_VERSION = 2;
 
@@ -56,7 +57,8 @@ public class BedrockFluidVeinHandler {
         if (world.isRemote)
             return null;
 
-        ChunkPosDimension coords = new ChunkPosDimension(world.provider.getDimension(), getVeinCoord(chunkX), getVeinCoord(chunkZ));
+        ChunkPosDimension coords = new ChunkPosDimension(world.provider.getDimension(), getVeinCoord(chunkX),
+                getVeinCoord(chunkZ));
 
         FluidVeinWorldEntry worldEntry = veinCache.get(coords);
         if (worldEntry == null) {
@@ -87,7 +89,8 @@ public class BedrockFluidVeinHandler {
                 if (definition.getMaximumYield() - definition.getMinimumYield() <= 0) {
                     maximumYield = definition.getMinimumYield();
                 } else {
-                    maximumYield = random.nextInt(definition.getMaximumYield() - definition.getMinimumYield()) + definition.getMinimumYield();
+                    maximumYield = random.nextInt(definition.getMaximumYield() - definition.getMinimumYield()) +
+                            definition.getMinimumYield();
                 }
                 maximumYield = Math.min(maximumYield, definition.getMaximumYield());
             }
@@ -147,7 +150,8 @@ public class BedrockFluidVeinHandler {
         totalWeightMap.clear();
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !mutePackets) {
             HashMap<FluidVeinWorldEntry, Integer> packetMap = new HashMap<>();
-            for (Map.Entry<ChunkPosDimension, FluidVeinWorldEntry> entry : BedrockFluidVeinHandler.veinCache.entrySet()) {
+            for (Map.Entry<ChunkPosDimension, FluidVeinWorldEntry> entry : BedrockFluidVeinHandler.veinCache
+                    .entrySet()) {
                 if (entry.getKey() != null && entry.getValue() != null)
                     packetMap.put(entry.getValue(), entry.getValue().getDefinition().getWeight());
             }
@@ -250,6 +254,7 @@ public class BedrockFluidVeinHandler {
     }
 
     public static class FluidVeinWorldEntry {
+
         private BedrockFluidDepositDefinition vein;
         private int fluidYield;
         private int operationsRemaining;
@@ -260,9 +265,7 @@ public class BedrockFluidVeinHandler {
             this.operationsRemaining = operationsRemaining;
         }
 
-        private FluidVeinWorldEntry() {
-
-        }
+        private FluidVeinWorldEntry() {}
 
         public BedrockFluidDepositDefinition getDefinition() {
             return this.vein;

@@ -1,6 +1,5 @@
 package gregtech.common.gui.widget.appeng.slot;
 
-import appeng.api.storage.data.IAEFluidStack;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -9,7 +8,10 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.gui.widget.appeng.AEListGridWidget;
+
 import net.minecraft.item.ItemStack;
+
+import appeng.api.storage.data.IAEFluidStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,5 +70,4 @@ public class AEFluidDisplayWidget extends Widget {
             }
         }
     }
-
 }

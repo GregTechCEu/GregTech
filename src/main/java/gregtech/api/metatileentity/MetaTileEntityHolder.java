@@ -1,13 +1,5 @@
 package gregtech.api.metatileentity;
 
-import appeng.api.networking.IGridNode;
-import appeng.api.networking.security.IActionHost;
-import appeng.api.util.AECableType;
-import appeng.api.util.AEPartLocation;
-import appeng.api.util.DimensionalCoord;
-import appeng.me.helpers.AENetworkProxy;
-import appeng.me.helpers.IGridProxyable;
-import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
@@ -21,6 +13,7 @@ import gregtech.client.particle.GTNameTagParticle;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.common.ConfigHolder;
 import gregtech.core.network.packets.PacketRecoverMTE;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,20 +35,33 @@ import net.minecraftforge.fml.common.Optional.InterfaceList;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import appeng.api.networking.IGridNode;
+import appeng.api.networking.security.IActionHost;
+import appeng.api.util.AECableType;
+import appeng.api.util.AEPartLocation;
+import appeng.api.util.DimensionalCoord;
+import appeng.me.helpers.AENetworkProxy;
+import appeng.me.helpers.IGridProxyable;
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 
 import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
 @InterfaceList(value = {
-        @Interface(iface = "appeng.api.networking.security.IActionHost", modid = GTValues.MODID_APPENG, striprefs = true),
+        @Interface(iface = "appeng.api.networking.security.IActionHost",
+                   modid = GTValues.MODID_APPENG,
+                   striprefs = true),
         @Interface(iface = "appeng.me.helpers.IGridProxyable", modid = GTValues.MODID_APPENG, striprefs = true),
 })
-public class MetaTileEntityHolder extends TickableTileEntityBase implements IGregTechTileEntity, IUIHolder, IWorldNameable, IActionHost, IGridProxyable {
+public class MetaTileEntityHolder extends TickableTileEntityBase implements IGregTechTileEntity, IUIHolder,
+                                  IWorldNameable, IActionHost, IGridProxyable {
 
     MetaTileEntity metaTileEntity;
     private boolean needToUpdateLightning = false;
@@ -89,7 +95,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                 buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(getMetaTileEntity().metaTileEntityId));
                 getMetaTileEntity().writeInitialSyncData(buffer);
             });
-            //just to update neighbours so cables and other things will work properly
+            // just to update neighbours so cables and other things will work properly
             this.needToUpdateLightning = true;
             world.neighborChanged(getPos(), getBlockType(), getPos());
             markDirty();
@@ -126,8 +132,10 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
                 setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
-                /* Note: NBTs need to be read before onAttached is run, since NBTs may contain important information
-                 * about the composition of the BlockPattern that onAttached may generate. */
+                /*
+                 * Note: NBTs need to be read before onAttached is run, since NBTs may contain important information
+                 * about the composition of the BlockPattern that onAttached may generate.
+                 */
                 this.metaTileEntity.readFromNBT(metaTileEntityData);
             } else {
                 GTLog.logger.error("Failed to load MetaTileEntity with invalid ID " + metaTileEntityIdRaw);
@@ -168,7 +176,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        Object metaTileEntityValue = metaTileEntity == null ? null : metaTileEntity.getCoverCapability(capability, facing);
+        Object metaTileEntityValue = metaTileEntity == null ? null :
+                metaTileEntity.getCoverCapability(capability, facing);
         return metaTileEntityValue != null || super.hasCapability(capability, facing);
     }
 
@@ -204,11 +213,13 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                 timeStatisticsIndex = (timeStatisticsIndex + 1) % timeStatistics.length;
             }
             if (tickTime > 100_000_000L && getMetaTileEntity().doTickProfileMessage() && lagWarningCount++ < 10)
-                GTLog.logger.warn("WARNING: Possible Lag Source at [" + getPos().getX() + ", " + getPos().getY() + ", " + getPos().getZ() + "] in Dimension " + world.provider.getDimension() + " with " + tickTime + "ns caused by an instance of " + getMetaTileEntity().getClass());
+                GTLog.logger.warn("WARNING: Possible Lag Source at [" + getPos().getX() + ", " + getPos().getY() +
+                        ", " + getPos().getZ() + "] in Dimension " + world.provider.getDimension() + " with " +
+                        tickTime + "ns caused by an instance of " + getMetaTileEntity().getClass());
         }
 
-        //increment only after current tick, so meta tile entities will get first tick as timer == 0
-        //and update their settings which depend on getTimer() % N properly
+        // increment only after current tick, so meta tile entities will get first tick as timer == 0
+        // and update their settings which depend on getTimer() % N properly
         super.update();
     }
 
@@ -217,20 +228,22 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         if (logLevel > 2) {
             if (isValid()) {
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_machine",
-                        new TextComponentTranslation(getMetaTileEntity().metaTileEntityId.toString()).setStyle(new Style().setColor(TextFormatting.BLUE)),
-                        new TextComponentTranslation("behavior.tricorder.debug_machine_valid").setStyle(new Style().setColor(TextFormatting.GREEN))
-                ));
+                        new TextComponentTranslation(getMetaTileEntity().metaTileEntityId.toString())
+                                .setStyle(new Style().setColor(TextFormatting.BLUE)),
+                        new TextComponentTranslation("behavior.tricorder.debug_machine_valid")
+                                .setStyle(new Style().setColor(TextFormatting.GREEN))));
             } else if (metaTileEntity == null) {
-                //noinspection NoTranslation
+                // noinspection NoTranslation
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_machine",
                         new TextComponentTranslation("-1").setStyle(new Style().setColor(TextFormatting.BLUE)),
-                        new TextComponentTranslation("behavior.tricorder.debug_machine_invalid_null").setStyle(new Style().setColor(TextFormatting.RED))
-                ));
+                        new TextComponentTranslation("behavior.tricorder.debug_machine_invalid_null")
+                                .setStyle(new Style().setColor(TextFormatting.RED))));
             } else {
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_machine",
-                        new TextComponentTranslation(getMetaTileEntity().metaTileEntityId.toString()).setStyle(new Style().setColor(TextFormatting.BLUE)),
-                        new TextComponentTranslation("behavior.tricorder.debug_machine_invalid").setStyle(new Style().setColor(TextFormatting.RED))
-                ));
+                        new TextComponentTranslation(getMetaTileEntity().metaTileEntityId.toString())
+                                .setStyle(new Style().setColor(TextFormatting.BLUE)),
+                        new TextComponentTranslation("behavior.tricorder.debug_machine_invalid")
+                                .setStyle(new Style().setColor(TextFormatting.RED))));
             }
         }
         if (logLevel > 1) {
@@ -240,18 +253,23 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                 double worstTickTime = timeStats[1];
 
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_cpu_load",
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(averageTickTime / timeStatistics.length)).setStyle(new Style().setColor(TextFormatting.YELLOW)),
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(timeStatistics.length)).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(worstTickTime)).setStyle(new Style().setColor(TextFormatting.RED))
-                ));
-                list.add(new TextComponentTranslation("behavior.tricorder.debug_cpu_load_seconds", tricorderFormat.format(worstTickTime / 1000000000)));
+                        new TextComponentTranslation(
+                                TextFormattingUtil.formatNumbers(averageTickTime / timeStatistics.length))
+                                        .setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(timeStatistics.length))
+                                .setStyle(new Style().setColor(TextFormatting.GREEN)),
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(worstTickTime))
+                                .setStyle(new Style().setColor(TextFormatting.RED))));
+                list.add(new TextComponentTranslation("behavior.tricorder.debug_cpu_load_seconds",
+                        tricorderFormat.format(worstTickTime / 1000000000)));
             }
 
             if (lagWarningCount > 0) {
                 list.add(new TextComponentTranslation("behavior.tricorder.debug_lag_count",
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(lagWarningCount)).setStyle(new Style().setColor(TextFormatting.RED)),
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(100_000_000L)).setStyle(new Style().setColor(TextFormatting.RED))
-                ));
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(lagWarningCount))
+                                .setStyle(new Style().setColor(TextFormatting.RED)),
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(100_000_000L))
+                                .setStyle(new Style().setColor(TextFormatting.RED))));
             }
         }
         return list;
@@ -259,7 +277,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
 
     /**
      * @return double array of length 2, with index 0 being the average time and index 1 the worst time, in ns.
-     * If there is no tick time, it will return null.
+     *         If there is no tick time, it will return null.
      */
     public double[] getTimeStatistics() {
         if (timeStatistics.length > 0) {
@@ -271,7 +289,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                     worstTickTime = tickTime;
                 }
             }
-            return new double[]{averageTickTime, worstTickTime};
+            return new double[] { averageTickTime, worstTickTime };
         }
         return null;
     }
@@ -365,8 +383,10 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     }
 
     @Override
-    public boolean shouldRefresh(@Nonnull World world, @Nonnull BlockPos pos, IBlockState oldState, IBlockState newState) {
-        return oldState.getBlock() != newState.getBlock(); //MetaTileEntityHolder should never refresh (until block changes)
+    public boolean shouldRefresh(@Nonnull World world, @Nonnull BlockPos pos, IBlockState oldState,
+                                 IBlockState newState) {
+        return oldState.getBlock() != newState.getBlock(); // MetaTileEntityHolder should never refresh (until block
+                                                           // changes)
     }
 
     @Override
@@ -444,26 +464,24 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         if (!getName().equals(customName)) {
             this.customName = customName;
             if (world.isRemote) {
-                if (hasCustomName()) {
-                    if (nameTagParticle == null) {
-                        nameTagParticle = new GTNameTagParticle(world, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, getName());
-                        nameTagParticle.setOnUpdate(p -> {
-                            if (isInvalid() || !world.isBlockLoaded(pos, false)) {
-                                p.setExpired();
-                            }
-                        });
-                        GTParticleManager.INSTANCE.addEffect(nameTagParticle);
-                    } else {
-                        nameTagParticle.name = getName();
-                    }
-                } else {
-                    if (nameTagParticle != null) {
-                        nameTagParticle.setExpired();
-                        nameTagParticle = null;
-                    }
-                }
+                updateNameTagParticle();
             } else {
                 markAsDirty();
+            }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void updateNameTagParticle() {
+        if (hasCustomName()) {
+            if (nameTagParticle == null) {
+                nameTagParticle = new GTNameTagParticle(this, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
+                GTParticleManager.INSTANCE.addEffect(nameTagParticle);
+            }
+        } else {
+            if (nameTagParticle != null) {
+                nameTagParticle.setExpired();
+                nameTagParticle = null;
             }
         }
     }
@@ -482,7 +500,9 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     @Nonnull
     @Override
     public ITextComponent getDisplayName() {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : metaTileEntity != null ? new TextComponentTranslation(metaTileEntity.getMetaFullName()) : new TextComponentString(this.getName());
+        return this.hasCustomName() ? new TextComponentString(this.getName()) :
+                metaTileEntity != null ? new TextComponentTranslation(metaTileEntity.getMetaFullName()) :
+                        new TextComponentString(this.getName());
     }
 
     @Nullable

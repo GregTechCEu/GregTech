@@ -1,13 +1,5 @@
 package gregtech.integration.groovy;
 
-import com.cleanroommc.groovyscript.GroovyScript;
-import com.cleanroommc.groovyscript.api.GroovyLog;
-import com.cleanroommc.groovyscript.brackets.BracketHandlerManager;
-import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
-import com.cleanroommc.groovyscript.compat.mods.ModSupport;
-import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
-import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
@@ -28,7 +20,7 @@ import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.crafttweaker.material.MaterialExpansion;
 import gregtech.integration.crafttweaker.material.MaterialPropertyExpansion;
 import gregtech.modules.GregTechModules;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
@@ -37,20 +29,30 @@ import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.cleanroommc.groovyscript.GroovyScript;
+import com.cleanroommc.groovyscript.api.GroovyLog;
+import com.cleanroommc.groovyscript.brackets.BracketHandlerManager;
+import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
+import com.cleanroommc.groovyscript.compat.mods.ModSupport;
+import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
+import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
+import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_GRS,
-        containerID = GTValues.MODID,
-        modDependencies = GTValues.MODID_GROOVYSCRIPT,
-        name = "GregTech GroovyScript Integration",
-        description = "GroovyScript Integration Module"
-)
+                moduleID = GregTechModules.MODULE_GRS,
+                containerID = GTValues.MODID,
+                modDependencies = GTValues.MODID_GROOVYSCRIPT,
+                name = "GregTech GroovyScript Integration",
+                description = "GroovyScript Integration Module")
 public class GroovyScriptModule extends IntegrationSubmodule {
 
     private static ModSupport.Container<Container> modSupportContainer;
@@ -73,8 +75,8 @@ public class GroovyScriptModule extends IntegrationSubmodule {
     }
 
     public static boolean isCurrentlyRunning() {
-        return GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS)
-                && GroovyScript.getSandbox().isRunning();
+        return GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS) &&
+                GroovyScript.getSandbox().isRunning();
     }
 
     public static Container getInstance() {
@@ -116,7 +118,7 @@ public class GroovyScriptModule extends IntegrationSubmodule {
     }
 
     public static String[] splitObjectName(String toSplit) {
-        String[] resultSplit = {GTValues.MODID, toSplit};
+        String[] resultSplit = { GTValues.MODID, toSplit };
         int i = toSplit.indexOf(':');
         if (i >= 0) {
             resultSplit[1] = toSplit.substring(i + 1);
@@ -174,7 +176,8 @@ public class GroovyScriptModule extends IntegrationSubmodule {
         }
 
         for (MetaItem<?> item : MetaItem.getMetaItems()) {
-            Map<String, ItemStack> map = metaItems.computeIfAbsent(Objects.requireNonNull(item.getRegistryName()).getNamespace(),
+            Map<String, ItemStack> map = metaItems.computeIfAbsent(
+                    Objects.requireNonNull(item.getRegistryName()).getNamespace(),
                     (k) -> new Object2ObjectOpenHashMap<>());
             for (MetaItem<?>.MetaValueItem entry : item.getAllItems()) {
                 if (!entry.unlocalizedName.equals("meta_item")) {
@@ -189,8 +192,7 @@ public class GroovyScriptModule extends IntegrationSubmodule {
      */
     public static class Container extends ModPropertyContainer {
 
-        private Container() {
-        }
+        private Container() {}
 
         @Override
         protected void addRegistry(VirtualizedRegistry<?> registry) {
@@ -200,9 +202,11 @@ public class GroovyScriptModule extends IntegrationSubmodule {
         @Override
         public void initialize() {
             BracketHandlerManager.registerBracketHandler(GTValues.MODID, "recipemap", RecipeMap::getByName);
-            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "material", GregTechAPI.materialManager::getMaterial);
+            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "material",
+                    GregTechAPI.materialManager::getMaterial);
             BracketHandlerManager.registerBracketHandler(GTValues.MODID, "oreprefix", OrePrefix::getPrefix);
-            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "metaitem", GroovyScriptModule::getMetaItem, ItemStack.EMPTY);
+            BracketHandlerManager.registerBracketHandler(GTValues.MODID, "metaitem", GroovyScriptModule::getMetaItem,
+                    ItemStack.EMPTY);
 
             ExpansionHelper.mixinClass(Material.class, MaterialExpansion.class);
             ExpansionHelper.mixinClass(Material.class, MaterialPropertyExpansion.class);

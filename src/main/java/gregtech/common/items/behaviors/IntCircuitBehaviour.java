@@ -12,6 +12,7 @@ import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,7 +32,8 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     }
 
     @Override
-    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+                                             EnumFacing facing, float hitX, float hitY, float hitZ) {
         MetaTileEntity mte = GTUtility.getMetaTileEntity(world, pos);
         ItemStack stack = player.getHeldItem(hand);
 
@@ -57,11 +59,17 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 60)
                 .label(9, 8, "metaitem.circuit.integrated.gui")
-                .widget(new DynamicLabelWidget(82, 30, () -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(holder.getCurrentItem())), 0x4D4040))
-                .widget(new ClickButtonWidget(15, 24, 20, 20, "-5", data -> IntCircuitIngredient.adjustConfiguration(holder, -5)))
-                .widget(new ClickButtonWidget(50, 24, 20, 20, "-1", data -> IntCircuitIngredient.adjustConfiguration(holder, -1)))
-                .widget(new ClickButtonWidget(104, 24, 20, 20, "+1", data -> IntCircuitIngredient.adjustConfiguration(holder, +1)))
-                .widget(new ClickButtonWidget(141, 24, 20, 20, "+5", data -> IntCircuitIngredient.adjustConfiguration(holder, +5)))
+                .widget(new DynamicLabelWidget(82, 30,
+                        () -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(holder.getCurrentItem())),
+                        0x4D4040))
+                .widget(new ClickButtonWidget(15, 24, 20, 20, "-5",
+                        data -> IntCircuitIngredient.adjustConfiguration(holder, -5)))
+                .widget(new ClickButtonWidget(50, 24, 20, 20, "-1",
+                        data -> IntCircuitIngredient.adjustConfiguration(holder, -1)))
+                .widget(new ClickButtonWidget(104, 24, 20, 20, "+1",
+                        data -> IntCircuitIngredient.adjustConfiguration(holder, +1)))
+                .widget(new ClickButtonWidget(141, 24, 20, 20, "+5",
+                        data -> IntCircuitIngredient.adjustConfiguration(holder, +5)))
                 .build(holder, entityPlayer);
     }
 

@@ -8,6 +8,7 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -23,22 +24,29 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TextEditorWidget extends WidgetGroup {
+
     private static final TextureArea PALETTE = TextureArea.fullImage("textures/gui/widget/palette.png");
     private static final TextureArea STYLE = TextureArea.fullImage("textures/gui/widget/formatting.png");
     private final TextPanelWidget textPanelWidget;
 
     private static final Pattern COMMENT = Pattern.compile("(//.*|/\\*[\\s\\S]*?\\*/)|(#.*)");
-    private static final Pattern STRING = Pattern.compile("(\"(?:[^\"\\\\]|\\\\[\\s\\S])*\"|'(?:[^'\\\\]|\\\\[\\s\\S])*')");
+    private static final Pattern STRING = Pattern
+            .compile("(\"(?:[^\"\\\\]|\\\\[\\s\\S])*\"|'(?:[^'\\\\]|\\\\[\\s\\S])*')");
     private static final Pattern BOOL = Pattern.compile("\\b(true|false|null|undefined|NaN)\\b");
-    private static final Pattern KEYWORD = Pattern.compile("\\b(import|var|for|if|else|return|this|while|new|function|switch|case|typeof|do|in|throw|try|catch|finally|with|instance|delete|void|break|continue)\\b");
-    private static final Pattern KEYWORD_2 = Pattern.compile("\\b(String|int|long|boolean|float|double|byte|short|document|Date|Math|window|Object|location|navigator|Array|Number|Boolean|Function|RegExp)\\b");
+    private static final Pattern KEYWORD = Pattern.compile(
+            "\\b(import|var|for|if|else|return|this|while|new|function|switch|case|typeof|do|in|throw|try|catch|finally|with|instance|delete|void|break|continue)\\b");
+    private static final Pattern KEYWORD_2 = Pattern.compile(
+            "\\b(String|int|long|boolean|float|double|byte|short|document|Date|Math|window|Object|location|navigator|Array|Number|Boolean|Function|RegExp)\\b");
     private static final Pattern VARIABLE = Pattern.compile("(?:[^\\W\\d]|\\$)[\\$\\w]*");
-    private static final Pattern NUMBER = Pattern.compile("(0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?|\\.\\d+(?:[eE][+-]?\\d+)?)");
+    private static final Pattern NUMBER = Pattern
+            .compile("(0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?|\\.\\d+(?:[eE][+-]?\\d+)?)");
     private static final Pattern ANY = Pattern.compile("[\\s\\S]");
 
-    public TextEditorWidget(int x, int y, int width, int height,Consumer<String> stringUpdate, boolean allowToolBox) {
-        super(new Position(x, y), new Size(Math.max(width, allowToolBox ? 80 : width), Math.max(height, allowToolBox ? 32 : height)));
-        textPanelWidget = new TextPanelWidget(0, 32, Math.max(width, allowToolBox ? 80 : width), Math.max(height, allowToolBox ? 32 : height) - 32, stringUpdate);
+    public TextEditorWidget(int x, int y, int width, int height, Consumer<String> stringUpdate, boolean allowToolBox) {
+        super(new Position(x, y),
+                new Size(Math.max(width, allowToolBox ? 80 : width), Math.max(height, allowToolBox ? 32 : height)));
+        textPanelWidget = new TextPanelWidget(0, 32, Math.max(width, allowToolBox ? 80 : width),
+                Math.max(height, allowToolBox ? 32 : height) - 32, stringUpdate);
         this.addWidget(textPanelWidget);
         if (allowToolBox) {
             initToolBox();
@@ -89,33 +97,38 @@ public class TextEditorWidget extends WidgetGroup {
                 if (styleFormatting == TextFormatting.RESET) break;
                 this.addWidget(new RectButtonWidget(x * 16 + 32, y * 16, 16, 16, 1)
                         .setToggleButton(STYLE.getSubArea(0.5 + x * 1.0 / 6, y * 0.5, 1.0 / 6, 0.5),
-                                (cd, pressed)-> {
+                                (cd, pressed) -> {
                                     if (pressed) {
                                         textPanelWidget.addFormatting(styleFormatting);
                                     } else {
                                         textPanelWidget.removeFormatting(styleFormatting);
                                     }
                                 })
-                        .setValueSupplier(true, ()-> textPanelWidget.getFrontStyleFormatting().contains(styleFormatting))
+                        .setValueSupplier(true,
+                                () -> textPanelWidget.getFrontStyleFormatting().contains(styleFormatting))
                         .setIcon(STYLE.getSubArea(x * 1.0 / 6, y * 0.5, 1.0 / 6, 0.5))
                         .setColors(0, -1, 0)
                         .setHoverText(styleFormatting.getFriendlyName()));
             }
         }
         this.addWidget(new RectButtonWidget(3 * 16 + 32, 0, 16, 16, 3)
-                .setToggleButton(new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor()), (c, p)-> textPanelWidget.allowMarkdown = !p)
+                .setToggleButton(new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor()),
+                        (c, p) -> textPanelWidget.allowMarkdown = !p)
                 .setValueSupplier(true, () -> !textPanelWidget.allowMarkdown)
-                .setColors(TerminalTheme.COLOR_B_3.getColor(), TerminalTheme.COLOR_1.getColor(), TerminalTheme.COLOR_B_3.getColor())
+                .setColors(TerminalTheme.COLOR_B_3.getColor(), TerminalTheme.COLOR_1.getColor(),
+                        TerminalTheme.COLOR_B_3.getColor())
                 .setIcon(new ColorRectTexture(TerminalTheme.COLOR_7.getColor()))
                 .setHoverText("Check Markdown when Ctrl+V"));
         this.addWidget(new RectButtonWidget(3 * 16 + 32, 16, 16, 16, 3)
                 .setClickListener(clickData -> textPanelWidget.pageSetCurrent(""))
-                .setColors(TerminalTheme.COLOR_B_3.getColor(), TerminalTheme.COLOR_1.getColor(), TerminalTheme.COLOR_B_3.getColor())
+                .setColors(TerminalTheme.COLOR_B_3.getColor(), TerminalTheme.COLOR_1.getColor(),
+                        TerminalTheme.COLOR_B_3.getColor())
                 .setIcon(new ColorRectTexture(TerminalTheme.COLOR_7.getColor()))
                 .setHoverText("Clean Up"));
     }
 
     private static class TextPanelWidget extends DraggableScrollableWidgetGroup {
+
         public final static int SPACE = 0;
         public int updateCount;
         public String content;
@@ -133,7 +146,6 @@ public class TextEditorWidget extends WidgetGroup {
         private static final Pattern R_CODE_PATTERN = Pattern.compile("(?i)" + SECTION_SIGN + "[R]");
         @SideOnly(Side.CLIENT)
         private static final Pattern COLOR_CODE_PATTERN = Pattern.compile("(?i)" + SECTION_SIGN + "[0-9A-F]");
-
 
         public TextPanelWidget(int x, int y, int width, int height, Consumer<String> stringUpdate) {
             super(x, y, width, height);
@@ -160,12 +172,13 @@ public class TextEditorWidget extends WidgetGroup {
 
         @Override
         public boolean keyTyped(char typedChar, int keyCode) {
-            if(!focus || !isActive()) return false;
+            if (!focus || !isActive()) return false;
             if (GuiScreen.isKeyComboCtrlV(keyCode)) {
-                this.pageInsertIntoCurrent(allowMarkdown ? formatFromMarkdown(GuiScreen.getClipboardString()) : GuiScreen.getClipboardString());
+                this.pageInsertIntoCurrent(allowMarkdown ? formatFromMarkdown(GuiScreen.getClipboardString()) :
+                        GuiScreen.getClipboardString());
                 findFrontFormatting();
             } else {
-                switch(keyCode) {
+                switch (keyCode) {
                     case 14:
                         if (!content.isEmpty()) {
                             this.pageSetCurrent(content.substring(0, content.length() - 1));
@@ -194,7 +207,7 @@ public class TextEditorWidget extends WidgetGroup {
             Deque<TextFormatting> stack = new ArrayDeque<>();
             int[] chars = markdown.chars().toArray();
             for (int i = 0; i < chars.length; i++) {
-                if (chars[i] == '\\' && i + 1 < chars.length){
+                if (chars[i] == '\\' && i + 1 < chars.length) {
                     if (chars[i + 1] == '*' || chars[i + 1] == '_' || chars[i + 1] == '~' || chars[i + 1] == '`') {
                         builder.append(chars[i + 1]);
                         i++;
@@ -202,54 +215,57 @@ public class TextEditorWidget extends WidgetGroup {
                         builder.append('\\');
                     }
                 } else if (chars[i] == '*' && i + 1 < chars.length && chars[i + 1] == ' ') { // SUBLINE
-                    builder.append(' ').append(TextFormatting.BOLD).append('*').append(TextFormatting.RESET).append(' ');
+                    builder.append(' ').append(TextFormatting.BOLD).append('*').append(TextFormatting.RESET)
+                            .append(' ');
                     i++;
                 } else if (chars[i] == '*' && i + 1 < chars.length && chars[i + 1] == '*') { // BOLD
                     checkTextFormatting(builder, TextFormatting.BOLD, stack);
                     i++;
-                } else if (chars[i] == '_'){
-                    if (i - 1 == -1 || !Character.isLetterOrDigit(chars[i-1])) { // ITALIC
+                } else if (chars[i] == '_') {
+                    if (i - 1 == -1 || !Character.isLetterOrDigit(chars[i - 1])) { // ITALIC
                         checkTextFormatting(builder, TextFormatting.ITALIC, stack);
-                    } else if (i + 1 == chars.length || !Character.isLetterOrDigit(chars[i+1])) {
+                    } else if (i + 1 == chars.length || !Character.isLetterOrDigit(chars[i + 1])) {
                         checkTextFormatting(builder, TextFormatting.ITALIC, stack);
                     } else {
                         builder.append('_');
                     }
                 } else if (chars[i] == '~') { // STRIKETHROUGH
                     checkTextFormatting(builder, TextFormatting.STRIKETHROUGH, stack);
-                } else if (chars[i] == '`' && i + 1 < chars.length && chars[i + 1] == '`' && i + 2 < chars.length && chars[i + 2] == '`') { // code
-                    boolean find = false;
-                    for (int j = i + 3; j < chars.length - 2; j++) {
-                        if (chars[j] == '`' && chars[j + 1] == '`' && chars[j + 2] == '`') {
-                            find = true;
-                            builder.append(checkCode(markdown.substring(i + 3, j)));
-                            i += j - i;
-                        }
+                } else if (chars[i] == '`' && i + 1 < chars.length && chars[i + 1] == '`' && i + 2 < chars.length &&
+                        chars[i + 2] == '`') { // code
+                            boolean find = false;
+                            for (int j = i + 3; j < chars.length - 2; j++) {
+                                if (chars[j] == '`' && chars[j + 1] == '`' && chars[j + 2] == '`') {
+                                    find = true;
+                                    builder.append(checkCode(markdown.substring(i + 3, j)));
+                                    i += j - i;
+                                }
+                            }
+                            if (!find) {
+                                builder.append("```");
+                            }
+                            i += 2;
+                        } else
+                    if (chars[i] == '`') {
+                        checkTextFormatting(builder, TextFormatting.UNDERLINE, stack);
+                    } else {
+                        builder.append((char) chars[i]);
                     }
-                    if (!find) {
-                        builder.append("```");
-                    }
-                    i += 2;
-                } else if (chars[i] == '`') {
-                    checkTextFormatting(builder, TextFormatting.UNDERLINE, stack);
-                } else {
-                    builder.append((char) chars[i]);
-                }
             }
             return builder.toString();
         }
 
         private static String checkCode(String code) {
-            Pattern[] patterns = new Pattern[]{COMMENT, STRING, BOOL, KEYWORD, KEYWORD_2, VARIABLE, NUMBER, ANY};
-            TextFormatting[] colors = new TextFormatting[]{
+            Pattern[] patterns = new Pattern[] { COMMENT, STRING, BOOL, KEYWORD, KEYWORD_2, VARIABLE, NUMBER, ANY };
+            TextFormatting[] colors = new TextFormatting[] {
                     TextFormatting.DARK_GRAY, // comment
-                    TextFormatting.DARK_GREEN,  //string
+                    TextFormatting.DARK_GREEN,  // string
                     TextFormatting.RED,  // value
                     TextFormatting.BLUE,  // keyword
                     TextFormatting.LIGHT_PURPLE, // keyword2
                     TextFormatting.BLACK,  // variable
                     TextFormatting.RED,  // variable
-                    TextFormatting.DARK_PURPLE}; // else
+                    TextFormatting.DARK_PURPLE }; // else
             StringBuilder builder = new StringBuilder();
             while (code.length() > 0) {
                 boolean find = false;
@@ -270,7 +286,8 @@ public class TextEditorWidget extends WidgetGroup {
             return builder.toString();
         }
 
-        private static void checkTextFormatting(StringBuilder builder, TextFormatting formatting, Deque<TextFormatting> stack) {
+        private static void checkTextFormatting(StringBuilder builder, TextFormatting formatting,
+                                                Deque<TextFormatting> stack) {
             if (!stack.isEmpty() && stack.peek() == formatting) {
                 builder.append(TextFormatting.RESET);
                 stack.pop();
@@ -286,9 +303,9 @@ public class TextEditorWidget extends WidgetGroup {
         private static TextFormatting lookAheadChars(final String content, int index) {
             if (index > 1 && content.charAt(index - 2) == SECTION_SIGN) {
                 int t = content.charAt(index - 1);
-                if ('0' <= t && t <= '9'){
+                if ('0' <= t && t <= '9') {
                     return TextFormatting.values()[t - '0'];
-                } else if ('a' <= t && t <= 'f'){
+                } else if ('a' <= t && t <= 'f') {
                     return TextFormatting.values()[t - 'a' + 10];
                 } else if ('k' <= t && t <= 'o') {
                     return TextFormatting.values()[t - 'k' + 16];
@@ -301,8 +318,8 @@ public class TextEditorWidget extends WidgetGroup {
 
         public static String cleanUpFormatting(final String content) {
             Set<Integer> removed = new HashSet<>();
-		    Matcher marcher = R_CODE_PATTERN.matcher(content);
-		    while (marcher.find()) {
+            Matcher marcher = R_CODE_PATTERN.matcher(content);
+            while (marcher.find()) {
                 int index = marcher.start();
                 while (index > 1) {
                     TextFormatting ahead = lookAheadChars(content, index);
@@ -321,7 +338,7 @@ public class TextEditorWidget extends WidgetGroup {
                     TextFormatting ahead = lookAheadChars(content, index);
                     if (ahead == null) {
                         break;
-                    } else if (TextFormatting.RESET != ahead){
+                    } else if (TextFormatting.RESET != ahead) {
                         if (!removed.add(index - 2)) {
                             break;
                         }
@@ -333,7 +350,7 @@ public class TextEditorWidget extends WidgetGroup {
             }
             StringBuilder builder = new StringBuilder();
             AtomicInteger start = new AtomicInteger();
-            removed.stream().sorted().forEach(remove->{
+            removed.stream().sorted().forEach(remove -> {
                 builder.append(content, start.get(), remove);
                 start.set(remove + 2);
             });
@@ -368,7 +385,7 @@ public class TextEditorWidget extends WidgetGroup {
                 for (TextFormatting style : frontStyle) {
                     pageInsertIntoCurrent(style.toString());
                 }
-            } else if (formatting.isFancyStyling()){
+            } else if (formatting.isFancyStyling()) {
                 if (frontStyle.contains(formatting)) {
                     return;
                 }
@@ -381,14 +398,14 @@ public class TextEditorWidget extends WidgetGroup {
             if (formatting.isColor()) {
                 frontColor = null;
                 pageInsertIntoCurrent(TextFormatting.RESET.toString());
-                frontStyle.forEach(style->pageInsertIntoCurrent(style.toString()));
+                frontStyle.forEach(style -> pageInsertIntoCurrent(style.toString()));
             } else if (formatting.isFancyStyling()) {
                 pageInsertIntoCurrent(TextFormatting.RESET.toString());
                 if (frontColor != null) {
                     pageInsertIntoCurrent(frontColor.toString());
                 }
                 frontStyle.remove(formatting);
-                frontStyle.forEach(style->pageInsertIntoCurrent(style.toString()));
+                frontStyle.forEach(style -> pageInsertIntoCurrent(style.toString()));
             }
         }
 
@@ -404,19 +421,21 @@ public class TextEditorWidget extends WidgetGroup {
             if (!content.equals(string)) {
                 content = cleanUpFormatting(string);
                 findFrontFormatting();
-                if(stringUpdate != null) {
+                if (stringUpdate != null) {
                     stringUpdate.accept(content);
                 }
-                textHeight = this.fontRenderer.getWordWrappedHeight(content + TextFormatting.BLACK + "_", this.getSize().width - yBarWidth);
+                textHeight = this.fontRenderer.getWordWrappedHeight(content + TextFormatting.BLACK + "_",
+                        this.getSize().width - yBarWidth);
             }
         }
 
         public void pageInsertIntoCurrent(String string) {
             content = cleanUpFormatting(content + string);
-            if(stringUpdate != null) {
+            if (stringUpdate != null) {
                 stringUpdate.accept(content);
             }
-            textHeight = this.fontRenderer.getWordWrappedHeight(content + TextFormatting.BLACK + "_", this.getSize().width - yBarWidth);
+            textHeight = this.fontRenderer.getWordWrappedHeight(content + TextFormatting.BLACK + "_",
+                    this.getSize().width - yBarWidth);
         }
 
         @Override
@@ -433,7 +452,8 @@ public class TextEditorWidget extends WidgetGroup {
             }
             int x = getPosition().x - scrollXOffset;
             int y = getPosition().y + SPACE - scrollYOffset;
-            for (String textLine : this.fontRenderer.listFormattedStringToWidth(contentString, getSize().width - yBarWidth)) {
+            for (String textLine : this.fontRenderer.listFormattedStringToWidth(contentString,
+                    getSize().width - yBarWidth)) {
                 fontRenderer.drawString(textLine, x, y, 0xff000000, false);
                 y += fontRenderer.FONT_HEIGHT;
             }
@@ -441,5 +461,3 @@ public class TextEditorWidget extends WidgetGroup {
         }
     }
 }
-
-

@@ -7,15 +7,18 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.unification.stack.ItemAndMetadata;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
 
 public class SmartItemFilter extends ItemFilter {
 
@@ -45,7 +48,8 @@ public class SmartItemFilter extends ItemFilter {
             ItemStack infinitelyBigStack = itemStack.copy();
             infinitelyBigStack.setCount(Integer.MAX_VALUE);
 
-            Recipe recipe = filteringMode.recipeMap.findRecipe(Long.MAX_VALUE, Collections.singletonList(infinitelyBigStack), Collections.emptyList());
+            Recipe recipe = filteringMode.recipeMap.findRecipe(Long.MAX_VALUE,
+                    Collections.singletonList(infinitelyBigStack), Collections.emptyList());
             if (recipe == null) {
                 filteringMode.transferStackSizesCache.put(itemAndMetadata, 0);
                 cachedTransferRateValue = 0;
@@ -66,7 +70,7 @@ public class SmartItemFilter extends ItemFilter {
     public void initUI(Consumer<Widget> widgetGroup) {
         widgetGroup.accept(new CycleButtonWidget(10, 0, 75, 20,
                 SmartFilteringMode.class, this::getFilteringMode, this::setFilteringMode)
-                .setTooltipHoverString("cover.smart_item_filter.filtering_mode.description"));
+                        .setTooltipHoverString("cover.smart_item_filter.filtering_mode.description"));
     }
 
     @Override
@@ -90,6 +94,7 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     private static class ItemAndMetadataAndStackSize {
+
         public final ItemAndMetadata itemAndMetadata;
         public final int transferStackSize;
 
@@ -113,6 +118,7 @@ public class SmartItemFilter extends ItemFilter {
     }
 
     public enum SmartFilteringMode implements IStringSerializable {
+
         ELECTROLYZER("cover.smart_item_filter.filtering_mode.electrolyzer", RecipeMaps.ELECTROLYZER_RECIPES),
         CENTRIFUGE("cover.smart_item_filter.filtering_mode.centrifuge", RecipeMaps.CENTRIFUGE_RECIPES),
         SIFTER("cover.smart_item_filter.filtering_mode.sifter", RecipeMaps.SIFTER_RECIPES);
@@ -132,6 +138,4 @@ public class SmartItemFilter extends ItemFilter {
             return localeName;
         }
     }
-
-
 }

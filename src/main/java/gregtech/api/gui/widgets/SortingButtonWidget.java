@@ -11,7 +11,8 @@ public class SortingButtonWidget extends ClickButtonWidget {
     private static boolean inventoryTweaksPresent;
     private static KeyBinding sortKeyBinding;
 
-    public SortingButtonWidget(int xPosition, int yPosition, int width, int height, String displayText, Consumer<ClickData> onPressed) {
+    public SortingButtonWidget(int xPosition, int yPosition, int width, int height, String displayText,
+                               Consumer<ClickData> onPressed) {
         super(xPosition, yPosition, width, height, displayText, onPressed);
     }
 
@@ -59,5 +60,4 @@ public class SortingButtonWidget extends ClickButtonWidget {
             return 0;
         }
     }
-
 }

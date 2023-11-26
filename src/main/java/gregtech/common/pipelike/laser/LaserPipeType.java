@@ -3,6 +3,7 @@ package gregtech.common.pipelike.laser;
 import gregtech.api.pipenet.block.IPipeType;
 
 public enum LaserPipeType implements IPipeType<LaserPipeProperties> {
+
     NORMAL;
 
     @Override

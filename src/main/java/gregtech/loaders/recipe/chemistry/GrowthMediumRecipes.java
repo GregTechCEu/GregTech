@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.metatileentity.multiblock.CleanroomType;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -15,7 +16,6 @@ import static gregtech.common.items.MetaItems.*;
 public class GrowthMediumRecipes {
 
     public static void init() {
-
         // Bio Chaff
         MACERATOR_RECIPES.recipeBuilder().duration(200)
                 .input(PLANT_BALL, 2)

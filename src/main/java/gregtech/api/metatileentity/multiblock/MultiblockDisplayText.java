@@ -6,6 +6,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.util.text.*;
 
 import java.util.List;
@@ -24,7 +25,8 @@ public class MultiblockDisplayText {
         return builder(textList, isStructureFormed, true);
     }
 
-    public static Builder builder(List<ITextComponent> textList, boolean isStructureFormed, boolean showIncompleteStructureWarning) {
+    public static Builder builder(List<ITextComponent> textList, boolean isStructureFormed,
+                                  boolean showIncompleteStructureWarning) {
         return new Builder(textList, isStructureFormed, showIncompleteStructureWarning);
     }
 
@@ -40,13 +42,16 @@ public class MultiblockDisplayText {
         private String pausedKey = "gregtech.multiblock.work_paused";
         private String runningKey = "gregtech.multiblock.running";
 
-        private Builder(List<ITextComponent> textList, boolean isStructureFormed, boolean showIncompleteStructureWarning) {
+        private Builder(List<ITextComponent> textList, boolean isStructureFormed,
+                        boolean showIncompleteStructureWarning) {
             this.textList = textList;
             this.isStructureFormed = isStructureFormed;
 
             if (!isStructureFormed && showIncompleteStructureWarning) {
-                ITextComponent base = TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.invalid_structure");
-                ITextComponent hover = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.invalid_structure.tooltip");
+                ITextComponent base = TextComponentUtil.translationWithColor(TextFormatting.RED,
+                        "gregtech.multiblock.invalid_structure");
+                ITextComponent hover = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                        "gregtech.multiblock.invalid_structure.tooltip");
                 textList.add(TextComponentUtil.setHover(base, hover));
             }
         }
@@ -87,13 +92,38 @@ public class MultiblockDisplayText {
 
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
-                ITextComponent voltageName = new TextComponentString(GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
+                ITextComponent voltageName = new TextComponentString(
+                        GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
-                textList.add(TextComponentUtil.translationWithColor(
+                ITextComponent bodyText = TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick",
-                        energyFormatted, voltageName));
+                        energyFormatted, voltageName);
+                ITextComponent hoverText = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                        "gregtech.multiblock.max_energy_per_tick_hover");
+                textList.add(TextComponentUtil.setHover(bodyText, hoverText));
             }
+            return this;
+        }
+
+        /**
+         * Adds the max Recipe Tier that this multiblock can use for recipe lookup.
+         * <br>
+         * Added if the structure is formed and if the passed tier is a valid energy tier index for
+         * {@link GTValues#VNF}.
+         */
+        public Builder addEnergyTierLine(int tier) {
+            if (!isStructureFormed) return this;
+            if (tier < GTValues.ULV || tier > GTValues.MAX) return this;
+
+            ITextComponent voltageName = new TextComponentString(GTValues.VNF[tier]);
+            ITextComponent bodyText = TextComponentUtil.translationWithColor(
+                    TextFormatting.GRAY,
+                    "gregtech.multiblock.max_recipe_tier",
+                    voltageName);
+            ITextComponent hoverText = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                    "gregtech.multiblock.max_recipe_tier_hover");
+            textList.add(TextComponentUtil.setHover(bodyText, hoverText));
             return this;
         }
 
@@ -107,7 +137,8 @@ public class MultiblockDisplayText {
             if (energyUsage > 0) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(energyUsage);
                 // wrap in text component to keep it from being formatted
-                ITextComponent voltageName = new TextComponentString(GTValues.VNF[GTUtility.getTierByVoltage(energyUsage)]);
+                ITextComponent voltageName = new TextComponentString(
+                        GTValues.VNF[GTUtility.getTierByVoltage(energyUsage)]);
 
                 textList.add(TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
@@ -127,7 +158,8 @@ public class MultiblockDisplayText {
             if (maxVoltage != 0 && maxVoltage >= -recipeEUt) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
-                ITextComponent voltageName = new TextComponentString(GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
+                ITextComponent voltageName = new TextComponentString(
+                        GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
                 textList.add(TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
@@ -138,16 +170,19 @@ public class MultiblockDisplayText {
         }
 
         /**
-         * Adds the max EU/t that this multiblock can produce, including how many amps. Recommended for multi-amp outputting multis.
+         * Adds the max EU/t that this multiblock can produce, including how many amps. Recommended for multi-amp
+         * outputting multis.
          * <br>
-         * Added if the structure is formed, if the amperage is greater than zero and if the max voltage is greater than zero.
+         * Added if the structure is formed, if the amperage is greater than zero and if the max voltage is greater than
+         * zero.
          */
         public Builder addEnergyProductionAmpsLine(long maxVoltage, int amperage) {
             if (!isStructureFormed) return this;
             if (maxVoltage != 0 && amperage != 0) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
-                ITextComponent voltageName = new TextComponentString(GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
+                ITextComponent voltageName = new TextComponentString(
+                        GTValues.VNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
                 textList.add(TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
@@ -165,7 +200,8 @@ public class MultiblockDisplayText {
         public Builder addComputationUsageLine(int maxCWUt) {
             if (!isStructureFormed) return this;
             if (maxCWUt > 0) {
-                ITextComponent computation = TextComponentUtil.stringWithColor(TextFormatting.AQUA, TextFormattingUtil.formatNumbers(maxCWUt));
+                ITextComponent computation = TextComponentUtil.stringWithColor(TextFormatting.AQUA,
+                        TextFormattingUtil.formatNumbers(maxCWUt));
                 textList.add(TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
                         "gregtech.multiblock.computation.max",
@@ -182,7 +218,8 @@ public class MultiblockDisplayText {
         public Builder addComputationUsageExactLine(int currentCWUt) {
             if (!isStructureFormed) return this;
             if (isActive && currentCWUt > 0) {
-                ITextComponent computation = TextComponentUtil.stringWithColor(TextFormatting.AQUA, TextFormattingUtil.formatNumbers(currentCWUt) + " CWU/t");
+                ITextComponent computation = TextComponentUtil.stringWithColor(TextFormatting.AQUA,
+                        TextFormattingUtil.formatNumbers(currentCWUt) + " CWU/t");
                 textList.add(TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,
                         "gregtech.multiblock.computation.usage",
@@ -264,7 +301,8 @@ public class MultiblockDisplayText {
             return this;
         }
 
-        /** Adds a line indicating how many parallels this multi can potentially perform.
+        /**
+         * Adds a line indicating how many parallels this multi can potentially perform.
          * <br>
          * Added if structure is formed and the number of parallels is greater than one.
          */
@@ -291,7 +329,8 @@ public class MultiblockDisplayText {
         public Builder addLowPowerLine(boolean isLowPower) {
             if (!isStructureFormed) return this;
             if (isLowPower) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.not_enough_energy"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
+                        "gregtech.multiblock.not_enough_energy"));
             }
             return this;
         }
@@ -304,7 +343,8 @@ public class MultiblockDisplayText {
         public Builder addLowComputationLine(boolean isLowComputation) {
             if (!isStructureFormed) return this;
             if (isLowComputation) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.computation.not_enough_computation"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
+                        "gregtech.multiblock.computation.not_enough_computation"));
             }
             return this;
         }
@@ -317,7 +357,8 @@ public class MultiblockDisplayText {
         public Builder addLowDynamoTierLine(boolean isTooLow) {
             if (!isStructureFormed) return this;
             if (isTooLow) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.not_enough_energy_output"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
+                        "gregtech.multiblock.not_enough_energy_output"));
             }
             return this;
         }
@@ -401,8 +442,10 @@ public class MultiblockDisplayText {
         public Builder addMufflerObstructedLine(boolean isObstructed) {
             if (!isStructureFormed) return this;
             if (isObstructed) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.universal.muffler_obstructed"));
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.universal.muffler_obstructed_desc"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
+                        "gregtech.multiblock.universal.muffler_obstructed"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                        "gregtech.multiblock.universal.muffler_obstructed_desc"));
             }
             return this;
         }
@@ -415,7 +458,8 @@ public class MultiblockDisplayText {
         public Builder addFuelNeededLine(String fuelName, int previousRecipeDuration) {
             if (!isStructureFormed || !isActive) return this;
             ITextComponent fuelNeeded = TextComponentUtil.stringWithColor(TextFormatting.RED, fuelName);
-            ITextComponent numTicks = TextComponentUtil.stringWithColor(TextFormatting.AQUA, TextFormattingUtil.formatNumbers(previousRecipeDuration));
+            ITextComponent numTicks = TextComponentUtil.stringWithColor(TextFormatting.AQUA,
+                    TextFormattingUtil.formatNumbers(previousRecipeDuration));
             textList.add(TextComponentUtil.translationWithColor(
                     TextFormatting.GRAY,
                     "gregtech.multiblock.turbine.fuel_needed",

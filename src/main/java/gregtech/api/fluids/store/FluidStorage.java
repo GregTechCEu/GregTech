@@ -3,8 +3,10 @@ package gregtech.api.fluids.store;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTLog;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraftforge.fluids.Fluid;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +25,7 @@ public final class FluidStorage {
     /**
      * Enqueue a fluid for registration
      *
-     * @param key the key corresponding with the fluid
+     * @param key     the key corresponding with the fluid
      * @param builder the FluidBuilder to build
      */
     public void enqueueRegistration(@NotNull FluidStorageKey key, @NotNull FluidBuilder builder) {
@@ -80,7 +82,7 @@ public final class FluidStorage {
     /**
      * Will do nothing if an existing fluid association would be overwritten.
      *
-     * @param key the key to associate with the fluid
+     * @param key   the key to associate with the fluid
      * @param fluid the fluid to associate with the key
      * @return if the associations were successfully updated
      */
@@ -95,7 +97,7 @@ public final class FluidStorage {
     /**
      * Will overwrite existing fluid associations.
      *
-     * @param key the key to associate with the fluid
+     * @param key   the key to associate with the fluid
      * @param fluid the fluid to associate with the key
      */
     public void store(@NotNull FluidStorageKey key, @NotNull Fluid fluid) {

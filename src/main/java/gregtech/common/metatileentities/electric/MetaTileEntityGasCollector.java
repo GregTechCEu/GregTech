@@ -11,16 +11,20 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.GasCollectorDimensionProperty;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import it.unimi.dsi.fastutil.ints.IntLists;
+
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.ints.IntLists;
+
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+
 public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
 
-    public MetaTileEntityGasCollector(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean hasFrontFacing,
+    public MetaTileEntityGasCollector(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer,
+                                      int tier, boolean hasFrontFacing,
                                       Function<Integer, Integer> tankScalingFunction) {
         super(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, tankScalingFunction);
     }
@@ -47,7 +51,8 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
 
     private static class GasCollectorRecipeLogic extends RecipeLogicEnergy {
 
-        public GasCollectorRecipeLogic(MetaTileEntity metaTileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
+        public GasCollectorRecipeLogic(MetaTileEntity metaTileEntity, RecipeMap<?> recipeMap,
+                                       Supplier<IEnergyContainer> energyContainer) {
             super(metaTileEntity, recipeMap, energyContainer);
         }
 

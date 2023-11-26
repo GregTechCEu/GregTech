@@ -1,10 +1,12 @@
 package gregtech.api.items.metaitem.stats;
 
 import net.minecraft.item.ItemStack;
+
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nullable;
 import java.awt.*;
+
+import javax.annotation.Nullable;
 
 public interface IItemDurabilityManager extends IItemComponent {
 
@@ -22,12 +24,18 @@ public interface IItemDurabilityManager extends IItemComponent {
         return true;
     }
 
-    /** Whether to show the durability bar when {@link IItemDurabilityManager#getDurabilityForDisplay(ItemStack)} is 0. Default true */
+    /**
+     * Whether to show the durability bar when {@link IItemDurabilityManager#getDurabilityForDisplay(ItemStack)} is 0.
+     * Default true
+     */
     default boolean showEmptyBar(ItemStack itemStack) {
         return true;
     }
 
-    /** Whether to show the durability bar when {@link IItemDurabilityManager#getDurabilityForDisplay(ItemStack)} is 1. Default true */
+    /**
+     * Whether to show the durability bar when {@link IItemDurabilityManager#getDurabilityForDisplay(ItemStack)} is 1.
+     * Default true
+     */
     default boolean showFullBar(ItemStack itemStack) {
         return true;
     }

@@ -5,13 +5,9 @@ import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.capability.IOpticalComputationProvider;
 import gregtech.api.capability.IOpticalDataAccessHatch;
 import gregtech.api.pipenet.IRoutePath;
-import gregtech.api.util.FacingPos;
-import gregtech.common.pipelike.optical.OpticalPipeProperties;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
-import net.minecraft.tileentity.TileEntity;
+
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

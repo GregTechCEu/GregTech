@@ -6,5 +6,4 @@ import net.minecraft.item.ItemStack;
 public interface IItemNameProvider extends IItemComponent {
 
     String getItemStackDisplayName(ItemStack itemStack, String unlocalizedName);
-
 }

@@ -2,6 +2,7 @@ package gregtech.api.block;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.util.LocalizationUtils;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -19,12 +20,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block implements IWalkingSpeedBonus {
 
@@ -37,7 +39,8 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
             for (T t : VALUES) {
                 IStateHarvestLevel stateHarvestLevel = (IStateHarvestLevel) t;
                 IBlockState state = getState(t);
-                setHarvestLevel(stateHarvestLevel.getHarvestTool(state), stateHarvestLevel.getHarvestLevel(state), state);
+                setHarvestLevel(stateHarvestLevel.getHarvestTool(state), stateHarvestLevel.getHarvestLevel(state),
+                        state);
             }
         }
         setCreativeTab(GregTechAPI.TAB_GREGTECH);
@@ -82,12 +85,13 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World player, List<String> tooltip, @Nonnull ITooltipFlag advanced) {
-        //tier less tooltip like: tile.turbine_casing.tooltip
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World player, List<String> tooltip,
+                               @Nonnull ITooltipFlag advanced) {
+        // tier less tooltip like: tile.turbine_casing.tooltip
         String unlocalizedVariantTooltip = getTranslationKey() + ".tooltip";
         if (I18n.hasKey(unlocalizedVariantTooltip))
             Collections.addAll(tooltip, LocalizationUtils.formatLines(unlocalizedVariantTooltip));
-        //item specific tooltip: tile.turbine_casing.bronze_gearbox.tooltip
+        // item specific tooltip: tile.turbine_casing.bronze_gearbox.tooltip
         String unlocalizedTooltip = stack.getTranslationKey() + ".tooltip";
         if (I18n.hasKey(unlocalizedTooltip))
             Collections.addAll(tooltip, LocalizationUtils.formatLines(unlocalizedTooltip));
@@ -117,7 +121,8 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
             return;
         }
 
-        IBlockState below = entityIn.getEntityWorld().getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
+        IBlockState below = entityIn.getEntityWorld()
+                .getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
         if (checkApplicableBlocks(below)) {
             if (bonusSpeedCondition(entityIn)) {
                 entityIn.motionX *= getWalkingSpeedBonus();
@@ -126,9 +131,10 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
         }
     }
 
-    //magic is here
+    // magic is here
     @SuppressWarnings("unchecked")
-    protected static <T, R> Class<T> getActualTypeParameter(Class<? extends R> thisClass, Class<R> declaringClass, int index) {
+    protected static <T, R> Class<T> getActualTypeParameter(Class<? extends R> thisClass, Class<R> declaringClass,
+                                                            int index) {
         Type type = thisClass.getGenericSuperclass();
 
         while (!(type instanceof ParameterizedType) || ((ParameterizedType) type).getRawType() != declaringClass) {

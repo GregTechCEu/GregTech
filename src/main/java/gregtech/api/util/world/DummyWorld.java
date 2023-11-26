@@ -23,7 +23,8 @@ public class DummyWorld extends World {
     public static final DummyWorld INSTANCE = new DummyWorld();
 
     public DummyWorld() {
-        super(new DummySaveHandler(), new WorldInfo(DEFAULT_SETTINGS, "DummyServer"), new WorldProviderSurface(), new Profiler(), false);
+        super(new DummySaveHandler(), new WorldInfo(DEFAULT_SETTINGS, "DummyServer"), new WorldProviderSurface(),
+                new Profiler(), false);
         // Guarantee the dimension ID was not reset by the provider
         this.provider.setDimension(Integer.MAX_VALUE);
         int providerDim = this.provider.getDimension();
@@ -40,39 +41,38 @@ public class DummyWorld extends World {
 
     @Override
     public void notifyNeighborsRespectDebug(@Nonnull BlockPos pos, @Nonnull Block blockType, boolean p_175722_3_) {
-        //NOOP - do not trigger forge events
+        // NOOP - do not trigger forge events
     }
 
     @Override
     public void notifyNeighborsOfStateChange(@Nonnull BlockPos pos, @Nonnull Block blockType, boolean updateObservers) {
-        //NOOP - do not trigger forge events
+        // NOOP - do not trigger forge events
     }
 
     @Override
-    public void notifyNeighborsOfStateExcept(@Nonnull BlockPos pos, @Nonnull Block blockType, @Nonnull EnumFacing skipSide) {
-        //NOOP - do not trigger forge events
+    public void notifyNeighborsOfStateExcept(@Nonnull BlockPos pos, @Nonnull Block blockType,
+                                             @Nonnull EnumFacing skipSide) {
+        // NOOP - do not trigger forge events
     }
 
     @Override
-    public void markAndNotifyBlock(@Nonnull BlockPos pos, @Nullable Chunk chunk, @Nonnull IBlockState iblockstate, @Nonnull IBlockState newState, int flags) {
-        //NOOP - do not trigger forge events
+    public void markAndNotifyBlock(@Nonnull BlockPos pos, @Nullable Chunk chunk, @Nonnull IBlockState iblockstate,
+                                   @Nonnull IBlockState newState, int flags) {
+        // NOOP - do not trigger forge events
     }
 
     @Override
-    public void notifyBlockUpdate(@Nonnull BlockPos pos, @Nonnull IBlockState oldState, @Nonnull IBlockState newState, int flags) {
-    }
+    public void notifyBlockUpdate(@Nonnull BlockPos pos, @Nonnull IBlockState oldState, @Nonnull IBlockState newState,
+                                  int flags) {}
 
     @Override
-    public void markBlockRangeForRenderUpdate(@Nonnull BlockPos rangeMin, @Nonnull BlockPos rangeMax) {
-    }
+    public void markBlockRangeForRenderUpdate(@Nonnull BlockPos rangeMin, @Nonnull BlockPos rangeMax) {}
 
     @Override
-    public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2) {
-    }
+    public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2) {}
 
     @Override
-    public void updateObservingBlocksAt(@Nonnull BlockPos pos, @Nonnull Block blockType) {
-    }
+    public void updateObservingBlocksAt(@Nonnull BlockPos pos, @Nonnull Block blockType) {}
 
     @Nonnull
     @Override

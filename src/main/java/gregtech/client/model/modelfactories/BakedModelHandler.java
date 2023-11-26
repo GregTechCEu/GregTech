@@ -1,8 +1,5 @@
 package gregtech.client.model.modelfactories;
 
-import codechicken.lib.render.item.CCRenderItem;
-import codechicken.lib.texture.TextureUtils;
-import codechicken.lib.util.TransformUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -28,26 +25,32 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.render.item.CCRenderItem;
+import codechicken.lib.texture.TextureUtils;
+import codechicken.lib.util.TransformUtils;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class BakedModelHandler {
 
     private static final StateMapperBase SIMPLE_STATE_MAPPER = new StateMapperBase() {
+
         @Override
         protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
             return getSimpleModelLocation(state.getBlock());
         }
     };
-    private static final ItemMeshDefinition SIMPLE_MESH_DEFINITION = (stack) ->
-            getSimpleModelLocation(Block.getBlockFromItem(stack.getItem()));
+    private static final ItemMeshDefinition SIMPLE_MESH_DEFINITION = (stack) -> getSimpleModelLocation(
+            Block.getBlockFromItem(stack.getItem()));
 
     private static ModelResourceLocation getSimpleModelLocation(Block block) {
         return new ModelResourceLocation(Block.REGISTRY.getNameForObject(block), "");
@@ -75,7 +78,8 @@ public class BakedModelHandler {
         for (BlockFluidBase fluidBlock : fluidBlocks) {
             Fluid fluid = ObfuscationReflectionHelper.getPrivateValue(BlockFluidBase.class, fluidBlock, "definedFluid");
             ModelFluid modelFluid = new ModelFluid(fluid);
-            IBakedModel bakedModel = modelFluid.bake(modelFluid.getDefaultState(), DefaultVertexFormats.ITEM, TextureUtils::getTexture);
+            IBakedModel bakedModel = modelFluid.bake(modelFluid.getDefaultState(), DefaultVertexFormats.ITEM,
+                    TextureUtils::getTexture);
             ModelResourceLocation resourceLocation = getSimpleModelLocation(fluidBlock);
             event.getModelRegistry().putObject(resourceLocation, bakedModel);
         }
@@ -135,4 +139,3 @@ public class BakedModelHandler {
         }
     }
 }
-

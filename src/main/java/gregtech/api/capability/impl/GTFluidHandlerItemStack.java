@@ -2,6 +2,7 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IFilter;
 import gregtech.api.capability.IFilteredFluidContainer;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -62,7 +63,7 @@ public class GTFluidHandlerItemStack extends FluidHandlerItemStack implements IF
     @Override
     public IFluidTankProperties[] getTankProperties() {
         if (properties == null) {
-            return properties = new IFluidTankProperties[]{new TankProperties()};
+            return properties = new IFluidTankProperties[] { new TankProperties() };
         }
         return properties;
     }

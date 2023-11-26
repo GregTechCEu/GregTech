@@ -9,6 +9,7 @@ import gregtech.api.util.Size;
 import java.util.function.BiConsumer;
 
 public class CustomPositionSizeWidget extends Widget implements IDraggable {
+
     private Widget controlled;
     private final int borderColor;
     private final int hoverColor;
@@ -20,7 +21,6 @@ public class CustomPositionSizeWidget extends Widget implements IDraggable {
     private boolean dragPos;
 
     private BiConsumer<Position, Size> onUpdated;
-
 
     public CustomPositionSizeWidget(Widget controlled, int borderColor, int hoverColor, int border) {
         super(controlled.getSelfPosition(), controlled.getSize());
@@ -128,20 +128,26 @@ public class CustomPositionSizeWidget extends Widget implements IDraggable {
         }
         // UP
         drawSolidRect(x, y, width / 5, border, hoverUp && !hoverRight ? hoverColor : borderColor);
-        drawSolidRect(x + width * 2 / 5, y, width / 5, border, hoverUp && !hoverLeft && !hoverRight ? hoverColor : borderColor);
+        drawSolidRect(x + width * 2 / 5, y, width / 5, border,
+                hoverUp && !hoverLeft && !hoverRight ? hoverColor : borderColor);
         drawSolidRect(x + width * 4 / 5, y, width / 5, border, hoverUp && !hoverLeft ? hoverColor : borderColor);
         // DOWN
         drawSolidRect(x, y + height - border, width / 5, border, hoverDown && !hoverRight ? hoverColor : borderColor);
-        drawSolidRect(x + width * 2 / 5, y + height - border, width / 5, border, hoverDown && !hoverLeft && !hoverRight ? hoverColor : borderColor);
-        drawSolidRect(x + width * 4 / 5, y + height - border, width / 5, border, hoverDown && !hoverLeft ? hoverColor : borderColor);
+        drawSolidRect(x + width * 2 / 5, y + height - border, width / 5, border,
+                hoverDown && !hoverLeft && !hoverRight ? hoverColor : borderColor);
+        drawSolidRect(x + width * 4 / 5, y + height - border, width / 5, border,
+                hoverDown && !hoverLeft ? hoverColor : borderColor);
         // LEFT
         drawSolidRect(x, y, border, height / 5, hoverLeft && !hoverDown ? hoverColor : borderColor);
-        drawSolidRect(x, y + height * 2 / 5, border, height / 5, hoverLeft && !hoverDown && !hoverUp ? hoverColor : borderColor);
+        drawSolidRect(x, y + height * 2 / 5, border, height / 5,
+                hoverLeft && !hoverDown && !hoverUp ? hoverColor : borderColor);
         drawSolidRect(x, y + height * 4 / 5, border, height / 5, hoverLeft && !hoverUp ? hoverColor : borderColor);
         // RIGHT
         drawSolidRect(x + width - border, y, border, height / 5, hoverRight && !hoverDown ? hoverColor : borderColor);
-        drawSolidRect(x + width - border, y + height * 2 / 5, border, height / 5, hoverRight && !hoverDown && !hoverUp ? hoverColor : borderColor);
-        drawSolidRect(x + width - border, y + height * 4 / 5, border, height / 5, hoverRight && !hoverUp ? hoverColor : borderColor);
+        drawSolidRect(x + width - border, y + height * 2 / 5, border, height / 5,
+                hoverRight && !hoverDown && !hoverUp ? hoverColor : borderColor);
+        drawSolidRect(x + width - border, y + height * 4 / 5, border, height / 5,
+                hoverRight && !hoverUp ? hoverColor : borderColor);
     }
 
     @Override

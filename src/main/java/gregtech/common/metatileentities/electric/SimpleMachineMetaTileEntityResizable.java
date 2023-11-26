@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -20,8 +21,10 @@ public class SimpleMachineMetaTileEntityResizable extends SimpleMachineMetaTileE
     private final int outputAmount;
 
     /**
-     * @param inputAmount  Number of Item Input Slots for this machine. Pass -1 to use the default value from the RecipeMap.
-     * @param outputAmount Number of Item Output Slots for this machine. Pass -1 to use the default value from the RecipeMap.
+     * @param inputAmount  Number of Item Input Slots for this machine. Pass -1 to use the default value from the
+     *                     RecipeMap.
+     * @param outputAmount Number of Item Output Slots for this machine. Pass -1 to use the default value from the
+     *                     RecipeMap.
      */
     public SimpleMachineMetaTileEntityResizable(ResourceLocation metaTileEntityId,
                                                 RecipeMap<?> recipeMap,
@@ -36,8 +39,10 @@ public class SimpleMachineMetaTileEntityResizable extends SimpleMachineMetaTileE
     }
 
     /**
-     * @param inputAmount  Number of Item Input Slots for this machine. Pass -1 to use the default value from the RecipeMap.
-     * @param outputAmount Number of Item Output Slots for this machine. Pass -1 to use the default value from the RecipeMap.
+     * @param inputAmount  Number of Item Input Slots for this machine. Pass -1 to use the default value from the
+     *                     RecipeMap.
+     * @param outputAmount Number of Item Output Slots for this machine. Pass -1 to use the default value from the
+     *                     RecipeMap.
      */
     public SimpleMachineMetaTileEntityResizable(ResourceLocation metaTileEntityId,
                                                 RecipeMap<?> recipeMap,
@@ -71,7 +76,8 @@ public class SimpleMachineMetaTileEntityResizable extends SimpleMachineMetaTileE
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new SimpleMachineMetaTileEntityResizable(metaTileEntityId, workable.getRecipeMap(), inputAmount, outputAmount, renderer, getTier());
+        return new SimpleMachineMetaTileEntityResizable(metaTileEntityId, workable.getRecipeMap(), inputAmount,
+                outputAmount, renderer, getTier());
     }
 
     @Override

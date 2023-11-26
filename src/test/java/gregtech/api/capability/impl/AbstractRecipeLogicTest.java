@@ -10,9 +10,11 @@ import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,7 +30,6 @@ public class AbstractRecipeLogicTest {
 
     @Test
     public void trySearchNewRecipe() {
-
         World world = DummyWorld.INSTANCE;
 
         // Create an empty recipe map to work with
@@ -40,13 +41,12 @@ public class AbstractRecipeLogicTest {
                 new SimpleRecipeBuilder().EUt(30),
                 false);
 
-        MetaTileEntity at =
-                MetaTileEntities.registerMetaTileEntity(190,
-                        new SimpleMachineMetaTileEntity(
-                                GTUtility.gregtechId("chemical_reactor.lv"),
-                                map,
-                                null,
-                                1, false));
+        MetaTileEntity at = MetaTileEntities.registerMetaTileEntity(190,
+                new SimpleMachineMetaTileEntity(
+                        GTUtility.gregtechId("chemical_reactor.lv"),
+                        map,
+                        null,
+                        1, false));
         MetaTileEntity atte = new MetaTileEntityHolder().setMetaTileEntity(at);
         ((MetaTileEntityHolder) atte.getHolder()).setWorld(world);
         map.recipeBuilder()
@@ -56,6 +56,7 @@ public class AbstractRecipeLogicTest {
                 .buildAndRegister();
 
         AbstractRecipeLogic arl = new AbstractRecipeLogic(atte, map) {
+
             @Override
             protected long getEnergyInputPerSecond() {
                 return Long.MAX_VALUE;
@@ -77,7 +78,7 @@ public class AbstractRecipeLogicTest {
             }
 
             @Override
-            protected long getMaxVoltage() {
+            public long getMaxVoltage() {
                 return 32;
             }
         };

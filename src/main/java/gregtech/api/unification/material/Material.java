@@ -1,8 +1,5 @@
 package gregtech.api.unification.material;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidState;
@@ -19,17 +16,23 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import crafttweaker.annotations.ZenRegister;
 import org.jetbrains.annotations.ApiStatus;
 import stanhebben.zenscript.annotations.*;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.UnaryOperator;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @ZenClass("mods.gregtech.material.Material")
 @ZenRegister
@@ -111,7 +114,8 @@ public class Material implements Comparable<Material> {
         return getMaterialComponents().toArray(new MaterialStack[0]);
     }
 
-    private Material(@Nonnull MaterialInfo materialInfo, @Nonnull MaterialProperties properties, @Nonnull MaterialFlags flags) {
+    private Material(@Nonnull MaterialInfo materialInfo, @Nonnull MaterialProperties properties,
+                     @Nonnull MaterialFlags flags) {
         this.materialInfo = materialInfo;
         this.properties = properties;
         this.flags = flags;
@@ -177,7 +181,7 @@ public class Material implements Comparable<Material> {
                 Material material = materialStack.material;
                 onlyMetalMaterials &= material.hasProperty(PropertyKey.INGOT);
             }
-            //allow centrifuging of alloy materials only
+            // allow centrifuging of alloy materials only
             if (onlyMetalMaterials) {
                 flags.addFlags(MaterialFlags.DECOMPOSITION_BY_CENTRIFUGING);
             } else {
@@ -190,6 +194,7 @@ public class Material implements Comparable<Material> {
      * Retrieves a fluid from the material.
      * Attempts to retrieve with {@link FluidProperty#getPrimaryKey()}, {@link FluidStorageKeys#LIQUID} and
      * {@link FluidStorageKeys#GAS}.
+     * 
      * @return the fluid
      * @see #getFluid(FluidStorageKey)
      */
@@ -235,7 +240,7 @@ public class Material implements Comparable<Material> {
 
     /**
      *
-     * @param key the key for the fluid
+     * @param key    the key for the fluid
      * @param amount the amount the FluidStack should have
      * @return a FluidStack with the fluid and amount
      */
@@ -245,7 +250,8 @@ public class Material implements Comparable<Material> {
 
     public int getBlockHarvestLevel() {
         if (!hasProperty(PropertyKey.DUST)) {
-            throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a harvest level! Is probably a Fluid");
+            throw new IllegalArgumentException(
+                    "Material " + getResourceLocation() + " does not have a harvest level! Is probably a Fluid");
         }
         int harvestLevel = getProperty(PropertyKey.DUST).getHarvestLevel();
         return harvestLevel > 0 ? harvestLevel - 1 : harvestLevel;
@@ -253,7 +259,8 @@ public class Material implements Comparable<Material> {
 
     public int getToolHarvestLevel() {
         if (!hasProperty(PropertyKey.TOOL)) {
-            throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a tool harvest level! Is probably not a Tool Material");
+            throw new IllegalArgumentException("Material " + getResourceLocation() +
+                    " does not have a tool harvest level! Is probably not a Tool Material");
         }
         return getProperty(PropertyKey.TOOL).getToolHarvestLevel();
     }
@@ -313,7 +320,6 @@ public class Material implements Comparable<Material> {
         return totalNeutrons / totalAmount;
     }
 
-
     @ZenGetter("mass")
     public long getMass() {
         if (materialInfo.element != null)
@@ -338,7 +344,7 @@ public class Material implements Comparable<Material> {
         return getFluid(FluidStorageKeys.PLASMA, amount);
     }
 
-    //TODO clean up the name-related methods
+    // TODO clean up the name-related methods
     @ZenGetter("name")
     @Nonnull
     public String getName() {
@@ -515,6 +521,7 @@ public class Material implements Comparable<Material> {
 
         /**
          * Add a liquid for this material.
+         * 
          * @see #fluid(FluidStorageKey, FluidState)
          */
         public Builder liquid() {
@@ -523,6 +530,7 @@ public class Material implements Comparable<Material> {
 
         /**
          * Add a liquid for this material.
+         * 
          * @see #fluid(FluidStorageKey, FluidState)
          */
         public Builder liquid(@Nonnull FluidBuilder builder) {
@@ -531,6 +539,7 @@ public class Material implements Comparable<Material> {
 
         /**
          * Add a plasma for this material.
+         * 
          * @see #fluid(FluidStorageKey, FluidState)
          */
         public Builder plasma() {
@@ -539,6 +548,7 @@ public class Material implements Comparable<Material> {
 
         /**
          * Add a plasma for this material.
+         * 
          * @see #fluid(FluidStorageKey, FluidState)
          */
         public Builder plasma(@Nonnull FluidBuilder builder) {
@@ -547,6 +557,7 @@ public class Material implements Comparable<Material> {
 
         /**
          * Add a gas for this material.
+         * 
          * @see #fluid(FluidStorageKey, FluidState)
          */
         public Builder gas() {
@@ -555,6 +566,7 @@ public class Material implements Comparable<Material> {
 
         /**
          * Add a gas for this material.
+         * 
          * @see #fluid(FluidStorageKey, FluidState)
          */
         public Builder gas(@Nonnull FluidBuilder builder) {
@@ -652,7 +664,8 @@ public class Material implements Comparable<Material> {
          *
          * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require a iron tool.<br>
          *                     If this Material also has a {@link ToolProperty}, this value will
-         *                     also be used to determine the tool's Mining level (-1). So 2 will make the tool harvest diamonds.<br>
+         *                     also be used to determine the tool's Mining level (-1). So 2 will make the tool harvest
+         *                     diamonds.<br>
          *                     If this Material already had a Harvest Level defined, it will be overridden.
          * @throws IllegalArgumentException If an {@link IngotProperty} has already been added to this Material.
          */
@@ -666,7 +679,8 @@ public class Material implements Comparable<Material> {
          *
          * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require a iron tool.<br>
          *                     If this Material also has a {@link ToolProperty}, this value will
-         *                     also be used to determine the tool's Mining level (-1). So 2 will make the tool harvest diamonds.<br>
+         *                     also be used to determine the tool's Mining level (-1). So 2 will make the tool harvest
+         *                     diamonds.<br>
          *                     If this Material already had a Harvest Level defined, it will be overridden.
          * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.<br>
          *                     If this Material already had a Burn Time defined, it will be overridden.
@@ -794,9 +808,9 @@ public class Material implements Comparable<Material> {
          * Set the {@link MaterialIconSet} of this Material.<br>
          * Defaults vary depending on if the Material has a:<br>
          * <ul>
-         * <li> {@link GemProperty}, it will default to {@link MaterialIconSet#GEM_VERTICAL}
-         * <li> {@link IngotProperty} or {@link DustProperty}, it will default to {@link MaterialIconSet#DULL}
-         * <li> {@link FluidProperty}, it will default to {@link MaterialIconSet#FLUID}
+         * <li>{@link GemProperty}, it will default to {@link MaterialIconSet#GEM_VERTICAL}
+         * <li>{@link IngotProperty} or {@link DustProperty}, it will default to {@link MaterialIconSet#DULL}
+         * <li>{@link FluidProperty}, it will default to {@link MaterialIconSet#FLUID}
          * </ul>
          * Default will be determined by first-found Property in this order, unless specified.
          *
@@ -810,18 +824,16 @@ public class Material implements Comparable<Material> {
         public Builder components(Object... components) {
             Preconditions.checkArgument(
                     components.length % 2 == 0,
-                    "Material Components list malformed!"
-            );
+                    "Material Components list malformed!");
 
             for (int i = 0; i < components.length; i += 2) {
                 if (components[i] == null) {
-                    throw new IllegalArgumentException("Material in Components List is null for Material "
-                            + this.materialInfo.resourceLocation);
+                    throw new IllegalArgumentException(
+                            "Material in Components List is null for Material " + this.materialInfo.resourceLocation);
                 }
                 composition.add(new MaterialStack(
                         (Material) components[i],
-                        (Integer) components[i + 1]
-                ));
+                        (Integer) components[i + 1]));
             }
             return this;
         }
@@ -851,8 +863,10 @@ public class Material implements Comparable<Material> {
          * Dependent Flags (for example, {@link MaterialFlags#GENERATE_LONG_ROD} requiring
          * {@link MaterialFlags#GENERATE_ROD}) will be automatically applied.
          *
-         * @param f1 A {@link Collection} of {@link MaterialFlag}. Provided this way for easy Flag presets to be applied.
-         * @param f2 An Array of {@link MaterialFlag}. If no {@link Collection} is required, use {@link Builder#flags(MaterialFlag...)}.
+         * @param f1 A {@link Collection} of {@link MaterialFlag}. Provided this way for easy Flag presets to be
+         *           applied.
+         * @param f2 An Array of {@link MaterialFlag}. If no {@link Collection} is required, use
+         *           {@link Builder#flags(MaterialFlag...)}.
          */
         public Builder flags(Collection<MaterialFlag> f1, MaterialFlag... f2) {
             this.flags.addFlags(f1.toArray(new MaterialFlag[0]));
@@ -906,12 +920,12 @@ public class Material implements Comparable<Material> {
         public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride, int durationOverride) {
             return blast(b -> b.temp(temp, gasTier).blastStats(eutOverride, durationOverride));
         }
-        
+
         public Builder blast(int temp) {
             properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp));
             return this;
         }
-        
+
         public Builder blast(int temp, BlastProperty.GasTier gasTier) {
             properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier));
             return this;
@@ -1006,8 +1020,10 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon, int criticalTemperature) {
-            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon, criticalTemperature));
+        public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon,
+                                       int criticalTemperature) {
+            properties.setProperty(PropertyKey.WIRE,
+                    new WireProperties((int) voltage, amperage, loss, isSuperCon, criticalTemperature));
             return this;
         }
 
@@ -1015,8 +1031,10 @@ public class Material implements Comparable<Material> {
             return fluidPipeProperties(maxTemp, throughput, gasProof, false, false, false);
         }
 
-        public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof, boolean cryoProof, boolean plasmaProof) {
-            properties.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof));
+        public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof,
+                                           boolean cryoProof, boolean plasmaProof) {
+            properties.setProperty(PropertyKey.FLUID_PIPE,
+                    new FluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof));
             return this;
         }
 
@@ -1045,6 +1063,7 @@ public class Material implements Comparable<Material> {
      * Holds the basic info for a Material, like the name, color, id, etc..
      */
     private static class MaterialInfo {
+
         /**
          * The modid and unlocalized name of this Material.
          * <p>
@@ -1093,24 +1112,26 @@ public class Material implements Comparable<Material> {
             this.metaItemSubId = metaItemSubId;
             String name = resourceLocation.getPath();
             if (!GTUtility.toLowerCaseUnderscore(GTUtility.lowerUnderscoreToUpperCamel(name)).equals(name)) {
-                throw new IllegalArgumentException("Cannot add materials with names like 'materialnumber'! Use 'material_number' instead.");
+                throw new IllegalArgumentException(
+                        "Cannot add materials with names like 'materialnumber'! Use 'material_number' instead.");
             }
             this.resourceLocation = resourceLocation;
         }
 
         private void verifyInfo(MaterialProperties p, boolean averageRGB) {
-
             // Verify IconSet
             if (iconSet == null) {
                 if (p.hasProperty(PropertyKey.GEM)) {
                     iconSet = MaterialIconSet.GEM_VERTICAL;
-                } else if (p.hasProperty(PropertyKey.DUST) || p.hasProperty(PropertyKey.INGOT) || p.hasProperty(PropertyKey.POLYMER)) {
-                    iconSet = MaterialIconSet.DULL;
-                } else if (p.hasProperty(PropertyKey.FLUID)) {
-                    iconSet = MaterialIconSet.FLUID;
-                } else {
-                    iconSet = MaterialIconSet.DULL;
-                }
+                } else if (p.hasProperty(PropertyKey.DUST) || p.hasProperty(PropertyKey.INGOT) ||
+                        p.hasProperty(PropertyKey.POLYMER)) {
+                            iconSet = MaterialIconSet.DULL;
+                        } else
+                    if (p.hasProperty(PropertyKey.FLUID)) {
+                        iconSet = MaterialIconSet.FLUID;
+                    } else {
+                        iconSet = MaterialIconSet.DULL;
+                    }
             }
 
             // Verify MaterialRGB

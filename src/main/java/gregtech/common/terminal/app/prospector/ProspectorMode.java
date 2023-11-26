@@ -3,6 +3,7 @@ package gregtech.common.terminal.app.prospector;
 import javax.annotation.Nonnull;
 
 public enum ProspectorMode {
+
     ORE("ore_prospector", "metaitem.prospector.mode.ores"),
     FLUID("fluid_prospector", "metaitem.prospector.mode.fluid");
 

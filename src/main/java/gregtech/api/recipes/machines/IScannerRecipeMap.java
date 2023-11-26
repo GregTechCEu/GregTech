@@ -1,8 +1,10 @@
 package gregtech.api.recipes.machines;
 
 import gregtech.api.recipes.Recipe;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +28,8 @@ public interface IScannerRecipeMap {
          *         recipe is not found to run. Return null if no recipe should be run by your logic.
          */
         @Nullable
-        Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, boolean exactVoltage);
+        Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs,
+                                  boolean exactVoltage);
 
         /**
          * @return A list of Recipes that are never registered, but are added to JEI to demonstrate the custom logic.

@@ -6,6 +6,7 @@ import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.common.terminal.app.game.minesweeper.widget.MineMapWidget;
 
 public class MinesweeperApp extends AbstractApplication {
+
     private MineMapWidget mineField;
     private WidgetGroup textGroup;
     private int timer;
@@ -35,8 +36,8 @@ public class MinesweeperApp extends AbstractApplication {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if(mineField.hasWon() || mineField.hasLost()) {
-            if(mineField.hasWon()) {
+        if (mineField.hasWon() || mineField.hasLost()) {
+            if (mineField.hasWon()) {
                 mineField.notifyWon();
             }
             resetCountdown--;
@@ -55,21 +56,23 @@ public class MinesweeperApp extends AbstractApplication {
         return mineField.flagsPlaced + "/" + mineField.mineCount;
     }
 
-    public void setTextStatus() { //swap widget for localization
+    public void setTextStatus() { // swap widget for localization
         if (resetCountdown == 100) {
             textGroup.clearAllWidgets();
-            textGroup.addWidget(new SimpleTextWidget(333 / 8 * 5, 10, "terminal.minesweeper.time", 0xFFCCCCCC, ()->String.valueOf(timer / 20), true)); // Normal
-        }
-        else if(resetCountdown==99){
+            textGroup.addWidget(new SimpleTextWidget(333 / 8 * 5, 10, "terminal.minesweeper.time", 0xFFCCCCCC,
+                    () -> String.valueOf(timer / 20), true)); // Normal
+        } else if (resetCountdown == 99) {
             textGroup.clearAllWidgets();
-            if(mineField.hasLost()){
-                textGroup.addWidget(new SimpleTextWidget(333 / 8 * 5, 10, "terminal.minesweeper.lose", 0xFFCCCCCC, ()->String.valueOf(resetCountdown / 20), true)); // Losing condition
-            } else{
-                textGroup.addWidget(new SimpleTextWidget(333 / 8 * 5, 10, "terminal.minesweeper.win.1", 0xFFCCCCCC, ()->String.valueOf(timer / 20), true)); // Winning condition
-                textGroup.addWidget(new SimpleTextWidget(333 / 8 * 5, 20, "terminal.minesweeper.win.2", 0xFFCCCCCC, ()->String.valueOf(resetCountdown / 20), true));
+            if (mineField.hasLost()) {
+                textGroup.addWidget(new SimpleTextWidget(333 / 8 * 5, 10, "terminal.minesweeper.lose", 0xFFCCCCCC,
+                        () -> String.valueOf(resetCountdown / 20), true)); // Losing condition
+            } else {
+                textGroup.addWidget(new SimpleTextWidget(333 / 8 * 5, 10, "terminal.minesweeper.win.1", 0xFFCCCCCC,
+                        () -> String.valueOf(timer / 20), true)); // Winning condition
+                textGroup.addWidget(new SimpleTextWidget(333 / 8 * 5, 20, "terminal.minesweeper.win.2", 0xFFCCCCCC,
+                        () -> String.valueOf(resetCountdown / 20), true));
             }
         }
-
     }
 
     @Override

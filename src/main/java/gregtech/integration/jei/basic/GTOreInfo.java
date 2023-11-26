@@ -1,6 +1,5 @@
 package gregtech.integration.jei.basic;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.FileUtility;
@@ -16,9 +15,7 @@ import gregtech.api.worldgen.populator.SurfaceBlockPopulator;
 import gregtech.api.worldgen.populator.SurfaceRockPopulator;
 import gregtech.common.blocks.BlockOre;
 import gregtech.integration.jei.utils.JEIResourceDepositCategoryUtils;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.ingredients.VanillaTypes;
-import mezz.jei.api.recipe.IRecipeWrapper;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -30,6 +27,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.Loader;
+
+import com.google.common.collect.ImmutableList;
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
+import mezz.jei.api.recipe.IRecipeWrapper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -60,19 +62,21 @@ public class GTOreInfo implements IRecipeWrapper {
     public GTOreInfo(OreDepositDefinition definition) {
         this.definition = definition;
 
-        //Don't default to vanilla Maximums and minimums if the values are not defined and Cubic Chunks is loaded
-        //This could be improved to use the actual minimum and maximum heights, at the cost of including the CC Api
+        // Don't default to vanilla Maximums and minimums if the values are not defined and Cubic Chunks is loaded
+        // This could be improved to use the actual minimum and maximum heights, at the cost of including the CC Api
         if (Loader.isModLoaded(MODID_CC)) {
-            this.maxHeight = definition.getMaximumHeight() == Integer.MAX_VALUE ? Integer.MAX_VALUE : definition.getMaximumHeight();
-            this.minHeight = definition.getMinimumHeight() == Integer.MIN_VALUE ? Integer.MIN_VALUE : definition.getMinimumHeight();
+            this.maxHeight = definition.getMaximumHeight() == Integer.MAX_VALUE ? Integer.MAX_VALUE :
+                    definition.getMaximumHeight();
+            this.minHeight = definition.getMinimumHeight() == Integer.MIN_VALUE ? Integer.MIN_VALUE :
+                    definition.getMinimumHeight();
         } else {
-            //Some veins don't have a maximum height, so set it to the maximum world height?
+            // Some veins don't have a maximum height, so set it to the maximum world height?
             this.maxHeight = definition.getMaximumHeight() == Integer.MAX_VALUE ? 255 : definition.getMaximumHeight();
-            //Some veins don't have a minimum height, so set it to 0 in that case
+            // Some veins don't have a minimum height, so set it to 0 in that case
             this.minHeight = definition.getMinimumHeight() == Integer.MIN_VALUE ? 0 : definition.getMinimumHeight();
         }
 
-        //Get the Name and trim unneeded information
+        // Get the Name and trim unneeded information
         if (definition.getAssignedName() == null) {
             this.name = FileUtility.trimFileName(definition.getDepositName());
         } else {
@@ -83,7 +87,7 @@ public class GTOreInfo implements IRecipeWrapper {
 
         this.weight = definition.getWeight();
 
-        //Find the Vein Populator and use it to define the Surface Indicator
+        // Find the Vein Populator and use it to define the Surface Indicator
         veinPopulator = definition.getVeinPopulator();
         ItemStack identifierStack = findSurfaceBlock(veinPopulator);
 
@@ -100,7 +104,7 @@ public class GTOreInfo implements IRecipeWrapper {
         if (blockFiller instanceof LayeredBlockFiller) {
             groupedOutputsAsItemStacks = getLayeredVeinOutputStacks();
         } else {
-            //Group the output Ores
+            // Group the output Ores
             groupedOutputsAsItemStacks = findUniqueBlocksAsItemStack(generatedBlocksAsItemStacks);
         }
 
@@ -182,8 +186,7 @@ public class GTOreInfo implements IRecipeWrapper {
                 getStacksFromStates(getPossibleStates(filler.getPrimary(), new ArrayList<>()), new ArrayList<>()),
                 getStacksFromStates(getPossibleStates(filler.getSecondary(), new ArrayList<>()), new ArrayList<>()),
                 getStacksFromStates(getPossibleStates(filler.getBetween(), new ArrayList<>()), new ArrayList<>()),
-                getStacksFromStates(getPossibleStates(filler.getSporadic(), new ArrayList<>()), new ArrayList<>())
-        );
+                getStacksFromStates(getPossibleStates(filler.getSporadic(), new ArrayList<>()), new ArrayList<>()));
     }
 
     // Condenses the List of ores down to group together ores that share the same material but only vary in stone type.
@@ -221,7 +224,6 @@ public class GTOreInfo implements IRecipeWrapper {
 
     // Finds the generated surface block or material. In the case of Fluid generation, finds a bucket of the fluid.
     public static ItemStack findSurfaceBlock(IVeinPopulator veinPopulator) {
-
         Material mat;
         IBlockState state;
         ItemStack stack = new ItemStack(Items.AIR);
@@ -240,7 +242,7 @@ public class GTOreInfo implements IRecipeWrapper {
             stack = GTUtility.toItem(state);
             return stack;
         }
-        //Fluid generation support
+        // Fluid generation support
         else if (veinPopulator instanceof FluidSpringPopulator) {
             state = ((FluidSpringPopulator) veinPopulator).getFluidState();
             Block temp = state.getBlock();
@@ -255,19 +257,18 @@ public class GTOreInfo implements IRecipeWrapper {
         return stack;
     }
 
-    //Creates a tooltip based on the specific slots
+    // Creates a tooltip based on the specific slots
     public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-
-        //Only add the Biome Information to the selected Ore
+        // Only add the Biome Information to the selected Ore
         if (slotIndex == 0) {
             tooltip.addAll(JEIResourceDepositCategoryUtils.createSpawnPageBiomeTooltip(biomeFunction, weight));
             if (description != null) {
                 tooltip.add(description);
             }
         }
-        //Surface Indicator slot
+        // Surface Indicator slot
         else if (slotIndex == 1) {
-            //Only add the special tooltip to the Material rock piles
+            // Only add the special tooltip to the Material rock piles
             if (veinPopulator instanceof SurfaceRockPopulator) {
                 tooltip.add(I18n.format("gregtech.jei.ore.surface_rock_1"));
                 tooltip.add(I18n.format("gregtech.jei.ore.surface_rock_2"));
@@ -281,9 +282,8 @@ public class GTOreInfo implements IRecipeWrapper {
         }
     }
 
-    //Creates a tooltip show the weighting of the individual ores in the ore vein
+    // Creates a tooltip show the weighting of the individual ores in the ore vein
     public List<String> createOreWeightingTooltip(int slotIndex) {
-
         List<String> tooltip = new ArrayList<>();
         double weight;
 
@@ -302,7 +302,8 @@ public class GTOreInfo implements IRecipeWrapper {
 
     private List<String> createOreLayeringTooltip(int slotIndex) {
         List<String> tooltip = new ArrayList<>();
-        FillerConfigUtils.LayeredFillerEntry filler = (FillerConfigUtils.LayeredFillerEntry) blockFiller.getAllPossibleStates().get(0);
+        FillerConfigUtils.LayeredFillerEntry filler = (FillerConfigUtils.LayeredFillerEntry) blockFiller
+                .getAllPossibleStates().get(0);
         switch (slotIndex) {
             // cases are offset by 2, being the "Ore Input" and the Surface Indicator
             case 2: {

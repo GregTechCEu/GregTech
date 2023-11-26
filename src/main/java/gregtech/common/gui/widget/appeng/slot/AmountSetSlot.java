@@ -1,6 +1,5 @@
 package gregtech.common.gui.widget.appeng.slot;
 
-import appeng.api.storage.data.IAEStack;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -8,7 +7,10 @@ import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.util.Position;
 import gregtech.common.gui.widget.appeng.AEConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
+
 import net.minecraft.network.PacketBuffer;
+
+import appeng.api.storage.data.IAEStack;
 
 /**
  * @Author GlodBlock
@@ -53,8 +55,7 @@ public class AmountSetSlot<T extends IAEStack<T>> extends Widget {
         try {
             long newAmount = Long.parseLong(amount);
             writeClientAction(1, buf -> buf.writeVarLong(newAmount));
-        } catch (NumberFormatException ignore) {
-        }
+        } catch (NumberFormatException ignore) {}
     }
 
     @Override
@@ -82,5 +83,4 @@ public class AmountSetSlot<T extends IAEStack<T>> extends Widget {
         drawStringSized("Amount", position.x + 3, position.y + 3, 0x404040, false, 1f, false);
         GuiTextures.DISPLAY.draw(position.x + 3, position.y + 11, 65, 14);
     }
-
 }

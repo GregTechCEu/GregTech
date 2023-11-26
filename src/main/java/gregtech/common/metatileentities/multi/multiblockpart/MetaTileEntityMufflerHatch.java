@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.gui.GuiTextures;
@@ -19,6 +16,7 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,10 +30,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
 import java.util.List;
 
-public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMufflerHatch>, ITieredMetaTileEntity, IMufflerHatch {
+import javax.annotation.Nullable;
+
+public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements
+                                        IMultiblockAbilityPart<IMufflerHatch>, ITieredMetaTileEntity, IMufflerHatch {
 
     private final int recoveryChance;
     private final GTItemStackHandler inventory;
@@ -63,7 +67,8 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
                 this.frontFaceFree = checkFrontFaceFree();
         }
 
-        if (getWorld().isRemote && getController() instanceof MultiblockWithDisplayBase controller && controller.isActive()) {
+        if (getWorld().isRemote && getController() instanceof MultiblockWithDisplayBase controller &&
+                controller.isActive()) {
             pollutionParticles();
         }
     }
@@ -84,7 +89,6 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     private boolean calculateChance() {
         return recoveryChance >= 100 || recoveryChance > GTValues.RNG.nextInt(100);
     }
-
 
     /**
      * @return true if front face is free and contains only air blocks in 1x1 area
@@ -178,7 +182,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
 
     private ModularUI.Builder createUITemplate(EntityPlayer player, int rowSize, int xOffset) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + xOffset * 2,
-                        18 + 18 * rowSize + 94)
+                18 + 18 * rowSize + 94)
                 .label(10, 5, getMetaFullName());
 
         for (int y = 0; y < rowSize; y++) {
@@ -186,7 +190,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
                 int index = y * rowSize + x;
                 builder.widget(new SlotWidget(inventory, index,
                         (88 - rowSize * 9 + x * 18) + xOffset, 18 + y * 18, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT));
+                                .setBackgroundTexture(GuiTextures.SLOT));
             }
         }
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7 + xOffset, 18 + 18 * rowSize + 12);

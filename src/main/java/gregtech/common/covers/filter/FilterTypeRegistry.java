@@ -1,12 +1,14 @@
 package gregtech.common.covers.filter;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.GTLog;
 import gregtech.common.items.MetaItems;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import net.minecraft.item.ItemStack;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import java.util.Map;
 

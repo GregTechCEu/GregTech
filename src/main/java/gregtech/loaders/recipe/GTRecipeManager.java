@@ -4,6 +4,7 @@ import gregtech.api.event.MaterialInfoEvent;
 import gregtech.loaders.recipe.handlers.DecompositionRecipeHandler;
 import gregtech.loaders.recipe.handlers.RecipeHandlerList;
 import gregtech.loaders.recipe.handlers.ToolRecipeHandler;
+
 import net.minecraftforge.common.MinecraftForge;
 
 public final class GTRecipeManager {

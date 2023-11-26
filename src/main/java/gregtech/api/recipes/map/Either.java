@@ -7,6 +7,7 @@ import java.util.function.Function;
 public abstract class Either<L, R> {
 
     private static final class Left<L, R> extends Either<L, R> {
+
         private final L value;
 
         public Left(final L value) {
@@ -14,7 +15,8 @@ public abstract class Either<L, R> {
         }
 
         @Override
-        public <C, D> Either<C, D> mapBoth(final Function<? super L, ? extends C> f1, final Function<? super R, ? extends D> f2) {
+        public <C, D> Either<C, D> mapBoth(final Function<? super L, ? extends C> f1,
+                                           final Function<? super R, ? extends D> f2) {
             return new Left<>(f1.apply(value));
         }
 
@@ -67,8 +69,8 @@ public abstract class Either<L, R> {
         }
     }
 
-
     private static final class Right<L, R> extends Either<L, R> {
+
         private final R value;
 
         public Right(final R value) {
@@ -76,7 +78,8 @@ public abstract class Either<L, R> {
         }
 
         @Override
-        public <C, D> Either<C, D> mapBoth(final Function<? super L, ? extends C> f1, final Function<? super R, ? extends D> f2) {
+        public <C, D> Either<C, D> mapBoth(final Function<? super L, ? extends C> f1,
+                                           final Function<? super R, ? extends D> f2) {
             return new Right<>(f2.apply(value));
         }
 
@@ -129,10 +132,10 @@ public abstract class Either<L, R> {
         }
     }
 
-    private Either() {
-    }
+    private Either() {}
 
-    public abstract <C, D> Either<C, D> mapBoth(final Function<? super L, ? extends C> f1, final Function<? super R, ? extends D> f2);
+    public abstract <C, D> Either<C, D> mapBoth(final Function<? super L, ? extends C> f1,
+                                                final Function<? super R, ? extends D> f2);
 
     public abstract <T> T map(final Function<? super L, ? extends T> l, Function<? super R, ? extends T> r);
 

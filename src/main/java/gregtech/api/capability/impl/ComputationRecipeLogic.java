@@ -6,7 +6,9 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.recipeproperties.ComputationProperty;
 import gregtech.api.recipes.recipeproperties.TotalComputationProperty;
+
 import net.minecraft.nbt.NBTTagCompound;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -146,7 +148,6 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
             isDurationTotalCWU = compound.getBoolean("IsDurationTotalCWU");
         }
     }
-
 
     /**
      * @return Whether TOP / WAILA should show the recipe progress as duration or as total computation.

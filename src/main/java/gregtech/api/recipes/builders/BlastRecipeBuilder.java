@@ -6,14 +6,14 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
 
 public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
 
-    public BlastRecipeBuilder() {
-    }
+    public BlastRecipeBuilder() {}
 
     public BlastRecipeBuilder(Recipe recipe, RecipeMap<BlastRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
@@ -39,7 +39,8 @@ public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
 
     public BlastRecipeBuilder blastFurnaceTemp(int blastFurnaceTemp) {
         if (blastFurnaceTemp <= 0) {
-            GTLog.logger.error("Blast Furnace Temperature cannot be less than or equal to 0", new IllegalArgumentException());
+            GTLog.logger.error("Blast Furnace Temperature cannot be less than or equal to 0",
+                    new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
         }
         this.applyProperty(TemperatureProperty.getInstance(), blastFurnaceTemp);

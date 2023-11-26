@@ -1,10 +1,11 @@
 package gregtech.integration.crafttweaker.recipe;
 
+import gregtech.api.recipes.RecipeMap;
+
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.BracketHandler;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.zenscript.IBracketHandler;
-import gregtech.api.recipes.RecipeMap;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
 import stanhebben.zenscript.expression.ExpressionString;

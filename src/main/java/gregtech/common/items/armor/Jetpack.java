@@ -6,6 +6,7 @@ import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.KeyBind;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,8 +22,9 @@ import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
@@ -32,7 +34,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     public Jetpack(int energyPerUse, long capacity, int tier) {
         super(energyPerUse, capacity, tier, EntityEquipmentSlot.CHEST);
         if (ArmorUtils.SIDE.isClient() && this.shouldDrawHUD()) {
-            //noinspection NewExpressionSideOnly
+            // noinspection NewExpressionSideOnly
             HUD = new ArmorUtils.ModularHUD();
         }
     }
@@ -100,7 +102,8 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     }
 
     @Override
-    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
+    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source,
+                                         double damage, EntityEquipmentSlot equipmentSlot) {
         return new ArmorProperties(0, 0, 0);
     }
 
@@ -111,7 +114,8 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
         NBTTagCompound data = item.getTagCompound();
         if (data != null) {
             if (data.hasKey("hover")) {
-                String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
+                String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") :
+                        I18n.format("metaarmor.hud.status.disabled"));
                 String result = I18n.format("metaarmor.hud.hover_mode", status);
                 this.HUD.newString(result);
             }

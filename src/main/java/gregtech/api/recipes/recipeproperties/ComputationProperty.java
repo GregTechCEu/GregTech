@@ -22,6 +22,7 @@ public class ComputationProperty extends RecipeProperty<Integer> {
 
     @Override
     public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value) {
-        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.computation_per_tick", castValue(value)), x, y, color);
+        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.computation_per_tick", castValue(value)), x, y,
+                color);
     }
 }

@@ -1,21 +1,23 @@
 package gregtech.client.renderer.texture.custom;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils.IIconRegister;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.cclop.ColourOperation;
 import gregtech.client.renderer.cclop.LightMapOperation;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.texture.TextureUtils.IIconRegister;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 
 public class LargeTurbineRenderer implements IIconRegister {
@@ -36,14 +38,19 @@ public class LargeTurbineRenderer implements IIconRegister {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(TextureMap textureMap) {
-        this.baseRingSprite = textureMap.registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/base_ring"));
-        this.baseBackgroundSprite = textureMap.registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/base_bg"));
-        this.idleBladeSprite = textureMap.registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/rotor_idle"));
-        this.activeBladeSprite = textureMap.registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/rotor_spinning"));
+        this.baseRingSprite = textureMap
+                .registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/base_ring"));
+        this.baseBackgroundSprite = textureMap
+                .registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/base_bg"));
+        this.idleBladeSprite = textureMap
+                .registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/rotor_idle"));
+        this.activeBladeSprite = textureMap
+                .registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/rotor_spinning"));
     }
 
     @SideOnly(Side.CLIENT)
-    public void renderSided(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, EnumFacing side, boolean hasBase, boolean hasRotor, boolean isActive, int rotorRGB) {
+    public void renderSided(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
+                            EnumFacing side, boolean hasBase, boolean hasRotor, boolean isActive, int rotorRGB) {
         Matrix4 cornerOffset = null;
         switch (side.getAxis()) {
             case X:
@@ -60,14 +67,18 @@ public class LargeTurbineRenderer implements IIconRegister {
                 break;
         }
         if (hasBase) {
-            Textures.renderFace(renderState, cornerOffset, ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240)), side, Cuboid6.full, baseRingSprite, BlockRenderLayer.CUTOUT_MIPPED);
-            Textures.renderFace(renderState, cornerOffset, ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), new ColourOperation(0xFFFFFFFF)), side, Cuboid6.full, baseBackgroundSprite, BlockRenderLayer.CUTOUT_MIPPED);
+            Textures.renderFace(renderState, cornerOffset, ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240)),
+                    side, Cuboid6.full, baseRingSprite, BlockRenderLayer.CUTOUT_MIPPED);
+            Textures.renderFace(renderState, cornerOffset,
+                    ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), new ColourOperation(0xFFFFFFFF)), side,
+                    Cuboid6.full, baseBackgroundSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
         if (hasRotor) {
             TextureAtlasSprite sprite = isActive ? activeBladeSprite : idleBladeSprite;
-            IVertexOperation[] color = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(rotorRGB)));
-            Textures.renderFace(renderState, cornerOffset, color, side, Cuboid6.full, sprite, BlockRenderLayer.CUTOUT_MIPPED);
+            IVertexOperation[] color = ArrayUtils.add(pipeline,
+                    new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(rotorRGB)));
+            Textures.renderFace(renderState, cornerOffset, color, side, Cuboid6.full, sprite,
+                    BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
-
 }

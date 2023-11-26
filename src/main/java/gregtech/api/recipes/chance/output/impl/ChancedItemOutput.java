@@ -2,7 +2,9 @@ package gregtech.api.recipes.chance.output.impl;
 
 import gregtech.api.recipes.chance.output.BoostableChanceOutput;
 import gregtech.api.util.GTStringUtils;
+
 import net.minecraft.item.ItemStack;
+
 import org.jetbrains.annotations.NotNull;
 
 /**

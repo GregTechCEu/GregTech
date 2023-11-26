@@ -5,6 +5,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
@@ -16,8 +17,7 @@ public final class CoverUIFactory extends UIFactory<CoverWithUI> {
 
     public static final CoverUIFactory INSTANCE = new CoverUIFactory();
 
-    private CoverUIFactory() {
-    }
+    private CoverUIFactory() {}
 
     public void init() {
         GregTechAPI.UI_FACTORY_REGISTRY.register(2, GTUtility.gregtechId("cover_behavior_factory"), this);
@@ -33,7 +33,8 @@ public final class CoverUIFactory extends UIFactory<CoverWithUI> {
         BlockPos blockPos = syncData.readBlockPos();
         EnumFacing attachedSide = EnumFacing.VALUES[syncData.readByte()];
         TileEntity tileEntity = Minecraft.getMinecraft().world.getTileEntity(blockPos);
-        CoverableView coverable = tileEntity == null ? null : tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, attachedSide);
+        CoverableView coverable = tileEntity == null ? null :
+                tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, attachedSide);
         if (coverable != null) {
             Cover cover = coverable.getCoverAtSide(attachedSide);
             if (cover instanceof CoverWithUI coverWithUI) {

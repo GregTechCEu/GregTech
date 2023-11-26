@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.steam.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -15,6 +12,7 @@ import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -22,9 +20,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus {
 
@@ -60,7 +63,8 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(TooltipHelper.BLINKING_ORANGE + I18n.format("gregtech.machine.steam_bus.tooltip"));
     }
@@ -88,7 +92,8 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus {
         for (int y = 0; y < 2; y++) {
             for (int x = 0; x < 2; x++) {
                 int index = y * 2 + x;
-                builder.slot(isExportHatch ? exportItems : importItems, index, 70 + x * 18, 31 + y * 18, true, !isExportHatch,
+                builder.slot(isExportHatch ? exportItems : importItems, index, 70 + x * 18, 31 + y * 18, true,
+                        !isExportHatch,
                         GuiTextures.SLOT_STEAM.get(IS_STEEL));
             }
         }

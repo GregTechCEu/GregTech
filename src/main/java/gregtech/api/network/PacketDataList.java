@@ -2,12 +2,14 @@ package gregtech.api.network;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An optimised data structure backed by two arrays.
  * This is essentially equivalent to <code>List<Pair<Integer, byte[]>></code>, but more efficient.
- * {@link it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap} can not be used since it doesn't allow duplicate discriminators.
+ * {@link it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap} can not be used since it doesn't allow duplicate
+ * discriminators.
  */
 public class PacketDataList {
 

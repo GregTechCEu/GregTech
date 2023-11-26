@@ -7,12 +7,14 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.function.Consumer;
 
 public class ScrollBarWidget extends Widget {
+
     protected final float min;
     protected final float max;
     protected final float dur;
@@ -24,7 +26,6 @@ public class ScrollBarWidget extends Widget {
     protected int buttonHeight;
     protected Consumer<Float> onChanged;
     protected boolean isClient;
-
 
     public ScrollBarWidget(int x, int y, int width, int height, float min, float max, float dur) {
         super(new Position(x, y), new Size(width, height));
@@ -85,13 +86,15 @@ public class ScrollBarWidget extends Widget {
     }
 
     private float getValue() {
-        return (float) (min + Math.floor((max - min) * xOffset * 1.0f / (this.getSize().width - buttonWidth) / dur) * dur) ;
+        return (float) (min +
+                Math.floor((max - min) * xOffset * 1.0f / (this.getSize().width - buttonWidth) / dur) * dur);
     }
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (this.isOnScrollPane(mouseX, mouseY)) {
-            this.xOffset = MathHelper.clamp(mouseX - this.getPosition().x - buttonWidth / 2, 0, this.getSize().width - buttonWidth);
+            this.xOffset = MathHelper.clamp(mouseX - this.getPosition().x - buttonWidth / 2, 0,
+                    this.getSize().width - buttonWidth);
             this.draggedOnScrollBar = true;
         }
         return this.isMouseOverElement(mouseX, mouseY);
@@ -100,7 +103,8 @@ public class ScrollBarWidget extends Widget {
     @Override
     public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
         if (draggedOnScrollBar) {
-            this.xOffset = MathHelper.clamp(mouseX - this.getPosition().x - buttonWidth / 2, 0, this.getSize().width - buttonWidth);
+            this.xOffset = MathHelper.clamp(mouseX - this.getPosition().x - buttonWidth / 2, 0,
+                    this.getSize().width - buttonWidth);
             if (onChanged != null) {
                 onChanged.accept(getValue());
             }
@@ -111,7 +115,7 @@ public class ScrollBarWidget extends Widget {
 
     @Override
     public boolean mouseReleased(int mouseX, int mouseY, int button) {
-        if(this.draggedOnScrollBar) {
+        if (this.draggedOnScrollBar) {
             if (!isClient) {
                 this.writeClientAction(2, packetBuffer -> packetBuffer.writeFloat(getValue()));
             }
@@ -125,7 +129,7 @@ public class ScrollBarWidget extends Widget {
         super.handleClientAction(id, buffer);
         if (id == 2) {
             float value = buffer.readFloat();
-            if(this.onChanged != null) {
+            if (this.onChanged != null) {
                 onChanged.accept(value);
             }
         }

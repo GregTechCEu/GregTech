@@ -1,6 +1,5 @@
 package gregtech.api.capability;
 
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
@@ -10,11 +9,12 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Base class for multi-tank fluid handlers. Handles insertion logic, along with other standard
@@ -43,7 +43,7 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
 
     /**
      * @return unmodifiable view of {@code MultiFluidTankEntry}s. Note that it's still possible to access
-     * and modify inner contents of the tanks.
+     *         and modify inner contents of the tanks.
      */
     @Nonnull
     List<MultiFluidTankEntry> getFluidTanks();
@@ -58,7 +58,7 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
 
     /**
      * @return {@code false} if insertion to this fluid handler enforces input to be
-     * filled in one slot at max. {@code true} if it bypasses the rule.
+     *         filled in one slot at max. {@code true} if it bypasses the rule.
      */
     boolean allowSameFluidFill();
 
@@ -123,7 +123,7 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
         public IFluidTankProperties[] getTankProperties() {
             return delegate instanceof IFluidHandler fluidHandler ?
                     fluidHandler.getTankProperties() :
-                    new IFluidTankProperties[]{new FallbackTankProperty()};
+                    new IFluidTankProperties[] { new FallbackTankProperty() };
         }
 
         public NBTTagCompound trySerialize() {
@@ -137,7 +137,7 @@ public interface IMultipleTankHandler extends IFluidHandler, Iterable<IMultipleT
             return new NBTTagCompound();
         }
 
-        @SuppressWarnings({"unchecked"})
+        @SuppressWarnings({ "unchecked" })
         public void tryDeserialize(NBTTagCompound tag) {
             if (delegate instanceof FluidTank fluidTank) {
                 fluidTank.readFromNBT(tag);

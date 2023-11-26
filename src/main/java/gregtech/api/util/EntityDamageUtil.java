@@ -2,6 +2,7 @@ package gregtech.api.util;
 
 import gregtech.api.damagesources.DamageSources;
 import gregtech.core.advancement.AdvancementTriggers;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.*;
@@ -25,7 +26,8 @@ public class EntityDamageUtil {
      * @param multiplier  the multiplier on the damage taken
      * @param maximum     the maximum damage to apply to the entity, use -1 for no maximum
      */
-    public static void applyTemperatureDamage(@Nonnull EntityLivingBase entity, int temperature, float multiplier, int maximum) {
+    public static void applyTemperatureDamage(@Nonnull EntityLivingBase entity, int temperature, float multiplier,
+                                              int maximum) {
         if (temperature > 320) {
             int damage = (int) ((multiplier * (temperature - 300)) / 50.0F);
             if (maximum > 0) {
@@ -50,7 +52,8 @@ public class EntityDamageUtil {
         if (damage <= 0) return;
         if (!entity.isEntityAlive()) return;
         // fire/lava mobs cannot be burned
-        if (entity instanceof EntityBlaze || entity instanceof EntityMagmaCube || entity instanceof EntityWitherSkeleton || entity instanceof EntityWither)
+        if (entity instanceof EntityBlaze || entity instanceof EntityMagmaCube ||
+                entity instanceof EntityWitherSkeleton || entity instanceof EntityWither)
             return;
         // fire resistance entities cannot be burned
         if (entity.getActivePotionEffect(MobEffects.FIRE_RESISTANCE) != null) return;

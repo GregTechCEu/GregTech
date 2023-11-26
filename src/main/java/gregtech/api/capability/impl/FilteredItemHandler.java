@@ -2,12 +2,14 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
 import java.util.function.Predicate;
+
+import javax.annotation.Nonnull;
 
 public class FilteredItemHandler extends GTItemStackHandler {
 
@@ -18,7 +20,7 @@ public class FilteredItemHandler extends GTItemStackHandler {
     private Predicate<ItemStack> fillPredicate;
 
     public FilteredItemHandler(MetaTileEntity metaTileEntity) {
-        super(metaTileEntity,1);
+        super(metaTileEntity, 1);
     }
 
     public FilteredItemHandler(MetaTileEntity metaTileEntity, int size) {

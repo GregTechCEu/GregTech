@@ -2,15 +2,16 @@ package gregtech.common.items.armor;
 
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.input.KeyBind;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
 
 import javax.annotation.Nonnull;
 
-
 /**
- * Logic from SimplyJetpacks2: https://github.com/Tomson124/SimplyJetpacks2/blob/1.12/src/main/java/tonius/simplyjetpacks/item/ItemJetpack.java
+ * Logic from SimplyJetpacks2:
+ * https://github.com/Tomson124/SimplyJetpacks2/blob/1.12/src/main/java/tonius/simplyjetpacks/item/ItemJetpack.java
  */
 public interface IJetpack {
 
@@ -66,14 +67,16 @@ public interface IJetpack {
 
         if (!player.isInWater() && !player.isInLava() && canUseEnergy(stack, getEnergyPerUse())) {
             if (flyKeyDown || hover && !player.onGround) {
-                drainEnergy(stack, (int) (player.isSprinting() ? Math.round(getEnergyPerUse() * getSprintEnergyModifier()) : getEnergyPerUse()));
+                drainEnergy(stack, (int) (player.isSprinting() ?
+                        Math.round(getEnergyPerUse() * getSprintEnergyModifier()) : getEnergyPerUse()));
 
                 if (hasEnergy(stack)) {
                     if (flyKeyDown) {
                         if (!hover) {
                             player.motionY = Math.min(player.motionY + currentAccel, currentSpeedVertical);
                         } else {
-                            if (descendKeyDown) player.motionY = Math.min(player.motionY + currentAccel, getVerticalHoverSlowSpeed());
+                            if (descendKeyDown)
+                                player.motionY = Math.min(player.motionY + currentAccel, getVerticalHoverSlowSpeed());
                             else player.motionY = Math.min(player.motionY + currentAccel, getVerticalHoverSpeed());
                         }
                     } else if (descendKeyDown) {
@@ -81,8 +84,10 @@ public interface IJetpack {
                     } else {
                         player.motionY = Math.min(player.motionY + currentAccel, -getVerticalHoverSlowSpeed());
                     }
-                    float speedSideways = (float) (player.isSneaking() ? getSidewaysSpeed() * 0.5f : getSidewaysSpeed());
-                    float speedForward = (float) (player.isSprinting() ? speedSideways * getSprintSpeedModifier() : speedSideways);
+                    float speedSideways = (float) (player.isSneaking() ? getSidewaysSpeed() * 0.5f :
+                            getSidewaysSpeed());
+                    float speedForward = (float) (player.isSprinting() ? speedSideways * getSprintSpeedModifier() :
+                            speedSideways);
 
                     if (KeyBind.VANILLA_FORWARD.isKeyDown(player))
                         player.moveRelative(0, 0, speedForward, speedForward);

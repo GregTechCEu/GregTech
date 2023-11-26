@@ -1,10 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import appeng.core.AEConfig;
-import appeng.core.features.AEFeature;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.CleanroomLogic;
@@ -31,6 +26,7 @@ import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveBlastFurnac
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveWaterPump;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
@@ -48,7 +44,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -56,13 +51,21 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import appeng.core.AEConfig;
+import appeng.core.features.AEFeature;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
 
-public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implements ICleanroomProvider, IWorkable, IDataInfoProvider {
+public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
+                                     implements ICleanroomProvider, IWorkable, IDataInfoProvider {
 
     public static final int CLEAN_AMOUNT_THRESHOLD = 90;
     public static final int MIN_CLEAN_AMOUNT = 0;
@@ -119,7 +122,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         // max progress is based on the dimensions of the structure: (x^3)-(x^2)
         // taller cleanrooms take longer than wider ones
         // minimum of 100 is a 5x5x5 cleanroom: 125-25=100 ticks
-        this.cleanroomLogic.setMaxProgress(Math.max(100, ((lDist + rDist + 1) * (bDist + fDist + 1) * hDist) - ((lDist + rDist + 1) * (bDist + fDist + 1))));
+        this.cleanroomLogic.setMaxProgress(Math.max(100,
+                ((lDist + rDist + 1) * (bDist + fDist + 1) * hDist) - ((lDist + rDist + 1) * (bDist + fDist + 1))));
     }
 
     @Override
@@ -228,8 +232,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
      * @param direction the direction to move
      * @return if a block is a valid wall block at pos moved in direction
      */
-    public boolean isBlockEdge(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction) {
-        return world.getBlockState(pos.move(direction)) == MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE);
+    public boolean isBlockEdge(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos,
+                               @Nonnull EnumFacing direction) {
+        return world.getBlockState(pos.move(direction)) ==
+                MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE);
     }
 
     /**
@@ -238,8 +244,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
      * @param direction the direction to move
      * @return if a block is a valid floor block at pos moved in direction
      */
-    public boolean isBlockFloor(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos, @Nonnull EnumFacing direction) {
-        return isBlockEdge(world, pos, direction) || world.getBlockState(pos) == MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS);
+    public boolean isBlockFloor(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos,
+                                @Nonnull EnumFacing direction) {
+        return isBlockEdge(world, pos, direction) || world.getBlockState(pos) ==
+                MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS);
     }
 
     @Nonnull
@@ -265,7 +273,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         // build each row of the structure
         StringBuilder borderBuilder = new StringBuilder();     // BBBBB
         StringBuilder wallBuilder = new StringBuilder();       // BXXXB
-        StringBuilder insideBuilder = new StringBuilder();     // X   X
+        StringBuilder insideBuilder = new StringBuilder();     // X X
         StringBuilder roofBuilder = new StringBuilder();       // BFFFB
         StringBuilder controllerBuilder = new StringBuilder(); // BFSFB
         StringBuilder centerBuilder = new StringBuilder();     // BXKXB
@@ -320,12 +328,12 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         wall[0] = borderBuilder.toString();
         wall[wall.length - 1] = borderBuilder.toString();
 
-        String[] slice = new String[hDist + 1]; // "BXXXB", "X   X", "X   X", "X   X", "BFFFB"
+        String[] slice = new String[hDist + 1]; // "BXXXB", "X X", "X X", "X X", "BFFFB"
         Arrays.fill(slice, insideBuilder.toString());
         slice[0] = wallBuilder.toString();
         slice[slice.length - 1] = roofBuilder.toString();
 
-        String[] center = Arrays.copyOf(slice, slice.length); // "BXKXB", "X   X", "X   X", "X   X", "BFSFB"
+        String[] center = Arrays.copyOf(slice, slice.length); // "BXKXB", "X X", "X X", "X X", "BFSFB"
         if (this.frontFacing == EnumFacing.NORTH || this.frontFacing == EnumFacing.SOUTH) {
             center[0] = centerBuilder.reverse().toString();
             center[center.length - 1] = controllerBuilder.reverse().toString();
@@ -350,7 +358,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 .where('X', wallPredicate.or(basePredicate)
                         .or(doorPredicate().setMaxGlobalLimited(8))
                         .or(abilities(MultiblockAbility.PASSTHROUGH_HATCH).setMaxGlobalLimited(30)))
-                .where('K', wallPredicate) // the block beneath the controller must only be a casing for structure dimension checks
+                .where('K', wallPredicate) // the block beneath the controller must only be a casing for structure
+                                           // dimension checks
                 .where('F', filterPredicate())
                 .where(' ', innerPredicate())
                 .build();
@@ -362,7 +371,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             IBlockState blockState = blockWorldState.getBlockState();
             Block block = blockState.getBlock();
             if (block instanceof BlockCleanroomCasing) {
-                BlockCleanroomCasing.CasingType casingType = ((BlockCleanroomCasing) blockState.getBlock()).getState(blockState);
+                BlockCleanroomCasing.CasingType casingType = ((BlockCleanroomCasing) blockState.getBlock())
+                        .getState(blockState);
                 if (casingType.equals(BlockCleanroomCasing.CasingType.PLASCRETE)) return false;
 
                 Object currentFilter = blockWorldState.getMatchContext().getOrPut("FilterType", casingType);
@@ -379,7 +389,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                         .filter(type -> !type.equals(BlockCleanroomCasing.CasingType.PLASCRETE))
                         .map(type -> new BlockInfo(MetaBlocks.CLEANROOM_CASING.getState(type), null))
                         .toArray(BlockInfo[]::new)))
-                .addTooltips("gregtech.multiblock.pattern.error.filters");
+                                .addTooltips("gregtech.multiblock.pattern.error.filters");
     }
 
     @SideOnly(Side.CLIENT)
@@ -401,7 +411,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Nonnull
     protected static TraceabilityPredicate doorPredicate() {
-        return new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock() instanceof BlockDoor);
+        return new TraceabilityPredicate(
+                blockWorldState -> blockWorldState.getBlockState().getBlock() instanceof BlockDoor);
     }
 
     @Nonnull
@@ -512,7 +523,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.8"));
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.9"));
             if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
-                tooltip.add(I18n.format(AEConfig.instance().isFeatureEnabled(AEFeature.CHANNELS) ? "gregtech.machine.cleanroom.tooltip.ae2.channels" : "gregtech.machine.cleanroom.tooltip.ae2.no_channels"));
+                tooltip.add(I18n.format(AEConfig.instance().isFeatureEnabled(AEFeature.CHANNELS) ?
+                        "gregtech.machine.cleanroom.tooltip.ae2.channels" :
+                        "gregtech.machine.cleanroom.tooltip.ae2.no_channels"));
             }
             tooltip.add("");
         } else {
@@ -523,7 +536,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive(), isWorkingEnabled());
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive(),
+                isWorkingEnabled());
     }
 
     @SideOnly(Side.CLIENT)
@@ -557,7 +571,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        return Collections.singletonList(new TextComponentTranslation(isClean() ? "gregtech.multiblock.cleanroom.clean_state" : "gregtech.multiblock.cleanroom.dirty_state"));
+        return Collections.singletonList(new TextComponentTranslation(
+                isClean() ? "gregtech.multiblock.cleanroom.clean_state" : "gregtech.multiblock.cleanroom.dirty_state"));
     }
 
     @Override
@@ -603,7 +618,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     public boolean drainEnergy(boolean simulate) {
-        long energyToDrain = isClean() ? (long) Math.min(4, Math.pow(4, getEnergyTier())) : GTValues.VA[getEnergyTier()];
+        long energyToDrain = isClean() ? (long) Math.min(4, Math.pow(4, getEnergyTier())) :
+                GTValues.VA[getEnergyTier()];
         long resultEnergy = energyContainer.getEnergyStored() - energyToDrain;
         if (resultEnergy >= 0L && resultEnergy <= energyContainer.getEnergyCapacity()) {
             if (!simulate)
@@ -712,13 +728,20 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 .where('L', MetaTileEntities.PASSTHROUGH_HATCH_FLUID, EnumFacing.NORTH)
                 .where('H', MetaTileEntities.HULL[GTValues.HV], EnumFacing.NORTH)
                 .where('D', MetaTileEntities.DIODES[GTValues.HV], EnumFacing.NORTH)
-                .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE), EnumFacing.SOUTH)
-                .where('O', Blocks.IRON_DOOR.getDefaultState().withProperty(BlockDoor.FACING, EnumFacing.NORTH).withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.LOWER))
-                .where('R', Blocks.IRON_DOOR.getDefaultState().withProperty(BlockDoor.FACING, EnumFacing.NORTH).withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.UPPER));
+                .where('M',
+                        () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
+                                MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE),
+                        EnumFacing.SOUTH)
+                .where('O',
+                        Blocks.IRON_DOOR.getDefaultState().withProperty(BlockDoor.FACING, EnumFacing.NORTH)
+                                .withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.LOWER))
+                .where('R', Blocks.IRON_DOOR.getDefaultState().withProperty(BlockDoor.FACING, EnumFacing.NORTH)
+                        .withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.UPPER));
 
         Arrays.stream(BlockCleanroomCasing.CasingType.values())
                 .filter(casingType -> !casingType.equals(BlockCleanroomCasing.CasingType.PLASCRETE))
-                .forEach(casingType -> shapeInfo.add(builder.where('F', MetaBlocks.CLEANROOM_CASING.getState(casingType)).build()));
+                .forEach(casingType -> shapeInfo
+                        .add(builder.where('F', MetaBlocks.CLEANROOM_CASING.getState(casingType)).build()));
         return shapeInfo;
     }
 

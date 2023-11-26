@@ -1,7 +1,5 @@
 package gregtech.common.gui.widget.appeng.slot;
 
-import appeng.api.storage.data.IAEItemStack;
-import com.google.common.collect.Lists;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.util.Position;
@@ -10,17 +8,22 @@ import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.gui.widget.appeng.AEConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
-import mezz.jei.api.gui.IGhostIngredientHandler;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import appeng.api.storage.data.IAEItemStack;
+import com.google.common.collect.Lists;
+import mezz.jei.api.gui.IGhostIngredientHandler;
+
 import java.awt.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 /**
  * @Author GlodBlock
@@ -123,8 +126,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
                 if (!item.isEmpty()) {
                     writeUpdateInfo(UPDATE_ID, buf -> buf.writeItemStack(item));
                 }
-            } catch (IOException ignored) {
-            }
+            } catch (IOException ignored) {}
         }
         if (id == AMOUNT_CHANGE_ID) {
             if (slot.getConfig() != null) {
@@ -146,8 +148,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
             try {
                 ItemStack item = buffer.readItemStack();
                 slot.setConfig(WrappedItemStack.fromItemStack(item));
-            } catch (IOException ignored) {
-            }
+            } catch (IOException ignored) {}
         }
         if (id == AMOUNT_CHANGE_ID) {
             if (slot.getConfig() != null) {
@@ -203,5 +204,4 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         }
         return false;
     }
-
 }

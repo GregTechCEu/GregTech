@@ -59,7 +59,8 @@ public class DynamiteEntity extends EntityThrowable {
         ticksUntilExplosion--;
 
         if (world.rand.nextInt(3) == 2) {
-            world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, this.posX, this.posY, this.posZ, -this.motionX * 0.05f, this.inGround ? 0.05f : -this.motionY * 0.05f, -this.motionZ * 0.05f);
+            world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, this.posX, this.posY, this.posZ, -this.motionX * 0.05f,
+                    this.inGround ? 0.05f : -this.motionY * 0.05f, -this.motionZ * 0.05f);
         }
 
         if (ticksUntilExplosion < 0 && !world.isRemote) {
@@ -81,11 +82,14 @@ public class DynamiteEntity extends EntityThrowable {
         }
 
         Vec3d vec3d = new Vec3d(this.posX, this.posY, this.posZ);
-        Vec3d vec3d1 = new Vec3d(this.posX + this.motionX + (this.motionX > 0 ? 0.5f : -0.5f), this.posY + this.motionY + (this.motionY > 0 ? 0.2f : -0.2f), this.posZ + this.motionZ + (this.motionZ > 0 ? 0.2f : -0.2f));
+        Vec3d vec3d1 = new Vec3d(this.posX + this.motionX + (this.motionX > 0 ? 0.5f : -0.5f),
+                this.posY + this.motionY + (this.motionY > 0 ? 0.2f : -0.2f),
+                this.posZ + this.motionZ + (this.motionZ > 0 ? 0.2f : -0.2f));
         RayTraceResult raytraceresult = this.world.rayTraceBlocks(vec3d, vec3d1);
 
         if (raytraceresult != null) {
-            if (raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK && this.world.getBlockState(raytraceresult.getBlockPos()).getBlock() == Blocks.PORTAL) {
+            if (raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK &&
+                    this.world.getBlockState(raytraceresult.getBlockPos()).getBlock() == Blocks.PORTAL) {
                 this.setPortal(raytraceresult.getBlockPos());
             } else if (!net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
                 this.onImpact(raytraceresult);
@@ -122,7 +126,9 @@ public class DynamiteEntity extends EntityThrowable {
 
         if (this.isInWater()) {
             for (int j = 0; j < 4; ++j) {
-                this.world.spawnParticle(EnumParticleTypes.WATER_BUBBLE, this.posX - this.motionX * 0.25D, this.posY - this.motionY * 0.25D, this.posZ - this.motionZ * 0.25D, this.motionX, this.motionY, this.motionZ);
+                this.world.spawnParticle(EnumParticleTypes.WATER_BUBBLE, this.posX - this.motionX * 0.25D,
+                        this.posY - this.motionY * 0.25D, this.posZ - this.motionZ * 0.25D, this.motionX, this.motionY,
+                        this.motionZ);
             }
 
             f1 = 0.8F;

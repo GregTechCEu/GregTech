@@ -1,16 +1,18 @@
 package gregtech.common.gui.widget.appeng;
 
+import gregtech.api.gui.Widget;
+import gregtech.common.gui.widget.appeng.slot.AEFluidDisplayWidget;
+
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IItemList;
 import appeng.fluids.util.AEFluidStack;
 import appeng.fluids.util.FluidList;
-import gregtech.api.gui.Widget;
-import gregtech.common.gui.widget.appeng.slot.AEFluidDisplayWidget;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 /**
  * @Author GlodBlock
@@ -34,7 +36,7 @@ public class AEFluidGridWidget extends AEListGridWidget<IAEFluidStack> {
             if (cnt == index) {
                 return fluid;
             }
-            cnt ++;
+            cnt++;
         }
         return null;
     }
@@ -83,7 +85,7 @@ public class AEFluidGridWidget extends AEListGridWidget<IAEFluidStack> {
     @Override
     protected void readListChange(PacketBuffer buffer) {
         int size = buffer.readVarInt();
-        for (int i = 0; i < size ; i ++) {
+        for (int i = 0; i < size; i++) {
             FluidStack fluid = FluidRegistry.getFluidStack(buffer.readString(Integer.MAX_VALUE / 16), 1);
             long delta = buffer.readVarLong();
             if (fluid != null) {

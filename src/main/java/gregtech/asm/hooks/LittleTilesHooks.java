@@ -1,10 +1,12 @@
 package gregtech.asm.hooks;
 
+import gregtech.client.utils.BloomEffectUtil;
+
+import net.minecraft.util.BlockRenderLayer;
+
 import com.creativemd.creativecore.client.mods.optifine.OptifineHelper;
 import com.creativemd.littletiles.client.render.cache.LayeredRenderBoxCache;
 import com.creativemd.littletiles.client.render.tile.LittleRenderBox;
-import gregtech.client.utils.BloomEffectUtil;
-import net.minecraft.util.BlockRenderLayer;
 
 import java.util.Iterator;
 import java.util.List;
@@ -15,8 +17,8 @@ public class LittleTilesHooks {
         return new BloomLayeredRenderBoxCache();
     }
 
-
     public static class BloomLayeredRenderBoxCache extends LayeredRenderBoxCache {
+
         private List<LittleRenderBox> solid = null;
         private List<LittleRenderBox> cutout_mipped = null;
         private List<LittleRenderBox> cutout = null;
@@ -24,7 +26,7 @@ public class LittleTilesHooks {
         private List<LittleRenderBox> translucent = null;
 
         public List<LittleRenderBox> get(BlockRenderLayer layer) {
-            if (layer == BloomEffectUtil.BLOOM) {
+            if (layer == BloomEffectUtil.getBloomLayer()) {
                 return bloom;
             }
             switch (layer) {
@@ -41,7 +43,7 @@ public class LittleTilesHooks {
         }
 
         public void set(List<LittleRenderBox> cubes, BlockRenderLayer layer) {
-            if (layer == BloomEffectUtil.BLOOM) {
+            if (layer == BloomEffectUtil.getBloomLayer()) {
                 bloom = cubes;
             }
             switch (layer) {
@@ -84,6 +86,5 @@ public class LittleTilesHooks {
                 }
             }
         }
-
     }
 }

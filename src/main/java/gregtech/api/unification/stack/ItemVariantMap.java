@@ -1,11 +1,13 @@
 package gregtech.api.unification.stack;
 
 import gregtech.api.GTValues;
+
 import net.minecraft.item.ItemStack;
+
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Set;
 
 /**
  * An abstraction of dictionary-like collection with each item variant as keys.
@@ -23,7 +25,7 @@ public interface ItemVariantMap<E> {
 
     /**
      * @return {@code true} if there's any nonnull value associated with some item
-     * metadata, excluding metadata value of {@link GTValues#W} {@code (32767)}.
+     *         metadata, excluding metadata value of {@link GTValues#W} {@code (32767)}.
      * @see #hasWildcardEntry()
      */
     boolean hasNonWildcardEntry();
@@ -31,7 +33,7 @@ public interface ItemVariantMap<E> {
     /**
      * @param meta item metadata
      * @return {@code true} if there's a nonnull value associated with given item
-     * metadata, {@code false} otherwise.
+     *         metadata, {@code false} otherwise.
      */
     boolean has(short meta);
 
@@ -42,7 +44,7 @@ public interface ItemVariantMap<E> {
      *
      * @param meta item metadata
      * @return value associated with given item metadata, or {@code null} if there's no
-     * values associated.
+     *         values associated.
      */
     @Nullable
     E get(short meta);
@@ -56,7 +58,7 @@ public interface ItemVariantMap<E> {
 
     /**
      * @return {@code true} if there's a nonnull value associated with item
-     * metadata {@link GTValues#W} {@code (32767)}.
+     *         metadata {@link GTValues#W} {@code (32767)}.
      * @see #hasNonWildcardEntry()
      */
     default boolean hasWildcardEntry() {
@@ -66,7 +68,7 @@ public interface ItemVariantMap<E> {
     /**
      * @param stack item stack
      * @return {@code true} if there's a nonnull value associated with item damage of
-     * the item, {@code false} otherwise.
+     *         the item, {@code false} otherwise.
      */
     default boolean has(@Nonnull ItemStack stack) {
         return has((short) stack.getItemDamage());
@@ -79,7 +81,7 @@ public interface ItemVariantMap<E> {
      *
      * @param stack item stack
      * @return value associated with item damage of the item, or {@code null} if there's
-     * no values associated.
+     *         no values associated.
      */
     @Nullable
     default E get(@Nonnull ItemStack stack) {
@@ -129,7 +131,7 @@ public interface ItemVariantMap<E> {
          * @param meta item metadata
          * @param e    new value, or {@code null} for entry removal
          * @return previous value associated with given item metadata, or {@code null} if
-         * there was no such value.
+         *         there was no such value.
          */
         @Nullable
         E put(short meta, @Nullable E e);
@@ -142,7 +144,7 @@ public interface ItemVariantMap<E> {
          * @param stack item stack
          * @param e     new value, or {@code null} for entry removal
          * @return previous value associated with given item metadata, or {@code null} if
-         * there was no such value.
+         *         there was no such value.
          */
         @Nullable
         default E put(@Nonnull ItemStack stack, @Nullable E e) {

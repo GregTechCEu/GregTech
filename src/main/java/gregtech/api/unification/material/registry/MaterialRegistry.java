@@ -3,8 +3,9 @@ package gregtech.api.unification.material.registry;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTControlledRegistry;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
+
+import javax.annotation.Nonnull;
 
 public abstract class MaterialRegistry extends GTControlledRegistry<String, Material> {
 

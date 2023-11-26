@@ -1,11 +1,12 @@
 package gregtech.integration.crafttweaker.block;
 
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.block.IBlockState;
-import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.unification.material.Material;
+
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.block.IBlockState;
+import crafttweaker.api.minecraft.CraftTweakerMC;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -32,7 +33,8 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
      * @param tier            the tier of the Heating Coil - used for cracker pyrolyse discounts
      * @param material        the {@link Material} of the Heating Coil, use null for no specific material
      */
-    public CTHeatingCoilBlockStats(String name, int coilTemperature, int level, int energyDiscount, int tier, @Nullable Material material) {
+    public CTHeatingCoilBlockStats(String name, int coilTemperature, int level, int energyDiscount, int tier,
+                                   @Nullable Material material) {
         this.name = name;
         this.coilTemperature = coilTemperature;
         this.level = level;
@@ -74,8 +76,10 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
     }
 
     @ZenMethod
-    public static void add(@Nonnull IBlockState state, @Nonnull String name, int coilTemperature, int level, int energyDiscount, int tier, @Nullable Material material) {
-        GregTechAPI.HEATING_COILS.put(CraftTweakerMC.getBlockState(state), new CTHeatingCoilBlockStats(name, coilTemperature, level, energyDiscount, tier, material));
+    public static void add(@Nonnull IBlockState state, @Nonnull String name, int coilTemperature, int level,
+                           int energyDiscount, int tier, @Nullable Material material) {
+        GregTechAPI.HEATING_COILS.put(CraftTweakerMC.getBlockState(state),
+                new CTHeatingCoilBlockStats(name, coilTemperature, level, energyDiscount, tier, material));
     }
 
     @ZenMethod

@@ -5,8 +5,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.network.PacketDataList;
 import gregtech.api.util.GTLog;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +16,9 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,7 +90,8 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
                     if (className == null) {
                         className = this.getClass().getName();
                     }
-                    GTLog.logger.error("Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
+                    GTLog.logger.error(
+                            "Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
                             className, discriminatorKey, backedBuffer.readableBytes());
                 }
             }

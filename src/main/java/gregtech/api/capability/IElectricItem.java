@@ -90,5 +90,4 @@ public interface IElectricItem {
      * @return The tier of the item.
      */
     int getTier();
-
 }

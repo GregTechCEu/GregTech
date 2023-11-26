@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IMultipleTankHandler;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -9,12 +10,13 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBTTagCompound> {
 
@@ -35,7 +37,8 @@ public class FluidTankList implements IMultipleTankHandler, INBTSerializable<NBT
         this.allowSameFluidFill = allowSameFluidFill;
     }
 
-    public FluidTankList(boolean allowSameFluidFill, @Nonnull IMultipleTankHandler parent, IFluidTank... additionalTanks) {
+    public FluidTankList(boolean allowSameFluidFill, @Nonnull IMultipleTankHandler parent,
+                         IFluidTank... additionalTanks) {
         ArrayList<MultiFluidTankEntry> list = new ArrayList<>(parent.getFluidTanks());
         for (IFluidTank tank : additionalTanks) list.add(wrapIntoEntry(tank));
         this.fluidTanks = list.toArray(new MultiFluidTankEntry[0]);

@@ -1,34 +1,34 @@
 package gregtech.api.terminal.util;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 /***
  * Tree
+ * 
  * @param <T> key
  * @param <K> leaf
  */
 public class TreeNode<T, K> {
+
     public final int dimension;
     protected final T key;
     protected K content;
     protected List<TreeNode<T, K>> children;
-
 
     public TreeNode(int dimension, T key) {
         this.dimension = dimension;
         this.key = key;
     }
 
-    public boolean isLeaf(){
+    public boolean isLeaf() {
         return getChildren() == null || getChildren().isEmpty();
     }
 
-    public TreeNode<T, K> getOrCreateChild (T childKey) {
+    public TreeNode<T, K> getOrCreateChild(T childKey) {
         TreeNode<T, K> result;
         if (getChildren() != null) {
-            result = getChildren().stream().filter(child->child.key.equals(childKey)).findFirst().orElseGet(()->{
+            result = getChildren().stream().filter(child -> child.key.equals(childKey)).findFirst().orElseGet(() -> {
                 TreeNode<T, K> newNode = new TreeNode<>(dimension + 1, childKey);
                 getChildren().add(newNode);
                 return newNode;
@@ -52,7 +52,7 @@ public class TreeNode<T, K> {
         return null;
     }
 
-    public void addContent (T key, K content) {
+    public void addContent(T key, K content) {
         getOrCreateChild(key).content = content;
     }
 

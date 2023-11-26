@@ -2,11 +2,13 @@ package gregtech.modules;
 
 import gregtech.api.modules.IGregTechModule;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 public abstract class BaseGregTechModule implements IGregTechModule {
 

@@ -1,12 +1,5 @@
 package gregtech.integration.forestry.recipes;
 
-import forestry.api.recipes.RecipeManagers;
-import forestry.apiculture.ModuleApiculture;
-import forestry.apiculture.items.EnumPropolis;
-import forestry.core.config.Config;
-import forestry.core.fluids.Fluids;
-import forestry.factory.MachineUIDs;
-import forestry.factory.ModuleFactory;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
@@ -18,15 +11,23 @@ import gregtech.integration.IntegrationUtil;
 import gregtech.integration.forestry.ForestryConfig;
 import gregtech.integration.forestry.ForestryUtil;
 import gregtech.integration.forestry.bees.GTDropType;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 
+import forestry.api.recipes.RecipeManagers;
+import forestry.apiculture.ModuleApiculture;
+import forestry.apiculture.items.EnumPropolis;
+import forestry.core.config.Config;
+import forestry.core.fluids.Fluids;
+import forestry.factory.MachineUIDs;
+import forestry.factory.ModuleFactory;
+
 public class ForestryMiscRecipes {
 
     public static void init() {
-
         if (ForestryConfig.enableGTBees) {
             // Oil Drop
             ItemStack dropStack = ForestryUtil.getDropStack(GTDropType.OIL);
@@ -37,7 +38,8 @@ public class ForestryMiscRecipes {
                     .duration(32).EUt(8).buildAndRegister();
 
             if (ModuleFactory.machineEnabled(MachineUIDs.SQUEEZER)) {
-                RecipeManagers.squeezerManager.addRecipe(40, dropStack, Materials.OilHeavy.getFluid(100), ModuleApiculture.getItems().propolis.get(EnumPropolis.NORMAL, 1), 30);
+                RecipeManagers.squeezerManager.addRecipe(40, dropStack, Materials.OilHeavy.getFluid(100),
+                        ModuleApiculture.getItems().propolis.get(EnumPropolis.NORMAL, 1), 30);
             }
 
             // Biomass Drop
@@ -53,7 +55,8 @@ public class ForestryMiscRecipes {
                     .duration(32).EUt(8).buildAndRegister();
 
             if (ModuleFactory.machineEnabled(MachineUIDs.SQUEEZER)) {
-                RecipeManagers.squeezerManager.addRecipe(40, dropStack, Materials.Biomass.getFluid(100), propolisStack, 30);
+                RecipeManagers.squeezerManager.addRecipe(40, dropStack, Materials.Biomass.getFluid(100), propolisStack,
+                        30);
             }
 
             // Ethanol Drop
@@ -65,7 +68,8 @@ public class ForestryMiscRecipes {
                     .duration(32).EUt(8).buildAndRegister();
 
             if (ModuleFactory.machineEnabled(MachineUIDs.SQUEEZER)) {
-                RecipeManagers.squeezerManager.addRecipe(40, dropStack, Materials.Ethanol.getFluid(100), propolisStack, 30);
+                RecipeManagers.squeezerManager.addRecipe(40, dropStack, Materials.Ethanol.getFluid(100), propolisStack,
+                        30);
             }
 
             // Mutagen Drop
@@ -77,7 +81,8 @@ public class ForestryMiscRecipes {
                     .duration(32).EUt(8).buildAndRegister();
 
             if (ModuleFactory.machineEnabled(MachineUIDs.SQUEEZER)) {
-                RecipeManagers.squeezerManager.addRecipe(40, dropStack, Materials.Mutagen.getFluid(100), propolisStack, 30);
+                RecipeManagers.squeezerManager.addRecipe(40, dropStack, Materials.Mutagen.getFluid(100), propolisStack,
+                        30);
             }
         }
 

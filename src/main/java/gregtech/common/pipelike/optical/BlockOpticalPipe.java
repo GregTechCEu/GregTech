@@ -10,6 +10,7 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.common.pipelike.optical.net.WorldOpticalPipeNet;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -23,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -94,7 +96,8 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    public void setTileEntityData(@Nonnull TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> pipeTile, ItemStack itemStack) {
+    public void setTileEntityData(@Nonnull TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> pipeTile,
+                                  ItemStack itemStack) {
         pipeTile.setPipeData(this, pipeType);
     }
 
@@ -109,12 +112,14 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<OpticalPipeType, OpticalPipeProperties> selfTile, EnumFacing side, IPipeTile<OpticalPipeType, OpticalPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<OpticalPipeType, OpticalPipeProperties> selfTile, EnumFacing side,
+                                   IPipeTile<OpticalPipeType, OpticalPipeProperties> sideTile) {
         return selfTile instanceof TileEntityOpticalPipe && sideTile instanceof TileEntityOpticalPipe;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<OpticalPipeType, OpticalPipeProperties> selfTile, EnumFacing side, @Nullable TileEntity tile) {
+    public boolean canPipeConnectToBlock(IPipeTile<OpticalPipeType, OpticalPipeProperties> selfTile, EnumFacing side,
+                                         @Nullable TileEntity tile) {
         if (tile == null) return false;
         if (tile.hasCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, side.getOpposite())) return true;
         return tile.hasCapability(GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER, side.getOpposite());

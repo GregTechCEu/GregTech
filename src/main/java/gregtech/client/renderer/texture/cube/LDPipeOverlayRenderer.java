@@ -2,12 +2,14 @@ package gregtech.client.renderer.texture.cube;
 
 import gregtech.api.GTValues;
 import gregtech.client.renderer.ICubeRenderer;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,14 +58,16 @@ public class LDPipeOverlayRenderer extends AlignedOrientedOverlayRenderer {
 
             // emissive
 
-            TextureAtlasSprite normalSpriteEmissive = ICubeRenderer.getResource(textureMap, modID, overlayPath + EMISSIVE);
+            TextureAtlasSprite normalSpriteEmissive = ICubeRenderer.getResource(textureMap, modID,
+                    overlayPath + EMISSIVE);
 
             sprites.put(overlayFace, new ActivePredicate(normalSprite, normalSprite, null,
                     normalSpriteEmissive, null, null));
         }
 
         if (!foundTexture) {
-            FMLClientHandler.instance().trackMissingTexture(new ResourceLocation(modID, "blocks/" + basePath + "/overlay_OVERLAY_FACE"));
+            FMLClientHandler.instance()
+                    .trackMissingTexture(new ResourceLocation(modID, "blocks/" + basePath + "/overlay_OVERLAY_FACE"));
         }
     }
 }

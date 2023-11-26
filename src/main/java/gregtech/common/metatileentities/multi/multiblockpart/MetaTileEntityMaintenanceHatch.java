@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.gui.GuiTextures;
@@ -28,6 +24,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
 import gregtech.common.inventory.handlers.TapeItemStackHandler;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,8 +41,11 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -55,9 +55,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
+public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
+                                            implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
     private final boolean isConfigurable;
     private GTItemStackHandler itemStackHandler;
@@ -95,8 +99,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         super.renderMetaTileEntity(renderState, translation, pipeline);
 
         if (shouldRenderOverlay()) {
-            (isConfigurable ? Textures.MAINTENANCE_OVERLAY_CONFIGURABLE : isTaped ? Textures.MAINTENANCE_OVERLAY_TAPED : Textures.MAINTENANCE_OVERLAY)
-                    .renderSided(getFrontFacing(), renderState, translation, pipeline);
+            (isConfigurable ? Textures.MAINTENANCE_OVERLAY_CONFIGURABLE :
+                    isTaped ? Textures.MAINTENANCE_OVERLAY_TAPED : Textures.MAINTENANCE_OVERLAY)
+                            .renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
@@ -115,6 +120,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     /**
      * Sets this Maintenance Hatch as being duct taped
+     * 
      * @param isTaped is the state of the hatch being taped or not
      */
     @Override
@@ -128,8 +134,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     /**
      * Stores maintenance data to this MetaTileEntity
+     * 
      * @param maintenanceProblems is the byte value representing the problems
-     * @param timeActive is the int value representing the total time the parent multiblock has been active
+     * @param timeActive          is the int value representing the total time the parent multiblock has been active
      */
     @Override
     public void storeMaintenanceData(byte maintenanceProblems, int timeActive) {
@@ -154,6 +161,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     /**
      * reads this MetaTileEntity's maintenance data
+     * 
      * @return Tuple of Byte, Integer corresponding to the maintenance problems, and total time active
      */
     @Override
@@ -186,6 +194,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     /**
      * Fixes the maintenance problems of this hatch's Multiblock Controller
+     * 
      * @param entityPlayer the player performing the fixing
      */
     private void fixMaintenanceProblems(@Nullable EntityPlayer entityPlayer) {
@@ -219,7 +228,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * Handles duct taping for manual and auto-taping use
      *
      * @param handler is the handler to get duct tape from
-     * @param slot is the inventory slot to check for tape
+     * @param slot    is the inventory slot to check for tape
      * @return true if tape was consumed, else false
      */
     private boolean consumeDuctTape(@Nullable IItemHandler handler, int slot) {
@@ -242,7 +251,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * Attempts to fix a provided maintenance problem with a tool in the player's
      * inventory, if the tool exists.
      *
-     * @param problems Problem Flags
+     * @param problems     Problem Flags
      * @param entityPlayer Target Player which their inventory would be scanned for tools to fix
      */
     private void fixProblemsWithTools(byte problems, EntityPlayer entityPlayer) {
@@ -368,7 +377,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                CuboidRayTraceResult hitResult) {
         if (getController() instanceof IMaintenance && ((IMaintenance) getController()).hasMaintenanceProblems()) {
             if (consumeDuctTape(playerIn, playerIn.getHeldItem(hand))) {
                 fixAllMaintenanceProblems();
@@ -391,15 +401,20 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                     .setCanInteractPredicate(this::isAttachedToMultiBlock));
         } else {
             builder.widget(new SlotWidget(itemStackHandler, 0, 89 - 10, 18 - 1)
-                    .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY).setTooltipText("gregtech.machine.maintenance_hatch_tape_slot.tooltip"))
-                    .widget(new ClickButtonWidget(89 - 10 - 1, 18 * 2 + 3, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
-                            .setButtonTexture(GuiTextures.MAINTENANCE_ICON).setTooltipText("gregtech.machine.maintenance_hatch_tool_slot.tooltip"));
+                    .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY)
+                    .setTooltipText("gregtech.machine.maintenance_hatch_tape_slot.tooltip"))
+                    .widget(new ClickButtonWidget(89 - 10 - 1, 18 * 2 + 3, 20, 20, "",
+                            data -> fixMaintenanceProblems(entityPlayer))
+                                    .setButtonTexture(GuiTextures.MAINTENANCE_ICON)
+                                    .setTooltipText("gregtech.machine.maintenance_hatch_tool_slot.tooltip"));
         }
         if (isConfigurable) {
-            builder.widget(new AdvancedTextWidget(5, 25, getTextWidgetText("duration", this::getDurationMultiplier), 0x404040))
+            builder.widget(
+                    new AdvancedTextWidget(5, 25, getTextWidgetText("duration", this::getDurationMultiplier), 0x404040))
                     .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", this::getTimeMultiplier), 0x404040))
                     .widget(new ClickButtonWidget(9, 18 * 3 + 16 - 18, 12, 12, "-", this::decInternalMultiplier))
-                    .widget(new ClickButtonWidget(9 + 18 * 2, 18 * 3 + 16 - 18, 12, 12, "+", this::incInternalMultiplier));
+                    .widget(new ClickButtonWidget(9 + 18 * 2, 18 * 3 + 16 - 18, 12, 12, "+",
+                            this::incInternalMultiplier));
         }
         return builder.build(getHolder(), entityPlayer);
     }
@@ -408,9 +423,11 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         return (list) -> {
             ITextComponent tooltip;
             if (multiplier.get() == 1.0) {
-                tooltip = new TextComponentTranslation("gregtech.maintenance.configurable_" + type + ".unchanged_description");
+                tooltip = new TextComponentTranslation(
+                        "gregtech.maintenance.configurable_" + type + ".unchanged_description");
             } else {
-                tooltip = new TextComponentTranslation("gregtech.maintenance.configurable_" + type + ".changed_description", multiplier.get());
+                tooltip = new TextComponentTranslation(
+                        "gregtech.maintenance.configurable_" + type + ".changed_description", multiplier.get());
             }
             list.add(new TextComponentTranslation("gregtech.maintenance.configurable_" + type, multiplier.get())
                     .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
@@ -499,7 +516,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.disabled"));
         if (isConfigurable) {

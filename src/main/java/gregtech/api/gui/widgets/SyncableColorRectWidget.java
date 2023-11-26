@@ -4,6 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.network.PacketBuffer;
 
 import java.util.function.Supplier;
@@ -57,18 +58,20 @@ public class SyncableColorRectWidget extends Widget {
         if (drawCheckerboard) {
             int white = 0xFFFFFFFF;
             int grey = 0xFFBFBFBF;
-            int columnWidth = (size.width - 2*borderWidth) / checkerboardGridColumns;
-            int rowHeight = (size.height - 2*borderWidth) / checkerboardGridRows;
+            int columnWidth = (size.width - 2 * borderWidth) / checkerboardGridColumns;
+            int rowHeight = (size.height - 2 * borderWidth) / checkerboardGridRows;
             boolean whiteGrey = false;
             for (int i = 0; i < checkerboardGridRows; i++) {
                 for (int j = 0; j < checkerboardGridColumns; j++) {
-                    drawSolidRect(position.x + borderWidth + i * columnWidth, position.y + borderWidth + j * rowHeight, columnWidth, rowHeight, whiteGrey ? white : grey);
+                    drawSolidRect(position.x + borderWidth + i * columnWidth, position.y + borderWidth + j * rowHeight,
+                            columnWidth, rowHeight, whiteGrey ? white : grey);
                     whiteGrey = !whiteGrey;
                 }
                 whiteGrey = !whiteGrey;
             }
         }
-        drawSolidRect(position.x + borderWidth, position.y + borderWidth, size.width - 2*borderWidth, size.height - 2*borderWidth, color);
+        drawSolidRect(position.x + borderWidth, position.y + borderWidth, size.width - 2 * borderWidth,
+                size.height - 2 * borderWidth, color);
     }
 
     @Override
