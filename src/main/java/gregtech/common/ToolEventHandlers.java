@@ -223,7 +223,9 @@ public class ToolEventHandlers {
         }
 
         // AoE selection box and block damage overlay
-        if (!sneaking && stack.getItem() instanceof IGTTool) {
+        if (!sneaking && stack.getItem() instanceof IGTTool tool) {
+            state = state.getActualState(player.world, pos);
+            if (!ToolHelper.isToolEffective(state, tool.getToolClasses(stack), tool.getTotalHarvestLevel(stack))) return;
             Set<BlockPos> validPositions = ToolHelper.getHarvestableBlocks(stack, player.world, player, event.getTarget());
             if (validPositions.isEmpty()) return;
 
