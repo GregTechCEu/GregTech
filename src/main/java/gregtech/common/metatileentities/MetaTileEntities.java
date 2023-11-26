@@ -70,7 +70,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityCharger[] CHARGER = new MetaTileEntityCharger[GTValues.V.length];
     //SIMPLE MACHINES SECTION
     public static final SimpleMachineMetaTileEntity[] ELECTRIC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final MetaTileEntityMacerator[] MACERATOR = new MetaTileEntityMacerator[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] MACERATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] ALLOY_SMELTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] ARC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
@@ -142,7 +142,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityBlockBreaker[] BLOCK_BREAKER = new MetaTileEntityBlockBreaker[4];
     public static final MetaTileEntityItemCollector[] ITEM_COLLECTOR = new MetaTileEntityItemCollector[4];
     public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
-    public static final MetaTileEntityWorldAccelerator[] WORLD_ACCELERATOR = new MetaTileEntityWorldAccelerator[8]; // no ULV, no MAX
+    public static final MetaTileEntityWorldAccelerator[] WORLD_ACCELERATOR = new MetaTileEntityWorldAccelerator[8]; // LV-UV
     public static MetaTileEntityMachineHatch MACHINE_HATCH;
     public static MetaTileEntityPassthroughHatchItem PASSTHROUGH_HATCH_ITEM;
     public static MetaTileEntityPassthroughHatchFluid PASSTHROUGH_HATCH_FLUID;
@@ -323,9 +323,10 @@ public class MetaTileEntities {
 
         // Macerator, IDs 65-79
         registerMetaTileEntities(MACERATOR, 65, "macerator", (tier, voltageName) ->
-                new MetaTileEntityMacerator(
+                new SimpleMachineMetaTileEntityResizable(
                         gregtechId(String.format("%s.%s", "macerator", voltageName)),
                         RecipeMaps.MACERATOR_RECIPES,
+                        -1,
                         switch (tier) {
                             case 1, 2 -> 1;
                             case 3 -> 3;
@@ -338,7 +339,16 @@ public class MetaTileEntities {
         registerSimpleMetaTileEntity(ALLOY_SMELTER, 80, "alloy_smelter", RecipeMaps.ALLOY_SMELTER_RECIPES, Textures.ALLOY_SMELTER_OVERLAY, true);
 
         // Arc Furnace, IDs 95-109
-        registerSimpleMetaTileEntity(ARC_FURNACE, 95, "arc_furnace", RecipeMaps.ARC_FURNACE_RECIPES, Textures.ARC_FURNACE_OVERLAY, false, GTUtility.hvCappedTankSizeFunction);
+        registerMetaTileEntities(ARC_FURNACE, 95, "arc_furnace", (tier, voltageName) ->
+                new SimpleMachineMetaTileEntityResizable(
+                        gregtechId(String.format("%s.%s", "arc_furnace", voltageName)),
+                        RecipeMaps.ARC_FURNACE_RECIPES,
+                        -1,
+                        tier >= GTValues.EV ? 9 : 4,
+                        Textures.ARC_FURNACE_OVERLAY,
+                        tier,
+                        false,
+                        GTUtility.hvCappedTankSizeFunction));
 
         // Assembler, IDs 110-124
         registerSimpleMetaTileEntity(ASSEMBLER, 110, "assembler", RecipeMaps.ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);

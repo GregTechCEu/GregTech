@@ -121,7 +121,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0) return;
         if (getWorld().isRemote || !active || stack.isEmpty()) return;
 
-        TileEntity tile = getWorld().getTileEntity(getPos().offset(this.getOutputFacing()));
+        TileEntity tile = getNeighbor(getOutputFacing());
         if (tile != null) {
             IItemHandler container = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.getOutputFacing().getOpposite());
             if (container == null || container.getSlots() == 0)

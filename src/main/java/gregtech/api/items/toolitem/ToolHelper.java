@@ -456,13 +456,23 @@ public final class ToolHelper {
             // natural to mine, but avoid exploits like mining Obsidian quickly by instead targeting Stone.
             return false;
         }
+        state = state.getActualState(world, pos);
         return stack.canHarvestBlock(state);
+    }
+
+    public static boolean canMineWithPick(String tool) {
+        return ToolClasses.WRENCH.equals(tool) || ToolClasses.WIRE_CUTTER.equals(tool);
     }
 
     // encompasses all vanilla special case tool checks for harvesting
     public static boolean isToolEffective(IBlockState state, Set<String> toolClasses, int harvestLevel) {
         Block block = state.getBlock();
-        if (toolClasses.contains(block.getHarvestTool(state))) {
+        String harvestTool = block.getHarvestTool(state);
+        if (canMineWithPick(harvestTool) && ConfigHolder.machines.requireGTToolsForBlocks) {
+            if (!toolClasses.contains(harvestTool)) return false;
+        }
+
+        if (toolClasses.contains(harvestTool)) {
             return block.getHarvestLevel(state) <= harvestLevel;
         }
 

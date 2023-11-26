@@ -4,22 +4,20 @@ import gregtech.api.capability.ILaserContainer;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class LaserNetHandler implements ILaserContainer {
+
     private LaserPipeNet net;
     private final TileEntityLaserPipe pipe;
     private final EnumFacing facing;
-    private final World world;
 
     public LaserNetHandler(LaserPipeNet net, @Nonnull TileEntityLaserPipe pipe, @Nullable EnumFacing facing) {
         this.net = net;
         this.pipe = pipe;
         this.facing = facing;
-        this.world = pipe.getWorld();
     }
 
     public void updateNetwork(LaserPipeNet net) {
@@ -28,7 +26,7 @@ public class LaserNetHandler implements ILaserContainer {
 
     private void setPipesActive() {
         for (BlockPos pos : net.getAllNodes().keySet()) {
-            if (world.getTileEntity(pos) instanceof TileEntityLaserPipe laserPipe) {
+            if (pipe.getWorld().getTileEntity(pos) instanceof TileEntityLaserPipe laserPipe) {
                 laserPipe.setActive(true, 100);
             }
         }
@@ -40,12 +38,12 @@ public class LaserNetHandler implements ILaserContainer {
             return null;
         }
 
-        LaserPipeNet.LaserData data = net.getNetData(pipe.getPipePos(), facing);
+        LaserRoutePath data = net.getNetData(pipe.getPipePos(), facing);
         if (data == null) {
             return null;
         }
 
-        return data.getHandler(world);
+        return data.getHandler();
     }
 
     @Override

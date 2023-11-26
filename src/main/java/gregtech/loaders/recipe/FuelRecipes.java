@@ -282,9 +282,16 @@ public class FuelRecipes {
                 .buildAndRegister();
 
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
+                .fluidInputs(Argon.getPlasma(1))
+                .fluidOutputs(Argon.getFluid(1))
+                .duration(96)
+                .EUt((int) V[EV])
+                .buildAndRegister();
+
+        RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Iron.getPlasma(1))
                 .fluidOutputs(Iron.getFluid(1))
-                .duration(96)
+                .duration(128)
                 .EUt((int) V[EV])
                 .buildAndRegister();
 

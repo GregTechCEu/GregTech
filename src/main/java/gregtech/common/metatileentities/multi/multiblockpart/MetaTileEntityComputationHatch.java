@@ -111,7 +111,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
 
     @Nullable
     private IOpticalComputationProvider getOpticalNetProvider() {
-        TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(getFrontFacing()));
+        TileEntity tileEntity = getNeighbor(getFrontFacing());
         if (tileEntity == null) return null;
 
         if (tileEntity instanceof TileEntityOpticalPipe) {

@@ -54,6 +54,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -336,6 +337,33 @@ public class GTUtility {
                 if (y < 0.25) return EnumFacing.DOWN;
                 if (y > 0.75) return EnumFacing.UP;
                 return facing;
+        }
+        return null;
+    }
+
+    /**
+     * Calculates on which side the neighbor is relative to the main pos.
+     *
+     * @param main     main pos
+     * @param neighbor neighbor pos
+     * @return position of neighbor relative to main or null the neighbor pos is not a neighbor
+     */
+    @Nullable
+    public static EnumFacing getFacingToNeighbor(@NotNull BlockPos main, @NotNull BlockPos neighbor) {
+        int difX = neighbor.getX() - main.getX();
+        int difY = neighbor.getY() - main.getY();
+        int difZ = neighbor.getZ() - main.getZ();
+        if (difX != 0) {
+            if (difY != 0 || difZ != 0 || (difX != 1 && difX != -1)) return null;
+            return difX > 0 ? EnumFacing.EAST : EnumFacing.WEST;
+        }
+        if (difY != 0) {
+            if (difZ != 0 || (difY != 1 && difY != -1)) return null;
+            return difY > 0 ? EnumFacing.UP : EnumFacing.DOWN;
+        }
+        if (difZ != 0) {
+            if (difZ != 1 && difZ != -1) return null;
+            return difZ > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH;
         }
         return null;
     }

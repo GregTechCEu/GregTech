@@ -37,8 +37,8 @@ public class MaterialInfoLoader {
                         new MaterialStack(Materials.StainlessSteel, M * 2), // foil
                         new MaterialStack(Materials.Aluminium, M)) // ingot
         );
-        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.TUNGSTENSTEEL),
-                new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 8), // double wire
+        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.RTM_ALLOY),
+                new ItemMaterialInfo(new MaterialStack(Materials.RTMAlloy, M * 8), // double wire
                         new MaterialStack(Materials.VanadiumSteel, M * 2), // foil
                         new MaterialStack(Materials.Nichrome, M)) // ingot
         );

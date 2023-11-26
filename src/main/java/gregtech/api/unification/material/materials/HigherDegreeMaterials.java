@@ -42,7 +42,7 @@ public class HigherDegreeMaterials {
                 .components(SterlingSilver, 1, BismuthBronze, 1, Steel, 2, BlackSteel, 4)
                 .toolStats(ToolProperty.Builder.of(7.0F, 6.0F, 2560, 3)
                         .attackSpeed(0.1F).enchantability(21).build())
-                .blastTemp(1300, GasTier.LOW, VA[HV], 1000)
+                .blast(b -> b.temp(1300, GasTier.LOW).blastStats(VA[HV], 1000))
                 .build();
 
         BlueSteel = new Material.Builder(2511, gregtechId("blue_steel"))
@@ -52,7 +52,7 @@ public class HigherDegreeMaterials {
                 .components(RoseGold, 1, Brass, 1, Steel, 2, BlackSteel, 4)
                 .toolStats(ToolProperty.Builder.of(15.0F, 6.0F, 1024, 3)
                         .attackSpeed(0.1F).enchantability(33).build())
-                .blastTemp(1400, GasTier.LOW, VA[HV], 1000)
+                .blast(b -> b.temp(1400, GasTier.LOW).blastStats(VA[HV], 1000))
                 .build();
 
         Basalt = new Material.Builder(2512, gregtechId("basalt"))
@@ -90,7 +90,10 @@ public class HigherDegreeMaterials {
                 .components(TungstenSteel, 5, Chrome, 1, Molybdenum, 2, Vanadium, 1)
                 .rotorStats(10.0f, 5.5f, 4000)
                 .cableProperties(V[LuV], 4, 2)
-                .blastTemp(4200, GasTier.MID, VA[EV], 1300)
+                .blast(b -> b
+                        .temp(4200, GasTier.MID)
+                        .blastStats(VA[EV], 1300)
+                        .vacuumStats(VA[HV]))
                 .build();
 
         RedAlloy = new Material.Builder(2517, gregtechId("red_alloy"))
@@ -117,7 +120,10 @@ public class HigherDegreeMaterials {
                 .toolStats(ToolProperty.Builder.of(5.0F, 10.0F, 3072, 4)
                         .attackSpeed(0.3F).enchantability(33).build())
                 .rotorStats(10.0f, 8.0f, 5120)
-                .blastTemp(5000, GasTier.HIGH, VA[EV], 1400)
+                .blast(b -> b
+                        .temp(5000, GasTier.HIGH)
+                        .blastStats(VA[EV], 1400)
+                        .vacuumStats(VA[HV]))
                 .build();
 
         HSSS = new Material.Builder(2520, gregtechId("hsss"))
@@ -126,7 +132,10 @@ public class HigherDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME, GENERATE_ROTOR, GENERATE_ROUND, GENERATE_FOIL, GENERATE_GEAR)
                 .components(HSSG, 6, Iridium, 2, Osmium, 1)
                 .rotorStats(15.0f, 7.0f, 3000)
-                .blastTemp(5000, GasTier.HIGH, VA[EV], 1500)
+                .blast(b -> b
+                        .temp(5000, GasTier.HIGH)
+                        .blastStats(VA[EV], 1500)
+                        .vacuumStats(VA[EV], 200))
                 .build();
 
         // FREE ID: 2521
