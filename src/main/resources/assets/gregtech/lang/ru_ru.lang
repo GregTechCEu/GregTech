@@ -1163,8 +1163,8 @@ cover.advanced_fluid_detector.max=Макс. жидкости:
 cover.advanced_fluid_detector.min=Мин. жидкости:
 cover.advanced_item_detector.label=Улучшенный детектор предметов
 cover.advanced_item_detector.invert_tooltip=Переключите, чтобы инвертировать логику красного камня./nПо умолчанию красный камень перестает испускать сигнал, когда количество предметов меньше минимального, и начинает испускать сигнал, при превышении минимального количества предметов до установленного максимума
-cover.advanced_item_detector.max=Максимум предметов:
-cover.advanced_item_detector.min=Минимум предметов:
+cover.advanced_item_detector.max=Макс. предметов:
+cover.advanced_item_detector.min=Мин. предметов:
 cover.storage.title=Хранилище (Улучшение)
 
 # %s это локализованное название материала
@@ -5525,3 +5525,5 @@ cover.ore_dictionary_filter.compile.warn.consecutive_negation=Последова
 cover.generic.advanced_detector.continuous=Непрерывный
 cover.generic.advanced_detector.latched=Замкнутый
 cover.ore_dictionary_filter.compile.error.unexpected_compilation_flag=Флаги компиляции в середине выражения
+cover.generic.advanced_detector.invert_label=Вывод редстоуна:
+cover.generic.advanced_detector.latch_tooltip=Измените поведение редстоуна этого Улучшения. /n§eНепрерывный§7 - По умолчанию; Значения меньше мин. выхода равны 0; Значения больше макс. выхода равны 15; Значения между мин. и макс. выходом от 0 до 15 /n§eЗамкнутый§7 - Выводит 15 пока выше макс., затем выводит 0 до тех пор, пока не станет ниже мин.
