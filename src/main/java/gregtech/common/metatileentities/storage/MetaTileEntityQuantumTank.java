@@ -594,6 +594,20 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     @Override
+    public ItemStack getPickItem(EntityPlayer player) {
+        if(!player.isCreative()) return super.getPickItem(player);
+
+        ItemStack baseItemStack = getStackForm();
+        NBTTagCompound tag = new NBTTagCompound();
+
+        this.writeItemStackData(tag);
+        if(!tag.isEmpty()) {
+            baseItemStack.setTagCompound(tag);
+        }
+        return baseItemStack;
+    }
+
+    @Override
     public boolean needsSneakToRotate() {
         return true;
     }
