@@ -3,12 +3,16 @@ package gregtech.common.metatileentities.multi.electric;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import gregtech.api.GTValues;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.*;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.IndicatorImageWidget;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -20,32 +24,28 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
+import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
-import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.shader.postprocessing.BloomEffect;
 import gregtech.client.shader.postprocessing.BloomType;
-import gregtech.client.utils.BloomEffectUtil;
-import gregtech.client.utils.RenderBufferHelper;
-import gregtech.client.utils.RenderUtil;
+import gregtech.client.utils.*;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -57,7 +57,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -70,13 +69,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.DoubleSupplier;
 
-public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController implements IFastRenderMetaTileEntity {
+public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController implements IFastRenderMetaTileEntity, IBloomEffect {
 
     private final int tier;
     private EnergyContainerList inputEnergyContainers;
     private long heat = 0; // defined in TileEntityFusionReactor but serialized in FusionRecipeLogic
+    @Nullable
     private Integer color;
     private final FusionProgressSupplier progressBarSupplier;
+
+    @SideOnly(Side.CLIENT)
+    private BloomEffectUtil.BloomRenderTicket bloomRenderTicket;
 
     public MetaTileEntityFusionReactor(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, RecipeMaps.FUSION_RECIPES);
@@ -618,30 +621,35 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        if (color != null && MinecraftForgeClient.getRenderPass() == 0) {
-            final int c = color;
-            BloomEffectUtil.scheduleBloomRender(FusionBloomSetup.INSTANCE, getBloomType(), buffer -> {
-                int color = RenderUtil.colorInterpolator(c, -1).apply(Eases.QUAD_IN.getInterpolation(
-                        Math.abs((Math.abs(getOffsetTimer() % 50) + partialTicks) - 25) / 25));
-                float a = (float) (color >> 24 & 255) / 255.0F;
-                float r = (float) (color >> 16 & 255) / 255.0F;
-                float g = (float) (color >> 8 & 255) / 255.0F;
-                float b = (float) (color & 255) / 255.0F;
-                Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
-                if (entity != null) {
-                    buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
-                    EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
-                    EnumFacing.Axis axis = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped()).getAxis();
-                    RenderBufferHelper.renderRing(buffer,
-                            x + relativeBack.getXOffset() * 7 + 0.5,
-                            y + relativeBack.getYOffset() * 7 + 0.5,
-                            z + relativeBack.getZOffset() * 7 + 0.5,
-                            6, 0.2, 10, 20,
-                            r, g, b, a, axis);
-                    Tessellator.getInstance().draw();
-                }
-            });
+        if (this.color != null && this.bloomRenderTicket != null) {
+            this.bloomRenderTicket = BloomEffectUtil.registerBloomRender(FusionBloomSetup.INSTANCE, getBloomType(), this);
         }
+    }
+
+    @Override
+    public void renderBloomEffect(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context) {
+        Integer c = color;
+        if (c == null) return;
+        int color = RenderUtil.interpolateColor(c, -1, Eases.QUAD_IN.getInterpolation(
+                Math.abs((Math.abs(getOffsetTimer() % 50) + context.partialTicks()) - 25) / 25));
+        float a = (float) (color >> 24 & 255) / 255.0F;
+        float r = (float) (color >> 16 & 255) / 255.0F;
+        float g = (float) (color >> 8 & 255) / 255.0F;
+        float b = (float) (color & 255) / 255.0F;
+        EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
+        EnumFacing.Axis axis = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped()).getAxis();
+
+        RenderBufferHelper.renderRing(buffer,
+                getPos().getX() - context.cameraX() + relativeBack.getXOffset() * 7 + 0.5,
+                getPos().getY() - context.cameraY() + relativeBack.getYOffset() * 7 + 0.5,
+                getPos().getZ() - context.cameraZ() + relativeBack.getZOffset() * 7 + 0.5,
+                6, 0.2, 10, 20,
+                r, g, b, a, axis);
+    }
+
+    @Override
+    public boolean shouldRenderBloomEffect(@Nonnull EffectRenderContext context) {
+        return this.color!=null;
     }
 
     @Override
@@ -690,10 +698,14 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
             GlStateManager.color(1, 1, 1, 1);
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
             GlStateManager.disableTexture2D();
+
+            buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
         }
 
         @Override
         public void postDraw(@Nonnull BufferBuilder buffer) {
+            Tessellator.getInstance().draw();
+
             GlStateManager.enableTexture2D();
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
         }

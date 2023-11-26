@@ -4,6 +4,7 @@ import codechicken.lib.vec.Vector3;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.renderer.fx.LaserBeamRenderer;
+import gregtech.client.utils.EffectRenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -11,7 +12,6 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 
@@ -41,10 +41,10 @@ public class GTLaserBeamParticle extends GTParticle {
     }
 
     @Override
-    public boolean shouldRender(@Nonnull Entity renderViewEntity, float partialTicks) {
+    public boolean shouldRender(@Nonnull EffectRenderContext context) {
         double renderRange = getSquaredRenderRange();
         if (renderRange < 0) return true;
-        Vec3d eyePos = renderViewEntity.getPositionEyes(partialTicks);
+        Vec3d eyePos = context.renderViewEntity().getPositionEyes(context.partialTicks());
         return eyePos.squareDistanceTo(posX, posY, posZ) <= renderRange ||
                 eyePos.squareDistanceTo(posX + direction.x, posY + direction.y, posZ + direction.z) <= renderRange;
     }
@@ -136,14 +136,13 @@ public class GTLaserBeamParticle extends GTParticle {
     }
 
     @Override
-    public void renderParticle(@Nonnull BufferBuilder buffer, @Nonnull Entity renderViewEntity, float partialTicks,
-                               double cameraX, double cameraY, double cameraZ, @Nonnull Vec3d cameraViewDir,
-                               float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-        GlStateManager.translate(posX - cameraX, posY - cameraY, posZ - cameraZ);
+    public void renderParticle(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context) {
+        GlStateManager.translate(posX - context.cameraX(), posY - context.cameraY(), posZ - context.cameraZ());
 
         Vector3 cameraDirection = null;
         if (!doubleVertical) {
-            cameraDirection = new Vector3(posX, posY, posZ).subtract(new Vector3(renderViewEntity.getPositionEyes(partialTicks)));
+            Vec3d positionEyes = context.renderViewEntity().getPositionEyes(context.partialTicks());
+            cameraDirection = new Vector3(posX, posY, posZ).subtract(new Vector3(positionEyes));
         }
         TextureManager renderEngine = Minecraft.getMinecraft().getRenderManager().renderEngine;
         ITextureObject bodyTexture = null;
@@ -164,11 +163,11 @@ public class GTLaserBeamParticle extends GTParticle {
                 renderEngine.loadTexture(head, headTexture);
             }
         }
-        float offset = -emit * (Minecraft.getMinecraft().player.ticksExisted + partialTicks);
+        float offset = -emit * (Minecraft.getMinecraft().player.ticksExisted + context.partialTicks());
         LaserBeamRenderer.renderRawBeam(bodyTexture == null ? -1 :
                 bodyTexture.getGlTextureId(), headTexture == null ? -1 :
                 headTexture.getGlTextureId(), direction, cameraDirection, beamHeight, headWidth, alpha, offset);
-        GlStateManager.translate(cameraX - posX, cameraY - posY, cameraZ - posZ);
+        GlStateManager.translate(context.cameraX() - posX, context.cameraY() - posY, context.cameraZ() - posZ);
     }
 
     @Nullable

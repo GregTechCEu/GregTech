@@ -8,12 +8,14 @@ import gregtech.client.shader.postprocessing.BloomType;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,6 +25,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -32,12 +35,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
-
 @SideOnly(Side.CLIENT)
 public class BloomEffectUtil {
 
-    private static final Map<BloomRenderSetup, List<Consumer<BufferBuilder>>> SCHEDULED_BLOOM_RENDERS = new Object2ObjectOpenHashMap<>();
+    private static final Map<BloomRenderKey, List<BloomRenderTicket>> BLOOM_RENDERS = new Object2ObjectOpenHashMap<>();
+    private static final List<BloomRenderTicket> SCHEDULED_BLOOM_RENDERS = new ArrayList<>();
 
     /**
      * @deprecated use {@link #getBloomLayer()}
@@ -48,6 +50,9 @@ public class BloomEffectUtil {
 
     private static BlockRenderLayer bloom;
     private static Framebuffer bloomFBO;
+
+    @Nullable
+    private static World currentWorld = null;
 
     /**
      * @return {@link BlockRenderLayer} instance for the bloom render layer.
@@ -137,17 +142,41 @@ public class BloomEffectUtil {
     }
 
     /**
-     * Schedule a custom bloom render function for next world render. This render call gets processed only once; all
-     * scheduled render callbacks are cleared once they have been processed.
+     * <p>
+     * Register a custom bloom render callback for next world render. The render call persists until manually
+     * </p>
+     * <p>
+     * This method does nothing if Optifine is present.
+     * </p>
      *
      * @param setup     Render setup, if exists
      * @param bloomType Type of the bloom
-     * @param render    The function to be called on next world render
+     * @param render    Rendering callback
+     * @return Ticket for the registered bloom render callback
+     * @throws NullPointerException if {@code bloomType == null || render == null}
      */
-    public static void scheduleBloomRender(@Nullable IRenderSetup setup,
-                                           @Nonnull BloomType bloomType,
-                                           @Nonnull Consumer<BufferBuilder> render) {
-        SCHEDULED_BLOOM_RENDERS.computeIfAbsent(new BloomRenderSetup(setup, bloomType), x -> new ArrayList<>()).add(render);
+    @Nonnull
+    @CheckReturnValue
+    public static BloomRenderTicket registerBloomRender(@Nullable IRenderSetup setup,
+                                                        @Nonnull BloomType bloomType,
+                                                        @Nonnull IBloomEffect render) {
+        BloomRenderTicket ticket = new BloomRenderTicket(setup, bloomType, render);
+        if (Shaders.isOptiFineShaderPackLoaded()) {
+            ticket.valid = true;
+        } else {
+            SCHEDULED_BLOOM_RENDERS.add(ticket);
+        }
+        return ticket;
+    }
+
+    /**
+     * @deprecated use ticket-based bloom render hook {@link #registerBloomRender(IRenderSetup, BloomType, IBloomEffect)}
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    public static void requestCustomBloom(IBloomRenderFast handler, Consumer<BufferBuilder> render) {
+        BloomType bloomType = BloomType.fromValue(handler.customBloomStyle());
+        registerBloomRender(handler, bloomType, (b, c) -> render.accept(b)).legacy = true;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -185,24 +214,26 @@ public class BloomEffectUtil {
         mc.profiler.endStartSection("BTLayer");
 
         if (Shaders.isOptiFineShaderPackLoaded()) {
-            int result = renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
-            SCHEDULED_BLOOM_RENDERS.clear();
-            return result;
+            return renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
         }
+
+        preDraw();
+
+        EffectRenderContext context = EffectRenderContext.getInstance().update(entity, (float) partialTicks);
 
         if (!ConfigHolder.client.shader.emissiveTexturesBloom) {
             GlStateManager.depthMask(true);
-            renderGlobal.renderBlockLayer(BloomEffectUtil.bloom, partialTicks, pass, entity);
+            renderGlobal.renderBlockLayer(bloom, partialTicks, pass, entity);
 
-            // render fast
-            if (!SCHEDULED_BLOOM_RENDERS.isEmpty()) {
+            if (!BLOOM_RENDERS.isEmpty()) {
                 BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-                for (var e : SCHEDULED_BLOOM_RENDERS.entrySet()) {
-                    draw(buffer, e.getKey(), e.getValue());
+                for (List<BloomRenderTicket> list : BLOOM_RENDERS.values()) {
+                    draw(buffer, context, list);
                 }
-                SCHEDULED_BLOOM_RENDERS.clear();
             }
+            postDraw();
             GlStateManager.depthMask(false);
+
             return renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
         }
 
@@ -229,17 +260,16 @@ public class BloomEffectUtil {
                 RenderUtil.hookDepthBuffer(bloomFBO, fbo.depthBuffer);
             }
 
-            bloomFBO.setFramebufferFilter(GL_LINEAR);
+            bloomFBO.setFramebufferFilter(GL11.GL_LINEAR);
         }
 
         GlStateManager.depthMask(true);
         fbo.bindFramebuffer(true);
 
-        // render fast
-        if (!SCHEDULED_BLOOM_RENDERS.isEmpty()) {
+        if (!BLOOM_RENDERS.isEmpty()) {
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-            for (var entry : SCHEDULED_BLOOM_RENDERS.entrySet()) {
-                draw(buffer, entry.getKey(), entry.getValue());
+            for (List<BloomRenderTicket> list : BLOOM_RENDERS.values()) {
+                draw(buffer, context, list);
             }
         }
 
@@ -247,7 +277,7 @@ public class BloomEffectUtil {
         bloomFBO.framebufferClear();
         bloomFBO.bindFramebuffer(false);
 
-        renderGlobal.renderBlockLayer(BloomEffectUtil.bloom, partialTicks, pass, entity);
+        renderGlobal.renderBlockLayer(bloom, partialTicks, pass, entity);
 
         GlStateManager.depthMask(false);
 
@@ -259,7 +289,7 @@ public class BloomEffectUtil {
         OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, fbo.framebufferObject);
         GlStateManager.enableBlend();
         mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        GlStateManager.shadeModel(7425);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
         int result = renderGlobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
 
@@ -296,19 +326,18 @@ public class BloomEffectUtil {
 
         //********** render custom bloom ************
 
-        // render fast
-        if (!SCHEDULED_BLOOM_RENDERS.isEmpty()) {
+        if (!BLOOM_RENDERS.isEmpty()) {
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-            for (var e : SCHEDULED_BLOOM_RENDERS.entrySet()) {
-                BloomRenderSetup handler = e.getKey();
-                List<Consumer<BufferBuilder>> list = e.getValue();
+            for (var e : BLOOM_RENDERS.entrySet()) {
+                BloomRenderKey key = e.getKey();
+                List<BloomRenderTicket> list = e.getValue();
 
                 GlStateManager.depthMask(true);
 
                 bloomFBO.framebufferClear();
                 bloomFBO.bindFramebuffer(true);
 
-                draw(buffer, handler, list);
+                draw(buffer, context, list);
 
                 GlStateManager.depthMask(false);
 
@@ -319,7 +348,7 @@ public class BloomEffectUtil {
                 Shaders.renderFullImageInFBO(bloomFBO, Shaders.IMAGE_F, null);
                 GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-                switch (handler.bloomType) {
+                switch (key.bloomType) {
                     case GAUSSIAN -> BloomEffect.renderLOG(bloomFBO, fbo);
                     case UNITY -> BloomEffect.renderUnity(bloomFBO, fbo);
                     case UNREAL -> BloomEffect.renderUnreal(bloomFBO, fbo);
@@ -333,30 +362,132 @@ public class BloomEffectUtil {
                 GlStateManager.disableBlend();
                 Shaders.renderFullImageInFBO(fbo, Shaders.IMAGE_F, null);
             }
-            SCHEDULED_BLOOM_RENDERS.clear();
+            postDraw();
         }
 
         return result;
     }
 
-    private static void draw(@Nonnull BufferBuilder buffer,
-                             @Nonnull BloomRenderSetup handler,
-                             @Nonnull List<Consumer<BufferBuilder>> renderers) {
-        if (handler.renderSetup != null) {
-            handler.renderSetup.preDraw(buffer);
+    private static void draw(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context,
+                             @Nonnull List<BloomRenderTicket> tickets) {
+        boolean initialized = false;
+        @Nullable
+        IRenderSetup renderSetup = null;
+        for (BloomRenderTicket ticket : tickets) {
+            if (!ticket.isValid() || !ticket.render.shouldRenderBloomEffect(context)) continue;
+            if (!initialized) {
+                initialized = true;
+                renderSetup = ticket.renderSetup;
+                if (renderSetup != null) {
+                    renderSetup.preDraw(buffer);
+                }
+            }
+            ticket.render.renderBloomEffect(buffer, context);
+            if (ticket.legacy) ticket.invalidate();
         }
-        for (Consumer<BufferBuilder> renderer : renderers) {
-            renderer.accept(buffer);
+        if (initialized && renderSetup != null) {
+            renderSetup.postDraw(buffer);
         }
-        if (handler.renderSetup != null) {
-            handler.renderSetup.postDraw(buffer);
+    }
+
+    private static void preDraw() {
+        WorldClient world = Minecraft.getMinecraft().world;
+        if (currentWorld != world) {
+            for (List<BloomRenderTicket> list : BLOOM_RENDERS.values()) {
+                for (BloomRenderTicket ticket : list) {
+                    ticket.invalidate();
+                }
+            }
+            BLOOM_RENDERS.clear();
+            if (currentWorld != null) {
+                for (BloomRenderTicket ticket : SCHEDULED_BLOOM_RENDERS) {
+                    ticket.invalidate();
+                }
+                SCHEDULED_BLOOM_RENDERS.clear();
+            }
+            currentWorld = world;
+        }
+
+        for (BloomRenderTicket ticket : SCHEDULED_BLOOM_RENDERS) {
+            if (!ticket.isValid()) continue;
+            BLOOM_RENDERS.computeIfAbsent(new BloomRenderKey(ticket.renderSetup, ticket.bloomType),
+                    k -> new ArrayList<>()).add(ticket);
+        }
+        SCHEDULED_BLOOM_RENDERS.clear();
+    }
+
+    private static void postDraw() {
+        for (var it = BLOOM_RENDERS.values().iterator(); it.hasNext(); ) {
+            List<BloomRenderTicket> list = it.next();
+
+            if (!list.isEmpty()) {
+                if (!list.removeIf(ticket -> !ticket.isValid()) || !list.isEmpty()) continue;
+            }
+
+            it.remove();
         }
     }
 
     @Desugar
-    private record BloomRenderSetup(@Nullable IRenderSetup renderSetup, @Nonnull BloomType bloomType) {}
+    private record BloomRenderKey(@Nullable IRenderSetup renderSetup, @Nonnull BloomType bloomType) {}
 
-    private static final class BloomRenderTicket {
+    public static final class BloomRenderTicket {
 
+        @Nullable
+        private final IRenderSetup renderSetup;
+        private final BloomType bloomType;
+        private final IBloomEffect render;
+
+        private boolean valid = true;
+        /**
+         * Used to mark bloom tickets made by legacy API; this ticket will be automatically expired after 1 render call.
+         * Remove this method in 2.9 as well as the deprecated method.
+         */
+        private boolean legacy;
+
+        BloomRenderTicket(@Nullable IRenderSetup renderSetup, @Nonnull BloomType bloomType, @Nonnull IBloomEffect render) {
+            this.renderSetup = renderSetup;
+            this.bloomType = Objects.requireNonNull(bloomType, "bloomType == null");
+            this.render = Objects.requireNonNull(render, "render == null");
+        }
+
+        @Nullable
+        public IRenderSetup getRenderSetup() {
+            return this.renderSetup;
+        }
+
+        @Nonnull
+        public BloomType getBloomType() {
+            return this.bloomType;
+        }
+
+        public boolean isValid() {
+            return this.valid;
+        }
+
+        public void invalidate() {
+            this.valid = false;
+        }
+    }
+
+    /**
+     * @deprecated use ticket-based bloom render hook {@link #registerBloomRender(IRenderSetup, BloomType, IBloomEffect)}
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    public interface IBloomRenderFast extends IRenderSetup {
+
+        /**
+         * Custom Bloom Style.
+         *
+         * @return 0 - Simple Gaussian Blur Bloom
+         * <p>
+         * 1 - Unity Bloom
+         * </p>
+         * <p>
+         * 2 - Unreal Bloom
+         * </p>
+         */
+        int customBloomStyle();
     }
 }

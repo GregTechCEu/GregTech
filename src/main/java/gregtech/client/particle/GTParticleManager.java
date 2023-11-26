@@ -2,15 +2,14 @@ package gregtech.client.particle;
 
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.IRenderSetup;
+import gregtech.client.utils.EffectRenderContext;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -18,10 +17,10 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -35,8 +34,8 @@ public class GTParticleManager {
     @Nullable
     private static World currentWorld = null;
 
-    private final Map<IRenderSetup, ArrayDeque<GTParticle>> depthEnabledParticles = new Object2ObjectLinkedOpenHashMap<>();
-    private final Map<IRenderSetup, ArrayDeque<GTParticle>> depthDisabledParticles = new Object2ObjectLinkedOpenHashMap<>();
+    private final Map<@Nullable IRenderSetup, ArrayDeque<GTParticle>> depthEnabledParticles = new Object2ObjectLinkedOpenHashMap<>();
+    private final Map<@Nullable IRenderSetup, ArrayDeque<GTParticle>> depthDisabledParticles = new Object2ObjectLinkedOpenHashMap<>();
 
     private final List<GTParticle> newParticleQueue = new ArrayList<>();
 
@@ -67,27 +66,27 @@ public class GTParticleManager {
     }
 
     private void updateQueue(Map<IRenderSetup, ArrayDeque<GTParticle>> renderQueue) {
-        var entryIterator = renderQueue.entrySet().iterator();
-        while (entryIterator.hasNext()) {
-            Map.Entry<IRenderSetup, ArrayDeque<GTParticle>> entry = entryIterator.next();
-            ArrayDeque<GTParticle> particles = entry.getValue();
+        Iterator<ArrayDeque<GTParticle>> it = renderQueue.values().iterator();
+        while (it.hasNext()) {
+            ArrayDeque<GTParticle> particles = it.next();
 
-            Iterator<GTParticle> iterator = particles.iterator();
-            while (iterator.hasNext()) {
-                GTParticle particle = iterator.next();
-                try {
-                    particle.onUpdate();
-                } catch (RuntimeException exception) {
-                    GTLog.logger.error("particle update error: {}", particle.toString(), exception);
-                    particle.setExpired();
+            Iterator<GTParticle> it2 = particles.iterator();
+            while (it2.hasNext()) {
+                GTParticle particle = it2.next();
+                if (particle.isAlive()) {
+                    try {
+                        particle.onUpdate();
+                    } catch (RuntimeException exception) {
+                        GTLog.logger.error("particle update error: {}", particle.toString(), exception);
+                        particle.setExpired();
+                    }
+                    if (particle.isAlive()) continue;
                 }
-                if (!particle.isAlive()) {
-                    iterator.remove();
-                }
+                it2.remove();
             }
 
             if (particles.isEmpty()) {
-                entryIterator.remove();
+                it.remove();
             }
         }
     }
@@ -116,68 +115,55 @@ public class GTParticleManager {
     public void renderParticles(@Nonnull Entity renderViewEntity, float partialTicks) {
         if (depthEnabledParticles.isEmpty() && depthDisabledParticles.isEmpty()) return;
 
-        double cameraX = renderViewEntity.lastTickPosX + (renderViewEntity.posX - renderViewEntity.lastTickPosX) * partialTicks;
-        double cameraY = renderViewEntity.lastTickPosY + (renderViewEntity.posY - renderViewEntity.lastTickPosY) * partialTicks;
-        double cameraZ = renderViewEntity.lastTickPosZ + (renderViewEntity.posZ - renderViewEntity.lastTickPosZ) * partialTicks;
-        Vec3d cameraViewDir = renderViewEntity.getLook(partialTicks);
-
-        float rotationX = ActiveRenderInfo.getRotationX();
-        float rotationZ = ActiveRenderInfo.getRotationZ();
-        float rotationYZ = ActiveRenderInfo.getRotationYZ();
-        float rotationXY = ActiveRenderInfo.getRotationXY();
-        float rotationXZ = ActiveRenderInfo.getRotationXZ();
+        EffectRenderContext instance = EffectRenderContext.getInstance().update(renderViewEntity, partialTicks);
 
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0);
 
-        Tessellator tessellator = Tessellator.getInstance();
         GlStateManager.disableLighting();
 
         if (!depthDisabledParticles.isEmpty()) {
             GlStateManager.depthMask(false);
 
-            renderGlParticlesInLayer(depthDisabledParticles, tessellator, renderViewEntity,
-                    partialTicks, cameraX, cameraY, cameraZ, cameraViewDir,
-                    rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+            renderGlParticlesInLayer(depthDisabledParticles, instance);
 
             GlStateManager.depthMask(true);
         }
 
-        renderGlParticlesInLayer(depthEnabledParticles, tessellator, renderViewEntity,
-                partialTicks, cameraX, cameraY, cameraZ, cameraViewDir,
-                rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+        renderGlParticlesInLayer(depthEnabledParticles, instance);
 
         GlStateManager.disableBlend();
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
     }
 
-    private static void renderGlParticlesInLayer(@Nonnull Map<IRenderSetup, ArrayDeque<GTParticle>> renderQueue,
-                                                 @Nonnull Tessellator tessellator, @Nonnull Entity renderViewEntity,
-                                                 float partialTicks, double cameraX, double cameraY, double cameraZ,
-                                                 @Nonnull Vec3d cameraViewDir, float rotationX, float rotationZ,
-                                                 float rotationYZ, float rotationXY, float rotationXZ) {
+    private static void renderGlParticlesInLayer(@Nonnull Map<@Nullable IRenderSetup, ArrayDeque<GTParticle>> renderQueue,
+                                                 @Nonnull EffectRenderContext context) {
         for (var e : renderQueue.entrySet()) {
+            @Nullable
             IRenderSetup handler = e.getKey();
             ArrayDeque<GTParticle> particles = e.getValue();
             if (particles.isEmpty()) continue;
-            BufferBuilder buffer = tessellator.getBuffer();
-            if (handler != null) {
-                handler.preDraw(buffer);
-            }
+
+            boolean initialized = false;
+            BufferBuilder buffer = Tessellator.getInstance().getBuffer();
             for (GTParticle particle : particles) {
-                if (particle.shouldRender(renderViewEntity, partialTicks)) {
+                if (particle.shouldRender(context)) {
                     try {
-                        particle.renderParticle(buffer, renderViewEntity,
-                                partialTicks, cameraX, cameraY, cameraZ, cameraViewDir,
-                                rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+                        if (!initialized) {
+                            initialized = true;
+                            if (handler != null) {
+                                handler.preDraw(buffer);
+                            }
+                        }
+                        particle.renderParticle(buffer, context);
                     } catch (Throwable throwable) {
                         GTLog.logger.error("particle render error: {}", particle.toString(), throwable);
                         particle.setExpired();
                     }
                 }
             }
-            if (handler != null) {
+            if (initialized && handler != null) {
                 handler.postDraw(buffer);
             }
         }
@@ -214,7 +200,7 @@ public class GTParticleManager {
         }
     }
 
-    private static int count(Map<IRenderSetup, ArrayDeque<GTParticle>> renderQueue) {
+    private static int count(Map<@Nullable IRenderSetup, ArrayDeque<GTParticle>> renderQueue) {
         int g = 0;
         for (Deque<GTParticle> queue : renderQueue.values()) {
             g += queue.size();

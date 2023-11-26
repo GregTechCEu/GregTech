@@ -1,13 +1,13 @@
 package gregtech.client.particle;
 
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.client.utils.EffectRenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -32,17 +32,16 @@ public class GTNameTagParticle extends GTParticle {
     }
 
     @Override
-    public void renderParticle(@Nonnull BufferBuilder buffer, @Nonnull Entity renderViewEntity, float partialTicks,
-                               double cameraX, double cameraY, double cameraZ, @Nonnull Vec3d cameraViewDir,
-                               float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+    public void renderParticle(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context) {
         String name = this.metaTileEntityHolder.getName();
         if (name.isEmpty()) return;
 
-        float rotationYaw = renderViewEntity.prevRotationYaw + (renderViewEntity.rotationYaw - renderViewEntity.prevRotationYaw) * partialTicks;
-        float rotationPitch = renderViewEntity.prevRotationPitch + (renderViewEntity.rotationPitch - renderViewEntity.prevRotationPitch) * partialTicks;
+        Entity renderViewEntity = context.renderViewEntity();
+        float rotationYaw = renderViewEntity.prevRotationYaw + (renderViewEntity.rotationYaw - renderViewEntity.prevRotationYaw) * context.partialTicks();
+        float rotationPitch = renderViewEntity.prevRotationPitch + (renderViewEntity.rotationPitch - renderViewEntity.prevRotationPitch) * context.partialTicks();
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(posX - cameraX, posY - cameraY, posZ - cameraZ);
+        GlStateManager.translate(posX - context.cameraX(), posY - context.cameraY(), posZ - context.cameraZ());
         GlStateManager.glNormal3f(0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(-rotationYaw, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(rotationPitch, 1.0F, 0.0F, 0.0F);

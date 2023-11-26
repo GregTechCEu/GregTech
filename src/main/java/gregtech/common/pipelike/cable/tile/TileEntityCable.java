@@ -216,7 +216,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     @SideOnly(Side.CLIENT)
     public void createParticle() {
-        particle = new GTOverheatParticle(world, pos, meltTemp, getPipeBoxes(), getPipeType().insulationLevel >= 0);
+        particle = new GTOverheatParticle(this, meltTemp, getPipeBoxes(), getPipeType().insulationLevel >= 0);
         GTParticleManager.INSTANCE.addEffect(particle);
     }
 

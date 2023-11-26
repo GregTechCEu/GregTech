@@ -1,9 +1,8 @@
 package gregtech.client.particle;
 
 import gregtech.client.renderer.IRenderSetup;
+import gregtech.client.utils.EffectRenderContext;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -33,9 +32,10 @@ public abstract class GTParticle {
         this.posZ = posZ;
     }
 
-    public boolean shouldRender(@Nonnull Entity renderViewEntity, float partialTicks) {
+    public boolean shouldRender(@Nonnull EffectRenderContext context) {
         if (squaredRenderRange < 0) return true;
-        return renderViewEntity.getPositionEyes(partialTicks).squareDistanceTo(posX, posY, posZ) <= squaredRenderRange;
+        return context.renderViewEntity().getPositionEyes(context.partialTicks())
+                .squareDistanceTo(posX, posY, posZ) <= squaredRenderRange;
     }
 
     public final boolean isAlive() {
@@ -47,7 +47,9 @@ public abstract class GTParticle {
     }
 
     public final void setExpired() {
+        if (this.expired) return;
         this.expired = true;
+        onExpired();
     }
 
     /**
@@ -94,27 +96,19 @@ public abstract class GTParticle {
     public void onUpdate() {}
 
     /**
+     * Called once on expiration.
+     */
+    protected void onExpired() {}
+
+    /**
      * Render the particle. If this particle has non-null {@link #getRenderSetup()} associated, this method will be
      * called between a {@link IRenderSetup#preDraw(BufferBuilder)} call and a
      * {@link IRenderSetup#postDraw(BufferBuilder)} call.
      *
-     * @param buffer           Buffer builder
-     * @param renderViewEntity Render view entity
-     * @param partialTicks     Partial ticks
-     * @param cameraX          X position of the camera (interpolated X position of the render view entity)
-     * @param cameraY          Y position of the camera (interpolated Y position of the render view entity)
-     * @param cameraZ          Z position of the camera (interpolated Z position of the render view entity)
-     * @param cameraViewDir    View direction of the camera
-     * @param rotationX        X rotation of the render view entity
-     * @param rotationZ        Z rotation of the render view entity
-     * @param rotationYZ       YZ rotation of the render view entity
-     * @param rotationXY       XY rotation of the render view entity
-     * @param rotationXZ       XZ rotation of the render view entity
+     * @param buffer  buffer builder
+     * @param context render context
      */
-    public void renderParticle(@Nonnull BufferBuilder buffer, @Nonnull Entity renderViewEntity,
-                               float partialTicks, double cameraX, double cameraY, double cameraZ,
-                               @Nonnull Vec3d cameraViewDir, float rotationX, float rotationZ,
-                               float rotationYZ, float rotationXY, float rotationXZ) {}
+    public void renderParticle(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context) {}
 
     /**
      * @return Render setup for this particle, if exists
