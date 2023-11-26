@@ -3,7 +3,7 @@ package gregtech.worldgen.generator;
 import gregtech.worldgen.placeable.WorldgenPlaceable;
 import org.jetbrains.annotations.NotNull;
 
-public class LayeredVeinSettings extends GeneratorSettingsBase<LayeredVeinGenerator> implements ChunkAlignedSettings<LayeredVeinGenerator> {
+public class LayeredVeinSettings extends CuboidVeinSettings<LayeredVeinGenerator> {
 
     private final int density;
 
@@ -13,7 +13,8 @@ public class LayeredVeinSettings extends GeneratorSettingsBase<LayeredVeinGenera
     private final WorldgenPlaceable spread;
 
     public LayeredVeinSettings(@NotNull String name, int minY, int maxY, int weight, int density, int size,
-                               int @NotNull [] allowedDimensions, @NotNull String @NotNull [] allowedBiomes, @NotNull WorldgenPlaceable top, @NotNull WorldgenPlaceable middle,
+                               int @NotNull [] allowedDimensions, @NotNull String @NotNull [] allowedBiomes,
+                               @NotNull WorldgenPlaceable top, @NotNull WorldgenPlaceable middle,
                                @NotNull WorldgenPlaceable bottom, @NotNull WorldgenPlaceable spread) {
         super(name, minY, maxY, weight, size, allowedDimensions, allowedBiomes);
         this.density = density;

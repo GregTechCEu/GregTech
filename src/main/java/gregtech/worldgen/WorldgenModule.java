@@ -8,10 +8,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.StoneVariantBlock;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
-import gregtech.worldgen.generator.ChunkAlignedSettings;
-import gregtech.worldgen.generator.GeneratorRegistry;
-import gregtech.worldgen.generator.LayeredVeinSettings;
-import gregtech.worldgen.generator.StoneBlob;
+import gregtech.worldgen.generator.*;
 import gregtech.worldgen.placeable.BlockStatePlaceable;
 import gregtech.worldgen.placeable.MaterialPlaceable;
 import net.minecraft.block.Block;
@@ -96,6 +93,16 @@ public class WorldgenModule extends BaseGregTechModule {
                 new MaterialPlaceable(Materials.Opal),
                 new MaterialPlaceable(Materials.YellowLimonite)
         ));
+
+        CHUNK_ALIGNED_REGISTRY.register(new MixedVeinSettings("test3", 40, 70, 20, 24,
+                new int[]{0}, new String[0], new int[]{1, 1, 5, 3},
+                new MaterialPlaceable[]{
+                        new MaterialPlaceable(Materials.Platinum),
+                        new MaterialPlaceable(Materials.Bauxite),
+                        new MaterialPlaceable(Materials.Coal),
+                        new MaterialPlaceable(Materials.Powellite)
+                }, 15)
+        );
     }
 
     @Override
