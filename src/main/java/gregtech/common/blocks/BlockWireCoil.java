@@ -86,7 +86,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         CUPRONICKEL("cupronickel", 1800, 1, 1, Materials.Cupronickel),
         KANTHAL("kanthal", 2700, 2, 1, Materials.Kanthal),
         NICHROME("nichrome", 3600, 2, 2, Materials.Nichrome),
-        TUNGSTENSTEEL("tungstensteel", 4500, 4, 2, Materials.TungstenSteel),
+        RTM_ALLOY("rtm_alloy", 4500, 4, 2, Materials.RTMAlloy),
         HSS_G("hss_g", 5400, 4, 4, Materials.HSSG),
         NAQUADAH("naquadah", 7200, 8, 4, Materials.Naquadah),
         TRINIUM("trinium", 9001, 8, 8, Materials.Trinium),

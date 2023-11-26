@@ -69,4 +69,9 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
     protected boolean openGUIOnRightClick() {
         return isStructureFormed();
     }
+
+    @Override
+    public boolean allowsExtendedFacing() {
+        return false;
+    }
 }

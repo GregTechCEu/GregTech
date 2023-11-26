@@ -178,11 +178,13 @@ public class OreByProduct implements IRecipeWrapper {
 
         // centrifuge impure -> dust
         addToOutputs(material, OrePrefix.dust, 1);
-        addToOutputs(byproducts[0], OrePrefix.dustTiny, 1);
+        addToOutputs(byproducts[0], OrePrefix.dust, 1);
+        addChance(1111, 0);
 
         // ore wash crushed -> crushed purified
         addToOutputs(material, OrePrefix.crushedPurified, 1);
-        addToOutputs(byproducts[0], OrePrefix.dustTiny, 3);
+        addToOutputs(byproducts[0], OrePrefix.dust, 1);
+        addChance(3333, 0);
         List<FluidStack> fluidStacks = new ArrayList<>();
         fluidStacks.add(Materials.Water.getFluid(1000));
         fluidStacks.add(Materials.DistilledWater.getFluid(100));
@@ -190,7 +192,8 @@ public class OreByProduct implements IRecipeWrapper {
 
         // TC crushed/crushed purified -> centrifuged
         addToOutputs(material, OrePrefix.crushedCentrifuged, 1);
-        addToOutputs(byproducts[1], OrePrefix.dustTiny, byproductMultiplier * 3);
+        addToOutputs(byproducts[1], OrePrefix.dust, byproductMultiplier);
+        addChance(3333, 0);
 
         // macerate centrifuged -> dust
         addToOutputs(material, OrePrefix.dust, 1);
@@ -204,7 +207,8 @@ public class OreByProduct implements IRecipeWrapper {
 
         // centrifuge purified -> dust
         addToOutputs(material, OrePrefix.dust, 1);
-        addToOutputs(byproducts[1], OrePrefix.dustTiny, 1);
+        addToOutputs(byproducts[1], OrePrefix.dust, 1);
+        addChance(1111, 0);
 
         // cauldron/simple washer
         addToOutputs(material, OrePrefix.crushed, 1);
@@ -232,16 +236,15 @@ public class OreByProduct implements IRecipeWrapper {
 
         // electromagnetic separator
         if (hasSeparator) {
-            ItemStack separatedStack1 = OreDictUnifier.get(OrePrefix.dustSmall, separatedInto.get(0));
             OrePrefix prefix = (separatedInto.get(separatedInto.size() - 1).getBlastTemperature() == 0 && separatedInto.get(separatedInto.size() - 1).hasProperty(PropertyKey.INGOT))
-                    ? OrePrefix.nugget : OrePrefix.dustSmall;
+                    ? OrePrefix.nugget : OrePrefix.dust;
             ItemStack separatedStack2 = OreDictUnifier.get(prefix, separatedInto.get(separatedInto.size() - 1), prefix == OrePrefix.nugget ? 2 : 1);
 
             addToOutputs(material, OrePrefix.dust, 1);
-            addToOutputs(separatedStack1);
-            addChance(4000, 850);
+            addToOutputs(separatedInto.get(0), OrePrefix.dust, 1);
+            addChance(1000, 250);
             addToOutputs(separatedStack2);
-            addChance(2000, 600);
+            addChance(prefix == OrePrefix.dust ? 500 : 2000, prefix == OrePrefix.dust ? 150 : 600);
         } else {
             addEmptyOutputs(3);
         }

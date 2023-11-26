@@ -158,25 +158,25 @@ public class OreRecipeHandler {
                 .input(crushedPrefix, material)
                 .fluidInputs(Materials.Water.getFluid(1000))
                 .circuitMeta(1)
-                .outputs(crushedPurifiedOre,
-                        OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, 3),
-                        OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
+                .outputs(crushedPurifiedOre)
+                .chancedOutput(OrePrefix.dust, byproductMaterial, 3333, 0)
+                .output(OrePrefix.dust, Materials.Stone)
                 .buildAndRegister();
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
                 .fluidInputs(Materials.DistilledWater.getFluid(100))
-                .outputs(crushedPurifiedOre,
-                        OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, 3),
-                        OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
+                .outputs(crushedPurifiedOre)
+                .chancedOutput(OrePrefix.dust, byproductMaterial, 3333, 0)
+                .output(OrePrefix.dust, Materials.Stone)
                 .duration(200)
                 .buildAndRegister();
 
         RecipeMaps.THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
-                .outputs(crushedCentrifugedOre,
-                        OreDictUnifier.get(OrePrefix.dustTiny, property.getOreByProduct(1, material), property.getByProductMultiplier() * 3),
-                        OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
+                .outputs(crushedCentrifugedOre)
+                .chancedOutput(OrePrefix.dust, property.getOreByProduct(1, material), property.getByProductMultiplier(), 3333, 0)
+                .output(OrePrefix.dust, Materials.Stone)
                 .buildAndRegister();
 
         if (property.getWashedIn().getKey() != null) {
@@ -247,7 +247,8 @@ public class OreRecipeHandler {
         if (!crushedCentrifugedStack.isEmpty()) {
             RecipeMaps.THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                     .input(purifiedPrefix, material)
-                    .outputs(crushedCentrifugedStack, OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, 3))
+                    .outputs(crushedCentrifugedStack)
+                    .chancedOutput(OrePrefix.dust, byproductMaterial, 3333, 0)
                     .buildAndRegister();
         }
 
@@ -303,7 +304,7 @@ public class OreRecipeHandler {
                 .duration((int) (material.getMass() * 4)).EUt(24);
 
         if (byproduct.hasProperty(PropertyKey.DUST)) {
-            builder.outputs(OreDictUnifier.get(OrePrefix.dustTiny, byproduct));
+            builder.chancedOutput(OrePrefix.dust, byproduct, 1111, 0);
         } else {
             builder.fluidOutputs(byproduct.getFluid(GTValues.L / 9));
         }
@@ -327,17 +328,16 @@ public class OreRecipeHandler {
 
         if (property.getSeparatedInto() != null && !property.getSeparatedInto().isEmpty()) {
             List<Material> separatedMaterial = property.getSeparatedInto();
-            ItemStack separatedStack1 = OreDictUnifier.get(OrePrefix.dustSmall, separatedMaterial.get(0));
             OrePrefix prefix = (separatedMaterial.get(separatedMaterial.size() - 1).getBlastTemperature() == 0 && separatedMaterial.get(separatedMaterial.size() - 1).hasProperty(PropertyKey.INGOT))
-                    ? OrePrefix.nugget : OrePrefix.dustSmall;
+                    ? OrePrefix.nugget : OrePrefix.dust;
 
             ItemStack separatedStack2 = OreDictUnifier.get(prefix, separatedMaterial.get(separatedMaterial.size() - 1), prefix == OrePrefix.nugget ? 2 : 1);
 
             RecipeMaps.ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
                     .input(purePrefix, material)
                     .outputs(dustStack)
-                    .chancedOutput(separatedStack1, 4000, 850)
-                    .chancedOutput(separatedStack2, 2000, 600)
+                    .chancedOutput(OrePrefix.dust, separatedMaterial.get(0), 1000, 250)
+                    .chancedOutput(separatedStack2, prefix == OrePrefix.dust ? 500 : 2000, prefix == OrePrefix.dust ? 150 : 600)
                     .duration(200).EUt(24)
                     .buildAndRegister();
         }
@@ -351,7 +351,8 @@ public class OreRecipeHandler {
 
         RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
                 .input(purePrefix, material)
-                .outputs(dustStack, OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial))
+                .outputs(dustStack)
+                .chancedOutput(OrePrefix.dust, byproductMaterial, 1111, 0)
                 .duration(100)
                 .EUt(5)
                 .buildAndRegister();

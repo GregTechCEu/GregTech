@@ -65,7 +65,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
 
     public MetaTileEntity getRealMTE() {
         MetaTileEntity target = this.holder.getMetaTileEntity();
-        if (target instanceof MultiblockControllerBase && partIndex > 0) {
+        if (target instanceof MultiblockControllerBase multi && partIndex > 0) {
             if (partPos != null) {
                 TileEntity entity = this.screen.getWorld().getTileEntity(partPos);
                 if (entity instanceof IGregTechTileEntity) {
@@ -75,7 +75,8 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
                     return null;
                 }
             }
-            PatternMatchContext context = ((MultiblockControllerBase) target).structurePattern.checkPatternFastAt(target.getWorld(), target.getPos(), target.getFrontFacing().getOpposite());
+            PatternMatchContext context = multi.structurePattern.checkPatternFastAt(
+                    target.getWorld(), target.getPos(), target.getFrontFacing().getOpposite(), multi.getUpwardsFacing(), multi.allowsFlip());
             if (context == null) {
                 return null;
             }

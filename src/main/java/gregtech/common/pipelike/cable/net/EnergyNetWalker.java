@@ -16,7 +16,7 @@ import java.util.List;
 
 public class EnergyNetWalker extends PipeNetWalker<TileEntityCable> {
 
-    public static List<RoutePath> createNetData(World world, BlockPos sourcePipe) {
+    public static List<EnergyRoutePath> createNetData(World world, BlockPos sourcePipe) {
         if (!(world.getTileEntity(sourcePipe) instanceof TileEntityCable)) {
             return null;
         }
@@ -25,11 +25,11 @@ public class EnergyNetWalker extends PipeNetWalker<TileEntityCable> {
         return walker.isFailed() ? null : walker.routes;
     }
 
-    private final List<RoutePath> routes;
+    private final List<EnergyRoutePath> routes;
     private TileEntityCable[] pipes = {};
     private int loss;
 
-    protected EnergyNetWalker(World world, BlockPos sourcePipe, int walkedBlocks, List<RoutePath> routes) {
+    protected EnergyNetWalker(World world, BlockPos sourcePipe, int walkedBlocks, List<EnergyRoutePath> routes) {
         super(world, sourcePipe, walkedBlocks);
         this.routes = routes;
     }
@@ -50,10 +50,12 @@ public class EnergyNetWalker extends PipeNetWalker<TileEntityCable> {
 
     @Override
     protected void checkNeighbour(TileEntityCable pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
+        // assert that the last added pipe is the current pipe
+        if (pipeTile != pipes[pipes.length - 1]) throw new IllegalStateException("The current pipe is not the last added pipe. Something went seriously wrong!");
         if (neighbourTile != null) {
             IEnergyContainer container = neighbourTile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, faceToNeighbour.getOpposite());
             if (container != null) {
-                routes.add(new RoutePath(new BlockPos(pipePos), faceToNeighbour, pipes, getWalkedBlocks(), loss));
+                routes.add(new EnergyRoutePath(faceToNeighbour, pipes, getWalkedBlocks(), loss));
             }
         }
     }

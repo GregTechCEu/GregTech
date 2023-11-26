@@ -1,6 +1,6 @@
 package gregtech.common;
 
-import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.*;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -14,11 +14,14 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
+import gregtech.common.items.tool.rotation.CustomBlockRotations;
+import gregtech.common.items.tool.rotation.ICustomRotationBehavior;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -55,6 +58,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
@@ -212,14 +216,16 @@ public class ToolEventHandlers {
         boolean sneaking = player.isSneaking();
 
         // Grid overlays
-        if (tile != null && shouldRenderGridOverlays(state, tile, stack, player.getHeldItemOffhand(), sneaking) &&
+        if (shouldRenderGridOverlays(state, tile, stack, player.getHeldItemOffhand(), sneaking) &&
                 renderGridOverlays(player, pos, state, event.getTarget().sideHit, tile, event.getPartialTicks())) {
             event.setCanceled(true);
             return;
         }
 
         // AoE selection box and block damage overlay
-        if (!sneaking && stack.getItem() instanceof IGTTool) {
+        if (!sneaking && stack.getItem() instanceof IGTTool tool) {
+            state = state.getActualState(player.world, pos);
+            if (!ToolHelper.isToolEffective(state, tool.getToolClasses(stack), tool.getTotalHarvestLevel(stack))) return;
             Set<BlockPos> validPositions = ToolHelper.getHarvestableBlocks(stack, player.world, player, event.getTarget());
             if (validPositions.isEmpty()) return;
 
@@ -285,7 +291,7 @@ public class ToolEventHandlers {
     }
 
     @SideOnly(Side.CLIENT)
-    private static boolean shouldRenderGridOverlays(@Nonnull IBlockState state, TileEntity tile, ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
+    private static boolean shouldRenderGridOverlays(@Nonnull IBlockState state, @Nullable TileEntity tile, ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
         if (state.getBlock() instanceof BlockPipe<?, ?, ?> pipe) {
             if (isSneaking && (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass())) {
                 return true;
@@ -318,17 +324,27 @@ public class ToolEventHandlers {
 
         if (tile instanceof IGregTechTileEntity gtte) {
             MetaTileEntity mte = gtte.getMetaTileEntity();
-            if (mte != null && (mainHand.isEmpty() || mte.canRenderMachineGrid(mainHand, offHand))) {
-                return true;
+            if (mte != null) {
+                if (mainHand.isEmpty() && isSneaking && mte.hasAnyCover()) return true;
+                if (mte.canRenderMachineGrid(mainHand, offHand)) return true;
             }
         }
-        CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, null);
-        if (coverHolder == null) return false;
 
-        final boolean hasAnyCover = coverHolder.hasAnyCover();
-        final boolean acceptsCovers = coverHolder.acceptsCovers();
+        if (ToolHelper.isTool(mainHand, ToolClasses.WRENCH)) {
+            ICustomRotationBehavior behavior = CustomBlockRotations.getCustomRotation(state.getBlock());
+            if (behavior != null && behavior.showGrid()) return true;
+        }
 
-        return GTUtility.isCoverBehaviorItem(mainHand, () -> hasAnyCover, coverDefinition -> acceptsCovers);
+        if (tile != null) {
+            CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, null);
+            if (coverHolder == null) return false;
+
+            final boolean hasAnyCover = coverHolder.hasAnyCover();
+            final boolean acceptsCovers = coverHolder.acceptsCovers();
+
+            return GTUtility.isCoverBehaviorItem(mainHand, () -> hasAnyCover, coverDefinition -> acceptsCovers);
+        }
+        return false;
     }
 
     private static float rColour;
@@ -357,8 +373,36 @@ public class ToolEventHandlers {
             } else if (tile instanceof MetaTileEntityHolder) {
                 MetaTileEntity mte = ((MetaTileEntityHolder) tile).getMetaTileEntity();
                 drawGridOverlays(facing, box, mte::isSideUsed);
+                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing() && ToolHelper.isTool(player.getHeldItemMainhand(), ToolClasses.WRENCH)) {
+                    // set up some render state first
+                    GL11.glPushMatrix();
+                    GL11.glTranslated(pos.getX() - (int) d3, pos.getY() - (int) d4, pos.getZ() - (int) d5);
+                    GL11.glTranslated(0.5D - (d3 - (int) d3), 0.5D - (d4 - (int) d4), 0.5D - (d5 - (int) d5));
+                    Rotation.sideRotations[facing.getIndex()].glApply();
+                    GL11.glTranslated(0, -0.502, 0);
+                    GL11.glLineWidth(2.5F);
+                    if (multi.getFrontFacing() == facing) {
+                        // render in the center of the grid
+                        drawRotationMarker(ROTATION_MARKER_TRANSFORM_CENTER, player.isSneaking());
+                    } else if (multi.getFrontFacing() == facing.getOpposite()) {
+                        // render in the corners of the grid
+                        for (Transformation t : ROTATION_MARKER_TRANSFORMS_CORNER) {
+                            drawRotationMarker(t, player.isSneaking());
+                        }
+                    } else {
+                        // render on the side of the grid
+                        drawRotationMarker(ROTATION_MARKER_TRANSFORMS_SIDES_TRANSFORMS[
+                                ROTATION_MARKER_TRANSFORMS_SIDES[facing.getIndex() * 6 + multi.getFrontFacing().getIndex()]], player.isSneaking());
+                    }
+                    GL11.glPopMatrix();
+                }
             } else {
-                drawGridOverlays(box);
+                ICustomRotationBehavior behavior = CustomBlockRotations.getCustomRotation(state.getBlock());
+                if (behavior != null && behavior.showGrid()) {
+                    drawGridOverlays(facing, box, side -> behavior.showXOnSide(state, side));
+                } else {
+                    drawGridOverlays(box);
+                }
             }
             GlStateManager.depthMask(true);
             GlStateManager.enableTexture2D();
@@ -600,5 +644,58 @@ public class ToolEventHandlers {
     @SideOnly(Side.CLIENT)
     private static void endLine(BufferBuilder buffer, Vector3 vec) {
         buffer.pos(vec.x, vec.y, vec.z).color(rColour, gColour, bColour, 1F).endVertex();
+    }
+
+    // Rotation Marker
+    // do not question these
+    private static final Transformation ROTATION_MARKER_TRANSFORM_CENTER = new Scale(0.5);
+    private static final Transformation[] ROTATION_MARKER_TRANSFORMS_SIDES_TRANSFORMS = {
+            new Scale(0.25).with(new Translation(0, 0, 0.375)).compile(),
+            new Scale(0.25).with(new Translation(0.375, 0, 0)).compile(),
+            new Scale(0.25).with(new Translation(0, 0, -0.375)).compile(),
+            new Scale(0.25).with(new Translation(-0.375, 0, 0)).compile()};
+    private static final int[] ROTATION_MARKER_TRANSFORMS_SIDES = { -1, -1, 2, 0, 3, 1, -1, -1, 0, 2, 3, 1, 0, 2, -1,
+            -1, 3, 1, 2, 0, -1, -1, 3, 1, 1, 3, 2, 0, -1, -1, 3, 1, 2, 0, -1, -1 };
+    private static final Transformation[] ROTATION_MARKER_TRANSFORMS_CORNER = {
+            new Scale(0.25).with(new Translation(0.375, 0, 0.375)).compile(),
+            new Scale(0.25).with(new Translation(-0.375, 0, 0.375)).compile(),
+            new Scale(0.25).with(new Translation(0.375, 0, -0.375)).compile(),
+            new Scale(0.25).with(new Translation(-0.375, 0, -0.375)).compile()};
+    private static int rotationMarkerDisplayList;
+    private static boolean rotationMarkerDisplayListCompiled = false;
+
+    @SideOnly(Side.CLIENT)
+    private static void drawRotationMarker(Transformation transform, boolean flip) {
+        if (!rotationMarkerDisplayListCompiled) {
+            rotationMarkerDisplayList = GLAllocation.generateDisplayLists(1);
+
+            GL11.glNewList(rotationMarkerDisplayList, GL11.GL_COMPILE);
+            GL11.glBegin(GL11.GL_LINE_LOOP);
+            for (int i = 0; i <= 120; i++) {
+                GL11.glVertex3d(
+                        Math.cos(i * Math.PI * 1.75 / 120) * 0.4,
+                        0,
+                        Math.sin(i * Math.PI * 1.75 / 120) * 0.4);
+            }
+            for (int i = 120; i >= 0; i--) {
+                GL11.glVertex3d(
+                        Math.cos(i * Math.PI * 1.75 / 120) * 0.24,
+                        0,
+                        Math.sin(i * Math.PI * 1.75 / 120) * 0.24);
+            }
+            GL11.glVertex3d(0.141114561800, 0, 0);
+            GL11.glVertex3d(0.32, 0, -0.178885438199);
+            GL11.glVertex3d(0.498885438199, 0, 0);
+            GL11.glEnd();
+            GL11.glEndList();
+
+            rotationMarkerDisplayListCompiled = true;
+        }
+        GL11.glPushMatrix();
+        GL11.glColor4f(rColour, gColour, bColour, 1.0f);
+        transform.glApply();
+        if (flip) GL11.glScaled(-1.0, 1.0, 1.0);
+        GL11.glCallList(rotationMarkerDisplayList);
+        GL11.glPopMatrix();
     }
 }

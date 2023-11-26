@@ -10,7 +10,6 @@ import gregtech.api.util.GTUtility;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -24,7 +23,7 @@ public class ConverterTrait extends MTETrait {
 
     /**
      * If TRUE, the front facing of the machine will OUTPUT EU, other sides INPUT FE.
-     *
+     * <p>
      * If FALSE, the front facing of the machine will OUTPUT FE, other sides INPUT EU.
      */
     private boolean feToEu;
@@ -36,8 +35,6 @@ public class ConverterTrait extends MTETrait {
     private final long baseCapacity;
 
     private long usedAmps;
-
-    private BlockPos frontPos;
 
     public ConverterTrait(MetaTileEntityConverter mte, int amps, boolean feToEu) {
         super(mte);
@@ -138,15 +135,10 @@ public class ConverterTrait extends MTETrait {
     }
 
     protected <T> T getCapabilityAtFront(Capability<T> capability) {
-        TileEntity tile = metaTileEntity.getWorld().getTileEntity(frontPos == null ? frontPos = metaTileEntity.getPos().offset(metaTileEntity.getFrontFacing()) : frontPos);
+        TileEntity tile = metaTileEntity.getNeighbor(metaTileEntity.getFrontFacing());
         if (tile == null) return null;
         EnumFacing opposite = metaTileEntity.getFrontFacing().getOpposite();
         return tile.getCapability(capability, opposite);
-    }
-
-    @Override
-    public void onFrontFacingSet(EnumFacing newFrontFacing) {
-        this.frontPos = null;
     }
 
     // -- GTCEu Energy--------------------------------------------

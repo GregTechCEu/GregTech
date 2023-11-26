@@ -136,11 +136,6 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     }
 
     @Override
-    protected void renderTextures(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(), this.isWorkingEnabled());
-    }
-
-    @Override
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.2"));

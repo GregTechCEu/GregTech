@@ -43,7 +43,7 @@ public class LDPipeProvider implements IProbeInfoProvider {
                         addIOText(probeInfo, endpoint);
 
                         if (entityPlayer.isSneaking()) {
-                            BlockPos otherPos = other.getPos();
+                            BlockPos otherPos = other.pos();
                             String prefix = null;
                             if (other.isInput()) {
                                 prefix = "{*gregtech.top.ld_pipe_input_endpoint*}";

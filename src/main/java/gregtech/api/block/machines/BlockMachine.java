@@ -16,7 +16,9 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.IBlockAppearance;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.ctm.IFacadeWrapper;
@@ -56,6 +58,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -246,6 +249,16 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             } else {
                 metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
             }
+            if (metaTileEntity instanceof MultiblockControllerBase multi) {
+                if (multi.allowsExtendedFacing()) {
+                    EnumFacing frontFacing = multi.getFrontFacing();
+                    if (frontFacing == EnumFacing.UP) {
+                        multi.setUpwardsFacing(placer.getHorizontalFacing());
+                    } else if (frontFacing == EnumFacing.DOWN) {
+                        multi.setUpwardsFacing(placer.getHorizontalFacing().getOpposite());
+                    }
+                }
+            }
             if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
                 if (metaTileEntity.getProxy() != null) {
                     metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
@@ -255,9 +268,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             // Color machines on place if holding spray can in off-hand
             if (placer instanceof EntityPlayer) {
                 ItemStack offhand = placer.getHeldItemOffhand();
-                for (int i  = 0; i < EnumDyeColor.values().length; i++) {
+                for (int i = 0; i < EnumDyeColor.values().length; i++) {
                     if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
-                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
+                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
                         break;
                     }
                 }
@@ -360,10 +373,24 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Override
     public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
-        MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
-        if (metaTileEntity != null) {
-            metaTileEntity.updateInputRedstoneSignals();
-            metaTileEntity.onNeighborChanged();
+        TileEntity holder = worldIn.getTileEntity(pos);
+        if (holder instanceof IGregTechTileEntity gregTechTile) {
+            EnumFacing facing = GTUtility.getFacingToNeighbor(pos, fromPos);
+            if (facing != null) gregTechTile.onNeighborChanged(facing);
+            MetaTileEntity metaTileEntity = gregTechTile.getMetaTileEntity();
+            if (metaTileEntity != null) {
+                metaTileEntity.updateInputRedstoneSignals();
+                metaTileEntity.onNeighborChanged();
+            }
+        }
+    }
+
+    @Override
+    public void onNeighborChange(IBlockAccess world, @NotNull BlockPos pos, @NotNull BlockPos neighbor) {
+        TileEntity holder = world.getTileEntity(pos);
+        if (holder instanceof IGregTechTileEntity gregTechTile) {
+            EnumFacing facing = GTUtility.getFacingToNeighbor(pos, neighbor);
+            if (facing != null) gregTechTile.onNeighborChanged(facing);
         }
     }
 
@@ -473,7 +500,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public boolean canEntityDestroy(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull Entity entity) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        if(metaTileEntity == null) {
+        if (metaTileEntity == null) {
             return super.canEntityDestroy(state, world, pos, entity);
         }
         return !((entity instanceof EntityWither || entity instanceof EntityWitherSkull) && metaTileEntity.getWitherProof());

@@ -68,7 +68,7 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     public void update() {
         super.update();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0L && isAttachedToMultiBlock() && getFrontFacing() == EnumFacing.DOWN) {
-            TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(getFrontFacing()));
+            TileEntity tileEntity = getNeighbor(getFrontFacing());
             IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getFrontFacing().getOpposite());
             if (fluidHandler != null) {
                 GTTransferUtils.transferFluids(fluidInventory, fluidHandler);

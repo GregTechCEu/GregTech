@@ -101,7 +101,7 @@ public class BlockPattern {
         return worldState.error;
     }
 
-    public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing facing) {
+    public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing frontFacing, EnumFacing upwardsFacing, boolean allowsFlip) {
         if (!cache.isEmpty()) {
             boolean pass = true;
             for (Map.Entry<Long, BlockInfo> entry : cache.entrySet()) {
@@ -122,14 +122,24 @@ public class BlockPattern {
             }
             if (pass) return worldState.hasError() ? null : matchContext;
         }
-        return checkPatternAt(world, centerPos, facing);
+
+        // First try normal pattern, and if it fails, try flipped (if allowed).
+        PatternMatchContext pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
+        if (allowsFlip) {
+            if (pmc != null) {
+                return pmc;
+            }
+            pmc = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, true);
+        }
+        if (pmc == null) clearCache(); // we don't want a random cache of a partially formed multi
+        return pmc;
     }
 
     public void clearCache() {
         cache.clear();
     }
 
-    private PatternMatchContext checkPatternAt(World world, BlockPos centerPos, EnumFacing facing) {
+    private PatternMatchContext checkPatternAt(World world, BlockPos centerPos, EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped) {
         boolean findFirstAisle = false;
         int minZ = -centerOffset[4];
 
@@ -149,7 +159,8 @@ public class BlockPattern {
                 for (int b = 0, y = -centerOffset[1]; b < this.thumbLength; b++, y++) {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
-                        BlockPos pos = setActualRelativeOffset(x, y, z, facing).add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
+                        BlockPos pos = setActualRelativeOffset(x, y, z, frontFacing, upwardsFacing, isFlipped)
+                                .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
                         TileEntity tileEntity = worldState.getTileEntity();
                         if (predicate != TraceabilityPredicate.ANY) {
@@ -211,6 +222,7 @@ public class BlockPattern {
         }
 
         worldState.setError(null);
+        matchContext.setNeededFlip(isFlipped);
         return matchContext;
     }
 
@@ -230,7 +242,8 @@ public class BlockPattern {
                 for (int b = 0, y = -centerOffset[1]; b < this.thumbLength; b++, y++) {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
-                        BlockPos pos = setActualRelativeOffset(x, y, z, facing).add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
+                        BlockPos pos = setActualRelativeOffset(x, y, z, facing, controllerBase.getUpwardsFacing(), controllerBase.isFlipped())
+                                .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
                         if (!world.getBlockState(pos).getMaterial().isReplaceable()) {
                             blocks.put(pos, world.getBlockState(pos));
@@ -528,7 +541,7 @@ public class BlockPattern {
                             }
                         }
                         BlockInfo info = infos == null || infos.length == 0 ? BlockInfo.EMPTY : infos[0];
-                        BlockPos pos = setActualRelativeOffset(z, y, x, EnumFacing.NORTH);
+                        BlockPos pos = setActualRelativeOffset(z, y, x, EnumFacing.NORTH, EnumFacing.UP, false);
                         // TODO
                         if (info.getTileEntity() instanceof MetaTileEntityHolder) {
                             MetaTileEntityHolder holder = new MetaTileEntityHolder();
@@ -580,28 +593,81 @@ public class BlockPattern {
         return result;
     }
 
-    private BlockPos setActualRelativeOffset(int x, int y, int z, EnumFacing facing) {
+    private BlockPos setActualRelativeOffset(int x, int y, int z, EnumFacing facing, EnumFacing upwardsFacing, boolean isFlipped) {
         int[] c0 = new int[]{x, y, z}, c1 = new int[3];
-        for (int i = 0; i < 3; i++) {
-            switch (structureDir[i].getActualFacing(facing)) {
-                case UP:
-                    c1[1] = c0[i];
-                    break;
-                case DOWN:
-                    c1[1] = -c0[i];
-                    break;
-                case WEST:
-                    c1[0] = -c0[i];
-                    break;
-                case EAST:
-                    c1[0] = c0[i];
-                    break;
-                case NORTH:
-                    c1[2] = -c0[i];
-                    break;
-                case SOUTH:
-                    c1[2] = c0[i];
-                    break;
+        if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) {
+            EnumFacing of = facing == EnumFacing.DOWN ? upwardsFacing : upwardsFacing.getOpposite();
+            for (int i = 0; i < 3; i++) {
+                switch (structureDir[i].getActualFacing(of)) {
+                    case UP -> c1[1] = c0[i];
+                    case DOWN -> c1[1] = -c0[i];
+                    case WEST -> c1[0] = -c0[i];
+                    case EAST -> c1[0] = c0[i];
+                    case NORTH -> c1[2] = -c0[i];
+                    case SOUTH -> c1[2] = c0[i];
+                }
+            }
+            int xOffset = upwardsFacing.getXOffset();
+            int zOffset = upwardsFacing.getZOffset();
+            int tmp;
+            if (xOffset == 0) {
+                tmp = c1[2];
+                c1[2] = zOffset > 0 ? c1[1] : -c1[1];
+                c1[1] = zOffset > 0 ? -tmp : tmp;
+            } else {
+                tmp = c1[0];
+                c1[0] = xOffset > 0 ? c1[1] : -c1[1];
+                c1[1] = xOffset > 0 ? -tmp : tmp;
+            }
+            if (isFlipped) {
+                if (upwardsFacing == EnumFacing.NORTH || upwardsFacing == EnumFacing.SOUTH) {
+                    c1[0] = -c1[0]; // flip X-axis
+                } else {
+                    c1[2] = -c1[2]; // flip Z-axis
+                }
+            }
+        } else {
+            for (int i = 0; i < 3; i++) {
+                switch (structureDir[i].getActualFacing(facing)) {
+                    case UP -> c1[1] = c0[i];
+                    case DOWN -> c1[1] = -c0[i];
+                    case WEST -> c1[0] = -c0[i];
+                    case EAST -> c1[0] = c0[i];
+                    case NORTH -> c1[2] = -c0[i];
+                    case SOUTH -> c1[2] = c0[i];
+                }
+            }
+            if (upwardsFacing == EnumFacing.WEST || upwardsFacing == EnumFacing.EAST) {
+                int xOffset = upwardsFacing == EnumFacing.WEST ? facing.rotateY().getXOffset() : facing.rotateY().getOpposite().getXOffset();
+                int zOffset = upwardsFacing == EnumFacing.WEST ? facing.rotateY().getZOffset() : facing.rotateY().getOpposite().getZOffset();
+                int tmp;
+                if(xOffset == 0) {
+                    tmp = c1[2];
+                    c1[2] = zOffset > 0 ? -c1[1] : c1[1];
+                    c1[1] = zOffset > 0 ? tmp : -tmp;
+                } else {
+                    tmp = c1[0];
+                    c1[0] = xOffset > 0 ? -c1[1] : c1[1];
+                    c1[1] = xOffset > 0 ? tmp : -tmp;
+                }
+            } else if (upwardsFacing == EnumFacing.SOUTH) {
+                c1[1] = -c1[1];
+                if (facing.getXOffset() == 0) {
+                    c1[0] = -c1[0];
+                } else {
+                    c1[2] = -c1[2];
+                }
+            }
+            if (isFlipped) {
+                if (upwardsFacing == EnumFacing.NORTH || upwardsFacing == EnumFacing.SOUTH) {
+                    if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH) {
+                        c1[0] = -c1[0]; // flip X-axis
+                    } else {
+                        c1[2] = -c1[2]; // flip Z-axis
+                    }
+                } else {
+                    c1[1] = -c1[1]; // flip Y-axis
+                }
             }
         }
         return new BlockPos(c1[0], c1[1], c1[2]);

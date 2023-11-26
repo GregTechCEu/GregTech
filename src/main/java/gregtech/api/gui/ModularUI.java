@@ -159,15 +159,21 @@ public final class ModularUI implements ISizeProvider {
     }
 
     public float getRColorForOverlay() {
-        return shouldColor ? ((ConfigHolder.client.defaultUIColor & 0xFF0000) >> 16) / 255.0f : 1.0f;
+        return shouldColor ? ((getColor() & 0xFF0000) >> 16) / 255.0f : 1.0f;
     }
 
     public float getGColorForOverlay() {
-        return shouldColor ? ((ConfigHolder.client.defaultUIColor & 0xFF00) >> 8) / 255.0f : 1.0f;
+        return shouldColor ? ((getColor() & 0xFF00) >> 8) / 255.0f : 1.0f;
     }
 
     public float getBColorForOverlay() {
-        return shouldColor ? (ConfigHolder.client.defaultUIColor & 0xFF) / 255.0f : 1.0f;
+        return shouldColor ? (getColor() & 0xFF) / 255.0f : 1.0f;
+    }
+
+    private int getColor() {
+        int color = holder.getUIColorOverride();
+        if (color == -1) color = ConfigHolder.client.defaultUIColor;
+        return color;
     }
 
     /**
