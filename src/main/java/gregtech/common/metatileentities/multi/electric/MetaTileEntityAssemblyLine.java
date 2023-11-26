@@ -293,6 +293,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Nonnull
+    @SideOnly(Side.CLIENT)
     private GTLaserBeamParticle createALParticles(Vector3 startPos, Vector3 endPos) {
         return new GTLaserBeamParticle(this, startPos, endPos)
                 .setBody(LASER_LOCATION)

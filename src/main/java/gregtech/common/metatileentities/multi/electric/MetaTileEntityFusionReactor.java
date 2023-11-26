@@ -620,6 +620,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (this.color != null && this.bloomRenderTicket != null) {
             this.bloomRenderTicket = BloomEffectUtil.registerBloomRender(FusionBloomSetup.INSTANCE, getBloomType(), this);
@@ -627,6 +628,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void renderBloomEffect(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context) {
         Integer c = color;
         if (c == null) return;
@@ -648,8 +650,9 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean shouldRenderBloomEffect(@Nonnull EffectRenderContext context) {
-        return this.color!=null;
+        return this.color != null;
     }
 
     @Override
