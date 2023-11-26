@@ -19,6 +19,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.particle.GTNameTagParticle;
 import gregtech.client.particle.GTParticleManager;
+import gregtech.common.ConfigHolder;
 import gregtech.core.network.packets.PacketRecoverMTE;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -258,7 +259,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
 
     /**
      * @return double array of length 2, with index 0 being the average time and index 1 the worst time, in ns.
-     *         If there is no tick time, it will return null.
+     * If there is no tick time, it will return null.
      */
     public double[] getTimeStatistics() {
         if (timeStatistics.length > 0) {
@@ -270,7 +271,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                     worstTickTime = tickTime;
                 }
             }
-            return new double[] { averageTickTime, worstTickTime };
+            return new double[]{averageTickTime, worstTickTime};
         }
         return null;
     }
@@ -428,6 +429,15 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             }
         }
         return false;
+    }
+
+    @Override
+    public int getUIColorOverride() {
+        if (metaTileEntity == null) return -1;
+        if (ConfigHolder.client.useSprayCanColorInUI) {
+            return metaTileEntity.getPaintingColor();
+        }
+        return -1;
     }
 
     public void setCustomName(String customName) {

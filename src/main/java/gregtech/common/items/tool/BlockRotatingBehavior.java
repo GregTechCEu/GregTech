@@ -1,10 +1,14 @@
 package gregtech.common.items.tool;
 
+import codechicken.lib.raytracer.RayTracer;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.common.items.tool.rotation.CustomBlockRotations;
+import gregtech.common.items.tool.rotation.ICustomRotationBehavior;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRailBase;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,14 +38,22 @@ public class BlockRotatingBehavior implements IToolBehavior {
             return EnumActionResult.PASS;
         }
 
-        Block b = world.getBlockState(pos).getBlock();
+        IBlockState state = world.getBlockState(pos);
+        Block b = state.getBlock();
         // leave rail rotation to Crowbar only
         if (b instanceof BlockRailBase) {
             return EnumActionResult.FAIL;
         }
 
         if (!player.isSneaking() && world.canMineBlockBody(player, pos)) {
-            if (b.rotateBlock(world, pos, side)) {
+            // Special cases for vanilla blocks where the default rotation behavior is less than ideal
+            ICustomRotationBehavior behavior = CustomBlockRotations.getCustomRotation(b);
+            if (behavior != null) {
+                if (behavior.customRotate(state, world, pos, RayTracer.retraceBlock(world, player, pos))) {
+                    ToolHelper.onActionDone(player, world, hand);
+                    return EnumActionResult.SUCCESS;
+                }
+            } else if (b.rotateBlock(world, pos, side)) {
                 ToolHelper.onActionDone(player, world, hand);
                 return EnumActionResult.SUCCESS;
             }

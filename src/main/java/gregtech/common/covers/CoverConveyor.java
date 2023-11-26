@@ -81,12 +81,12 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
         if (getWorld() != null && getWorld().isRemote) {
             // tile at cover holder pos
-            TileEntity te = getWorld().getTileEntity(getPos());
+            TileEntity te = getTileEntityHere();
             if (te instanceof TileEntityItemPipe) {
                 ((TileEntityItemPipe) te).resetTransferred();
             }
             // tile neighbour to holder pos at attached side
-            te = getWorld().getTileEntity(getPos().offset(getAttachedSide()));
+            te = getNeighbor(getAttachedSide());
             if (te instanceof TileEntityItemPipe) {
                 ((TileEntityItemPipe) te).resetTransferred();
             }
@@ -139,7 +139,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         long timer = coverable.getOffsetTimer();
         if (timer % 5 == 0 && isWorkingAllowed && itemsLeftToTransferLastSecond > 0) {
             EnumFacing side = getAttachedSide();
-            TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(side));
+            TileEntity tileEntity = coverable.getNeighbor(side);
             IItemHandler itemHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
             IItemHandler myItemHandler = coverable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
             if (itemHandler != null && myItemHandler != null) {
@@ -492,8 +492,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
                 .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
-        if (getWorld().getTileEntity(getPos()) instanceof TileEntityItemPipe ||
-                getWorld().getTileEntity(getPos().offset(getAttachedSide())) instanceof TileEntityItemPipe) {
+        if (getTileEntityHere() instanceof TileEntityItemPipe ||
+                getNeighbor(getAttachedSide()) instanceof TileEntityItemPipe) {
             final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
                     () -> distributionMode.ordinal(),
                     val -> setDistributionMode(DistributionMode.values()[val]))

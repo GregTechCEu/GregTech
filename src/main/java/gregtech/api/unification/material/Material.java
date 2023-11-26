@@ -23,11 +23,13 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.ApiStatus;
 import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.UnaryOperator;
 
 @ZenClass("mods.gregtech.material.Material")
 @ZenRegister
@@ -877,23 +879,46 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        /** @deprecated use {@link Material.Builder#blast(int)}. */
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+        @Deprecated
         public Builder blastTemp(int temp) {
+            return blast(temp);
+        }
+
+        /** @deprecated use {@link Material.Builder#blast(int, BlastProperty.GasTier)}. */
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+        @Deprecated
+        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier) {
+            return blast(temp, gasTier);
+        }
+
+        /** @deprecated use {@link Material.Builder#blast(UnaryOperator)} for more detailed stats. */
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+        @Deprecated
+        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride) {
+            return blast(b -> b.temp(temp, gasTier).blastStats(eutOverride));
+        }
+
+        /** @deprecated use {@link Material.Builder#blast(UnaryOperator)} for more detailed stats. */
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+        @Deprecated
+        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride, int durationOverride) {
+            return blast(b -> b.temp(temp, gasTier).blastStats(eutOverride, durationOverride));
+        }
+        
+        public Builder blast(int temp) {
             properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp));
             return this;
         }
-
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier) {
-            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, -1, -1));
+        
+        public Builder blast(int temp, BlastProperty.GasTier gasTier) {
+            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier));
             return this;
         }
 
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride) {
-            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, eutOverride, -1));
-            return this;
-        }
-
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride, int durationOverride) {
-            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, eutOverride, durationOverride));
+        public Builder blast(UnaryOperator<BlastProperty.Builder> b) {
+            properties.setProperty(PropertyKey.BLAST, b.apply(new BlastProperty.Builder()).build());
             return this;
         }
 

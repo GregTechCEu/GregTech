@@ -176,7 +176,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
         long ampsUsed = 0;
         for (EnumFacing facing : EnumFacing.values()) {
             EnumFacing opposite = facing.getOpposite();
-            TileEntity tile = getWorld().getTileEntity(getPos().offset(facing));
+            TileEntity tile = getNeighbor(facing);
             if (tile != null) {
                 IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, opposite);
                 // Try to get laser capability

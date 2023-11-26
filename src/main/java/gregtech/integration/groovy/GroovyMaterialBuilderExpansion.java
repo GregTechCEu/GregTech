@@ -62,6 +62,10 @@ public class GroovyMaterialBuilderExpansion {
     }
 
     public static Material.Builder blastTemp(Material.Builder builder, int temp, String raw, int eutOverride, int durationOverride) {
+        return blastTemp(builder, temp, raw, eutOverride, durationOverride, -1, -1);
+    }
+
+    public static Material.Builder blastTemp(Material.Builder builder, int temp, String raw, int eutOverride, int durationOverride, int vacuumEUtOverride, int vacuumDurationOverride) {
         BlastProperty.GasTier gasTier = null;
         String name = raw.toUpperCase();
         for (BlastProperty.GasTier gasTier1 : BlastProperty.GasTier.VALUES) {
@@ -70,8 +74,12 @@ public class GroovyMaterialBuilderExpansion {
                 break;
             }
         }
+        final BlastProperty.GasTier finalGasTier = gasTier;
         if (GroovyScriptModule.validateNonNull(gasTier, () -> "Can't find gas tier for " + name + " in material builder. Valid values are 'low', 'mid', 'high', 'higher', 'highest'!")) {
-            return builder.blastTemp(temp, gasTier, eutOverride, durationOverride);
+            return builder.blast(b -> b
+                    .temp(temp, finalGasTier)
+                    .blastStats(eutOverride, durationOverride)
+                    .vacuumStats(vacuumEUtOverride, vacuumDurationOverride));
         }
         return builder;
     }

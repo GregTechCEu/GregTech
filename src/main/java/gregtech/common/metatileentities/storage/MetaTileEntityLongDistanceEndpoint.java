@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -237,8 +238,8 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             textComponents.add(new TextComponentString("Network:"));
             textComponents.add(new TextComponentString(" - " + network.getTotalSize() + " pipes"));
             ILDEndpoint in = network.getActiveInputIndex(), out = network.getActiveOutputIndex();
-            textComponents.add(new TextComponentString(" - input: " + (in == null ? "none" : in.getPos())));
-            textComponents.add(new TextComponentString(" - output: " + (out == null ? "none" : out.getPos())));
+            textComponents.add(new TextComponentString(" - input: " + (in == null ? "none" : in.pos())));
+            textComponents.add(new TextComponentString(" - output: " + (out == null ? "none" : out.pos())));
         }
         if (isInput()) {
             textComponents.add(new TextComponentString("Input endpoint"));
@@ -247,5 +248,23 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity 
             textComponents.add(new TextComponentString("Output endpoint"));
         }
         return textComponents;
+    }
+
+    @Override
+    public World world() {
+        return getWorld();
+    }
+
+    @Override
+    public BlockPos pos() {
+        return getPos();
+    }
+
+    @Override
+    public void onNeighborChanged(@NotNull EnumFacing facing) {
+    }
+
+    @Override
+    public void markAsDirty() {
     }
 }

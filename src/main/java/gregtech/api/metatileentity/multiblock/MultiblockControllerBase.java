@@ -309,7 +309,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (context != null && !structureFormed) {
             Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
-            parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
             for (IMultiblockPart part : parts) {
                 if (part.isAttachedToMultiBlock()) {
                     if (!part.canPartShare()) {
@@ -317,6 +316,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     }
                 }
             }
+            this.setFlipped(context.neededFlip());
+            parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
             Map<MultiblockAbility<Object>, List<Object>> abilities = new HashMap<>();
             for (IMultiblockPart multiblockPart : parts) {
                 if (multiblockPart instanceof IMultiblockAbilityPart) {
@@ -331,7 +332,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             this.multiblockAbilities.putAll(abilities);
             this.structureFormed = true;
             writeCustomData(STRUCTURE_FORMED, buf -> buf.writeBoolean(true));
-            this.setFlipped(context.neededFlip());
             formStructure(context);
         } else if (context == null && structureFormed) {
             invalidateStructure();

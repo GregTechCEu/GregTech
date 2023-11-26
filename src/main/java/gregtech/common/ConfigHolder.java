@@ -393,6 +393,9 @@ public class ConfigHolder {
         @Config.RequiresMcRestart
         public int multiblockPreviewColor = 0xC6C6C6;
 
+        @Config.Comment({"Whether to use the Spray Can color in UIs when a machine is painted.", "Default: true"})
+        public boolean useSprayCanColorInUI = true;
+
         // does not require mc restart, drawn dynamically
         @Config.Comment({"The color to use for the text in the Multiblock Preview JEI Page.",
                 "Default: 3355443 (0x333333), which is minecraft's dark gray color."})
