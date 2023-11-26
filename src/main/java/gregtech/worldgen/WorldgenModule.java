@@ -8,9 +8,9 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.StoneVariantBlock;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
+import gregtech.worldgen.generator.ChunkAlignedSettings;
 import gregtech.worldgen.generator.GeneratorRegistry;
 import gregtech.worldgen.generator.LayeredVeinSettings;
-import gregtech.worldgen.generator.SporadicWorldGenerator;
 import gregtech.worldgen.generator.StoneBlob;
 import gregtech.worldgen.placeable.BlockStatePlaceable;
 import gregtech.worldgen.placeable.MaterialPlaceable;
@@ -42,9 +42,9 @@ public class WorldgenModule extends BaseGregTechModule {
      */
     public static final boolean DEBUG = false;
 
-    public static final GeneratorRegistry<LayeredVeinSettings> CHUNK_ALIGNED_REGISTRY = new GeneratorRegistry<>();
+    public static final GeneratorRegistry<ChunkAlignedSettings<?>> CHUNK_ALIGNED_REGISTRY = new GeneratorRegistry<>();
     public static final GeneratorRegistry<StoneBlob> STONE_BLOB_REGISTRY = new GeneratorRegistry<>();
-    public static final GeneratorRegistry<SporadicWorldGenerator> SPORADIC_REGISTRY = new GeneratorRegistry<>();
+//    public static final GeneratorRegistry<SporadicWorldGenerator> SPORADIC_REGISTRY = new GeneratorRegistry<>();
 
     @Override
     public @NotNull Logger getLogger() {

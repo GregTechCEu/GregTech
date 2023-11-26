@@ -3,7 +3,7 @@ package gregtech.worldgen.generator;
 import gregtech.worldgen.placeable.WorldgenPlaceable;
 import org.jetbrains.annotations.NotNull;
 
-public class StoneBlob extends GeneratorSettingsBase {
+public class StoneBlob extends GeneratorSettingsBase<StoneBlobGenerator> {
 
     private final WorldgenPlaceable placeable;
 
@@ -16,5 +16,11 @@ public class StoneBlob extends GeneratorSettingsBase {
 
     public @NotNull WorldgenPlaceable placeable() {
         return placeable;
+    }
+
+    @NotNull
+    @Override
+    public StoneBlobGenerator createGenerator() {
+        return new StoneBlobGenerator(this);
     }
 }

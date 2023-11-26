@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Base class storing general info about world generators
  */
-public abstract class GeneratorSettingsBase implements GeneratorSettings {
+public abstract class GeneratorSettingsBase<T extends WorldGenerator> implements GeneratorSettings<T> {
 
     protected final String name;
 
@@ -36,6 +36,7 @@ public abstract class GeneratorSettingsBase implements GeneratorSettings {
         return this.weight;
     }
 
+    @Override
     public @NotNull String name() {
         return name;
     }

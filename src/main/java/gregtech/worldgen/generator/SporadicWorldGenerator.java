@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-public interface SporadicWorldGenerator extends GeneratorSettings {
+public interface SporadicWorldGenerator extends WorldGenerator {
 
     /**
      * Generate worldgen chunk-aligned.

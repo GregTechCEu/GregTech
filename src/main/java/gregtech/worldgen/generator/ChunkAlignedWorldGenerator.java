@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-public interface ChunkAlignedWorldGenerator {
+public interface ChunkAlignedWorldGenerator extends WorldGenerator {
 
     /**
      * Generate worldgen chunk-aligned.

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GeneratorRegistry<T extends GeneratorSettings> {
+public final class GeneratorRegistry<T extends GeneratorSettings<?>> {
 
     private final Int2ObjectMap<List<T>> map = new Int2ObjectOpenHashMap<>();
     private final Int2IntOpenHashMap weightMap = new Int2IntOpenHashMap();

@@ -4,10 +4,9 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import gregtech.api.util.XSTR;
 import gregtech.api.util.math.ChunkPosDimension;
+import gregtech.worldgen.generator.ChunkAlignedSettings;
 import gregtech.worldgen.generator.ChunkAlignedWorldGenerator;
 import gregtech.worldgen.generator.EmptyVein;
-import gregtech.worldgen.generator.LayeredVeinGenerator;
-import gregtech.worldgen.generator.LayeredVeinSettings;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +29,7 @@ public class ChunkAlignedWorldgen implements Runnable {
             .softValues()
             .build();
 
-    private static final Collection<WorldgenCallback<LayeredVeinSettings>> callbacks = new ArrayList<>();
+    private static final Collection<WorldgenCallback<ChunkAlignedSettings<?>>> callbacks = new ArrayList<>();
 
     private final int chunkX;
     private final int chunkZ;
@@ -52,7 +51,7 @@ public class ChunkAlignedWorldgen implements Runnable {
      * @param callback the callback to register
      */
     @SuppressWarnings("unused")
-    public static void registerCallback(@NotNull WorldgenCallback<LayeredVeinSettings> callback) {
+    public static void registerCallback(@NotNull WorldgenCallback<ChunkAlignedSettings<?>> callback) {
         callbacks.add(callback);
     }
 
@@ -163,11 +162,11 @@ public class ChunkAlignedWorldgen implements Runnable {
                     if (attempts >= WorldgenModule.maxOregenPlacementAttempts()) break;
 
                     int weight = random.nextInt(totalWeight);
-                    for (LayeredVeinSettings settings : collection) {
+                    for (var settings : collection) {
                         weight -= settings.weight();
                         if (weight > 0) continue;
 
-                        ChunkAlignedWorldGenerator generator = new LayeredVeinGenerator(settings);
+                        ChunkAlignedWorldGenerator generator = settings.createGenerator();
 
                         PlacementResult result = generator.generate(world, new XSTR(seed), biome,
                                 dimension, originX * 16, originZ * 16,

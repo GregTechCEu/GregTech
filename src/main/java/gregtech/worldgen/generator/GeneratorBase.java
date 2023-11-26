@@ -3,7 +3,7 @@ package gregtech.worldgen.generator;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class GeneratorBase<T extends GeneratorSettings> {
+public abstract class GeneratorBase<T extends GeneratorSettings> implements WorldGenerator {
 
     protected final T settings;
 
