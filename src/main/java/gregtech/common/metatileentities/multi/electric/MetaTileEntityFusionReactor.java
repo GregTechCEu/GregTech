@@ -622,7 +622,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     @Override
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        if (this.color != null && this.bloomRenderTicket != null) {
+        if (this.color != null && this.bloomRenderTicket == null) {
             this.bloomRenderTicket = BloomEffectUtil.registerBloomRender(FusionBloomSetup.INSTANCE, getBloomType(), this);
         }
     }
