@@ -143,7 +143,8 @@ public class BloomEffectUtil {
 
     /**
      * <p>
-     * Register a custom bloom render callback for next world render. The render call persists until manually
+     * Register a custom bloom render callback for subsequent world render. The render call persists until it is
+     * manually freed by calling {@link BloomRenderTicket#invalidate()}, or automatically freed on client world change.
      * </p>
      * <p>
      * This method does nothing if Optifine is present.
@@ -162,7 +163,7 @@ public class BloomEffectUtil {
                                                         @Nonnull IBloomEffect render) {
         BloomRenderTicket ticket = new BloomRenderTicket(setup, bloomType, render);
         if (Shaders.isOptiFineShaderPackLoaded()) {
-            ticket.valid = true;
+            ticket.invalidate();
         } else {
             SCHEDULED_BLOOM_RENDERS.add(ticket);
         }
