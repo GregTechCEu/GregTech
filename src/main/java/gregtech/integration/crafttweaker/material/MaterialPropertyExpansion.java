@@ -86,7 +86,7 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addBlastProperty(Material m, int blastTemp, @Optional String gasTier, @Optional int durationOverride, @Optional int eutOverride) {
+    public static void addBlastProperty(Material m, int blastTemp, @Optional String gasTier, @Optional int durationOverride, @Optional int eutOverride, @Optional int vacuumDurationOverride, @Optional int vacuumEUtOverride) {
         if (checkFrozen("add blast property")) return;
         if (m.hasProperty(PropertyKey.BLAST)) {
             BlastProperty property = m.getProperty(PropertyKey.BLAST);
@@ -94,11 +94,14 @@ public class MaterialPropertyExpansion {
             if (gasTier != null) property.setGasTier(BlastProperty.validateGasTier(gasTier));
             if (durationOverride != 0) property.setDurationOverride(durationOverride);
             if (eutOverride != 0) property.setEutOverride(eutOverride);
+            if (vacuumDurationOverride != 0) property.setVacuumDurationOverride(vacuumDurationOverride);
+            if (vacuumEUtOverride != 0) property.setVacuumEutOverride(vacuumEUtOverride);
         } else {
-            m.setProperty(PropertyKey.BLAST, new BlastProperty(blastTemp,
-                    gasTier == null ? BlastProperty.GasTier.LOW : BlastProperty.validateGasTier(gasTier),
-                    durationOverride == 0 ? -1 : durationOverride,
-                    eutOverride == 0 ? -1 : eutOverride));
+            BlastProperty.Builder builder = new BlastProperty.Builder();
+            builder.temp(blastTemp, gasTier == null ? BlastProperty.GasTier.LOW : BlastProperty.validateGasTier(gasTier));
+            builder.blastStats(durationOverride == 0 ? -1 : durationOverride, eutOverride == 0 ? -1 : eutOverride);
+            builder.vacuumStats(vacuumEUtOverride == 0 ? -1 : vacuumEUtOverride, vacuumDurationOverride == 0 ? -1 : vacuumDurationOverride);
+            m.setProperty(PropertyKey.BLAST, builder.build());
         }
     }
 

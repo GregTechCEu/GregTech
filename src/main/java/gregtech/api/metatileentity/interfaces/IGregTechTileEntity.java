@@ -9,7 +9,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
  * Also delivers most of the Information about TileEntities.
  * <p/>
  */
-public interface IGregTechTileEntity extends IHasWorldObjectAndCoords, ISyncedTileEntity, IUIHolder {
+public interface IGregTechTileEntity extends IHasWorldObjectAndCoords, INeighborCache, ISyncedTileEntity, IUIHolder {
 
     MetaTileEntity getMetaTileEntity();
 

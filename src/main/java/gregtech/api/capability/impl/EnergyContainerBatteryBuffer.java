@@ -85,7 +85,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
         }
 
         EnumFacing outFacing = metaTileEntity.getFrontFacing();
-        TileEntity tileEntity = metaTileEntity.getWorld().getTileEntity(metaTileEntity.getPos().offset(outFacing));
+        TileEntity tileEntity = metaTileEntity.getNeighbor(outFacing);
         if (tileEntity == null) {
             return;
         }

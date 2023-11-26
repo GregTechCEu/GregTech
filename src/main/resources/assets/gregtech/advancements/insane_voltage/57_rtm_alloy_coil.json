@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.insane_voltage.57_rtm_alloy_coil.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.insane_voltage.57_rtm_alloy_coil.name"
+    },
+    "icon": {
+      "item": "gregtech:wire_coil",
+      "data": 3
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:wire_coil",
+            "data": 3
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:insane_voltage/root_iv"
+}

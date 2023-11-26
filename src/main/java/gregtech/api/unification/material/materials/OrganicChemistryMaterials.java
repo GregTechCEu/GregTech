@@ -23,7 +23,6 @@ public class OrganicChemistryMaterials {
                 .build()
                 .setFormula("Si(CH3)2O", true);
 
-
         Nitrobenzene = new Material.Builder(1001, gregtechId("nitrobenzene"))
                 .gas()
                 .color(0x704936)

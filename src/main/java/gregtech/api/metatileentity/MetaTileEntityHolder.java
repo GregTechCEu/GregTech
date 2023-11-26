@@ -19,6 +19,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.particle.GTNameTagParticle;
 import gregtech.client.particle.GTParticleManager;
+import gregtech.common.ConfigHolder;
 import gregtech.core.network.packets.PacketRecoverMTE;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -428,6 +429,15 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             }
         }
         return false;
+    }
+
+    @Override
+    public int getUIColorOverride() {
+        if (metaTileEntity == null) return -1;
+        if (ConfigHolder.client.useSprayCanColorInUI) {
+            return metaTileEntity.getPaintingColor();
+        }
+        return -1;
     }
 
     public void setCustomName(String customName) {

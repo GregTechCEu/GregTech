@@ -73,7 +73,7 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
                 return isRecipeAvailable(controller.getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), seen, recipe) ||
                         isRecipeAvailable(controller.getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), seen, recipe);
             } else {
-                TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(getFrontFacing()));
+                TileEntity tileEntity = getNeighbor(getFrontFacing());
                 if (tileEntity == null) return false;
 
                 if (tileEntity instanceof TileEntityOpticalPipe) {

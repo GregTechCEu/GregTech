@@ -14,6 +14,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +26,11 @@ import java.util.function.Consumer;
 public abstract class SyncedTileEntityBase extends BlockStateTileEntity implements ISyncedTileEntity {
 
     private final PacketDataList updates = new PacketDataList();
+
+    public @Nullable TileEntity getNeighbor(EnumFacing facing) {
+        if (world == null || pos == null) return null;
+        return world.getTileEntity(pos.offset(facing));
+    }
 
     @Override
     public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter) {

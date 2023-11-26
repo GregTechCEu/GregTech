@@ -160,11 +160,16 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder blastTemp(int temp, @Optional String gasTier, @Optional int eutOverride, @Optional int durationOverride) {
+    public CTMaterialBuilder blastTemp(int temp, @Optional String gasTier, @Optional int eutOverride, @Optional int durationOverride, @Optional int vacuumEUtOverride, @Optional int vacuumDurationOverride) {
         BlastProperty.GasTier tier = BlastProperty.validateGasTier(gasTier);
-        if (eutOverride == 0) eutOverride = -1;
-        if (durationOverride == 0) durationOverride = -1;
-        backingBuilder.blastTemp(temp, tier, eutOverride, durationOverride);
+        final int blastEUt = eutOverride != 0 ? eutOverride : -1;
+        final int blastDuration = durationOverride != 0 ? durationOverride : -1;
+        final int vacuumEUt = vacuumEUtOverride != 0 ? vacuumEUtOverride : -1;
+        final int vacuumDuration = vacuumDurationOverride != 0 ? vacuumDurationOverride : -1;
+        backingBuilder.blast(b -> b
+                .temp(temp, tier)
+                .blastStats(blastEUt, blastDuration)
+                .vacuumStats(vacuumEUt, vacuumDuration));
         return this;
     }
 

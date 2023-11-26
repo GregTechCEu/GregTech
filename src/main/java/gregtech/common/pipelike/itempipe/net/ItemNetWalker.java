@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 
 public class ItemNetWalker extends PipeNetWalker<TileEntityItemPipe> {
 
-    public static List<ItemPipeNet.Inventory> createNetData(World world, BlockPos sourcePipe, EnumFacing faceToSourceHandler) {
+    public static List<ItemRoutePath> createNetData(World world, BlockPos sourcePipe, EnumFacing faceToSourceHandler) {
         if (!(world.getTileEntity(sourcePipe) instanceof TileEntityItemPipe)) {
             return null;
         }
@@ -36,13 +36,13 @@ public class ItemNetWalker extends PipeNetWalker<TileEntityItemPipe> {
     }
 
     private ItemPipeProperties minProperties;
-    private final List<ItemPipeNet.Inventory> inventories;
+    private final List<ItemRoutePath> inventories;
     private final List<Predicate<ItemStack>> filters = new ArrayList<>();
     private final EnumMap<EnumFacing, List<Predicate<ItemStack>>> nextFilters = new EnumMap<>(EnumFacing.class);
     private BlockPos sourcePipe;
     private EnumFacing facingToHandler;
 
-    protected ItemNetWalker(World world, BlockPos sourcePipe, int distance, List<ItemPipeNet.Inventory> inventories, ItemPipeProperties properties) {
+    protected ItemNetWalker(World world, BlockPos sourcePipe, int distance, List<ItemRoutePath> inventories, ItemPipeProperties properties) {
         super(world, sourcePipe, distance);
         this.inventories = inventories;
         this.minProperties = properties;
@@ -89,7 +89,7 @@ public class ItemNetWalker extends PipeNetWalker<TileEntityItemPipe> {
             if (moreFilters != null && !moreFilters.isEmpty()) {
                 filters.addAll(moreFilters);
             }
-            inventories.add(new ItemPipeNet.Inventory(new BlockPos(pipePos), faceToNeighbour, getWalkedBlocks(), minProperties, filters));
+            inventories.add(new ItemRoutePath(pipeTile, faceToNeighbour, getWalkedBlocks(), minProperties, filters));
         }
     }
 

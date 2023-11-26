@@ -20,6 +20,8 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
+import gregtech.common.items.tool.rotation.CustomBlockRotations;
+import gregtech.common.items.tool.rotation.ICustomRotationBehavior;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -56,6 +58,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
@@ -213,14 +216,16 @@ public class ToolEventHandlers {
         boolean sneaking = player.isSneaking();
 
         // Grid overlays
-        if (tile != null && shouldRenderGridOverlays(state, tile, stack, player.getHeldItemOffhand(), sneaking) &&
+        if (shouldRenderGridOverlays(state, tile, stack, player.getHeldItemOffhand(), sneaking) &&
                 renderGridOverlays(player, pos, state, event.getTarget().sideHit, tile, event.getPartialTicks())) {
             event.setCanceled(true);
             return;
         }
 
         // AoE selection box and block damage overlay
-        if (!sneaking && stack.getItem() instanceof IGTTool) {
+        if (!sneaking && stack.getItem() instanceof IGTTool tool) {
+            state = state.getActualState(player.world, pos);
+            if (!ToolHelper.isToolEffective(state, tool.getToolClasses(stack), tool.getTotalHarvestLevel(stack))) return;
             Set<BlockPos> validPositions = ToolHelper.getHarvestableBlocks(stack, player.world, player, event.getTarget());
             if (validPositions.isEmpty()) return;
 
@@ -286,7 +291,7 @@ public class ToolEventHandlers {
     }
 
     @SideOnly(Side.CLIENT)
-    private static boolean shouldRenderGridOverlays(@Nonnull IBlockState state, TileEntity tile, ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
+    private static boolean shouldRenderGridOverlays(@Nonnull IBlockState state, @Nullable TileEntity tile, ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
         if (state.getBlock() instanceof BlockPipe<?, ?, ?> pipe) {
             if (isSneaking && (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass())) {
                 return true;
@@ -319,17 +324,27 @@ public class ToolEventHandlers {
 
         if (tile instanceof IGregTechTileEntity gtte) {
             MetaTileEntity mte = gtte.getMetaTileEntity();
-            if (mte != null && (mainHand.isEmpty() || mte.canRenderMachineGrid(mainHand, offHand))) {
-                return true;
+            if (mte != null) {
+                if (mainHand.isEmpty() && isSneaking && mte.hasAnyCover()) return true;
+                if (mte.canRenderMachineGrid(mainHand, offHand)) return true;
             }
         }
-        CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, null);
-        if (coverHolder == null) return false;
 
-        final boolean hasAnyCover = coverHolder.hasAnyCover();
-        final boolean acceptsCovers = coverHolder.acceptsCovers();
+        if (ToolHelper.isTool(mainHand, ToolClasses.WRENCH)) {
+            ICustomRotationBehavior behavior = CustomBlockRotations.getCustomRotation(state.getBlock());
+            if (behavior != null && behavior.showGrid()) return true;
+        }
 
-        return GTUtility.isCoverBehaviorItem(mainHand, () -> hasAnyCover, coverDefinition -> acceptsCovers);
+        if (tile != null) {
+            CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, null);
+            if (coverHolder == null) return false;
+
+            final boolean hasAnyCover = coverHolder.hasAnyCover();
+            final boolean acceptsCovers = coverHolder.acceptsCovers();
+
+            return GTUtility.isCoverBehaviorItem(mainHand, () -> hasAnyCover, coverDefinition -> acceptsCovers);
+        }
+        return false;
     }
 
     private static float rColour;
@@ -358,7 +373,7 @@ public class ToolEventHandlers {
             } else if (tile instanceof MetaTileEntityHolder) {
                 MetaTileEntity mte = ((MetaTileEntityHolder) tile).getMetaTileEntity();
                 drawGridOverlays(facing, box, mte::isSideUsed);
-                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing()) {
+                if (mte instanceof MultiblockControllerBase multi && multi.allowsExtendedFacing() && ToolHelper.isTool(player.getHeldItemMainhand(), ToolClasses.WRENCH)) {
                     // set up some render state first
                     GL11.glPushMatrix();
                     GL11.glTranslated(pos.getX() - (int) d3, pos.getY() - (int) d4, pos.getZ() - (int) d5);
@@ -382,7 +397,12 @@ public class ToolEventHandlers {
                     GL11.glPopMatrix();
                 }
             } else {
-                drawGridOverlays(box);
+                ICustomRotationBehavior behavior = CustomBlockRotations.getCustomRotation(state.getBlock());
+                if (behavior != null && behavior.showGrid()) {
+                    drawGridOverlays(facing, box, side -> behavior.showXOnSide(state, side));
+                } else {
+                    drawGridOverlays(box);
+                }
             }
             GlStateManager.depthMask(true);
             GlStateManager.enableTexture2D();
