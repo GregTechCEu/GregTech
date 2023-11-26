@@ -313,6 +313,7 @@ public class BloomEffectUtil {
             case 1 -> BloomEffect.renderUnity(bloomFBO, fbo);
             case 2 -> BloomEffect.renderUnreal(bloomFBO, fbo);
             default -> {
+                postDraw();
                 GlStateManager.depthMask(false);
                 GlStateManager.disableBlend();
                 return result;
