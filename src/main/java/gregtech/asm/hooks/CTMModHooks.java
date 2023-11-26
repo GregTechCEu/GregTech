@@ -23,15 +23,15 @@ public class CTMModHooks {
     }
 
     public static boolean canRenderInLayer(IModelCTM model, IBlockState state, BlockRenderLayer layer) {
-        boolean flag = model.canRenderInLayer(state, layer);
+        boolean canRenderInLayer = model.canRenderInLayer(state, layer);
         if (model instanceof ModelCTM && layers != null) {
             try {
-                return CTMHooks.checkLayerWithOptiFine(flag, layers.getByte(model), layer);
+                return CTMHooks.checkLayerWithOptiFine(canRenderInLayer, layers.getByte(model), layer);
             } catch (Exception ignored) {
                 layers = null;
                 GTLog.logger.error("CTMModHooks Field error");
             }
         }
-        return flag;
+        return canRenderInLayer;
     }
 }

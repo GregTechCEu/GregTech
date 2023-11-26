@@ -234,7 +234,7 @@ public interface Cover {
 
     @SideOnly(Side.CLIENT)
     default boolean canRenderInLayer(@NotNull BlockRenderLayer renderLayer) {
-        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomEffectUtil.getRealBloomLayer();
+        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomEffectUtil.getEffectiveBloomLayer();
     }
 
     @SideOnly(Side.CLIENT)

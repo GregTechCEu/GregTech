@@ -24,7 +24,7 @@ public class LittleTilesHooks {
         private List<LittleRenderBox> translucent = null;
 
         public List<LittleRenderBox> get(BlockRenderLayer layer) {
-            if (layer == BloomEffectUtil.BLOOM) {
+            if (layer == BloomEffectUtil.getBloomLayer()) {
                 return bloom;
             }
             switch (layer) {
@@ -41,7 +41,7 @@ public class LittleTilesHooks {
         }
 
         public void set(List<LittleRenderBox> cubes, BlockRenderLayer layer) {
-            if (layer == BloomEffectUtil.BLOOM) {
+            if (layer == BloomEffectUtil.getBloomLayer()) {
                 bloom = cubes;
             }
             switch (layer) {
@@ -76,7 +76,7 @@ public class LittleTilesHooks {
             if (!OptifineHelper.isActive())
                 return;
 
-            for (Iterator<LittleRenderBox> iterator = solid.iterator(); iterator.hasNext();) {
+            for (Iterator<LittleRenderBox> iterator = solid.iterator(); iterator.hasNext(); ) {
                 LittleRenderBox littleRenderingCube = iterator.next();
                 if (littleRenderingCube.needsResorting) {
                     cutout_mipped.add(littleRenderingCube);
@@ -84,6 +84,5 @@ public class LittleTilesHooks {
                 }
             }
         }
-
     }
 }

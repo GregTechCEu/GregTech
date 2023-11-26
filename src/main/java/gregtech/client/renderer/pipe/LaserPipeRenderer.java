@@ -51,7 +51,7 @@ public class LaserPipeRenderer extends PipeRenderer {
 
     @Override
     protected void renderOtherLayers(BlockRenderLayer layer, CCRenderState renderState, PipeRenderContext renderContext) {
-        if (active && layer == BloomEffectUtil.getRealBloomLayer() && (renderContext.getConnections() & 0b111111) != 0) {
+        if (active && layer == BloomEffectUtil.getEffectiveBloomLayer() && (renderContext.getConnections() & 0b111111) != 0) {
             Cuboid6 innerCuboid = BlockPipe.getSideBox(null, renderContext.getPipeThickness());
             if ((renderContext.getConnections() & 0b111111) != 0) {
                 for (EnumFacing side : EnumFacing.VALUES) {
@@ -82,7 +82,7 @@ public class LaserPipeRenderer extends PipeRenderer {
 
     @Override
     protected boolean canRenderInLayer(BlockRenderLayer layer) {
-        return super.canRenderInLayer(layer) || layer == BloomEffectUtil.getRealBloomLayer();
+        return super.canRenderInLayer(layer) || layer == BloomEffectUtil.getEffectiveBloomLayer();
     }
 
     @Override

@@ -43,6 +43,7 @@ import static gregtech.api.GTValues.CLIENT_TIME;
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientEventHandler {
 
+    @SuppressWarnings("ConstantValue")
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
         if (event.getTarget().getBlockPos() == null) {
@@ -83,8 +84,8 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onRenderGameOverlayPre(RenderGameOverlayEvent.Pre event) {
         TerminalARRenderer.renderGameOverlayEvent(event);
-        if (ConfigHolder.misc.debug && event instanceof RenderGameOverlayEvent.Text) {
-            GTParticleManager.debugOverlay((RenderGameOverlayEvent.Text) event);
+        if (ConfigHolder.misc.debug && event instanceof RenderGameOverlayEvent.Text text) {
+            GTParticleManager.debugOverlay(text);
         }
     }
 

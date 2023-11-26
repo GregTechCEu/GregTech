@@ -264,7 +264,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
         return renderLayer == BlockRenderLayer.CUTOUT_MIPPED ||
-                renderLayer == BloomEffectUtil.getRealBloomLayer() ||
+                renderLayer == BloomEffectUtil.getEffectiveBloomLayer() ||
                 (renderLayer == BlockRenderLayer.TRANSLUCENT && !getWorld().getBlockState(getPos()).getValue(BlockMachine.OPAQUE));
     }
 

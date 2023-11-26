@@ -127,7 +127,7 @@ public class TerminalMenuWidget extends WidgetGroup {
     public void hideMenu() {
         if (!isHide && interpolator == null) {
             int y = getSelfPosition().y;
-            interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x - getSize().width, 6, Eases.EaseLinear,
+            interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x - getSize().width, 6, Eases.LINEAR,
                     value-> setSelfPosition(new Position(value.intValue(), y)),
                     value-> {
                         setVisible(false);
@@ -144,7 +144,7 @@ public class TerminalMenuWidget extends WidgetGroup {
         if (isHide && interpolator == null) {
             setVisible(true);
             int y = getSelfPosition().y;
-            interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x + getSize().width, 6, Eases.EaseLinear,
+            interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x + getSize().width, 6, Eases.LINEAR,
                     value-> setSelfPosition(new Position(value.intValue(), y)),
                     value-> {
                         interpolator = null;

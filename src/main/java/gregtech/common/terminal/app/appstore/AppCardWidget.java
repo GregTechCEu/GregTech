@@ -124,7 +124,7 @@ public class AppCardWidget extends AnimaWidgetGroup {
             int maxAlpha = 100; // 0-255!!!!!
             float partialTicks = Minecraft.getMinecraft().getRenderPartialTicks();
             if (alpha != maxAlpha && interpolator == null) {
-                interpolator = new Interpolator(0, maxAlpha, dur, Eases.EaseLinear,
+                interpolator = new Interpolator(0, maxAlpha, dur, Eases.LINEAR,
                         value-> alpha = value.intValue(),
                         value-> interpolator = null);
                 interpolator.start();

@@ -251,7 +251,7 @@ public class AppPageWidget extends TerminalDialogWidget {
         if (hover + 1 > stage) {
             if (lineWidth != end && (interpolator == null || back)) {
                 back = false;
-                interpolator = new Interpolator(lineWidth, end, (end - lineWidth) / 15, Eases.EaseLinear,
+                interpolator = new Interpolator(lineWidth, end, (end - lineWidth) / 15, Eases.LINEAR,
                         value-> lineWidth = value.intValue(),
                         value-> interpolator = null);
                 interpolator.start();
@@ -259,7 +259,7 @@ public class AppPageWidget extends TerminalDialogWidget {
         } else {
             if (lineWidth != 0 && (interpolator == null || !back)) {
                 back = true;
-                interpolator = new Interpolator(lineWidth, 0, lineWidth / 15, Eases.EaseLinear,
+                interpolator = new Interpolator(lineWidth, 0, lineWidth / 15, Eases.LINEAR,
                         value-> lineWidth = value.intValue(),
                         value-> interpolator = null);
                 interpolator.start();

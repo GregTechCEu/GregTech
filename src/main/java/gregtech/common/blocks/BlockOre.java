@@ -177,7 +177,8 @@ public class BlockOre extends Block implements IBlockOre {
 
     @Override
     public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.CUTOUT_MIPPED || (material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomEffectUtil.getRealBloomLayer());
+        return layer == BlockRenderLayer.CUTOUT_MIPPED ||
+                material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomEffectUtil.getEffectiveBloomLayer();
     }
 
     private BlockStateContainer createStateContainer() {

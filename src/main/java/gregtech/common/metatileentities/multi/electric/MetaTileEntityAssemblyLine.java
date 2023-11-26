@@ -233,6 +233,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         buf.writeVarInt(beamCount);
     }
 
+    @SideOnly(Side.CLIENT)
     private void readParticles(@Nonnull PacketBuffer buf) {
         beamCount = buf.readVarInt();
         if (beamParticles == null) {
@@ -261,7 +262,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 Vector3 endPos = startPos.copy()
                         .subtract(relativeUp.getXOffset(), relativeUp.getYOffset(), relativeUp.getZOffset());
 
-                beamParticles[i][0] = createALParticles(getWorld(), startPos, endPos);
+                beamParticles[i][0] = createALParticles(startPos, endPos);
 
                 pos.setPos(getPos());
                 if (negativeUp) {
@@ -277,10 +278,11 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 endPos = startPos.copy()
                         .subtract(relativeUp.getXOffset(), relativeUp.getYOffset(), relativeUp.getZOffset());
 
-                beamParticles[i][1] = createALParticles(getWorld(), startPos, endPos);
+                beamParticles[i][1] = createALParticles(startPos, endPos);
 
                 // Don't forget to add particles
-                GTParticleManager.INSTANCE.addEffect(beamParticles[i][0], beamParticles[i][1]);
+                GTParticleManager.INSTANCE.addEffect(beamParticles[i][0]);
+                GTParticleManager.INSTANCE.addEffect(beamParticles[i][1]);
 
             } else if (i >= beamCount && particle != null) {
                 particle.setExpired();
@@ -292,8 +294,9 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Nonnull
-    private GTLaserBeamParticle createALParticles(World world, Vector3 startPos, Vector3 endPos) {
-        GTLaserBeamParticle particle = new GTLaserBeamParticle(world, startPos, endPos)
+    @SideOnly(Side.CLIENT)
+    private GTLaserBeamParticle createALParticles(Vector3 startPos, Vector3 endPos) {
+        return new GTLaserBeamParticle(this, startPos, endPos)
                 .setBody(LASER_LOCATION)
                 .setBeamHeight(0.125f)
                 // Try commenting or adjusting on the next four lines to see what happens
@@ -301,14 +304,6 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .setHead(LASER_HEAD_LOCATION)
                 .setHeadWidth(0.1f)
                 .setEmit(0.2f);
-
-        particle.setOnUpdate(p -> {
-            if (!isValid() || !getWorld().isBlockLoaded(getPos(), false) || getWorld().getTileEntity(getPos()) != this.getHolder()) {
-                p.setExpired();
-            }
-        });
-
-        return particle;
     }
 
     @Override

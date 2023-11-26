@@ -62,7 +62,7 @@ public class LampBakedModel implements IBakedModel {
             return getFilteredQuads(true, true, state, side, rand);
         } else if (layer == BlockRenderLayer.SOLID) {
             return getFilteredQuads(false, true, state, side, rand);
-        } else if (layer == BloomEffectUtil.BLOOM || layer == BlockRenderLayer.CUTOUT) {
+        } else if (layer == BloomEffectUtil.getBloomLayer() || layer == BlockRenderLayer.CUTOUT) {
             return getFilteredQuads(true, false, state, side, rand);
         } else {
             return Collections.emptyList();

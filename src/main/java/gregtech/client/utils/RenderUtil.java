@@ -28,10 +28,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.function.Function;
 
 @SideOnly(Side.CLIENT)
 public class RenderUtil {
@@ -273,23 +273,22 @@ public class RenderUtil {
         return trans;
     }
 
-    public static Function<Float, Integer> colorInterpolator(int color1, int color2) {
-        int a = color1 >> 24 & 255;
-        int r = color1 >> 16 & 255;
-        int g = color1 >> 8 & 255;
-        int b = color1 & 255;
+    public static int interpolateColor(int color1, int color2, float blend) {
+        int a1 = color1 >> 24 & 255;
+        int r1 = color1 >> 16 & 255;
+        int g1 = color1 >> 8 & 255;
+        int b1 = color1 & 255;
 
         int a2 = color2 >> 24 & 255;
         int r2 = color2 >> 16 & 255;
         int g2 = color2 >> 8 & 255;
         int b2 = color2 & 255;
-        return (f) -> {
-            int A = (int) (a * (1 - f) + a2 * (f));
-            int R = (int) (r * (1 - f) + r2 * (f));
-            int G = (int) (g * (1 - f) + g2 * (f));
-            int B = (int) (b * (1 - f) + b2 * (f));
-            return A << 24 | R << 16 | G << 8 | B;
-        };
+
+        int a = (int) (a1 * (1 - blend) + a2 * blend);
+        int r = (int) (r1 * (1 - blend) + r2 * blend);
+        int g = (int) (g1 * (1 - blend) + g2 * blend);
+        int b = (int) (b1 * (1 - blend) + b2 * blend);
+        return a << 24 | r << 16 | g << 8 | b;
     }
 
     public static void renderRect(float x, float y, float width, float height, float z, int color) {
@@ -625,7 +624,7 @@ public class RenderUtil {
         }
         UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format) {
             @Override
-            public void put(int element, float... data) {
+            public void put(int element, @Nonnull float... data) {
                 if (this.getVertexFormat().getElement(element) == DefaultVertexFormats.TEX_2S)
                     super.put(element, 480.0f / 0xFFFF, 480.0f / 0xFFFF);
                 else super.put(element, data);
