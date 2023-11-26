@@ -444,19 +444,24 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         if (!getName().equals(customName)) {
             this.customName = customName;
             if (world.isRemote) {
-                if (hasCustomName()) {
-                    if (nameTagParticle == null) {
-                        nameTagParticle = new GTNameTagParticle(this, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
-                        GTParticleManager.INSTANCE.addEffect(nameTagParticle);
-                    }
-                } else {
-                    if (nameTagParticle != null) {
-                        nameTagParticle.setExpired();
-                        nameTagParticle = null;
-                    }
-                }
+                updateNameTagParticle();
             } else {
                 markAsDirty();
+            }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void updateNameTagParticle(){
+        if (hasCustomName()) {
+            if (nameTagParticle == null) {
+                nameTagParticle = new GTNameTagParticle(this, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
+                GTParticleManager.INSTANCE.addEffect(nameTagParticle);
+            }
+        } else {
+            if (nameTagParticle != null) {
+                nameTagParticle.setExpired();
+                nameTagParticle = null;
             }
         }
     }
