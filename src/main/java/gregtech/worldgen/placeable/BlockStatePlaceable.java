@@ -1,6 +1,5 @@
 package gregtech.worldgen.placeable;
 
-import gregtech.worldgen.WorldgenPlaceable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -29,7 +28,12 @@ public class BlockStatePlaceable implements WorldgenPlaceable {
 
     @Override
     public void place(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState existing) {
-        world.setBlockState(pos, state, 0);
+        world.setBlockState(pos, state, 16); // prevent observer updates with flag 16
+    }
+
+    @Override
+    public boolean hasRegular() {
+        return true;
     }
 
     @Override
@@ -37,5 +41,10 @@ public class BlockStatePlaceable implements WorldgenPlaceable {
         if (placeAsSmall) {
             place(world, pos, existing);
         }
+    }
+
+    @Override
+    public boolean hasSmall() {
+        return placeAsSmall;
     }
 }

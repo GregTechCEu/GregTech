@@ -1,4 +1,4 @@
-package gregtech.worldgen;
+package gregtech.worldgen.placeable;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -17,6 +17,11 @@ public interface WorldgenPlaceable {
     void place(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState existing);
 
     /**
+     * @return if the placeable has a regular block to place at all
+     */
+    boolean hasRegular();
+
+    /**
      * Place in world as a small ore
      *
      * @param world    the world to place in
@@ -24,4 +29,9 @@ public interface WorldgenPlaceable {
      * @param existing the state currently at the position
      */
     void placeSmall(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState existing);
+
+    /**
+     * @return if the placeable has a small block to place at all
+     */
+    boolean hasSmall();
 }

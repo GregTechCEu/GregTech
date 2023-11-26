@@ -1,17 +1,19 @@
 package gregtech.worldgen;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import gregtech.api.util.XSTR;
 import gregtech.api.util.math.ChunkPosDimension;
 import gregtech.worldgen.generator.ChunkAlignedWorldGenerator;
 import gregtech.worldgen.generator.EmptyVein;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import gregtech.worldgen.generator.LayeredVeinGenerator;
+import gregtech.worldgen.generator.LayeredVeinSettings;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayDeque;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static gregtech.worldgen.WorldgenModule.DEBUG;
 import static gregtech.worldgen.WorldgenModule.isOriginChunk;
@@ -20,8 +22,15 @@ public class ChunkAlignedWorldgen implements Runnable {
 
     private static final int ORIGIN_CHUNK_SEARCH_RADIUS = 2;
 
-    private static final Queue<ChunkPosDimension> originChunks = new ArrayDeque<>();
-    private static final Map<ChunkPosDimension, ChunkAlignedWorldGenerator> chunkAligned = new Object2ObjectOpenHashMap<>();
+    private static final Queue<ChunkPosDimension> chunksToProcess = new ArrayDeque<>();
+    private static final Cache<ChunkPosDimension, ChunkAlignedWorldGenerator> cache = CacheBuilder.newBuilder()
+            .expireAfterWrite(1, TimeUnit.MINUTES)
+            .concurrencyLevel(1)
+            .maximumSize(WorldgenConfig.chunkAlignedCacheSize)
+            .softValues()
+            .build();
+
+    private static final Collection<WorldgenCallback<LayeredVeinSettings>> callbacks = new ArrayList<>();
 
     private final int chunkX;
     private final int chunkZ;
@@ -35,6 +44,24 @@ public class ChunkAlignedWorldgen implements Runnable {
         this.world = world;
         this.dimension = dimension;
         this.biome = biome;
+    }
+
+    /**
+     * Register a callback to be fired upon successful vein placement
+     *
+     * @param callback the callback to register
+     */
+    @SuppressWarnings("unused")
+    public static void registerCallback(@NotNull WorldgenCallback<LayeredVeinSettings> callback) {
+        callbacks.add(callback);
+    }
+
+    /**
+     * Clears the worldgen cache
+     */
+    @ApiStatus.Internal
+    public static void clearCache() {
+        cache.invalidateAll();
     }
 
     @Override
@@ -61,7 +88,7 @@ public class ChunkAlignedWorldgen implements Runnable {
                     if (DEBUG) {
                         WorldgenModule.logger.info("Found OriginChunk {}", pos);
                     }
-                    originChunks.add(pos);
+                    chunksToProcess.add(pos);
                 }
             }
         }
@@ -76,8 +103,8 @@ public class ChunkAlignedWorldgen implements Runnable {
      * Process the origin chunks to generate
      */
     private void processOriginChunks() {
-        while (!originChunks.isEmpty()) {
-            ChunkPosDimension pos = originChunks.remove();
+        while (!chunksToProcess.isEmpty()) {
+            ChunkPosDimension pos = chunksToProcess.remove();
             generate(pos);
         }
     }
@@ -97,7 +124,7 @@ public class ChunkAlignedWorldgen implements Runnable {
 
         Random random = new XSTR(seed);
 
-        ChunkAlignedWorldGenerator potential = chunkAligned.get(originPos);
+        ChunkAlignedWorldGenerator potential = cache.getIfPresent(originPos);
         if (potential == null) {
             findAndGenerateNew(random, originPos, seed);
         } else {
@@ -113,9 +140,9 @@ public class ChunkAlignedWorldgen implements Runnable {
     /**
      * Generate a new chunk-aligned vein
      *
-     * @param random the random to use
+     * @param random    the random to use
      * @param originPos the origin chunk pos
-     * @param seed the seed for random values
+     * @param seed      the seed for random values
      */
     private void findAndGenerateNew(@NotNull Random random, @NotNull ChunkPosDimension originPos, long seed) {
         var collection = WorldgenModule.CHUNK_ALIGNED_REGISTRY.getGenerators(dimension);
@@ -136,9 +163,11 @@ public class ChunkAlignedWorldgen implements Runnable {
                     if (attempts >= WorldgenModule.maxOregenPlacementAttempts()) break;
 
                     int weight = random.nextInt(totalWeight);
-                    for (ChunkAlignedWorldGenerator generator : collection) {
-                        weight -= generator.getWeight();
+                    for (LayeredVeinSettings settings : collection) {
+                        weight -= settings.weight();
                         if (weight > 0) continue;
+
+                        ChunkAlignedWorldGenerator generator = new LayeredVeinGenerator(settings);
 
                         PlacementResult result = generator.generate(world, new XSTR(seed), biome,
                                 dimension, originX * 16, originZ * 16,
@@ -147,25 +176,29 @@ public class ChunkAlignedWorldgen implements Runnable {
                             case PLACED, NON_OVERLAPPING -> {
                                 if (DEBUG) {
                                     WorldgenModule.logger.info("Placed vein \"{}\", searchAttempts={}, placementAttempts={}, dimension={}",
-                                            generator.getName(), i, attempts, dimension);
+                                            settings.name(), i, attempts, dimension);
                                 }
-                                chunkAligned.put(originPos, generator);
+                                cache.put(originPos, generator);
                                 foundVein = true;
                             }
                             case NON_OVERLAPPING_AIR_BLOCK -> {
                                 if (DEBUG) {
                                     WorldgenModule.logger.info("No overlap and air in test spot for vein \"{}\", searchAttempts={}, placementAttempts={}, dimension={}",
-                                            generator.getName(), i, attempts, dimension);
+                                            settings.name(), i, attempts, dimension);
                                 }
                                 attempts++;
                             }
                             case CANNOT_GEN_IN_BOTTOM -> attempts++;
                         }
+                        if (result == PlacementResult.PLACED) {
+                            callbacks.forEach(o -> o.receive(originPos, settings));
+                        }
+
                         break;
                     }
                 }
                 if (!foundVein && this.chunkX == originX && this.chunkZ == originZ) {
-                    chunkAligned.put(originPos, EmptyVein.INSTANCE);
+                    cache.put(originPos, EmptyVein.INSTANCE);
                 }
             }
         } else {
@@ -173,7 +206,7 @@ public class ChunkAlignedWorldgen implements Runnable {
                 WorldgenModule.logger.info("Skipping vein pos={}, chunkX={}, chunkZ={}, roll={}, abundance={}",
                         originPos, chunkX, chunkZ, roll, WorldgenModule.oreVeinAbundance());
             }
-            chunkAligned.put(originPos, EmptyVein.INSTANCE);
+            cache.put(originPos, EmptyVein.INSTANCE);
         }
     }
 

@@ -10,8 +10,6 @@ public final class EmptyVein implements ChunkAlignedWorldGenerator {
 
     public static final EmptyVein INSTANCE = new EmptyVein();
 
-    private final int[] dimensions = new int[0];
-
     private EmptyVein() {}
 
     @Override
@@ -21,18 +19,4 @@ public final class EmptyVein implements ChunkAlignedWorldGenerator {
         return PlacementResult.PLACED;
     }
 
-    @Override
-    public @NotNull String getName() {
-        return "EMPTY_VEIN";
-    }
-
-    @Override
-    public int getWeight() {
-        return 0;
-    }
-
-    @Override
-    public int @NotNull [] getDimensions() {
-        return dimensions;
-    }
 }

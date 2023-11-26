@@ -11,7 +11,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GeneratorRegistry<T extends GeneratorEntry> {
+public final class GeneratorRegistry<T extends GeneratorSettings> {
 
     private final Int2ObjectMap<List<T>> map = new Int2ObjectOpenHashMap<>();
     private final Int2IntOpenHashMap weightMap = new Int2IntOpenHashMap();
@@ -20,11 +20,7 @@ public final class GeneratorRegistry<T extends GeneratorEntry> {
      * @param generator the generator to register
      */
     public void register(@NotNull T generator) {
-        if (generator instanceof EmptyVein) {
-            throw new IllegalArgumentException("Cannot register an Empty Generator");
-        }
-
-        int[] dimensions = generator.getDimensions();
+        int[] dimensions = generator.allowedDimensions();
         for (int dimension : dimensions) {
             List<T> list = map.get(dimension);
             if (list == null) {
@@ -32,7 +28,7 @@ public final class GeneratorRegistry<T extends GeneratorEntry> {
                 map.put(dimension, list);
             }
             list.add(generator);
-            weightMap.put(dimension, weightMap.get(dimension) + generator.getWeight());
+            weightMap.put(dimension, weightMap.get(dimension) + generator.weight());
         }
     }
 

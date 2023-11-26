@@ -2,7 +2,7 @@ package gregtech.worldgen.generator;
 
 import gregtech.worldgen.PlacementResult;
 import gregtech.worldgen.WorldgenModule;
-import gregtech.worldgen.WorldgenPlaceable;
+import gregtech.worldgen.placeable.WorldgenPlaceable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -12,24 +12,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorldGenerator {
+public class LayeredVeinGenerator extends GeneratorBase<LayeredVeinSettings> implements ChunkAlignedWorldGenerator {
 
-    private final int density;
-
-    private final WorldgenPlaceable top;
-    private final WorldgenPlaceable middle;
-    private final WorldgenPlaceable bottom;
-    private final WorldgenPlaceable spread;
-
-    public LayeredVein(@NotNull String name, int minY, int maxY, int weight, int density, int size,
-                       int @NotNull [] allowedDimensions, @NotNull String @NotNull [] allowedBiomes, @NotNull WorldgenPlaceable top, @NotNull WorldgenPlaceable middle,
-                       @NotNull WorldgenPlaceable bottom, @NotNull WorldgenPlaceable spread) {
-        super(name, minY, maxY, weight, size, allowedDimensions, allowedBiomes);
-        this.density = density;
-        this.top = top;
-        this.middle = middle;
-        this.bottom = bottom;
-        this.spread = spread;
+    public LayeredVeinGenerator(@NotNull LayeredVeinSettings settings) {
+        super(settings);
     }
 
     /**
@@ -89,6 +75,30 @@ public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorld
         return world.getBlockState(pos);
     }
 
+    /**
+     * Place an ore block at the position
+     *
+     * @param world     the world containing the position
+     * @param pos       the position to place at
+     * @param placeable the placeable to place
+     * @param existing  the block currently in the world at the position
+     */
+    private static void placeOre(@NotNull World world, @NotNull BlockPos pos, @NotNull WorldgenPlaceable placeable, @NotNull IBlockState existing) {
+        placeable.place(world, pos, existing);
+    }
+
+    /**
+     * Place a small ore block at the position
+     *
+     * @param world     the world containing the position
+     * @param pos       the position to place at
+     * @param placeable the placeable to place
+     * @param existing  the block currently in the world at the position
+     */
+    private static void placeSmallOre(@NotNull World world, @NotNull BlockPos pos, @NotNull WorldgenPlaceable placeable, @NotNull IBlockState existing) {
+        placeable.placeSmall(world, pos, existing);
+    }
+
     @Override
     public @NotNull PlacementResult generate(@NotNull World world, @NotNull Random random,
                                              @NotNull String biome, int dimension, int originX, int originZ,
@@ -96,10 +106,12 @@ public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorld
         if (!canGenerateInDimension(dimension)) return PlacementResult.INCOMPATIBLE_DIMENSION;
         if (!canGenerateInBiome(biome)) return PlacementResult.INCOMPATIBLE_BIOME;
 
-        int startY = this.minY + random.nextInt(maxY - minY - 5);
+        int minY = settings.minY();
+        int startY = minY + random.nextInt(settings.maxY() - minY - 5);
 
         // check the X axis first
 
+        int size = settings.size();
         int westBound = originX - random.nextInt(size);
         int eastBound = originX + 16 + random.nextInt(size);
 
@@ -113,7 +125,9 @@ public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorld
         IBlockState state = world.getBlockState(pos);
 
         PlacementResult result = checkCanPlace(state, world, pos, xLeft, xRight);
-        if (result != null) return result;
+        if (result != null) {
+            return result;
+        }
 
         // if the X axis passes, check the Z axis
 
@@ -125,11 +139,13 @@ public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorld
         int zRight = Math.min(southBound, chunkZ + 8 + 16);
 
         result = checkCanPlace(state, world, pos, zLeft, zRight);
-        if (result != null) return result;
+        if (result != null) {
+            return result;
+        }
 
         if (WorldgenModule.DEBUG) {
             WorldgenModule.logger.info("Attempting vein \"{}\", chunkX={}, chunkZ={}, originX={}, originZ={}, minY={}",
-                    this.name, chunkX / 16, chunkZ / 16, originX / 16, originZ / 16, minY);
+                    settings.name(), chunkX / 16, chunkZ / 16, originX / 16, originZ / 16, minY);
         }
 
         // determine density based on distance from the origin chunk
@@ -137,11 +153,13 @@ public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorld
         double xLength = chunkX / 16f - originX / 16f;
         double zLength = chunkZ / 16f - originZ / 16f;
         double volume = Math.sqrt(2 + (xLength * xLength) + (zLength * zLength));
-        int localDensity = (int) Math.max(1, this.density / volume);
+        int localDensity = (int) Math.max(1, settings.density() / volume);
 
         // place the regular ores in the vein
         result = placeOres(world, random, pos, localDensity, startY, xLeft, xRight, zLeft, zRight, westBound, eastBound, southBound, northBound);
-        if (result != null) return result;
+        if (result != null) {
+            return result;
+        }
 
         // place the small ores
         if (WorldgenModule.isSmallOresEnabled()) {
@@ -149,11 +167,6 @@ public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorld
         }
 
         return PlacementResult.PLACED;
-    }
-
-    @Override
-    public @NotNull String getName() {
-        return this.name;
     }
 
     /**
@@ -234,7 +247,7 @@ public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorld
 
         if (WorldgenModule.DEBUG) {
             WorldgenModule.logger.info("Placed Ore Vein at westBound={}, eastBound={}, northBound={}, southBound={}, localDensity={}, veinDensity={}, top={}, middle={}, bottom={}, spread={}",
-                    westBound, eastBound, northBound, southBound, localDensity, density,
+                    westBound, eastBound, northBound, southBound, localDensity, settings.density(),
                     topAmount, middleAmount, bottomAmount, spreadAmount);
         }
 
@@ -253,8 +266,9 @@ public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorld
      * @return if the ore was placed
      */
     private boolean placeTop(@NotNull World world, @NotNull Random random, @NotNull BlockPos pos,
-                                @NotNull IBlockState existing, int weightX, int weightZ) {
-        if (shouldPlaceOre(random, weightX, weightZ)) {
+                             @NotNull IBlockState existing, int weightX, int weightZ) {
+        WorldgenPlaceable top = settings.top();
+        if (top.hasRegular() && shouldPlaceOre(random, weightX, weightZ)) {
             placeOre(world, pos, top, existing);
             return true;
         }
@@ -274,7 +288,8 @@ public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorld
      */
     private boolean placeMiddle(@NotNull World world, @NotNull Random random, @NotNull BlockPos pos,
                                 @NotNull IBlockState existing, int weightX, int weightZ) {
-        if (random.nextInt(2) == 0 && shouldPlaceOre(random, weightX, weightZ)) {
+        WorldgenPlaceable middle = settings.middle();
+        if (middle.hasRegular() && random.nextInt(2) == 0 && shouldPlaceOre(random, weightX, weightZ)) {
             placeOre(world, pos, middle, existing);
             return true;
         }
@@ -294,7 +309,8 @@ public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorld
      */
     private boolean placeBottom(@NotNull World world, @NotNull Random random, @NotNull BlockPos pos,
                                 @NotNull IBlockState existing, int weightX, int weightZ) {
-        if (shouldPlaceOre(random, weightX, weightZ)) {
+        WorldgenPlaceable bottom = settings.bottom();
+        if (bottom.hasRegular() && shouldPlaceOre(random, weightX, weightZ)) {
             placeOre(world, pos, bottom, existing);
             return true;
         }
@@ -312,9 +328,10 @@ public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorld
      * @param weightZ  the z weight
      * @return if the ore was placed
      */
-    private boolean placeSpread(@NotNull World world, @NotNull Random random, @NotNull BlockPos pos, 
+    private boolean placeSpread(@NotNull World world, @NotNull Random random, @NotNull BlockPos pos,
                                 @NotNull IBlockState existing, int weightX, int weightZ) {
-        if (random.nextInt(7) == 0 && shouldPlaceOre(random, weightX, weightZ)) {
+        WorldgenPlaceable spread = settings.spread();
+        if (spread.hasRegular() && random.nextInt(7) == 0 && shouldPlaceOre(random, weightX, weightZ)) {
             placeOre(world, pos, spread, existing);
             return true;
         }
@@ -336,44 +353,35 @@ public class LayeredVein extends WorldGeneratorBase implements ChunkAlignedWorld
      */
     private void placeSmallOres(@NotNull World world, @NotNull Random random, @NotNull BlockPos.MutableBlockPos pos, int xLeft,
                                 int xRight, int zLeft, int zRight, int chunkX, int chunkZ) {
-        int amount = (xRight - xLeft) * (zRight - zLeft) * this.density / 10 * WorldgenModule.smallOresMultiplier();
+        int amount = (xRight - xLeft) * (zRight - zLeft) * settings.density() / 10 * WorldgenModule.smallOresMultiplier();
+
+        WorldgenPlaceable top = settings.top();
+        WorldgenPlaceable middle = settings.middle();
+        WorldgenPlaceable bottom = settings.bottom();
+        WorldgenPlaceable spread = settings.spread();
+
         IBlockState state;
+
         for (int i = 0; i < amount; i++) {
-            state = rollSmallOrePos(world, random, pos, chunkX, chunkZ, 160);
-            placeSmallOre(world, pos, top, state);
+            if (top.hasSmall()) {
+                state = rollSmallOrePos(world, random, pos, chunkX, chunkZ, 160);
+                placeSmallOre(world, pos, top, state);
+            }
 
-            state = rollSmallOrePos(world, random, pos, chunkX, chunkZ, 160);
-            placeSmallOre(world, pos, middle, state);
+            if (middle.hasSmall()) {
+                state = rollSmallOrePos(world, random, pos, chunkX, chunkZ, 160);
+                placeSmallOre(world, pos, middle, state);
+            }
 
-            state = rollSmallOrePos(world, random, pos, chunkX, chunkZ, 160);
-            placeSmallOre(world, pos, bottom, state);
+            if (bottom.hasSmall()) {
+                state = rollSmallOrePos(world, random, pos, chunkX, chunkZ, 160);
+                placeSmallOre(world, pos, bottom, state);
+            }
 
-            state = rollSmallOrePos(world, random, pos, chunkX, chunkZ, 190);
-            placeSmallOre(world, pos, spread, state);
+            if (spread.hasSmall()) {
+                state = rollSmallOrePos(world, random, pos, chunkX, chunkZ, 190);
+                placeSmallOre(world, pos, spread, state);
+            }
         }
-    }
-
-    /**
-     * Place an ore block at the position
-     *
-     * @param world     the world containing the position
-     * @param pos       the position to place at
-     * @param placeable the placeable to place
-     * @param existing  the block currently in the world at the position
-     */
-    private static void placeOre(@NotNull World world, @NotNull BlockPos pos, @NotNull WorldgenPlaceable placeable, @NotNull IBlockState existing) {
-        placeable.place(world, pos, existing);
-    }
-
-    /**
-     * Place a small ore block at the position
-     *
-     * @param world     the world containing the position
-     * @param pos       the position to place at
-     * @param placeable the placeable to place
-     * @param existing  the block currently in the world at the position
-     */
-    private static void placeSmallOre(@NotNull World world, @NotNull BlockPos pos, @NotNull WorldgenPlaceable placeable, @NotNull IBlockState existing) {
-        placeable.placeSmall(world, pos, existing);
     }
 }

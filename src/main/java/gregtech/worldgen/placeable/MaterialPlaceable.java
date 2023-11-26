@@ -3,7 +3,7 @@ package gregtech.worldgen.placeable;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.StoneType;
-import gregtech.worldgen.WorldgenPlaceable;
+import gregtech.worldgen.WorldgenModule;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -32,11 +32,21 @@ public class MaterialPlaceable implements WorldgenPlaceable {
         if (oreBlock == null) return;
 
         IBlockState state = oreBlock.getOreBlock(stoneType);
-        world.setBlockState(pos, state, 0);
+        world.setBlockState(pos, state, 16); // prevent observer updates with flag 16
+    }
+
+    @Override
+    public boolean hasRegular() {
+        return true;
     }
 
     @Override
     public void placeSmall(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState existing) {
         //TODO Small Ores
+    }
+
+    @Override
+    public boolean hasSmall() {
+        return WorldgenModule.isSmallOresEnabled();
     }
 }

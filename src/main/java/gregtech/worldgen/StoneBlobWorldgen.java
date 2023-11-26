@@ -3,6 +3,7 @@ package gregtech.worldgen;
 import gregtech.api.util.XSTR;
 import gregtech.api.util.math.ChunkPosDimension;
 import gregtech.worldgen.generator.StoneBlob;
+import gregtech.worldgen.generator.StoneBlobGenerator;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.world.World;
@@ -39,16 +40,13 @@ public class StoneBlobWorldgen implements Runnable {
 
         Random random = new XSTR();
         for (StoneBlob blob : list) {
-            if (!blob.canGenerateInDimension(dimension)) continue;
-            if (!blob.canGenerateInBiome(biome)) continue;
-
             double realSize = findOriginChunks(blob, random);
             processOriginChunks(blob, random, realSize);
         }
     }
 
     private double findOriginChunks(@NotNull StoneBlob blob, @NotNull Random random) {
-        double realSize = blob.getSize() / 16f;
+        double realSize = blob.size() / 16f;
         int windowWidth = (int) realSize / 16 + 1;
 
         int minX = chunkX - windowWidth;
@@ -66,7 +64,7 @@ public class StoneBlobWorldgen implements Runnable {
                 } else {
                     long seed = pos.hashCode() * 31L + world.getSeed();
                     random.setSeed(seed);
-                    if (random.nextInt(blob.getWeight()) == 0) {
+                    if (random.nextInt(blob.weight()) == 0) {
                         blobs.put(pos, true);
                         blobChunks.add(pos);
                     } else {
@@ -88,7 +86,7 @@ public class StoneBlobWorldgen implements Runnable {
     private void generate(@NotNull StoneBlob blob, @NotNull ChunkPosDimension originPos, @NotNull Random random,
                           double realSize) {
         random.setSeed(originPos.hashCode() * 31L + world.getSeed());
-        PlacementResult result =  blob.generate(world, random, biome, dimension, chunkX * 16, chunkZ * 16,
+        PlacementResult result =  new StoneBlobGenerator(blob).generate(world, random, biome, dimension, chunkX * 16, chunkZ * 16,
                 originPos.x() * 16, originPos.z() * 16, realSize);
         if (result == PlacementResult.NON_OVERLAPPING_AIR_BLOCK) {
             blobs.put(originPos, false);

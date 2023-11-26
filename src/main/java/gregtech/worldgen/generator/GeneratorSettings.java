@@ -2,15 +2,17 @@ package gregtech.worldgen.generator;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface GeneratorEntry {
+public interface GeneratorSettings {
 
     /**
      * @return the weight of this object
      */
-    int getWeight();
+    int weight();
 
     /**
      * @return the dimensions this object can function in
      */
-    int @NotNull [] getDimensions();
+    int @NotNull [] allowedDimensions();
+
+    @NotNull String @NotNull [] allowedBiomes();
 }

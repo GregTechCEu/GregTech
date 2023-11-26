@@ -8,7 +8,10 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.StoneVariantBlock;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
-import gregtech.worldgen.generator.*;
+import gregtech.worldgen.generator.GeneratorRegistry;
+import gregtech.worldgen.generator.LayeredVeinSettings;
+import gregtech.worldgen.generator.SporadicWorldGenerator;
+import gregtech.worldgen.generator.StoneBlob;
 import gregtech.worldgen.placeable.BlockStatePlaceable;
 import gregtech.worldgen.placeable.MaterialPlaceable;
 import net.minecraft.block.Block;
@@ -17,6 +20,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +42,7 @@ public class WorldgenModule extends BaseGregTechModule {
      */
     public static final boolean DEBUG = false;
 
-    public static final GeneratorRegistry<ChunkAlignedWorldGenerator> CHUNK_ALIGNED_REGISTRY = new GeneratorRegistry<>();
+    public static final GeneratorRegistry<LayeredVeinSettings> CHUNK_ALIGNED_REGISTRY = new GeneratorRegistry<>();
     public static final GeneratorRegistry<StoneBlob> STONE_BLOB_REGISTRY = new GeneratorRegistry<>();
     public static final GeneratorRegistry<SporadicWorldGenerator> SPORADIC_REGISTRY = new GeneratorRegistry<>();
 
@@ -77,7 +81,7 @@ public class WorldgenModule extends BaseGregTechModule {
                 new BlockStatePlaceable(MetaBlocks.STONE_BLOCKS.get(StoneVariantBlock.StoneVariant.SMOOTH)
                         .getState(StoneVariantBlock.StoneType.BASALT))));
 
-        CHUNK_ALIGNED_REGISTRY.register(new LayeredVein("test1", 20, 50, 80, 5, 32,
+        CHUNK_ALIGNED_REGISTRY.register(new LayeredVeinSettings("test1", 20, 50, 80, 5, 32,
                 new int[]{0}, new String[0],
                 new MaterialPlaceable(Materials.Diamond),
                 new MaterialPlaceable(Materials.Gold),
@@ -85,13 +89,19 @@ public class WorldgenModule extends BaseGregTechModule {
                 new MaterialPlaceable(Materials.TricalciumPhosphate)
         ));
 
-        CHUNK_ALIGNED_REGISTRY.register(new LayeredVein("test2", 40, 70, 20, 2, 24,
+        CHUNK_ALIGNED_REGISTRY.register(new LayeredVeinSettings("test2", 40, 70, 20, 2, 24,
                 new int[]{0}, new String[0],
                 new MaterialPlaceable(Materials.Silver),
                 new MaterialPlaceable(Materials.Redstone),
                 new MaterialPlaceable(Materials.Opal),
                 new MaterialPlaceable(Materials.YellowLimonite)
         ));
+    }
+
+    @Override
+    public void serverStopped(FMLServerStoppedEvent event) {
+        super.serverStopped(event);
+        ChunkAlignedWorldgen.clearCache();
     }
 
     /**

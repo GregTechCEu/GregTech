@@ -1,5 +1,6 @@
 package gregtech.worldgen;
 
+import gregtech.api.util.GTLog;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
@@ -34,6 +35,7 @@ public final class GTWorldGenerator implements IWorldGenerator {
     }
 
     private void runContainers() {
+        GTLog.logger.fatal("Container size {}", containers.size());
         int amount = Math.min(containers.size(), MAX_CONTAINERS);
         for (int i = 0; i < amount; i++) {
             WorldgenContainer container = containers.remove();

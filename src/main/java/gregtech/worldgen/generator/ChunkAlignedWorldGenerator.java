@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-public interface ChunkAlignedWorldGenerator extends GeneratorEntry {
+public interface ChunkAlignedWorldGenerator {
 
     /**
      * Generate worldgen chunk-aligned.
@@ -23,9 +23,4 @@ public interface ChunkAlignedWorldGenerator extends GeneratorEntry {
      */
     @NotNull PlacementResult generate(@NotNull World world, @NotNull Random random, @NotNull String biome,
                                       int dimension, int originX, int originZ, int chunkX, int chunkZ);
-
-    /**
-     * @return the name of this generator
-     */
-    @NotNull String getName();
 }

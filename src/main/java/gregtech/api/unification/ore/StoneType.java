@@ -76,7 +76,7 @@ public class StoneType implements Comparable<StoneType> {
         if (hasDummyPredicateRan.get()) {
             // Current Block's isReplaceableOreGen does indeed consider the predicate
             // Reset hasDummyPredicateRan for the next test
-            hasDummyPredicateRan.set(false);
+            hasDummyPredicateRan.remove();
             // Pass through actual predicates and test for real
             for (StoneType stoneType : STONE_TYPE_REGISTRY) {
                 if (state.getBlock().isReplaceableOreGen(state, world, pos, stoneType.predicate)) {
