@@ -5481,3 +5481,11 @@ metaitem.basic_tape.name=Лента
 cover.shutter.message.enabled=Затвор включен
 cover.shutter.message.disabled=Затвор отключен
 cover.generic.advanced_detector.invert_tooltip=Переключите, чтобы инвертировать логику красного камня
+cover.ore_dictionary_filter.preview.match.not=<node><not>неt</not> '<value>%s</value>'</node>
+cover.ore_dictionary_filter.preview.char=<node><value>1</value> символ</node>
+cover.ore_dictionary_filter.preview.char.not=<node><logic>либо</logic> больше <value>1</value> символа, <logic>либо</logic> ничего</node>
+cover.ore_dictionary_filter.preview.match=<node>'<value>%s</value>'</node>
+
+# Scoop
+item.gt.tool.scoop.name=Сачок (%s)
+metaitem.electrode.tin.name=Оловянный электрод
