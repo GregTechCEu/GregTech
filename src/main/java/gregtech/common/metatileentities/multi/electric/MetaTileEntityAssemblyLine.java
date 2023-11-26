@@ -233,6 +233,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         buf.writeVarInt(beamCount);
     }
 
+    @SideOnly(Side.CLIENT)
     private void readParticles(@Nonnull PacketBuffer buf) {
         beamCount = buf.readVarInt();
         if (beamParticles == null) {
