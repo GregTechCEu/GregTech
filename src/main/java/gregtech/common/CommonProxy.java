@@ -332,7 +332,7 @@ public class CommonProxy {
         GTRecipeManager.loadLatest();
 
         // On initial load we need to postpone cache flushing until FMLPostInitializationEvent
-        // to account for WoodMachineRecipes#postInit().
+        // to account for post-init recipe registration
         if (Loader.instance().hasReachedState(LoaderState.AVAILABLE))
             GTRecipeInputCache.disableCache();
     }
