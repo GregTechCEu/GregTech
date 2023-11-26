@@ -8,6 +8,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.BlastProperty;
+
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -20,7 +21,8 @@ public class GroovyMaterialBuilderExpansion {
     public static Material.Builder fluid(Material.Builder builder, String raw, FluidBuilder fluidBuilder) {
         FluidStorageKey key = FluidStorageKey.getByName(new ResourceLocation(raw));
         if (key == null) key = FluidStorageKey.getByName(gregtechId(raw));
-        if (GroovyScriptModule.validateNonNull(key, () -> "Can't find fluid type for " + raw + " in material builder")) {
+        if (GroovyScriptModule.validateNonNull(key,
+                () -> "Can't find fluid type for " + raw + " in material builder")) {
             return builder.fluid(key, fluidBuilder);
         }
         return builder;
@@ -28,7 +30,8 @@ public class GroovyMaterialBuilderExpansion {
 
     public static Material.Builder element(Material.Builder builder, String raw) {
         Element element = Elements.get(raw);
-        if (GroovyScriptModule.validateNonNull(element, () -> "Can't find element for " + raw + " in material builder")) {
+        if (GroovyScriptModule.validateNonNull(element,
+                () -> "Can't find element for " + raw + " in material builder")) {
             return builder.element(element);
         }
         return builder;
@@ -38,7 +41,8 @@ public class GroovyMaterialBuilderExpansion {
         List<MaterialFlag> flags = new ArrayList<>();
         for (String rawFlag : rawFlags) {
             MaterialFlag flag = MaterialFlag.getByName(rawFlag);
-            if (GroovyScriptModule.validateNonNull(flag, () -> "Can't find material flag for '" + rawFlag + "' in material builder")) {
+            if (GroovyScriptModule.validateNonNull(flag,
+                    () -> "Can't find material flag for '" + rawFlag + "' in material builder")) {
                 flags.add(flag);
             }
         }
@@ -47,7 +51,8 @@ public class GroovyMaterialBuilderExpansion {
 
     public static Material.Builder iconSet(Material.Builder builder, String raw) {
         MaterialIconSet iconSet = MaterialIconSet.getByName(raw);
-        if (GroovyScriptModule.validateNonNull(iconSet, () -> "Can't find material icon set for " + raw + " in material builder")) {
+        if (GroovyScriptModule.validateNonNull(iconSet,
+                () -> "Can't find material icon set for " + raw + " in material builder")) {
             return builder.iconSet(iconSet);
         }
         return builder;
@@ -61,11 +66,13 @@ public class GroovyMaterialBuilderExpansion {
         return blastTemp(builder, temp, raw, eutOverride, -1);
     }
 
-    public static Material.Builder blastTemp(Material.Builder builder, int temp, String raw, int eutOverride, int durationOverride) {
+    public static Material.Builder blastTemp(Material.Builder builder, int temp, String raw, int eutOverride,
+                                             int durationOverride) {
         return blastTemp(builder, temp, raw, eutOverride, durationOverride, -1, -1);
     }
 
-    public static Material.Builder blastTemp(Material.Builder builder, int temp, String raw, int eutOverride, int durationOverride, int vacuumEUtOverride, int vacuumDurationOverride) {
+    public static Material.Builder blastTemp(Material.Builder builder, int temp, String raw, int eutOverride,
+                                             int durationOverride, int vacuumEUtOverride, int vacuumDurationOverride) {
         BlastProperty.GasTier gasTier = null;
         String name = raw.toUpperCase();
         for (BlastProperty.GasTier gasTier1 : BlastProperty.GasTier.VALUES) {
@@ -75,7 +82,8 @@ public class GroovyMaterialBuilderExpansion {
             }
         }
         final BlastProperty.GasTier finalGasTier = gasTier;
-        if (GroovyScriptModule.validateNonNull(gasTier, () -> "Can't find gas tier for " + name + " in material builder. Valid values are 'low', 'mid', 'high', 'higher', 'highest'!")) {
+        if (GroovyScriptModule.validateNonNull(gasTier, () -> "Can't find gas tier for " + name +
+                " in material builder. Valid values are 'low', 'mid', 'high', 'higher', 'highest'!")) {
             return builder.blast(b -> b
                     .temp(temp, finalGasTier)
                     .blastStats(eutOverride, durationOverride)

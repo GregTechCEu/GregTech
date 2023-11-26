@@ -7,6 +7,7 @@ import gregtech.api.terminal.gui.widgets.TreeListWidget;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 
 public class SettingComponent extends WidgetGroup implements IMenuComponent {
+
     private Widget settingWidget;
 
     public SettingComponent(IWidgetSettings settings) {
@@ -25,5 +26,4 @@ public class SettingComponent extends WidgetGroup implements IMenuComponent {
                 .setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
                 .setLeafTexture(GuiTextures.SLOT_DARKENED));
     }
-
 }

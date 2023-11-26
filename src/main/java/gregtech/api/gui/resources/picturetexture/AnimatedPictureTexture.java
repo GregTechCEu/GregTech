@@ -1,12 +1,13 @@
 package gregtech.api.gui.resources.picturetexture;
 
-
 import gregtech.api.gui.resources.utils.ProcessedImageData;
+
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.Arrays;
 
 public class AnimatedPictureTexture extends PictureTexture {
+
     private final int[] textureIDs;
     private final long[] delay;
     private final long duration;
@@ -28,7 +29,8 @@ public class AnimatedPictureTexture extends PictureTexture {
         if (imageData != null) {
             long startTime = System.currentTimeMillis();
             int index = 0;
-            while (completedFrames < textureIDs.length && index < textureIDs.length && System.currentTimeMillis() - startTime < 10) {
+            while (completedFrames < textureIDs.length && index < textureIDs.length &&
+                    System.currentTimeMillis() - startTime < 10) {
                 while (textureIDs[index] != -1 && index < textureIDs.length - 1)
                     index++;
                 if (textureIDs[index] == -1)

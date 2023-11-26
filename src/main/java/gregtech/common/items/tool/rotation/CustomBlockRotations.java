@@ -1,7 +1,7 @@
 package gregtech.common.items.tool.rotation;
 
 import gregtech.api.cover.CoverRayTracer;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.BlockHopper;
@@ -12,6 +12,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
@@ -35,6 +37,7 @@ public class CustomBlockRotations {
     }
 
     public static final ICustomRotationBehavior BLOCK_HORIZONTAL_BEHAVIOR = new ICustomRotationBehavior() {
+
         @Override
         public boolean customRotate(IBlockState state, World world, BlockPos pos, RayTraceResult hitResult) {
             EnumFacing gridSide = CoverRayTracer.determineGridSideHit(hitResult);
@@ -56,6 +59,7 @@ public class CustomBlockRotations {
     };
 
     public static final ICustomRotationBehavior BLOCK_DIRECTIONAL_BEHAVIOR = new ICustomRotationBehavior() {
+
         @Override
         public boolean customRotate(IBlockState state, World world, BlockPos pos, RayTraceResult hitResult) {
             EnumFacing gridSide = CoverRayTracer.determineGridSideHit(hitResult);
@@ -97,6 +101,7 @@ public class CustomBlockRotations {
 
         // Cannot face up, and uses a custom BlockState property key
         HOPPER(Blocks.HOPPER, new ICustomRotationBehavior() {
+
             @Override
             public boolean customRotate(IBlockState state, World world, BlockPos pos, RayTraceResult hitResult) {
                 EnumFacing gridSide = CoverRayTracer.determineGridSideHit(hitResult);

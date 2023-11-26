@@ -1,7 +1,5 @@
 package gregtech.common.terminal.app.guide;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.gui.resources.IGuiTexture;
@@ -9,6 +7,9 @@ import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.MetaTileEntities;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class SimpleMachineGuideApp extends GuideApp<MetaTileEntity> {
 
@@ -33,7 +34,7 @@ public class SimpleMachineGuideApp extends GuideApp<MetaTileEntity> {
 
     @Override
     public MetaTileEntity ofJson(JsonObject json) {
-        String[] valids = {"machine", "generator", "metatileentity"};
+        String[] valids = { "machine", "generator", "metatileentity" };
         if (json.isJsonObject()) {
             for (String valid : valids) {
                 JsonElement id = json.getAsJsonObject().get(valid);

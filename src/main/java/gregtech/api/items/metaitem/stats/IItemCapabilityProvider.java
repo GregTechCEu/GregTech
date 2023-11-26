@@ -7,5 +7,4 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 public interface IItemCapabilityProvider extends IItemComponent {
 
     ICapabilityProvider createProvider(ItemStack itemStack);
-
 }

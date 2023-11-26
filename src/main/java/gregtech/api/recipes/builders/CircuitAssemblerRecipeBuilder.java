@@ -13,8 +13,7 @@ public class CircuitAssemblerRecipeBuilder extends RecipeBuilder<CircuitAssemble
 
     private int solderMultiplier = 1;
 
-    public CircuitAssemblerRecipeBuilder() {
-    }
+    public CircuitAssemblerRecipeBuilder() {}
 
     public CircuitAssemblerRecipeBuilder(Recipe recipe, RecipeMap<CircuitAssemblerRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
@@ -43,5 +42,4 @@ public class CircuitAssemblerRecipeBuilder extends RecipeBuilder<CircuitAssemble
     public int getSolderMultiplier() {
         return this.solderMultiplier;
     }
-
 }

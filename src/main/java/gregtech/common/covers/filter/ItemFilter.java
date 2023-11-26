@@ -2,6 +2,7 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.gui.Widget;
 import gregtech.api.util.IDirtyNotifiable;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -21,8 +22,7 @@ public abstract class ItemFilter {
         onMaxStackSizeChange();
     }
 
-    protected void onMaxStackSizeChange() {
-    }
+    protected void onMaxStackSizeChange() {}
 
     public abstract boolean showGlobalTransferLimitSlider();
 

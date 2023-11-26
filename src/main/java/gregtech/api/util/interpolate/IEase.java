@@ -1,12 +1,15 @@
 package gregtech.api.util.interpolate;
 
 /**
- * Object representation of an easing function.<p/>
+ * Object representation of an easing function.
+ * <p/>
  * Easing functions describe numerical change rate of values, on a timescale of {@code 0 ~ 1}.
+ * 
  * @see Eases
  */
 @FunctionalInterface
 public interface IEase {
+
     /**
      * Get change rate of values on specific time {@code t}.
      *

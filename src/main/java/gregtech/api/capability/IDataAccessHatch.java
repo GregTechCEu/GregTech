@@ -2,9 +2,10 @@ package gregtech.api.capability;
 
 import gregtech.api.recipes.Recipe;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import javax.annotation.Nonnull;
 
 public interface IDataAccessHatch {
 

@@ -1,6 +1,5 @@
 package gregtech.api.capability.impl;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.Bootstrap;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -19,20 +18,24 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluid
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMaintenanceHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import com.google.common.collect.ImmutableList;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import static gregtech.api.util.GTUtility.gregtechId;
 import static org.hamcrest.CoreMatchers.*;
@@ -46,7 +49,6 @@ public class MultiblockRecipeLogicTest {
 
     @Test
     public void trySearchNewRecipe() {
-
         World world = DummyWorld.INSTANCE;
 
         // Create a recipe Map to be used for testing
@@ -65,41 +67,39 @@ public class MultiblockRecipeLogicTest {
                 .blastFurnaceTemp(1)
                 .buildAndRegister();
 
-        RecipeMapMultiblockController mbt =
-                MetaTileEntities.registerMetaTileEntity(509,
-                        new MetaTileEntityElectricBlastFurnace(
-                                // super function calls the world, which equal null in test
-                                gregtechId("electric_blast_furnace")) {
-                            @Override
-                            public boolean canBeDistinct() {
-                                return false;
-                            }
+        RecipeMapMultiblockController mbt = MetaTileEntities.registerMetaTileEntity(509,
+                new MetaTileEntityElectricBlastFurnace(
+                        // super function calls the world, which equal null in test
+                        gregtechId("electric_blast_furnace")) {
 
-                            @Override
-                            public void reinitializeStructurePattern() {
+                    @Override
+                    public boolean canBeDistinct() {
+                        return false;
+                    }
 
-                            }
+                    @Override
+                    public void reinitializeStructurePattern() {}
 
-                            // function checks for the temperature of the recipe against the coils
-                            @Override
-                            public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
-                                return true;
-                            }
+                    // function checks for the temperature of the recipe against the coils
+                    @Override
+                    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+                        return true;
+                    }
 
-                            // ignore maintenance problems
-                            @Override
-                            public boolean hasMaintenanceMechanics() {
-                                return false;
-                            }
+                    // ignore maintenance problems
+                    @Override
+                    public boolean hasMaintenanceMechanics() {
+                        return false;
+                    }
 
-                            // ignore muffler outputs
-                            @Override
-                            public boolean hasMufflerMechanics() {
-                                return false;
-                            }
-                        });
+                    // ignore muffler outputs
+                    @Override
+                    public boolean hasMufflerMechanics() {
+                        return false;
+                    }
+                });
 
-        //isValid() check in the dirtying logic requires both a metatileentity and a holder
+        // isValid() check in the dirtying logic requires both a metatileentity and a holder
         try {
             Field field = MetaTileEntity.class.getDeclaredField("holder");
             field.setAccessible(true);
@@ -118,8 +118,9 @@ public class MultiblockRecipeLogicTest {
 
         ((MetaTileEntityHolder) mbt.getHolder()).setWorld(world);
 
-        //Controller and isAttachedToMultiBlock need the world so we fake it here.
+        // Controller and isAttachedToMultiBlock need the world so we fake it here.
         MetaTileEntityItemBus importItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -131,6 +132,7 @@ public class MultiblockRecipeLogicTest {
             }
         };
         MetaTileEntityItemBus exportItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, true) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -141,7 +143,9 @@ public class MultiblockRecipeLogicTest {
                 return mbt;
             }
         };
-        MetaTileEntityFluidHatch importFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1, false) {
+        MetaTileEntityFluidHatch importFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1,
+                false) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -152,7 +156,9 @@ public class MultiblockRecipeLogicTest {
                 return mbt;
             }
         };
-        MetaTileEntityFluidHatch exportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.export.lv"), 1, true) {
+        MetaTileEntityFluidHatch exportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.export.lv"), 1,
+                true) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -164,7 +170,7 @@ public class MultiblockRecipeLogicTest {
             }
         };
 
-        //Controller is a private field but we need that information
+        // Controller is a private field but we need that information
         try {
             Field field = MetaTileEntityMultiblockPart.class.getDeclaredField("controllerTile");
             field.setAccessible(true);
@@ -219,7 +225,6 @@ public class MultiblockRecipeLogicTest {
             protected IMultipleTankHandler getOutputTank() {
                 return importFluidBus.getExportFluids();
             }
-
         };
 
         mbl.isOutputsFull = false;
@@ -279,7 +284,6 @@ public class MultiblockRecipeLogicTest {
 
     @Test
     public void trySearchNewRecipeDistinct() {
-
         World world = DummyWorld.INSTANCE;
 
         // Create a recipe Map to be used for testing
@@ -298,42 +302,38 @@ public class MultiblockRecipeLogicTest {
                 .blastFurnaceTemp(1)
                 .buildAndRegister();
 
-        RecipeMapMultiblockController mbt =
-                MetaTileEntities.registerMetaTileEntity(510,
-                        new MetaTileEntityElectricBlastFurnace(
-                                // super function calls the world, which equal null in test
-                                gregtechId("electric_blast_furnace")) {
+        RecipeMapMultiblockController mbt = MetaTileEntities.registerMetaTileEntity(510,
+                new MetaTileEntityElectricBlastFurnace(
+                        // super function calls the world, which equal null in test
+                        gregtechId("electric_blast_furnace")) {
 
-                            @Override
-                            public boolean hasMufflerMechanics() {
-                                return false;
-                            }
+                    @Override
+                    public boolean hasMufflerMechanics() {
+                        return false;
+                    }
 
-                            // ignore maintenance problems
-                            @Override
-                            public boolean hasMaintenanceMechanics() {
-                                return false;
-                            }
+                    // ignore maintenance problems
+                    @Override
+                    public boolean hasMaintenanceMechanics() {
+                        return false;
+                    }
 
+                    @Override
+                    public void reinitializeStructurePattern() {}
 
-                            @Override
-                            public void reinitializeStructurePattern() {
+                    @Override
+                    public boolean isDistinct() {
+                        return true;
+                    }
 
-                            }
+                    // function checks for the temperature of the recipe against the coils
+                    @Override
+                    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+                        return true;
+                    }
+                });
 
-                            @Override
-                            public boolean isDistinct() {
-                                return true;
-                            }
-
-                            // function checks for the temperature of the recipe against the coils
-                            @Override
-                            public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
-                                return true;
-                            }
-                        });
-
-        //isValid() check in the dirtying logic requires both a metatileentity and a holder
+        // isValid() check in the dirtying logic requires both a metatileentity and a holder
         try {
             Field field = MetaTileEntity.class.getDeclaredField("holder");
             field.setAccessible(true);
@@ -352,9 +352,9 @@ public class MultiblockRecipeLogicTest {
 
         ((MetaTileEntityHolder) mbt.getHolder()).setWorld(world);
 
-
-        //Controller and isAttachedToMultiBlock need the world so we fake it here.
+        // Controller and isAttachedToMultiBlock need the world so we fake it here.
         MetaTileEntityItemBus importItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -366,6 +366,7 @@ public class MultiblockRecipeLogicTest {
             }
         };
         MetaTileEntityItemBus importItemBus2 = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -377,6 +378,7 @@ public class MultiblockRecipeLogicTest {
             }
         };
         MetaTileEntityItemBus exportItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, true) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -387,7 +389,9 @@ public class MultiblockRecipeLogicTest {
                 return mbt;
             }
         };
-        MetaTileEntityFluidHatch importFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1, false) {
+        MetaTileEntityFluidHatch importFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1,
+                false) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -398,7 +402,9 @@ public class MultiblockRecipeLogicTest {
                 return mbt;
             }
         };
-        MetaTileEntityFluidHatch exportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.export.lv"), 1, true) {
+        MetaTileEntityFluidHatch exportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.export.lv"), 1,
+                true) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -410,7 +416,7 @@ public class MultiblockRecipeLogicTest {
             }
         };
 
-        //Controller is a private field but we need that information
+        // Controller is a private field but we need that information
         try {
             Field field = MetaTileEntityMultiblockPart.class.getDeclaredField("controllerTile");
             field.setAccessible(true);
@@ -474,7 +480,6 @@ public class MultiblockRecipeLogicTest {
                 a.add(importItemBus2.getImportItems());
                 return a;
             }
-
         };
 
         MatcherAssert.assertThat(mbt.isDistinct(), is(true));
@@ -549,21 +554,21 @@ public class MultiblockRecipeLogicTest {
 
     @Test
     public void testMaintenancePenalties() {
-        TestableMaintenanceHatch maintenanceHatch = new TestableMaintenanceHatch(gregtechId("maintenance.hatch"), false);
+        TestableMaintenanceHatch maintenanceHatch = new TestableMaintenanceHatch(gregtechId("maintenance.hatch"),
+                false);
 
         RecipeMapMultiblockController mbt = MetaTileEntities.registerMetaTileEntity(508,
                 new MetaTileEntityElectricBlastFurnace(
                         // super function calls the world, which equal null in test
                         gregtechId("electric_blast_furnace")) {
+
                     @Override
                     public boolean canBeDistinct() {
                         return false;
                     }
 
                     @Override
-                    public void reinitializeStructurePattern() {
-
-                    }
+                    public void reinitializeStructurePattern() {}
 
                     // function checks for the temperature of the recipe against the coils
                     @Override
@@ -586,14 +591,14 @@ public class MultiblockRecipeLogicTest {
                     @Override
                     public <T> List<T> getAbilities(MultiblockAbility<T> ability) {
                         if (ability == MultiblockAbility.MAINTENANCE_HATCH) {
-                            //noinspection unchecked
+                            // noinspection unchecked
                             return (List<T>) ImmutableList.of(maintenanceHatch);
                         }
                         return super.getAbilities(ability);
                     }
                 });
 
-        //isValid() check in the dirtying logic requires both a metatileentity and a holder
+        // isValid() check in the dirtying logic requires both a metatileentity and a holder
         try {
             Field field = MetaTileEntity.class.getDeclaredField("holder");
             field.setAccessible(true);
@@ -614,8 +619,9 @@ public class MultiblockRecipeLogicTest {
 
         maintenanceHatch.myController = mbt;
 
-        //Controller and isAttachedToMultiBlock need the world so we fake it here.
+        // Controller and isAttachedToMultiBlock need the world so we fake it here.
         MetaTileEntityItemBus importItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -627,6 +633,7 @@ public class MultiblockRecipeLogicTest {
             }
         };
         MetaTileEntityItemBus exportItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, true) {
+
             @Override
             public boolean isAttachedToMultiBlock() {
                 return true;
@@ -638,7 +645,7 @@ public class MultiblockRecipeLogicTest {
             }
         };
 
-        //Controller is a private field but we need that information
+        // Controller is a private field but we need that information
         try {
             Field field = MetaTileEntityMultiblockPart.class.getDeclaredField("controllerTile");
             field.setAccessible(true);

@@ -4,11 +4,13 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.ComputationRecipeLogic;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.Capability;
+
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
 
 import javax.annotation.Nonnull;
 
@@ -26,7 +28,9 @@ public class WorkableInfoProvider extends CapabilityInfoProvider<IWorkable> {
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull IWorkable capability, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@Nonnull IWorkable capability, @Nonnull IProbeInfo probeInfo,
+                                @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity,
+                                @Nonnull IProbeHitData data) {
         if (!capability.isActive()) return;
 
         int currentProgress = capability.getProgress();

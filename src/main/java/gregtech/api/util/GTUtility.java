@@ -1,6 +1,5 @@
 package gregtech.api.util;
 
-import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
@@ -18,7 +17,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
@@ -52,17 +51,21 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static gregtech.api.GTValues.V;
 
@@ -76,8 +79,8 @@ public class GTUtility {
         return result;
     }
 
-    //just because CCL uses a different color format
-    //0xRRGGBBAA
+    // just because CCL uses a different color format
+    // 0xRRGGBBAA
     public static int convertRGBtoOpaqueRGBA_CL(int colorValue) {
         return convertRGBtoRGBA_CL(colorValue, 255);
     }
@@ -90,7 +93,7 @@ public class GTUtility {
         return colorAlpha >>> 8;
     }
 
-    //0xAARRGGBB
+    // 0xAARRGGBB
     public static int convertRGBtoOpaqueRGBA_MC(int colorValue) {
         return convertRGBtoOpaqueRGBA_MC(colorValue, 255);
     }
@@ -119,24 +122,25 @@ public class GTUtility {
      */
     public static boolean mergeItemStack(ItemStack itemStack, List<Slot> slots, boolean simulate) {
         if (itemStack.isEmpty())
-            return false; //if we are merging empty stack, return
+            return false; // if we are merging empty stack, return
 
         boolean merged = false;
-        //iterate non-empty slots first
-        //to try to insert stack into them
+        // iterate non-empty slots first
+        // to try to insert stack into them
         for (Slot slot : slots) {
             if (!slot.isItemValid(itemStack))
-                continue; //if itemstack cannot be placed into that slot, continue
+                continue; // if itemstack cannot be placed into that slot, continue
             ItemStack stackInSlot = slot.getStack();
             if (!ItemStack.areItemsEqual(itemStack, stackInSlot) ||
                     !ItemStack.areItemStackTagsEqual(itemStack, stackInSlot))
-                continue; //if itemstacks don't match, continue
+                continue; // if itemstacks don't match, continue
             int slotMaxStackSize = Math.min(stackInSlot.getMaxStackSize(), slot.getItemStackLimit(stackInSlot));
             int amountToInsert = Math.min(itemStack.getCount(), slotMaxStackSize - stackInSlot.getCount());
-            // Need to check <= 0 for the PA, which could have this value negative due to slot limits in the Machine Access Interface
+            // Need to check <= 0 for the PA, which could have this value negative due to slot limits in the Machine
+            // Access Interface
             if (amountToInsert <= 0)
-                continue; //if we can't insert anything, continue
-            //shrink our stack, grow slot's stack and mark slot as changed
+                continue; // if we can't insert anything, continue
+            // shrink our stack, grow slot's stack and mark slot as changed
             if (!simulate) {
                 stackInSlot.grow(amountToInsert);
             }
@@ -144,27 +148,27 @@ public class GTUtility {
             slot.onSlotChanged();
             merged = true;
             if (itemStack.isEmpty())
-                return true; //if we inserted all items, return
+                return true; // if we inserted all items, return
         }
 
-        //then try to insert itemstack into empty slots
-        //breaking it into pieces if needed
+        // then try to insert itemstack into empty slots
+        // breaking it into pieces if needed
         for (Slot slot : slots) {
             if (!slot.isItemValid(itemStack))
-                continue; //if itemstack cannot be placed into that slot, continue
+                continue; // if itemstack cannot be placed into that slot, continue
             if (slot.getHasStack())
-                continue; //if slot contains something, continue
+                continue; // if slot contains something, continue
             int amountToInsert = Math.min(itemStack.getCount(), slot.getItemStackLimit(itemStack));
             if (amountToInsert == 0)
-                continue; //if we can't insert anything, continue
-            //split our stack and put result in slot
+                continue; // if we can't insert anything, continue
+            // split our stack and put result in slot
             ItemStack stackInSlot = itemStack.splitStack(amountToInsert);
             if (!simulate) {
                 slot.putStack(stackInSlot);
             }
             merged = true;
             if (itemStack.isEmpty())
-                return true; //if we inserted all items, return
+                return true; // if we inserted all items, return
         }
         return merged;
     }
@@ -202,7 +206,7 @@ public class GTUtility {
      * @param array Array sorted with natural order
      * @param value Value to search for
      * @return Index of the nearest value lesser or equal than {@code value},
-     * or {@code -1} if there's no entry matching the condition
+     *         or {@code -1} if there's no entry matching the condition
      */
     public static int nearestLesserOrEqual(@Nonnull long[] array, long value) {
         int low = 0, high = array.length - 1;
@@ -222,7 +226,7 @@ public class GTUtility {
      * @param array Array sorted with natural order
      * @param value Value to search for
      * @return Index of the nearest value lesser than {@code value},
-     * or {@code -1} if there's no entry matching the condition
+     *         or {@code -1} if there's no entry matching the condition
      */
     public static int nearestLesser(@Nonnull long[] array, long value) {
         int low = 0, high = array.length - 1;
@@ -240,8 +244,8 @@ public class GTUtility {
 
     /**
      * @return Lowest tier of the voltage that can handle {@code voltage}; that is,
-     * a voltage with value greater than equal than {@code voltage}. If there's no
-     * tier that can handle it, {@code MAX} is returned.
+     *         a voltage with value greater than equal than {@code voltage}. If there's no
+     *         tier that can handle it, {@code MAX} is returned.
      */
     public static byte getTierByVoltage(long voltage) {
         return (byte) Math.min(GTValues.MAX, nearestLesser(V, voltage) + 1);
@@ -251,7 +255,7 @@ public class GTUtility {
      * Ex: This method turns both 1024 and 512 into HV.
      *
      * @return the highest voltage tier with value below or equal to {@code voltage}, or
-     * {@code ULV} if there's no tier below
+     *         {@code ULV} if there's no tier below
      */
     public static byte getFloorTierByVoltage(long voltage) {
         return (byte) Math.max(GTValues.ULV, nearestLesserOrEqual(V, voltage));
@@ -259,7 +263,8 @@ public class GTUtility {
 
     @SuppressWarnings("deprecation")
     public static BiomeDictionary.Type getBiomeTypeTagByName(String name) {
-        Map<String, BiomeDictionary.Type> byName = ReflectionHelper.getPrivateValue(BiomeDictionary.Type.class, null, "byName");
+        Map<String, BiomeDictionary.Type> byName = ReflectionHelper.getPrivateValue(BiomeDictionary.Type.class, null,
+                "byName");
         return byName.get(name);
     }
 
@@ -370,10 +375,11 @@ public class GTUtility {
 
     /**
      * @return a list of itemstack linked with given item handler
-     * modifications in list will reflect on item handler and wise-versa
+     *         modifications in list will reflect on item handler and wise-versa
      */
     public static List<ItemStack> itemHandlerToList(IItemHandlerModifiable inputs) {
         return new AbstractList<ItemStack>() {
+
             @Override
             public ItemStack set(int index, ItemStack element) {
                 ItemStack oldStack = inputs.getStackInSlot(index);
@@ -395,11 +401,12 @@ public class GTUtility {
 
     /**
      * @return a list of fluidstack linked with given fluid handler
-     * modifications in list will reflect on fluid handler and wise-versa
+     *         modifications in list will reflect on fluid handler and wise-versa
      */
     public static List<FluidStack> fluidHandlerToList(IMultipleTankHandler fluidInputs) {
         List<IMultipleTankHandler.MultiFluidTankEntry> backedList = fluidInputs.getFluidTanks();
         return new AbstractList<FluidStack>() {
+
             @Override
             public FluidStack set(int index, FluidStack element) {
                 IFluidTank fluidTank = backedList.get(index).getDelegate();
@@ -533,7 +540,8 @@ public class GTUtility {
         return pos1.getX() == pos2.getX() & pos1.getY() == pos2.getY() & pos1.getZ() == pos2.getZ();
     }
 
-    public static boolean isCoverBehaviorItem(ItemStack itemStack, @Nullable BooleanSupplier hasCoverSupplier, @Nullable Predicate<CoverDefinition> canPlaceCover) {
+    public static boolean isCoverBehaviorItem(ItemStack itemStack, @Nullable BooleanSupplier hasCoverSupplier,
+                                              @Nullable Predicate<CoverDefinition> canPlaceCover) {
         Item item = itemStack.getItem();
         if (item instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) itemStack.getItem();
@@ -602,9 +610,11 @@ public class GTUtility {
      * <p>
      * This function is meant for use with generators
      */
-    public static final Function<Integer, Integer> steamGeneratorTankSizeFunction = tier -> Math.min(16000 * (1 << (tier - 1)), 64000);
+    public static final Function<Integer, Integer> steamGeneratorTankSizeFunction = tier -> Math
+            .min(16000 * (1 << (tier - 1)), 64000);
 
-    public static final Function<Integer, Integer> genericGeneratorTankSizeFunction = tier -> Math.min(4000 * (1 << (tier - 1)), 16000);
+    public static final Function<Integer, Integer> genericGeneratorTankSizeFunction = tier -> Math
+            .min(4000 * (1 << (tier - 1)), 16000);
 
     public static ItemStack toItem(IBlockState state) {
         return toItem(state, 1);
@@ -640,16 +650,18 @@ public class GTUtility {
     }
 
     /**
-     * Does almost the same thing as .to(LOWER_UNDERSCORE, string), but it also inserts underscores between words and numbers.
+     * Does almost the same thing as .to(LOWER_UNDERSCORE, string), but it also inserts underscores between words and
+     * numbers.
      *
      * @param string Any string with ASCII characters.
-     * @return A string that is all lowercase, with underscores inserted before word/number boundaries: "maragingSteel300" -> "maraging_steel_300"
+     * @return A string that is all lowercase, with underscores inserted before word/number boundaries:
+     *         "maragingSteel300" -> "maraging_steel_300"
      */
     public static String toLowerCaseUnderscore(String string) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < string.length(); i++) {
-            if (i != 0 && (Character.isUpperCase(string.charAt(i)) || (
-                    Character.isDigit(string.charAt(i - 1)) ^ Character.isDigit(string.charAt(i)))))
+            if (i != 0 && (Character.isUpperCase(string.charAt(i)) ||
+                    (Character.isDigit(string.charAt(i - 1)) ^ Character.isDigit(string.charAt(i)))))
                 result.append("_");
             result.append(Character.toLowerCase(string.charAt(i)));
         }
@@ -657,10 +669,12 @@ public class GTUtility {
     }
 
     /**
-     * Does almost the same thing as LOWER_UNDERSCORE.to(UPPER_CAMEL, string), but it also removes underscores before numbers.
+     * Does almost the same thing as LOWER_UNDERSCORE.to(UPPER_CAMEL, string), but it also removes underscores before
+     * numbers.
      *
      * @param string Any string with ASCII characters.
-     * @return A string that is all lowercase, with underscores inserted before word/number boundaries: "maraging_steel_300" -> "maragingSteel300"
+     * @return A string that is all lowercase, with underscores inserted before word/number boundaries:
+     *         "maraging_steel_300" -> "maragingSteel300"
      */
     public static String lowerUnderscoreToUpperCamel(String string) {
         StringBuilder result = new StringBuilder();
@@ -749,7 +763,8 @@ public class GTUtility {
      *
      * @return true if the passed IBlockState was valid snow block
      */
-    public static boolean tryBreakSnow(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, boolean playSound) {
+    public static boolean tryBreakSnow(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state,
+                                       boolean playSound) {
         boolean success = false;
         if (state.getBlock() == Blocks.SNOW) {
             world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, 7));
@@ -759,13 +774,15 @@ public class GTUtility {
             if (layers == 1) {
                 world.destroyBlock(pos, false);
             } else {
-                world.setBlockState(pos, Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, layers - 1));
+                world.setBlockState(pos,
+                        Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, layers - 1));
             }
             success = true;
         }
 
         if (success && playSound) {
-            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH,
+                    SoundCategory.BLOCKS, 1.0f, 1.0f);
         }
 
         return success;
@@ -806,7 +823,8 @@ public class GTUtility {
             return (FluidStack) ingredient;
         } else if (ingredient instanceof ItemStack) {
             ItemStack itemStack = (ItemStack) ingredient;
-            IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+            IFluidHandlerItem fluidHandler = itemStack
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandler != null)
                 return fluidHandler.drain(Integer.MAX_VALUE, false);
         }

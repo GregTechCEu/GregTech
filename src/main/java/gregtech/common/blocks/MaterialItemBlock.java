@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.unification.ore.OrePrefix;
+
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 

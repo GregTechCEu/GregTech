@@ -1,6 +1,7 @@
 package gregtech.common.worldgen;
 
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
@@ -11,8 +12,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.SaplingGrowTreeEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-import javax.annotation.Nonnull;
 import java.util.Random;
+
+import javax.annotation.Nonnull;
 
 import static gregtech.common.blocks.wood.BlockRubberLog.NATURAL;
 
@@ -66,8 +68,9 @@ public class WorldGenRubberTree extends WorldGenerator {
                         int dx = Math.abs(cx - pos.getX());
                         int dz = Math.abs(cz - pos.getZ());
                         if ((dx <= 1 && dz <= 1) || (dx <= 1 && random
-                                .nextInt(chance) == 0) || (dz <= 1 && random
-                                .nextInt(chance) == 0)) {
+                                .nextInt(chance) == 0) || (dz <= 1 &&
+                                        random
+                                                .nextInt(chance) == 0)) {
                             tmpPos.setPos(cx, pos.getY() + cHeight, cz);
                             if (world.isAirBlock(tmpPos)) {
                                 setBlockAndNotifyAdequately(world, new BlockPos(tmpPos), leaves);
@@ -90,8 +93,8 @@ public class WorldGenRubberTree extends WorldGenerator {
         IBlockState baseState = world.getBlockState(below);
         Block baseBlock = baseState.getBlock();
         if (baseBlock.isAir(baseState, world, below) ||
-                !baseBlock.canSustainPlant(baseState, world, below, EnumFacing.UP, MetaBlocks.RUBBER_SAPLING) || (
-                !world.isAirBlock(pos.up()) && world.getBlockState(pos.up()).getBlock() != MetaBlocks.RUBBER_SAPLING))
+                !baseBlock.canSustainPlant(baseState, world, below, EnumFacing.UP, MetaBlocks.RUBBER_SAPLING) ||
+                (!world.isAirBlock(pos.up()) && world.getBlockState(pos.up()).getBlock() != MetaBlocks.RUBBER_SAPLING))
             return 0;
         int height = 1;
         pos = pos.up();

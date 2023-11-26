@@ -1,9 +1,10 @@
 package gregtech.integration.crafttweaker.material;
 
-import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
+
+import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 

@@ -3,9 +3,8 @@ package gregtech.api.recipes.chance.boost;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.chance.ChanceEntry;
-import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
-import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.chance.output.BoostableChanceOutput;
+
 import org.hamcrest.MatcherAssert;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,9 @@ public class ChanceBoostTest {
     private static final int RESULT_TWO_BOOST = BASE_AMOUNT + (BOOST_AMOUNT * 2);
 
     @SuppressWarnings("DataFlowIssue")
-    private static final BoostableChanceEntry<Object> CHANCE_ENTRY = new BoostableChanceOutput<>(null, BASE_AMOUNT, BOOST_AMOUNT) {
+    private static final BoostableChanceEntry<Object> CHANCE_ENTRY = new BoostableChanceOutput<>(null, BASE_AMOUNT,
+            BOOST_AMOUNT) {
+
         @Override
         public @NotNull ChanceEntry<Object> copy() {
             return null;

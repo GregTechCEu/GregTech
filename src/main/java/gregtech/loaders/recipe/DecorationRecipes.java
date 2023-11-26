@@ -2,21 +2,22 @@ package gregtech.loaders.recipe;
 
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.blocks.BlockColored;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.item.EnumDyeColor;
 
 import static gregtech.api.recipes.RecipeMaps.*;
+
 public class DecorationRecipes {
 
-    private DecorationRecipes(){}
+    private DecorationRecipes() {}
+
     public static void init() {
         assemblerRecipes();
         dyeRecipes();
     }
 
     private static void assemblerRecipes() {
-
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.block, Materials.Concrete, 5)
                 .input(OrePrefix.plate, Materials.Iron, 2)
@@ -40,11 +41,9 @@ public class DecorationRecipes {
                 .outputs(MetaBlocks.STUDS.getItemVariant(EnumDyeColor.BLACK, 32))
                 .EUt(4).duration(20)
                 .buildAndRegister();
-
     }
 
     private static void dyeRecipes() {
-
         for (int i = 0; i < Materials.CHEMICAL_DYES.length; i++) {
             CHEMICAL_BATH_RECIPES.recipeBuilder()
                     .inputs(MetaBlocks.METAL_SHEET.getItemVariant(EnumDyeColor.WHITE))
@@ -67,7 +66,5 @@ public class DecorationRecipes {
                     .EUt(2).duration(10)
                     .buildAndRegister();
         }
-
     }
-
 }

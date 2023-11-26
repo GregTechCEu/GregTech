@@ -1,11 +1,11 @@
 package gregtech.common.items.tool;
 
-import codechicken.lib.raytracer.RayTracer;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.items.tool.rotation.CustomBlockRotations;
 import gregtech.common.items.tool.rotation.ICustomRotationBehavior;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.state.IBlockState;
@@ -20,9 +20,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import codechicken.lib.raytracer.RayTracer;
+
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class BlockRotatingBehavior implements IToolBehavior {
 
@@ -31,7 +34,9 @@ public class BlockRotatingBehavior implements IToolBehavior {
     protected BlockRotatingBehavior() {/**/}
 
     @Override
-    public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
+    public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos,
+                                           @Nonnull EnumFacing side, float hitX, float hitY, float hitZ,
+                                           @Nonnull EnumHand hand) {
         TileEntity te = world.getTileEntity(pos);
         // MTEs have special handling on rotation
         if (te instanceof IGregTechTileEntity) {
@@ -62,7 +67,8 @@ public class BlockRotatingBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
+                               @Nonnull ITooltipFlag flag) {
         tooltip.add(I18n.format("item.gt.tool.behavior.block_rotation"));
     }
 }

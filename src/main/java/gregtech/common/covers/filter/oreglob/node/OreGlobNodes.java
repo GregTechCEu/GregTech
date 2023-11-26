@@ -5,7 +5,8 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 /**
- * Entry point for accessing all oreGlobNode instances outside package. Thanks to Java for the superior visibility system.
+ * Entry point for accessing all oreGlobNode instances outside package. Thanks to Java for the superior visibility
+ * system.
  */
 public class OreGlobNodes {
 

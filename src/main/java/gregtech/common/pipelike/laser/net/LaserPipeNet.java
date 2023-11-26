@@ -4,13 +4,16 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.common.pipelike.laser.LaserPipeProperties;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class LaserPipeNet extends PipeNet<LaserPipeProperties> {
 
@@ -45,15 +48,15 @@ public class LaserPipeNet extends PipeNet<LaserPipeProperties> {
     }
 
     @Override
-    protected void transferNodeData(Map<BlockPos, Node<LaserPipeProperties>> transferredNodes, PipeNet<LaserPipeProperties> parentNet) {
+    protected void transferNodeData(Map<BlockPos, Node<LaserPipeProperties>> transferredNodes,
+                                    PipeNet<LaserPipeProperties> parentNet) {
         super.transferNodeData(transferredNodes, parentNet);
         netData.clear();
         ((LaserPipeNet) parentNet).netData.clear();
     }
 
     @Override
-    protected void writeNodeData(LaserPipeProperties nodeData, NBTTagCompound tagCompound) {
-    }
+    protected void writeNodeData(LaserPipeProperties nodeData, NBTTagCompound tagCompound) {}
 
     @Override
     protected LaserPipeProperties readNodeData(NBTTagCompound tagCompound) {

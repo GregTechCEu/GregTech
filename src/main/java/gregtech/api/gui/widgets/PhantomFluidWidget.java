@@ -1,6 +1,5 @@
 package gregtech.api.gui.widgets;
 
-import com.google.common.collect.Lists;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -10,7 +9,7 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.*;
 import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
-import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -23,7 +22,9 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.Lists;
+import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
 
 import static gregtech.api.util.GTUtility.getFluidFromContainer;
 
@@ -46,7 +49,8 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
     private boolean showTip;
     protected FluidStack lastFluidStack;
 
-    public PhantomFluidWidget(int xPosition, int yPosition, int width, int height, Supplier<FluidStack> fluidStackSupplier, Consumer<FluidStack> fluidStackUpdater) {
+    public PhantomFluidWidget(int xPosition, int yPosition, int width, int height,
+                              Supplier<FluidStack> fluidStackSupplier, Consumer<FluidStack> fluidStackUpdater) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.fluidStackSupplier = fluidStackSupplier;
         this.fluidStackUpdater = fluidStackUpdater;
@@ -89,6 +93,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
 
         Rectangle rectangle = toRectangleBox();
         return Lists.newArrayList(new Target<Object>() {
+
             @Nonnull
             @Override
             public Rectangle getArea() {
@@ -180,7 +185,8 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
             ItemStack itemStack = gui.entityPlayer.inventory.getItemStack().copy();
             if (!itemStack.isEmpty()) {
                 itemStack.setCount(1);
-                IFluidHandlerItem fluidHandler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+                IFluidHandlerItem fluidHandler = itemStack
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
                 if (fluidHandler != null) {
                     FluidStack resultFluid = fluidHandler.drain(Integer.MAX_VALUE, false);
                     fluidStackUpdater.accept(resultFluid);
@@ -271,13 +277,16 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         }
         if (lastFluidStack != null) {
             GlStateManager.disableBlend();
-            RenderUtil.drawFluidForGui(lastFluidStack, lastFluidStack.amount, pos.x + 1, pos.y + 1, size.width - 1, size.height - 1);
+            RenderUtil.drawFluidForGui(lastFluidStack, lastFluidStack.amount, pos.x + 1, pos.y + 1, size.width - 1,
+                    size.height - 1);
             if (showTip) {
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(0.5, 0.5, 1);
                 String s = TextFormattingUtil.formatLongToCompactString(lastFluidStack.amount, 4) + "L";
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3F)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3F) + 6) * 2, 0xFFFFFF);
+                fontRenderer.drawStringWithShadow(s,
+                        (pos.x + (size.width / 3F)) * 2 - fontRenderer.getStringWidth(s) + 21,
+                        (pos.y + (size.height / 3F) + 6) * 2, 0xFFFFFF);
                 GlStateManager.popMatrix();
             }
             GlStateManager.enableBlend();
@@ -293,7 +302,8 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                 hoverStringList.add(fluidName);
                 if (showTip) {
                     hoverStringList.add(lastFluidStack.amount + " L");
-                    Collections.addAll(hoverStringList, LocalizationUtils.formatLines("cover.fluid_filter.config_amount"));
+                    Collections.addAll(hoverStringList,
+                            LocalizationUtils.formatLines("cover.fluid_filter.config_amount"));
                 }
                 drawHoveringText(ItemStack.EMPTY, hoverStringList, -1, mouseX, mouseY);
             }

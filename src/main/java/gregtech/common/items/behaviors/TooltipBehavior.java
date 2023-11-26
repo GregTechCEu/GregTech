@@ -1,11 +1,13 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
 
 /**
  * Adds tooltips with multiple translation keys

@@ -8,8 +8,10 @@ import gregtech.api.recipes.recipeproperties.ImplosionExplosiveProperty;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ValidationResult;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -17,9 +19,7 @@ import javax.annotation.Nonnull;
 
 public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder> {
 
-    public ImplosionRecipeBuilder() {
-
-    }
+    public ImplosionRecipeBuilder() {}
 
     public ImplosionRecipeBuilder(Recipe recipe, RecipeMap<ImplosionRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
@@ -71,7 +71,8 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
         if (this.recipePropertyStorage == null) {
             return ItemStack.EMPTY;
         }
-        return this.recipePropertyStorage.getRecipePropertyValue(ImplosionExplosiveProperty.getInstance(), ItemStack.EMPTY);
+        return this.recipePropertyStorage.getRecipePropertyValue(ImplosionExplosiveProperty.getInstance(),
+                ItemStack.EMPTY);
     }
 
     public ValidationResult<Recipe> build() {

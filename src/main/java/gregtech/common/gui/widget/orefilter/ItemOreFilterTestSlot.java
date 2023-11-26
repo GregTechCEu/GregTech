@@ -1,11 +1,10 @@
 package gregtech.common.gui.widget.orefilter;
 
-import com.google.common.collect.Lists;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.Position;
-import mezz.jei.api.gui.IGhostIngredientHandler;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -15,12 +14,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.collect.Lists;
+import mezz.jei.api.gui.IGhostIngredientHandler;
+
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ItemOreFilterTestSlot extends OreFilterTestSlot implements IGhostIngredientTarget {
 
@@ -56,7 +59,8 @@ public class ItemOreFilterTestSlot extends OreFilterTestSlot implements IGhostIn
             GlStateManager.pushMatrix();
             RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
             itemRender.renderItemAndEffectIntoGUI(testStack, pos.x + 1, pos.y + 1);
-            itemRender.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, testStack, pos.x + 1, pos.y + 1, null);
+            itemRender.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, testStack, pos.x + 1, pos.y + 1,
+                    null);
             GlStateManager.popMatrix();
             RenderHelper.disableStandardItemLighting();
         }
@@ -75,7 +79,8 @@ public class ItemOreFilterTestSlot extends OreFilterTestSlot implements IGhostIn
 
     private void putItem(ItemStack stack) {
         ItemStack testStack = getTestStack();
-        if ((stack.isEmpty() ^ testStack.isEmpty()) || !testStack.isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(testStack, stack)) {
+        if ((stack.isEmpty() ^ testStack.isEmpty()) || !testStack.isItemEqual(stack) ||
+                !ItemStack.areItemStackTagsEqual(testStack, stack)) {
             ItemStack copy = stack.copy();
             copy.setCount(1);
             setTestStack(copy);
@@ -89,6 +94,7 @@ public class ItemOreFilterTestSlot extends OreFilterTestSlot implements IGhostIn
         }
         Rectangle rectangle = toRectangleBox();
         return Lists.newArrayList(new IGhostIngredientHandler.Target<Object>() {
+
             @Nonnull
             @Override
             public Rectangle getArea() {

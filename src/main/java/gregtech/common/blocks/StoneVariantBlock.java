@@ -6,6 +6,7 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.properties.PropertyEnum;
@@ -17,8 +18,9 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nonnull;
 import java.util.Random;
+
+import javax.annotation.Nonnull;
 
 @SuppressWarnings("deprecation")
 public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType> {
@@ -50,7 +52,8 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos,
+                                    @Nonnull EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
@@ -100,22 +103,34 @@ public class StoneVariantBlock extends VariantBlock<StoneVariantBlock.StoneType>
 
         public OrePrefix getOrePrefix() {
             switch (this) {
-                case BLACK_GRANITE: case RED_GRANITE: case MARBLE: case BASALT:
+                case BLACK_GRANITE:
+                case RED_GRANITE:
+                case MARBLE:
+                case BASALT:
                     return OrePrefix.stone;
-                case CONCRETE_LIGHT: case CONCRETE_DARK:
+                case CONCRETE_LIGHT:
+                case CONCRETE_DARK:
                     return OrePrefix.block;
-                default: throw new IllegalStateException("Unreachable");
+                default:
+                    throw new IllegalStateException("Unreachable");
             }
         }
 
         public Material getMaterial() {
             switch (this) {
-                case BLACK_GRANITE: return Materials.GraniteBlack;
-                case RED_GRANITE: return Materials.GraniteRed;
-                case MARBLE: return Materials.Marble;
-                case BASALT: return Materials.Basalt;
-                case CONCRETE_LIGHT: case CONCRETE_DARK: return Materials.Concrete;
-                default: throw new IllegalStateException("Unreachable");
+                case BLACK_GRANITE:
+                    return Materials.GraniteBlack;
+                case RED_GRANITE:
+                    return Materials.GraniteRed;
+                case MARBLE:
+                    return Materials.Marble;
+                case BASALT:
+                    return Materials.Basalt;
+                case CONCRETE_LIGHT:
+                case CONCRETE_DARK:
+                    return Materials.Concrete;
+                default:
+                    throw new IllegalStateException("Unreachable");
             }
         }
     }

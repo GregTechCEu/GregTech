@@ -7,6 +7,7 @@ import gregtech.api.terminal.os.menu.IMenuComponent;
 import java.util.function.Consumer;
 
 public class ClickComponent implements IMenuComponent {
+
     private IGuiTexture icon;
     private String hoverText;
     private Consumer<Widget.ClickData> consumer;

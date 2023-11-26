@@ -31,5 +31,4 @@ public class BlockUtility {
     public static NonNullList<ItemStack> stopCaptureDrops() {
         return WRAPPER.captureDrops(false);
     }
-
 }

@@ -1,8 +1,10 @@
 package gregtech.asm.hooks;
 
 import gregtech.api.util.GTLog;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockRenderLayer;
+
 import team.chisel.ctm.api.model.IModelCTM;
 import team.chisel.ctm.client.model.ModelCTM;
 
@@ -13,7 +15,7 @@ public class CTMModHooks {
 
     private static Field layers;
 
-    static{
+    static {
         try {
             layers = ModelCTM.class.getDeclaredField("layers");
             layers.setAccessible(true);

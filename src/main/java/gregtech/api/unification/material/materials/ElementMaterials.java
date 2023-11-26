@@ -297,7 +297,8 @@ public class ElementMaterials {
                 .ore()
                 .color(0xFFE650).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_RING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
-                        GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE, GENERATE_FOIL, GENERATE_DOUBLE_PLATE)
+                        GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE, GENERATE_FOIL,
+                        GENERATE_DOUBLE_PLATE)
                 .element(Elements.Au)
                 .cableProperties(V[HV], 3, 2)
                 .fluidPipeProperties(1671, 25, true, true, false, false)
@@ -377,7 +378,9 @@ public class ElementMaterials {
                 .plasma()
                 .ore()
                 .color(0xC8C8C8).iconSet(METALLIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_SPRING_SMALL, GENERATE_SPRING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, BLAST_FURNACE_CALCITE_TRIPLE)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR,
+                        GENERATE_SPRING_SMALL, GENERATE_SPRING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
+                        BLAST_FURNACE_CALCITE_TRIPLE)
                 .element(Elements.Fe)
                 .toolStats(ToolProperty.Builder.of(2.0F, 2.0F, 256, 2)
                         .enchantability(14).build())
@@ -820,10 +823,12 @@ public class ElementMaterials {
                 .itemPipeProperties(4096, 0.5f)
                 .build();
 
-        Titanium = new Material.Builder(113, gregtechId("titanium")) // todo Ore? Look at EBF recipe here if we do Ti ores
+        Titanium = new Material.Builder(113, gregtechId("titanium")) // todo Ore? Look at EBF recipe here if we do Ti
+                                                                     // ores
                 .ingot(3).fluid()
                 .color(0xDCA0F0).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_FRAME)
+                .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR,
+                        GENERATE_FRAME)
                 .element(Elements.Ti)
                 .toolStats(ToolProperty.Builder.of(8.0F, 6.0F, 1536, 3)
                         .enchantability(14).build())
@@ -846,7 +851,8 @@ public class ElementMaterials {
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(3695))
                 .color(0x323232).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
+                .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_GEAR,
+                        GENERATE_DOUBLE_PLATE)
                 .element(Elements.W)
                 .rotorStats(7.0f, 3.0f, 2560)
                 .cableProperties(V[IV], 2, 2)
@@ -916,7 +922,8 @@ public class ElementMaterials {
                 .liquid(new FluidBuilder().customStill())
                 .ore()
                 .color(0x323232).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_FOIL, GENERATE_SPRING, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW, GENERATE_DOUBLE_PLATE)
+                .flags(EXT_METAL, GENERATE_FOIL, GENERATE_SPRING, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW,
+                        GENERATE_DOUBLE_PLATE)
                 .element(Elements.Nq)
                 .rotorStats(6.0f, 4.0f, 1280)
                 .cableProperties(V[ZPM], 2, 2)
@@ -943,7 +950,8 @@ public class ElementMaterials {
                 .ingot(3)
                 .liquid(new FluidBuilder().customStill())
                 .color(0x1E1E1E).iconSet(SHINY)
-                .flags(EXT_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FOIL, GENERATE_GEAR, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW)
+                .flags(EXT_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FOIL, GENERATE_GEAR, GENERATE_FINE_WIRE,
+                        GENERATE_BOLT_SCREW)
                 .element(Elements.Nq2)
                 .blast(b -> b
                         .temp(9000, GasTier.HIGH)
@@ -955,7 +963,8 @@ public class ElementMaterials {
                 .ingot(6)
                 .liquid(new FluidBuilder().temperature(100_000))
                 .color(0xFAFAFA)
-                .flags(EXT_METAL, GENERATE_BOLT_SCREW, GENERATE_FRAME, GENERATE_GEAR, GENERATE_LONG_ROD, GENERATE_DOUBLE_PLATE)
+                .flags(EXT_METAL, GENERATE_BOLT_SCREW, GENERATE_FRAME, GENERATE_GEAR, GENERATE_LONG_ROD,
+                        GENERATE_DOUBLE_PLATE)
                 .element(Elements.Nt)
                 .toolStats(ToolProperty.Builder.of(180.0F, 100.0F, 65535, 6)
                         .attackSpeed(0.5F).enchantability(33).magnetic().unbreakable().build())
@@ -967,7 +976,8 @@ public class ElementMaterials {
                 .ingot(6)
                 .liquid(new FluidBuilder().temperature(25_000))
                 .color(0x600000).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING, GENERATE_SMALL_GEAR, GENERATE_ROUND, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING, GENERATE_SMALL_GEAR, GENERATE_ROUND, GENERATE_FOIL,
+                        GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .element(Elements.Tr)
                 .cableProperties(V[UV], 1, 8)
                 .rotorStats(20.0f, 6.0f, 10240)
@@ -995,6 +1005,5 @@ public class ElementMaterials {
                         .blastStats(VA[LuV], 1500)
                         .vacuumStats(VA[IV], 300))
                 .build();
-
     }
 }

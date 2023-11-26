@@ -1,9 +1,8 @@
 package gregtech.modules;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.modules.*;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -11,6 +10,9 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.event.*;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,8 +37,7 @@ public class ModuleManager implements IModuleManager {
     private final Logger logger = LogManager.getLogger("GregTech Module Loader");
     private Configuration config;
 
-    private ModuleManager() {
-    }
+    private ModuleManager() {}
 
     public static ModuleManager getInstance() {
         return INSTANCE;
@@ -50,7 +51,8 @@ public class ModuleManager implements IModuleManager {
     public boolean isModuleEnabled(IGregTechModule module) {
         GregTechModule annotation = module.getClass().getAnnotation(GregTechModule.class);
         String comment = getComment(module);
-        Property prop = getConfiguration().get(MODULE_CFG_CATEGORY_NAME, annotation.containerID() + ":" + annotation.moduleID(), true, comment);
+        Property prop = getConfiguration().get(MODULE_CFG_CATEGORY_NAME,
+                annotation.containerID() + ":" + annotation.moduleID(), true, comment);
         return prop.getBoolean();
     }
 
@@ -80,13 +82,13 @@ public class ModuleManager implements IModuleManager {
     }
 
     public void setup(ASMDataTable asmDataTable, File configDirectory) {
-        // find and register all containers registered with the @ModuleContainer annotation, then sort them by container name
+        // find and register all containers registered with the @ModuleContainer annotation, then sort them by container
+        // name
         discoverContainers(asmDataTable);
         containers = containers.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new
-                ));
+                        Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
 
         currentStage = ModuleStage.M_SETUP;
         configFolder = new File(configDirectory, GTValues.MODID);
@@ -265,7 +267,8 @@ public class ModuleManager implements IModuleManager {
                     GregTechModule annotation = module.getClass().getAnnotation(GregTechModule.class);
                     String moduleID = annotation.moduleID();
                     toLoad.remove(new ResourceLocation(moduleID));
-                    logger.info("Module {} is missing at least one of module dependencies: {}, skipping loading...", moduleID, dependencies);
+                    logger.info("Module {} is missing at least one of module dependencies: {}, skipping loading...",
+                            moduleID, dependencies);
                 }
             }
         } while (changed);
@@ -334,7 +337,8 @@ public class ModuleManager implements IModuleManager {
                     logger.error("Could not initialize module " + moduleID, e);
                 }
             } else {
-                logger.info("Module {} is missing at least one of mod dependencies: {}, skipping loading...", moduleID, modDependencies);
+                logger.info("Module {} is missing at least one of mod dependencies: {}, skipping loading...", moduleID,
+                        modDependencies);
             }
         }
         return instances.stream().sorted((m1, m2) -> {

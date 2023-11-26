@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IOpticalComputationHatch;
 import gregtech.api.capability.IOpticalComputationProvider;
@@ -21,7 +18,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.MetaBlocks;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -31,6 +28,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,11 +135,13 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.3"));
-        tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.4", TextFormattingUtil.formatNumbers(EUT_PER_HATCH)));
+        tooltip.add(I18n.format("gregtech.machine.network_switch.tooltip.4",
+                TextFormattingUtil.formatNumbers(EUT_PER_HATCH)));
     }
 
     @Override
@@ -167,7 +168,8 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     }
 
     /** Handles computation load across multiple receivers and to multiple transmitters. */
-    private static class MultipleComputationHandler implements IOpticalComputationProvider, IOpticalComputationReceiver {
+    private static class MultipleComputationHandler implements IOpticalComputationProvider,
+                                                    IOpticalComputationReceiver {
 
         // providers in the NS provide distributable computation to the NS
         private final Set<IOpticalComputationHatch> providers = new ObjectOpenHashSet<>();
@@ -176,7 +178,8 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
 
         private int EUt;
 
-        private void onStructureForm(Collection<IOpticalComputationHatch> providers, Collection<IOpticalComputationHatch> transmitters) {
+        private void onStructureForm(Collection<IOpticalComputationHatch> providers,
+                                     Collection<IOpticalComputationHatch> transmitters) {
             reset();
             this.providers.addAll(providers);
             this.transmitters.addAll(transmitters);

@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -16,9 +17,11 @@ import java.util.function.Supplier;
 
 public class FixWiringTaskWidget extends Widget {
 
-    private final static TextureArea background = TextureArea.fullImage("textures/gui/widget/electricity_wires_baseback.png");
+    private final static TextureArea background = TextureArea
+            .fullImage("textures/gui/widget/electricity_wires_baseback.png");
     private final static TextureArea wire = TextureArea.fullImage("textures/gui/widget/electricity_wires.png");
-    private final static TextureArea wire_base = TextureArea.fullImage("textures/gui/widget/electricity_wires_base.png");
+    private final static TextureArea wire_base = TextureArea
+            .fullImage("textures/gui/widget/electricity_wires_base.png");
     private final int[] colors = new int[4];
     private final boolean[] connect = new boolean[4];
     private final int[] init = new int[4];
@@ -79,19 +82,19 @@ public class FixWiringTaskWidget extends Widget {
         for (int i = 0; i < 4; i++) {
             double y1 = y + yScale * ((i + 1) * 104 - 10);
             if (isLeft) {
-                if (isMouseOver(x, (int)(y1 - yScale * 16), (int)(xScale * 38 * 1.5), (int)(yScale * 64), mouseX, mouseY)) {
+                if (isMouseOver(x, (int) (y1 - yScale * 16), (int) (xScale * 38 * 1.5), (int) (yScale * 64), mouseX,
+                        mouseY)) {
                     return i;
                 }
             } else {
-                if (isMouseOver(x + width - (int)(xScale * 38 * 1.5), (int)(y1 - yScale * 16), (int)(xScale * 38 * 1.5), (int)(yScale * 64), mouseX, mouseY)) {
+                if (isMouseOver(x + width - (int) (xScale * 38 * 1.5), (int) (y1 - yScale * 16),
+                        (int) (xScale * 38 * 1.5), (int) (yScale * 64), mouseX, mouseY)) {
                     return i;
                 }
             }
         }
         return -1;
     }
-
-
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
@@ -109,9 +112,9 @@ public class FixWiringTaskWidget extends Widget {
             if (connect[i]) {
                 for (int j = 0; j < init.length; j++) {
                     if (init[j] == i) {
-                        double y2 =  y + yScale * ((j + 1) * 104 - 10);
+                        double y2 = y + yScale * ((j + 1) * 104 - 10);
                         drawLines(Arrays.asList(new Vec2f(x + xScale * 25, (float) y1 + yScale * 12),
-                                new Vec2f(x+ width - (int)(xScale * 25), (float) y2 + yScale * 12)), color, color, 5);
+                                new Vec2f(x + width - (int) (xScale * 25), (float) y2 + yScale * 12)), color, color, 5);
                         break;
                     }
                 }
@@ -122,20 +125,25 @@ public class FixWiringTaskWidget extends Widget {
             int color = colors[i];
 
             if (dragged == i) {
-                drawLines(Arrays.asList(new Vec2f(x + xScale * 25, (float) y1 + yScale * 12), new Vec2f(mouseX, mouseY)), color, color, 5);
+                drawLines(
+                        Arrays.asList(new Vec2f(x + xScale * 25, (float) y1 + yScale * 12), new Vec2f(mouseX, mouseY)),
+                        color, color, 5);
             }
 
             // left
-            wire.drawSubArea(x + (int)(xScale * 25), y1 - yScale * 5, (int)(xScale * 38), (int)(yScale * 32), 0, 0, 0.5,1);
+            wire.drawSubArea(x + (int) (xScale * 25), y1 - yScale * 5, (int) (xScale * 38), (int) (yScale * 32), 0, 0,
+                    0.5, 1);
             setColor(color);
-            wire_base.drawSubArea(x, (int)y1, (int)(xScale * 50), (int)(yScale * 32), 0, 0, 0.5, 1);
-            GlStateManager.color(1,1,1,1);
+            wire_base.drawSubArea(x, (int) y1, (int) (xScale * 50), (int) (yScale * 32), 0, 0, 0.5, 1);
+            GlStateManager.color(1, 1, 1, 1);
 
-            //right
-            wire.drawSubArea(x + width -  (int)(xScale * (25 + 38)), y1 - yScale * 5, (int)(xScale * 38), (int)(yScale * 32), 0.5, 0, 0.5, 1);
+            // right
+            wire.drawSubArea(x + width - (int) (xScale * (25 + 38)), y1 - yScale * 5, (int) (xScale * 38),
+                    (int) (yScale * 32), 0.5, 0, 0.5, 1);
             setColor(colors[init[i]]);
-            wire_base.drawSubArea(x + width - (int)(xScale * 50), (int)y1, (int)(xScale * 50), (int)(yScale * 32), 0.5, 0, 0.5, 1);
-            GlStateManager.color(1,1,1,1);
+            wire_base.drawSubArea(x + width - (int) (xScale * 50), (int) y1, (int) (xScale * 50), (int) (yScale * 32),
+                    0.5, 0, 0.5, 1);
+            GlStateManager.color(1, 1, 1, 1);
         }
     }
 

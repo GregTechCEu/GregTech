@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +51,8 @@ public class IntegrationUtil {
     }
 
     @NotNull
-    public static ItemStack getModItem(@NotNull String modid, @NotNull String name, int meta, int amount, @Nullable String nbt) {
+    public static ItemStack getModItem(@NotNull String modid, @NotNull String name, int meta, int amount,
+                                       @Nullable String nbt) {
         if (!Loader.isModLoaded(modid)) {
             return ItemStack.EMPTY;
         }
@@ -74,11 +76,11 @@ public class IntegrationUtil {
         }
 
         @Override
-        public void initGui(GuiErrorScreen guiErrorScreen, FontRenderer fontRenderer) {
-        }
+        public void initGui(GuiErrorScreen guiErrorScreen, FontRenderer fontRenderer) {}
 
         @Override
-        public void drawScreen(GuiErrorScreen errorScreen, FontRenderer fontRenderer, int mouseX, int mouseY, float time) {
+        public void drawScreen(GuiErrorScreen errorScreen, FontRenderer fontRenderer, int mouseX, int mouseY,
+                               float time) {
             int x = errorScreen.width / 2;
             int y = 75;
             for (String message : messages) {

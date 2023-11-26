@@ -4,12 +4,12 @@ import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
 import java.util.Arrays;
 import java.util.List;
-
 
 /**
  * Used for setting a "ghost" IC for a machine
@@ -22,7 +22,8 @@ public class GhostCircuitSlotWidget extends SlotWidget {
 
     private final GhostCircuitItemStackHandler circuitInventory;
 
-    public GhostCircuitSlotWidget(GhostCircuitItemStackHandler circuitInventory, int slotIndex, int xPosition, int yPosition) {
+    public GhostCircuitSlotWidget(GhostCircuitItemStackHandler circuitInventory, int slotIndex, int xPosition,
+                                  int yPosition) {
         super(circuitInventory, slotIndex, xPosition, yPosition, false, false, false);
         this.circuitInventory = circuitInventory;
     }

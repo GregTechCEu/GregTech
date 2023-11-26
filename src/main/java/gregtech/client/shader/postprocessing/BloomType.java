@@ -3,6 +3,7 @@ package gregtech.client.shader.postprocessing;
 import javax.annotation.Nonnull;
 
 public enum BloomType {
+
     /**
      * Simple Gaussian Blur
      */

@@ -1,12 +1,14 @@
 package gregtech.client.shader;
 
 import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class PingPongBuffer {
+
     private static final Framebuffer BUFFER_A;
     private static final Framebuffer BUFFER_B;
     private static boolean flag;

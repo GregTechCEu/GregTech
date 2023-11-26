@@ -10,7 +10,8 @@ public class RecipeLogicEnergy extends AbstractRecipeLogic {
 
     protected final Supplier<IEnergyContainer> energyContainer;
 
-    public RecipeLogicEnergy(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
+    public RecipeLogicEnergy(MetaTileEntity tileEntity, RecipeMap<?> recipeMap,
+                             Supplier<IEnergyContainer> energyContainer) {
         super(tileEntity, recipeMap);
         this.energyContainer = energyContainer;
         setMaximumOverclockVoltage(getMaxVoltage());

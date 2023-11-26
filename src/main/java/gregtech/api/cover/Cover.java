@@ -1,11 +1,7 @@
 package gregtech.api.cover;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.client.utils.BloomEffectUtil;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +13,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
@@ -31,9 +33,11 @@ public interface Cover {
     /**
      * @return the CoverableView containing this cover
      */
-    @NotNull CoverableView getCoverableView();
+    @NotNull
+    CoverableView getCoverableView();
 
-    @NotNull CoverDefinition getDefinition();
+    @NotNull
+    CoverDefinition getDefinition();
 
     /**
      * @return the World containing this cover
@@ -97,14 +101,15 @@ public interface Cover {
     default void update() {}
 
     default boolean isTickable() {
-        //noinspection InstanceofThis
+        // noinspection InstanceofThis
         return this instanceof ITickable;
     }
 
     /**
      * @return the side the cover is attached to
      */
-    @NotNull EnumFacing getAttachedSide();
+    @NotNull
+    EnumFacing getAttachedSide();
 
     /**
      * @param coverable the CoverableView to attach to
@@ -122,7 +127,8 @@ public interface Cover {
      * @param player        the player attaching the cover
      * @param itemStack     the item used to place the cover
      */
-    default void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {}
+    default void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
+                              @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {}
 
     /**
      * Called when the cover is removed
@@ -165,7 +171,8 @@ public interface Cover {
      * @param hitResult the HitResult of the click
      * @return the action's result
      */
-    default @NotNull EnumActionResult onRightClick(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    default @NotNull EnumActionResult onRightClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                                   @NotNull CuboidRayTraceResult hitResult) {
         return EnumActionResult.PASS;
     }
 
@@ -175,7 +182,8 @@ public interface Cover {
      * @param hitResult the HitResult of the click
      * @return the action's result
      */
-    default @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    default @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                                         @NotNull CuboidRayTraceResult hitResult) {
         return EnumActionResult.PASS;
     }
 
@@ -185,7 +193,8 @@ public interface Cover {
      * @param hitResult the HitResult of the click
      * @return the action's result
      */
-    default @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer player, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    default @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
+                                                        @NotNull CuboidRayTraceResult hitResult) {
         return EnumActionResult.PASS;
     }
 
@@ -229,7 +238,8 @@ public interface Cover {
      * It will be automatically translated to prevent Z-fighting with machine faces
      */
     @SideOnly(Side.CLIENT)
-    void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, @NotNull IVertexOperation[] pipeline,
+    void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                     @NotNull IVertexOperation[] pipeline,
                      @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer);
 
     @SideOnly(Side.CLIENT)
@@ -238,7 +248,8 @@ public interface Cover {
     }
 
     @SideOnly(Side.CLIENT)
-    void renderCoverPlate(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, @NotNull IVertexOperation[] pipeline,
+    void renderCoverPlate(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                          @NotNull IVertexOperation[] pipeline,
                           @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer);
 
     default boolean canRenderBackside() {

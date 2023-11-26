@@ -8,23 +8,25 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.covers.*;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 public class ItemNetHandler implements IItemHandler {
 
@@ -87,7 +89,8 @@ public class ItemNetHandler implements IItemHandler {
             return insertFirst(stack, simulate);
 
         CoverConveyor conveyor = (CoverConveyor) (pipeConveyor ? pipeCover : tileCover);
-        if (conveyor.getConveyorMode() == (pipeConveyor ? CoverConveyor.ConveyorMode.IMPORT : CoverConveyor.ConveyorMode.EXPORT)) {
+        if (conveyor.getConveyorMode() ==
+                (pipeConveyor ? CoverConveyor.ConveyorMode.IMPORT : CoverConveyor.ConveyorMode.EXPORT)) {
             boolean roundRobinGlobal = conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN_GLOBAL;
             if (roundRobinGlobal || conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN_PRIO)
                 return insertRoundRobin(stack, simulate, roundRobinGlobal);
@@ -223,7 +226,8 @@ public class ItemNetHandler implements IItemHandler {
 
         // equally distribute items over all inventories
         // it takes into account how much was inserted in total
-        // f.e. if inv1 has 2 inserted and inv2 has 6 inserted, it will first try to insert 4 into inv1 so that both have 6 and then it will distribute the rest equally
+        // f.e. if inv1 has 2 inserted and inv2 has 6 inserted, it will first try to insert 4 into inv1 so that both
+        // have 6 and then it will distribute the rest equally
         outer:
         while (amount > 0 && !transferredCopy.isEmpty()) {
             Iterator<EnhancedRoundRobinData> iterator = transferredCopy.iterator();
@@ -236,7 +240,7 @@ public class ItemNetHandler implements IItemHandler {
                 int toInsert;
                 if (nextStep <= 0) {
                     if (amount <= m) {
-                        //break outer;
+                        // break outer;
                         toInsert = 1;
                     } else {
                         toInsert = Math.min(c, amount);
@@ -295,34 +299,43 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     public ItemStack insert(ItemRoutePath routePath, ItemStack stack, boolean simulate, boolean ignoreLimit) {
-        int allowed = ignoreLimit ? stack.getCount() : checkTransferable(routePath.getProperties().getTransferRate(), stack.getCount(), simulate);
+        int allowed = ignoreLimit ? stack.getCount() :
+                checkTransferable(routePath.getProperties().getTransferRate(), stack.getCount(), simulate);
         if (allowed == 0 || !routePath.matchesFilters(stack)) {
             return stack;
         }
-        Cover pipeCover = routePath.getTargetPipe().getCoverableImplementation().getCoverAtSide(routePath.getTargetFacing());
+        Cover pipeCover = routePath.getTargetPipe().getCoverableImplementation()
+                .getCoverAtSide(routePath.getTargetFacing());
         Cover tileCover = getCoverOnNeighbour(routePath.getTargetPipe(), routePath.getTargetFacing());
 
         if (pipeCover != null) {
             testHandler.setStackInSlot(0, stack.copy());
-            IItemHandler itemHandler = pipeCover.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, testHandler);
-            if (itemHandler == null || (itemHandler != testHandler && (allowed = itemHandler.extractItem(0, allowed, true).getCount()) <= 0)) {
+            IItemHandler itemHandler = pipeCover.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                    testHandler);
+            if (itemHandler == null || (itemHandler != testHandler &&
+                    (allowed = itemHandler.extractItem(0, allowed, true).getCount()) <= 0)) {
                 testHandler.setStackInSlot(0, ItemStack.EMPTY);
                 return stack;
             }
             testHandler.setStackInSlot(0, ItemStack.EMPTY);
         }
         IItemHandler neighbourHandler = routePath.getHandler();
-        if (pipeCover instanceof CoverRoboticArm && ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT) {
-            return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) pipeCover, stack, simulate, allowed, ignoreLimit);
+        if (pipeCover instanceof CoverRoboticArm &&
+                ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT) {
+            return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) pipeCover, stack, simulate, allowed,
+                    ignoreLimit);
         }
-        if (tileCover instanceof CoverRoboticArm && ((CoverRoboticArm) tileCover).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT) {
-            return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) tileCover, stack, simulate, allowed, ignoreLimit);
+        if (tileCover instanceof CoverRoboticArm &&
+                ((CoverRoboticArm) tileCover).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT) {
+            return insertOverRobotArm(neighbourHandler, (CoverRoboticArm) tileCover, stack, simulate, allowed,
+                    ignoreLimit);
         }
 
         return insert(neighbourHandler, stack, simulate, allowed, ignoreLimit);
     }
 
-    private ItemStack insert(IItemHandler handler, ItemStack stack, boolean simulate, int allowed, boolean ignoreLimit) {
+    private ItemStack insert(IItemHandler handler, ItemStack stack, boolean simulate, int allowed,
+                             boolean ignoreLimit) {
         if (stack.getCount() == allowed) {
             ItemStack re = GTTransferUtils.insertItem(handler, stack, simulate);
             if (!ignoreLimit)
@@ -342,14 +355,16 @@ public class ItemNetHandler implements IItemHandler {
     public Cover getCoverOnNeighbour(TileEntityItemPipe itemPipe, EnumFacing facing) {
         TileEntity tile = itemPipe.getNeighbor(facing);
         if (tile != null) {
-            CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER, facing.getOpposite());
+            CoverHolder coverHolder = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVER_HOLDER,
+                    facing.getOpposite());
             if (coverHolder == null) return null;
             return coverHolder.getCoverAtSide(facing.getOpposite());
         }
         return null;
     }
 
-    public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, ItemStack stack, boolean simulate, int allowed, boolean ignoreLimit) {
+    public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, ItemStack stack, boolean simulate,
+                                        int allowed, boolean ignoreLimit) {
         int rate;
         boolean isStackSpecific = false;
         Object index = arm.getItemFilterContainer().matchItemStack(stack);
@@ -440,11 +455,11 @@ public class ItemNetHandler implements IItemHandler {
             simulatedTransfersGlobalRoundRobin.merge(routePath.toFacingPos(), amount, Integer::sum);
         else
             pipe.getTransferred().merge(routePath.toFacingPos(), amount, Integer::sum);
-
     }
 
     private boolean contains(ItemRoutePath routePath, boolean simulate) {
-        return simulate ? simulatedTransfersGlobalRoundRobin.containsKey(routePath.toFacingPos()) : pipe.getTransferred().containsKey(routePath.toFacingPos());
+        return simulate ? simulatedTransfersGlobalRoundRobin.containsKey(routePath.toFacingPos()) :
+                pipe.getTransferred().containsKey(routePath.toFacingPos());
     }
 
     private int didTransferTo(ItemRoutePath routePath, boolean simulate) {

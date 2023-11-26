@@ -9,5 +9,4 @@ public interface ISubItemHandler extends IItemComponent {
     String getItemSubType(ItemStack itemStack);
 
     void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems);
-
 }

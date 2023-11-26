@@ -11,8 +11,7 @@ public final class FluidAttributes {
      */
     public static final FluidAttribute ACID = new FluidAttribute(gregtechId("acid"),
             list -> list.add(I18n.format("gregtech.fluid.type_acid.tooltip")),
-            list -> list.add(I18n.format("gregtech.fluid_pipe.acid_proof"))
-    );
+            list -> list.add(I18n.format("gregtech.fluid_pipe.acid_proof")));
 
     private FluidAttributes() {}
 }

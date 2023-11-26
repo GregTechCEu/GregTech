@@ -1,11 +1,12 @@
 package gregtech.integration.crafttweaker.material;
 
+import gregtech.api.GregTechAPI;
+import gregtech.api.unification.material.Material;
+
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.BracketHandler;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.zenscript.IBracketHandler;
-import gregtech.api.GregTechAPI;
-import gregtech.api.unification.material.Material;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
 import stanhebben.zenscript.expression.ExpressionString;
@@ -46,5 +47,4 @@ public class MaterialBracketHandler implements IBracketHandler {
         return position -> new ExpressionCallStatic(position, environment, method,
                 new ExpressionString(position, nameBuilder.toString()));
     }
-
 }

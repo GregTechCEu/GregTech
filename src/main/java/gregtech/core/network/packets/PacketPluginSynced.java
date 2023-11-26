@@ -6,6 +6,7 @@ import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.core.network.NetworkUtils;
+
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -48,8 +49,10 @@ public class PacketPluginSynced implements IPacket, IServerExecutor {
     @Override
     public void executeServer(NetHandlerPlayServer handler) {
         TileEntity te = NetworkUtils.getTileEntityServer(dimension, pos);
-        if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-            MonitorPluginBaseBehavior plugin = ((MetaTileEntityMonitorScreen) ((IGregTechTileEntity) te).getMetaTileEntity()).plugin;
+        if (te instanceof IGregTechTileEntity &&
+                ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+            MonitorPluginBaseBehavior plugin = ((MetaTileEntityMonitorScreen) ((IGregTechTileEntity) te)
+                    .getMetaTileEntity()).plugin;
             if (plugin != null) {
                 plugin.readPluginAction(handler.player, id, updateData);
             }

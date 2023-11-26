@@ -1,6 +1,5 @@
 package gregtech.common.items.behaviors;
 
-import codechicken.lib.raytracer.RayTracer;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
@@ -13,6 +12,7 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,6 +26,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
+import codechicken.lib.raytracer.RayTracer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,7 @@ import static gregtech.common.blocks.MetaBlocks.MACHINE;
 import static gregtech.common.metatileentities.MetaTileEntities.CLIPBOARD_TILE;
 
 public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
+
     public static final int MAX_PAGES = 25;
     private static final int TEXT_COLOR = 0x1E1E1E;
 
@@ -55,9 +58,10 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                     () -> getButtonState(holder, finalI), (x) -> setButton(holder, finalI, x)));
 
             builder.image(32, 58 + 22 * i, 140, 12, GuiTextures.CLIPBOARD_TEXT_BOX);
-            textFields.add(new TextFieldWidget2(34, 60 + 22 * i, 136, 9, () -> getString(holder, finalI), val -> setString(holder, finalI, val))
-                    .setMaxLength(23)
-                    .setTextColor(TEXT_COLOR));
+            textFields.add(new TextFieldWidget2(34, 60 + 22 * i, 136, 9, () -> getString(holder, finalI),
+                    val -> setString(holder, finalI, val))
+                            .setMaxLength(23)
+                            .setTextColor(TEXT_COLOR));
         }
 
         for (TextFieldWidget2 textField : textFields) {
@@ -79,20 +83,22 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         return builder.build(holder, entityPlayer);
     }
 
-    public static ModularUI createMTEUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) { // So that people don't click on any text fields
+    public static ModularUI createMTEUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) { // So that people
+                                                                                                   // don't click on any
+                                                                                                   // text fields
         initNBT(holder.getCurrentItem());
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.CLIPBOARD_PAPER_BACKGROUND, 170, 238);
 
         builder.image(18, 8, 130, 14, GuiTextures.CLIPBOARD_TEXT_BOX);
         builder.widget(new SimpleTextWidget(20, 10, "", TEXT_COLOR, () -> getTitle(holder), true).setCenter(false));
 
-
         for (int i = 0; i < 8; i++) {
             int finalI = i;
             builder.widget(new ImageCycleButtonWidget(6, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_BUTTON, 4,
                     () -> getButtonState(holder, finalI), (x) -> setButton(holder, finalI, x)));
             builder.image(22, 38 + 20 * i, 140, 12, GuiTextures.CLIPBOARD_TEXT_BOX);
-            builder.widget(new SimpleTextWidget(24, 40 + 20 * i, "", TEXT_COLOR, () -> getString(holder, finalI), true).setCenter(false));
+            builder.widget(new SimpleTextWidget(24, 40 + 20 * i, "", TEXT_COLOR, () -> getString(holder, finalI), true)
+                    .setCenter(false));
         }
 
         builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, x.isShiftClick ? -10 : -1))
@@ -227,7 +233,11 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
-        if (!world.isRemote && RayTracer.retrace(player).typeOfHit != RayTraceResult.Type.BLOCK) { // So that the player doesn't place a clipboard before suddenly getting the GUI
+        if (!world.isRemote && RayTracer.retrace(player).typeOfHit != RayTraceResult.Type.BLOCK) { // So that the player
+                                                                                                   // doesn't place a
+                                                                                                   // clipboard before
+                                                                                                   // suddenly getting
+                                                                                                   // the GUI
             PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
             holder.openUI();
         }
@@ -235,7 +245,8 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+                                             EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!world.isRemote && facing.getAxis() != EnumFacing.Axis.Y) {
             ItemStack heldItem = player.getHeldItem(hand).copy();
             heldItem.setCount(1); // don't place multiple items at a time
@@ -254,7 +265,8 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                     // And manipulate it to our liking
                     IGregTechTileEntity holder = (IGregTechTileEntity) world.getTileEntity(shiftedPos);
                     if (holder != null) {
-                        MetaTileEntityClipboard clipboard = (MetaTileEntityClipboard) holder.setMetaTileEntity(CLIPBOARD_TILE);
+                        MetaTileEntityClipboard clipboard = (MetaTileEntityClipboard) holder
+                                .setMetaTileEntity(CLIPBOARD_TILE);
                         if (clipboard != null) {
                             clipboard.initializeClipboard(heldItem);
                             clipboard.setFrontFacing(facing.getOpposite());

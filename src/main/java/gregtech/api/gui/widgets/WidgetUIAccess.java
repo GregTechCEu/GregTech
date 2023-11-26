@@ -2,6 +2,7 @@ package gregtech.api.gui.widgets;
 
 import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.Widget;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
@@ -57,5 +58,4 @@ public interface WidgetUIAccess {
      * Client will receive payload data in {@link Widget#readUpdateInfo(int, PacketBuffer)}
      */
     void writeUpdateInfo(Widget widget, int id, Consumer<PacketBuffer> payloadWriter);
-
 }

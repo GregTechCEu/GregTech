@@ -1,12 +1,13 @@
 package gregtech.asm.util;
 
+import net.minecraft.launchwrapper.Launch;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 import com.google.common.io.LineProcessor;
 import com.google.common.io.Resources;
-import net.minecraft.launchwrapper.Launch;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -14,7 +15,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.*;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -22,10 +22,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Nonnull;
+
 /**
  * @apiNote codechicken.asm.ObfMapping
  */
-@SuppressWarnings({"unused", "UnstableApiUsage"})
+@SuppressWarnings({ "unused", "UnstableApiUsage" })
 public class ObfMapping extends Remapper {
 
     public static final ObfRemapper obfMapper = new ObfRemapper();
@@ -69,14 +71,14 @@ public class ObfMapping extends Remapper {
         if (lastDot < 0) {
             return new ObfMapping(s, "", "");
         }
-        int sep = s.indexOf('(');//methods
+        int sep = s.indexOf('(');// methods
         int sep_end = sep;
         if (sep < 0) {
-            sep = s.indexOf(' ');//some stuffs
+            sep = s.indexOf(' ');// some stuffs
             sep_end = sep + 1;
         }
         if (sep < 0) {
-            sep = s.indexOf(':');//fields
+            sep = s.indexOf(':');// fields
             sep_end = sep + 1;
         }
         if (sep < 0) {
@@ -246,11 +248,14 @@ public class ObfMapping extends Remapper {
                 Field rawMethodMapsField = FMLDeobfuscatingRemapper.class.getDeclaredField("rawMethodMaps");
                 rawFieldMapsField.setAccessible(true);
                 rawMethodMapsField.setAccessible(true);
-                Map<String, Map<String, String>> rawFieldMaps = (Map<String, Map<String, String>>) rawFieldMapsField.get(FMLDeobfuscatingRemapper.INSTANCE);
-                Map<String, Map<String, String>> rawMethodMaps = (Map<String, Map<String, String>>) rawMethodMapsField.get(FMLDeobfuscatingRemapper.INSTANCE);
+                Map<String, Map<String, String>> rawFieldMaps = (Map<String, Map<String, String>>) rawFieldMapsField
+                        .get(FMLDeobfuscatingRemapper.INSTANCE);
+                Map<String, Map<String, String>> rawMethodMaps = (Map<String, Map<String, String>>) rawMethodMapsField
+                        .get(FMLDeobfuscatingRemapper.INSTANCE);
 
                 if (rawFieldMaps == null) {
-                    throw new IllegalStateException("gregtech.asm.util.ObfMapping loaded too early. Make sure all references are in or after the asm transformer load stage");
+                    throw new IllegalStateException(
+                            "gregtech.asm.util.ObfMapping loaded too early. Make sure all references are in or after the asm transformer load stage");
                 }
 
                 for (Map<String, String> map : rawFieldMaps.values()) {
@@ -325,7 +330,7 @@ public class ObfMapping extends Remapper {
                 File methodCsv = new File(csvDir, "methods.csv");
 
                 if (notchSrg.exists() && fieldCsv.exists() && methodCsv.exists()) {
-                    return new File[]{notchSrg, fieldCsv, methodCsv};
+                    return new File[] { notchSrg, fieldCsv, methodCsv };
                 }
             }
 
@@ -363,19 +368,16 @@ public class ObfMapping extends Remapper {
         public Void getResult() {
             return null;
         }
-
     }
 
     static {
         boolean obf = true;
         try {
             obf = Launch.classLoader.getClassBytes("net.minecraft.world.World") == null;
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
         obfuscated = obf;
         if (!obf) {
             loadMCPRemapper();
         }
     }
-
 }

@@ -1,20 +1,23 @@
 package gregtech.common.terminal.app.guideeditor.widget.configurator;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.util.Position;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.util.Collections;
 import java.util.function.Consumer;
 
 public class ConfiguratorWidget<T> extends WidgetGroup {
+
     protected T defaultValue;
     protected String name;
     protected boolean canDefault;
@@ -36,7 +39,7 @@ public class ConfiguratorWidget<T> extends WidgetGroup {
         this.canDefault = defaultValue != null;
         this.config = config;
         if (config.get(name) == null) {
-            config.addProperty(name, (String)null);
+            config.addProperty(name, (String) null);
         }
         if (canDefault && config.get(name).isJsonNull()) {
             isDefault = true;
@@ -48,9 +51,7 @@ public class ConfiguratorWidget<T> extends WidgetGroup {
         init();
     }
 
-    protected void init() {
-
-    }
+    protected void init() {}
 
     protected void updateValue(T value) {
         if (canDefault && isDefault) return;
@@ -63,7 +64,7 @@ public class ConfiguratorWidget<T> extends WidgetGroup {
         return this;
     }
 
-    protected void update(){
+    protected void update() {
         if (onUpdated != null) {
             onUpdated.accept(name);
         }
@@ -74,7 +75,8 @@ public class ConfiguratorWidget<T> extends WidgetGroup {
         int x = getPosition().x;
         int y = getPosition().y;
         if (canDefault && isMouseOver(x + nameWidth + 4, y + 6, 5, 5, mouseX, mouseY)) {
-            drawHoveringText(ItemStack.EMPTY, Collections.singletonList(I18n.format("terminal.guide_editor.default")), 100, mouseX, mouseY);
+            drawHoveringText(ItemStack.EMPTY, Collections.singletonList(I18n.format("terminal.guide_editor.default")),
+                    100, mouseX, mouseY);
         }
         if (!isDefault) {
             super.drawInForeground(mouseX, mouseY);
@@ -95,10 +97,9 @@ public class ConfiguratorWidget<T> extends WidgetGroup {
         if (canDefault && isDefault) {
             super.drawInBackground(-100, -100, partialTicks, context);
             drawSolidRect(x, y + 15, this.getSize().width, this.getSize().height - 15, 0x99000000);
-        }  else {
+        } else {
             super.drawInBackground(mouseX, mouseY, partialTicks, context);
         }
-
     }
 
     @Override
@@ -121,6 +122,5 @@ public class ConfiguratorWidget<T> extends WidgetGroup {
         return false;
     }
 
-    protected void onDefault() {
-    }
+    protected void onDefault() {}
 }

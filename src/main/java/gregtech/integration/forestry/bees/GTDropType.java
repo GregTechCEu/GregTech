@@ -14,7 +14,7 @@ public enum GTDropType {
 
     GTDropType(String name, int primary, int secondary) {
         this.name = name;
-        this.color = new int[]{primary, secondary};
+        this.color = new int[] { primary, secondary };
     }
 
     public static GTDropType getDrop(int meta) {

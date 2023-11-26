@@ -3,6 +3,7 @@ package gregtech.common.items.tool;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.unification.OreDictUnifier;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -21,9 +22,10 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 import static gregtech.api.items.toolitem.ToolHelper.TORCH_PLACING_KEY;
 
@@ -35,7 +37,9 @@ public class TorchPlaceBehavior implements IToolBehavior {
 
     @Nonnull
     @Override
-    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos,
+                                      @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY,
+                                      float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         NBTTagCompound behaviourTag = ToolHelper.getBehaviorsTag(stack);
         if (behaviourTag.getBoolean(ToolHelper.TORCH_PLACING_KEY)) {
@@ -70,7 +74,8 @@ public class TorchPlaceBehavior implements IToolBehavior {
         return EnumActionResult.PASS;
     }
 
-    private static boolean checkAndPlaceTorch(ItemStack slotStack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    private static boolean checkAndPlaceTorch(ItemStack slotStack, EntityPlayer player, World world, BlockPos pos,
+                                              EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!slotStack.isEmpty()) {
             Item slotItem = slotStack.getItem();
             if (slotItem instanceof ItemBlock) {
@@ -84,13 +89,17 @@ public class TorchPlaceBehavior implements IToolBehavior {
                     if (!block.isReplaceable(world, pos)) {
                         pos = pos.offset(facing);
                     }
-                    if (player.canPlayerEdit(pos, facing, slotStack) && world.mayPlace(slotBlock, pos, false, facing, player)) {
+                    if (player.canPlayerEdit(pos, facing, slotStack) &&
+                            world.mayPlace(slotBlock, pos, false, facing, player)) {
                         int i = slotItemBlock.getMetadata(slotStack.getMetadata());
-                        IBlockState slotState = slotBlock.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, i, player, hand);
-                        if (slotItemBlock.placeBlockAt(slotStack, player, world, pos, facing, hitX, hitY, hitZ, slotState)) {
+                        IBlockState slotState = slotBlock.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, i,
+                                player, hand);
+                        if (slotItemBlock.placeBlockAt(slotStack, player, world, pos, facing, hitX, hitY, hitZ,
+                                slotState)) {
                             slotState = world.getBlockState(pos);
                             SoundType soundtype = slotState.getBlock().getSoundType(slotState, world, pos, player);
-                            world.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+                            world.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS,
+                                    (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
                             if (!player.isCreative()) slotStack.shrink(1);
                             return true;
                         }
@@ -107,7 +116,8 @@ public class TorchPlaceBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
+                               @Nonnull ITooltipFlag flag) {
         tooltip.add(I18n.format("item.gt.tool.behavior.torch_place"));
     }
 }

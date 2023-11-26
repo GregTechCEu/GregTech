@@ -1,6 +1,7 @@
 package gregtech.core.command.internal;
 
 import gregtech.api.command.ICommandManager;
+
 import net.minecraft.command.ICommand;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.server.command.CommandTreeBase;

@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -19,6 +15,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -30,17 +27,24 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.Nullable;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     private int itemsPerCycle = 1;
     private int ticksPerCycle = 1;
 
-    private final GTItemStackHandler handler = new GTItemStackHandler(this,1) {
+    private final GTItemStackHandler handler = new GTItemStackHandler(this, 1) {
+
         @Override
         protected int getStackLimit(int slot, ItemStack stack) {
             return 1;
@@ -64,7 +68,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
-                ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
+                ArrayUtils.add(pipeline,
+                        new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
                 this.getFrontFacing(), this.getTier());
         Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
@@ -75,7 +80,6 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         QuantumStorageRenderer.renderChestStack(x, y, z, this, this.virtualItemStack, 420, partialTicks);
     }
-
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
@@ -107,8 +111,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
         builder.label(7, 65, "gregtech.creative.chest.tpc");
 
-
-        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
+        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value,
+                "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
 
         return builder.build(getHolder(), entityPlayer);
     }
@@ -123,7 +127,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
         TileEntity tile = getNeighbor(getOutputFacing());
         if (tile != null) {
-            IItemHandler container = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.getOutputFacing().getOpposite());
+            IItemHandler container = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                    this.getOutputFacing().getOpposite());
             if (container == null || container.getSlots() == 0)
                 return;
             stack.setCount(itemsPerCycle);
@@ -179,9 +184,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.creative_tooltip.1")
-                + TooltipHelper.RAINBOW + I18n.format("gregtech.creative_tooltip.2")
-                + I18n.format("gregtech.creative_tooltip.3"));
+        tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
+                I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
         // do not append the normal tooltips
     }
 

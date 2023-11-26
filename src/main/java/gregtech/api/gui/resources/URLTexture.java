@@ -3,12 +3,14 @@ package gregtech.api.gui.resources;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.picturetexture.PictureTexture;
 import gregtech.api.gui.resources.utils.DownloadThread;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class URLTexture implements IGuiTexture{
+public class URLTexture implements IGuiTexture {
+
     public final String url;
     @SideOnly(Side.CLIENT)
     private DownloadThread downloader;
@@ -19,7 +21,6 @@ public class URLTexture implements IGuiTexture{
     @SideOnly(Side.CLIENT)
     private String error;
 
-
     public URLTexture(String url) {
         this.url = url;
     }
@@ -27,7 +28,7 @@ public class URLTexture implements IGuiTexture{
     @SideOnly(Side.CLIENT)
     @Override
     public void updateTick() {
-        if(this.texture != null) {
+        if (this.texture != null) {
             texture.tick(); // gif\video update
         }
     }
@@ -35,14 +36,16 @@ public class URLTexture implements IGuiTexture{
     @Override
     public void draw(double x, double y, int width, int height) {
         if (texture != null && texture.hasTexture()) {
-            texture.render((float)x, (float)y, width, height, 0, 1, 1, false, false);
+            texture.render((float) x, (float) y, width, height, 0, 1, 1, false, false);
         } else {
             if (failed || url == null || this.url.isEmpty()) {
-                Minecraft.getMinecraft().fontRenderer.drawString(I18n.format("texture.url_texture.fail"), (int)x + 2, (int)(y + height / 2.0 - 4), 0xffff0000);
+                Minecraft.getMinecraft().fontRenderer.drawString(I18n.format("texture.url_texture.fail"), (int) x + 2,
+                        (int) (y + height / 2.0 - 4), 0xffff0000);
             } else {
                 this.loadTexture();
                 int s = (int) Math.floorMod(System.currentTimeMillis() / 200, 24);
-                Widget.drawSector((float)(x + width / 2.0), (float)(y + height / 2.0), (float)(Math.min(width, height) / 4.0),
+                Widget.drawSector((float) (x + width / 2.0), (float) (y + height / 2.0),
+                        (float) (Math.min(width, height) / 4.0),
                         0xFF94E2C1, 24, s, s + 5);
             }
         }

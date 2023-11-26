@@ -1,9 +1,5 @@
 package gregtech.common.covers;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
@@ -13,6 +9,7 @@ import gregtech.api.util.GTLog;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.common.items.behaviors.FacadeItem;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -25,6 +22,11 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,17 +55,20 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
     }
 
     @Override
-    public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
+    public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
+                             @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
         setFacadeStack(FacadeItem.getFacadeStack(itemStack));
     }
 
     @Override
-    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline,
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline,
                             @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         BlockRenderLayer oldLayer = MinecraftForgeClient.getRenderLayer();
         ForgeHooksClient.setRenderLayer(layer);
-        FacadeRenderer.renderBlockCover(renderState, translation, getCoverableView().getWorld(), getCoverableView().getPos(), getAttachedSide().getIndex(), facadeState, plateBox, layer);
+        FacadeRenderer.renderBlockCover(renderState, translation, getCoverableView().getWorld(),
+                getCoverableView().getPos(), getAttachedSide().getIndex(), facadeState, plateBox, layer);
         ForgeHooksClient.setRenderLayer(oldLayer);
     }
 
@@ -152,5 +157,7 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
     }
 
     @Override
-    public void renderCoverPlate(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {}
+    public void renderCoverPlate(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                                 IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox,
+                                 @NotNull BlockRenderLayer layer) {}
 }

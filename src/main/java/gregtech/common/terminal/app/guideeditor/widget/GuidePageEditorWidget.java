@@ -1,7 +1,5 @@
 package gregtech.common.terminal.app.guideeditor.widget;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -15,10 +13,15 @@ import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
 import gregtech.common.terminal.app.guide.widget.GuidePageWidget;
 import gregtech.common.terminal.app.guide.widget.IGuideWidget;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 public class GuidePageEditorWidget extends GuidePageWidget {
+
     private Widget selected;
     private final WidgetGroup toolButtons;
     private final CustomPositionSizeWidget customPositionSizeWidget;
@@ -29,7 +32,8 @@ public class GuidePageEditorWidget extends GuidePageWidget {
         super(xPosition, yPosition, width, height, margin);
         this.setDraggable(false);
         setTitle("Template");
-        customPositionSizeWidget = new CustomPositionSizeWidget(0xff0000ff, 0xffff0000, 2).setOnUpdated(this::onPosSizeChanged);
+        customPositionSizeWidget = new CustomPositionSizeWidget(0xff0000ff, 0xffff0000, 2)
+                .setOnUpdated(this::onPosSizeChanged);
         toolButtons = new WidgetGroup(Position.ORIGIN, Size.ZERO);
         toolButtons.setVisible(false);
         toolButtons.addWidget(new CircleButtonWidget(-20, -4, 8, 1, 12)
@@ -99,7 +103,8 @@ public class GuidePageEditorWidget extends GuidePageWidget {
         customPositionSizeWidget.setVisible(true);
         customPositionSizeWidget.setActive(!(widget instanceof IGuideWidget) || ((IGuideWidget) widget).isFixed());
         toolButtons.setVisible(true);
-        toolButtons.setSelfPosition(new Position(widget.getSelfPosition().x + widget.getSize().width / 2, widget.getSelfPosition().y));
+        toolButtons.setSelfPosition(
+                new Position(widget.getSelfPosition().x + widget.getSize().width / 2, widget.getSelfPosition().y));
     }
 
     private void delete(ClickData clickData) {
@@ -170,7 +175,8 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                 }
                 stream.add(index + 1, guideWidget);
             } else {
-                guideWidget = widget.updateOrCreateStreamWidget(margin, getStreamBottom() + 5, pageWidth - 2 * margin, widgetConfig);
+                guideWidget = widget.updateOrCreateStreamWidget(margin, getStreamBottom() + 5, pageWidth - 2 * margin,
+                        widgetConfig);
                 stream.add(guideWidget);
             }
             this.addWidget(guideWidget);
@@ -178,7 +184,6 @@ public class GuidePageEditorWidget extends GuidePageWidget {
         }
         return widgetConfig;
     }
-
 
     public void moveUp(Widget widget) {
         int index = stream.indexOf(widget);
@@ -190,13 +195,17 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                 int y1 = widget.getSelfPosition().y;
                 int y2 = target.getSelfPosition().y;
                 interpolator = new Interpolator(0, 1, 10, Eases.LINEAR, value -> {
-                    widget.setSelfPosition(new Position(widget.getSelfPosition().x, (int) (y1 - value.floatValue() * offsetU)));
-                    target.setSelfPosition(new Position(target.getSelfPosition().x, (int) (y2 + value.floatValue() * offsetD)));
+                    widget.setSelfPosition(
+                            new Position(widget.getSelfPosition().x, (int) (y1 - value.floatValue() * offsetU)));
+                    target.setSelfPosition(
+                            new Position(target.getSelfPosition().x, (int) (y2 + value.floatValue() * offsetD)));
                     if (widget == selected) {
                         setToolButton(selected);
                     }
-                    widget.setVisible(widget.getSelfPosition().y < scrollYOffset + getSize().height && widget.getSelfPosition().y + widget.getSize().height > 0);
-                    target.setVisible(target.getSelfPosition().y < scrollYOffset + getSize().height && target.getSelfPosition().y + target.getSize().height > 0);
+                    widget.setVisible(widget.getSelfPosition().y < scrollYOffset + getSize().height &&
+                            widget.getSelfPosition().y + widget.getSize().height > 0);
+                    target.setVisible(target.getSelfPosition().y < scrollYOffset + getSize().height &&
+                            target.getSelfPosition().y + target.getSize().height > 0);
                 }, value -> {
                     interpolator = null;
                     stream.remove(widget);
@@ -223,13 +232,17 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                 int y1 = widget.getSelfPosition().y;
                 int y2 = target.getSelfPosition().y;
                 interpolator = new Interpolator(0, 1, 10, Eases.LINEAR, value -> {
-                    widget.setSelfPosition(new Position(widget.getSelfPosition().x, (int) (y1 + value.floatValue() * offsetD)));
-                    target.setSelfPosition(new Position(target.getSelfPosition().x, (int) (y2 - value.floatValue() * offsetU)));
+                    widget.setSelfPosition(
+                            new Position(widget.getSelfPosition().x, (int) (y1 + value.floatValue() * offsetD)));
+                    target.setSelfPosition(
+                            new Position(target.getSelfPosition().x, (int) (y2 - value.floatValue() * offsetU)));
                     if (widget == selected) {
                         setToolButton(selected);
                     }
-                    widget.setVisible(widget.getSelfPosition().y < getSize().height - xBarHeight && widget.getSelfPosition().y + widget.getSize().height > 0);
-                    target.setVisible(target.getSelfPosition().y < getSize().height - xBarHeight && target.getSelfPosition().y + target.getSize().height > 0);
+                    widget.setVisible(widget.getSelfPosition().y < getSize().height - xBarHeight &&
+                            widget.getSelfPosition().y + widget.getSize().height > 0);
+                    target.setVisible(target.getSelfPosition().y < getSize().height - xBarHeight &&
+                            target.getSelfPosition().y + target.getSize().height > 0);
                 }, value -> {
                     interpolator = null;
                     stream.remove(widget);

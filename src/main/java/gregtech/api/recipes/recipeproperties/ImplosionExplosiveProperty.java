@@ -10,7 +10,6 @@ public class ImplosionExplosiveProperty extends RecipeProperty<ItemStack> {
 
     private static ImplosionExplosiveProperty INSTANCE;
 
-
     private ImplosionExplosiveProperty() {
         super(KEY, ItemStack.class);
     }

@@ -7,7 +7,7 @@ import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.GTUtility;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
@@ -20,11 +20,14 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID, value = Side.CLIENT)
 public class OreBakedModel implements IBakedModel {
@@ -113,7 +116,8 @@ public class OreBakedModel implements IBakedModel {
         Map<ResourceLocation, IBakedModel> overlayCache = new Object2ObjectOpenHashMap<>();
 
         for (Map.Entry<Entry, ModelResourceLocation> e : ENTRIES.entrySet()) {
-            IBakedModel overlay = overlayCache.computeIfAbsent(MaterialIconType.ore.getBlockTexturePath(e.getKey().iconSet),
+            IBakedModel overlay = overlayCache.computeIfAbsent(
+                    MaterialIconType.ore.getBlockTexturePath(e.getKey().iconSet),
                     tex -> new ModelFactory(ModelFactory.ModelTemplate.ORE_OVERLAY)
                             .addSprite("texture", tex)
                             .bake());

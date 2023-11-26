@@ -10,12 +10,14 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
-import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
-import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,8 +77,7 @@ public class RecyclingHandler {
         return new ItemMaterialInfo(materialStacksExploded.entrySet().stream()
                 .map(e -> new MaterialStack(e.getKey(), e.getValue() / outputCount))
                 .sorted(Comparator.comparingLong(m -> -m.amount))
-                .collect(Collectors.toList())
-        );
+                .collect(Collectors.toList()));
     }
 
     public static @Nullable ItemMaterialInfo getRecyclingIngredients(List<GTRecipeInput> inputs, int outputCount) {

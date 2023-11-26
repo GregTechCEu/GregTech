@@ -1,13 +1,16 @@
 package gregtech.api.util.oreglob;
 
 import gregtech.api.unification.OreDictUnifier;
+
 import net.minecraft.item.ItemStack;
+
 import org.jetbrains.annotations.ApiStatus;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+
+import javax.annotation.Nonnull;
 
 /**
  * Glob-like string matcher language designed for ore dictionary matching.
@@ -80,7 +83,7 @@ public abstract class OreGlob {
     }
 
     /**
-     * Visualize this instance with standard Minecraft text formatting. Two spaces ('  ') will
+     * Visualize this instance with standard Minecraft text formatting. Two spaces (' ') will
      * be used as indentation.
      *
      * @return Formatted visualization

@@ -1,32 +1,33 @@
 package gregtech.api.gui.resources.picturetexture;
 
 import gregtech.api.gui.resources.IGuiTexture;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+
 import org.lwjgl.opengl.GL11;
 
 public abstract class PictureTexture implements IGuiTexture {
+
     public int width;
     public int height;
 
     public PictureTexture(int width, int height) {
         this.width = width;
         this.height = height;
-
     }
 
-    public void beforeRender() {
-
-    }
+    public void beforeRender() {}
 
     @Override
     public void draw(double x, double y, int width, int height) {
-        render((float)x, (float)y, 1, 1, 0, width, height, false, false);
+        render((float) x, (float) y, 1, 1, 0, width, height, false, false);
     }
 
-    public void render(float x, float y, float width, float height, float rotation, float scaleX, float scaleY, boolean flippedX, boolean flippedY) {
+    public void render(float x, float y, float width, float height, float rotation, float scaleX, float scaleY,
+                       boolean flippedX, boolean flippedY) {
         this.beforeRender();
-        GlStateManager.color(1,1,1,1);
+        GlStateManager.color(1, 1, 1, 1);
         GlStateManager.enableBlend();
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         GlStateManager.bindTexture(this.getTextureID());

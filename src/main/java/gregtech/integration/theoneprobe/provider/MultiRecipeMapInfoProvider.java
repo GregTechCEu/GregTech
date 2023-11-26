@@ -4,12 +4,14 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.recipes.RecipeMap;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.TextStyleClass;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.Capability;
+
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.TextStyleClass;
 
 import javax.annotation.Nonnull;
 
@@ -27,10 +29,13 @@ public class MultiRecipeMapInfoProvider extends CapabilityInfoProvider<IMultiple
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull IMultipleRecipeMaps iMultipleRecipeMaps, @Nonnull IProbeInfo iProbeInfo, @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@Nonnull IMultipleRecipeMaps iMultipleRecipeMaps, @Nonnull IProbeInfo iProbeInfo,
+                                @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity,
+                                @Nonnull IProbeHitData data) {
         if (iMultipleRecipeMaps.getAvailableRecipeMaps().length == 1) return;
 
-        iProbeInfo.text(TextStyleClass.INFO + IProbeInfo.STARTLOC + "gregtech.multiblock.multiple_recipemaps.header" + IProbeInfo.ENDLOC);
+        iProbeInfo.text(TextStyleClass.INFO + IProbeInfo.STARTLOC + "gregtech.multiblock.multiple_recipemaps.header" +
+                IProbeInfo.ENDLOC);
         for (RecipeMap<?> recipeMap : iMultipleRecipeMaps.getAvailableRecipeMaps()) {
             if (recipeMap.equals(iMultipleRecipeMaps.getCurrentRecipeMap())) {
                 iProbeInfo.text("   " + TextStyleClass.INFOIMP + "{*" + recipeMap.getTranslationKey() + "*} {*<*}");

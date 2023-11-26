@@ -1,6 +1,7 @@
 package gregtech.api.damagesources;
 
 import gregtech.api.items.toolitem.IGTTool;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;

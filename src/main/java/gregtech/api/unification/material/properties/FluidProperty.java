@@ -2,6 +2,7 @@ package gregtech.api.unification.material.properties;
 
 import gregtech.api.fluids.store.FluidStorage;
 import gregtech.api.fluids.store.FluidStorageKey;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

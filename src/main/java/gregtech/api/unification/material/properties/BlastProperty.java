@@ -60,7 +60,8 @@ public class BlastProperty implements IMaterialProperty {
         this.gasTier = gasTier;
     }
 
-    private BlastProperty(int blastTemperature, GasTier gasTier, int eutOverride, int durationOverride, int vacuumEUtOverride, int vacuumDurationOverride) {
+    private BlastProperty(int blastTemperature, GasTier gasTier, int eutOverride, int durationOverride,
+                          int vacuumEUtOverride, int vacuumDurationOverride) {
         this.blastTemperature = blastTemperature;
         this.gasTier = gasTier;
         this.eutOverride = eutOverride;
@@ -140,16 +141,21 @@ public class BlastProperty implements IMaterialProperty {
         else {
             String message = "Gas Tier must be either \"LOW\", \"MID\", \"HIGH\", \"HIGHER\", or \"HIGHEST\"";
             CraftTweakerAPI.logError(message);
-            throw new IllegalArgumentException("Could not find valid gas tier for name: " + gasTierName + ". " + message);
+            throw new IllegalArgumentException(
+                    "Could not find valid gas tier for name: " + gasTierName + ". " + message);
         }
     }
 
     public enum GasTier {
+
         // Tiers used by GTCEu
-        LOW, MID, HIGH,
+        LOW,
+        MID,
+        HIGH,
 
         // Tiers reserved for addons
-        HIGHER, HIGHEST;
+        HIGHER,
+        HIGHEST;
 
         public static final GasTier[] VALUES = values();
     }
@@ -199,7 +205,8 @@ public class BlastProperty implements IMaterialProperty {
         }
 
         public BlastProperty build() {
-            return new BlastProperty(temp, gasTier, eutOverride, durationOverride, vacuumEUtOverride, vacuumDurationOverride);
+            return new BlastProperty(temp, gasTier, eutOverride, durationOverride, vacuumEUtOverride,
+                    vacuumDurationOverride);
         }
     }
 }

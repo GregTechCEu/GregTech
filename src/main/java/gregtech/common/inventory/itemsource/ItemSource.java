@@ -1,7 +1,8 @@
 package gregtech.common.inventory.itemsource;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.item.ItemStack;
+
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 public abstract class ItemSource {
 

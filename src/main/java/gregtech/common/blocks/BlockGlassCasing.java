@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -32,7 +33,8 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos,
+                                    EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
@@ -44,7 +46,8 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
 
     @Override
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        return getState(state) == CasingType.TEMPERED_GLASS ? layer == BlockRenderLayer.TRANSLUCENT : super.canRenderInLayer(state, layer);
+        return getState(state) == CasingType.TEMPERED_GLASS ? layer == BlockRenderLayer.TRANSLUCENT :
+                super.canRenderInLayer(state, layer);
     }
 
     @Override
@@ -88,6 +91,5 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
         public String getName() {
             return this.name;
         }
-
     }
 }

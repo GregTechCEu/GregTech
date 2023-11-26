@@ -1,10 +1,12 @@
 package gregtech.asm.hooks;
 
+import gregtech.client.utils.BloomEffectUtil;
+
+import net.minecraft.util.BlockRenderLayer;
+
 import com.creativemd.creativecore.client.mods.optifine.OptifineHelper;
 import com.creativemd.littletiles.client.render.cache.LayeredRenderBoxCache;
 import com.creativemd.littletiles.client.render.tile.LittleRenderBox;
-import gregtech.client.utils.BloomEffectUtil;
-import net.minecraft.util.BlockRenderLayer;
 
 import java.util.Iterator;
 import java.util.List;
@@ -15,8 +17,8 @@ public class LittleTilesHooks {
         return new BloomLayeredRenderBoxCache();
     }
 
-
     public static class BloomLayeredRenderBoxCache extends LayeredRenderBoxCache {
+
         private List<LittleRenderBox> solid = null;
         private List<LittleRenderBox> cutout_mipped = null;
         private List<LittleRenderBox> cutout = null;
@@ -76,7 +78,7 @@ public class LittleTilesHooks {
             if (!OptifineHelper.isActive())
                 return;
 
-            for (Iterator<LittleRenderBox> iterator = solid.iterator(); iterator.hasNext(); ) {
+            for (Iterator<LittleRenderBox> iterator = solid.iterator(); iterator.hasNext();) {
                 LittleRenderBox littleRenderingCube = iterator.next();
                 if (littleRenderingCube.needsResorting) {
                     cutout_mipped.add(littleRenderingCube);

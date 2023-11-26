@@ -4,7 +4,9 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.IRoutePath;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
+
 import net.minecraft.util.EnumFacing;
+
 import org.jetbrains.annotations.NotNull;
 
 public class EnergyRoutePath implements IRoutePath<TileEntityCable> {

@@ -13,15 +13,17 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
@@ -39,8 +41,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public void update() {
-    }
+    public void update() {}
 
     public void updateWorkable() {
         super.update();
@@ -114,7 +115,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (controller instanceof RecipeMapMultiblockController) {
             RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
 
-            if (distinctController.canBeDistinct() && distinctController.isDistinct() && getInputInventory().getSlots() > 0) {
+            if (distinctController.canBeDistinct() && distinctController.isDistinct() &&
+                    getInputInventory().getSlots() > 0) {
                 boolean canWork = false;
                 if (invalidatedInputList.isEmpty()) {
                     return true;
@@ -125,7 +127,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     metaTileEntity.getNotifiedFluidInputList().clear();
                     metaTileEntity.getNotifiedItemInputList().clear();
                 } else {
-                    Iterator<IItemHandlerModifiable> notifiedIter = metaTileEntity.getNotifiedItemInputList().iterator();
+                    Iterator<IItemHandlerModifiable> notifiedIter = metaTileEntity.getNotifiedItemInputList()
+                            .iterator();
                     while (notifiedIter.hasNext()) {
                         IItemHandlerModifiable bus = notifiedIter.next();
                         Iterator<IItemHandlerModifiable> invalidatedIter = invalidatedInputList.iterator();
@@ -169,7 +172,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         // do not run recipes when there are more than 5 maintenance problems
         // Maintenance can apply to all multiblocks, so cast to a base multiblock class
         MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-        if (ConfigHolder.machines.enableMaintenance && controller.hasMaintenanceMechanics() && controller.getNumMaintenanceProblems() > 5) {
+        if (ConfigHolder.machines.enableMaintenance && controller.hasMaintenanceMechanics() &&
+                controller.getNumMaintenanceProblems() > 5) {
             return;
         }
 
@@ -177,7 +181,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (controller instanceof RecipeMapMultiblockController) {
             RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
 
-            if (distinctController.canBeDistinct() && distinctController.isDistinct() && getInputInventory().getSlots() > 0) {
+            if (distinctController.canBeDistinct() && distinctController.isDistinct() &&
+                    getInputInventory().getSlots() > 0) {
                 trySearchNewRecipeDistinct();
                 return;
             }
@@ -187,7 +192,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     /**
-     * Put into place so multiblocks can override {@link AbstractRecipeLogic#trySearchNewRecipe()} without having to deal with
+     * Put into place so multiblocks can override {@link AbstractRecipeLogic#trySearchNewRecipe()} without having to
+     * deal with
      * the maintenance and distinct logic in {@link MultiblockRecipeLogic#trySearchNewRecipe()}
      */
     protected void trySearchNewRecipeCombined() {
@@ -232,7 +238,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 }
             }
             if (currentRecipe == null) {
-                //no valid recipe found, invalidate this bus
+                // no valid recipe found, invalidate this bus
                 invalidatedInputList.add(bus);
             }
         }
@@ -242,7 +248,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     public void invalidateInputs() {
         MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
         RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
-        if (distinctController.canBeDistinct() && distinctController.isDistinct() && getInputInventory().getSlots() > 0) {
+        if (distinctController.canBeDistinct() && distinctController.isDistinct() &&
+                getInputInventory().getSlots() > 0) {
             invalidatedInputList.add(currentDistinctInputBus);
         } else {
             super.invalidateInputs();
@@ -254,8 +261,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     protected boolean prepareRecipeDistinct(Recipe recipe) {
-
-        recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
+        recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(),
+                metaTileEntity.getFluidOutputLimit());
 
         recipe = findParallelRecipe(
                 recipe,
@@ -331,8 +338,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Nonnull
     protected Tuple<Integer, Double> getMaintenanceValues() {
-        MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
-        int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() || !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
+        MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ?
+                (MultiblockWithDisplayBase) metaTileEntity : null;
+        int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() ||
+                !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
         double durationMultiplier = 1.0D;
         if (displayBase != null && displayBase.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
             durationMultiplier = displayBase.getMaintenanceDurationMultiplier();

@@ -6,6 +6,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.items.tool.*;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.monster.EntityGolem;
@@ -15,9 +16,10 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 public final class ToolItems {
 
@@ -180,7 +182,8 @@ public final class ToolItems {
                 .toolStats(b -> b.blockBreaking().attacking()
                         .attackDamage(5.0F).attackSpeed(-3.0F).durabilityMultiplier(3.0F)
                         .aoe(2, 2, 2)
-                        .behaviors(HoeGroundBehavior.INSTANCE, HarvestCropsBehavior.INSTANCE).canApplyEnchantment(EnumEnchantmentType.DIGGER))
+                        .behaviors(HoeGroundBehavior.INSTANCE, HarvestCropsBehavior.INSTANCE)
+                        .canApplyEnchantment(EnumEnchantmentType.DIGGER))
                 .oreDict(ToolOreDict.toolScythe)
                 .toolClasses(ToolClasses.SCYTHE, ToolClasses.HOE));
         KNIFE = register(ItemGTSword.Builder.of(GTValues.MODID, "knife")
@@ -250,7 +253,8 @@ public final class ToolItems {
                         .efficiencyMultiplier(2.0F)
                         .attackDamage(5.0F).attackSpeed(-3.2F)
                         .brokenStack(ToolHelper.SUPPLY_POWER_UNIT_LV)
-                        .behaviors(HarvestIceBehavior.INSTANCE, DisableShieldBehavior.INSTANCE, TreeFellingBehavior.INSTANCE))
+                        .behaviors(HarvestIceBehavior.INSTANCE, DisableShieldBehavior.INSTANCE,
+                                TreeFellingBehavior.INSTANCE))
                 .oreDict(ToolOreDict.toolAxe)
                 .secondaryOreDicts(ToolOreDict.toolChainsaw)
                 .sound(GTSoundEvents.CHAINSAW_TOOL, true)
@@ -333,7 +337,8 @@ public final class ToolItems {
     }
 
     public static void registerColors() {
-        TOOLS.forEach(tool -> Minecraft.getMinecraft().getItemColors().registerItemColorHandler(tool::getColor, tool.get()));
+        TOOLS.forEach(
+                tool -> Minecraft.getMinecraft().getItemColors().registerItemColorHandler(tool::getColor, tool.get()));
     }
 
     public static void registerOreDict() {

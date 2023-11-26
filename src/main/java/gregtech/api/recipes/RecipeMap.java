@@ -1,12 +1,5 @@
 package gregtech.api.recipes;
 
-import com.cleanroommc.groovyscript.api.GroovyLog;
-import com.google.common.collect.ImmutableList;
-import crafttweaker.CraftTweakerAPI;
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.item.IItemStack;
-import crafttweaker.api.liquid.ILiquidStack;
-import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -33,12 +26,7 @@ import gregtech.integration.crafttweaker.recipe.CTRecipeBuilder;
 import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.integration.groovy.VirtualizedRecipeMap;
 import gregtech.modules.GregTechModules;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
@@ -46,19 +34,34 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.oredict.OreDictionary;
-import org.jetbrains.annotations.ApiStatus;
-import stanhebben.zenscript.annotations.Optional;
-import stanhebben.zenscript.annotations.*;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.cleanroommc.groovyscript.api.GroovyLog;
+import com.google.common.collect.ImmutableList;
+import crafttweaker.CraftTweakerAPI;
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.item.IItemStack;
+import crafttweaker.api.liquid.ILiquidStack;
+import crafttweaker.api.minecraft.CraftTweakerMC;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.ApiStatus;
+import stanhebben.zenscript.annotations.*;
+import stanhebben.zenscript.annotations.Optional;
+
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @ZenClass("mods.gregtech.recipe.RecipeMap")
 @ZenRegister
@@ -173,14 +176,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         this.isHidden = isHidden;
         defaultRecipeBuilder.setRecipeMap(this);
-        defaultRecipeBuilder.category(GTRecipeCategory.create(GTValues.MODID, unlocalizedName, getTranslationKey(), this));
+        defaultRecipeBuilder
+                .category(GTRecipeCategory.create(GTValues.MODID, unlocalizedName, getTranslationKey(), this));
         this.recipeBuilderSample = defaultRecipeBuilder;
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
 
-        this.grsVirtualizedRecipeMap = GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS)
-                ? new VirtualizedRecipeMap(this) : null;
+        this.grsVirtualizedRecipeMap = GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS) ?
+                new VirtualizedRecipeMap(this) : null;
     }
-
 
     @ZenMethod
     public static List<RecipeMap<?>> getRecipeMaps() {
@@ -206,7 +209,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         OrePrefix currentOrePrefix = OrePrefix.getCurrentProcessingPrefix();
         if (currentOrePrefix != null) {
             Material currentMaterial = OrePrefix.getCurrentMaterial();
-            GTLog.logger.error("Error happened during processing ore registration of prefix {} and material {}. " + "Seems like cross-mod compatibility issue. Report to GTCEu github.", currentOrePrefix, currentMaterial);
+            GTLog.logger.error(
+                    "Error happened during processing ore registration of prefix {} and material {}. " +
+                            "Seems like cross-mod compatibility issue. Report to GTCEu github.",
+                    currentOrePrefix, currentMaterial);
         }
     }
 
@@ -217,7 +223,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public RecipeMap<R> setSlotOverlay(boolean isOutput, boolean isFluid, TextureArea slotOverlay) {
-        return this.setSlotOverlay(isOutput, isFluid, false, slotOverlay).setSlotOverlay(isOutput, isFluid, true, slotOverlay);
+        return this.setSlotOverlay(isOutput, isFluid, false, slotOverlay).setSlotOverlay(isOutput, isFluid, true,
+                slotOverlay);
     }
 
     public RecipeMap<R> setSlotOverlay(boolean isOutput, boolean isFluid, boolean isLast, TextureArea slotOverlay) {
@@ -374,10 +381,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         int amount = recipe.getInputs().size();
         if (amount > getMaxInputs()) {
-            GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be at most {}.", amount, getMaxInputs());
+            GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be at most {}.", amount,
+                    getMaxInputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError(String.format("Invalid amount of recipe inputs. Actual: %s. Should be at most %s.", amount, getMaxInputs()));
+                CraftTweakerAPI.logError(String.format(
+                        "Invalid amount of recipe inputs. Actual: %s. Should be at most %s.", amount, getMaxInputs()));
                 CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
             }
             recipeStatus = EnumValidationResult.INVALID;
@@ -385,10 +394,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         amount = recipe.getOutputs().size() + recipe.getChancedOutputs().getChancedEntries().size();
         if (amount > getMaxOutputs()) {
-            GTLog.logger.error("Invalid amount of recipe outputs. Actual: {}. Should be at most {}.", amount, getMaxOutputs());
+            GTLog.logger.error("Invalid amount of recipe outputs. Actual: {}. Should be at most {}.", amount,
+                    getMaxOutputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError(String.format("Invalid amount of recipe outputs. Actual: %s. Should be at most %s.", amount, getMaxOutputs()));
+                CraftTweakerAPI
+                        .logError(String.format("Invalid amount of recipe outputs. Actual: %s. Should be at most %s.",
+                                amount, getMaxOutputs()));
                 CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
             }
             recipeStatus = EnumValidationResult.INVALID;
@@ -396,10 +408,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         amount = recipe.getFluidInputs().size();
         if (amount > getMaxFluidInputs()) {
-            GTLog.logger.error("Invalid amount of recipe fluid inputs. Actual: {}. Should be at most {}.", amount, getMaxFluidInputs());
+            GTLog.logger.error("Invalid amount of recipe fluid inputs. Actual: {}. Should be at most {}.", amount,
+                    getMaxFluidInputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError(String.format("Invalid amount of recipe fluid inputs. Actual: %s. Should be at most %s.", amount, getMaxFluidInputs()));
+                CraftTweakerAPI.logError(
+                        String.format("Invalid amount of recipe fluid inputs. Actual: %s. Should be at most %s.",
+                                amount, getMaxFluidInputs()));
                 CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
             }
             recipeStatus = EnumValidationResult.INVALID;
@@ -407,11 +422,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         amount = recipe.getFluidOutputs().size() + recipe.getChancedFluidOutputs().getChancedEntries().size();
         if (amount > getMaxFluidOutputs()) {
-            GTLog.logger.error("Invalid amount of recipe fluid outputs. Actual: {}. Should be at most {}.", amount, getMaxFluidOutputs());
+            GTLog.logger.error("Invalid amount of recipe fluid outputs. Actual: {}. Should be at most {}.", amount,
+                    getMaxFluidOutputs());
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Outputs"));
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError(String.format("Invalid amount of recipe fluid outputs. Actual: %s. Should be at most %s.", amount, getMaxFluidOutputs()));
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Outputs"));
+                CraftTweakerAPI.logError(
+                        String.format("Invalid amount of recipe fluid outputs. Actual: %s. Should be at most %s.",
+                                amount, getMaxFluidOutputs()));
+                CraftTweakerAPI.logError("Stacktrace:",
+                        new IllegalArgumentException("Invalid number of Fluid Outputs"));
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -446,9 +465,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return the Recipe it has found or null for no matching Recipe
      */
     @Nullable
-    public Recipe findRecipe(long voltage, final List<ItemStack> inputs, final List<FluidStack> fluidInputs, boolean exactVoltage) {
+    public Recipe findRecipe(long voltage, final List<ItemStack> inputs, final List<FluidStack> fluidInputs,
+                             boolean exactVoltage) {
         final List<ItemStack> items = inputs.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
-        final List<FluidStack> fluids = fluidInputs.stream().filter(f -> f != null && f.amount != 0).collect(Collectors.toList());
+        final List<FluidStack> fluids = fluidInputs.stream().filter(f -> f != null && f.amount != 0)
+                .collect(Collectors.toList());
 
         return find(items, fluids, recipe -> {
             if (exactVoltage && recipe.getEUt() != voltage) {
@@ -471,7 +492,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return a List of Lists of AbstractMapIngredients used for finding recipes
      */
     @Nullable
-    protected List<List<AbstractMapIngredient>> prepareRecipeFind(@Nonnull Collection<ItemStack> items, @Nonnull Collection<FluidStack> fluids) {
+    protected List<List<AbstractMapIngredient>> prepareRecipeFind(@Nonnull Collection<ItemStack> items,
+                                                                  @Nonnull Collection<FluidStack> fluids) {
         // First, check if items and fluids are valid.
         if (items.size() == Integer.MAX_VALUE || fluids.size() == Integer.MAX_VALUE) {
             return null;
@@ -499,7 +521,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return the recipe found
      */
     @Nullable
-    public Recipe find(@Nonnull Collection<ItemStack> items, @Nonnull Collection<FluidStack> fluids, @Nonnull Predicate<Recipe> canHandle) {
+    public Recipe find(@Nonnull Collection<ItemStack> items, @Nonnull Collection<FluidStack> fluids,
+                       @Nonnull Predicate<Recipe> canHandle) {
         List<List<AbstractMapIngredient>> list = prepareRecipeFind(items, fluids);
         // couldn't build any inputs to use for search, so no recipe could be found
         if (list == null) return null;
@@ -621,7 +644,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 // if there is a recipe (left mapping), return it immediately as found, if it can be handled
                 // Otherwise, recurse and go to the next branch.
                 Recipe r = result.map(potentialRecipe -> canHandle.test(potentialRecipe) ? potentialRecipe : null,
-                        potentialBranch -> diveIngredientTreeFindRecipe(ingredients, potentialBranch, canHandle, index, count, skip));
+                        potentialBranch -> diveIngredientTreeFindRecipe(ingredients, potentialBranch, canHandle, index,
+                                count, skip));
                 if (r != null) {
                     return r;
                 }
@@ -642,8 +666,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return a recipe
      */
     @Nullable
-    private Recipe diveIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch map,
-                                                @Nonnull Predicate<Recipe> canHandle, int currentIndex, int count, long skip) {
+    private Recipe diveIngredientTreeFindRecipe(@Nonnull List<List<AbstractMapIngredient>> ingredients,
+                                                @Nonnull Branch map,
+                                                @Nonnull Predicate<Recipe> canHandle, int currentIndex, int count,
+                                                long skip) {
         // We loop around ingredients.size() if we reach the end.
         // only end when all ingredients are exhausted, or a recipe is found
         int i = (currentIndex + 1) % ingredients.size();
@@ -653,7 +679,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 // Recursive call
                 // Increase the count, so the recursion can terminate if needed (ingredients is exhausted)
                 // Append the current index to the skip list
-                Recipe found = recurseIngredientTreeFindRecipe(ingredients, map, canHandle, i, count + 1, skip | (1L << i));
+                Recipe found = recurseIngredientTreeFindRecipe(ingredients, map, canHandle, i, count + 1,
+                        skip | (1L << i));
                 if (found != null) {
                     return found;
                 }
@@ -686,7 +713,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param collidingRecipes the list to store recipe collisions
      */
     private void recurseIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients,
-                                                           @Nonnull Branch branchRoot, @Nonnull Set<Recipe> collidingRecipes) {
+                                                           @Nonnull Branch branchRoot,
+                                                           @Nonnull Set<Recipe> collidingRecipes) {
         // Try each ingredient as a starting point, adding it to the skip-list.
         // The skip-list is a packed long, where each 1 bit represents an index to skip
         for (int i = 0; i < ingredients.size(); i++) {
@@ -722,7 +750,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 // if there is a recipe (left mapping), return it immediately as found
                 // Otherwise, recurse and go to the next branch.
                 Recipe r = result.map(recipe -> recipe,
-                        right -> diveIngredientTreeFindRecipeCollisions(ingredients, right, index, count, skip, collidingRecipes));
+                        right -> diveIngredientTreeFindRecipeCollisions(ingredients, right, index, count, skip,
+                                collidingRecipes));
                 if (r != null) {
                     collidingRecipes.add(r);
                 }
@@ -744,7 +773,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      */
     @Nullable
     private Recipe diveIngredientTreeFindRecipeCollisions(@Nonnull List<List<AbstractMapIngredient>> ingredients,
-                                                          @Nonnull Branch map, int currentIndex, int count, long skip, @Nonnull Set<Recipe> collidingRecipes) {
+                                                          @Nonnull Branch map, int currentIndex, int count, long skip,
+                                                          @Nonnull Set<Recipe> collidingRecipes) {
         // We loop around ingredients.size() if we reach the end.
         // only end when all ingredients are exhausted, or a recipe is found
         int i = (currentIndex + 1) % ingredients.size();
@@ -754,7 +784,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 // Recursive call
                 // Increase the count, so the recursion can terminate if needed (ingredients is exhausted)
                 // Append the current index to the skip list
-                Recipe r = recurseIngredientTreeFindRecipeCollisions(ingredients, map, i, count + 1, skip | (1L << i), collidingRecipes);
+                Recipe r = recurseIngredientTreeFindRecipeCollisions(ingredients, map, i, count + 1, skip | (1L << i),
+                        collidingRecipes);
                 if (r != null) {
                     return r;
                 }
@@ -765,7 +796,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+    public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
+                                                 FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
         builder.widget(new RecipeProgressWidget(200, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType, this));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
@@ -774,26 +806,34 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return builder;
     }
 
-    //this DOES NOT include machine control widgets or binds player inventory
-    public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+    // this DOES NOT include machine control widgets or binds player inventory
+    public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems,
+                                              IItemHandlerModifiable exportItems, FluidTankList importFluids,
+                                              FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
-        builder.widget(new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType, this));
+        builder.widget(new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture,
+                moveType, this));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
         if (this.specialTexture != null && this.specialTexturePosition != null) addSpecialTexture(builder);
         return builder;
     }
 
-    //this DOES NOT include machine control widgets or binds player inventory
-    public ModularUI.Builder createUITemplateNoOutputs(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+    // this DOES NOT include machine control widgets or binds player inventory
+    public ModularUI.Builder createUITemplateNoOutputs(DoubleSupplier progressSupplier,
+                                                       IItemHandlerModifiable importItems,
+                                                       IItemHandlerModifiable exportItems, FluidTankList importFluids,
+                                                       FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
-        builder.widget(new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType, this));
+        builder.widget(new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture,
+                moveType, this));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         if (this.specialTexture != null && this.specialTexturePosition != null) addSpecialTexture(builder);
         return builder;
     }
 
-    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
+    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler,
+                                         FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
         int itemInputsCount = itemHandler.getSlots();
         int fluidInputsCount = fluidHandler.getTanks();
         boolean invertFluids = false;
@@ -831,7 +871,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             } else {
                 int startSpecY = startInputsY + itemSlotsToDown * 18;
                 for (int i = 0; i < fluidInputsCount; i++) {
-                    int x = isOutputs ? startInputsX + 18 * (i % 3) : startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
+                    int x = isOutputs ? startInputsX + 18 * (i % 3) :
+                            startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
                     int y = startSpecY + (i / 3) * 18;
                     addSlot(builder, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
                 }
@@ -839,11 +880,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
     }
 
-    protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
+    protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
+                           FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
         if (!isFluid) {
-            builder.widget(new SlotWidget(itemHandler, slotIndex, x, y, true, !isOutputs).setBackgroundTexture(getOverlaysForSlot(isOutputs, false, slotIndex == itemHandler.getSlots() - 1)));
+            builder.widget(new SlotWidget(itemHandler, slotIndex, x, y, true, !isOutputs).setBackgroundTexture(
+                    getOverlaysForSlot(isOutputs, false, slotIndex == itemHandler.getSlots() - 1)));
         } else {
-            builder.widget(new TankWidget(fluidHandler.getTankAt(slotIndex), x, y, 18, 18).setAlwaysShowFull(true).setBackgroundTexture(getOverlaysForSlot(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1)).setContainerClicking(true, !isOutputs));
+            builder.widget(new TankWidget(fluidHandler.getTankAt(slotIndex), x, y, 18, 18).setAlwaysShowFull(true)
+                    .setBackgroundTexture(getOverlaysForSlot(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1))
+                    .setContainerClicking(true, !isOutputs));
         }
     }
 
@@ -851,34 +896,34 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         TextureArea base = isFluid ? GuiTextures.FLUID_SLOT : GuiTextures.SLOT;
         byte overlayKey = (byte) ((isOutput ? 2 : 0) + (isFluid ? 1 : 0) + (isLast ? 4 : 0));
         if (slotOverlays.containsKey(overlayKey)) {
-            return new TextureArea[]{base, slotOverlays.get(overlayKey)};
+            return new TextureArea[] { base, slotOverlays.get(overlayKey) };
         }
-        return new TextureArea[]{base};
+        return new TextureArea[] { base };
     }
 
     protected static int[] determineSlotsGrid(int itemInputsCount) {
         int itemSlotsToLeft;
         int itemSlotsToDown;
         double sqrt = Math.sqrt(itemInputsCount);
-        //if the number of input has an integer root
-        //return it.
+        // if the number of input has an integer root
+        // return it.
         if (sqrt % 1 == 0) {
             itemSlotsToLeft = itemSlotsToDown = (int) sqrt;
         } else if (itemInputsCount == 3) {
             itemSlotsToLeft = 3;
             itemSlotsToDown = 1;
         } else {
-            //if we couldn't fit all into a perfect square,
-            //increase the amount of slots to the left
+            // if we couldn't fit all into a perfect square,
+            // increase the amount of slots to the left
             itemSlotsToLeft = (int) Math.ceil(sqrt);
             itemSlotsToDown = itemSlotsToLeft - 1;
-            //if we still can't fit all the slots in a grid,
-            //increase the amount of slots on the bottom
+            // if we still can't fit all the slots in a grid,
+            // increase the amount of slots on the bottom
             if (itemInputsCount > itemSlotsToLeft * itemSlotsToDown) {
                 itemSlotsToDown = itemSlotsToLeft;
             }
         }
-        return new int[]{itemSlotsToLeft, itemSlotsToDown};
+        return new int[] { itemSlotsToLeft, itemSlotsToDown };
     }
 
     /**
@@ -907,6 +952,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     /**
      * This height is used to determine Y position to start drawing info on JEI.
+     * 
      * @deprecated remove overrides, this method is no longer used in any way.
      */
     @Deprecated
@@ -924,7 +970,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param index       where in the ingredients list we are.
      * @param count       how many branches were added already.
      */
-    private boolean recurseIngredientTreeAdd(@Nonnull Recipe recipe, @Nonnull List<List<AbstractMapIngredient>> ingredients,
+    private boolean recurseIngredientTreeAdd(@Nonnull Recipe recipe,
+                                             @Nonnull List<List<AbstractMapIngredient>> ingredients,
                                              @Nonnull Branch branchMap, int index, int count) {
         if (count >= ingredients.size()) return true;
         if (index >= ingredients.size()) {
@@ -951,19 +998,25 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                         if (!v.left().isPresent() || v.left().get() != recipe) {
                             // the recipe already there was not the one being added, so there is a conflict
                             if (recipe.getIsCTRecipe()) {
-                                CraftTweakerAPI.logError(String.format("Recipe duplicate or conflict found in RecipeMap %s and was not added. See next lines for details.", this.unlocalizedName));
+                                CraftTweakerAPI.logError(String.format(
+                                        "Recipe duplicate or conflict found in RecipeMap %s and was not added. See next lines for details.",
+                                        this.unlocalizedName));
 
-                                CraftTweakerAPI.logError(String.format("Attempted to add Recipe: %s", CTRecipeHelper.getRecipeAddLine(this, recipe)));
+                                CraftTweakerAPI.logError(String.format("Attempted to add Recipe: %s",
+                                        CTRecipeHelper.getRecipeAddLine(this, recipe)));
 
                                 if (v.left().isPresent()) {
-                                    CraftTweakerAPI.logError(String.format("Which conflicts with: %s", CTRecipeHelper.getRecipeAddLine(this, v.left().get())));
+                                    CraftTweakerAPI.logError(String.format("Which conflicts with: %s",
+                                            CTRecipeHelper.getRecipeAddLine(this, v.left().get())));
                                 } else {
                                     CraftTweakerAPI.logError("Could not identify exact duplicate/conflict.");
                                 }
                             }
                             if (recipe.isGroovyRecipe()) {
                                 GroovyLog log = GroovyLog.get();
-                                log.warn("Recipe duplicate or conflict found in RecipeMap {} and was not added. See next lines for details", this.unlocalizedName);
+                                log.warn(
+                                        "Recipe duplicate or conflict found in RecipeMap {} and was not added. See next lines for details",
+                                        this.unlocalizedName);
 
                                 log.warn("Attempted to add Recipe: {}", recipe.toString());
 
@@ -974,7 +1027,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                                 }
                             }
                             if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment()) {
-                                GTLog.logger.warn("Recipe duplicate or conflict found in RecipeMap {} and was not added. See next lines for details", this.unlocalizedName);
+                                GTLog.logger.warn(
+                                        "Recipe duplicate or conflict found in RecipeMap {} and was not added. See next lines for details",
+                                        this.unlocalizedName);
 
                                 GTLog.logger.warn("Attempted to add Recipe: {}", recipe.toString());
 
@@ -1016,7 +1071,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             // recursive part: apply the addition for the next ingredient in the list, for the right branch.
             // the right branch only contains ingredients, or is empty when the left branch is present
             boolean addedNextBranch = r.right()
-                    .filter(m -> recurseIngredientTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1))
+                    .filter(m -> recurseIngredientTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(),
+                            count + 1))
                     .isPresent();
 
             if (!addedNextBranch) {
@@ -1062,7 +1118,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param list        the list of MapIngredients to add to
      * @param fluidInputs the GTRecipeInputs to convert
      */
-    protected void buildFromRecipeFluids(@Nonnull List<List<AbstractMapIngredient>> list, @Nonnull List<GTRecipeInput> fluidInputs) {
+    protected void buildFromRecipeFluids(@Nonnull List<List<AbstractMapIngredient>> list,
+                                         @Nonnull List<GTRecipeInput> fluidInputs) {
         for (GTRecipeInput fluidInput : fluidInputs) {
             AbstractMapIngredient ingredient = new MapFluidIngredient(fluidInput);
             retrieveCachedIngredient(list, ingredient, fluidIngredientRoot);
@@ -1076,7 +1133,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param defaultIngredient the ingredient to use as a default value, if not cached
      * @param cache             the ingredient root to retrieve from
      */
-    protected static void retrieveCachedIngredient(@Nonnull List<List<AbstractMapIngredient>> list, @Nonnull AbstractMapIngredient defaultIngredient,
+    protected static void retrieveCachedIngredient(@Nonnull List<List<AbstractMapIngredient>> list,
+                                                   @Nonnull AbstractMapIngredient defaultIngredient,
                                                    @Nonnull WeakHashMap<AbstractMapIngredient, WeakReference<AbstractMapIngredient>> cache) {
         WeakReference<AbstractMapIngredient> cached = cache.get(defaultIngredient);
         if (cached != null && cached.get() != null) {
@@ -1093,7 +1151,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param list        the list to populate
      * @param ingredients the ingredients to convert
      */
-    protected void buildFromFluidStacks(@Nonnull List<List<AbstractMapIngredient>> list, @Nonnull Iterable<FluidStack> ingredients) {
+    protected void buildFromFluidStacks(@Nonnull List<List<AbstractMapIngredient>> list,
+                                        @Nonnull Iterable<FluidStack> ingredients) {
         for (FluidStack t : ingredients) {
             list.add(Collections.singletonList(new MapFluidIngredient(t)));
         }
@@ -1107,7 +1166,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      */
     @Nonnull
     protected List<List<AbstractMapIngredient>> fromRecipe(@Nonnull Recipe r) {
-        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>((r.getInputs().size()) + r.getFluidInputs().size());
+        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(
+                (r.getInputs().size()) + r.getFluidInputs().size());
         if (r.getInputs().size() > 0) {
             buildFromRecipeItems(list, uniqueIngredientsList(r.getInputs()));
         }
@@ -1131,7 +1191,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 this.hasOreDictedInputs = true;
                 if (r.hasNBTMatchingCondition()) {
                     hasNBTMatcherInputs = true;
-                    ingredient = new MapOreDictNBTIngredient(r.getOreDict(), r.getNBTMatcher(), r.getNBTMatchingCondition());
+                    ingredient = new MapOreDictNBTIngredient(r.getOreDict(), r.getNBTMatcher(),
+                            r.getNBTMatchingCondition());
                 } else {
                     ingredient = new MapOreDictIngredient(r.getOreDict());
                 }
@@ -1169,7 +1230,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param list        the list to populate
      * @param ingredients the ingredients to convert
      */
-    protected void buildFromItemStacks(@Nonnull List<List<AbstractMapIngredient>> list, @Nonnull ItemStack[] ingredients) {
+    protected void buildFromItemStacks(@Nonnull List<List<AbstractMapIngredient>> list,
+                                       @Nonnull ItemStack[] ingredients) {
         AbstractMapIngredient ingredient;
         for (ItemStack stack : ingredients) {
             int meta = stack.getMetadata();
@@ -1203,19 +1265,21 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     protected RecipeMap<R> setSpecialTexture(int x, int y, int width, int height, TextureArea area) {
-        this.specialTexturePosition = new int[]{x, y, width, height};
+        this.specialTexturePosition = new int[] { x, y, width, height };
         this.specialTexture = area;
         return this;
     }
 
     protected ModularUI.Builder addSpecialTexture(ModularUI.Builder builder) {
-        builder.image(specialTexturePosition[0], specialTexturePosition[1], specialTexturePosition[2], specialTexturePosition[3], specialTexture);
+        builder.image(specialTexturePosition[0], specialTexturePosition[1], specialTexturePosition[2],
+                specialTexturePosition[3], specialTexture);
         return builder;
     }
 
     public Collection<Recipe> getRecipeList() {
         ObjectOpenHashSet<Recipe> recipes = new ObjectOpenHashSet<>();
-        return lookup.getRecipes(true).filter(recipes::add).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList());
+        return lookup.getRecipes(true).filter(recipes::add).sorted(RECIPE_DURATION_THEN_EU)
+                .collect(Collectors.toList());
     }
 
     public SoundEvent getSound() {
@@ -1225,9 +1289,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @ZenMethod("findRecipe")
     @Method(modid = GTValues.MODID_CT)
     @Nullable
-    public CTRecipe ctFindRecipe(long maxVoltage, IItemStack[] itemInputs, ILiquidStack[] fluidInputs, @Optional(valueLong = Integer.MAX_VALUE) int outputFluidTankCapacity) {
-        List<ItemStack> mcItemInputs = itemInputs == null ? Collections.emptyList() : Arrays.stream(itemInputs).map(CraftTweakerMC::getItemStack).collect(Collectors.toList());
-        List<FluidStack> mcFluidInputs = fluidInputs == null ? Collections.emptyList() : Arrays.stream(fluidInputs).map(CraftTweakerMC::getLiquidStack).collect(Collectors.toList());
+    public CTRecipe ctFindRecipe(long maxVoltage, IItemStack[] itemInputs, ILiquidStack[] fluidInputs,
+                                 @Optional(valueLong = Integer.MAX_VALUE) int outputFluidTankCapacity) {
+        List<ItemStack> mcItemInputs = itemInputs == null ? Collections.emptyList() :
+                Arrays.stream(itemInputs).map(CraftTweakerMC::getItemStack).collect(Collectors.toList());
+        List<FluidStack> mcFluidInputs = fluidInputs == null ? Collections.emptyList() :
+                Arrays.stream(fluidInputs).map(CraftTweakerMC::getLiquidStack).collect(Collectors.toList());
         Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, true);
         return backingRecipe == null ? null : new CTRecipe(this, backingRecipe);
     }
@@ -1265,7 +1332,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param branchMap      the current branch in the recursion.
      */
     @Nullable
-    private Recipe recurseIngredientTreeRemove(@Nonnull Recipe recipeToRemove, @Nonnull List<List<AbstractMapIngredient>> ingredients, @Nonnull Branch branchMap, int depth) {
+    private Recipe recurseIngredientTreeRemove(@Nonnull Recipe recipeToRemove,
+                                               @Nonnull List<List<AbstractMapIngredient>> ingredients,
+                                               @Nonnull Branch branchMap, int depth) {
         // for every ingredient
         for (List<AbstractMapIngredient> current : ingredients) {
             // for all possibilities as keys
@@ -1280,7 +1349,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     // if there is a recipe (left mapping), return it immediately as found
                     // otherwise, recurse and go to the next branch. Do so by omitting the current ingredient.
                     Recipe r = result.map(potentialRecipe -> potentialRecipe,
-                            potentialBranch -> recurseIngredientTreeRemove(recipeToRemove, ingredients.subList(1, ingredients.size()), potentialBranch, depth + 1));
+                            potentialBranch -> recurseIngredientTreeRemove(recipeToRemove,
+                                    ingredients.subList(1, ingredients.size()), potentialBranch, depth + 1));
                     if (r == recipeToRemove) {
                         found = r;
                     } else {
@@ -1290,7 +1360,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                                     this.unlocalizedName, CTRecipeHelper.getRecipeRemoveLine(this, recipeToRemove)));
                         }
                         if (ConfigHolder.misc.debug || GTValues.isDeobfEnvironment()) {
-                            GTLog.logger.warn("Failed to remove recipe from RecipeMap {}. See next lines for details", this.unlocalizedName);
+                            GTLog.logger.warn("Failed to remove recipe from RecipeMap {}. See next lines for details",
+                                    this.unlocalizedName);
                             GTLog.logger.warn("Failed to remove Recipe: {}", recipeToRemove.toString());
                         }
                     }
@@ -1376,7 +1447,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (modifyFluidOutputs) {
             this.maxFluidOutputs = Math.max(this.maxFluidOutputs, maxFluidOutputs);
         } else {
-            throw new UnsupportedOperationException("Cannot change max fluid output amount for " + getUnlocalizedName());
+            throw new UnsupportedOperationException(
+                    "Cannot change max fluid output amount for " + getUnlocalizedName());
         }
     }
 

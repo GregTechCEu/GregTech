@@ -1,9 +1,10 @@
 package gregtech.client.renderer.cclop;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 @SideOnly(Side.CLIENT)
 public class LightMapOperation implements IVertexOperation {
+
     public static final int operationIndex = CCRenderState.registerOperation();
     int lightmapX;
     int lightmapY;

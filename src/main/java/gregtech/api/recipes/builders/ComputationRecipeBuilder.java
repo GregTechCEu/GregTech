@@ -7,6 +7,7 @@ import gregtech.api.recipes.recipeproperties.ComputationProperty;
 import gregtech.api.recipes.recipeproperties.TotalComputationProperty;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
+
 import org.jetbrains.annotations.NotNull;
 
 public class ComputationRecipeBuilder extends RecipeBuilder<ComputationRecipeBuilder> {

@@ -12,9 +12,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.material.Materials;
 import gregtech.client.renderer.texture.Textures;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMaps;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
@@ -24,8 +22,13 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMaps;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import java.util.Objects;
+
+import javax.annotation.Nonnull;
 
 public class SteamLavaBoiler extends SteamBoiler {
 
@@ -33,6 +36,7 @@ public class SteamLavaBoiler extends SteamBoiler {
     private static boolean initialized;
 
     private static final IFilter<FluidStack> FUEL_FILTER = new IFilter<>() {
+
         @Override
         public boolean test(@Nonnull FluidStack fluidStack) {
             for (Fluid fluid : getBoilerFuelToConsumption().keySet()) {
@@ -126,7 +130,8 @@ public class SteamLavaBoiler extends SteamBoiler {
     public void randomDisplayTick(float x, float y, float z) {
         super.randomDisplayTick(x, y, z);
         if (GTValues.RNG.nextFloat() < 0.3F) {
-            getWorld().spawnParticle(EnumParticleTypes.LAVA, x + GTValues.RNG.nextFloat(), y, z + GTValues.RNG.nextFloat(), 0.0F, 0.0F, 0.0F);
+            getWorld().spawnParticle(EnumParticleTypes.LAVA, x + GTValues.RNG.nextFloat(), y,
+                    z + GTValues.RNG.nextFloat(), 0.0F, 0.0F, 0.0F);
         }
     }
 }

@@ -1,20 +1,24 @@
 package gregtech.integration.jei.basic;
 
 import gregtech.api.GTValues;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
+
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.api.recipe.IRecipeWrapperFactory;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class BasicRecipeCategory<T, W extends IRecipeWrapper> implements IRecipeCategory<W>, IRecipeWrapperFactory<T> {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+public abstract class BasicRecipeCategory<T, W extends IRecipeWrapper>
+                                         implements IRecipeCategory<W>, IRecipeWrapperFactory<T> {
 
     public final String uniqueName;
     public final String localizedName;
@@ -52,8 +56,7 @@ public abstract class BasicRecipeCategory<T, W extends IRecipeWrapper> implement
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
-    }
+    public void drawExtras(@Nonnull Minecraft minecraft) {}
 
     @Nonnull
     @Override

@@ -10,6 +10,7 @@ import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class OsSettings extends AbstractWidgetGroup {
+
     public static boolean DOUBLE_CHECK;
     static {
         if (FMLCommonHandler.instance().getSide().isClient()) {
@@ -42,7 +44,8 @@ public class OsSettings extends AbstractWidgetGroup {
             nbt.setBoolean("double_check", DOUBLE_CHECK);
             try {
                 if (!nbt.isEmpty()) {
-                    CompressedStreamTools.safeWrite(nbt, new File(TerminalRegistry.TERMINAL_PATH, "config/os_settings.nbt"));
+                    CompressedStreamTools.safeWrite(nbt,
+                            new File(TerminalRegistry.TERMINAL_PATH, "config/os_settings.nbt"));
                 }
             } catch (IOException e) {
                 GTLog.logger.error("error while saving local nbt for the os settings", e);
@@ -55,11 +58,11 @@ public class OsSettings extends AbstractWidgetGroup {
         this.os = os;
         this.addWidget(new LabelWidget(25, 15, "terminal.settings.os.double_check", -1).setYCentered(true));
         this.addWidget(new RectButtonWidget(10, 10, 10, 10, 2)
-                .setToggleButton(new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor()), (c, p)->{
-                    DOUBLE_CHECK=!p;
+                .setToggleButton(new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor()), (c, p) -> {
+                    DOUBLE_CHECK = !p;
                     saveConfig();
                 })
-                .setValueSupplier(true, ()->!DOUBLE_CHECK)
+                .setValueSupplier(true, () -> !DOUBLE_CHECK)
                 .setColors(TerminalTheme.COLOR_B_3.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
                         TerminalTheme.COLOR_B_3.getColor())

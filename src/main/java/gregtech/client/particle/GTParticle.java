@@ -2,6 +2,7 @@ package gregtech.client.particle;
 
 import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.utils.EffectRenderContext;
+
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -10,7 +11,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * A custom particle implementation with framework for more advanced rendering capabilities.<p/>
+ * A custom particle implementation with framework for more advanced rendering capabilities.
+ * <p/>
  * GTParticle instances are managed by {@link GTParticleManager}. GTParticle instances with same {@link IRenderSetup}s
  * will be drawn together as a batch.
  */
@@ -54,8 +56,9 @@ public abstract class GTParticle {
 
     /**
      * @return {@code true} to render the particle with
-     * {@link net.minecraft.client.renderer.GlStateManager#depthMask(boolean) depth mask} feature disabled; in other
-     * words, render the particle without modifying depth buffer.
+     *         {@link net.minecraft.client.renderer.GlStateManager#depthMask(boolean) depth mask} feature disabled; in
+     *         other
+     *         words, render the particle without modifying depth buffer.
      */
     public boolean shouldDisableDepth() {
         return false;
@@ -63,8 +66,9 @@ public abstract class GTParticle {
 
     /**
      * @return render range. If the distance between particle and render view entity exceeds this value, the particle
-     * will not be rendered. If render range is negative value or {@code NaN}, then the check is disabled and the
-     * particle will be rendered regardless of the distance.
+     *         will not be rendered. If render range is negative value or {@code NaN}, then the check is disabled and
+     *         the
+     *         particle will be rendered regardless of the distance.
      */
     public final double getRenderRange() {
         return this.renderRange;

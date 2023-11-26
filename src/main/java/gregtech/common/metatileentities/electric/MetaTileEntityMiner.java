@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.electric;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -22,6 +18,7 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -39,10 +36,16 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner, IControllable, IDataInfoProvider {
 
@@ -65,7 +68,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityMiner(metaTileEntityId, getTier(), this.minerLogic.getSpeed(), this.minerLogic.getMaximumRadius(), this.minerLogic.getFortune());
+        return new MetaTileEntityMiner(metaTileEntityId, getTier(), this.minerLogic.getSpeed(),
+                this.minerLogic.getMaximumRadius(), this.minerLogic.getFortune());
     }
 
     @Override
@@ -102,16 +106,18 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
             for (int y = 0; y < rowSize; y++) {
                 for (int x = 0; x < rowSize; x++) {
                     int index = y * rowSize + x;
-                    builder.widget(new SlotWidget(exportItems, index, 151 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
-                            .setBackgroundTexture(GuiTextures.SLOT));
+                    builder.widget(
+                            new SlotWidget(exportItems, index, 151 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
+                                    .setBackgroundTexture(GuiTextures.SLOT));
                 }
             }
         } else {
             for (int y = 0; y < rowSize; y++) {
                 for (int x = 0; x < rowSize; x++) {
                     int index = y * rowSize + x;
-                    builder.widget(new SlotWidget(exportItems, index, 142 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
-                            .setBackgroundTexture(GuiTextures.SLOT));
+                    builder.widget(
+                            new SlotWidget(exportItems, index, 142 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
+                                    .setBackgroundTexture(GuiTextures.SLOT));
                 }
             }
         }
@@ -135,15 +141,19 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
         textList.add(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
         if (this.minerLogic.isDone())
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.done")
+                    .setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (this.minerLogic.isWorking())
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.working")
+                    .setStyle(new Style().setColor(TextFormatting.GOLD)));
         else if (!this.isWorkingEnabled())
             textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
         if (isInventoryFull)
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.invfull")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
         if (!drainEnergy(true))
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.needspower").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.needspower")
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
     private void addDisplayText2(@Nonnull List<ITextComponent> textList) {
@@ -153,13 +163,16 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+                               boolean advanced) {
         int currentArea = getWorkingArea(minerLogic.getCurrentRadius());
         tooltip.add(I18n.format("gregtech.machine.miner.tooltip", currentArea, currentArea));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick", energyPerTick)
-                + TextFormatting.GRAY + ", " + I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getSpeed() / 20));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick", energyPerTick) + TextFormatting.GRAY +
+                ", " + I18n.format("gregtech.machine.miner.per_block", this.minerLogic.getSpeed() / 20));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(),
+                GTValues.VNF[getTier()]));
+        tooltip.add(
+                I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         int maxArea = getWorkingArea(minerLogic.getMaximumRadius());
         tooltip.add(I18n.format("gregtech.universal.tooltip.working_area_max", maxArea, maxArea));
     }
@@ -201,7 +214,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                      CuboidRayTraceResult hitResult) {
         if (getWorld().isRemote) return true;
 
         if (!this.isActive()) {
@@ -216,7 +230,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
             this.minerLogic.resetArea();
 
             int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
-            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
+            playerIn.sendMessage(
+                    new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
         } else {
             playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.miner.errorradius"));
         }
@@ -303,6 +318,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     @Override
     public List<ITextComponent> getDataInfo() {
         int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
-        return Collections.singletonList(new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
+        return Collections.singletonList(
+                new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
     }
 }

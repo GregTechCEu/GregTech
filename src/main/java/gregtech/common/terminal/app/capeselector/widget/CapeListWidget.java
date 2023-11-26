@@ -9,6 +9,7 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.util.CapesRegistry;
 import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class CapeListWidget extends DraggableScrollableWidgetGroup {
+
     private final UUID uuid;
     private List<ResourceLocation> capes;
     private int selectedX, selectedY = -1;
@@ -67,11 +69,13 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
                 int finalRowNumber = rowNumber;
                 int finalI = i;
                 ClickButtonWidget capeButton = new ClickButtonWidget(rowPosition * 70 + 21, rowNumber * 56, 28, 44, "",
-                        (data) -> this.setCape(finalRowPosition, finalRowNumber, capes.get(finalI))).setButtonTexture(capeImage)
-                        .setShouldClientCallback(true);
+                        (data) -> this.setCape(finalRowPosition, finalRowNumber, capes.get(finalI)))
+                                .setButtonTexture(capeImage)
+                                .setShouldClientCallback(true);
                 row.addWidget(capeButton);
 
-                if(capes.get(i).equals(CapesRegistry.getPlayerCape(uuid))) { // If this is the cape that the player is wearing right now, select it.
+                if (capes.get(i).equals(CapesRegistry.getPlayerCape(uuid))) { // If this is the cape that the player is
+                                                                              // wearing right now, select it.
                     selectedX = finalRowPosition;
                     selectedY = finalRowNumber;
                 }
@@ -113,9 +117,10 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
         // Get selected cape button
         Widget button = ((WidgetGroup) this.widgets.get(this.selectedY)).widgets.get(this.selectedX);
 
-        RenderUtil.useScissor(getPosition().x, getPosition().y, getSize().width - yBarWidth, getSize().height - xBarHeight, () -> {
-            drawSelectionOverlay(button.getPosition().x - 6, button.getPosition().y - 6,
-                    button.getSize().width + 12, button.getSize().height + 12); // Add a bit of margin
-        });
+        RenderUtil.useScissor(getPosition().x, getPosition().y, getSize().width - yBarWidth,
+                getSize().height - xBarHeight, () -> {
+                    drawSelectionOverlay(button.getPosition().x - 6, button.getPosition().y - 6,
+                            button.getSize().width + 12, button.getSize().height + 12); // Add a bit of margin
+                });
     }
 }

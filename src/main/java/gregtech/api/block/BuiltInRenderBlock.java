@@ -29,5 +29,4 @@ public abstract class BuiltInRenderBlock extends BlockCustomParticle {
     public boolean isFullCube(@Nonnull IBlockState state) {
         return false;
     }
-
 }

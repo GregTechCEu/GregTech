@@ -3,6 +3,7 @@ package gregtech.common.covers.filter.oreglob.impl;
 import gregtech.common.covers.filter.oreglob.node.BranchType;
 import gregtech.common.covers.filter.oreglob.node.NodeVisitor;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
+
 import it.unimi.dsi.fastutil.ints.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
  * <p>
  * For example, matching the input {@code "ingotIron"} with string {@code "i"} and
  * input state of {@code [ 0, 1, 2, 3, 4, 5 ]} would each produce these output states.
+ * 
  * <pre>
  *     0  =>  [ 1 ]  (the first "i" matches the string match node "i")
  *     1  =>  [ ]    (no match; "n" does not match the string match node "i")
@@ -26,6 +28,7 @@ import java.util.List;
  *     4  =>  [ ]    (no match; "t" does not match the string match node "i")
  *     5  =>  [ 6 ]  (the "I" matches the string match node "i"; oreglob is by default case insensitive.)
  * </pre>
+ * 
  * When the next node gets evaluated, the input state will be the last evaluation result
  * from the last node; in the example above, input state for the node after {@code "i"}
  * will be {@code [ 1, 6 ]}.
@@ -35,6 +38,7 @@ import java.util.List;
  * without using surrogate pairs.
  */
 class NodeInterpreter implements NodeVisitor {
+
     private final String input;
     private IntSet inputStates;
     private IntSet outputStates = new IntLinkedOpenHashSet();
@@ -171,7 +175,8 @@ class NodeInterpreter implements NodeVisitor {
                     IntSet out2 = new IntOpenHashSet(branchState.outputStates);
                     out2.removeAll(this.outputStates); // out2 = { x in out2 AND x !in out }
                     this.outputStates.removeAll(branchState.outputStates); // out = { x in out AND x !in out2 }
-                    this.outputStates.addAll(out2); // out = { ( x in out AND x !in out2 ) OR ( x in out2 AND x !in out ) }
+                    this.outputStates.addAll(out2); // out = { ( x in out AND x !in out2 ) OR ( x in out2 AND x !in out
+                                                    // ) }
                 }
             }
             default -> throw new IllegalStateException("Unknown BranchType '" + type + "'");

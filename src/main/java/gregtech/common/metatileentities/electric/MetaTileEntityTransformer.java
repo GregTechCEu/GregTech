@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.electric;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.gui.ModularUI;
@@ -14,6 +10,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.metatileentities.MetaTileEntities;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,6 +23,11 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -44,7 +46,7 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     public MetaTileEntityTransformer(ResourceLocation metaTileEntityId, int tier, int... highAmperages) {
         super(metaTileEntityId, tier);
         if (highAmperages == null || highAmperages.length == 0) {
-            this.highAmperages = new int[]{1}; // fallback case, "normal" transformer
+            this.highAmperages = new int[] { 1 }; // fallback case, "normal" transformer
         } else {
             this.highAmperages = highAmperages;
         }
@@ -151,13 +153,15 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
         int lowAmperage = highAmperage * 4;
 
         if (isTransformUp) {
-            //storage = 1 amp high; input = tier / 4; amperage = 4; output = tier; amperage = 1
-            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L * lowAmperage, tierVoltage, lowAmperage, tierVoltage * 4, highAmperage);
+            // storage = 1 amp high; input = tier / 4; amperage = 4; output = tier; amperage = 1
+            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L * lowAmperage, tierVoltage,
+                    lowAmperage, tierVoltage * 4, highAmperage);
             ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s != getFrontFacing());
             ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing());
         } else {
-            //storage = 1 amp high; input = tier; amperage = 1; output = tier / 4; amperage = 4
-            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L * lowAmperage, tierVoltage * 4, highAmperage, tierVoltage, lowAmperage);
+            // storage = 1 amp high; input = tier; amperage = 1; output = tier / 4; amperage = 4
+            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L * lowAmperage, tierVoltage * 4,
+                    highAmperage, tierVoltage, lowAmperage);
             ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s == getFrontFacing());
             ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s != getFrontFacing());
         }
@@ -189,9 +193,11 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
             }
         }
 
-        frontFaceTexture.renderSided(frontFacing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() + 1]));
+        frontFaceTexture.renderSided(frontFacing, renderState, translation,
+                PipelineUtil.color(pipeline, GTValues.VC[getTier() + 1]));
         Arrays.stream(EnumFacing.values()).filter(f -> f != frontFacing)
-                .forEach((f -> otherFaceTexture.renderSided(f, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]))));
+                .forEach((f -> otherFaceTexture.renderSided(f, renderState, translation,
+                        PipelineUtil.color(pipeline, GTValues.VC[getTier()]))));
     }
 
     @Override
@@ -200,7 +206,8 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                     CuboidRayTraceResult hitResult) {
         if (getWorld().isRemote) {
             scheduleRenderUpdate();
             return true;
@@ -208,17 +215,20 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
         if (isTransformUp) {
             setTransformUp(false);
             playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_down",
-                    energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
+                    energyContainer.getInputVoltage(), energyContainer.getInputAmperage(),
+                    energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
         } else {
             setTransformUp(true);
             playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_up",
-                    energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
+                    energyContainer.getInputVoltage(), energyContainer.getInputAmperage(),
+                    energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
         }
         return true;
     }
 
     @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                      CuboidRayTraceResult hitResult) {
         if (hasMultipleAmperages()) {
             if (getWorld().isRemote) {
                 scheduleRenderUpdate();
@@ -227,7 +237,8 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
 
             incrementAmpIndex();
             playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer_adjustable.message_adjust",
-                    energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
+                    energyContainer.getInputVoltage(), energyContainer.getInputAmperage(),
+                    energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
 
             return true;
         }
@@ -262,8 +273,10 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
         if (hasMultipleAmperages()) {
             tooltip.add(I18n.format("gregtech.machine.transformer_adjustable.tooltip_tool_usage", higherAmperage));
         }
-        tooltip.add(I18n.format("gregtech.machine.transformer.tooltip_transform_down", lowerAmperage, higherVoltage, higherTierName, higherAmperage, lowerVoltage, lowerTierName));
-        tooltip.add(I18n.format("gregtech.machine.transformer.tooltip_transform_up", higherAmperage, lowerVoltage, lowerTierName, lowerAmperage, higherVoltage, higherTierName));
+        tooltip.add(I18n.format("gregtech.machine.transformer.tooltip_transform_down", lowerAmperage, higherVoltage,
+                higherTierName, higherAmperage, lowerVoltage, lowerTierName));
+        tooltip.add(I18n.format("gregtech.machine.transformer.tooltip_transform_up", higherAmperage, lowerVoltage,
+                lowerTierName, lowerAmperage, higherVoltage, higherTierName));
     }
 
     @Override

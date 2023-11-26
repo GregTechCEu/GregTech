@@ -7,6 +7,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.properties.PropertyMaterial;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockFaceShape;
@@ -30,12 +31,15 @@ import javax.annotation.Nullable;
 @SuppressWarnings("deprecation")
 public abstract class BlockSurfaceRock extends BlockMaterialBase {
 
-    private static final AxisAlignedBB STONE_AABB = new AxisAlignedBB(2.0 / 16.0, 0.0 / 16.0, 2.0 / 16.0, 14.0 / 16.0, 2.0 / 16.0, 14.0 / 16.0);
-    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(GTUtility.gregtechId("surface_rock"), "normal");
+    private static final AxisAlignedBB STONE_AABB = new AxisAlignedBB(2.0 / 16.0, 0.0 / 16.0, 2.0 / 16.0, 14.0 / 16.0,
+            2.0 / 16.0, 14.0 / 16.0);
+    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(
+            GTUtility.gregtechId("surface_rock"), "normal");
 
     public static BlockSurfaceRock create(Material[] materials) {
         PropertyMaterial property = PropertyMaterial.create("variant", materials);
         return new BlockSurfaceRock() {
+
             @Nonnull
             @Override
             public PropertyMaterial getVariantProperty() {
@@ -57,7 +61,9 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
     }
 
     @Override
-    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state,
+                                    EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing,
+                                    float hitX, float hitY, float hitZ) {
         dropBlockAsItem(worldIn, pos, state, 0);
         worldIn.setBlockToAir(pos);
         playerIn.swingArm(hand);
@@ -66,13 +72,15 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
 
     @Nonnull
     @Override
-    public SoundType getSoundType(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
+    public SoundType getSoundType(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos,
+                                  @Nullable Entity entity) {
         return SoundType.GROUND;
     }
 
     @Override
     @Nonnull
-    public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
+    public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source,
+                                        @Nonnull BlockPos pos) {
         return STONE_AABB;
     }
 
@@ -82,12 +90,14 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
 
     @Override
     @Nonnull
-    public ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    public ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world,
+                                  @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
         return getDropStack(state, 1);
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
+    public void getDrops(NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos,
+                         @Nonnull IBlockState state, int fortune) {
         int amount = 3 + GTValues.RNG.nextInt((int) (2 + fortune * 1.5));
         drops.add(getDropStack(state, amount));
     }
@@ -103,9 +113,11 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
     }
 
     @Override
-    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, BlockPos fromPos) {
+    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos,
+                                @Nonnull Block blockIn, BlockPos fromPos) {
         if (fromPos.up().equals(pos)) {
-            if (worldIn.getBlockState(fromPos).getBlockFaceShape(worldIn, fromPos, EnumFacing.UP) != BlockFaceShape.SOLID) {
+            if (worldIn.getBlockState(fromPos).getBlockFaceShape(worldIn, fromPos, EnumFacing.UP) !=
+                    BlockFaceShape.SOLID) {
                 worldIn.destroyBlock(pos, true);
             }
         }
@@ -113,7 +125,8 @@ public abstract class BlockSurfaceRock extends BlockMaterialBase {
 
     @Override
     @Nonnull
-    public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+    public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state,
+                                            @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
     }
 }

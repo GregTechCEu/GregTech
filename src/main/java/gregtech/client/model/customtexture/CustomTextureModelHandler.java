@@ -1,7 +1,5 @@
 package gregtech.client.model.customtexture;
 
-import com.google.common.collect.Sets;
-import com.google.gson.JsonParseException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -21,26 +19,32 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.collect.Sets;
+import com.google.gson.JsonParseException;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Copyright CTM.
  */
 @SideOnly(Side.CLIENT)
 public enum CustomTextureModelHandler implements IResourceManagerReloadListener {
+
     INSTANCE;
 
     private final Set<ResourceLocation> wrappedModels = Sets.newHashSet();
 
     @SubscribeEvent(priority = EventPriority.LOWEST) // low priority to capture all event-registered models
     public void onModelBake(ModelBakeEvent event) {
-        Map<ModelResourceLocation, IModel> stateModels = ObfuscationReflectionHelper.getPrivateValue(ModelLoader.class, event.getModelLoader(), "stateModels");
+        Map<ModelResourceLocation, IModel> stateModels = ObfuscationReflectionHelper.getPrivateValue(ModelLoader.class,
+                event.getModelLoader(), "stateModels");
         for (ModelResourceLocation mrl : event.getModelRegistry().getKeys()) {
             if (!wrappedModels.contains(mrl)) {
                 IModel rootModel = stateModels.get(mrl);
@@ -53,7 +57,8 @@ public enum CustomTextureModelHandler implements IResourceManagerReloadListener 
                         } catch (IOException ignored) {} // Fallthrough
                         if (meta != null) {
                             wrappedModels.add(mrl);
-                            event.getModelRegistry().putObject(mrl, wrap(rootModel, event.getModelRegistry().getObject(mrl)));
+                            event.getModelRegistry().putObject(mrl,
+                                    wrap(rootModel, event.getModelRegistry().getObject(mrl)));
                             break;
                         }
                     }
@@ -65,7 +70,8 @@ public enum CustomTextureModelHandler implements IResourceManagerReloadListener 
     @Nonnull
     private static IBakedModel wrap(IModel model, IBakedModel object) {
         CustomTextureModel ctm = new CustomTextureModel(null, model);
-        ctm.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM, rl -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(rl.toString()));
+        ctm.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM,
+                rl -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(rl.toString()));
         return new CustomTextureBakedModel(ctm, object);
     }
 

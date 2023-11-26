@@ -1,9 +1,10 @@
 package gregtech.common.covers.filter.oreglob.impl;
 
-import com.google.common.annotations.VisibleForTesting;
 import gregtech.api.util.oreglob.OreGlob;
 import gregtech.api.util.oreglob.OreGlobTextBuilder;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
+
+import com.google.common.annotations.VisibleForTesting;
 
 import javax.annotation.Nonnull;
 

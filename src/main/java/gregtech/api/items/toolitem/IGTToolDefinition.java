@@ -2,10 +2,12 @@ package gregtech.api.items.toolitem;
 
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 
 import java.util.List;
 
@@ -103,5 +105,4 @@ public interface IGTToolDefinition {
     default ItemStack getBrokenStack() {
         return ItemStack.EMPTY;
     }
-
 }

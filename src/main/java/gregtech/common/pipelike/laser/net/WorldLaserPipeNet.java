@@ -2,12 +2,15 @@ package gregtech.common.pipelike.laser.net;
 
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.common.pipelike.laser.LaserPipeProperties;
+
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
 public class WorldLaserPipeNet extends WorldPipeNet<LaserPipeProperties, LaserPipeNet> {
+
     private static final String DATA_ID = "gregtech.laser_pipe_net";
+
     public WorldLaserPipeNet(String name) {
         super(name);
     }

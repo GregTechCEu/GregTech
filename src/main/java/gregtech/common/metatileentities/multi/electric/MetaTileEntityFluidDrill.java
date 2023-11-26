@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
-import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
@@ -32,6 +28,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -48,12 +45,19 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import com.google.common.collect.Lists;
+
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implements ITieredMetaTileEntity, IWorkable, IProgressBarMultiblock {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
+                                      implements ITieredMetaTileEntity, IWorkable, IProgressBarMultiblock {
 
     private final FluidDrillLogic minerLogic;
     private final int tier;
@@ -169,7 +173,8 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
                         if (minerLogic.getDrilledFluid() != null) {
                             // Fluid name
                             Fluid drilledFluid = minerLogic.getDrilledFluid();
-                            ITextComponent fluidInfo = TextComponentUtil.setColor(GTUtility.getFluidTranslation(drilledFluid), TextFormatting.GREEN);
+                            ITextComponent fluidInfo = TextComponentUtil
+                                    .setColor(GTUtility.getFluidTranslation(drilledFluid), TextFormatting.GREEN);
                             tl.add(TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
                                     "gregtech.multiblock.fluid_rig.drilled_fluid",
@@ -178,13 +183,16 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
                             // Fluid amount
                             ITextComponent amountInfo = TextComponentUtil.stringWithColor(
                                     TextFormatting.BLUE,
-                                    TextFormattingUtil.formatNumbers(minerLogic.getFluidToProduce() * 20L / FluidDrillLogic.MAX_PROGRESS) + " L/t");
+                                    TextFormattingUtil.formatNumbers(
+                                            minerLogic.getFluidToProduce() * 20L / FluidDrillLogic.MAX_PROGRESS) +
+                                            " L/t");
                             tl.add(TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
                                     "gregtech.multiblock.fluid_rig.fluid_amount",
                                     amountInfo));
                         } else {
-                            ITextComponent noFluid = TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.fluid_rig.no_fluid_in_area");
+                            ITextComponent noFluid = TextComponentUtil.translationWithColor(TextFormatting.RED,
+                                    "gregtech.multiblock.fluid_rig.no_fluid_in_area");
                             tl.add(TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
                                     "gregtech.multiblock.fluid_rig.drilled_fluid",
@@ -212,9 +220,12 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.description"));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.depletion", TextFormattingUtil.formatNumbers(100.0 / getDepletionChance())));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_tier_range", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier(), TextFormattingUtil.formatNumbers(getRigMultiplier() * 1.5)));
+        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.depletion",
+                TextFormattingUtil.formatNumbers(100.0 / getDepletionChance())));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_tier_range", GTValues.VNF[this.tier],
+                GTValues.VNF[this.tier + 1]));
+        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier(),
+                TextFormattingUtil.formatNumbers(getRigMultiplier() * 1.5)));
         if (tier > GTValues.MV) {
             tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.shows_depletion"));
         }
@@ -262,7 +273,8 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.minerLogic.isActive(), this.minerLogic.isWorkingEnabled());
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
+                this.minerLogic.isActive(), this.minerLogic.isWorkingEnabled());
     }
 
     @Override
@@ -276,12 +288,14 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     }
 
     public boolean fillTanks(FluidStack stack, boolean simulate) {
-        return GTTransferUtils.addFluidsToFluidHandler(outputFluidInventory, simulate, Collections.singletonList(stack));
+        return GTTransferUtils.addFluidsToFluidHandler(outputFluidInventory, simulate,
+                Collections.singletonList(stack));
     }
 
     public int getEnergyTier() {
         if (energyContainer == null) return this.tier;
-        return Math.min(this.tier + 1 , Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
+        return Math.min(this.tier + 1,
+                Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
     }
 
     public long getEnergyInputPerSecond() {
@@ -365,7 +379,8 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
 
     @Override
     public double getFillPercentage(int index) {
-        int numOperationsLeft = BedrockFluidVeinHandler.getOperationsRemaining(getWorld(), minerLogic.getChunkX(), minerLogic.getChunkZ());
+        int numOperationsLeft = BedrockFluidVeinHandler.getOperationsRemaining(getWorld(), minerLogic.getChunkX(),
+                minerLogic.getChunkZ());
         int maxOperations = BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS;
         return 1.0 * numOperationsLeft / maxOperations;
     }
@@ -377,13 +392,16 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
 
     @Override
     public void addBarHoverText(List<ITextComponent> hoverList, int index) {
-        int numOperationsLeft = BedrockFluidVeinHandler.getOperationsRemaining(getWorld(), minerLogic.getChunkX(), minerLogic.getChunkZ());
+        int numOperationsLeft = BedrockFluidVeinHandler.getOperationsRemaining(getWorld(), minerLogic.getChunkX(),
+                minerLogic.getChunkZ());
         int maxOperations = BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS;
         int percentage = (int) Math.round(1.0 * numOperationsLeft / maxOperations * 100);
-        TextFormatting color = percentage > 40 ? TextFormatting.GREEN : percentage > 10 ? TextFormatting.YELLOW : TextFormatting.RED;
+        TextFormatting color = percentage > 40 ? TextFormatting.GREEN :
+                percentage > 10 ? TextFormatting.YELLOW : TextFormatting.RED;
 
         if (numOperationsLeft == 0) {
-            hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.RED, "gregtech.multiblock.fluid_rig.vein_depleted"));
+            hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
+                    "gregtech.multiblock.fluid_rig.vein_depleted"));
         } else {
             ITextComponent veinInfo = TextComponentUtil.stringWithColor(color, percentage + "%");
             hoverList.add(TextComponentUtil.translationWithColor(

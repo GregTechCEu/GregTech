@@ -1,7 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.AtomicDouble;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
@@ -39,6 +37,7 @@ import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -59,17 +58,22 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.AtomicDouble;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.DoubleSupplier;
 
-public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController implements IFastRenderMetaTileEntity, IBloomEffect {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
+                                         implements IFastRenderMetaTileEntity, IBloomEffect {
 
     private final int tier;
     private EnergyContainerList inputEnergyContainers;
@@ -86,6 +90,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         this.recipeMapWorkable = new FusionRecipeLogic(this);
         this.tier = tier;
         this.energyContainer = new EnergyContainerHandler(this, 0, 0, 0, 0, 0) {
+
             @Nonnull
             @Override
             public String getName() {
@@ -121,15 +126,18 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 .aisle("###############", "######OSO######", "###############")
                 .where('S', selfPredicate())
                 .where('G', states(getCasingState(), getGlassState()))
-                .where('E', states(getCasingState(), getGlassState()).or(metaTileEntities(Arrays.stream(MetaTileEntities.ENERGY_INPUT_HATCH)
-                        .filter(mte -> mte != null && tier <= mte.getTier() && mte.getTier() <= GTValues.UV)
-                        .toArray(MetaTileEntity[]::new))
-                        .setMinGlobalLimited(1).setPreviewCount(16)))
+                .where('E',
+                        states(getCasingState(), getGlassState()).or(metaTileEntities(Arrays
+                                .stream(MetaTileEntities.ENERGY_INPUT_HATCH)
+                                .filter(mte -> mte != null && tier <= mte.getTier() && mte.getTier() <= GTValues.UV)
+                                .toArray(MetaTileEntity[]::new))
+                                        .setMinGlobalLimited(1).setPreviewCount(16)))
                 .where('C', states(getCasingState()))
                 .where('K', states(getCoilState()))
                 .where('O', states(getCasingState(), getGlassState()).or(abilities(MultiblockAbility.EXPORT_FLUIDS)))
                 .where('A', air())
-                .where('I', states(getCasingState()).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(2)))
+                .where('I',
+                        states(getCasingState()).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(2)))
                 .where('#', any())
                 .build();
     }
@@ -173,8 +181,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
         shapeInfos.add(baseBuilder.shallowCopy()
                 .where('G', getCasingState())
-                .build()
-        );
+                .build());
         shapeInfos.add(baseBuilder.build());
         return shapeInfos;
     }
@@ -221,6 +228,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     public void invalidateStructure() {
         super.invalidateStructure();
         this.energyContainer = new EnergyContainerHandler(this, 0, 0, 0, 0, 0) {
+
             @Nonnull
             @Override
             public String getName() {
@@ -241,6 +249,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         this.inputEnergyContainers = new EnergyContainerList(energyInputs);
         long euCapacity = calculateEnergyStorageFactor(energyInputs.size());
         this.energyContainer = new EnergyContainerHandler(this, euCapacity, GTValues.V[tier], 0, 0, 0) {
+
             @Nonnull
             @Override
             public String getName() {
@@ -261,8 +270,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         }
         super.updateFormedValid();
         if (recipeMapWorkable.isWorking() && color == null) {
-            if (recipeMapWorkable.getPreviousRecipe() != null && !recipeMapWorkable.getPreviousRecipe().getFluidOutputs().isEmpty()) {
-                int newColor = 0xFF000000 | recipeMapWorkable.getPreviousRecipe().getFluidOutputs().get(0).getFluid().getColor();
+            if (recipeMapWorkable.getPreviousRecipe() != null &&
+                    !recipeMapWorkable.getPreviousRecipe().getFluidOutputs().isEmpty()) {
+                int newColor = 0xFF000000 |
+                        recipeMapWorkable.getPreviousRecipe().getFluidOutputs().get(0).getFluid().getColor();
                 if (!Objects.equals(color, newColor)) {
                     color = newColor;
                     writeCustomData(GregtechDataCodes.UPDATE_COLOR, this::writeColor);
@@ -306,9 +317,11 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.fusion_reactor.capacity", calculateEnergyStorageFactor(16) / 1000000L));
+        tooltip.add(
+                I18n.format("gregtech.machine.fusion_reactor.capacity", calculateEnergyStorageFactor(16) / 1000000L));
         tooltip.add(I18n.format("gregtech.machine.fusion_reactor.overclocking"));
     }
 
@@ -338,17 +351,18 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
         // Energy Bar
         builder.widget(new ProgressWidget(
-                () -> energyContainer.getEnergyCapacity() > 0 ? 1.0 * energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() : 0,
+                () -> energyContainer.getEnergyCapacity() > 0 ?
+                        1.0 * energyContainer.getEnergyStored() / energyContainer.getEnergyCapacity() : 0,
                 4, 144, 94, 7,
                 GuiTextures.PROGRESS_BAR_FUSION_ENERGY, ProgressWidget.MoveType.HORIZONTAL)
-                .setHoverTextConsumer(this::addEnergyBarHoverText));
+                        .setHoverTextConsumer(this::addEnergyBarHoverText));
 
         // Heat Bar
         builder.widget(new ProgressWidget(
                 () -> energyContainer.getEnergyCapacity() > 0 ? 1.0 * heat / energyContainer.getEnergyCapacity() : 0,
                 100, 144, 94, 7,
                 GuiTextures.PROGRESS_BAR_FUSION_HEAT, ProgressWidget.MoveType.HORIZONTAL)
-                .setHoverTextConsumer(this::addHeatBarHoverText));
+                        .setHoverTextConsumer(this::addHeatBarHoverText));
 
         // Indicator Widget
         builder.widget(new IndicatorImageWidget(174, 122, 17, 17, getLogo())
@@ -385,7 +399,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         // Voiding Mode Button
         builder.widget(new ImageCycleButtonWidget(173, 189, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
                 4, this::getVoidingMode, this::setVoidingMode)
-                .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
+                        .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
 
         // Distinct Buses Unavailable Image
         builder.widget(new ImageWidget(173, 171, 18, 18, GuiTextures.BUTTON_NO_DISTINCT_BUSES)
@@ -402,8 +416,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     private void addEnergyBarHoverText(List<ITextComponent> hoverList) {
         ITextComponent energyInfo = TextComponentUtil.stringWithColor(
                 TextFormatting.AQUA,
-                TextFormattingUtil.formatNumbers(energyContainer.getEnergyStored()) + " / "
-                        + TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()) + " EU");
+                TextFormattingUtil.formatNumbers(energyContainer.getEnergyStored()) + " / " +
+                        TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()) + " EU");
         hoverList.add(TextComponentUtil.translationWithColor(
                 TextFormatting.GRAY,
                 "gregtech.multiblock.energy_stored",
@@ -413,7 +427,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     private void addHeatBarHoverText(List<ITextComponent> hoverList) {
         ITextComponent heatInfo = TextComponentUtil.stringWithColor(
                 TextFormatting.RED,
-                TextFormattingUtil.formatNumbers(heat) + " / " + TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()));
+                TextFormattingUtil.formatNumbers(heat) + " / " +
+                        TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()));
         hoverList.add(TextComponentUtil.translationWithColor(
                 TextFormatting.GRAY,
                 "gregtech.multiblock.fusion_reactor.heat",
@@ -431,6 +446,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         public FusionProgressSupplier() {
             // Bottom Left, fill on [0, 0.25)
             bottomLeft = new ProgressWidget.TimedProgressSupplier(200, 164, false) {
+
                 @Override
                 public double getAsDouble() {
                     double val = super.getAsDouble();
@@ -496,6 +512,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         }
 
         private enum Type {
+
             BOTTOM_LEFT(
                     61, 66, 35, 41,
                     GuiTextures.PROGRESS_BAR_FUSION_REACTOR_DIAGRAM_BL, ProgressWidget.MoveType.VERTICAL),
@@ -527,12 +544,15 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
             public ProgressWidget getWidget(MetaTileEntityFusionReactor instance) {
                 return new ProgressWidget(
-                        () -> instance.recipeMapWorkable.isActive() ? instance.progressBarSupplier.getSupplier(this).getAsDouble() : 0,
+                        () -> instance.recipeMapWorkable.isActive() ?
+                                instance.progressBarSupplier.getSupplier(this).getAsDouble() : 0,
                         x, y, width, height, texture, moveType)
-                        .setIgnoreColor(true)
-                        .setHoverTextConsumer(tl -> MultiblockDisplayText.builder(tl, instance.isStructureFormed())
-                                .setWorkingStatus(instance.recipeMapWorkable.isWorkingEnabled(), instance.recipeMapWorkable.isActive())
-                                .addWorkingStatusLine());
+                                .setIgnoreColor(true)
+                                .setHoverTextConsumer(
+                                        tl -> MultiblockDisplayText.builder(tl, instance.isStructureFormed())
+                                                .setWorkingStatus(instance.recipeMapWorkable.isWorkingEnabled(),
+                                                        instance.recipeMapWorkable.isActive())
+                                                .addWorkingStatusLine());
             }
         }
     }
@@ -561,8 +581,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         @Override
         public void updateWorkable() {
             super.updateWorkable();
-            // Drain heat when the reactor is not active, is paused via soft mallet, or does not have enough energy and has fully wiped recipe progress
-            // Don't drain heat when there is not enough energy and there is still some recipe progress, as that makes it doubly hard to complete the recipe
+            // Drain heat when the reactor is not active, is paused via soft mallet, or does not have enough energy and
+            // has fully wiped recipe progress
+            // Don't drain heat when there is not enough energy and there is still some recipe progress, as that makes
+            // it doubly hard to complete the recipe
             // (Will have to recover heat and recipe progress)
             if (heat > 0) {
                 if (!isActive || !workingEnabled || (hasNotEnoughEnergy && progressTime == 0)) {
@@ -623,7 +645,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (this.color != null && this.bloomRenderTicket == null) {
-            this.bloomRenderTicket = BloomEffectUtil.registerBloomRender(FusionBloomSetup.INSTANCE, getBloomType(), this);
+            this.bloomRenderTicket = BloomEffectUtil.registerBloomRender(FusionBloomSetup.INSTANCE, getBloomType(),
+                    this);
         }
     }
 
@@ -638,8 +661,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         float r = (float) (color >> 16 & 255) / 255.0F;
         float g = (float) (color >> 8 & 255) / 255.0F;
         float b = (float) (color & 255) / 255.0F;
-        EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
-        EnumFacing.Axis axis = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped()).getAxis();
+        EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
+                isFlipped());
+        EnumFacing.Axis axis = RelativeDirection.UP.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped())
+                .getAxis();
 
         RenderBufferHelper.renderRing(buffer,
                 getPos().getX() - context.cameraX() + relativeBack.getXOffset() * 7 + 0.5,
@@ -657,8 +682,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        EnumFacing relativeRight = RelativeDirection.RIGHT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
-        EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing(), isFlipped());
+        EnumFacing relativeRight = RelativeDirection.RIGHT.getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
+                isFlipped());
+        EnumFacing relativeBack = RelativeDirection.BACK.getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
+                isFlipped());
 
         return new AxisAlignedBB(
                 this.getPos().offset(relativeBack).offset(relativeRight, 6),

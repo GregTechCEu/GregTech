@@ -1,15 +1,18 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.unification.material.Material;
+
 import net.minecraft.util.math.MathHelper;
+
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class OreProperty implements IMaterialProperty {
 
@@ -18,7 +21,7 @@ public class OreProperty implements IMaterialProperty {
      * <p>
      * Default: none, meaning only this property's Material.
      */
-    //@ZenProperty
+    // @ZenProperty
     private final List<Material> oreByProducts = new ArrayList<>();
 
     /**
@@ -26,7 +29,7 @@ public class OreProperty implements IMaterialProperty {
      * <p>
      * Default: 1 (no multiplier).
      */
-    //@ZenProperty
+    // @ZenProperty
     private int oreMultiplier;
 
     /**
@@ -34,7 +37,7 @@ public class OreProperty implements IMaterialProperty {
      * <p>
      * Default: 1 (no multiplier).
      */
-    //@ZenProperty
+    // @ZenProperty
     private int byProductMultiplier;
 
     /**
@@ -42,7 +45,7 @@ public class OreProperty implements IMaterialProperty {
      * <p>
      * Default: false.
      */
-    //@ZenProperty
+    // @ZenProperty
     private boolean emissive;
 
     /**
@@ -51,7 +54,7 @@ public class OreProperty implements IMaterialProperty {
      * Material will have a Dust Property.
      * Default: none.
      */
-    //@ZenProperty
+    // @ZenProperty
     @Nullable
     private Material directSmeltResult;
 
@@ -61,7 +64,7 @@ public class OreProperty implements IMaterialProperty {
      * Material will have a Fluid Property.
      * Default: none.
      */
-    //@ZenProperty
+    // @ZenProperty
     @Nullable
     private Material washedIn;
 
@@ -81,7 +84,7 @@ public class OreProperty implements IMaterialProperty {
      * Material will have a Dust Property.
      * Default: none.
      */
-    //@ZenProperty
+    // @ZenProperty
     private final List<Material> separatedInto = new ArrayList<>();
 
     public OreProperty(int oreMultiplier, int byProductMultiplier) {

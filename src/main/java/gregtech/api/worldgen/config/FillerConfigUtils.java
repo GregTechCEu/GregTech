@@ -1,17 +1,11 @@
 package gregtech.api.worldgen.config;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.ore.StoneTypes;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.WorldBlockPredicate;
 import gregtech.api.worldgen.filler.FillerEntry;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -19,6 +13,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -83,9 +85,11 @@ public class FillerConfigUtils {
         ArrayList<Pair<WorldBlockPredicate, FillerEntry>> matchers = new ArrayList<>();
 
         for (JsonElement valueDefinition : valuesArray) {
-            Preconditions.checkArgument(valueDefinition.isJsonObject(), "Found invalid value definition: %s", valueDefinition.toString());
+            Preconditions.checkArgument(valueDefinition.isJsonObject(), "Found invalid value definition: %s",
+                    valueDefinition.toString());
             JsonObject valueObject = valueDefinition.getAsJsonObject();
-            WorldBlockPredicate predicate = PredicateConfigUtils.createBlockStatePredicate(valueObject.get("predicate"));
+            WorldBlockPredicate predicate = PredicateConfigUtils
+                    .createBlockStatePredicate(valueObject.get("predicate"));
             FillerEntry filler = createBlockStateFiller(valueObject.get("value"));
             matchers.add(Pair.of(predicate, filler));
         }
@@ -119,14 +123,14 @@ public class FillerConfigUtils {
 
     public static LayeredFillerEntry createLayeredFiller(JsonObject object) {
         JsonArray values = object.get("values").getAsJsonArray();
-        Preconditions.checkArgument(values.size() == 4, "Invalid number of ores in a Layered vein (should be 4, is actually %d", values.size());
+        Preconditions.checkArgument(values.size() == 4,
+                "Invalid number of ores in a Layered vein (should be 4, is actually %d", values.size());
 
         return new LayeredFillerEntry(
                 readLayerFiller(values.get(0).getAsJsonObject(), "primary"),
                 readLayerFiller(values.get(1).getAsJsonObject(), "secondary"),
                 readLayerFiller(values.get(2).getAsJsonObject(), "between"),
-                createBlockStateFiller(values.get(3).getAsJsonObject().get("sporadic"))
-        );
+                createBlockStateFiller(values.get(3).getAsJsonObject().get("sporadic")));
     }
 
     private static Pair<FillerEntry, Integer> readLayerFiller(JsonObject object, String layerType) {
@@ -147,7 +151,8 @@ public class FillerConfigUtils {
 
         public OreFilterEntry(Map<StoneType, IBlockState> blockStateMap) {
             this.blockStateMap = blockStateMap;
-            this.defaultValue = blockStateMap.containsKey(StoneTypes.STONE) ? StoneTypes.STONE : blockStateMap.keySet().iterator().next();
+            this.defaultValue = blockStateMap.containsKey(StoneTypes.STONE) ? StoneTypes.STONE :
+                    blockStateMap.keySet().iterator().next();
             this.allowedStates = ImmutableSet.copyOf(blockStateMap.values());
         }
 
@@ -243,7 +248,8 @@ public class FillerConfigUtils {
 
         private final ImmutableList<IBlockState> blockStates;
 
-        public LayeredFillerEntry(Pair<FillerEntry, Integer> primary, Pair<FillerEntry, Integer> secondary, Pair<FillerEntry, Integer> between, FillerEntry sporadic) {
+        public LayeredFillerEntry(Pair<FillerEntry, Integer> primary, Pair<FillerEntry, Integer> secondary,
+                                  Pair<FillerEntry, Integer> between, FillerEntry sporadic) {
             this.primary = primary.getLeft();
             this.secondary = secondary.getLeft();
             this.between = between.getLeft();
@@ -275,7 +281,8 @@ public class FillerConfigUtils {
             return apply(source, blockAccess, blockPos, 1.0, new Random(), 0);
         }
 
-        public IBlockState apply(IBlockState source, IBlockAccess blockAccess, BlockPos blockPos, double density, Random random, int layer) {
+        public IBlockState apply(IBlockState source, IBlockAccess blockAccess, BlockPos blockPos, double density,
+                                 Random random, int layer) {
             // First try to spawn "between"
             if (layer >= startBetween && layer - startBetween + 1 <= betweenLayers) {
                 if (random.nextFloat() <= density / 2) {

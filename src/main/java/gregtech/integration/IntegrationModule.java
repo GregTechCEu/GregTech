@@ -1,31 +1,33 @@
 package gregtech.integration;
 
-import blusunrize.immersiveengineering.api.tool.BelljarHandler;
-import crazypants.enderio.api.farm.IFertilizer;
-import crazypants.enderio.base.farming.fertilizer.Bonemeal;
 import gregtech.api.GTValues;
 import gregtech.api.modules.GregTechModule;
 import gregtech.common.items.MetaItems;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
+
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import blusunrize.immersiveengineering.api.tool.BelljarHandler;
+import crazypants.enderio.api.farm.IFertilizer;
+import crazypants.enderio.base.farming.fertilizer.Bonemeal;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_INTEGRATION,
-        containerID = GTValues.MODID,
-        name = "GregTech Mod Integration",
-        description = "General GregTech Integration Module. Disabling this disables all integration modules."
-)
+                moduleID = GregTechModules.MODULE_INTEGRATION,
+                containerID = GTValues.MODID,
+                name = "GregTech Mod Integration",
+                description = "General GregTech Integration Module. Disabling this disables all integration modules.")
 public class IntegrationModule extends BaseGregTechModule {
 
     public static final Logger logger = LogManager.getLogger("GregTech Mod Integration");

@@ -1,7 +1,5 @@
 package gregtech.common.gui.widget.appeng.slot;
 
-import appeng.api.storage.data.IAEFluidStack;
-import com.google.common.collect.Lists;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.util.FluidTooltipUtil;
@@ -12,7 +10,7 @@ import gregtech.client.utils.RenderUtil;
 import gregtech.common.gui.widget.appeng.AEConfigWidget;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
-import mezz.jei.api.gui.IGhostIngredientHandler;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -22,12 +20,17 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import appeng.api.storage.data.IAEFluidStack;
+import com.google.common.collect.Lists;
+import mezz.jei.api.gui.IGhostIngredientHandler;
+
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import static gregtech.api.capability.GregtechDataCodes.LOAD_PHANTOM_FLUID_STACK_FROM_NBT;
 import static gregtech.api.util.GTUtility.getFluidFromContainer;
@@ -64,7 +67,8 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
             drawStringFixedCorner(amountStr, stackX + 17, stackY + 17, 16777215, true, 0.5f);
         }
         if (stock != null) {
-            RenderUtil.drawFluidForGui(stock.getFluidStack(), stock.getFluidStack().amount, stackX, stackY + 18, 17, 17);
+            RenderUtil.drawFluidForGui(stock.getFluidStack(), stock.getFluidStack().amount, stackX, stackY + 18, 17,
+                    17);
             String amountStr = TextFormattingUtil.formatLongToCompactString(stock.getStackSize(), 4) + "L";
             drawStringFixedCorner(amountStr, stackX + 17, stackY + 18 + 17, 16777215, true, 0.5f);
         }
@@ -140,7 +144,8 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
             writeUpdateInfo(REMOVE_ID, buf -> {});
         }
         if (id == UPDATE_ID) {
-            FluidStack fluid = FluidRegistry.getFluidStack(buffer.readString(Integer.MAX_VALUE / 16), buffer.readVarInt());
+            FluidStack fluid = FluidRegistry.getFluidStack(buffer.readString(Integer.MAX_VALUE / 16),
+                    buffer.readVarInt());
             slot.setConfig(WrappedFluidStack.fromFluidStack(fluid));
             this.parentWidget.enableAmount(this.index);
             if (fluid != null) {
@@ -182,7 +187,8 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
             slot.setConfig(null);
         }
         if (id == UPDATE_ID) {
-            FluidStack fluid = FluidRegistry.getFluidStack(buffer.readString(Integer.MAX_VALUE / 16), buffer.readVarInt());
+            FluidStack fluid = FluidRegistry.getFluidStack(buffer.readString(Integer.MAX_VALUE / 16),
+                    buffer.readVarInt());
             slot.setConfig(WrappedFluidStack.fromFluidStack(fluid));
         }
         if (id == AMOUNT_CHANGE_ID) {
@@ -243,5 +249,4 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
         }
         return false;
     }
-
 }

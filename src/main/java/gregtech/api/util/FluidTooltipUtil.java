@@ -2,11 +2,13 @@ package gregtech.api.util;
 
 import gregtech.api.fluids.GTFluid;
 import gregtech.api.unification.material.Material;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

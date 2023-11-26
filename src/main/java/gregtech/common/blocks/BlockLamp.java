@@ -8,6 +8,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.client.model.lamp.LampBakedModel;
 import gregtech.client.model.lamp.LampModelType;
 import gregtech.client.utils.BloomEffectUtil;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
@@ -30,13 +31,14 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class BlockLamp extends Block {
@@ -187,7 +189,8 @@ public class BlockLamp extends Block {
     public void onModelRegister() {
         Map<IBlockState, ModelResourceLocation> models = new HashMap<>();
         for (IBlockState state : getBlockState().getValidStates()) {
-            LampBakedModel.Entry entry = LampBakedModel.register(color, getModelType(), state.getValue(BLOOM), isLightActive(state));
+            LampBakedModel.Entry entry = LampBakedModel.register(color, getModelType(), state.getValue(BLOOM),
+                    isLightActive(state));
             models.put(state, entry.getBlockModelId());
             if (state.getValue(POWERED)) continue;
             Item item = Item.getItemFromBlock(this);
@@ -204,7 +207,8 @@ public class BlockLamp extends Block {
     }
 
     public void registerOreDict() {
-        OreDictUnifier.registerOre(new ItemStack(this, 1, GTValues.W), OrePrefix.lampGt, MarkerMaterials.Color.COLORS.get(color));
+        OreDictUnifier.registerOre(new ItemStack(this, 1, GTValues.W), OrePrefix.lampGt,
+                MarkerMaterials.Color.COLORS.get(color));
     }
 
     public static boolean isLightActive(IBlockState state) {

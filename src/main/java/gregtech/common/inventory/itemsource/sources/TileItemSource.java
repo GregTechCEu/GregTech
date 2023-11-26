@@ -39,28 +39,28 @@ public class TileItemSource extends InventoryItemSource {
     @Override
     public void computeItemHandler() {
         if (!world.isBlockLoaded(accessedBlockPos)) {
-            //we handle unloaded blocks as empty item handlers
-            //so when they are loaded, they are refreshed and handled correctly
+            // we handle unloaded blocks as empty item handlers
+            // so when they are loaded, they are refreshed and handled correctly
             itemHandler = EmptyHandler.INSTANCE;
             return;
         }
-        //use cached tile entity as long as it's valid and has same position (just in case of frames etc)
+        // use cached tile entity as long as it's valid and has same position (just in case of frames etc)
         TileEntity tileEntity = cachedTileEntity.get();
         if (tileEntity == null || tileEntity.isInvalid() || !tileEntity.getPos().equals(accessedBlockPos)) {
             tileEntity = world.getTileEntity(accessedBlockPos);
             if (tileEntity == null) {
-                //if tile entity doesn't exist anymore, we are invalid now
-                //return null which will be handled as INVALID
+                // if tile entity doesn't exist anymore, we are invalid now
+                // return null which will be handled as INVALID
                 itemHandler = null;
                 return;
             }
-            //update cached tile entity
+            // update cached tile entity
             this.cachedTileEntity = new WeakReference<>(tileEntity);
         }
-        //fetch capability from tile entity
-        //if it returns null, item handler info will be removed
-        //block should emit block update once it obtains capability again,
-        //so handler info will be recreated accordingly
+        // fetch capability from tile entity
+        // if it returns null, item handler info will be removed
+        // block should emit block update once it obtains capability again,
+        // so handler info will be recreated accordingly
         itemHandler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, accessSide.getOpposite());
     }
 

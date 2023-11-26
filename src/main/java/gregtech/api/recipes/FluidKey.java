@@ -24,13 +24,12 @@ public class FluidKey {
         return new FluidKey(new FluidStack(getFluid(), this.amount, tag));
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof FluidKey)) return false;
         FluidKey fluidKey = (FluidKey) o;
-        if (!Objects.equals(fluid, fluidKey.fluid) )
+        if (!Objects.equals(fluid, fluidKey.fluid))
             return false;
         if (tag == null && fluidKey.tag != null) return false;
         else return tag == null || tag.equals(fluidKey.tag);

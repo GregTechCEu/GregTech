@@ -3,6 +3,7 @@ package gregtech.common.crafting;
 import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.FacadeItem;
+
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -36,11 +37,11 @@ public class FacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements I
             if (itemStack.isEmpty()) continue;
             for (int j = 0; j < matched.length; j++) {
                 if (!ingredients.get(j).apply(itemStack)) continue;
-                if (matched[j]) return false; //already matched
+                if (matched[j]) return false; // already matched
                 matched[j] = true;
                 continue mainLoop;
             }
-            //reached there, no match
+            // reached there, no match
             return false;
         }
         for (boolean b : matched) {
@@ -95,6 +96,7 @@ public class FacadeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements I
     }
 
     private static class FacadeIngredient extends Ingredient {
+
         public static final FacadeIngredient INSTANCE = new FacadeIngredient();
 
         private FacadeIngredient() {

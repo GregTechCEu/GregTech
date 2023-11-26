@@ -3,6 +3,7 @@ package gregtech.core.network.packets;
 import gregtech.api.network.IClientExecutor;
 import gregtech.api.network.IPacket;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
+
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -42,7 +43,8 @@ public class PacketFluidVeinList implements IPacket, IClientExecutor {
             NBTTagCompound tag = ByteBufUtils.readTag(buf);
             if (tag == null || tag.isEmpty()) continue;
 
-            BedrockFluidVeinHandler.FluidVeinWorldEntry entry = BedrockFluidVeinHandler.FluidVeinWorldEntry.readFromNBT(tag);
+            BedrockFluidVeinHandler.FluidVeinWorldEntry entry = BedrockFluidVeinHandler.FluidVeinWorldEntry
+                    .readFromNBT(tag);
             this.map.put(entry, tag.getInteger("weight"));
         }
     }

@@ -15,6 +15,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -23,9 +24,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController {
 
@@ -50,7 +52,8 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
                 .aisle("XXX", "CSC", "#C#")
                 .where('S', selfPredicate())
                 .where('X', states(getFireboxState())
-                        .or(autoAbilities(true, false, false, false, false).setMinGlobalLimited(1).setMaxGlobalLimited(3)))
+                        .or(autoAbilities(true, false, false, false, false).setMinGlobalLimited(1)
+                                .setMaxGlobalLimited(3)))
                 .where('C', states(getCasingState()).setMinGlobalLimited(6)
                         .or(autoAbilities(false, false, true, true, false)))
                 .where('#', any())

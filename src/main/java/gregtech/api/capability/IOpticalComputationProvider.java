@@ -1,8 +1,9 @@
 package gregtech.api.capability;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import javax.annotation.Nonnull;
 
 /**
  * MUST be implemented on any multiblock which uses

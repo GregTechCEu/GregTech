@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -15,9 +16,10 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import java.util.Locale;
+
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Locale;
 
 import static gregtech.api.GTValues.VOLTAGE_NAMES;
 
@@ -50,7 +52,7 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
 
     public enum MachineCasingType implements IStringSerializable {
 
-        //Voltage-tiered casings
+        // Voltage-tiered casings
         ULV(makeName(VOLTAGE_NAMES[GTValues.ULV])),
         LV(makeName(VOLTAGE_NAMES[GTValues.LV])),
         MV(makeName(VOLTAGE_NAMES[GTValues.MV])),
