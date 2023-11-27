@@ -220,13 +220,13 @@ public class ModuleManager implements IModuleManager {
         Set<ResourceLocation> toLoad = new LinkedHashSet<>();
         Set<IGregTechModule> modulesToLoad = new LinkedHashSet<>();
         Configuration config = getConfiguration();
+        config.load();
+        config.addCustomCategoryComment(MODULE_CFG_CATEGORY_NAME,
+                "Module configuration file. Can individually enable/disable modules from GregTech and its addons");
 
         for (IModuleContainer container : containers.values()) {
             String containerID = container.getID();
             List<IGregTechModule> containerModules = modules.get(containerID);
-            config.load();
-            config.addCustomCategoryComment(MODULE_CFG_CATEGORY_NAME,
-                    "Module configuration file. Can individually enable/disable modules from GregTech and its addons");
             IGregTechModule coreModule = getCoreModule(containerModules);
             if (coreModule == null) {
                 throw new IllegalStateException("Could not find core module for module container " + containerID);
