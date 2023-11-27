@@ -83,7 +83,8 @@ public class FluidTooltipUtil {
         return createFluidTooltip(material, fluid, fluid.getState());
     }
 
-    public static Supplier<List<String>> createFluidTooltip(@Nullable Material material, @NotNull Fluid fluid, @NotNull FluidState fluidState) {
+    public static Supplier<List<String>> createFluidTooltip(@Nullable Material material, @NotNull Fluid fluid,
+                                                            @NotNull FluidState fluidState) {
         return () -> {
             List<String> tooltip = new ArrayList<>();
             if (material != null && !material.getChemicalFormula().isEmpty()) {
