@@ -149,9 +149,9 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
 
     private Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
         return (list) -> {
-            String fluidName = tankWidget.getFluidUnlocalizedName();
-            if (!fluidName.isEmpty()) {
-                list.add(new TextComponentTranslation(fluidName));
+            TextComponentTranslation translation = tankWidget.getFluidTextComponent();
+            if (translation != null) {
+                list.add(translation);
             }
         };
     }
