@@ -144,7 +144,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
     @Override
     protected void updateFormedValid() {
-        consumeEnergy();
+        if (isWorkingEnabled()) consumeEnergy();
         if (isActive()) {
             // forcibly use active coolers at full rate if temperature is half-way to damaging temperature
             double midpoint = (DAMAGE_TEMPERATURE - IDLE_TEMPERATURE) / 2;
