@@ -34,6 +34,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -206,7 +207,6 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             ItemStack stack = super.getStackInSlot(slot);
             stack.setCount(itemsPerCycle);
-
 
             IItemHandler otherHandler = null;
             for (EnumFacing side : EnumFacing.VALUES) {
