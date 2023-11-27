@@ -18,8 +18,7 @@ import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class MaintenanceInfoProvider extends CapabilityInfoProvider<IMaintenance> {
 
@@ -35,7 +34,7 @@ public class MaintenanceInfoProvider extends CapabilityInfoProvider<IMaintenance
         return GTValues.MODID + ":multiblock_maintenance_provider";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected Capability<IMaintenance> getCapability() {
         return GregtechTileCapabilities.CAPABILITY_MAINTENANCE;

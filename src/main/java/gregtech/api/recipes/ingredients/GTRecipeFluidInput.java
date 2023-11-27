@@ -3,9 +3,9 @@ package gregtech.api.recipes.ingredients;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.Objects;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class GTRecipeFluidInput extends GTRecipeInput {
 

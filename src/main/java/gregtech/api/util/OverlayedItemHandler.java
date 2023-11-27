@@ -3,7 +3,7 @@ package gregtech.api.util;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class OverlayedItemHandler {
 
@@ -11,7 +11,7 @@ public class OverlayedItemHandler {
     private final OverlayedItemHandlerSlot[] slots;
     private final IItemHandler overlayedHandler;
 
-    public OverlayedItemHandler(@Nonnull IItemHandler toOverlay) {
+    public OverlayedItemHandler(@NotNull IItemHandler toOverlay) {
         this.slots = new OverlayedItemHandlerSlot[toOverlay.getSlots()];
         this.originalSlots = new OverlayedItemHandlerSlot[toOverlay.getSlots()];
         this.overlayedHandler = toOverlay;
@@ -48,7 +48,7 @@ public class OverlayedItemHandler {
         }
     }
 
-    public int insertStackedItemStack(@Nonnull ItemStack stack, int amountToInsert) {
+    public int insertStackedItemStack(@NotNull ItemStack stack, int amountToInsert) {
         int lastKnownPopulatedSlot = 0;
         // loop through all slots, looking for ones matching the key
         for (int i = 0; i < this.slots.length; i++) {
@@ -104,7 +104,7 @@ public class OverlayedItemHandler {
         private int count = 0;
         private int slotLimit;
 
-        protected OverlayedItemHandlerSlot(@Nonnull ItemStack stackToMirror, int slotLimit) {
+        protected OverlayedItemHandlerSlot(@NotNull ItemStack stackToMirror, int slotLimit) {
             if (!stackToMirror.isEmpty()) {
                 this.itemStack = stackToMirror.copy();
                 this.count = stackToMirror.getCount();
@@ -114,7 +114,7 @@ public class OverlayedItemHandler {
             }
         }
 
-        protected OverlayedItemHandlerSlot(@Nonnull ItemStack itemStack, int slotLimit, int count) {
+        protected OverlayedItemHandlerSlot(@NotNull ItemStack itemStack, int slotLimit, int count) {
             this.itemStack = itemStack;
             this.count = count;
             this.slotLimit = slotLimit;
@@ -133,12 +133,12 @@ public class OverlayedItemHandler {
          * 
          * @return the stored ItemStack
          */
-        @Nonnull
+        @NotNull
         public ItemStack getItemStack() {
             return this.itemStack;
         }
 
-        public void setItemStack(@Nonnull ItemStack itemStack) {
+        public void setItemStack(@NotNull ItemStack itemStack) {
             if (!ItemStackHashStrategy.comparingAllButCount().equals(this.itemStack, itemStack)) {
                 this.itemStack = itemStack;
                 this.slotLimit = Math.min(itemStack.getMaxStackSize(), slotLimit);
@@ -149,7 +149,7 @@ public class OverlayedItemHandler {
             this.count = count;
         }
 
-        @Nonnull
+        @NotNull
         OverlayedItemHandlerSlot copy() {
             return new OverlayedItemHandlerSlot(this.itemStack, this.slotLimit, this.count);
         }

@@ -20,13 +20,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block implements IWalkingSpeedBonus {
 
@@ -48,7 +48,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
+    public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         for (T variant : VALUES) {
             list.add(getItemVariant(variant));
         }
@@ -74,7 +74,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
         return new ItemStack(this, amount, variant.ordinal());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
         Class<T> enumClass = getActualTypeParameter(getClass(), VariantBlock.class, 0);
@@ -85,8 +85,8 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World player, List<String> tooltip,
-                               @Nonnull ITooltipFlag advanced) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World player, List<String> tooltip,
+                               @NotNull ITooltipFlag advanced) {
         // tier less tooltip like: tile.turbine_casing.tooltip
         String unlocalizedVariantTooltip = getTranslationKey() + ".tooltip";
         if (I18n.hasKey(unlocalizedVariantTooltip))
@@ -98,11 +98,11 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     }
 
     @Override
-    public int damageDropped(@Nonnull IBlockState state) {
+    public int damageDropped(@NotNull IBlockState state) {
         return getMetaFromState(state);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
@@ -115,7 +115,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     }
 
     @Override
-    public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn) {
+    public void onEntityWalk(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull Entity entityIn) {
         // Short circuit if there is no bonus speed
         if (getWalkingSpeedBonus() == 1.0D) {
             return;

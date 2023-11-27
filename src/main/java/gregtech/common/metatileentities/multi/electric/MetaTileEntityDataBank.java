@@ -37,12 +37,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements IControllable {
 
@@ -155,7 +154,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -178,12 +177,12 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
                 .build();
     }
 
-    @Nonnull
+    @NotNull
     private static IBlockState getOuterState() {
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.COMPUTER_HEAT_VENT);
     }
 
-    @Nonnull
+    @NotNull
     private static IBlockState getInnerState() {
         return MetaBlocks.COMPUTER_CASING.getState(BlockComputerCasing.CasingType.COMPUTER_CASING);
     }
@@ -220,7 +219,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.DATA_BANK_OVERLAY;
@@ -238,7 +237,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.data_bank.tooltip.1"));
@@ -299,7 +298,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     }
 
     @Override
-    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();

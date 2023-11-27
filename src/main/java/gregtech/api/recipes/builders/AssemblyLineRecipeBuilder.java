@@ -13,12 +13,12 @@ import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.UnaryOperator;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeBuilder> {
 
@@ -33,7 +33,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         super(recipe, recipeMap);
     }
 
-    public AssemblyLineRecipeBuilder(@Nonnull AssemblyLineRecipeBuilder builder) {
+    public AssemblyLineRecipeBuilder(@NotNull AssemblyLineRecipeBuilder builder) {
         super(builder);
         this.recipeEntries.addAll(builder.getRecipeEntries());
         this.generatingRecipes = builder.generatingRecipes;
@@ -45,7 +45,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     @Override
-    public boolean applyProperty(@Nonnull String key, @Nullable Object value) {
+    public boolean applyProperty(@NotNull String key, @Nullable Object value) {
         if (key.equals(ResearchProperty.KEY)) {
             if (value instanceof ItemStack itemStack) {
                 scannerResearch(itemStack);
@@ -93,7 +93,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * @param researchId the researchId for the recipe
      * @return this
      */
-    public AssemblyLineRecipeBuilder researchWithoutRecipe(@Nonnull String researchId) {
+    public AssemblyLineRecipeBuilder researchWithoutRecipe(@NotNull String researchId) {
         return researchWithoutRecipe(researchId, AssemblyLineManager.getDefaultScannerItem());
     }
 
@@ -104,7 +104,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * @param dataStack  the stack to hold the data. Must have the {@link IDataItem} behavior.
      * @return this
      */
-    public AssemblyLineRecipeBuilder researchWithoutRecipe(@Nonnull String researchId, @Nonnull ItemStack dataStack) {
+    public AssemblyLineRecipeBuilder researchWithoutRecipe(@NotNull String researchId, @NotNull ItemStack dataStack) {
         applyResearchProperty(new ResearchPropertyData.ResearchEntry(researchId, dataStack));
         this.generatingRecipes = false;
         return this;
@@ -127,7 +127,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
      * @param researchStack the stack to use for research
      * @return this
      */
-    public AssemblyLineRecipeBuilder scannerResearch(@Nonnull ItemStack researchStack) {
+    public AssemblyLineRecipeBuilder scannerResearch(@NotNull ItemStack researchStack) {
         return scannerResearch(b -> new ResearchRecipeBuilder.ScannerRecipeBuilder().researchStack(researchStack));
     }
 
@@ -142,7 +142,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         return this;
     }
 
-    @Nonnull
+    @NotNull
     public Collection<ResearchRecipeEntry> getRecipeEntries() {
         return this.recipeEntries;
     }
@@ -167,8 +167,8 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
          * @param EUt           the EUt of the recipe
          * @param CWUt          how much computation per tick this recipe needs if in Research Station
          */
-        public ResearchRecipeEntry(@Nonnull String researchId, @Nonnull ItemStack researchStack,
-                                   @Nonnull ItemStack dataStack, int duration, int EUt, int CWUt) {
+        public ResearchRecipeEntry(@NotNull String researchId, @NotNull ItemStack researchStack,
+                                   @NotNull ItemStack dataStack, int duration, int EUt, int CWUt) {
             this.researchId = researchId;
             this.researchStack = researchStack;
             this.dataStack = dataStack;
@@ -177,17 +177,17 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
             this.CWUt = CWUt;
         }
 
-        @Nonnull
+        @NotNull
         public String getResearchId() {
             return this.researchId;
         }
 
-        @Nonnull
+        @NotNull
         public ItemStack getResearchStack() {
             return researchStack;
         }
 
-        @Nonnull
+        @NotNull
         public ItemStack getDataStack() {
             return dataStack;
         }

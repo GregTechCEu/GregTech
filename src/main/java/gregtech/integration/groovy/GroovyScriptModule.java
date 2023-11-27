@@ -38,14 +38,13 @@ import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
 import com.cleanroommc.groovyscript.sandbox.expand.ExpansionHelper;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_GRS,
@@ -58,7 +57,7 @@ public class GroovyScriptModule extends IntegrationSubmodule {
     private static ModSupport.Container<Container> modSupportContainer;
     private static final Map<String, Map<String, ItemStack>> metaItems = new Object2ObjectOpenHashMap<>();
 
-    @Nonnull
+    @NotNull
     @Override
     public List<Class<?>> getEventBusSubscribers() {
         return ImmutableList.of(GroovyHandCommand.class, GroovyScriptModule.class);

@@ -7,11 +7,10 @@ import gregtech.api.unification.material.Material;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.block.IBlockState;
 import crafttweaker.api.minecraft.CraftTweakerMC;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @ZenClass("mods.gregtech.blocks.HeatingCoils")
 @ZenRegister
@@ -43,7 +42,7 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
         this.material = material;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return this.name;
@@ -76,14 +75,14 @@ public class CTHeatingCoilBlockStats implements IHeatingCoilBlockStats {
     }
 
     @ZenMethod
-    public static void add(@Nonnull IBlockState state, @Nonnull String name, int coilTemperature, int level,
+    public static void add(@NotNull IBlockState state, @NotNull String name, int coilTemperature, int level,
                            int energyDiscount, int tier, @Nullable Material material) {
         GregTechAPI.HEATING_COILS.put(CraftTweakerMC.getBlockState(state),
                 new CTHeatingCoilBlockStats(name, coilTemperature, level, energyDiscount, tier, material));
     }
 
     @ZenMethod
-    public static void remove(@Nonnull IBlockState state) {
+    public static void remove(@NotNull IBlockState state) {
         GregTechAPI.HEATING_COILS.remove(CraftTweakerMC.getBlockState(state));
     }
 }

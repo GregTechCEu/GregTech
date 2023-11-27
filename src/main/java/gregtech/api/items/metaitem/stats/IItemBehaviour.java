@@ -16,10 +16,9 @@ import net.minecraft.world.World;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public interface IItemBehaviour extends IItemComponent {
 
@@ -54,5 +53,5 @@ public interface IItemBehaviour extends IItemComponent {
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 
-    default void addPropertyOverride(@Nonnull Item item) {}
+    default void addPropertyOverride(@NotNull Item item) {}
 }

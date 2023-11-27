@@ -21,15 +21,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.function.Function;
-
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
 
 @SideOnly(Side.CLIENT)
 public class CustomTextureModel implements IModel {
@@ -61,10 +59,9 @@ public class CustomTextureModel implements IModel {
     }
 
     @Override
-    @ParametersAreNonnullByDefault
-    @Nonnull
-    public IBakedModel bake(IModelState state, VertexFormat format,
-                            Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+    @NotNull
+    public IBakedModel bake(@NotNull IModelState state, @NotNull VertexFormat format,
+                            @NotNull Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         IBakedModel parent = vanillaModel.bake(state, format, rl -> {
             TextureAtlasSprite sprite = bakedTextureGetter.apply(rl);
             MetadataSectionCTM meta = null;
@@ -83,37 +80,37 @@ public class CustomTextureModel implements IModel {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Collection<ResourceLocation> getDependencies() {
         return Collections.emptySet();
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Collection<ResourceLocation> getTextures() {
         return textureDependencies;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public IModelState getDefaultState() {
         return getVanillaParent().getDefaultState();
     }
 
     @Override
-    @Nonnull
-    public Optional<? extends IClip> getClip(@Nonnull String name) {
+    @NotNull
+    public Optional<? extends IClip> getClip(@NotNull String name) {
         return getVanillaParent().getClip(name);
     }
 
     @Override
-    @Nonnull
-    public IModel process(@Nonnull ImmutableMap<String, String> customData) {
+    @NotNull
+    public IModel process(@NotNull ImmutableMap<String, String> customData) {
         return deepCopyOrMissing(getVanillaParent().process(customData), null, null);
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public IModel smoothLighting(boolean value) {
         if (modelInfo.isAmbientOcclusion() != value) {
             return deepCopyOrMissing(getVanillaParent().smoothLighting(value), value, null);
@@ -126,7 +123,7 @@ public class CustomTextureModel implements IModel {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public IModel gui3d(boolean value) {
         if (modelInfo.isGui3d() != value) {
             return deepCopyOrMissing(getVanillaParent().gui3d(value), null, value);
@@ -135,7 +132,7 @@ public class CustomTextureModel implements IModel {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public IModel uvlock(boolean value) {
         if (uvLock == null || uvLock != value) {
             IModel newParent = getVanillaParent().uvlock(value);
@@ -151,8 +148,8 @@ public class CustomTextureModel implements IModel {
     }
 
     @Override
-    @Nonnull
-    public IModel retexture(@Nonnull ImmutableMap<String, String> textures) {
+    @NotNull
+    public IModel retexture(@NotNull ImmutableMap<String, String> textures) {
         try {
             CustomTextureModel ret = deepCopy(getVanillaParent().retexture(textures), null, null);
             ret.modelInfo.textures.putAll(textures);
@@ -175,7 +172,7 @@ public class CustomTextureModel implements IModel {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Optional<ModelBlock> asVanillaModel() {
         return Optional.ofNullable(_asVanillaModel)
                 .<Optional<ModelBlock>>map(mh -> {

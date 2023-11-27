@@ -19,15 +19,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
-
-import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
 public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntityHolder> {
 
     @Override
-    public void render(MetaTileEntityHolder te, double x, double y, double z, float partialTicks, int destroyStage,
+    public void render(@NotNull MetaTileEntityHolder te, double x, double y, double z, float partialTicks,
+                       int destroyStage,
                        float alpha) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
@@ -87,7 +87,7 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
 
     @Override
     public void renderTileEntityFast(MetaTileEntityHolder te, double x, double y, double z, float partialTicks,
-                                     int destroyStage, float alpha, @Nonnull BufferBuilder buffer) {
+                                     int destroyStage, float alpha, @NotNull BufferBuilder buffer) {
         MetaTileEntity metaTileEntity = te.getMetaTileEntity();
         if (metaTileEntity instanceof IFastRenderMetaTileEntity) {
             CCRenderState renderState = CCRenderState.instance();
@@ -114,7 +114,7 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
     }
 
     @Override
-    public boolean isGlobalRenderer(@Nonnull MetaTileEntityHolder te) {
+    public boolean isGlobalRenderer(@NotNull MetaTileEntityHolder te) {
         if (te.getMetaTileEntity() instanceof IFastRenderMetaTileEntity) {
             return ((IFastRenderMetaTileEntity) te.getMetaTileEntity()).isGlobalRenderer();
         }

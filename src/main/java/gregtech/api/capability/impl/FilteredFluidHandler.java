@@ -7,8 +7,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FilteredFluidHandler extends FluidTank implements IFilteredFluidContainer {
 
@@ -39,7 +39,7 @@ public class FilteredFluidHandler extends FluidTank implements IFilteredFluidCon
      * @param filter new filter instance
      * @return this
      */
-    @Nonnull
+    @NotNull
     public FilteredFluidHandler setFilter(@Nullable IFilter<FluidStack> filter) {
         this.filter = filter;
         return this;

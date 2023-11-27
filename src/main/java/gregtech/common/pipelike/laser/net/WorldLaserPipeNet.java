@@ -5,7 +5,7 @@ import gregtech.common.pipelike.laser.LaserPipeProperties;
 
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldLaserPipeNet extends WorldPipeNet<LaserPipeProperties, LaserPipeNet> {
 
@@ -15,8 +15,8 @@ public class WorldLaserPipeNet extends WorldPipeNet<LaserPipeProperties, LaserPi
         super(name);
     }
 
-    @Nonnull
-    public static WorldLaserPipeNet getWorldPipeNet(@Nonnull World world) {
+    @NotNull
+    public static WorldLaserPipeNet getWorldPipeNet(@NotNull World world) {
         WorldLaserPipeNet netWorldData = (WorldLaserPipeNet) world.loadData(WorldLaserPipeNet.class, DATA_ID);
         if (netWorldData == null) {
             netWorldData = new WorldLaserPipeNet(DATA_ID);

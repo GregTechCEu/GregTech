@@ -14,11 +14,10 @@ import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GTFluidVeinInfo> {
 
@@ -52,8 +51,8 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
     }
 
     @Override
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, GTFluidVeinInfo gtFluidVeinInfo,
-                          @Nonnull IIngredients ingredients) {
+    public void setRecipe(@NotNull IRecipeLayout recipeLayout, GTFluidVeinInfo gtFluidVeinInfo,
+                          @NotNull IIngredients ingredients) {
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
 
         fluidStackGroup.init(0, true, SLOT_CENTER, 19, 16, 16, 1, false, null);
@@ -72,14 +71,14 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
                 gtFluidVeinInfo.getDefinition().getDimensionFilter());
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IRecipeWrapper getRecipeWrapper(@Nonnull GTFluidVeinInfo gtFluidVeinInfo) {
+    public IRecipeWrapper getRecipeWrapper(@NotNull GTFluidVeinInfo gtFluidVeinInfo) {
         return gtFluidVeinInfo;
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
         GTStringUtils.drawCenteredStringWithCutoff(veinName, minecraft.fontRenderer, 176);
 
         this.slot.draw(minecraft, SLOT_CENTER - 1, 18);
@@ -129,7 +128,7 @@ public class GTFluidVeinCategory extends BasicRecipeCategory<GTFluidVeinInfo, GT
                 TEXT_START_X + dimensionLength);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         if (isPointWithinRange(TEXT_START_X, START_POS_Y, weightLength, FONT_HEIGHT, mouseX, mouseY)) {

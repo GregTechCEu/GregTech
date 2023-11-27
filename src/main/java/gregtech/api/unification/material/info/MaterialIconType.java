@@ -10,11 +10,10 @@ import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 public class MaterialIconType {
 
@@ -129,18 +128,18 @@ public class MaterialIconType {
         ICON_TYPES.put(this.name, this);
     }
 
-    @Nonnull
-    public ResourceLocation getBlockTexturePath(@Nonnull MaterialIconSet materialIconSet) {
+    @NotNull
+    public ResourceLocation getBlockTexturePath(@NotNull MaterialIconSet materialIconSet) {
         return recurseIconsetPath(materialIconSet, BLOCK_TEXTURE_CACHE, BLOCK_TEXTURE_PATH_FULL, BLOCK_TEXTURE_PATH);
     }
 
-    @Nonnull
-    public ResourceLocation getItemModelPath(@Nonnull MaterialIconSet materialIconSet) {
+    @NotNull
+    public ResourceLocation getItemModelPath(@NotNull MaterialIconSet materialIconSet) {
         return recurseIconsetPath(materialIconSet, ITEM_MODEL_CACHE, ITEM_MODEL_PATH_FULL, ITEM_MODEL_PATH);
     }
 
-    @Nonnull
-    public ResourceLocation getBlockModelPath(@Nonnull MaterialIconSet materialIconSet) {
+    @NotNull
+    public ResourceLocation getBlockModelPath(@NotNull MaterialIconSet materialIconSet) {
         return recurseIconsetPath(materialIconSet, BLOCK_MODEL_CACHE, BLOCK_MODEL_PATH_FULL, BLOCK_MODEL_PATH);
     }
 
@@ -153,10 +152,10 @@ public class MaterialIconType {
      * @param path     the abbreviated path to the asset with formatting (%s) for IconSet and IconType names
      * @return the location of the asset
      */
-    @Nonnull
-    public ResourceLocation recurseIconsetPath(@Nonnull MaterialIconSet iconSet,
-                                               @Nonnull Table<MaterialIconType, MaterialIconSet, ResourceLocation> cache,
-                                               @Nonnull String fullPath, @Nonnull String path) {
+    @NotNull
+    public ResourceLocation recurseIconsetPath(@NotNull MaterialIconSet iconSet,
+                                               @NotNull Table<MaterialIconType, MaterialIconSet, ResourceLocation> cache,
+                                               @NotNull String fullPath, @NotNull String path) {
         if (cache.contains(this, iconSet)) {
             return cache.get(this, iconSet);
         }

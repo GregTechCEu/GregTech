@@ -15,11 +15,10 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 
 import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiFunction;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class SliderWidget extends Widget {
 
@@ -55,7 +54,7 @@ public class SliderWidget extends Widget {
         this.sliderPosition = (currentValue - min) / (max - min);
     }
 
-    public SliderWidget setSliderIcon(@Nonnull TextureArea sliderIcon) {
+    public SliderWidget setSliderIcon(@NotNull TextureArea sliderIcon) {
         Preconditions.checkNotNull(sliderIcon, "sliderIcon");
         this.sliderIcon = sliderIcon;
         return this;

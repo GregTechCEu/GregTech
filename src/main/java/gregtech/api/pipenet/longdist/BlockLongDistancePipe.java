@@ -19,13 +19,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
 
@@ -40,8 +38,8 @@ public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
     }
 
     @Override
-    public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state,
-                                @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
+    public void onBlockPlacedBy(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
+                                @NotNull EntityLivingBase placer, @NotNull ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
         if (worldIn.isRemote) return;
         // first find all neighbouring networks
@@ -92,7 +90,7 @@ public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
     }
 
     @Override
-    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+    public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
         super.breakBlock(worldIn, pos, state);
         if (worldIn.isRemote) return;
         LongDistanceNetwork network = LongDistanceNetwork.get(worldIn, pos);
@@ -102,21 +100,21 @@ public class BlockLongDistancePipe extends Block implements ILDNetworkPart {
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
+    public void getSubBlocks(@NotNull CreativeTabs itemIn, @NotNull NonNullList<ItemStack> items) {
         if (itemIn == GregTechAPI.TAB_GREGTECH) {
             items.add(new ItemStack(this));
         }
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos,
-                                    @Nonnull EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip,
-                               @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World worldIn, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         tooltip.add(I18n.format("gregtech.block.tooltip.no_mob_spawning"));
     }

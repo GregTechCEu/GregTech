@@ -10,26 +10,26 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 
-import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.io.IOException;
 
 public class CommandWorldgenReload extends CommandBase {
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "reload";
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getUsage(@Nonnull ICommandSender sender) {
+    public String getUsage(@NotNull ICommandSender sender) {
         return "gregtech.command.worldgen.reload.usage";
     }
 
     @Override
-    public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) {
+    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, String @NotNull [] args) {
         try {
             WorldGenRegistry.INSTANCE.reinitializeRegisteredVeins();
             sender.sendMessage(new TextComponentTranslation("gregtech.command.worldgen.reload.success")

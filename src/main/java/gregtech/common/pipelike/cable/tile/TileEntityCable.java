@@ -31,14 +31,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Cuboid6;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.capability.GregtechDataCodes.CABLE_TEMPERATURE;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONNECTIONS;
@@ -329,21 +328,21 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         return pipeBoxes;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setInteger("Temp", temperature);
         return compound;
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(@NotNull NBTTagCompound compound) {
         super.readFromNBT(compound);
         temperature = compound.getInteger("Temp");
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();

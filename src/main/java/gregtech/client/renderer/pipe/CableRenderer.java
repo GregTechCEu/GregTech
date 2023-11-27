@@ -17,8 +17,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.uv.IconTransformation;
 import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class CableRenderer extends PipeRenderer {
 

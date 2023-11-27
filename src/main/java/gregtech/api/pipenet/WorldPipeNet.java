@@ -9,10 +9,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
 import java.util.*;
-
-import javax.annotation.Nonnull;
 
 public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>> extends WorldSavedData {
 
@@ -147,9 +147,9 @@ public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
         NBTTagList allPipeNets = new NBTTagList();
         for (T pipeNet : pipeNets) {
             NBTTagCompound pNetTag = pipeNet.serializeNBT();

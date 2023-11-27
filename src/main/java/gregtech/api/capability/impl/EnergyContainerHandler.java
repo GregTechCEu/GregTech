@@ -16,9 +16,9 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import java.util.function.Predicate;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.function.Predicate;
 
 public class EnergyContainerHandler extends MTETrait implements IEnergyContainer {
 
@@ -79,7 +79,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         return lastEnergyOutputPerSec;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return GregtechDataCodes.ENERGY_CONTAINER_TRAIT;
@@ -93,7 +93,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
@@ -102,7 +102,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     }
 
     @Override
-    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
+    public void deserializeNBT(@NotNull NBTTagCompound compound) {
         this.energyStored = compound.getLong("EnergyStored");
         notifyEnergyListener(true);
     }

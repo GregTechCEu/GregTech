@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * <p>
@@ -24,12 +24,12 @@ public interface IRenderSetup {
      *
      * @param buffer Buffer builder
      */
-    void preDraw(@Nonnull BufferBuilder buffer);
+    void preDraw(@NotNull BufferBuilder buffer);
 
     /**
      * Run any post render gl code here.
      *
      * @param buffer Buffer builder
      */
-    void postDraw(@Nonnull BufferBuilder buffer);
+    void postDraw(@NotNull BufferBuilder buffer);
 }

@@ -12,10 +12,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 
 import codechicken.lib.vec.uv.IconTransformation;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
-
-import javax.annotation.Nullable;
 
 public class ItemPipeRenderer extends PipeRenderer {
 

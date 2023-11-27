@@ -9,8 +9,8 @@ import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 
 import net.minecraft.util.EnumFacing;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class OpticalRoutePath implements IRoutePath<TileEntityOpticalPipe> {
 
@@ -24,13 +24,13 @@ public class OpticalRoutePath implements IRoutePath<TileEntityOpticalPipe> {
         this.distance = distance;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public TileEntityOpticalPipe getTargetPipe() {
         return targetPipe;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public EnumFacing getTargetFacing() {
         return faceToHandler;

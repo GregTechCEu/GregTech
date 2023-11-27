@@ -12,9 +12,8 @@ import net.minecraftforge.fluids.FluidStack;
 
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.plugins.vanilla.ingredients.fluid.FluidStackRenderer;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FluidStackTextRenderer extends FluidStackRenderer {
 
@@ -46,7 +45,7 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
     }
 
     @Override
-    public void render(@Nonnull Minecraft minecraft, final int xPosition, final int yPosition,
+    public void render(@NotNull Minecraft minecraft, final int xPosition, final int yPosition,
                        @Nullable FluidStack fluidStack) {
         if (fluidStack == null)
             return;

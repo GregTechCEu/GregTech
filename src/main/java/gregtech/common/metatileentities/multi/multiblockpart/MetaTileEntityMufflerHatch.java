@@ -33,10 +33,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart implements
                                         IMultiblockAbilityPart<IMufflerHatch>, ITieredMetaTileEntity, IMufflerHatch {

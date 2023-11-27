@@ -16,11 +16,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class ItemListSlotWidget extends Widget {
 
@@ -75,7 +75,7 @@ public class ItemListSlotWidget extends Widget {
         }
     }
 
-    private void setCreativeHeldItem(@Nonnull ItemStack itemStack) {
+    private void setCreativeHeldItem(@NotNull ItemStack itemStack) {
         InventoryPlayer inventory = gui.entityPlayer.inventory;
         if (!itemStack.isEmpty() && inventory.getItemStack().isEmpty()) {
             itemStack.setCount(itemStack.getMaxStackSize());
@@ -83,7 +83,7 @@ public class ItemListSlotWidget extends Widget {
         }
     }
 
-    private static int getAmountToTake(@Nonnull ItemStack itemStack, int maxAmount, int button) {
+    private static int getAmountToTake(@NotNull ItemStack itemStack, int maxAmount, int button) {
         int maxStackSize = Math.min(itemStack.getMaxStackSize(), maxAmount);
         return button == 0 ? maxStackSize : (maxStackSize >= 2 ? maxStackSize / 2 : 1);
     }
@@ -153,7 +153,7 @@ public class ItemListSlotWidget extends Widget {
         }
     }
 
-    private void handleSelfShiftClick(@Nonnull IItemInfo itemInfo) {
+    private void handleSelfShiftClick(@NotNull IItemInfo itemInfo) {
         ItemStack itemStack = itemInfo.getItemStack().copy();
         itemStack.setCount(itemStack.getMaxStackSize());
         int currentStackSize = itemStack.getCount();

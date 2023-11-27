@@ -9,19 +9,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import org.hamcrest.MatcherAssert;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 import static gregtech.api.GTValues.*;
 import static org.hamcrest.CoreMatchers.is;
 
 public class EnergyContainerListTest {
 
-    @Nonnull
+    @NotNull
     private static MetaTileEntity createDummyMTE() {
         return new MetaTileEntity(new ResourceLocation("")) {
 
@@ -37,18 +36,18 @@ public class EnergyContainerListTest {
         };
     }
 
-    @Nonnull
+    @NotNull
     private static IEnergyContainer createContainer(int amps) {
         return createContainer(amps, LV);
     }
 
-    @Nonnull
+    @NotNull
     private static IEnergyContainer createContainer(int amps, int tier) {
         return EnergyContainerHandler.receiverContainer(createDummyMTE(),
                 V[tier] * 64L * amps, V[tier], amps);
     }
 
-    @Nonnull
+    @NotNull
     private static EnergyContainerList createList(int size, int ampsPerHatch) {
         List<IEnergyContainer> list = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
@@ -166,7 +165,7 @@ public class EnergyContainerListTest {
         check(new EnergyContainerList(list), 320, 1);
     }
 
-    private static void check(@Nonnull EnergyContainerList list, long inputVoltage, long inputAmperage) {
+    private static void check(@NotNull EnergyContainerList list, long inputVoltage, long inputAmperage) {
         MatcherAssert.assertThat(list.getInputVoltage(), is(inputVoltage));
         MatcherAssert.assertThat(list.getInputAmperage(), is(inputAmperage));
     }

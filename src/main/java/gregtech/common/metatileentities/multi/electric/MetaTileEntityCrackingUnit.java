@@ -31,10 +31,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.List;
 
 public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
 
@@ -114,7 +114,7 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.CRACKING_UNIT_OVERLAY;
@@ -149,7 +149,7 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected void modifyOverclockPost(int[] resultOverclock, @Nonnull IRecipePropertyStorage storage) {
+        protected void modifyOverclockPost(int[] resultOverclock, @NotNull IRecipePropertyStorage storage) {
             super.modifyOverclockPost(resultOverclock, storage);
 
             int coilTier = ((MetaTileEntityCrackingUnit) metaTileEntity).getCoilTier();

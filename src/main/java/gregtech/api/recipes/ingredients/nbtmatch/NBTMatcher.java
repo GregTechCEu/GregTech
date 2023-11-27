@@ -5,10 +5,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagLongArray;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * This class is used to match NBT tags. Used to match a MapItemStackNBTIngredient NBT tag to a given NBT tag value.
@@ -216,11 +216,11 @@ public interface NBTMatcher {
 
     boolean evaluate(@Nullable NBTTagCompound nbtTagCompound, @Nullable NBTCondition nbtCondition);
 
-    default boolean evaluate(@Nonnull ItemStack stack, @Nullable NBTCondition nbtCondition) {
+    default boolean evaluate(@NotNull ItemStack stack, @Nullable NBTCondition nbtCondition) {
         return evaluate(stack.getTagCompound(), nbtCondition);
     }
 
-    default boolean evaluate(@Nonnull FluidStack stack, @Nullable NBTCondition nbtCondition) {
+    default boolean evaluate(@NotNull FluidStack stack, @Nullable NBTCondition nbtCondition) {
         return evaluate(stack.tag, nbtCondition);
     }
 }

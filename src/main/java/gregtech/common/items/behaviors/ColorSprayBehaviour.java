@@ -28,11 +28,10 @@ import net.minecraftforge.fml.common.Loader;
 import appeng.api.util.AEColor;
 import appeng.tile.networking.TileCableBus;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IItemDurabilityManager {
 

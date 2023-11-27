@@ -2,7 +2,7 @@ package gregtech.api.recipes.logic;
 
 import gregtech.common.ConfigHolder;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A class for holding all the various Overclocking logics
@@ -26,9 +26,9 @@ public class OverclockingLogic {
      * @param numberOfOCs       the maximum amount of overclocks allowed
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    @Nonnull
-    public static int[] standardOverclockingLogic(int recipeEUt, long maxVoltage, int recipeDuration, int numberOfOCs,
-                                                  double durationDivisor, double voltageMultiplier) {
+    public static int @NotNull [] standardOverclockingLogic(int recipeEUt, long maxVoltage, int recipeDuration,
+                                                            int numberOfOCs,
+                                                            double durationDivisor, double voltageMultiplier) {
         double resultDuration = recipeDuration;
         double resultVoltage = recipeEUt;
 
@@ -81,9 +81,9 @@ public class OverclockingLogic {
         return (int) (recipeEUt * Math.min(1, Math.pow(0.95, amountEUtDiscount)));
     }
 
-    @Nonnull
-    public static int[] heatingCoilOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration,
-                                                     int maxOverclocks, int currentTemp, int recipeRequiredTemp) {
+    public static int @NotNull [] heatingCoilOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration,
+                                                               int maxOverclocks, int currentTemp,
+                                                               int recipeRequiredTemp) {
         int amountPerfectOC = calculateAmountCoilEUtDiscount(currentTemp, recipeRequiredTemp) / 2;
 
         // perfect overclock for every 1800k over recipe temperature

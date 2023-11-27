@@ -1,9 +1,9 @@
 package gregtech.api.capability;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
-
-import javax.annotation.Nonnull;
 
 /**
  * MUST be implemented on any multiblock which uses
@@ -32,7 +32,7 @@ public interface IOpticalComputationProvider {
      * @param seen The Optical Computation Providers already checked
      * @return The amount of CWU/t that could be supplied.
      */
-    int requestCWUt(int cwut, boolean simulate, @Nonnull Collection<IOpticalComputationProvider> seen);
+    int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen);
 
     /**
      * The maximum of CWU/t that this computation provider can provide.
@@ -48,7 +48,7 @@ public interface IOpticalComputationProvider {
      *
      * @param seen The Optical Computation Providers already checked
      */
-    int getMaxCWUt(@Nonnull Collection<IOpticalComputationProvider> seen);
+    int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen);
 
     /**
      * Whether this Computation Provider can "Bridge" with other Computation Providers.
@@ -66,5 +66,5 @@ public interface IOpticalComputationProvider {
      *
      * @param seen The Optical Computation Providers already checked
      */
-    boolean canBridge(@Nonnull Collection<IOpticalComputationProvider> seen);
+    boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen);
 }

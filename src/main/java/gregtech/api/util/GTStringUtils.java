@@ -16,14 +16,14 @@ import net.minecraft.block.Block;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public final class GTStringUtils {
 
     private GTStringUtils() {/**/}
 
-    @Nonnull
-    public static String prettyPrintItemStack(@Nonnull ItemStack stack) {
+    @NotNull
+    public static String prettyPrintItemStack(@NotNull ItemStack stack) {
         if (stack.getItem() instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) stack.getItem();
             MetaItem<?>.MetaValueItem metaValueItem = metaItem.getItem(stack);
@@ -75,8 +75,8 @@ public final class GTStringUtils {
      * @param stack the stack to convert
      * @return the string form of the stack
      */
-    @Nonnull
-    public static String itemStackToString(@Nonnull ItemStack stack) {
+    @NotNull
+    public static String itemStackToString(@NotNull ItemStack stack) {
         return stack.getCount() + "x" + stack.getItem().getTranslationKey(stack) + "@" + stack.getItemDamage();
     }
 
@@ -87,7 +87,7 @@ public final class GTStringUtils {
      * @param ticks the amount of ticks to convert
      * @return the time elapsed for the given number of ticks, in "mm:ss" format.
      */
-    @Nonnull
+    @NotNull
     public static String ticksToElapsedTime(int ticks) {
         int seconds = ticks / 20;
         int minutes = seconds / 60;

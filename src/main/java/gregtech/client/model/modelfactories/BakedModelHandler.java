@@ -30,13 +30,13 @@ import codechicken.lib.render.item.CCRenderItem;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
 @SideOnly(Side.CLIENT)
@@ -98,7 +98,7 @@ public class BakedModelHandler {
             this.particleTexture = particleTexture;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
             return Collections.emptyList();
@@ -119,21 +119,21 @@ public class BakedModelHandler {
             return true;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public TextureAtlasSprite getParticleTexture() {
             return TextureUtils.getBlockTexture(particleTexture);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemOverrideList getOverrides() {
             return ItemOverrideList.NONE;
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(@Nonnull TransformType cameraTransformType) {
+        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(@NotNull TransformType cameraTransformType) {
             CCRenderItem.notifyTransform(cameraTransformType);
             return PerspectiveMapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK, cameraTransformType);
         }

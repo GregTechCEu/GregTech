@@ -35,11 +35,10 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Function;
-
-import javax.annotation.Nullable;
 
 import static gregtech.api.GTValues.MAX;
 import static gregtech.api.GTValues.V;

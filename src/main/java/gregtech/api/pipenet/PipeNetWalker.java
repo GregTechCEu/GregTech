@@ -10,10 +10,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-
-import javax.annotation.Nullable;
 
 /**
  * This is a helper class to get information about a pipe net

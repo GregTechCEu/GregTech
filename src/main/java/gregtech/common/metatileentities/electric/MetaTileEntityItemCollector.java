@@ -38,10 +38,9 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 

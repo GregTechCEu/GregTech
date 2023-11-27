@@ -16,10 +16,10 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public final class ToolItems {
 
@@ -321,13 +321,13 @@ public final class ToolItems {
                 .markerItem(() -> ToolHelper.getAndSetToolData(PLUNGER, Materials.Rubber, 255, 1, 4F, 0F)));
     }
 
-    public static IGTTool register(@Nonnull ToolBuilder<?> builder) {
+    public static IGTTool register(@NotNull ToolBuilder<?> builder) {
         IGTTool tool = builder.build();
         TOOLS.add(tool);
         return tool;
     }
 
-    public static IGTTool register(@Nonnull IGTTool tool) {
+    public static IGTTool register(@NotNull IGTTool tool) {
         TOOLS.add(tool);
         return tool;
     }

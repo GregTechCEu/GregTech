@@ -1,9 +1,9 @@
 package gregtech.api.capability;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Comparator;
 import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
 
 /**
  * Base type for generic filters. In addition to the predicate method, this interface provides priority primarily used
@@ -32,7 +32,7 @@ public interface IFilter<T> extends Predicate<T> {
      * @return if this filter accepts the instance
      */
     @Override
-    boolean test(@Nonnull T t);
+    boolean test(@NotNull T t);
 
     /**
      * Return insertion priority for this filter. The priority is applied on some insertion logics, to prioritize
@@ -70,12 +70,12 @@ public interface IFilter<T> extends Predicate<T> {
      * @return reverse of this filter
      */
     @Override
-    @Nonnull
+    @NotNull
     default IFilter<T> negate() {
         return new IFilter<>() {
 
             @Override
-            public boolean test(@Nonnull T t) {
+            public boolean test(@NotNull T t) {
                 return !IFilter.this.test(t);
             }
 
@@ -85,7 +85,7 @@ public interface IFilter<T> extends Predicate<T> {
             }
 
             @Override
-            @Nonnull
+            @NotNull
             public IFilter<T> negate() {
                 return IFilter.this;
             }

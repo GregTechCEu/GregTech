@@ -29,11 +29,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.GTValues.ULV;
 import static gregtech.api.recipes.logic.OverclockingLogic.*;
@@ -157,7 +157,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public final String getName() {
         // this is final so machines are not accidentally given multiple workable instances
@@ -402,7 +402,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to check
      * @return true if the recipe is allowed to be used, else false
      */
-    public boolean checkRecipe(@Nonnull Recipe recipe) {
+    public boolean checkRecipe(@NotNull Recipe recipe) {
         return checkCleanroomRequirement(recipe);
     }
 
@@ -410,7 +410,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to check
      * @return if the cleanroom requirement is met
      */
-    protected boolean checkCleanroomRequirement(@Nonnull Recipe recipe) {
+    protected boolean checkCleanroomRequirement(@NotNull Recipe recipe) {
         CleanroomType requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
         if (requiredType == null) return true;
 
@@ -482,7 +482,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return the parallel logic type to use for recipes
      */
     @Override
-    @Nonnull
+    @NotNull
     public ParallelLogicType getParallelLogicType() {
         return ParallelLogicType.MULTIPLY;
     }
@@ -491,7 +491,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param tanks the tanks to check
      * @return the minimum fluid capacity of the tanks
      */
-    protected static int getMinTankCapacity(@Nonnull IMultipleTankHandler tanks) {
+    protected static int getMinTankCapacity(@NotNull IMultipleTankHandler tanks) {
         if (tanks.getTanks() == 0) {
             return 0;
         }
@@ -524,7 +524,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipeMap the recipemap to check
      * @return true if the recipemap is valid for recipe search
      */
-    public boolean isRecipeMapValid(@Nonnull RecipeMap<?> recipeMap) {
+    public boolean isRecipeMapValid(@NotNull RecipeMap<?> recipeMap) {
         return true;
     }
 
@@ -533,7 +533,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param stackB the second stack to check
      * @return true if both ItemStacks are equal
      */
-    protected static boolean areItemStacksEqual(@Nonnull ItemStack stackA, @Nonnull ItemStack stackB) {
+    protected static boolean areItemStacksEqual(@NotNull ItemStack stackA, @NotNull ItemStack stackB) {
         return (stackA.isEmpty() && stackB.isEmpty()) ||
                 (ItemStack.areItemsEqual(stackA, stackB) &&
                         ItemStack.areItemStackTagsEqual(stackA, stackB));
@@ -552,8 +552,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *                        a specific bus
      * @return - true if the recipe is successful, false if the recipe is not successful
      */
-    protected boolean setupAndConsumeRecipeInputs(@Nonnull Recipe recipe,
-                                                  @Nonnull IItemHandlerModifiable importInventory) {
+    protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
+                                                  @NotNull IItemHandlerModifiable importInventory) {
         this.overclockResults = calculateOverclock(recipe);
 
         modifyOverclockPost(overclockResults, recipe.getRecipePropertyStorage());
@@ -593,7 +593,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param resultOverclock the overclock data to use. Format: {@code [EUt, duration]}.
      * @return true if there is enough energy to continue recipe progress
      */
-    protected boolean hasEnoughPower(@Nonnull int[] resultOverclock) {
+    protected boolean hasEnoughPower(@NotNull int[] resultOverclock) {
         // Format of resultOverclock: EU/t, duration
         int totalEUt = resultOverclock[0] * resultOverclock[1];
 
@@ -630,7 +630,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param overclockResults The overclocked recipe EUt and duration, in format [EUt, duration]
      * @param storage          the RecipePropertyStorage of the recipe being processed
      */
-    protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {}
+    protected void modifyOverclockPost(int[] overclockResults, @NotNull IRecipePropertyStorage storage) {}
 
     /**
      * Calculates the overclocked Recipe's final duration and EU/t
@@ -638,8 +638,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to run
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    @Nonnull
-    protected int[] calculateOverclock(@Nonnull Recipe recipe) {
+    @NotNull
+    protected int[] calculateOverclock(@NotNull Recipe recipe) {
         // perform the actual overclocking
         return performOverclocking(recipe);
     }
@@ -651,8 +651,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to overclock
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    @Nonnull
-    protected int[] performOverclocking(@Nonnull Recipe recipe) {
+    @NotNull
+    protected int[] performOverclocking(@NotNull Recipe recipe) {
         int[] values = { recipe.getEUt(), recipe.getDuration(), getNumberOfOCs(recipe.getEUt()) };
         modifyOverclockPre(values, recipe.getRecipePropertyStorage());
 
@@ -691,7 +691,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param values  an array of [recipeEUt, recipeDuration, numberOfOCs]
      * @param storage the RecipePropertyStorage of the recipe being processed
      */
-    protected void modifyOverclockPre(@Nonnull int[] values, @Nonnull IRecipePropertyStorage storage) {}
+    protected void modifyOverclockPre(@NotNull int[] values, @NotNull IRecipePropertyStorage storage) {}
 
     /**
      * Calls the desired overclocking logic to be run for the recipe.
@@ -705,8 +705,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param amountOC        the maximum amount of overclocks to perform
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    @Nonnull
-    protected int[] runOverclockingLogic(@Nonnull IRecipePropertyStorage propertyStorage, int recipeEUt,
+    @NotNull
+    protected int[] runOverclockingLogic(@NotNull IRecipePropertyStorage propertyStorage, int recipeEUt,
                                          long maxVoltage, int duration, int amountOC) {
         return standardOverclockingLogic(
                 Math.abs(recipeEUt),
@@ -969,7 +969,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();
             getMetaTileEntity().scheduleRenderUpdate();
@@ -980,18 +980,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         this.isActive = buf.readBoolean();
         this.workingEnabled = buf.readBoolean();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
@@ -1018,7 +1018,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
+    public void deserializeNBT(@NotNull NBTTagCompound compound) {
         this.workingEnabled = compound.getBoolean("WorkEnabled");
         this.canRecipeProgress = compound.getBoolean("CanRecipeProgress");
         this.progressTime = compound.getInteger("Progress");

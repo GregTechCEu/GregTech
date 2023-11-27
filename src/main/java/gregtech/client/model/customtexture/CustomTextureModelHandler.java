@@ -21,15 +21,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.collect.Sets;
 import com.google.gson.JsonParseException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Copyright CTM.
@@ -67,7 +66,7 @@ public enum CustomTextureModelHandler implements IResourceManagerReloadListener 
         }
     }
 
-    @Nonnull
+    @NotNull
     private static IBakedModel wrap(IModel model, IBakedModel object) {
         CustomTextureModel ctm = new CustomTextureModel(null, model);
         ctm.bake(TRSRTransformation.identity(), DefaultVertexFormats.ITEM,
@@ -110,7 +109,7 @@ public enum CustomTextureModelHandler implements IResourceManagerReloadListener 
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+    public void onResourceManagerReload(@NotNull IResourceManager resourceManager) {
         METADATA_CACHE.clear();
         CustomTextureBakedModel.MODEL_CACHE.cleanUp();
         wrappedModels.clear();

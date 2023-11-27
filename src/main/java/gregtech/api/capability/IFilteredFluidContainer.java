@@ -2,9 +2,9 @@ package gregtech.api.capability;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.Comparator;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
+import java.util.Comparator;
 
 /**
  * Interface for fluid containers ({@link net.minecraftforge.fluids.IFluidTank IFluidTank} or

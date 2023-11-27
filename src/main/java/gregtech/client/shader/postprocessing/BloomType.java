@@ -1,6 +1,6 @@
 package gregtech.client.shader.postprocessing;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum BloomType {
 
@@ -30,7 +30,7 @@ public enum BloomType {
         };
     }
 
-    @Nonnull
+    @NotNull
     public static BloomType fromValue(int value) {
         return switch (value) {
             case 0 -> GAUSSIAN;

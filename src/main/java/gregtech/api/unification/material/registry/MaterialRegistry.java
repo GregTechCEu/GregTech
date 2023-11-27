@@ -3,9 +3,9 @@ package gregtech.api.unification.material.registry;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTControlledRegistry;
 
-import java.util.Collection;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.Collection;
 
 public abstract class MaterialRegistry extends GTControlledRegistry<String, Material> {
 
@@ -15,7 +15,7 @@ public abstract class MaterialRegistry extends GTControlledRegistry<String, Mate
 
     public abstract void register(Material material);
 
-    @Nonnull
+    @NotNull
     public abstract Collection<Material> getAllMaterials();
 
     /**
@@ -25,7 +25,7 @@ public abstract class MaterialRegistry extends GTControlledRegistry<String, Mate
      *
      * @param material the fallback material
      */
-    public abstract void setFallbackMaterial(@Nonnull Material material);
+    public abstract void setFallbackMaterial(@NotNull Material material);
 
     /**
      * Using {@link #getObjectById(int)} or related will still return {@code null} when an entry cannot be found.
@@ -33,7 +33,7 @@ public abstract class MaterialRegistry extends GTControlledRegistry<String, Mate
      *
      * @return the fallback material, used for when another material does not exist
      */
-    @Nonnull
+    @NotNull
     public abstract Material getFallbackMaterial();
 
     /**
@@ -41,6 +41,6 @@ public abstract class MaterialRegistry extends GTControlledRegistry<String, Mate
      */
     public abstract int getNetworkId();
 
-    @Nonnull
+    @NotNull
     public abstract String getModid();
 }

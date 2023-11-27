@@ -58,11 +58,10 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                                      implements ICleanroomProvider, IWorkable, IDataInfoProvider {
@@ -232,8 +231,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
      * @param direction the direction to move
      * @return if a block is a valid wall block at pos moved in direction
      */
-    public boolean isBlockEdge(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos,
-                               @Nonnull EnumFacing direction) {
+    public boolean isBlockEdge(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos,
+                               @NotNull EnumFacing direction) {
         return world.getBlockState(pos.move(direction)) ==
                 MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE);
     }
@@ -244,13 +243,13 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
      * @param direction the direction to move
      * @return if a block is a valid floor block at pos moved in direction
      */
-    public boolean isBlockFloor(@Nonnull World world, @Nonnull BlockPos.MutableBlockPos pos,
-                                @Nonnull EnumFacing direction) {
+    public boolean isBlockFloor(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos,
+                                @NotNull EnumFacing direction) {
         return isBlockEdge(world, pos, direction) || world.getBlockState(pos) ==
                 MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         // return the default structure, even if there is no valid size found
@@ -365,7 +364,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                 .build();
     }
 
-    @Nonnull
+    @NotNull
     protected TraceabilityPredicate filterPredicate() {
         return new TraceabilityPredicate(blockWorldState -> {
             IBlockState blockState = blockWorldState.getBlockState();
@@ -399,23 +398,23 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     // protected to allow easy addition of addon "cleanrooms"
-    @Nonnull
+    @NotNull
     protected IBlockState getCasingState() {
         return MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE);
     }
 
-    @Nonnull
+    @NotNull
     protected IBlockState getGlassState() {
         return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS);
     }
 
-    @Nonnull
+    @NotNull
     protected static TraceabilityPredicate doorPredicate() {
         return new TraceabilityPredicate(
                 blockWorldState -> blockWorldState.getBlockState().getBlock() instanceof BlockDoor);
     }
 
-    @Nonnull
+    @NotNull
     protected TraceabilityPredicate innerPredicate() {
         return new TraceabilityPredicate(blockWorldState -> {
             // all non-MetaTileEntities are allowed inside by default
@@ -541,14 +540,14 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.CLEANROOM_OVERLAY;
     }
 
     @Override
-    public boolean checkCleanroomType(@Nonnull CleanroomType type) {
+    public boolean checkCleanroomType(@NotNull CleanroomType type) {
         return type == this.cleanroomType;
     }
 
@@ -568,7 +567,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         return this.cleanAmount >= CLEAN_AMOUNT_THRESHOLD;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         return Collections.singletonList(new TextComponentTranslation(
@@ -655,7 +654,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound data) {
         super.writeToNBT(data);
         data.setInteger("lDist", this.lDist);
         data.setInteger("rDist", this.rDist);

@@ -6,7 +6,7 @@ import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class GTControlledRegistry<K, V> extends RegistryNamespaced<K, V> {
 
@@ -50,7 +50,7 @@ public class GTControlledRegistry<K, V> extends RegistryNamespaced<K, V> {
         return container != null && container.getModId().equals(GTValues.MODID);
     }
 
-    public void register(int id, @Nonnull K key, @Nonnull V value) {
+    public void register(int id, @NotNull K key, @NotNull V value) {
         if (id < 0 || id >= maxId) {
             throw new IndexOutOfBoundsException("Id is out of range: " + id);
         }
@@ -67,7 +67,7 @@ public class GTControlledRegistry<K, V> extends RegistryNamespaced<K, V> {
     }
 
     @Override
-    public void putObject(@Nonnull K key, @Nonnull V value) {
+    public void putObject(@NotNull K key, @NotNull V value) {
         throw new UnsupportedOperationException("Use #register(int, String, T)");
     }
 

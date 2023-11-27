@@ -19,11 +19,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Random;
-
-import javax.annotation.Nonnull;
 
 public class BlockRubberLeaves extends BlockLeaves {
 
@@ -41,20 +40,22 @@ public class BlockRubberLeaves extends BlockLeaves {
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, CHECK_DECAY, DECAYABLE);
     }
 
     @SuppressWarnings("deprecation")
+    @NotNull
     @Override
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY,
-                                            float hitZ, int meta, EntityLivingBase placer) {
+    public IBlockState getStateForPlacement(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull EnumFacing facing,
+                                            float hitX, float hitY,
+                                            float hitZ, int meta, @NotNull EntityLivingBase placer) {
         return this.getDefaultState().withProperty(DECAYABLE, false).withProperty(CHECK_DECAY, false);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
@@ -75,20 +76,20 @@ public class BlockRubberLeaves extends BlockLeaves {
         return meta;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public Item getItemDropped(@Nonnull IBlockState state, @Nonnull Random rand, int fortune) {
+    public Item getItemDropped(@NotNull IBlockState state, @NotNull Random rand, int fortune) {
         return Item.getItemFromBlock(MetaBlocks.RUBBER_SAPLING);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public List<ItemStack> onSheared(@Nonnull ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
+    public List<ItemStack> onSheared(@NotNull ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
         return Lists.newArrayList(new ItemStack(this, 1, 0));
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public BlockRenderLayer getRenderLayer() {
         if (!fancyLeaves()) {
             return super.getRenderLayer();
@@ -97,7 +98,7 @@ public class BlockRubberLeaves extends BlockLeaves {
     }
 
     @Override
-    public boolean isOpaqueCube(@Nonnull IBlockState state) {
+    public boolean isOpaqueCube(@NotNull IBlockState state) {
         if (!fancyLeaves()) {
             return super.isOpaqueCube(state);
         }
@@ -105,8 +106,8 @@ public class BlockRubberLeaves extends BlockLeaves {
     }
 
     @Override
-    public boolean shouldSideBeRendered(@Nonnull IBlockState blockState, @Nonnull IBlockAccess blockAccess,
-                                        @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    public boolean shouldSideBeRendered(@NotNull IBlockState blockState, @NotNull IBlockAccess blockAccess,
+                                        @NotNull BlockPos pos, @NotNull EnumFacing side) {
         if (!fancyLeaves()) {
             return super.shouldSideBeRendered(blockState, blockAccess, pos, side);
         }

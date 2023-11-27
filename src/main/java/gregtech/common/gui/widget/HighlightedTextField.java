@@ -6,11 +6,10 @@ import net.minecraft.util.text.TextFormatting;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
 
 public class HighlightedTextField extends TextFieldWidget2 {
 

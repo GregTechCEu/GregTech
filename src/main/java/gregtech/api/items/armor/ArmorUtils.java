@@ -24,13 +24,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class ArmorUtils {
 
@@ -114,7 +113,7 @@ public class ArmorUtils {
         }
     }
 
-    public static void playJetpackSound(@Nonnull EntityPlayer player) {
+    public static void playJetpackSound(@NotNull EntityPlayer player) {
         if (player.world.isRemote) {
             float cons = (float) player.motionY + player.moveForward;
             cons = MathHelper.clamp(cons, 0.6F, 1.0F);
@@ -205,7 +204,7 @@ public class ArmorUtils {
         return output;
     }
 
-    @Nonnull
+    @NotNull
     public static String format(long value) {
         return new DecimalFormat("###,###.##").format(value);
     }
@@ -243,7 +242,7 @@ public class ArmorUtils {
             }
         }
 
-        @Nonnull
+        @NotNull
         private Pair<Integer, Integer> getStringCoord(int index) {
             int posX;
             int posY;

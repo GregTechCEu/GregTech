@@ -3,11 +3,10 @@ package gregtech.api.recipes.map;
 import gregtech.api.recipes.Recipe;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
 
 public class Branch {
 
@@ -44,7 +43,7 @@ public class Branch {
         return (nodes == null || nodes.isEmpty()) && (specialNodes == null || specialNodes.isEmpty());
     }
 
-    @Nonnull
+    @NotNull
     public Map<AbstractMapIngredient, Either<Recipe, Branch>> getNodes() {
         if (nodes == null) {
             nodes = new Object2ObjectOpenHashMap<>(2);
@@ -52,7 +51,7 @@ public class Branch {
         return nodes;
     }
 
-    @Nonnull
+    @NotNull
     public Map<AbstractMapIngredient, Either<Recipe, Branch>> getSpecialNodes() {
         if (specialNodes == null) {
             specialNodes = new Object2ObjectOpenHashMap<>(2);

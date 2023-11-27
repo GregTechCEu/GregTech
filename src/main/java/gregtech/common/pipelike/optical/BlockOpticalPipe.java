@@ -26,16 +26,15 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProperties, WorldOpticalPipeNet> {
 
     private final OpticalPipeType pipeType;
     private final OpticalPipeProperties properties;
 
-    public BlockOpticalPipe(@Nonnull OpticalPipeType pipeType) {
+    public BlockOpticalPipe(@NotNull OpticalPipeType pipeType) {
         this.pipeType = pipeType;
         this.properties = OpticalPipeProperties.INSTANCE;
         setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
@@ -43,7 +42,7 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    protected Pair<TextureAtlasSprite, Integer> getParticleTexture(@Nonnull World world, BlockPos blockPos) {
+    protected Pair<TextureAtlasSprite, Integer> getParticleTexture(@NotNull World world, BlockPos blockPos) {
         return OpticalPipeRenderer.INSTANCE.getParticleTexture((TileEntityOpticalPipe) world.getTileEntity(blockPos));
     }
 
@@ -63,14 +62,14 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    public OpticalPipeProperties createProperties(@Nonnull IPipeTile<OpticalPipeType, OpticalPipeProperties> pipeTile) {
+    public OpticalPipeProperties createProperties(@NotNull IPipeTile<OpticalPipeType, OpticalPipeProperties> pipeTile) {
         OpticalPipeType pipeType = pipeTile.getPipeType();
         if (pipeType == null) return getFallbackType();
         return this.pipeType.modifyProperties(properties);
     }
 
     @Override
-    public OpticalPipeProperties createItemProperties(@Nonnull ItemStack itemStack) {
+    public OpticalPipeProperties createItemProperties(@NotNull ItemStack itemStack) {
         if (itemStack.getItem() instanceof ItemBlockOpticalPipe pipe) {
             return ((BlockOpticalPipe) pipe.getBlock()).properties;
         }
@@ -88,7 +87,7 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    public OpticalPipeType getItemPipeType(@Nonnull ItemStack itemStack) {
+    public OpticalPipeType getItemPipeType(@NotNull ItemStack itemStack) {
         if (itemStack.getItem() instanceof ItemBlockOpticalPipe pipe) {
             return ((BlockOpticalPipe) pipe.getBlock()).pipeType;
         }
@@ -96,18 +95,18 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    public void setTileEntityData(@Nonnull TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> pipeTile,
+    public void setTileEntityData(@NotNull TileEntityPipeBase<OpticalPipeType, OpticalPipeProperties> pipeTile,
                                   ItemStack itemStack) {
         pipeTile.setPipeData(this, pipeType);
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
+    public void getSubBlocks(@NotNull CreativeTabs itemIn, @NotNull NonNullList<ItemStack> items) {
         items.add(new ItemStack(this, 1, this.pipeType.ordinal()));
     }
 
     @Override
-    protected boolean isPipeTool(@Nonnull ItemStack stack) {
+    protected boolean isPipeTool(@NotNull ItemStack stack) {
         return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER);
     }
 
@@ -135,10 +134,10 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
-    @Nonnull
+    @NotNull
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
-    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
+    public EnumBlockRenderType getRenderType(@NotNull IBlockState state) {
         return OpticalPipeRenderer.INSTANCE.getBlockRenderType();
     }
 }

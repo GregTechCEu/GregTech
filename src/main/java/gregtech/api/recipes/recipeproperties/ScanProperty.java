@@ -3,7 +3,7 @@ package gregtech.api.recipes.recipeproperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ScanProperty extends RecipeProperty<Boolean> {
 
@@ -15,7 +15,7 @@ public class ScanProperty extends RecipeProperty<Boolean> {
         super(KEY, Boolean.class);
     }
 
-    @Nonnull
+    @NotNull
     public static ScanProperty getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new ScanProperty();

@@ -12,9 +12,8 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.core.Api;
 import appeng.util.item.AEItemStack;
 import io.netty.buffer.ByteBuf;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @Author GlodBlock
@@ -22,15 +21,15 @@ import javax.annotation.Nullable;
  */
 public class WrappedItemStack implements IAEItemStack {
 
-    @Nonnull
+    @NotNull
     ItemStack delegate;
 
-    private WrappedItemStack(@Nonnull ItemStack itemStack) {
+    private WrappedItemStack(@NotNull ItemStack itemStack) {
         this.delegate = itemStack;
     }
 
     @Nullable
-    public static WrappedItemStack fromItemStack(@Nonnull ItemStack stack) {
+    public static WrappedItemStack fromItemStack(@NotNull ItemStack stack) {
         return stack.isEmpty() ? null : new WrappedItemStack(stack);
     }
 

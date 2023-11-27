@@ -4,8 +4,7 @@ import gregtech.api.GTValues;
 
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * {@link ItemVariantMap} implementation backed by a hashmap. Each metadata is

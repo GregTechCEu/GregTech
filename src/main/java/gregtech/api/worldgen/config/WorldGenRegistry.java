@@ -29,6 +29,7 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,8 +44,6 @@ import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
 
 public class WorldGenRegistry {
 
@@ -444,7 +443,7 @@ public class WorldGenRegistry {
         }
     }
 
-    private static void removeExistingFiles(Path root, @Nonnull List<? extends IWorldgenDefinition> definitions) {
+    private static void removeExistingFiles(Path root, @NotNull List<? extends IWorldgenDefinition> definitions) {
         for (IWorldgenDefinition definition : definitions) {
             Path filePath = root.resolve(Paths.get(FileUtility.slashToNativeSep(definition.getDepositName())));
 
@@ -459,8 +458,8 @@ public class WorldGenRegistry {
         }
     }
 
-    private static <T extends IWorldgenDefinition> void addAddonFiles(Path root, @Nonnull List<T> definitions,
-                                                                      @Nonnull List<T> registeredDefinitions) {
+    private static <T extends IWorldgenDefinition> void addAddonFiles(Path root, @NotNull List<T> definitions,
+                                                                      @NotNull List<T> registeredDefinitions) {
         Iterator<T> it = definitions.iterator();
         while (it.hasNext()) {
             T definition = it.next();

@@ -8,11 +8,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
 import mezz.jei.api.recipe.IRecipeWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public abstract class AdvancedRecipeWrapper implements IRecipeWrapper {
 
@@ -25,7 +24,7 @@ public abstract class AdvancedRecipeWrapper implements IRecipeWrapper {
     public abstract void initExtras();
 
     @Override
-    public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+    public void drawInfo(@NotNull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         for (JeiButton button : buttons) {
             button.render(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
             if (button.isHovering(mouseX, mouseY)) {
@@ -45,7 +44,7 @@ public abstract class AdvancedRecipeWrapper implements IRecipeWrapper {
     }
 
     @Override
-    public boolean handleClick(@Nonnull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
+    public boolean handleClick(@NotNull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
         for (JeiButton button : buttons) {
             if (button.isHovering(mouseX, mouseY) &&
                     button.getClickAction().click(minecraft, mouseX, mouseY, mouseButton)) {

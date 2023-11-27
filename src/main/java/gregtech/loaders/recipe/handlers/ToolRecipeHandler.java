@@ -25,13 +25,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import com.google.common.collect.ImmutableList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.LATHE_RECIPES;
@@ -317,7 +316,7 @@ public class ToolRecipeHandler {
         }
     }
 
-    public static void addToolRecipe(@Nonnull Material material, @Nonnull IGTTool tool, boolean mirrored,
+    public static void addToolRecipe(@NotNull Material material, @NotNull IGTTool tool, boolean mirrored,
                                      Object... recipe) {
         if (mirrored) {
             ModHandler.addMirroredShapedRecipe(String.format("%s_%s", tool.getToolId(), material),

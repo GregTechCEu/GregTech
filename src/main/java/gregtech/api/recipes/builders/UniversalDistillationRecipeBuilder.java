@@ -8,7 +8,7 @@ import gregtech.api.recipes.RecipeMaps;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import static gregtech.api.recipes.logic.OverclockingLogic.STANDARD_OVERCLOCK_DURATION_DIVISOR;
 

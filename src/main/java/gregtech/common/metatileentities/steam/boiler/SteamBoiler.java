@@ -48,14 +48,13 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 
@@ -376,7 +375,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
         clearInventory(itemBuffer, containerInventory);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         return Collections.singletonList(new TextComponentTranslation("gregtech.machine.steam_boiler.heat_amount",

@@ -35,14 +35,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDProvider {
 
@@ -62,7 +61,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack stack) {
+    public void onArmorTick(World world, EntityPlayer player, @NotNull ItemStack stack) {
         IFluidHandlerItem internalTank = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
                 null);
         if (internalTank == null)
@@ -110,7 +109,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
     }
 
     @Override
-    public void addToolComponents(@Nonnull ArmorMetaValueItem mvi) {
+    public void addToolComponents(@NotNull ArmorMetaValueItem mvi) {
         mvi.addComponents(new Behaviour(tankCapacity));
     }
 
@@ -121,7 +120,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void drawHUD(@Nonnull ItemStack item) {
+    public void drawHUD(@NotNull ItemStack item) {
         IFluidHandlerItem tank = item.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (tank != null) {
             IFluidTankProperties[] prop = tank.getTankProperties();
@@ -187,11 +186,11 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         return burnTimer > 0 || currentRecipe != null;
     }
 
-    private static IFluidHandlerItem getIFluidHandlerItem(@Nonnull ItemStack stack) {
+    private static IFluidHandlerItem getIFluidHandlerItem(@NotNull ItemStack stack) {
         return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
     }
 
-    public void findNewRecipe(@Nonnull ItemStack stack) {
+    public void findNewRecipe(@NotNull ItemStack stack) {
         IFluidHandlerItem internalTank = getIFluidHandlerItem(stack);
         if (internalTank != null) {
             FluidStack fluidStack = internalTank.drain(1, false);
@@ -243,8 +242,8 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
     }
 
     @Override
-    public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor,
-                                                       @Nonnull DamageSource source, double damage,
+    public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor,
+                                                       @NotNull DamageSource source, double damage,
                                                        EntityEquipmentSlot equipmentSlot) {
         int damageLimit = (int) Math.min(Integer.MAX_VALUE, burnTimer * 1.0 / 32 * 25.0);
         if (source.isUnblockable()) return new ISpecialArmor.ArmorProperties(0, 0.0, 0);
@@ -252,7 +251,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
     }
 
     @Override
-    public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
+    public int getArmorDisplay(EntityPlayer player, @NotNull ItemStack armor, int slot) {
         return 0;
     }
 
@@ -261,7 +260,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         private static final IFilter<FluidStack> JETPACK_FUEL_FILTER = new IFilter<>() {
 
             @Override
-            public boolean test(@Nonnull FluidStack fluidStack) {
+            public boolean test(@NotNull FluidStack fluidStack) {
                 return RecipeMaps.COMBUSTION_GENERATOR_FUELS.find(Collections.emptyList(),
                         Collections.singletonList(fluidStack), (Objects::nonNull)) != null;
             }
@@ -281,7 +280,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         }
 
         @Override
-        public double getDurabilityForDisplay(@Nonnull ItemStack itemStack) {
+        public double getDurabilityForDisplay(@NotNull ItemStack itemStack) {
             IFluidHandlerItem fluidHandlerItem = itemStack
                     .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem == null) return 0;

@@ -37,12 +37,11 @@ import appeng.util.item.AEItemStack;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * @Author GlodBlock
@@ -186,7 +185,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.item_bus.export.tooltip"));
@@ -227,7 +226,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart
         }
 
         @Override
-        public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+        public void setStackInSlot(int slot, @NotNull ItemStack stack) {
             this.internalBuffer.add(AEItemStack.fromItemStack(stack));
             this.holder.markDirty();
             this.trigger();
@@ -238,15 +237,15 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart
             return 1;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack getStackInSlot(int slot) {
             return ItemStack.EMPTY;
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             if (stack.isEmpty()) {
                 return ItemStack.EMPTY;
             }
@@ -258,7 +257,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart
             return ItemStack.EMPTY;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             return ItemStack.EMPTY;

@@ -10,10 +10,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-
-import javax.annotation.Nullable;
 
 public class LaserPipeNet extends PipeNet<LaserPipeProperties> {
 

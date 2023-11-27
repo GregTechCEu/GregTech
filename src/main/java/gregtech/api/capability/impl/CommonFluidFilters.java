@@ -9,7 +9,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Common fluid filter implementations.
@@ -19,7 +19,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
     ALLOW_ALL {
 
         @Override
-        public boolean test(@Nonnull FluidStack fluid) {
+        public boolean test(@NotNull FluidStack fluid) {
             return true;
         }
 
@@ -36,7 +36,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
     DISALLOW_ALL {
 
         @Override
-        public boolean test(@Nonnull FluidStack fluid) {
+        public boolean test(@NotNull FluidStack fluid) {
             return false;
         }
 
@@ -53,7 +53,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
     BOILER_FLUID {
 
         @Override
-        public boolean test(@Nonnull FluidStack fluid) {
+        public boolean test(@NotNull FluidStack fluid) {
             if (matchesFluid(fluid, FluidRegistry.WATER) || matchesFluid(fluid, Materials.DistilledWater)) {
                 return true;
             }
@@ -75,7 +75,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
     STEAM {
 
         @Override
-        public boolean test(@Nonnull FluidStack fluid) {
+        public boolean test(@NotNull FluidStack fluid) {
             return matchesFluid(fluid, Materials.Steam);
         }
 
@@ -87,7 +87,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
     LIGHTER_FUEL {
 
         @Override
-        public boolean test(@Nonnull FluidStack fluidStack) {
+        public boolean test(@NotNull FluidStack fluidStack) {
             return matchesFluid(fluidStack, Materials.Butane) || matchesFluid(fluidStack, Materials.Propane);
         }
 
@@ -104,7 +104,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
      * @param fluidMaterial material with fluid
      * @return whether the fluid in fluid stack and fluid associated with the material are equal
      */
-    public static boolean matchesFluid(@Nonnull FluidStack fluidStack, @Nonnull Material fluidMaterial) {
+    public static boolean matchesFluid(@NotNull FluidStack fluidStack, @NotNull Material fluidMaterial) {
         return fluidStack.tag == null && fluidStack.getFluid() == fluidMaterial.getFluid();
     }
 
@@ -115,7 +115,7 @@ public enum CommonFluidFilters implements IFilter<FluidStack> {
      * @param fluid      fluid
      * @return whether the fluid in fluid stack and fluid parameter are equal
      */
-    public static boolean matchesFluid(@Nonnull FluidStack fluidStack, @Nonnull Fluid fluid) {
+    public static boolean matchesFluid(@NotNull FluidStack fluidStack, @NotNull Fluid fluid) {
         return fluidStack.tag == null && fluidStack.getFluid() == fluid;
     }
 }

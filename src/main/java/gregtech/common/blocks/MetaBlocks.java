@@ -71,13 +71,12 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
 
 import static gregtech.api.unification.material.info.MaterialFlags.FORCE_GENERATE_BLOCK;
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FRAME;
@@ -534,9 +533,9 @@ public class MetaBlocks {
 
         normalStateMapper = new StateMapperBase() {
 
-            @Nonnull
+            @NotNull
             @Override
-            protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
+            protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
                 return new ModelResourceLocation(Block.REGISTRY.getNameForObject(state.getBlock()), "normal");
             }
         };

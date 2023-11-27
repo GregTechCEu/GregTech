@@ -4,12 +4,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.event.*;
 
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
 
 /**
  * All modules must implement this interface.
@@ -25,7 +24,7 @@ public interface IGregTechModule {
      * e.g. <code>new ResourceLocation("gregtech", "foo_module")</code> represents a dependency on the module
      * "foo_module" in the container "gregtech"
      */
-    @Nonnull
+    @NotNull
     default Set<ResourceLocation> getDependencyUids() {
         return Collections.emptySet();
     }
@@ -59,7 +58,7 @@ public interface IGregTechModule {
      * @return A list of classes to subscribe to the Forge event bus.
      *         As the class gets subscribed, not any specific instance, event handlers must be static!
      */
-    @Nonnull
+    @NotNull
     default List<Class<?>> getEventBusSubscribers() {
         return Collections.emptyList();
     }
@@ -71,6 +70,6 @@ public interface IGregTechModule {
     /**
      * @return A logger to use for this module.
      */
-    @Nonnull
+    @NotNull
     Logger getLogger();
 }

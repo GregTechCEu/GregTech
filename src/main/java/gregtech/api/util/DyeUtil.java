@@ -2,14 +2,14 @@ package gregtech.api.util;
 
 import net.minecraft.item.EnumDyeColor;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class DyeUtil {
 
     /**
      * Determines dye color nearest to specified RGB color
      */
-    @Nonnull
+    @NotNull
     public static EnumDyeColor determineDyeColor(int rgbColor) {
         int r1 = rgbColor >> 16 & 0xFF;
         int g1 = rgbColor >> 8 & 0xFF;
@@ -33,8 +33,8 @@ public class DyeUtil {
         return dye;
     }
 
-    @Nonnull
-    public static String getOredictColorName(@Nonnull EnumDyeColor dyeColor) {
+    @NotNull
+    public static String getOredictColorName(@NotNull EnumDyeColor dyeColor) {
         switch (dyeColor) {
             case WHITE:
                 return "dyeWhite";

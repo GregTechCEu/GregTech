@@ -21,10 +21,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-
-import javax.annotation.Nonnull;
 
 public abstract class ParallelLogic {
 
@@ -36,8 +35,8 @@ public abstract class ParallelLogic {
      * @return returns the amount of possible time a recipe can be made from a given input inventory
      */
 
-    public static int getMaxRecipeMultiplier(@Nonnull Recipe recipe, @Nonnull IItemHandlerModifiable inputs,
-                                             @Nonnull IMultipleTankHandler fluidInputs, int parallelAmount) {
+    public static int getMaxRecipeMultiplier(@NotNull Recipe recipe, @NotNull IItemHandlerModifiable inputs,
+                                             @NotNull IMultipleTankHandler fluidInputs, int parallelAmount) {
         // Find all the items in the combined Item Input inventories and create oversized ItemStacks
         Object2IntMap<ItemStack> ingredientStacks = GTHashMaps.fromItemHandler(inputs);
 
@@ -66,8 +65,8 @@ public abstract class ParallelLogic {
      * @param voidFluids     If the result of the fluid parallel limiting should be ignored
      * @return returns the amount of recipes that can be merged successfully into a given output inventory
      */
-    public static int limitByOutputMerging(@Nonnull Recipe recipe, @Nonnull IItemHandlerModifiable outputs,
-                                           @Nonnull IMultipleTankHandler fluidOutputs, int parallelAmount,
+    public static int limitByOutputMerging(@NotNull Recipe recipe, @NotNull IItemHandlerModifiable outputs,
+                                           @NotNull IMultipleTankHandler fluidOutputs, int parallelAmount,
                                            boolean voidItems, boolean voidFluids) {
         int modifiedItemParallelAmount = Integer.MAX_VALUE;
         int modifiedFluidParallelAmount = Integer.MAX_VALUE;
@@ -120,7 +119,7 @@ public abstract class ParallelLogic {
      * @return the amount of times a {@link Recipe} outputs can be merged into an inventory without
      *         voiding products.
      */
-    public static int limitParallelByItems(@Nonnull Recipe recipe, @Nonnull OverlayedItemHandler overlayedItemHandler,
+    public static int limitParallelByItems(@NotNull Recipe recipe, @NotNull OverlayedItemHandler overlayedItemHandler,
                                            int multiplier) {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
@@ -166,9 +165,9 @@ public abstract class ParallelLogic {
      * @return the amount of times a {@link Recipe} outputs can be merged into an inventory without
      *         voiding products.
      */
-    public static int limitParallelByItemsIncremental(@Nonnull List<ItemStack> recipeOutputList,
-                                                      @Nonnull List<ItemStack> outputsToAppend,
-                                                      @Nonnull OverlayedItemHandler overlayedItemHandler,
+    public static int limitParallelByItemsIncremental(@NotNull List<ItemStack> recipeOutputList,
+                                                      @NotNull List<ItemStack> outputsToAppend,
+                                                      @NotNull OverlayedItemHandler overlayedItemHandler,
                                                       final int multiplier) {
         int minMultiplier = 0;
         int currentMultiplier = multiplier;
@@ -229,8 +228,8 @@ public abstract class ParallelLogic {
      * @return an array consisting of the last known multiplier, new multiplier to be attempted and
      *         the last know multiplier that resulted in failure
      */
-    @Nonnull
-    public static int[] adjustMultiplier(boolean mergedAll, int minMultiplier, int multiplier, int maxMultiplier) {
+    public static int @NotNull [] adjustMultiplier(boolean mergedAll, int minMultiplier, int multiplier,
+                                                   int maxMultiplier) {
         if (mergedAll) {
             minMultiplier = multiplier;
             int remainder = (maxMultiplier - multiplier) % 2;
@@ -253,8 +252,8 @@ public abstract class ParallelLogic {
      * @return the amount of times a {@link Recipe} outputs can be merged into a fluid handler without
      *         voiding products.
      */
-    public static int limitParallelByFluids(@Nonnull Recipe recipe,
-                                            @Nonnull OverlayedFluidHandler overlayedFluidHandler, int multiplier) {
+    public static int limitParallelByFluids(@NotNull Recipe recipe,
+                                            @NotNull OverlayedFluidHandler overlayedFluidHandler, int multiplier) {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
 
@@ -299,7 +298,7 @@ public abstract class ParallelLogic {
      * @param parallelAmount   The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Items
      */
-    protected static int getMaxRatioItem(@Nonnull Object2IntMap<ItemStack> countIngredients, @Nonnull Recipe recipe,
+    protected static int getMaxRatioItem(@NotNull Object2IntMap<ItemStack> countIngredients, @NotNull Recipe recipe,
                                          int parallelAmount) {
         int minMultiplier = Integer.MAX_VALUE;
         // map the recipe ingredients to account for duplicated and notConsumable ingredients.
@@ -386,7 +385,7 @@ public abstract class ParallelLogic {
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Fluids
      */
-    protected static int getMaxRatioFluid(@Nonnull Map<FluidKey, Integer> countFluid, @Nonnull Recipe recipe,
+    protected static int getMaxRatioFluid(@NotNull Map<FluidKey, Integer> countFluid, @NotNull Recipe recipe,
                                           int parallelAmount) {
         int minMultiplier = Integer.MAX_VALUE;
         // map the recipe input fluids to account for duplicated fluids,
@@ -470,12 +469,12 @@ public abstract class ParallelLogic {
 
     // At this point, the recipe is already trimmed according to the item and fluid output limit, so we just need to
     // take care of voiding
-    public static RecipeBuilder<?> doParallelRecipes(@Nonnull Recipe currentRecipe, @Nonnull RecipeMap<?> recipeMap,
-                                                     @Nonnull IItemHandlerModifiable importInventory,
-                                                     @Nonnull IMultipleTankHandler importFluids,
-                                                     @Nonnull IItemHandlerModifiable exportInventory,
-                                                     @Nonnull IMultipleTankHandler exportFluids, int parallelAmount,
-                                                     long maxVoltage, @Nonnull IVoidable voidable) {
+    public static RecipeBuilder<?> doParallelRecipes(@NotNull Recipe currentRecipe, @NotNull RecipeMap<?> recipeMap,
+                                                     @NotNull IItemHandlerModifiable importInventory,
+                                                     @NotNull IMultipleTankHandler importFluids,
+                                                     @NotNull IItemHandlerModifiable exportInventory,
+                                                     @NotNull IMultipleTankHandler exportFluids, int parallelAmount,
+                                                     long maxVoltage, @NotNull IVoidable voidable) {
         // First check if we are limited by recipe inputs. This can short circuit a lot of consecutive checking
         int multiplierByInputs = getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, parallelAmount);
         if (multiplierByInputs == 0) {
@@ -526,9 +525,9 @@ public abstract class ParallelLogic {
      * @return A {@link RecipeBuilder} containing the recipes that can be performed in parallel, limited by the
      *         ingredients available, and the output space available.
      */
-    public static RecipeBuilder<?> appendItemRecipes(@Nonnull RecipeMap<?> recipeMap,
-                                                     @Nonnull IItemHandlerModifiable importInventory,
-                                                     @Nonnull IItemHandlerModifiable exportInventory,
+    public static RecipeBuilder<?> appendItemRecipes(@NotNull RecipeMap<?> recipeMap,
+                                                     @NotNull IItemHandlerModifiable importInventory,
+                                                     @NotNull IItemHandlerModifiable exportInventory,
                                                      int parallelAmount, long maxVoltage, IVoidable voidable) {
         RecipeBuilder<?> recipeBuilder = null;
 

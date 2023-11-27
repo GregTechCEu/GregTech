@@ -53,6 +53,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import mezz.jei.api.gui.IGhostIngredientHandler;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -60,8 +61,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class WorldProspectorARApp extends ARApplication {
 
@@ -106,14 +105,14 @@ public class WorldProspectorARApp extends ARApplication {
                     Rectangle rectangle = toRectangleBox();
                     return Collections.singletonList(new IGhostIngredientHandler.Target<Object>() {
 
-                        @Nonnull
+                        @NotNull
                         @Override
                         public Rectangle getArea() {
                             return rectangle;
                         }
 
                         @Override
-                        public void accept(@Nonnull Object ingredient) {
+                        public void accept(@NotNull Object ingredient) {
                             if (ingredient instanceof ItemStack) {
                                 int mouseButton = Mouse.getEventButton();
                                 boolean shiftDown = TooltipHelper.isShiftDown();

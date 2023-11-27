@@ -24,13 +24,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
 
 public class GTShapedOreRecipe extends ShapedOreRecipe {
 
@@ -38,7 +37,7 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
     public static Constructor<IngredientNBT> ingredientNBT = ReflectionHelper.findConstructor(IngredientNBT.class,
             ItemStack.class);
 
-    public GTShapedOreRecipe(boolean isClearing, ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
+    public GTShapedOreRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result, Object... recipe) {
         super(group, result, parseShaped(isClearing, recipe));
         this.isClearing = isClearing;
     }
@@ -165,7 +164,7 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
     }
 
     @Override
-    public @Nonnull NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
+    public @NotNull NonNullList<ItemStack> getRemainingItems(@NotNull InventoryCrafting inv) {
         if (isClearing) {
             return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         } else {

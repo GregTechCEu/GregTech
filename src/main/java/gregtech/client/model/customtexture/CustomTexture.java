@@ -15,14 +15,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.util.vector.Vector;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
 public class CustomTexture {
@@ -133,7 +132,7 @@ public class CustomTexture {
             return (T[]) ret;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public VertexFormat getVertexFormat() {
             return vertexFormat;

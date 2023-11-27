@@ -31,16 +31,14 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
 public class BlockLamp extends Block {
 
     public static final PropertyBool BLOOM = PropertyBool.create("bloom");
@@ -95,18 +93,18 @@ public class BlockLamp extends Block {
         return 8;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, INVERTED, BLOOM, LIGHT, POWERED);
     }
 
     @Override
-    public int damageDropped(@Nonnull IBlockState state) {
+    public int damageDropped(@NotNull IBlockState state) {
         return getMetaFromState(state) & ITEM_FLAGS;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
@@ -134,7 +132,7 @@ public class BlockLamp extends Block {
     }
 
     @Override
-    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
+    public void onBlockAdded(World world, @NotNull BlockPos pos, @NotNull IBlockState state) {
         if (!world.isRemote) {
             boolean powered = state.getValue(POWERED);
             if (powered != world.isBlockPowered(pos)) {
@@ -145,7 +143,8 @@ public class BlockLamp extends Block {
 
     @Override
     @SuppressWarnings("deprecation")
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) {
+    public void neighborChanged(@NotNull IBlockState state, World world, @NotNull BlockPos pos, @NotNull Block block,
+                                @NotNull BlockPos fromPos) {
         if (!world.isRemote) {
             if (state.getValue(POWERED)) {
                 if (!world.isBlockPowered(pos)) {
@@ -158,21 +157,22 @@ public class BlockLamp extends Block {
     }
 
     @Override
-    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
+    public void updateTick(World world, @NotNull BlockPos pos, @NotNull IBlockState state, @NotNull Random rand) {
         if (!world.isRemote && state.getValue(POWERED) && !world.isBlockPowered(pos)) {
             world.setBlockState(pos, state.withProperty(POWERED, false), state.getValue(LIGHT) ? 2 | 8 : 2);
         }
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+    public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         for (int meta = 0; meta < getItemMetadataStates(); meta++) {
             list.add(new ItemStack(this, 1, meta));
         }
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag advanced) {
         IBlockState state = getStateFromMeta(stack.getMetadata());
         if (state.getValue(INVERTED)) tooltip.add(I18n.format("tile.gregtech_lamp.tooltip.inverted"));
         if (!state.getValue(BLOOM)) tooltip.add(I18n.format("tile.gregtech_lamp.tooltip.no_bloom"));
@@ -180,7 +180,7 @@ public class BlockLamp extends Block {
     }
 
     @Override
-    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+    public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
         if (layer == BlockRenderLayer.SOLID) return true;
         return layer == BloomEffectUtil.getEffectiveBloomLayer(isLightActive(state) && state.getValue(BLOOM));
     }
@@ -200,7 +200,7 @@ public class BlockLamp extends Block {
         ModelLoader.setCustomStateMapper(this, b -> models);
     }
 
-    @Nonnull
+    @NotNull
     @SideOnly(Side.CLIENT)
     protected LampModelType getModelType() {
         return LampModelType.LAMP;

@@ -10,8 +10,7 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnergyContainer> {
 
@@ -20,20 +19,20 @@ public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnerg
         return GTValues.MODID + ":energy_container_provider";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected Capability<IEnergyContainer> getCapability() {
         return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER;
     }
 
     @Override
-    protected boolean allowDisplaying(@Nonnull IEnergyContainer capability) {
+    protected boolean allowDisplaying(@NotNull IEnergyContainer capability) {
         return !capability.isOneProbeHidden();
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull IEnergyContainer capability, @Nonnull IProbeInfo probeInfo,
-                                EntityPlayer player, @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@NotNull IEnergyContainer capability, @NotNull IProbeInfo probeInfo,
+                                EntityPlayer player, @NotNull TileEntity tileEntity, @NotNull IProbeHitData data) {
         long maxStorage = capability.getEnergyCapacity();
         if (maxStorage == 0) return; // do not add empty max storage progress bar
         probeInfo.progress(capability.getEnergyStored(), maxStorage, probeInfo.defaultProgressStyle()

@@ -22,12 +22,11 @@ import net.minecraftforge.common.capabilities.Capability;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart implements
                                             IMultiblockAbilityPart<IOpticalComputationHatch>, IOpticalComputationHatch {
@@ -50,7 +49,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public int requestCWUt(int cwut, boolean simulate, @Nonnull Collection<IOpticalComputationProvider> seen) {
+    public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
         var controller = getController();
         if (controller == null || !controller.isStructureFormed()) return 0;
@@ -71,7 +70,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public int getMaxCWUt(@Nonnull Collection<IOpticalComputationProvider> seen) {
+    public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
         var controller = getController();
         if (controller == null || !controller.isStructureFormed()) return 0;
@@ -92,7 +91,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public boolean canBridge(@Nonnull Collection<IOpticalComputationProvider> seen) {
+    public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
         var controller = getController();
         // return true here so that unlinked hatches don't cause problems in multis like the Network Switch

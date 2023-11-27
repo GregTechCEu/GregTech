@@ -35,11 +35,10 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
@@ -79,7 +78,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     protected void updateFormedValid() {}
 
     @Override
-    @Nonnull
+    @NotNull
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XXX", "XXX")
@@ -106,7 +105,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
     @SideOnly(Side.CLIENT)
     @Override
-    @Nonnull
+    @NotNull
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (isMetal)
             return Textures.SOLID_STEEL_CASING;
@@ -127,7 +126,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     @Override
-    protected ModularUI.Builder createUITemplate(@Nonnull EntityPlayer entityPlayer) {
+    protected ModularUI.Builder createUITemplate(@NotNull EntityPlayer entityPlayer) {
         return ModularUI.defaultBuilder()
                 .widget(new LabelWidget(6, 6, getMetaFullName()))
                 .widget(new TankWidget(importFluids.getTankAt(0), 52, 18, 72, 61)
@@ -143,14 +142,14 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.MULTIBLOCK_TANK_OVERLAY;
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.multiblock.tank.tooltip"));

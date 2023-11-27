@@ -41,11 +41,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.GTValues.ULV;
 
@@ -76,7 +75,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         return tier == 0 ? 16 : 64;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -166,7 +165,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
         return tier == 0 ? Textures.PROCESSING_ARRAY_OVERLAY : Textures.ADVANCED_PROCESSING_ARRAY_OVERLAY;
@@ -273,7 +272,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
          * @return {@code true} if the provided recipeMap is valid for use
          */
         @Override
-        public boolean isRecipeMapValid(@Nonnull RecipeMap<?> recipeMap) {
+        public boolean isRecipeMapValid(@NotNull RecipeMap<?> recipeMap) {
             if (ArrayUtils.contains(((IMachineHatchMultiblock) metaTileEntity).getBlacklist(),
                     recipeMap.getUnlocalizedName())) {
                 return false;
@@ -345,7 +344,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        public boolean checkRecipe(@Nonnull Recipe recipe) {
+        public boolean checkRecipe(@NotNull Recipe recipe) {
             if (mte == null) return false;
 
             AbstractRecipeLogic arl = mte.getRecipeLogic();

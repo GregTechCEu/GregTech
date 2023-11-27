@@ -3,10 +3,9 @@ package gregtech.api.util;
 import net.minecraft.item.ItemStack;
 
 import it.unimi.dsi.fastutil.Hash;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-
-import javax.annotation.Nullable;
 
 /**
  * A configurable generator of hashing strategies, allowing for consideration of select properties of ItemStacks when

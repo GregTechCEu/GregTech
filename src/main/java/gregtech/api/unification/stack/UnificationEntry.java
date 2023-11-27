@@ -3,9 +3,9 @@ package gregtech.api.unification.stack;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 
-import java.util.Objects;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class UnificationEntry {
 

@@ -20,8 +20,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractRecipeLogic> {
 
@@ -30,16 +29,16 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
         return GTValues.MODID + ":recipe_logic_provider";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected Capability<AbstractRecipeLogic> getCapability() {
         return GregtechTileCapabilities.CAPABILITY_RECIPE_LOGIC;
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull AbstractRecipeLogic capability, @Nonnull IProbeInfo probeInfo,
-                                @Nonnull EntityPlayer player, @Nonnull TileEntity tileEntity,
-                                @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@NotNull AbstractRecipeLogic capability, @NotNull IProbeInfo probeInfo,
+                                @NotNull EntityPlayer player, @NotNull TileEntity tileEntity,
+                                @NotNull IProbeHitData data) {
         // do not show energy usage on machines that do not use energy
         if (capability.isWorking()) {
             if (capability instanceof PrimitiveRecipeLogic) {

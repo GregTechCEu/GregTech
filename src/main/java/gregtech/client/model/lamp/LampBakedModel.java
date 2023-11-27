@@ -20,10 +20,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-
-import javax.annotation.Nullable;
 
 // TODO could probably be combined with new OreBakedModel or AVBBM
 @Mod.EventBusSubscriber(modid = GTValues.MODID, value = Side.CLIENT)
@@ -112,16 +112,19 @@ public class LampBakedModel implements IBakedModel {
         return false;
     }
 
+    @NotNull
     @Override
     public TextureAtlasSprite getParticleTexture() {
         return getModel().getParticleTexture();
     }
 
+    @NotNull
     @Override
     public ItemOverrideList getOverrides() {
         return ItemOverrideList.NONE;
     }
 
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
     public ItemCameraTransforms getItemCameraTransforms() {
@@ -129,7 +132,7 @@ public class LampBakedModel implements IBakedModel {
     }
 
     @Override
-    public boolean isAmbientOcclusion(IBlockState state) {
+    public boolean isAmbientOcclusion(@NotNull IBlockState state) {
         return getModel().isAmbientOcclusion(state);
     }
 

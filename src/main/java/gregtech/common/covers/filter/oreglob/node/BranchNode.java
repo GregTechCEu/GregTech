@@ -1,8 +1,8 @@
 package gregtech.common.covers.filter.oreglob.node;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.List;
 
 class BranchNode extends OreGlobNode {
 
@@ -56,7 +56,7 @@ class BranchNode extends OreGlobNode {
     }
 
     @Override
-    public boolean isPropertyEqualTo(@Nonnull OreGlobNode node) {
+    public boolean isPropertyEqualTo(@NotNull OreGlobNode node) {
         if (!(node instanceof BranchNode br)) return false;
         if (this.type != br.type) return false;
         if (this.expressions.size() != br.expressions.size()) return false;

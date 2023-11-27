@@ -14,12 +14,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.Capability;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Created with IntelliJ IDEA.
@@ -155,13 +155,13 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability) {
+    public boolean hasCapability(@NotNull Capability<?> capability) {
         return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM;
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability) {
+    public <T> T getCapability(@NotNull Capability<T> capability) {
         return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM ?
                 GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM.cast(this) : null;
     }

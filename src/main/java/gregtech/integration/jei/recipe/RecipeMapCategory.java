@@ -38,14 +38,13 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
 
@@ -61,7 +60,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     private static final Map<GTRecipeCategory, RecipeMapCategory> gtCategories = new Object2ObjectOpenHashMap<>();
     private static final Map<RecipeMap<?>, List<RecipeMapCategory>> recipeMapCategories = new Object2ObjectOpenHashMap<>();
 
-    public RecipeMapCategory(@Nonnull RecipeMap<?> recipeMap, @Nonnull GTRecipeCategory category,
+    public RecipeMapCategory(@NotNull RecipeMap<?> recipeMap, @NotNull GTRecipeCategory category,
                              IGuiHelper guiHelper) {
         this.recipeMap = recipeMap;
         this.category = category;
@@ -90,13 +89,13 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String getUid() {
         return category.getUniqueID();
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String getTitle() {
         return LocalizationUtils.format(category.getTranslationKey());
     }
@@ -123,20 +122,20 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public String getModName() {
         return GTValues.MODID;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public IDrawable getBackground() {
         return backgroundDrawable;
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, @Nonnull GTRecipeWrapper recipeWrapper,
-                          @Nonnull IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, @NotNull GTRecipeWrapper recipeWrapper,
+                          @NotNull IIngredients ingredients) {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
         for (Widget uiWidget : modularUI.guiWidgets.values()) {
@@ -230,7 +229,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     }
 
     @Override
-    public void drawExtras(@Nonnull Minecraft minecraft) {
+    public void drawExtras(@NotNull Minecraft minecraft) {
         for (Widget widget : modularUI.guiWidgets.values()) {
             if (widget instanceof ProgressWidget) widget.detectAndSendChanges();
             widget.drawInBackground(0, 0, minecraft.getRenderPartialTicks(), new IRenderContext() {});
@@ -239,12 +238,12 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     }
 
     @Nullable
-    public static RecipeMapCategory getCategoryFor(@Nonnull GTRecipeCategory category) {
+    public static RecipeMapCategory getCategoryFor(@NotNull GTRecipeCategory category) {
         return gtCategories.get(category);
     }
 
     @Nullable
-    public static Collection<RecipeMapCategory> getCategoriesFor(@Nonnull RecipeMap<?> recipeMap) {
+    public static Collection<RecipeMapCategory> getCategoriesFor(@NotNull RecipeMap<?> recipeMap) {
         return recipeMapCategories.get(recipeMap);
     }
 }

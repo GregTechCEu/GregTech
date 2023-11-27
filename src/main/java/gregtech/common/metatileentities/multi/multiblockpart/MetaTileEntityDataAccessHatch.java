@@ -40,11 +40,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart
                                            implements IMultiblockAbilityPart<IDataAccessHatch>, IDataAccessHatch,
@@ -76,9 +75,9 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
                 rebuildData(getController() instanceof MetaTileEntityDataBank);
             }
 
-            @Nonnull
+            @NotNull
             @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
                 var controller = MetaTileEntityDataAccessHatch.this.getController();
                 boolean isDataBank = controller instanceof MetaTileEntityDataBank;
                 if (AssemblyLineManager.isStackDataItem(stack, isDataBank) &&
@@ -148,7 +147,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public boolean isRecipeAvailable(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
+    public boolean isRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
         seen.add(this);
         return recipes.contains(recipe);
     }
@@ -166,7 +165,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.1"));
@@ -178,7 +177,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         if (recipes.isEmpty()) return Collections.emptyList();

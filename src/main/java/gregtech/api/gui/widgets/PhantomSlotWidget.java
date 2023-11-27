@@ -11,14 +11,13 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.google.common.collect.Lists;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTarget {
 
@@ -84,14 +83,14 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
         Rectangle rectangle = toRectangleBox();
         return Lists.newArrayList(new Target<Object>() {
 
-            @Nonnull
+            @NotNull
             @Override
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(@Nonnull Object ingredient) {
+            public void accept(@NotNull Object ingredient) {
                 if (ingredient instanceof ItemStack) {
                     int mouseButton = Mouse.getEventButton();
                     boolean shiftDown = TooltipHelper.isShiftDown();

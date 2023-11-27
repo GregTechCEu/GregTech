@@ -16,8 +16,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ConverterInfoProvider extends CapabilityInfoProvider<ConverterTrait> {
 
@@ -26,15 +25,15 @@ public class ConverterInfoProvider extends CapabilityInfoProvider<ConverterTrait
         return GTValues.MODID + ":converter_info_provider";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected Capability<ConverterTrait> getCapability() {
         return GregtechCapabilities.CAPABILITY_CONVERTER;
     }
 
     @Override
-    protected void addProbeInfo(@Nonnull ConverterTrait capability, @Nonnull IProbeInfo probeInfo, EntityPlayer player,
-                                @Nonnull TileEntity tileEntity, @Nonnull IProbeHitData data) {
+    protected void addProbeInfo(@NotNull ConverterTrait capability, @NotNull IProbeInfo probeInfo, EntityPlayer player,
+                                @NotNull TileEntity tileEntity, @NotNull IProbeHitData data) {
         // Info on current converter mode
         probeInfo.text(TextStyleClass.INFO +
                 ((capability.isFeToEu()) ? "{*gregtech.top.convert_fe*}" : "{*gregtech.top.convert_eu*}"));

@@ -54,6 +54,7 @@ import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.config.Constants;
 import mezz.jei.input.IShowsRecipeFocuses;
 import mezz.jei.input.InputHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -62,8 +63,6 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
 
 @JEIPlugin
 @GregTechModule(
@@ -86,12 +85,12 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
     }
 
     @Override
-    public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
+    public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) {
         JustEnoughItemsModule.jeiRuntime = jeiRuntime;
     }
 
     @Override
-    public void registerItemSubtypes(@Nonnull ISubtypeRegistry subtypeRegistry) {
+    public void registerItemSubtypes(@NotNull ISubtypeRegistry subtypeRegistry) {
         MetaItemSubtypeHandler subtype = new MetaItemSubtypeHandler();
         for (MetaItem<?> metaItem : MetaItems.ITEMS) {
             subtypeRegistry.registerSubtypeInterpreter(metaItem, subtype);
@@ -101,7 +100,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
     }
 
     @Override
-    public void registerCategories(@Nonnull IRecipeCategoryRegistration registry) {
+    public void registerCategories(@NotNull IRecipeCategoryRegistration registry) {
         guiHelper = registry.getJeiHelpers().getGuiHelper();
         registry.addRecipeCategories(new IntCircuitCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MultiblockInfoCategory(registry.getJeiHelpers()));

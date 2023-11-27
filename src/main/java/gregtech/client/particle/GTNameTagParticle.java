@@ -10,15 +10,15 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class GTNameTagParticle extends GTParticle {
 
     private final MetaTileEntityHolder metaTileEntityHolder;
 
-    public GTNameTagParticle(@Nonnull MetaTileEntityHolder metaTileEntityHolder, double posX, double posY,
+    public GTNameTagParticle(@NotNull MetaTileEntityHolder metaTileEntityHolder, double posX, double posY,
                              double posZ) {
         super(posX, posY, posZ);
         this.metaTileEntityHolder = Objects.requireNonNull(metaTileEntityHolder);
@@ -35,7 +35,7 @@ public class GTNameTagParticle extends GTParticle {
     }
 
     @Override
-    public void renderParticle(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context) {
+    public void renderParticle(@NotNull BufferBuilder buffer, @NotNull EffectRenderContext context) {
         String name = this.metaTileEntityHolder.getName();
         if (name.isEmpty()) return;
 

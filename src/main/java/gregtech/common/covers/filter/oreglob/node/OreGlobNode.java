@@ -1,7 +1,7 @@
 package gregtech.common.covers.filter.oreglob.node;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Syntax tree representation of ore expression.
@@ -63,7 +63,7 @@ public abstract class OreGlobNode {
      * @param node The node to check
      * @return Whether this node shares same structure and content with given node
      */
-    public boolean isStructurallyEqualTo(@Nonnull OreGlobNode node) {
+    public boolean isStructurallyEqualTo(@NotNull OreGlobNode node) {
         if (this == node) return true;
         if (this.isNegated() != node.isNegated()) return false;
         return isPropertyEqualTo(node) && isStructurallyEqualTo(this.getNext(), node.getNext());
@@ -90,7 +90,7 @@ public abstract class OreGlobNode {
      * @param node The node to check
      * @return Whether this node has same type and property with given node
      */
-    public abstract boolean isPropertyEqualTo(@Nonnull OreGlobNode node);
+    public abstract boolean isPropertyEqualTo(@NotNull OreGlobNode node);
 
     /**
      * @return Match type of this specific node

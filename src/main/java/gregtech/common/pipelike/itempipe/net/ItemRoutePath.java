@@ -10,10 +10,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
 
 public class ItemRoutePath implements IRoutePath<TileEntityItemPipe> {
 
@@ -36,13 +36,13 @@ public class ItemRoutePath implements IRoutePath<TileEntityItemPipe> {
         };
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public TileEntityItemPipe getTargetPipe() {
         return targetPipe;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public EnumFacing getTargetFacing() {
         return faceToHandler;

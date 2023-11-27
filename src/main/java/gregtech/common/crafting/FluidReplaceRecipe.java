@@ -14,20 +14,20 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A recipe which inputs a single Fluid Container, and outputs the same Fluid Container with a new contained Fluid
  */
 public class FluidReplaceRecipe extends GTShapedOreRecipe {
 
-    public FluidReplaceRecipe(boolean isClearing, ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
+    public FluidReplaceRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result, Object... recipe) {
         super(isClearing, group, result, recipe);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
+    public NonNullList<ItemStack> getRemainingItems(@NotNull InventoryCrafting inv) {
         if (isClearing) {
             return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         } else {
@@ -44,9 +44,9 @@ public class FluidReplaceRecipe extends GTShapedOreRecipe {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
+    public ItemStack getCraftingResult(@NotNull InventoryCrafting inv) {
         IFluidHandlerItem recipeCap = output.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         if (recipeCap == null)
             throw new IllegalStateException("FluidReplaceRecipe output did not have an IFluidHandlerItem capability");
@@ -101,7 +101,7 @@ public class FluidReplaceRecipe extends GTShapedOreRecipe {
         return ItemStack.EMPTY;
     }
 
-    private static boolean isBucket(@Nonnull Item item) {
+    private static boolean isBucket(@NotNull Item item) {
         return item == Items.WATER_BUCKET || item == Items.LAVA_BUCKET || item == Items.MILK_BUCKET ||
                 item == ForgeModContainer.getInstance().universalBucket;
     }

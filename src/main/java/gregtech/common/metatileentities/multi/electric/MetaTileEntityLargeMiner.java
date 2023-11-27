@@ -59,12 +59,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.unification.material.Materials.DrillingFluid;
 
@@ -210,7 +208,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         int workingAreaChunks = this.minerLogic.getCurrentRadius() * 2 / CHUNK_LENGTH;
         tooltip.add(I18n.format("gregtech.machine.miner.multi.modes"));
@@ -317,7 +315,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
     }
 
-    @Nonnull
+    @NotNull
     private TraceabilityPredicate getFramePredicate() {
         if (this.material.equals(Materials.Titanium))
             return frames(Materials.Titanium);
@@ -371,7 +369,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         if (this.tier == 5)
@@ -543,7 +541,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
         return minerLogic.isActive() && isWorkingEnabled();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         int workingArea = getWorkingArea(this.minerLogic.getCurrentRadius());

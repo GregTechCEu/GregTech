@@ -7,11 +7,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.gson.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
 public class MetadataSectionCTM implements IMetadataSection {
@@ -79,7 +78,7 @@ public class MetadataSectionCTM implements IMetadataSection {
         }
 
         @Override
-        public @Nonnull String getSectionName() {
+        public @NotNull String getSectionName() {
             return SECTION_NAME;
         }
     }

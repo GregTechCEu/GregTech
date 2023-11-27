@@ -23,14 +23,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import appeng.api.storage.data.IAEFluidStack;
 import com.google.common.collect.Lists;
 import mezz.jei.api.gui.IGhostIngredientHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 import static gregtech.api.capability.GregtechDataCodes.LOAD_PHANTOM_FLUID_STACK_FROM_NBT;
 import static gregtech.api.util.GTUtility.getFluidFromContainer;
@@ -208,14 +207,14 @@ public class AEFluidConfigSlot extends AEConfigSlot<IAEFluidStack> {
         rectangle.height /= 2;
         return Lists.newArrayList(new IGhostIngredientHandler.Target<>() {
 
-            @Nonnull
+            @NotNull
             @Override
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(@Nonnull Object ingredient) {
+            public void accept(@NotNull Object ingredient) {
                 FluidStack stack = getFluidFromContainer(ingredient);
 
                 if (stack != null) {

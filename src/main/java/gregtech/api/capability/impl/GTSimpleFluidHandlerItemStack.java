@@ -8,8 +8,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStackSimple;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple implements IFilteredFluidContainer {
 
@@ -26,7 +26,7 @@ public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple i
      * @param container The container itemStack, data is stored on it directly as NBT.
      * @param capacity  The maximum capacity of this fluid tank.
      */
-    public GTSimpleFluidHandlerItemStack(@Nonnull ItemStack container, int capacity) {
+    public GTSimpleFluidHandlerItemStack(@NotNull ItemStack container, int capacity) {
         super(container, capacity);
     }
 
@@ -36,7 +36,7 @@ public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple i
         return this.filter;
     }
 
-    @Nonnull
+    @NotNull
     public GTSimpleFluidHandlerItemStack setFilter(@Nullable IFilter<FluidStack> filter) {
         this.filter = filter;
         return this;

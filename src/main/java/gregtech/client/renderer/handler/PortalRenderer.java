@@ -11,7 +11,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @SideOnly(Side.CLIENT)
 public class PortalRenderer extends Render<PortalEntity> {
@@ -25,12 +26,13 @@ public class PortalRenderer extends Render<PortalEntity> {
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(PortalEntity entity) {
+    protected ResourceLocation getEntityTexture(@NotNull PortalEntity entity) {
         return texture;
     }
 
     @Override
-    public void doRender(PortalEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void doRender(@NotNull PortalEntity entity, double x, double y, double z, float entityYaw,
+                         float partialTicks) {
         GlStateManager.pushMatrix();
         PortalRenderer.setupTranslation(x, y, z);
         this.bindEntityTexture(entity);

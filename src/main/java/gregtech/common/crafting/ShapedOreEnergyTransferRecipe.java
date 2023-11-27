@@ -12,18 +12,18 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
 
 public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
 
     private final Predicate<ItemStack> chargePredicate;
     private final boolean transferMaxCharge;
 
-    public ShapedOreEnergyTransferRecipe(ResourceLocation group, @Nonnull ItemStack result,
+    public ShapedOreEnergyTransferRecipe(ResourceLocation group, @NotNull ItemStack result,
                                          Predicate<ItemStack> chargePredicate, boolean overrideCharge,
                                          boolean transferMaxCharge, Object... recipe) {
         super(group, result, CraftingHelper.parseShaped(recipe));
@@ -50,9 +50,9 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack getCraftingResult(@Nonnull InventoryCrafting inventoryCrafting) {
+    public ItemStack getCraftingResult(@NotNull InventoryCrafting inventoryCrafting) {
         ItemStack resultStack = super.getCraftingResult(inventoryCrafting);
         chargeStackFromComponents(resultStack, inventoryCrafting, chargePredicate, transferMaxCharge);
         return resultStack;

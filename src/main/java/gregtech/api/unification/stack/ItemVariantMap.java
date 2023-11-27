@@ -4,10 +4,10 @@ import gregtech.api.GTValues;
 
 import net.minecraft.item.ItemStack;
 
-import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Set;
 
 /**
  * An abstraction of dictionary-like collection with each item variant as keys.
@@ -70,7 +70,7 @@ public interface ItemVariantMap<E> {
      * @return {@code true} if there's a nonnull value associated with item damage of
      *         the item, {@code false} otherwise.
      */
-    default boolean has(@Nonnull ItemStack stack) {
+    default boolean has(@NotNull ItemStack stack) {
         return has((short) stack.getItemDamage());
     }
 
@@ -84,7 +84,7 @@ public interface ItemVariantMap<E> {
      *         no values associated.
      */
     @Nullable
-    default E get(@Nonnull ItemStack stack) {
+    default E get(@NotNull ItemStack stack) {
         return get((short) stack.getItemDamage());
     }
 
@@ -96,8 +96,8 @@ public interface ItemVariantMap<E> {
      * @param <E> type of the element
      * @return an unmodifiable view of {@code map} with {@link Set} of elements as values.
      */
-    @Nonnull
-    static <E> ItemVariantMap<Set<E>> unmodifiableSetView(@Nonnull ItemVariantMap<? extends Set<E>> map) {
+    @NotNull
+    static <E> ItemVariantMap<Set<E>> unmodifiableSetView(@NotNull ItemVariantMap<? extends Set<E>> map) {
         return new UnmodifiableSetViewVariantMap<>(map);
     }
 
@@ -105,7 +105,7 @@ public interface ItemVariantMap<E> {
      * @param <E> type of the element
      * @return an unmodifiable instance of variant map with no entries.
      */
-    @Nonnull
+    @NotNull
     @SuppressWarnings("unchecked")
     static <E> ItemVariantMap<E> empty() {
         return (ItemVariantMap<E>) EmptyVariantMap.INSTANCE;
@@ -147,7 +147,7 @@ public interface ItemVariantMap<E> {
          *         there was no such value.
          */
         @Nullable
-        default E put(@Nonnull ItemStack stack, @Nullable E e) {
+        default E put(@NotNull ItemStack stack, @Nullable E e) {
             return put((short) stack.getItemDamage(), e);
         }
     }

@@ -39,13 +39,12 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart
                                    implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable,
@@ -301,7 +300,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     // Method provided to override
-    protected void getCircuitSlotTooltip(@Nonnull SlotWidget widget) {
+    protected void getCircuitSlotTooltip(@NotNull SlotWidget widget) {
         String configString;
         if (circuitInventory == null || circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
             configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
@@ -406,7 +405,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         if (this.isExportHatch)
             tooltip.add(I18n.format("gregtech.machine.item_bus.export.tooltip"));

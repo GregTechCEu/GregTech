@@ -10,10 +10,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.List;
 
 public class DisableShieldBehavior implements IToolBehavior {
 
@@ -28,13 +28,13 @@ public class DisableShieldBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addBehaviorNBT(@Nonnull ItemStack stack, @Nonnull NBTTagCompound tag) {
+    public void addBehaviorNBT(@NotNull ItemStack stack, @NotNull NBTTagCompound tag) {
         tag.setBoolean(ToolHelper.DISABLE_SHIELDS_KEY, true);
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
-                               @Nonnull ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         tooltip.add(I18n.format("item.gt.tool.behavior.shield_disable"));
     }
 }

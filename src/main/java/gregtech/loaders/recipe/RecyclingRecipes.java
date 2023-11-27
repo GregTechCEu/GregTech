@@ -25,14 +25,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 
 import com.google.common.collect.ImmutableList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.GTValues.L;
 import static gregtech.api.GTValues.M;
@@ -277,7 +276,7 @@ public class RecyclingRecipes {
     }
 
     private static boolean needsRecyclingCategory(@Nullable OrePrefix prefix, @Nullable MaterialStack inputStack,
-                                                  @Nonnull List<ItemStack> outputs) {
+                                                  @NotNull List<ItemStack> outputs) {
         // separate special arc smelting recipes into the regular category
         // i.e. Iron -> Wrought Iron, Copper -> Annealed Copper
         if (prefix == OrePrefix.nugget || prefix == OrePrefix.ingot || prefix == OrePrefix.block) {
@@ -329,7 +328,7 @@ public class RecyclingRecipes {
         return materialStack;
     }
 
-    private static ItemStack getArcIngotOrDust(@Nonnull MaterialStack stack) {
+    private static ItemStack getArcIngotOrDust(@NotNull MaterialStack stack) {
         if (stack.material == Materials.Carbon) {
             return OreDictUnifier.getDust(stack);
         }

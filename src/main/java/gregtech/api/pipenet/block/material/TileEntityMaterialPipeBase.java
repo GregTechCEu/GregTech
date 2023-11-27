@@ -10,7 +10,7 @@ import gregtech.api.unification.material.registry.MaterialRegistry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_PIPE_MATERIAL;
 
@@ -54,16 +54,16 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
         this.pipeMaterial = ((IMaterialPipeTile<PipeType, NodeDataType>) tileEntity).getPipeMaterial();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setString("PipeMaterial", pipeMaterial.toString());
         return compound;
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(@NotNull NBTTagCompound compound) {
         super.readFromNBT(compound);
         MaterialRegistry registry = getPipeBlock().getMaterialRegistry();
         this.pipeMaterial = registry.getObject(compound.getString("PipeMaterial"));
@@ -72,11 +72,11 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
         }
     }
 
-    private void writePipeMaterial(@Nonnull PacketBuffer buf) {
+    private void writePipeMaterial(@NotNull PacketBuffer buf) {
         buf.writeVarInt(getPipeBlock().getMaterialRegistry().getIDForObject(pipeMaterial));
     }
 
-    private void readPipeMaterial(@Nonnull PacketBuffer buf) {
+    private void readPipeMaterial(@NotNull PacketBuffer buf) {
         this.pipeMaterial = getPipeBlock().getMaterialRegistry().getObjectById(buf.readVarInt());
     }
 

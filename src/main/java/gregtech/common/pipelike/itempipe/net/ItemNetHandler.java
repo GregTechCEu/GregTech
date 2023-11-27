@@ -20,13 +20,12 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class ItemNetHandler implements IItemHandler {
 
@@ -65,9 +64,9 @@ public class ItemNetHandler implements IItemHandler {
         simulatedTransfersGlobalRoundRobin.putAll(pipe.getTransferred());
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) return stack;
 
         if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
@@ -433,13 +432,13 @@ public class ItemNetHandler implements IItemHandler {
         return 1;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack getStackInSlot(int i) {
         return ItemStack.EMPTY;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         return ItemStack.EMPTY;

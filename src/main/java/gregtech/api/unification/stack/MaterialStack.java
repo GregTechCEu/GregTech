@@ -4,11 +4,10 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.util.SmallDigits;
 
 import crafttweaker.annotations.ZenRegister;
+import org.jetbrains.annotations.NotNull;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenProperty;
-
-import javax.annotation.Nonnull;
 
 @ZenClass("mods.gregtech.material.MaterialStack")
 @ZenRegister
@@ -52,7 +51,7 @@ public class MaterialStack {
     }
 
     @ZenMethod("toString")
-    @Nonnull
+    @NotNull
     public String toFormatted() {
         final String chemicalFormula = material.getChemicalFormula();
 

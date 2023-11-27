@@ -15,11 +15,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_TOOLS,
@@ -30,13 +29,13 @@ public class ToolsModule extends BaseGregTechModule {
 
     public static final Logger logger = LogManager.getLogger("GregTech Tools");
 
-    @Nonnull
+    @NotNull
     @Override
     public Logger getLogger() {
         return logger;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<Class<?>> getEventBusSubscribers() {
         return Collections.singletonList(ToolsModule.class);

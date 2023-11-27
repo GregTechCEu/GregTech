@@ -5,8 +5,6 @@ import gregtech.api.util.GTUtility;
 
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 /**
  * MarkerMaterial is type of material used for generic things like material re-registration and use in recipes
  * Marker material cannot be used to generate any meta items
@@ -16,7 +14,7 @@ import javax.annotation.Nonnull;
  */
 public final class MarkerMaterial extends Material {
 
-    private MarkerMaterial(@Nonnull String name) {
+    private MarkerMaterial(@NotNull String name) {
         super(GTUtility.gregtechId(name));
     }
 
