@@ -16,6 +16,7 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -25,6 +26,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -42,6 +44,7 @@ import java.util.function.Consumer;
 public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifiablePart
                                           implements IMultiblockAbilityPart<IFluidTank> {
 
+    private static final int FLUID_AMOUNT = 2_000_000_000;
     private final InfiniteWaterTank fluidTank;
 
     public MetaTileEntityReservoirHatch(ResourceLocation metaTileEntityId) {
@@ -85,7 +88,7 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     }
 
     private int getInventorySize() {
-        return Integer.MAX_VALUE;
+        return FLUID_AMOUNT;
     }
 
     @Override
@@ -177,15 +180,16 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
 
     private static class InfiniteWaterTank extends NotifiableFluidTank {
 
-        private final FluidStack BIG_WATER = new FluidStack(FluidRegistry.WATER, Integer.MAX_VALUE);
+        private final FluidStack BIG_WATER = new FluidStack(FluidRegistry.WATER, FLUID_AMOUNT);
 
         public InfiniteWaterTank(int capacity, MetaTileEntity entityToNotify) {
             super(capacity, entityToNotify, false);
+            setFluid(BIG_WATER);
         }
 
         private void refillWater() {
-            if (BIG_WATER.amount != Integer.MAX_VALUE) {
-                BIG_WATER.amount = Integer.MAX_VALUE;
+            if (BIG_WATER.amount != FLUID_AMOUNT) {
+                BIG_WATER.amount = FLUID_AMOUNT;
                 onContentsChanged();
             }
         }
@@ -216,10 +220,15 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
             return fluid.getFluid() == BIG_WATER.getFluid();
         }
 
-        @Nullable
+        // serialization is unnecessary here, it should always have the same amount of fluid
         @Override
-        public FluidStack getFluid() {
-            return BIG_WATER;
+        public FluidTank readFromNBT(NBTTagCompound nbt) {
+            return this;
+        }
+
+        @Override
+        public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+            return nbt;
         }
     }
 }
