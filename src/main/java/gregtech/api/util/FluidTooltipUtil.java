@@ -21,7 +21,7 @@ public class FluidTooltipUtil {
     /**
      * Registry Mapping of <Fluid, Tooltip>
      */
-    private static final Map<Fluid, Supplier<List<String>>> tooltips = new HashMap<>();
+    private static final Map<Fluid, List<Supplier<List<String>>>> tooltips = new HashMap<>();
 
     /**
      * Used to register a tooltip to a Fluid.
@@ -30,7 +30,8 @@ public class FluidTooltipUtil {
      * @param tooltip The tooltip.
      */
     public static void registerTooltip(@NotNull Fluid fluid, @NotNull Supplier<List<String>> tooltip) {
-        tooltips.put(fluid, tooltip);
+        List<Supplier<List<String>>> list = tooltips.computeIfAbsent(fluid, $ -> new ArrayList<>(1));
+        list.add(tooltip);
     }
 
     /**
@@ -44,8 +45,13 @@ public class FluidTooltipUtil {
             return null;
         }
 
-        var supplier = tooltips.get(fluid);
-        return supplier == null ? Collections.emptyList() : supplier.get();
+        var list = tooltips.get(fluid);
+        if (list == null) return Collections.emptyList();
+        List<String> tooltip = new ArrayList<>();
+        for (var supplier : list) {
+            tooltip.addAll(supplier.get());
+        }
+        return tooltip;
     }
 
     /**
