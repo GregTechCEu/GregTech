@@ -1,10 +1,5 @@
 package gregtech.common.covers;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.*;
@@ -12,16 +7,22 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraftforge.items.ItemStackHandler;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +106,8 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
+                                                        @NotNull CuboidRayTraceResult hitResult) {
         if (!getCoverableView().getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
@@ -126,12 +128,13 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
                         .setBackgroundTexture(GuiTextures.SLOT))
                 .widget(new CycleButtonWidget(48, 70, 80, 18, this::isInverted, this::setInverted,
                         "cover.machine_controller.normal", "cover.machine_controller.inverted")
-                        .setTooltipHoverString("cover.machine_controller.inverted.description"))
+                                .setTooltipHoverString("cover.machine_controller.inverted.description"))
                 .build(this, player);
     }
 
     @Override
-    public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side, @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
+    public void onAttachment(@NotNull CoverableView coverableView, @NotNull EnumFacing side,
+                             @Nullable EntityPlayer player, @NotNull ItemStack itemStack) {
         super.onAttachment(coverableView, side, player, itemStack);
         this.controllerMode = getAllowedModes(getCoverableView(), getAttachedSide()).iterator().next();
         updateRedstoneStatus();
@@ -144,8 +147,10 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
-        Textures.MACHINE_CONTROLLER_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+        Textures.MACHINE_CONTROLLER_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline,
+                translation);
     }
 
     @Override
@@ -173,7 +178,8 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     private @Nullable IControllable getControllable() {
         EnumFacing side = controllerMode.side;
         if (side == null) {
-            return getCoverableView().getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, getAttachedSide());
+            return getCoverableView().getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE,
+                    getAttachedSide());
         } else {
             Cover cover = getCoverableView().getCoverAtSide(side);
             if (cover == null) {
@@ -198,8 +204,9 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     }
 
     private boolean shouldAllowWorking() {
-        boolean shouldAllowWorking = getCoverableView().getInputRedstoneSignal(getAttachedSide(), true) < minRedstoneStrength;
-        //noinspection SimplifiableConditionalExpression
+        boolean shouldAllowWorking = getCoverableView().getInputRedstoneSignal(getAttachedSide(), true) <
+                minRedstoneStrength;
+        // noinspection SimplifiableConditionalExpression
         return isInverted ? !shouldAllowWorking : shouldAllowWorking;
     }
 
@@ -209,7 +216,8 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
         EnumFacing attachedSide = getAttachedSide();
         CoverableView coverable = getCoverableView();
         for (EnumFacing side : EnumFacing.values()) {
-            if (side != attachedSide && coverable.getCoverAtSide(side) instanceof CoverMachineController machineController) {
+            if (side != attachedSide &&
+                    coverable.getCoverAtSide(side) instanceof CoverMachineController machineController) {
                 cover = machineController;
                 otherAllow = otherAllow && cover.controllerMode == controllerMode && cover.shouldAllowWorking();
             }
@@ -234,6 +242,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
     }
 
     public enum ControllerMode implements IStringSerializable {
+
         MACHINE("cover.machine_controller.mode.machine", null),
         COVER_UP("cover.machine_controller.mode.cover_up", EnumFacing.UP),
         COVER_DOWN("cover.machine_controller.mode.cover_down", EnumFacing.DOWN),
@@ -250,8 +259,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
             this.side = side;
         }
 
-
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return localeName;

@@ -8,6 +8,7 @@ import gregtech.integration.IntegrationModule;
 import gregtech.integration.jei.JustEnoughItemsModule;
 import gregtech.integration.jei.recipe.RecipeMapCategory;
 import gregtech.modules.GregTechModules;
+
 import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.ArrayList;
@@ -19,22 +20,28 @@ public class RecipeProgressWidget extends ProgressWidget {
 
     private final RecipeMap<?> recipeMap;
 
-    public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height, RecipeMap<?> recipeMap) {
+    public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height,
+                                RecipeMap<?> recipeMap) {
         super(progressSupplier, x, y, width, height);
         this.recipeMap = recipeMap;
-        setHoverTextConsumer(list -> list.add(new TextComponentTranslation("gui.widget.recipeProgressWidget.default_tooltip")));
+        setHoverTextConsumer(
+                list -> list.add(new TextComponentTranslation("gui.widget.recipeProgressWidget.default_tooltip")));
     }
 
-    public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height, TextureArea fullImage, MoveType moveType, RecipeMap<?> recipeMap) {
+    public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height,
+                                TextureArea fullImage, MoveType moveType, RecipeMap<?> recipeMap) {
         super(progressSupplier, x, y, width, height, fullImage, moveType);
         this.recipeMap = recipeMap;
-        setHoverTextConsumer(list -> list.add(new TextComponentTranslation("gui.widget.recipeProgressWidget.default_tooltip")));
+        setHoverTextConsumer(
+                list -> list.add(new TextComponentTranslation("gui.widget.recipeProgressWidget.default_tooltip")));
     }
 
-    public RecipeProgressWidget(int ticksPerCycle, int x, int y, int width, int height, TextureArea fullImage, MoveType moveType, RecipeMap<?> recipeMap) {
+    public RecipeProgressWidget(int ticksPerCycle, int x, int y, int width, int height, TextureArea fullImage,
+                                MoveType moveType, RecipeMap<?> recipeMap) {
         super(ticksPerCycle, x, y, width, height, fullImage, moveType);
         this.recipeMap = recipeMap;
-        setHoverTextConsumer(list -> list.add(new TextComponentTranslation("gui.widget.recipeProgressWidget.default_tooltip")));
+        setHoverTextConsumer(
+                list -> list.add(new TextComponentTranslation("gui.widget.recipeProgressWidget.default_tooltip")));
     }
 
     @Override

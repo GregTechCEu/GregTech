@@ -1,14 +1,11 @@
 package gregtech.common.covers;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GregTechAPI;
 import gregtech.api.cover.*;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
@@ -17,6 +14,11 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +40,8 @@ public class CoverCraftingTable extends CoverBase implements ITickable {
     private final ItemStackHandler internalInventory = new ItemStackHandler(18);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
 
-    public CoverCraftingTable(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+    public CoverCraftingTable(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                              @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
     }
 
@@ -53,7 +56,8 @@ public class CoverCraftingTable extends CoverBase implements ITickable {
     }
 
     @Override
-    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {}
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {}
 
     @Override
     public void update() {

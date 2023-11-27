@@ -1,9 +1,5 @@
 package gregtech.api.metatileentity;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
@@ -12,6 +8,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -19,14 +16,20 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEnergyChangeListener, ITieredMetaTileEntity {
+public abstract class TieredMetaTileEntity extends MetaTileEntity
+                                           implements IEnergyChangeListener, ITieredMetaTileEntity {
 
     private final int tier;
     protected IEnergyContainer energyContainer;
@@ -47,8 +50,7 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     }
 
     @Override
-    public void onEnergyChanged(IEnergyContainer container, boolean isInitialChange) {
-    }
+    public void onEnergyChanged(IEnergyContainer container, boolean isInitialChange) {}
 
     @SideOnly(Side.CLIENT)
     protected SimpleSidedCubeRenderer getBaseRenderer() {
@@ -56,7 +58,8 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant())
             tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
@@ -70,7 +73,8 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+        IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
     }
 
@@ -109,5 +113,4 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     protected boolean isEnergyEmitter() {
         return false;
     }
-
 }

@@ -1,10 +1,5 @@
 package gregtech.common.covers;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
@@ -19,6 +14,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.FluidFilter;
 import gregtech.common.covers.filter.FluidFilterWrapper;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,9 +26,14 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
@@ -43,7 +44,8 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     protected FluidHandlerFiltered fluidHandler;
 
     public CoverFluidFilter(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
-                            @NotNull EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture, FluidFilter fluidFilter) {
+                            @NotNull EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture,
+                            FluidFilter fluidFilter) {
         super(definition, coverableView, attachedSide);
         this.filterMode = FluidFilterMode.FILTER_FILL;
         this.titleLocale = titleLocale;
@@ -79,7 +81,8 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         return true;
     }
 
-    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
+                                                        @NotNull CuboidRayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
             this.openUI((EntityPlayerMP) playerIn);
         }
@@ -101,7 +104,8 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         this.texture.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
@@ -118,7 +122,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("FilterMode", this.filterMode.ordinal());
         tagCompound.setBoolean("IsBlacklist", this.fluidFilter.isBlacklistFilter());
@@ -128,7 +132,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.filterMode = FluidFilterMode.values()[tagCompound.getInteger("FilterMode")];
         this.fluidFilter.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));

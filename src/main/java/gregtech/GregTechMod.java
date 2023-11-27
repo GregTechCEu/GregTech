@@ -8,6 +8,7 @@ import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.covers.filter.oreglob.impl.OreGlobParser;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -17,22 +18,13 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.*;
 
 @Mod(modid = GTValues.MODID,
-        name = "GregTech",
-        acceptedMinecraftVersions = "[1.12.2,1.13)",
-        version = GTInternalTags.VERSION,
-        dependencies = "required:forge@[14.23.5.2847,);"
-                + "required-after:codechickenlib@[3.2.3,);"
-                + "after:appliedenergistics2;"
-                + "after:forestry;"
-                + "after:extrabees;"
-                + "after:extratrees;"
-                + "after:genetics;"
-                + "after:magicbees;"
-                + "after:jei@[4.15.0,);"
-                + "after:crafttweaker@[4.1.20,);"
-                + "after:groovyscript@[0.6.0,);"
-                + "after:theoneprobe;"
-                + "after:hwyla;")
+     name = "GregTech",
+     acceptedMinecraftVersions = "[1.12.2,1.13)",
+     version = GTInternalTags.VERSION,
+     dependencies = "required:forge@[14.23.5.2847,);" + "required-after:codechickenlib@[3.2.3,);" +
+             "after:appliedenergistics2;" + "after:forestry;" + "after:extrabees;" + "after:extratrees;" +
+             "after:genetics;" + "after:magicbees;" + "after:jei@[4.15.0,);" + "after:crafttweaker@[4.1.20,);" +
+             "after:groovyscript@[0.6.0,);" + "after:theoneprobe;" + "after:hwyla;")
 public class GregTechMod {
 
     // Hold this so that we can reference non-interface methods without

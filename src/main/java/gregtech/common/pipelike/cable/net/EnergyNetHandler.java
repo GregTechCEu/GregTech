@@ -4,6 +4,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
@@ -79,7 +80,9 @@ public class EnergyNetHandler implements IEnergyContainer {
             boolean cableBroken = false;
             for (TileEntityCable cable : path.getPath()) {
                 if (cable.getMaxVoltage() < voltage) {
-                    int heat = (int) (Math.log(GTUtility.getTierByVoltage(voltage) - GTUtility.getTierByVoltage(cable.getMaxVoltage())) * 45 + 36.5);
+                    int heat = (int) (Math.log(
+                            GTUtility.getTierByVoltage(voltage) - GTUtility.getTierByVoltage(cable.getMaxVoltage())) *
+                            45 + 36.5);
                     cable.applyHeat(heat);
 
                     cableBroken = cable.isInvalid();

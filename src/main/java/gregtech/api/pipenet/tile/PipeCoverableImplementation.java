@@ -6,6 +6,7 @@ import gregtech.api.cover.CoverSaveHandler;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -14,10 +15,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.function.Consumer;
 
@@ -97,7 +98,7 @@ public class PipeCoverableImplementation implements CoverHolder {
     @Override
     public final int getInputRedstoneSignal(@NotNull EnumFacing side, boolean ignoreCover) {
         if (!ignoreCover && getCoverAtSide(side) != null) {
-            return 0; //covers block input redstone signal for machine
+            return 0; // covers block input redstone signal for machine
         }
         return sidedRedstoneInput[side.getIndex()];
     }
@@ -162,8 +163,8 @@ public class PipeCoverableImplementation implements CoverHolder {
     }
 
     public boolean canConnectRedstone(@Nullable EnumFacing side) {
-        //so far null side means either upwards or downwards redstone wire connection
-        //so check both top cover and bottom cover
+        // so far null side means either upwards or downwards redstone wire connection
+        // so check both top cover and bottom cover
         if (side == null) {
             return canConnectRedstone(EnumFacing.UP) ||
                     canConnectRedstone(EnumFacing.DOWN);
@@ -197,7 +198,7 @@ public class PipeCoverableImplementation implements CoverHolder {
     }
 
     @Override
-    public void writeCoverData(@Nonnull Cover cover, int discriminator, @NotNull Consumer<@NotNull PacketBuffer> buf) {
+    public void writeCoverData(@NotNull Cover cover, int discriminator, @NotNull Consumer<@NotNull PacketBuffer> buf) {
         writeCustomData(UPDATE_COVER_DATA_PIPE, buffer -> {
             buffer.writeByte(cover.getAttachedSide().getIndex());
             buffer.writeVarInt(discriminator);
@@ -222,12 +223,12 @@ public class PipeCoverableImplementation implements CoverHolder {
         if (dataId == COVER_ATTACHED_PIPE) {
             CoverSaveHandler.readCoverPlacement(buf, this);
         } else if (dataId == COVER_REMOVED_PIPE) {
-            //cover removed event
+            // cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
             this.covers.remove(placementSide);
             holder.scheduleChunkForRenderUpdate();
         } else if (dataId == UPDATE_COVER_DATA_PIPE) {
-            //cover custom data received
+            // cover custom data received
             EnumFacing coverSide = EnumFacing.VALUES[buf.readByte()];
             Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();

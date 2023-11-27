@@ -8,18 +8,20 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import li.cil.oc.api.machine.Arguments;
-import li.cil.oc.api.machine.Callback;
-import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.ManagedEnvironment;
-import li.cil.oc.api.prefab.DriverSidedTileEntity;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.ManagedEnvironment;
+import li.cil.oc.api.prefab.DriverSidedTileEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,7 +134,8 @@ public class DriverAbstractRecipeLogic extends DriverSidedTileEntity {
                 }
 
                 List<Map<String, Object>> chancedFluidOutput = new ArrayList<>();
-                List<ChancedFluidOutput> chancedFluidOutputs = previousRecipe.getChancedFluidOutputs().getChancedEntries();
+                List<ChancedFluidOutput> chancedFluidOutputs = previousRecipe.getChancedFluidOutputs()
+                        .getChancedEntries();
                 chancedFluidOutputs.forEach(iR -> {
                     Map<String, Object> output = new Object2ObjectOpenHashMap<>();
                     output.put("chance", iR.getChance());
@@ -144,9 +147,9 @@ public class DriverAbstractRecipeLogic extends DriverSidedTileEntity {
                 if (!chancedFluidOutput.isEmpty()) {
                     recipe.put("chancedFluidOutput", chancedFluidOutput);
                 }
-                return new Object[]{recipe};
+                return new Object[] { recipe };
             }
-            return new Object[]{null};
+            return new Object[] { null };
         }
     }
 }

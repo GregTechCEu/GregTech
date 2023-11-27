@@ -16,6 +16,7 @@ import gregtech.common.terminal.app.prospector.ProspectingTexture;
 import gregtech.common.terminal.app.prospector.ProspectorMode;
 import gregtech.core.network.packets.PacketProspecting;
 import gregtech.integration.xaero.ColorUtility;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -37,12 +38,13 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 import java.io.IOException;
+import java.util.*;
 import java.util.List;
 import java.util.Queue;
-import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
@@ -66,7 +68,8 @@ public class WidgetProspectingMap extends Widget {
     private final List<String> hoveredNames = new ArrayList<>();
     private int color;
 
-    public WidgetProspectingMap(int xPosition, int yPosition, int chunkRadius, WidgetOreList widgetOreList, @Nonnull ProspectorMode mode, int scanTick) {
+    public WidgetProspectingMap(int xPosition, int yPosition, int chunkRadius, WidgetOreList widgetOreList,
+                                @NotNull ProspectorMode mode, int scanTick) {
         super(new Position(xPosition, yPosition), new Size(16 * (chunkRadius * 2 - 1), 16 * (chunkRadius * 2 - 1)));
         this.chunkRadius = chunkRadius;
         this.mode = mode;
@@ -105,7 +108,8 @@ public class WidgetProspectingMap extends Widget {
     public void detectAndSendChanges() {
         EntityPlayer player = gui.entityPlayer;
         World world = player.world;
-        if (FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter() % scanTick == 0 && chunkIndex < (chunkRadius * 2 - 1) * (chunkRadius * 2 - 1)) {
+        if (FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter() % scanTick == 0 &&
+                chunkIndex < (chunkRadius * 2 - 1) * (chunkRadius * 2 - 1)) {
 
             int playerChunkX = player.chunkCoordX;
             int playerChunkZ = player.chunkCoordZ;
@@ -117,7 +121,8 @@ public class WidgetProspectingMap extends Widget {
             int oz = row - chunkRadius + 1;
 
             Chunk chunk = world.getChunk(playerChunkX + ox, playerChunkZ + oz);
-            PacketProspecting packet = new PacketProspecting(playerChunkX + ox, playerChunkZ + oz, playerChunkX, playerChunkZ, (int) player.posX, (int) player.posZ, this.mode);
+            PacketProspecting packet = new PacketProspecting(playerChunkX + ox, playerChunkZ + oz, playerChunkX,
+                    playerChunkZ, (int) player.posX, (int) player.posZ, this.mode);
 
             switch (mode) {
                 case ORE:
@@ -144,7 +149,8 @@ public class WidgetProspectingMap extends Widget {
                                             } else if (type.processingPrefix == prefix) {
                                                 MaterialStack materialStack = OreDictUnifier.getMaterial(itemBlock);
                                                 if (materialStack != null) {
-                                                    String oreDict = "ore" + oreDictString.replaceFirst(prefix.name(), "");
+                                                    String oreDict = "ore" +
+                                                            oreDictString.replaceFirst(prefix.name(), "");
                                                     packet.addBlock(x, y, z, oreDict);
                                                     added = true;
                                                     break;
@@ -163,11 +169,15 @@ public class WidgetProspectingMap extends Widget {
                     }
                     break;
                 case FLUID:
-                    BedrockFluidVeinHandler.FluidVeinWorldEntry fStack = BedrockFluidVeinHandler.getFluidVeinWorldEntry(world, chunk.x, chunk.z);
+                    BedrockFluidVeinHandler.FluidVeinWorldEntry fStack = BedrockFluidVeinHandler
+                            .getFluidVeinWorldEntry(world, chunk.x, chunk.z);
                     if (fStack != null && fStack.getDefinition() != null) {
-                        packet.addBlock(0, 3, 0, TextFormattingUtil.formatNumbers(100.0 * BedrockFluidVeinHandler.getOperationsRemaining(world, chunk.x, chunk.z)
-                                / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS));
-                        packet.addBlock(0, 2, 0, String.valueOf(BedrockFluidVeinHandler.getFluidYield(world, chunk.x, chunk.z)));
+                        packet.addBlock(0, 3, 0,
+                                TextFormattingUtil.formatNumbers(100.0 *
+                                        BedrockFluidVeinHandler.getOperationsRemaining(world, chunk.x, chunk.z) /
+                                        BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS));
+                        packet.addBlock(0, 2, 0,
+                                String.valueOf(BedrockFluidVeinHandler.getFluidYield(world, chunk.x, chunk.z)));
                         Fluid fluid = BedrockFluidVeinHandler.getFluidInChunk(world, chunk.x, chunk.z);
                         if (fluid != null) {
                             packet.addBlock(0, 1, 0, fluid.getName());
@@ -246,8 +256,8 @@ public class WidgetProspectingMap extends Widget {
                     (cZ + 1) * 16 + this.getPosition().y,
                     new Color(0x4B6C6C6C, true).getRGB());
 
-            //pick the color of the highest element for the waypoint color
-            final int[] maxAmount = {0};
+            // pick the color of the highest element for the waypoint color
+            final int[] maxAmount = { 0 };
 
             if (this.mode == ProspectorMode.ORE) { // draw ore
                 tooltips.add(I18n.format("terminal.prospector.ore"));
@@ -257,7 +267,8 @@ public class WidgetProspectingMap extends Widget {
                         if (texture.map[cX * 16 + i][cZ * 16 + j] != null) {
                             texture.map[cX * 16 + i][cZ * 16 + j].values().forEach(dict -> {
                                 String name = OreDictUnifier.get(dict).getDisplayName();
-                                if (ProspectingTexture.SELECTED_ALL.equals(texture.getSelected()) || texture.getSelected().equals(dict)) {
+                                if (ProspectingTexture.SELECTED_ALL.equals(texture.getSelected()) ||
+                                        texture.getSelected().equals(dict)) {
                                     oreInfo.put(name, oreInfo.getOrDefault(name, 0) + 1);
                                     if (oreInfo.get(name) > maxAmount[0]) {
                                         maxAmount[0] = oreInfo.get(name);
@@ -278,7 +289,8 @@ public class WidgetProspectingMap extends Widget {
             } else if (this.mode == ProspectorMode.FLUID) {
                 tooltips.add(I18n.format("terminal.prospector.fluid"));
                 if (texture.map[cX][cZ] != null && !texture.map[cX][cZ].isEmpty()) {
-                    if (ProspectingTexture.SELECTED_ALL.equals(texture.getSelected()) || texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {
+                    if (ProspectingTexture.SELECTED_ALL.equals(texture.getSelected()) ||
+                            texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {
                         FluidStack fluidStack = FluidRegistry.getFluidStack(texture.map[cX][cZ].get((byte) 1), 1);
                         if (fluidStack != null) {
                             tooltips.add(I18n.format("terminal.prospector.fluid.info",
@@ -332,7 +344,8 @@ public class WidgetProspectingMap extends Widget {
                 added = addXaeroMapWaypoint(b);
             }
             if (added) {
-                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentTranslation("behavior.prospector.added_waypoint"), true);
+                Minecraft.getMinecraft().player
+                        .sendStatusMessage(new TextComponentTranslation("behavior.prospector.added_waypoint"), true);
             }
         }
         this.lastClicked = System.currentTimeMillis();
@@ -362,7 +375,7 @@ public class WidgetProspectingMap extends Widget {
         }
     }
 
-    @Nonnull
+    @NotNull
     private String createVeinName() {
         // remove the [] surrounding the array
         String s = hoveredNames.toString();
@@ -384,13 +397,15 @@ public class WidgetProspectingMap extends Widget {
     }
 
     @Optional.Method(modid = GTValues.MODID_VOXELMAP)
-    private boolean addVoxelMapWaypoint(@Nonnull BlockPos b) {
+    private boolean addVoxelMapWaypoint(@NotNull BlockPos b) {
         Color c = new Color(color);
         TreeSet<Integer> world = new TreeSet<>();
         world.add(Minecraft.getMinecraft().world.provider.getDimension());
 
-        com.mamiyaotaru.voxelmap.interfaces.IWaypointManager waypointManager = com.mamiyaotaru.voxelmap.interfaces.AbstractVoxelMap.getInstance().getWaypointManager();
-        com.mamiyaotaru.voxelmap.util.Waypoint voxelMapWaypoint = new com.mamiyaotaru.voxelmap.util.Waypoint(createVeinName(),
+        com.mamiyaotaru.voxelmap.interfaces.IWaypointManager waypointManager = com.mamiyaotaru.voxelmap.interfaces.AbstractVoxelMap
+                .getInstance().getWaypointManager();
+        com.mamiyaotaru.voxelmap.util.Waypoint voxelMapWaypoint = new com.mamiyaotaru.voxelmap.util.Waypoint(
+                createVeinName(),
                 b.getX(),
                 b.getZ(),
                 Minecraft.getMinecraft().world.getHeight(b.getX(), b.getZ()),
@@ -411,7 +426,7 @@ public class WidgetProspectingMap extends Widget {
     }
 
     @Optional.Method(modid = GTValues.MODID_XAERO_MINIMAP)
-    private boolean addXaeroMapWaypoint(@Nonnull BlockPos b) {
+    private boolean addXaeroMapWaypoint(@NotNull BlockPos b) {
         int red = clampColor(color >> 16 & 0xFF);
         int green = clampColor(color >> 8 & 0xFF);
         int blue = clampColor(color & 0xFF);

@@ -1,8 +1,5 @@
 package gregtech.api.gui;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableList;
 import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
@@ -11,11 +8,16 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.Position;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +53,9 @@ public final class ModularUI implements ISizeProvider {
     public final IUIHolder holder;
     public final EntityPlayer entityPlayer;
 
-    public ModularUI(ImmutableBiMap<Integer, Widget> guiWidgets, ImmutableList<Runnable> openListeners, ImmutableList<Runnable> closeListeners, IGuiTexture backgroundPath, int width, int height, IUIHolder holder, EntityPlayer entityPlayer) {
+    public ModularUI(ImmutableBiMap<Integer, Widget> guiWidgets, ImmutableList<Runnable> openListeners,
+                     ImmutableList<Runnable> closeListeners, IGuiTexture backgroundPath, int width, int height,
+                     IUIHolder holder, EntityPlayer entityPlayer) {
         this.guiWidgets = guiWidgets;
         this.uiOpenCallback = openListeners;
         this.uiCloseCallback = closeListeners;
@@ -94,7 +98,7 @@ public final class ModularUI implements ISizeProvider {
             getModularUIGui().initGui();
         }
     }
-    
+
     public void updateScreenSize(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -223,17 +227,22 @@ public final class ModularUI implements ISizeProvider {
             return widget(new SlotWidget(itemHandler, slotIndex, x, y).setBackgroundTexture(overlays));
         }
 
-        public Builder slot(IItemHandlerModifiable itemHandler, int slotIndex, int x, int y, boolean canTakeItems, boolean canPutItems, IGuiTexture... overlays) {
-            return widget(new SlotWidget(itemHandler, slotIndex, x, y, canTakeItems, canPutItems).setBackgroundTexture(overlays));
+        public Builder slot(IItemHandlerModifiable itemHandler, int slotIndex, int x, int y, boolean canTakeItems,
+                            boolean canPutItems, IGuiTexture... overlays) {
+            return widget(new SlotWidget(itemHandler, slotIndex, x, y, canTakeItems, canPutItems)
+                    .setBackgroundTexture(overlays));
         }
 
         // todo this shouldn't exist, only RecipeProgressWidget should directly take a DoubleSupplier
-        public Builder progressBar(DoubleSupplier progressSupplier, int x, int y, int width, int height, TextureArea texture, MoveType moveType) {
+        public Builder progressBar(DoubleSupplier progressSupplier, int x, int y, int width, int height,
+                                   TextureArea texture, MoveType moveType) {
             return widget(new ProgressWidget(progressSupplier, x, y, width, height, texture, moveType));
         }
 
-        public Builder progressBar(DoubleSupplier progressSupplier, int x, int y, int width, int height, TextureArea texture, MoveType moveType, RecipeMap<?> recipeMap) {
-            return widget(new RecipeProgressWidget(progressSupplier, x, y, width, height, texture, moveType, recipeMap));
+        public Builder progressBar(DoubleSupplier progressSupplier, int x, int y, int width, int height,
+                                   TextureArea texture, MoveType moveType, RecipeMap<?> recipeMap) {
+            return widget(
+                    new RecipeProgressWidget(progressSupplier, x, y, width, height, texture, moveType, recipeMap));
         }
 
         public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer) {
@@ -286,7 +295,8 @@ public final class ModularUI implements ISizeProvider {
         }
 
         public ModularUI build(IUIHolder holder, EntityPlayer player) {
-            ModularUI ui = new ModularUI(widgets.build(), openListeners.build(), closeListeners.build(), background, width, height, holder, player);
+            ModularUI ui = new ModularUI(widgets.build(), openListeners.build(), closeListeners.build(), background,
+                    width, height, holder, player);
             ui.shouldColor = this.shouldColor;
             return ui;
         }

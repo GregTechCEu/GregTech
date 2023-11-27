@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
@@ -15,6 +12,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.metatileentities.MetaTileEntities;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,11 +21,16 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
-public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IEnergyContainer> {
+public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
+                                       implements IMultiblockAbilityPart<IEnergyContainer> {
 
     protected final boolean isExportHatch;
     protected final int amperage;
@@ -38,10 +41,12 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
         this.isExportHatch = isExportHatch;
         this.amperage = amperage;
         if (isExportHatch) {
-            this.energyContainer = EnergyContainerHandler.emitterContainer(this, GTValues.V[tier] * 64L * amperage, GTValues.V[tier], amperage);
+            this.energyContainer = EnergyContainerHandler.emitterContainer(this, GTValues.V[tier] * 64L * amperage,
+                    GTValues.V[tier], amperage);
             ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing());
         } else {
-            this.energyContainer = EnergyContainerHandler.receiverContainer(this, GTValues.V[tier] * 16L * amperage, GTValues.V[tier], amperage);
+            this.energyContainer = EnergyContainerHandler.receiverContainer(this, GTValues.V[tier] * 16L * amperage,
+                    GTValues.V[tier], amperage);
         }
     }
 
@@ -54,7 +59,8 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            getOverlay().renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+            getOverlay().renderSided(getFrontFacing(), renderState, translation,
+                    PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
         }
     }
 
@@ -64,7 +70,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
         checkWeatherOrTerrainExplosion(getTier(), getTier() * 10, energyContainer);
     }
 
-    @Nonnull
+    @NotNull
     private SimpleOverlayRenderer getOverlay() {
         if (isExportHatch) {
             if (amperage <= 2) {
@@ -115,17 +121,22 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
         addDescriptorTooltip(stack, world, tooltip, advanced);
 
         if (isExportHatch) {
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
-            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(),
+                    tierName));
+            tooltip.add(
+                    I18n.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
         } else {
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
+            tooltip.add(
+                    I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
         }
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(
+                I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
-    protected void addDescriptorTooltip(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+    protected void addDescriptorTooltip(ItemStack stack, @Nullable World world, List<String> tooltip,
+                                        boolean advanced) {
         if (isExportHatch) {
             if (amperage > 2) {
                 tooltip.add(I18n.format("gregtech.machine.energy_hatch.output_hi_amp.tooltip"));

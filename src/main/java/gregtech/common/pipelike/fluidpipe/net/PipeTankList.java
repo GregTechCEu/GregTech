@@ -2,6 +2,7 @@ package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -9,8 +10,9 @@ import net.minecraftforge.fluids.capability.FluidTankPropertiesWrapper;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -55,7 +57,8 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
     @Override
     public int fill(FluidStack resource, boolean doFill) {
         int channel;
-        if (pipe.isFaceBlocked(facing) || resource == null || resource.amount <= 0 || (channel = findChannel(resource)) < 0)
+        if (pipe.isFaceBlocked(facing) || resource == null || resource.amount <= 0 ||
+                (channel = findChannel(resource)) < 0)
             return 0;
 
         return fill(resource, doFill, channel);
@@ -119,7 +122,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Iterator<FluidTank> iterator() {
         return Arrays.stream(tanks).iterator();
     }

@@ -7,6 +7,7 @@ import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.gui.widget.WidgetARGB;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -17,6 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.Arrays;
 
 public class TextPluginBehavior extends MonitorPluginBaseBehavior {
+
     public String[] texts;
     public int[] colors;
 
@@ -36,7 +38,7 @@ public class TextPluginBehavior extends MonitorPluginBaseBehavior {
 
     @Override
     public void readPluginData(int id, PacketBuffer buf) {
-        if(id == GregtechDataCodes.UPDATE_PLUGIN_CONFIG){
+        if (id == GregtechDataCodes.UPDATE_PLUGIN_CONFIG) {
             texts = new String[buf.readInt()];
             colors = new int[texts.length];
             for (int i = 0; i < texts.length; i++) {
@@ -48,7 +50,7 @@ public class TextPluginBehavior extends MonitorPluginBaseBehavior {
 
     @Override
     public MonitorPluginBaseBehavior createPlugin() {
-        TextPluginBehavior plugin =  new TextPluginBehavior();
+        TextPluginBehavior plugin = new TextPluginBehavior();
         plugin.texts = new String[16];
         plugin.colors = new int[16];
         return plugin;
@@ -67,9 +69,9 @@ public class TextPluginBehavior extends MonitorPluginBaseBehavior {
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         for (int i = 0; i < texts.length; i++) {
-            texts[i] = data.hasKey("t" + i)? data.getString("t" + i) : "";
+            texts[i] = data.hasKey("t" + i) ? data.getString("t" + i) : "";
         }
-        if(data.hasKey("color")) {
+        if (data.hasKey("color")) {
             colors = data.getIntArray("color");
         } else {
             Arrays.fill(colors, 0XFFFFFFFF);
@@ -80,7 +82,7 @@ public class TextPluginBehavior extends MonitorPluginBaseBehavior {
     @Override
     public void renderPlugin(float partialTicks, RayTraceResult rayTraceResult) {
         for (int i = 0; i < texts.length; i++) {
-            RenderUtil.renderText(-0.5f, -0.4625f + i / 16f, 0.002f, 1/128f, colors[i], texts[i], false);
+            RenderUtil.renderText(-0.5f, -0.4625f + i / 16f, 0.002f, 1 / 128f, colors[i], texts[i], false);
         }
     }
 
@@ -94,10 +96,11 @@ public class TextPluginBehavior extends MonitorPluginBaseBehavior {
         widgets.setSize(260, 210);
         for (int i = 0; i < texts.length; i++) {
             int finalI = i;
-            widgets.addWidget(new TextFieldWidget(25, 25 + i * 10, 100, 10, true, ()-> this.texts[finalI], (text)-> setText(finalI, text, this.colors[finalI])).setValidator((data)->true));
-            widgets.addWidget(new WidgetARGB(135, 25 + i * 10, 10, colors[i], color-> setText(finalI, this.texts[finalI], color)));
+            widgets.addWidget(new TextFieldWidget(25, 25 + i * 10, 100, 10, true, () -> this.texts[finalI],
+                    (text) -> setText(finalI, text, this.colors[finalI])).setValidator((data) -> true));
+            widgets.addWidget(new WidgetARGB(135, 25 + i * 10, 10, colors[i],
+                    color -> setText(finalI, this.texts[finalI], color)));
         }
         return widgets;
     }
-
 }

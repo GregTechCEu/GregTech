@@ -1,11 +1,11 @@
 package gregtech.common.items.tool;
 
-import codechicken.lib.raytracer.RayTracer;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.items.tool.rotation.CustomBlockRotations;
 import gregtech.common.items.tool.rotation.ICustomRotationBehavior;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.state.IBlockState;
@@ -20,8 +20,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.raytracer.RayTracer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public class BlockRotatingBehavior implements IToolBehavior {
@@ -31,7 +33,9 @@ public class BlockRotatingBehavior implements IToolBehavior {
     protected BlockRotatingBehavior() {/**/}
 
     @Override
-    public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
+    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                           @NotNull EnumFacing side, float hitX, float hitY, float hitZ,
+                                           @NotNull EnumHand hand) {
         TileEntity te = world.getTileEntity(pos);
         // MTEs have special handling on rotation
         if (te instanceof IGregTechTileEntity) {
@@ -62,7 +66,8 @@ public class BlockRotatingBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         tooltip.add(I18n.format("item.gt.tool.behavior.block_rotation"));
     }
 }

@@ -4,17 +4,19 @@ import gregtech.api.metatileentity.interfaces.INeighborCache;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.unification.material.Material;
+
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> extends INeighborCache {
+public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType>
+                          extends INeighborCache {
 
     World getPipeWorld();
 

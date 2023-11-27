@@ -1,10 +1,11 @@
 package gregtech.api.metatileentity;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.vec.Matrix4;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.vec.Matrix4;
 
 public interface IFastRenderMetaTileEntity {
 
@@ -15,9 +16,7 @@ public interface IFastRenderMetaTileEntity {
     default void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {}
 
     @SideOnly(Side.CLIENT)
-    default void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-
-    }
+    default void renderMetaTileEntity(double x, double y, double z, float partialTicks) {}
 
     AxisAlignedBB getRenderBoundingBox();
 

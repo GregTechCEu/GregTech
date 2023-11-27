@@ -14,11 +14,13 @@ import gregtech.common.covers.filter.oreglob.impl.ImpossibleOreGlob;
 import gregtech.common.gui.widget.HighlightedTextField;
 import gregtech.common.gui.widget.orefilter.ItemOreFilterTestSlot;
 import gregtech.common.gui.widget.orefilter.OreGlobCompileStatusWidget;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.Map;
 import java.util.Set;
@@ -116,7 +118,8 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     @Override
     public Object matchItemStack(ItemStack itemStack) {
-        return matchesItemStack(itemStack) ? "wtf is this system?? i can put any non null object here and it i will work??? $arch" : null;
+        return matchesItemStack(itemStack) ?
+                "wtf is this system?? i can put any non null object here and it i will work??? $arch" : null;
     }
 
     public boolean matchesItemStack(ItemStack itemStack) {

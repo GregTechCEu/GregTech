@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -19,6 +16,7 @@ import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,17 +33,20 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 
 public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
 
-    private static final int[] INVENTORY_SIZES = {4, 9, 16, 25, 25};
+    private static final int[] INVENTORY_SIZES = { 4, 9, 16, 25, 25 };
     private static final double MOTION_MULTIPLIER = 0.04;
     private static final int BASE_EU_CONSUMPTION = 6;
 
@@ -116,7 +117,8 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
             return;
         }
 
-        boolean isWorkingNow = energyContainer.getEnergyStored() >= getEnergyConsumedPerTick() && isBlockRedstonePowered();
+        boolean isWorkingNow = energyContainer.getEnergyStored() >= getEnergyConsumedPerTick() &&
+                isBlockRedstonePowered();
 
         if (isWorkingNow) {
             energyContainer.removeEnergy(getEnergyConsumedPerTick());
@@ -174,8 +176,10 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.item_collector.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_tick", getEnergyConsumedPerTick()));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.max_voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.max_voltage_in", energyContainer.getInputVoltage(),
+                GTValues.VNF[getTier()]));
+        tooltip.add(
+                I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.working_area", maxItemSuckingRange, maxItemSuckingRange));
     }
 
@@ -188,7 +192,8 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new GTItemStackHandler(this, INVENTORY_SIZES[MathHelper.clamp(getTier(), 0, INVENTORY_SIZES.length - 1)]);
+        return new GTItemStackHandler(this,
+                INVENTORY_SIZES[MathHelper.clamp(getTier(), 0, INVENTORY_SIZES.length - 1)]);
     }
 
     @Override
@@ -236,7 +241,8 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
         builder.widget(new ClickButtonWidget(10, 20, 20, 20, "-1", data -> adjustSuckingRange(-1)));
         builder.widget(new ClickButtonWidget(146, 20, 20, 20, "+1", data -> adjustSuckingRange(+1)));
         builder.widget(new ImageWidget(30, 20, 116, 20, GuiTextures.DISPLAY));
-        builder.widget(new SimpleTextWidget(88, 30, "gregtech.machine.item_collector.gui.collect_range", 0xFFFFFF, () -> Integer.toString(itemSuckingRange)));
+        builder.widget(new SimpleTextWidget(88, 30, "gregtech.machine.item_collector.gui.collect_range", 0xFFFFFF,
+                () -> Integer.toString(itemSuckingRange)));
 
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {

@@ -4,10 +4,12 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -16,7 +18,8 @@ import java.util.List;
 // much higher amperages, without hard-coding values in the super class.
 public class MetaTileEntitySubstationEnergyHatch extends MetaTileEntityEnergyHatch {
 
-    public MetaTileEntitySubstationEnergyHatch(ResourceLocation metaTileEntityId, int tier, int amperage, boolean isExportHatch) {
+    public MetaTileEntitySubstationEnergyHatch(ResourceLocation metaTileEntityId, int tier, int amperage,
+                                               boolean isExportHatch) {
         super(metaTileEntityId, tier, amperage, isExportHatch);
     }
 
@@ -31,7 +34,8 @@ public class MetaTileEntitySubstationEnergyHatch extends MetaTileEntityEnergyHat
     }
 
     @Override
-    protected void addDescriptorTooltip(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+    protected void addDescriptorTooltip(ItemStack stack, @Nullable World world, List<String> tooltip,
+                                        boolean advanced) {
         if (isExportHatch) {
             tooltip.add(I18n.format("gregtech.machine.substation_hatch.output.tooltip"));
         } else {

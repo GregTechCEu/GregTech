@@ -26,6 +26,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -38,10 +39,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 import static gregtech.api.GTValues.ULV;
@@ -73,7 +75,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         return tier == 0 ? 16 : 64;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -92,51 +94,58 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     public IBlockState getCasingState() {
-        return tier == 0
-                ? MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST)
-                : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSE_STURDY);
+        return tier == 0 ? MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST) :
+                MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSE_STURDY);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        return tier == 0
-                ? Textures.ROBUST_TUNGSTENSTEEL_CASING
-                : Textures.STURDY_HSSE_CASING;
+        return tier == 0 ? Textures.ROBUST_TUNGSTENSTEEL_CASING : Textures.STURDY_HSSE_CASING;
     }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
+        ProcessingArrayWorkable logic = (ProcessingArrayWorkable) recipeMapWorkable;
+
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
+                .addEnergyTierLine(logic.currentMachineStack == ItemStack.EMPTY ? -1 : logic.machineTier)
                 .addCustom(tl -> {
                     if (isStructureFormed()) {
-                        ProcessingArrayWorkable logic = (ProcessingArrayWorkable) recipeMapWorkable;
 
                         // Machine mode text
                         // Shared text components for both states
-                        ITextComponent maxMachinesText = TextComponentUtil.stringWithColor(TextFormatting.DARK_PURPLE, Integer.toString(getMachineLimit()));
-                        maxMachinesText = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.machine.machine_hatch.machines_max", maxMachinesText);
+                        ITextComponent maxMachinesText = TextComponentUtil.stringWithColor(TextFormatting.DARK_PURPLE,
+                                Integer.toString(getMachineLimit()));
+                        maxMachinesText = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                                "gregtech.machine.machine_hatch.machines_max", maxMachinesText);
 
                         if (logic.activeRecipeMap == null) {
                             // No machines in hatch
-                            ITextComponent noneText = TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.machine.machine_hatch.machines_none");
-                            ITextComponent bodyText = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.machine.machine_hatch.machines", noneText);
-                            ITextComponent hoverText1 = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.machine.machine_hatch.machines_none_hover");
+                            ITextComponent noneText = TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
+                                    "gregtech.machine.machine_hatch.machines_none");
+                            ITextComponent bodyText = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                                    "gregtech.machine.machine_hatch.machines", noneText);
+                            ITextComponent hoverText1 = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                                    "gregtech.machine.machine_hatch.machines_none_hover");
                             tl.add(TextComponentUtil.setHover(bodyText, hoverText1, maxMachinesText));
                         } else {
                             // Some amount of machines in hatch
                             String key = logic.getMachineStack().getTranslationKey();
-                            ITextComponent mapText = TextComponentUtil.translationWithColor(TextFormatting.DARK_PURPLE, key + ".name");
+                            ITextComponent mapText = TextComponentUtil.translationWithColor(TextFormatting.DARK_PURPLE,
+                                    key + ".name");
                             mapText = TextComponentUtil.translationWithColor(
                                     TextFormatting.DARK_PURPLE,
                                     "%sx %s",
                                     logic.getParallelLimit(), mapText);
-                            ITextComponent bodyText = TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.machine.machine_hatch.machines", mapText);
+                            ITextComponent bodyText = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                                    "gregtech.machine.machine_hatch.machines", mapText);
                             ITextComponent voltageName = new TextComponentString(GTValues.VNF[logic.machineTier]);
                             int amps = logic.getMachineStack().getCount();
-                            String energyFormatted = TextFormattingUtil.formatNumbers(GTValues.V[logic.machineTier] * amps);
+                            String energyFormatted = TextFormattingUtil
+                                    .formatNumbers(GTValues.V[logic.machineTier] * amps);
                             ITextComponent hoverText = TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
                                     "gregtech.machine.machine_hatch.machines_max_eut",
@@ -146,7 +155,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
                         // Hatch locked status
                         if (isActive()) {
-                            tl.add(TextComponentUtil.translationWithColor(TextFormatting.DARK_RED, "gregtech.machine.machine_hatch.locked"));
+                            tl.add(TextComponentUtil.translationWithColor(TextFormatting.DARK_RED,
+                                    "gregtech.machine.machine_hatch.locked"));
                         }
                     }
                 })
@@ -155,12 +165,10 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
-        return tier == 0
-                ? Textures.PROCESSING_ARRAY_OVERLAY
-                : Textures.ADVANCED_PROCESSING_ARRAY_OVERLAY;
+        return tier == 0 ? Textures.PROCESSING_ARRAY_OVERLAY : Textures.ADVANCED_PROCESSING_ARRAY_OVERLAY;
     }
 
     @Override
@@ -189,9 +197,12 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
-    public TraceabilityPredicate autoAbilities(boolean checkEnergyIn, boolean checkMaintenance, boolean checkItemIn, boolean checkItemOut, boolean checkFluidIn, boolean checkFluidOut, boolean checkMuffler) {
+    public TraceabilityPredicate autoAbilities(boolean checkEnergyIn, boolean checkMaintenance, boolean checkItemIn,
+                                               boolean checkItemOut, boolean checkFluidIn, boolean checkFluidOut,
+                                               boolean checkMuffler) {
         TraceabilityPredicate predicate = super.autoAbilities(checkMaintenance, checkMuffler)
-                .or(checkEnergyIn ? abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(4).setPreviewCount(1) : new TraceabilityPredicate());
+                .or(checkEnergyIn ? abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)
+                        .setMaxGlobalLimited(4).setPreviewCount(1) : new TraceabilityPredicate());
 
         predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setPreviewCount(1));
 
@@ -215,7 +226,6 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         ItemStack machineStack = ((ProcessingArrayWorkable) this.recipeMapWorkable).getMachineStack();
         MetaTileEntity mte = GTUtility.getMetaTileEntity(machineStack);
         return mte == null ? 0 : mte.getItemOutputLimit();
-
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
@@ -225,11 +235,11 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
         ItemStack currentMachineStack = ItemStack.EMPTY;
         MetaTileEntity mte = null;
-        //The Voltage Tier of the machines the PA is operating upon, from GTValues.V
+        // The Voltage Tier of the machines the PA is operating upon, from GTValues.V
         private int machineTier;
-        //The maximum Voltage of the machines the PA is operating upon
+        // The maximum Voltage of the machines the PA is operating upon
         private long machineVoltage;
-        //The Recipe Map of the machines the PA is operating upon
+        // The Recipe Map of the machines the PA is operating upon
         private RecipeMap<?> activeRecipeMap;
 
         public ProcessingArrayWorkable(RecipeMapMultiblockController tileEntity) {
@@ -241,7 +251,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             super.invalidate();
 
             // invalidate mte's cleanroom reference
-            if (mte != null && mte instanceof ICleanroomReceiver){
+            if (mte != null && mte instanceof ICleanroomReceiver) {
                 ((ICleanroomReceiver) mte).setCleanroom(null);
             }
 
@@ -262,12 +272,14 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
          * @return {@code true} if the provided recipeMap is valid for use
          */
         @Override
-        public boolean isRecipeMapValid(@Nonnull RecipeMap<?> recipeMap) {
-            if (ArrayUtils.contains(((IMachineHatchMultiblock) metaTileEntity).getBlacklist(), recipeMap.getUnlocalizedName())) {
+        public boolean isRecipeMapValid(@NotNull RecipeMap<?> recipeMap) {
+            if (ArrayUtils.contains(((IMachineHatchMultiblock) metaTileEntity).getBlacklist(),
+                    recipeMap.getUnlocalizedName())) {
                 return false;
             }
 
-            return GTUtility.isMachineValidForMachineHatch(currentMachineStack, ((IMachineHatchMultiblock) metaTileEntity).getBlacklist());
+            return GTUtility.isMachineValidForMachineHatch(currentMachineStack,
+                    ((IMachineHatchMultiblock) metaTileEntity).getBlacklist());
         }
 
         @Override
@@ -298,9 +310,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         public void findMachineStack() {
             RecipeMapMultiblockController controller = (RecipeMapMultiblockController) this.metaTileEntity;
 
-            //The Processing Array is limited to 1 Machine Interface per multiblock, and only has 1 slot
+            // The Processing Array is limited to 1 Machine Interface per multiblock, and only has 1 slot
             ItemStack machine = controller.getAbilities(MultiblockAbility.MACHINE_HATCH).get(0).getStackInSlot(0);
-
 
             mte = GTUtility.getMetaTileEntity(machine);
 
@@ -324,7 +335,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 }
             }
 
-            //Find the voltage tier of the machine.
+            // Find the voltage tier of the machine.
             this.machineTier = mte instanceof ITieredMetaTileEntity ? ((ITieredMetaTileEntity) mte).getTier() : 0;
 
             this.machineVoltage = GTValues.V[this.machineTier];
@@ -333,7 +344,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        public boolean checkRecipe(@Nonnull Recipe recipe) {
+        public boolean checkRecipe(@NotNull Recipe recipe) {
             if (mte == null) return false;
 
             AbstractRecipeLogic arl = mte.getRecipeLogic();
@@ -349,7 +360,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
         @Override
         public int getParallelLimit() {
-            return (currentMachineStack == null || currentMachineStack.isEmpty()) ? getMachineLimit() : Math.min(currentMachineStack.getCount(), getMachineLimit());
+            return (currentMachineStack == null || currentMachineStack.isEmpty()) ? getMachineLimit() :
+                    Math.min(currentMachineStack.getCount(), getMachineLimit());
         }
 
         @Override
@@ -358,13 +370,22 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
+        public long getMaxVoltage() {
+            // Allow the PA to use as much power as provided, since tier is gated by the machine anyway.
+            // UI text uses the machine stack's tier instead of the getMaxVoltage() tier as well.
+            return super.getMaximumOverclockVoltage();
+        }
+
+        @Override
         protected int getNumberOfOCs(int recipeEUt) {
             if (!isAllowOverclocking()) return 0;
 
-            int recipeTier = Math.max(0, GTUtility.getTierByVoltage(recipeEUt / Math.max(1, this.parallelRecipesPerformed)));
+            int recipeTier = Math.max(0,
+                    GTUtility.getTierByVoltage(recipeEUt / Math.max(1, this.parallelRecipesPerformed)));
             int maximumTier = Math.min(this.machineTier, GTUtility.getTierByVoltage(getMaxVoltage()));
 
-            // The maximum number of overclocks is determined by the difference between the tier the recipe is running at,
+            // The maximum number of overclocks is determined by the difference between the tier the recipe is running
+            // at,
             // and the maximum tier that the machine can overclock to.
             int numberOfOCs = maximumTier - recipeTier;
             if (recipeTier == ULV) numberOfOCs--; // no ULV overclocking

@@ -1,6 +1,7 @@
 package gregtech.api.damagesources;
 
 import gregtech.api.items.toolitem.IGTTool;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -8,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class DamageSources {
 

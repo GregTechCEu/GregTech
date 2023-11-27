@@ -6,6 +6,7 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.MCGuiUtil;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
@@ -32,7 +33,8 @@ public class TextFieldWidget extends Widget {
     private boolean enableBackground;
     private boolean isClient;
 
-    public TextFieldWidget(int xPosition, int yPosition, int width, int height, boolean enableBackground, Supplier<String> textSupplier, Consumer<String> textResponder) {
+    public TextFieldWidget(int xPosition, int yPosition, int width, int height, boolean enableBackground,
+                           Supplier<String> textSupplier, Consumer<String> textResponder) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         if (isClientSide()) {
             this.enableBackground = enableBackground;
@@ -40,7 +42,8 @@ public class TextFieldWidget extends Widget {
             if (enableBackground) {
                 this.textField = new GuiTextField(0, fontRenderer, xPosition, yPosition, width, height);
             } else {
-                this.textField = new GuiTextField(0, fontRenderer, xPosition + 1, yPosition + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, width - 2, height);
+                this.textField = new GuiTextField(0, fontRenderer, xPosition + 1,
+                        yPosition + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, width - 2, height);
             }
             this.textField.setCanLoseFocus(true);
             this.textField.setEnableBackgroundDrawing(enableBackground);
@@ -51,14 +54,16 @@ public class TextFieldWidget extends Widget {
         this.textResponder = textResponder;
     }
 
-    public TextFieldWidget(int xPosition, int yPosition, int width, int height, boolean enableBackground, Supplier<String> textSupplier, Consumer<String> textResponder, int maxStringLength) {
+    public TextFieldWidget(int xPosition, int yPosition, int width, int height, boolean enableBackground,
+                           Supplier<String> textSupplier, Consumer<String> textResponder, int maxStringLength) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         if (isClientSide()) {
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
             if (enableBackground) {
                 this.textField = new GuiTextField(0, fontRenderer, xPosition, yPosition, width, height);
             } else {
-                this.textField = new GuiTextField(0, fontRenderer, xPosition + 1, yPosition + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, width - 2, height);
+                this.textField = new GuiTextField(0, fontRenderer, xPosition + 1,
+                        yPosition + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, width - 2, height);
             }
             this.textField.setCanLoseFocus(true);
             this.textField.setEnableBackgroundDrawing(enableBackground);
@@ -70,12 +75,14 @@ public class TextFieldWidget extends Widget {
         this.textResponder = textResponder;
     }
 
-    public TextFieldWidget(int xPosition, int yPosition, int width, int height, IGuiTexture background, Supplier<String> textSupplier, Consumer<String> textResponder) {
+    public TextFieldWidget(int xPosition, int yPosition, int width, int height, IGuiTexture background,
+                           Supplier<String> textSupplier, Consumer<String> textResponder) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         if (isClientSide()) {
             this.enableBackground = false;
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-            this.textField = new GuiTextField(0, fontRenderer, xPosition + 1, yPosition + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, width - 2, height);
+            this.textField = new GuiTextField(0, fontRenderer, xPosition + 1,
+                    yPosition + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, width - 2, height);
             this.textField.setCanLoseFocus(true);
             this.textField.setEnableBackgroundDrawing(false);
             this.textField.setMaxStringLength(maxStringLength);
@@ -116,7 +123,6 @@ public class TextFieldWidget extends Widget {
         return this.currentString;
     }
 
-
     @Override
     protected void onPositionUpdate() {
         if (isClientSide() && textField != null) {
@@ -138,7 +144,8 @@ public class TextFieldWidget extends Widget {
             GuiTextField textField = this.textField;
             textField.width = enableBackground ? size.width : size.width - 2;
             textField.height = size.height;
-            textField.y = enableBackground ? position.y : position.y + (getSize().height - fontRenderer.FONT_HEIGHT) / 2 + 1;
+            textField.y = enableBackground ? position.y :
+                    position.y + (getSize().height - fontRenderer.FONT_HEIGHT) / 2 + 1;
 
         }
     }

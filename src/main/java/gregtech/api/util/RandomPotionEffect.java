@@ -34,5 +34,4 @@ public class RandomPotionEffect {
         result = 31 * result + chance;
         return result;
     }
-
 }

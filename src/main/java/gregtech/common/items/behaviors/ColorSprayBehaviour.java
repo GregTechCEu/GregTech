@@ -1,7 +1,5 @@
 package gregtech.common.items.behaviors;
 
-import appeng.api.util.AEColor;
-import appeng.tile.networking.TileCableBus;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -9,6 +7,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GradientUtil;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.BlockStainedGlass;
@@ -25,9 +24,12 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nullable;
+import appeng.api.util.AEColor;
+import appeng.tile.networking.TileCableBus;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.util.List;
 
@@ -48,7 +50,8 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
     }
 
     @Override
-    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+                                             EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         if (!player.canPlayerEdit(pos, facing, stack)) {
             return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
@@ -57,7 +60,8 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
             return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
         }
         useItemDurability(player, hand, stack, empty.copy());
-        world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL, SoundCategory.PLAYERS, 1.0f, 1.0f);
+        world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
+                SoundCategory.PLAYERS, 1.0f, 1.0f);
         return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 
@@ -104,7 +108,8 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
     }
 
     @SuppressWarnings("unchecked, rawtypes")
-    private static boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block, EnumFacing side) {
+    private static boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block,
+                                              EnumFacing side) {
         // MC special cases
         if (block == Blocks.STAINED_GLASS) {
             world.setBlockState(pos, Blocks.GLASS.getDefaultState());

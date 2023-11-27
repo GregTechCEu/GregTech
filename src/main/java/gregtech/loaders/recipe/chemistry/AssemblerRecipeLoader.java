@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -19,7 +20,6 @@ import static gregtech.common.items.MetaItems.*;
 public class AssemblerRecipeLoader {
 
     public static void init() {
-
         // Gearbox-like
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Bronze, 4)
@@ -73,7 +73,8 @@ public class AssemblerRecipeLoader {
                 .input(rotor, TungstenSteel, 2)
                 .input(pipeNormalFluid, TungstenSteel, 4)
                 .inputs(METAL_CASING.getItemVariant(TUNGSTENSTEEL_ROBUST))
-                .outputs(MULTIBLOCK_CASING.getItemVariant(EXTREME_ENGINE_INTAKE_CASING, ConfigHolder.recipes.casingsPerCraft))
+                .outputs(MULTIBLOCK_CASING.getItemVariant(EXTREME_ENGINE_INTAKE_CASING,
+                        ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).EUt(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()

@@ -5,6 +5,7 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class HardwareSlotWidget extends WidgetGroup {
+
     private final Hardware hardware;
     private final TerminalOSWidget os;
     private Runnable onSelected;
@@ -39,7 +41,8 @@ public class HardwareSlotWidget extends WidgetGroup {
                             NBTTagCompound tag = hardware.acceptItemStack(itemStack);
                             if (tag != null) {
                                 tag.setTag("item", itemStack.serializeNBT());
-                                os.hardwareProvider.getOrCreateHardwareCompound().setTag(hardware.getRegistryName(), tag);
+                                os.hardwareProvider.getOrCreateHardwareCompound().setTag(hardware.getRegistryName(),
+                                        tag);
                                 os.hardwareProvider.cleanCache(hardware.getRegistryName());
                             }
                         }).open();
@@ -54,22 +57,26 @@ public class HardwareSlotWidget extends WidgetGroup {
                     }
                 }
                 if (emptySlot) {
-                    TerminalDialogWidget.showConfirmDialog(os, "terminal.hardware.remove", "terminal.component.confirm", result -> {
-                        if (result) {
-                            NBTTagCompound tag = os.hardwareProvider.getOrCreateHardwareCompound().getCompoundTag(hardware.getRegistryName());
-                            if (!tag.isEmpty() && tag.hasKey("item")) {
-                                gui.entityPlayer.inventory.addItemStackToInventory(hardware.onHardwareRemoved(new ItemStack(tag.getCompoundTag("item"))));
-                            }
-                            os.hardwareProvider.getOrCreateHardwareCompound().removeTag(hardware.getRegistryName());
-                            os.hardwareProvider.cleanCache(hardware.getRegistryName());
-                        }
-                    }).open();
+                    TerminalDialogWidget
+                            .showConfirmDialog(os, "terminal.hardware.remove", "terminal.component.confirm", result -> {
+                                if (result) {
+                                    NBTTagCompound tag = os.hardwareProvider.getOrCreateHardwareCompound()
+                                            .getCompoundTag(hardware.getRegistryName());
+                                    if (!tag.isEmpty() && tag.hasKey("item")) {
+                                        gui.entityPlayer.inventory.addItemStackToInventory(
+                                                hardware.onHardwareRemoved(new ItemStack(tag.getCompoundTag("item"))));
+                                    }
+                                    os.hardwareProvider.getOrCreateHardwareCompound()
+                                            .removeTag(hardware.getRegistryName());
+                                    os.hardwareProvider.cleanCache(hardware.getRegistryName());
+                                }
+                            }).open();
                 } else {
-                    TerminalDialogWidget.showInfoDialog(os, "terminal.component.warning", "terminal.hardware.remove.full").open();
+                    TerminalDialogWidget
+                            .showInfoDialog(os, "terminal.component.warning", "terminal.hardware.remove.full").open();
                 }
             }
         }
-
     }
 
     @Override
@@ -93,13 +100,19 @@ public class HardwareSlotWidget extends WidgetGroup {
     public void drawInForeground(int mouseX, int mouseY) {
         if (hardware != null && isMouseOverElement(mouseX, mouseY)) {
             if (!hardware.hasHW()) {
-                drawHoveringText(ItemStack.EMPTY, Collections.singletonList(hardware.getLocalizedName()), 300, mouseX, mouseY);
+                drawHoveringText(ItemStack.EMPTY, Collections.singletonList(hardware.getLocalizedName()), 300, mouseX,
+                        mouseY);
             } else {
                 String info = hardware.addInformation();
                 if (info == null) {
-                    drawHoveringText(ItemStack.EMPTY, Arrays.asList(hardware.getLocalizedName(), I18n.format("terminal.hardware.tip.remove")), 300, mouseX, mouseY);
+                    drawHoveringText(ItemStack.EMPTY,
+                            Arrays.asList(hardware.getLocalizedName(), I18n.format("terminal.hardware.tip.remove")),
+                            300, mouseX, mouseY);
                 } else {
-                    drawHoveringText(ItemStack.EMPTY, Arrays.asList(String.format("%s (%s)", hardware.getLocalizedName(), info), I18n.format("terminal.hardware.tip.remove")), 300, mouseX, mouseY);
+                    drawHoveringText(ItemStack.EMPTY,
+                            Arrays.asList(String.format("%s (%s)", hardware.getLocalizedName(), info),
+                                    I18n.format("terminal.hardware.tip.remove")),
+                            300, mouseX, mouseY);
                 }
             }
         }

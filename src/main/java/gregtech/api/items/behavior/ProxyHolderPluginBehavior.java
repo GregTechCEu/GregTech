@@ -1,6 +1,7 @@
 package gregtech.api.items.behavior;
 
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class ProxyHolderPluginBehavior extends MonitorPluginBaseBehavior {
+
     protected IGregTechTileEntity holder;
     private BlockPos pos;
 

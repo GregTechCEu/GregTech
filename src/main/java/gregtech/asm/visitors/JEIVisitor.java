@@ -1,13 +1,15 @@
 package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 public class JEIVisitor extends MethodVisitor implements Opcodes {
 
     public static final String TARGET_CLASS_NAME = "mezz/jei/startup/ForgeModIdHelper";
-    public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME, "addModNameToIngredientTooltip", targetSignature());
+    public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME, "addModNameToIngredientTooltip",
+            targetSignature());
 
     private static final String FLUID_TOOLTIP_OWNER = "gregtech/asm/hooks/JEIHooks";
     private static final String FLUID_TOOLTIP_SIGNATURE = tooltipSignature();
@@ -20,19 +22,19 @@ public class JEIVisitor extends MethodVisitor implements Opcodes {
     // Need to call JEIHooks#addFluidTooltip(List<String>, Object)
     @Override
     public void visitCode() {
-
         mv.visitVarInsn(ALOAD, 1); // List<String> tooltip
         mv.visitVarInsn(ALOAD, 2); // T ingredient
 
         // statically call addFluidTooltip(List<String>, Object)
-        mv.visitMethodInsn(INVOKESTATIC, FLUID_TOOLTIP_OWNER, FLUID_TOOLTIP_METHOD_NAME, FLUID_TOOLTIP_SIGNATURE, false);
+        mv.visitMethodInsn(INVOKESTATIC, FLUID_TOOLTIP_OWNER, FLUID_TOOLTIP_METHOD_NAME, FLUID_TOOLTIP_SIGNATURE,
+                false);
 
         mv.visitCode();
     }
 
-    // public <E> List<String> addModNameToIngredientTooltip(List<String> tooltip, E ingredient, IIngredientHelper<E> ingredientHelper)
+    // public <E> List<String> addModNameToIngredientTooltip(List<String> tooltip, E ingredient, IIngredientHelper<E>
+    // ingredientHelper)
     private static String targetSignature() {
-
         return "(" +
                 "Ljava/util/List;" + // List<String>
                 "Ljava/lang/Object;" + // E
@@ -42,7 +44,6 @@ public class JEIVisitor extends MethodVisitor implements Opcodes {
 
     // public void addFluidTooltip(List<String> tooltip, Object ingredient)
     private static String tooltipSignature() {
-
         return "(" +
                 "Ljava/util/List;" + // List<String>
                 "Ljava/lang/Object;" + // Object

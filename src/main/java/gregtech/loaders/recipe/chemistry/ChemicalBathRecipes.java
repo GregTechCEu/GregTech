@@ -4,6 +4,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.StoneVariantBlock;
 import gregtech.common.blocks.StoneVariantBlock.StoneVariant;
 import gregtech.common.blocks.wood.BlockGregPlanks;
+
 import net.minecraft.init.Items;
 
 import static gregtech.api.GTValues.*;
@@ -14,7 +15,6 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 public class ChemicalBathRecipes {
 
     public static void init() {
-
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(dust, Wood)
                 .fluidInputs(Water.getFluid(100))
@@ -58,9 +58,11 @@ public class ChemicalBathRecipes {
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .inputs(MetaBlocks.STONE_BLOCKS.get(StoneVariant.SMOOTH).getItemVariant(StoneVariantBlock.StoneType.CONCRETE_LIGHT))
+                .inputs(MetaBlocks.STONE_BLOCKS.get(StoneVariant.SMOOTH)
+                        .getItemVariant(StoneVariantBlock.StoneType.CONCRETE_LIGHT))
                 .fluidInputs(Water.getFluid(100))
-                .outputs(MetaBlocks.STONE_BLOCKS.get(StoneVariant.SMOOTH).getItemVariant(StoneVariantBlock.StoneType.CONCRETE_DARK))
+                .outputs(MetaBlocks.STONE_BLOCKS.get(StoneVariant.SMOOTH)
+                        .getItemVariant(StoneVariantBlock.StoneType.CONCRETE_DARK))
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()

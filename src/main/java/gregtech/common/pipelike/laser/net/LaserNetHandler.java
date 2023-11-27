@@ -2,11 +2,12 @@ package gregtech.common.pipelike.laser.net;
 
 import gregtech.api.capability.ILaserContainer;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class LaserNetHandler implements ILaserContainer {
 
@@ -14,7 +15,7 @@ public class LaserNetHandler implements ILaserContainer {
     private final TileEntityLaserPipe pipe;
     private final EnumFacing facing;
 
-    public LaserNetHandler(LaserPipeNet net, @Nonnull TileEntityLaserPipe pipe, @Nullable EnumFacing facing) {
+    public LaserNetHandler(LaserPipeNet net, @NotNull TileEntityLaserPipe pipe, @Nullable EnumFacing facing) {
         this.net = net;
         this.pipe = pipe;
         this.facing = facing;

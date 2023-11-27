@@ -5,6 +5,7 @@ import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import gregtech.core.network.NetworkUtils;
+
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -47,8 +48,10 @@ public class PacketClipboardUIWidgetUpdate implements IPacket, IServerExecutor {
     @Override
     public void executeServer(NetHandlerPlayServer handler) {
         TileEntity te = NetworkUtils.getTileEntityServer(dimension, pos);
-        if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
-            ((MetaTileEntityClipboard) ((IGregTechTileEntity) te).getMetaTileEntity()).readUIAction(handler.player, id, updateData);
+        if (te instanceof IGregTechTileEntity &&
+                ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
+            ((MetaTileEntityClipboard) ((IGregTechTileEntity) te).getMetaTileEntity()).readUIAction(handler.player, id,
+                    updateData);
         }
     }
 }

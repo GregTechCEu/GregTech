@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.GTValues;
+
 import net.minecraft.util.ITickable;
 
 public abstract class TickableTileEntityBase extends NeighborCacheTileEntityBase implements ITickable {
@@ -31,7 +32,5 @@ public abstract class TickableTileEntityBase extends NeighborCacheTileEntityBase
         timer++;
     }
 
-    protected void onFirstTick() {
-    }
-
+    protected void onFirstTick() {}
 }

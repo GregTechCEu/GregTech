@@ -12,13 +12,14 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockController {
 
@@ -54,7 +55,7 @@ public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockContro
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.IMPLOSION_COMPRESSOR_OVERLAY;

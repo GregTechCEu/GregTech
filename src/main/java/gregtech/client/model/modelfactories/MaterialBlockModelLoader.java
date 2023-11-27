@@ -1,13 +1,11 @@
 package gregtech.client.model.modelfactories;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -20,6 +18,10 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.Map;
 
@@ -56,7 +58,8 @@ public class MaterialBlockModelLoader {
         }
     }
 
-    private static void loadModel(TextureStitchEvent.Pre event, ResourceLocation modelLocation, ModelResourceLocation modelId) {
+    private static void loadModel(TextureStitchEvent.Pre event, ResourceLocation modelLocation,
+                                  ModelResourceLocation modelId) {
         IModel model;
         try {
             model = ModelLoaderRegistry.getModel(modelLocation);
@@ -95,8 +98,10 @@ public class MaterialBlockModelLoader {
             this.iconType = iconType;
             this.iconSet = iconSet;
 
-            this.blockModelId = new ModelResourceLocation(GTUtility.gregtechId("material_" + iconType.name + "_" + iconSet.name), "normal");
-            this.itemModelId = new ModelResourceLocation(GTUtility.gregtechId("material_" + iconType.name + "_" + iconSet.name), "inventory");
+            this.blockModelId = new ModelResourceLocation(
+                    GTUtility.gregtechId("material_" + iconType.name + "_" + iconSet.name), "normal");
+            this.itemModelId = new ModelResourceLocation(
+                    GTUtility.gregtechId("material_" + iconType.name + "_" + iconSet.name), "inventory");
         }
 
         ResourceLocation getBlockModelLocation() {

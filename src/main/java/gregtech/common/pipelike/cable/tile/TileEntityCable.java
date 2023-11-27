@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.cable.tile;
 
-import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
@@ -18,6 +17,7 @@ import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.EnergyNetHandler;
 import gregtech.common.pipelike.cable.net.WorldENet;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -30,8 +30,10 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.vec.Cuboid6;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -40,7 +42,8 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.CABLE_TEMPERATURE;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONNECTIONS;
 
-public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties> implements IDataInfoProvider {
+public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties>
+                             implements IDataInfoProvider {
 
     private static final int meltTemp = 3000;
 
@@ -217,7 +220,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     @SideOnly(Side.CLIENT)
     public void createParticle() {
-        particle = new GTOverheatParticle(world, pos, meltTemp, getPipeBoxes(), getPipeType().insulationLevel >= 0);
+        particle = new GTOverheatParticle(this, meltTemp, getPipeBoxes(), getPipeType().insulationLevel >= 0);
         GTParticleManager.INSTANCE.addEffect(particle);
     }
 
@@ -263,7 +266,6 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         return super.getCapabilityInternal(capability, facing);
     }
 
-
     public void checkNetwork() {
         if (defaultHandler != null) {
             EnergyNet current = getEnergyNet();
@@ -282,7 +284,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         EnergyNet currentEnergyNet = this.currentEnergyNet.get();
         if (currentEnergyNet != null && currentEnergyNet.isValid() &&
                 currentEnergyNet.containsNode(getPos()))
-            return currentEnergyNet; //return current net if it is still valid
+            return currentEnergyNet; // return current net if it is still valid
         WorldENet worldENet = WorldENet.getWorldENet(getWorld());
         currentEnergyNet = worldENet.getNetFromPos(getPos());
         if (currentEnergyNet != null) {
@@ -326,30 +328,30 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         return pipeBoxes;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setInteger("Temp", temperature);
         return compound;
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound) {
+    public void readFromNBT(@NotNull NBTTagCompound compound) {
         super.readFromNBT(compound);
         temperature = compound.getInteger("Temp");
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
         list.add(new TextComponentTranslation("behavior.tricorder.eut_per_sec",
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getAverageVoltage())).setStyle(new Style().setColor(TextFormatting.RED))
-        ));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getAverageVoltage()))
+                        .setStyle(new Style().setColor(TextFormatting.RED))));
         list.add(new TextComponentTranslation("behavior.tricorder.amp_per_sec",
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getAverageAmperage())).setStyle(new Style().setColor(TextFormatting.RED))
-        ));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(this.getAverageAmperage()))
+                        .setStyle(new Style().setColor(TextFormatting.RED))));
         return list;
     }
 }

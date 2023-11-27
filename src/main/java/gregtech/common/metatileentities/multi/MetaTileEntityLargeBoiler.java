@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.BoilerRecipeLogic;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FluidTankList;
@@ -25,6 +22,7 @@ import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,10 +37,13 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -152,8 +153,10 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         if (isStructureFormed()) {
             int[] waterAmount = getWaterAmount();
             if (waterAmount[0] == 0) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.large_boiler.no_water"));
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.large_boiler.explosion_tooltip"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
+                        "gregtech.multiblock.large_boiler.no_water"));
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                        "gregtech.multiblock.large_boiler.explosion_tooltip"));
             }
         }
     }
@@ -202,14 +205,17 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     @Override
     public String[] getDescription() {
-        return new String[]{I18n.format("gregtech.multiblock.large_boiler.description")};
+        return new String[] { I18n.format("gregtech.multiblock.large_boiler.description") };
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.rate_tooltip", (int) (boilerType.steamPerTick() * 20 * boilerType.runtimeBoost(20) / 20.0)));
-        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.heat_time_tooltip", boilerType.getTicksToBoiling() / 20));
+        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.rate_tooltip",
+                (int) (boilerType.steamPerTick() * 20 * boilerType.runtimeBoost(20) / 20.0)));
+        tooltip.add(
+                I18n.format("gregtech.multiblock.large_boiler.heat_time_tooltip", boilerType.getTicksToBoiling() / 20));
         tooltip.add(I18n.format("gregtech.universal.tooltip.base_production_fluid", boilerType.steamPerTick()));
         tooltip.add(TooltipHelper.BLINKING_RED + I18n.format("gregtech.multiblock.large_boiler.explosion_tooltip"));
     }
@@ -217,11 +223,12 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive(), recipeLogic.isWorkingEnabled());
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive(),
+                recipeLogic.isWorkingEnabled());
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return boilerType.frontOverlay;
@@ -324,11 +331,13 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public void addBarHoverText(List<ITextComponent> hoverList, int index) {
         if (!isStructureFormed()) {
-            hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY, "gregtech.multiblock.invalid_structure"));
+            hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                    "gregtech.multiblock.invalid_structure"));
         } else {
             int[] waterAmount = getWaterAmount();
             if (waterAmount[0] == 0) {
-                hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW, "gregtech.multiblock.large_boiler.no_water"));
+                hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
+                        "gregtech.multiblock.large_boiler.no_water"));
             } else {
                 ITextComponent waterInfo = TextComponentUtil.translationWithColor(
                         TextFormatting.BLUE,
@@ -347,7 +356,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
      * If there is no water in the boiler (or the structure isn't formed, both of these values will be zero.
      */
     private int[] getWaterAmount() {
-        if (!isStructureFormed()) return new int[]{0, 0};
+        if (!isStructureFormed()) return new int[] { 0, 0 };
         List<IFluidTank> tanks = getAbilities(MultiblockAbility.IMPORT_FLUIDS);
         int filled = 0, capacity = 0;
         for (IFluidTank tank : tanks) {
@@ -357,6 +366,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 capacity += tank.getCapacity();
             }
         }
-        return new int[]{filled, capacity};
+        return new int[] { filled, capacity };
     }
 }

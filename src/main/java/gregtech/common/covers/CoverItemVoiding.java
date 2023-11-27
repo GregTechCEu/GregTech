@@ -1,10 +1,5 @@
 package gregtech.common.covers;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
@@ -14,6 +9,7 @@ import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
@@ -24,9 +20,13 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 
 public class CoverItemVoiding extends CoverConveyor {
 
@@ -46,7 +46,8 @@ public class CoverItemVoiding extends CoverConveyor {
     }
 
     protected void doTransferItems() {
-        IItemHandler myItemHandler = getCoverableView().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getAttachedSide());
+        IItemHandler myItemHandler = getCoverableView().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                getAttachedSide());
         if (myItemHandler == null) {
             return;
         }
@@ -77,13 +78,14 @@ public class CoverItemVoiding extends CoverConveyor {
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
         this.itemFilterContainer.initUI(20, primaryGroup::addWidget);
 
-        primaryGroup.addWidget(new CycleButtonWidget(10, 92 + 23, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
-                "cover.voiding.label.disabled", "cover.voiding.label.enabled")
-                .setTooltipHoverString("cover.voiding.tooltip"));
+        primaryGroup
+                .addWidget(new CycleButtonWidget(10, 92 + 23, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
+                        "cover.voiding.label.disabled", "cover.voiding.label.enabled")
+                                .setTooltipHoverString("cover.voiding.tooltip"));
 
         primaryGroup.addWidget(new CycleButtonWidget(10, 112 + 23, 116, 18,
                 ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+                        .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 125 + 82 + 16 + 24)
                 .widget(primaryGroup)
@@ -92,12 +94,14 @@ public class CoverItemVoiding extends CoverConveyor {
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
+    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
+                            Cuboid6 plateBox, BlockRenderLayer layer) {
         Textures.ITEM_VOIDING.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
     @Override
-    public @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
+                                                       @NotNull CuboidRayTraceResult hitResult) {
         this.isWorkingAllowed = !this.isWorkingAllowed;
         if (!playerIn.world.isRemote) {
             playerIn.sendStatusMessage(new TextComponentTranslation(isWorkingEnabled() ?
@@ -118,27 +122,28 @@ public class CoverItemVoiding extends CoverConveyor {
     }
 
     class NullItemHandler implements IItemHandler {
+
         @Override
         public int getSlots() {
             return 9;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack getStackInSlot(int slot) {
             return ItemStack.EMPTY;
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             if (!itemFilterContainer.testItemStack(stack)) {
                 return stack;
             }
             return ItemStack.EMPTY;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             return ItemStack.EMPTY;

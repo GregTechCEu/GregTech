@@ -3,13 +3,14 @@ package gregtech.common.terminal.app.hardwaremanager;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.*;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.client.shader.Shaders;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -17,7 +18,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HardwareManagerApp extends AbstractApplication {
-    private static final TextureArea CIRCUIT_LINE = TextureArea.fullImage("textures/gui/terminal/hardware_manager/circuit.png");
+
+    private static final TextureArea CIRCUIT_LINE = TextureArea
+            .fullImage("textures/gui/terminal/hardware_manager/circuit.png");
     @SideOnly(Side.CLIENT)
     private ShaderTexture circuit;
     private HardwareSlotWidget selected;
@@ -46,13 +49,17 @@ public class HardwareManagerApp extends AbstractApplication {
                 apps.clearAllWidgets();
                 AtomicInteger index = new AtomicInteger(0);
                 for (AbstractApplication installed : getOs().installedApps) {
-                    TerminalRegistry.getAppHardwareDemand(installed.getRegistryName(), getOs().tabletNBT.getCompoundTag(installed.getRegistryName()).getInteger("_tier")).stream()
+                    TerminalRegistry
+                            .getAppHardwareDemand(installed.getRegistryName(),
+                                    getOs().tabletNBT.getCompoundTag(installed.getRegistryName()).getInteger("_tier"))
+                            .stream()
                             .filter(hardware::isHardwareAdequate).findFirst()
                             .ifPresent(X -> {
-                                apps.addWidget(new RectButtonWidget(162 + (index.get() % 4) * 25, 122 + (index.get() / 4) * 30, 20, 20, 2)
-                                        .setIcon(installed.getIcon())
-                                        .setHoverText(installed.getUnlocalizedName())
-                                        .setColors(0, TerminalTheme.COLOR_7.getColor(), 0));
+                                apps.addWidget(new RectButtonWidget(162 + (index.get() % 4) * 25,
+                                        122 + (index.get() / 4) * 30, 20, 20, 2)
+                                                .setIcon(installed.getIcon())
+                                                .setHoverText(installed.getUnlocalizedName())
+                                                .setColors(0, TerminalTheme.COLOR_7.getColor(), 0));
                                 index.getAndIncrement();
                             });
                 }

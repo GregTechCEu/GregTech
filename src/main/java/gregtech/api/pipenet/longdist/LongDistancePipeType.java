@@ -2,11 +2,13 @@ package gregtech.api.pipenet.longdist;
 
 import gregtech.common.pipelike.fluidpipe.longdistance.LDFluidPipeType;
 import gregtech.common.pipelike.itempipe.longdistance.LDItemPipeType;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -59,7 +61,7 @@ public abstract class LongDistancePipeType {
         return endpoint1 != endpoint2 && endpoint1.pos().getDistance(p.getX(), p.getY(), p.getZ()) >= getMinLength();
     }
 
-    @Nonnull
+    @NotNull
     public LongDistanceNetwork createNetwork(LongDistanceNetwork.WorldData worldData) {
         return new LongDistanceNetwork(this, worldData);
     }

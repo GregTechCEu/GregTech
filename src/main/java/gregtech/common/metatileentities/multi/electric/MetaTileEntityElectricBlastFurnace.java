@@ -29,6 +29,7 @@ import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
@@ -44,8 +45,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -69,6 +71,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                 .addCustom(tl -> {
                     // Coil heat capacity line
                     if (isStructureFormed()) {
@@ -96,8 +99,9 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         } else {
             this.blastFurnaceTemperature = CoilType.CUPRONICKEL.getCoilTemperature();
         }
-        //the subtracted tier gives the starting level (exclusive) of the +100K heat bonus
-        this.blastFurnaceTemperature += 100 * Math.max(0, GTUtility.getFloorTierByVoltage(getEnergyContainer().getInputVoltage()) - GTValues.MV);
+        // the subtracted tier gives the starting level (exclusive) of the +100K heat bonus
+        this.blastFurnaceTemperature += 100 *
+                Math.max(0, GTUtility.getFloorTierByVoltage(getEnergyContainer().getInputVoltage()) - GTValues.MV);
     }
 
     @Override
@@ -107,7 +111,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     }
 
     @Override
-    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+    public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
         return this.blastFurnaceTemperature >= recipe.getProperty(TemperatureProperty.getInstance(), 0);
     }
 
@@ -137,7 +141,8 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.electric_blast_furnace.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.electric_blast_furnace.tooltip.2"));
@@ -150,7 +155,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.BLAST_FURNACE_OVERLAY;
@@ -187,19 +192,21 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.WEST)
                 .where('D', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.LV], EnumFacing.EAST)
                 .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP)
-                .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF), EnumFacing.NORTH);
+                .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
+                        MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF), EnumFacing.NORTH);
         GregTechAPI.HEATING_COILS.entrySet().stream()
                 .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
                 .forEach(entry -> shapeInfo.add(builder.where('C', entry.getKey()).build()));
         return shapeInfo;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = super.getDataInfo();
         list.add(new TextComponentTranslation("gregtech.multiblock.blast_furnace.max_temperature",
-                new TextComponentTranslation(TextFormattingUtil.formatNumbers(blastFurnaceTemperature) + "K").setStyle(new Style().setColor(TextFormatting.RED))));
+                new TextComponentTranslation(TextFormattingUtil.formatNumbers(blastFurnaceTemperature) + "K")
+                        .setStyle(new Style().setColor(TextFormatting.RED))));
         return list;
     }
 }

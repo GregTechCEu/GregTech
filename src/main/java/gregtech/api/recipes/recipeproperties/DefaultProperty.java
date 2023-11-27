@@ -13,5 +13,4 @@ public class DefaultProperty<T> extends RecipeProperty<T> {
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe." + getKey(),
                 castValue(value)), x, y, color);
     }
-
 }

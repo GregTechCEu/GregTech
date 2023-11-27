@@ -5,8 +5,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagLongArray;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 /**
@@ -107,7 +108,8 @@ public interface NBTMatcher {
                     return tag.getString(condition.nbtKey).equals(condition.value);
                 case LIST:
                     if (condition instanceof ListNBTCondition) {
-                        return tag.getTagList(condition.nbtKey, ((ListNBTCondition) condition).listTagType.typeId).tagList.equals(condition.value);
+                        return tag.getTagList(condition.nbtKey,
+                                ((ListNBTCondition) condition).listTagType.typeId).tagList.equals(condition.value);
                     } else {
                         return false;
                     }
@@ -127,8 +129,9 @@ public interface NBTMatcher {
      * If NBTTagCompound is found, evaluates recursively.
      */
     NBTMatcher RECURSIVE_EQUAL_TO = new NBTMatcher() {
+
         @Override
-        public boolean evaluate(@Nullable NBTTagCompound tag, @Nullable NBTCondition condition)  {
+        public boolean evaluate(@Nullable NBTTagCompound tag, @Nullable NBTCondition condition) {
             if (condition == null || condition.tagType == null) {
                 return false;
             }
@@ -145,7 +148,8 @@ public interface NBTMatcher {
                         return tag.getString(condition.nbtKey).equals(condition.value);
                     case LIST:
                         if (condition instanceof ListNBTCondition) {
-                            return tag.getTagList(condition.nbtKey, ((ListNBTCondition) condition).listTagType.typeId).tagList.equals(condition.value);
+                            return tag.getTagList(condition.nbtKey,
+                                    ((ListNBTCondition) condition).listTagType.typeId).tagList.equals(condition.value);
                         } else {
                             return false;
                         }
@@ -184,7 +188,8 @@ public interface NBTMatcher {
                 return tag.getString(condition.nbtKey).isEmpty();
             case LIST:
                 if (condition instanceof ListNBTCondition) {
-                    return tag.getTagList(condition.nbtKey, ((ListNBTCondition) condition).listTagType.typeId).isEmpty();
+                    return tag.getTagList(condition.nbtKey, ((ListNBTCondition) condition).listTagType.typeId)
+                            .isEmpty();
                 } else {
                     return false;
                 }
@@ -211,12 +216,11 @@ public interface NBTMatcher {
 
     boolean evaluate(@Nullable NBTTagCompound nbtTagCompound, @Nullable NBTCondition nbtCondition);
 
-    default boolean evaluate(@Nonnull ItemStack stack, @Nullable NBTCondition nbtCondition) {
+    default boolean evaluate(@NotNull ItemStack stack, @Nullable NBTCondition nbtCondition) {
         return evaluate(stack.getTagCompound(), nbtCondition);
     }
 
-    default boolean evaluate(@Nonnull FluidStack stack, @Nullable NBTCondition nbtCondition) {
+    default boolean evaluate(@NotNull FluidStack stack, @Nullable NBTCondition nbtCondition) {
         return evaluate(stack.tag, nbtCondition);
     }
-
 }

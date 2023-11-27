@@ -16,7 +16,6 @@ import static gregtech.common.metatileentities.MetaTileEntities.FUSION_REACTOR;
 public class AssemblyLineLoader {
 
     public static void init() {
-
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputs(FUSION_CASING.getItemVariant(SUPERCONDUCTOR_COIL))
                 .input(circuit, Tier.ZPM, 4)

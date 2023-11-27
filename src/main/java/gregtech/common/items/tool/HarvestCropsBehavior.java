@@ -1,10 +1,10 @@
 package gregtech.common.items.tool;
 
-import com.google.common.collect.ImmutableSet;
 import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.state.IBlockState;
@@ -21,8 +21,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.collect.ImmutableSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.Set;
 
@@ -32,11 +34,12 @@ public class HarvestCropsBehavior implements IToolBehavior {
 
     protected HarvestCropsBehavior() {/**/}
 
-    @Nonnull
+    @NotNull
     @Override
-    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
-
-        if(world.isRemote) {
+    public EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                      @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY,
+                                      float hitZ) {
+        if (world.isRemote) {
             return EnumActionResult.PASS;
         }
         ItemStack stack = player.getHeldItem(hand);
@@ -45,7 +48,7 @@ public class HarvestCropsBehavior implements IToolBehavior {
 
         Set<BlockPos> blocks;
 
-        if(aoeDefinition == AoESymmetrical.none()) {
+        if (aoeDefinition == AoESymmetrical.none()) {
             blocks = ImmutableSet.of(pos);
         } else {
             RayTraceResult rayTraceResult = ToolHelper.getPlayerDefaultRaytrace(player);
@@ -54,15 +57,16 @@ public class HarvestCropsBehavior implements IToolBehavior {
             if (rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK) return EnumActionResult.PASS;
             if (rayTraceResult.sideHit == null) return EnumActionResult.PASS;
 
-            blocks = ToolHelper.iterateAoE(stack, aoeDefinition, player.world, player, rayTraceResult, HarvestCropsBehavior::isBlockCrops);
-            if(isBlockCrops(stack, world, player, rayTraceResult.getBlockPos(), null))  {
+            blocks = ToolHelper.iterateAoE(stack, aoeDefinition, player.world, player, rayTraceResult,
+                    HarvestCropsBehavior::isBlockCrops);
+            if (isBlockCrops(stack, world, player, rayTraceResult.getBlockPos(), null)) {
                 blocks.add(rayTraceResult.getBlockPos());
             }
         }
 
         boolean harvested = false;
         for (BlockPos blockPos : blocks) {
-            if(harvestBlockRoutine(stack, blockPos, player)) {
+            if (harvestBlockRoutine(stack, blockPos, player)) {
                 harvested = true;
             }
         }
@@ -70,7 +74,8 @@ public class HarvestCropsBehavior implements IToolBehavior {
         return harvested ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
     }
 
-    private static boolean isBlockCrops(ItemStack stack, World world, EntityPlayer player, BlockPos pos, @Nullable BlockPos hitBlockPos) {
+    private static boolean isBlockCrops(ItemStack stack, World world, EntityPlayer player, BlockPos pos,
+                                        @Nullable BlockPos hitBlockPos) {
         if (world.isAirBlock(pos.up())) {
             Block block = world.getBlockState(pos).getBlock();
             return block instanceof BlockCrops;
@@ -103,14 +108,16 @@ public class HarvestCropsBehavior implements IToolBehavior {
             double offX = (GTValues.RNG.nextFloat() * f) + (1.0F - f) * 0.5D;
             double offY = (GTValues.RNG.nextFloat() * f) + (1.0F - f) * 0.5D;
             double offZ = (GTValues.RNG.nextFloat() * f) + (1.0F - f) * 0.5D;
-            EntityItem entityItem = new EntityItem(world, pos.getX() + offX, pos.getY() + offY, pos.getZ() + offZ, stack);
+            EntityItem entityItem = new EntityItem(world, pos.getX() + offX, pos.getY() + offY, pos.getZ() + offZ,
+                    stack);
             entityItem.setDefaultPickupDelay();
             world.spawnEntity(entityItem);
         }
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         tooltip.add(I18n.format("item.gt.tool.behavior.crop_harvesting"));
     }
 }

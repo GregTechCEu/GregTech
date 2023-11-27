@@ -5,7 +5,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import static net.minecraftforge.fluids.capability.templates.EmptyFluidHandler.EMPTY_TANK_PROPERTIES_ARRAY;
 
@@ -19,7 +19,7 @@ public class VoidFluidHandlerItemStack extends FluidHandlerItemStack {
      *
      * @param container The container itemStack.
      */
-    public VoidFluidHandlerItemStack(@Nonnull ItemStack container) {
+    public VoidFluidHandlerItemStack(@NotNull ItemStack container) {
         this(container, Integer.MAX_VALUE);
     }
 
@@ -29,7 +29,7 @@ public class VoidFluidHandlerItemStack extends FluidHandlerItemStack {
      * @param container The container itemStack.
      * @param capacity  max amount to void in each operation
      */
-    public VoidFluidHandlerItemStack(@Nonnull ItemStack container, final int capacity) {
+    public VoidFluidHandlerItemStack(@NotNull ItemStack container, final int capacity) {
         super(container, capacity);
     }
 

@@ -4,7 +4,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockRenderLayer;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class BuiltInRenderBlock extends BlockCustomParticle {
 
@@ -12,7 +12,7 @@ public abstract class BuiltInRenderBlock extends BlockCustomParticle {
         super(materialIn);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
@@ -20,14 +20,13 @@ public abstract class BuiltInRenderBlock extends BlockCustomParticle {
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean isOpaqueCube(@Nonnull IBlockState state) {
+    public boolean isOpaqueCube(@NotNull IBlockState state) {
         return false;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public boolean isFullCube(@Nonnull IBlockState state) {
+    public boolean isFullCube(@NotNull IBlockState state) {
         return false;
     }
-
 }

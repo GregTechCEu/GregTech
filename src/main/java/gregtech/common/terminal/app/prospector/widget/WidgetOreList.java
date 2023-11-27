@@ -1,7 +1,5 @@
 package gregtech.common.terminal.app.prospector.widget;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -12,6 +10,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.Position;
 import gregtech.common.terminal.app.prospector.ProspectorMode;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -21,10 +20,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.ItemStackHandler;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import java.util.*;
 import java.util.function.Consumer;
 
 public class WidgetOreList extends DraggableScrollableWidgetGroup {
+
     protected WidgetGroup selected;
     protected final BiMap<WidgetGroup, String> widgetMap;
     protected Consumer<String> onSelected = null;
@@ -75,7 +78,8 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
         itemStackHandler.insertItem(0, itemStack, false);
         WidgetGroup widgetGroup = new WidgetGroup(0, 0, getSize().width - 5, 18);
         widgetGroup.addWidget(new SlotWidget(itemStackHandler, 0, 0, 0, false, false));
-        widgetGroup.addWidget(new LabelWidget(20, 5, itemStack.getDisplayName(), materialStack==null? orePrefix.hashCode():materialStack.material.getMaterialRGB() | 0XFF000000));
+        widgetGroup.addWidget(new LabelWidget(20, 5, itemStack.getDisplayName(),
+                materialStack == null ? orePrefix.hashCode() : materialStack.material.getMaterialRGB() | 0XFF000000));
         addOrePrefix(orePrefix, widgetGroup);
     }
 
@@ -107,7 +111,8 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
                 .setClient()
                 .setHideTooltip(true)
                 .setContainerClicking(false, false));
-        widgetGroup.addWidget(new LabelWidget(20, 5, fluidStack.getLocalizedName(), getFluidColor(fluidStack.getFluid())));
+        widgetGroup
+                .addWidget(new LabelWidget(20, 5, fluidStack.getLocalizedName(), getFluidColor(fluidStack.getFluid())));
         addOrePrefix(orePrefix, widgetGroup);
     }
 
@@ -131,7 +136,8 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
             if (widget.isVisible()) {
                 widget.drawInBackground(mouseX, mouseY, partialTicks, context);
 
-                GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
+                GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(),
+                        1.0F);
             }
         }
         return true;
@@ -142,8 +148,8 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
         draggedWidget = null;
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible() && widget instanceof WidgetGroup) {
-                if(widget.isMouseOverElement(mouseX, mouseY)) {
+            if (widget.isVisible() && widget instanceof WidgetGroup) {
+                if (widget.isMouseOverElement(mouseX, mouseY)) {
                     if (isMouseOverElement(mouseX, mouseY) && this.selected != widget) {
                         this.setSelected(widgetMap.get(widget));
                     }
@@ -162,10 +168,10 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
             widgets.forEach(widget -> {
                 if (widget instanceof WidgetGroup) {
                     Widget widget1 = ((WidgetGroup) widget).getContainedWidgets(true).get(0);
-                    if (widget1 instanceof SlotWidget){
+                    if (widget1 instanceof SlotWidget) {
                         SlotWidget slotWidget = (SlotWidget) widget1;
                         List<ItemStack> list = OreDictUnifier.getAllWithOreDictionaryName(widgetMap.get(widget));
-                        if (list.size() > 0 ) {
+                        if (list.size() > 0) {
                             slotWidget.getHandle().decrStackSize(64);
                             slotWidget.getHandle().putStack(list.get(Math.floorMod(tickCounter / 20, list.size())));
                         }
@@ -185,7 +191,5 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
     }
 
     @Override
-    protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
-
-    }
+    protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {}
 }

@@ -1,13 +1,15 @@
 package gregtech.common.gui.widget.appeng.slot;
 
-import appeng.api.storage.data.IAEItemStack;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.gui.widget.appeng.AEListGridWidget;
+
 import net.minecraft.item.ItemStack;
+
+import appeng.api.storage.data.IAEItemStack;
 
 /**
  * @Author GlodBlock
@@ -55,5 +57,4 @@ public class AEItemDisplayWidget extends Widget {
             }
         }
     }
-
 }

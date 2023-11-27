@@ -1,19 +1,19 @@
 package gregtech.integration.jei.recipe;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+
+import net.minecraft.item.ItemStack;
+
+import com.google.common.collect.ImmutableList;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.item.ItemStack;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@ParametersAreNonnullByDefault
 public class IntCircuitRecipeWrapper implements IRecipeWrapper {
 
     public final boolean input;
@@ -25,8 +25,7 @@ public class IntCircuitRecipeWrapper implements IRecipeWrapper {
     public static Collection<IntCircuitRecipeWrapper> create() {
         return ImmutableList.of(
                 new IntCircuitRecipeWrapper(true),
-                new IntCircuitRecipeWrapper(false)
-        );
+                new IntCircuitRecipeWrapper(false));
     }
 
     @Override

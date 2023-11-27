@@ -3,6 +3,7 @@ package gregtech.api.gui.widgets;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -57,5 +58,4 @@ public class DynamicLabelWidget extends Widget {
             fontRenderer.drawString(split[i], position.x, position.y + (i * (fontRenderer.FONT_HEIGHT + 2)), color);
         }
     }
-
 }

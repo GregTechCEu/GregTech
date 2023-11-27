@@ -1,6 +1,7 @@
 package gregtech.api.recipes.chance.output;
 
 import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
+
 import org.jetbrains.annotations.NotNull;
 
 /**

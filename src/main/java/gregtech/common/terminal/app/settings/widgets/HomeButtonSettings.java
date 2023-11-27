@@ -13,7 +13,9 @@ import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.resources.I18n;
+
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -22,19 +24,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HomeButtonSettings extends AbstractWidgetGroup {
+
     final TerminalOSWidget os;
 
     public HomeButtonSettings(TerminalOSWidget os) {
         super(Position.ORIGIN, new Size(323, 212));
         this.os = os;
-        List<String> candidates = Arrays.stream(SystemCall.values()).map(SystemCall::getTranslateKey).collect(Collectors.toList());
+        List<String> candidates = Arrays.stream(SystemCall.values()).map(SystemCall::getTranslateKey)
+                .collect(Collectors.toList());
         candidates.add(0, "terminal.system_call.null");
         TerminalHomeButtonWidget home = this.os.home;
         this.addWidget(new LabelWidget(10, 15, "terminal.settings.home.double", -1).setYCentered(true));
         this.addWidget(new LabelWidget(50, 15, "+Ctrl", -1).setYCentered(true));
         this.addWidget(new LabelWidget(85, 15, "+Shift", -1).setYCentered(true));
-        this.addWidget(new LabelWidget(170, 15, "terminal.settings.home.action", -1).setXCentered(true).setYCentered(true));
-        this.addWidget(new LabelWidget(270, 15, "terminal.settings.home.args", -1).setXCentered(true).setYCentered(true));
+        this.addWidget(
+                new LabelWidget(170, 15, "terminal.settings.home.action", -1).setXCentered(true).setYCentered(true));
+        this.addWidget(
+                new LabelWidget(270, 15, "terminal.settings.home.args", -1).setXCentered(true).setYCentered(true));
 
         for (int shift = 0; shift < 2; shift++) {
             for (int ctrl = 0; ctrl < 2; ctrl++) {
@@ -51,15 +57,16 @@ public class HomeButtonSettings extends AbstractWidgetGroup {
                     if (shift == 1) {
                         this.addWidget(new ImageWidget(90, y + 5, 10, 10, GuiTextures.ICON_VISIBLE));
                     }
-                    TextFieldWidget textFieldWidget = new TextFieldWidget(230, y, 80, 20, TerminalTheme.COLOR_B_3, null, null)
-                            .setMaxStringLength(Integer.MAX_VALUE)
-                            .setTextResponder(arg -> {
-                                if (arg != null && home.getActions()[i] != null) {
-                                    home.getActions()[i].setValue(arg);
-                                }
-                                home.saveConfig();
-                            }, true)
-                            .setValidator(s -> true);
+                    TextFieldWidget textFieldWidget = new TextFieldWidget(230, y, 80, 20, TerminalTheme.COLOR_B_3, null,
+                            null)
+                                    .setMaxStringLength(Integer.MAX_VALUE)
+                                    .setTextResponder(arg -> {
+                                        if (arg != null && home.getActions()[i] != null) {
+                                            home.getActions()[i].setValue(arg);
+                                        }
+                                        home.saveConfig();
+                                    }, true)
+                                    .setValidator(s -> true);
                     if (pair != null && pair.getValue() != null) {
                         textFieldWidget.setCurrentString(pair.getValue());
                     } else {
@@ -74,32 +81,37 @@ public class HomeButtonSettings extends AbstractWidgetGroup {
                                 }
                                 return "terminal.system_call.null";
                             }, true)
-                            .setIsUp(i > 3)
-                            .setHoverText(I18n.format(doubleClick == 1 ? "terminal.settings.home.double_click" : "terminal.settings.home.click") + (ctrl == 1 ? "+Ctrl" : "") + (shift == 1 ? "+Shift" : ""))
-                            .setOnChanged(selected -> {
-                                SystemCall action = SystemCall.getFromName(selected);
-                                if (action != null) {
-                                    if (home.getActions()[i] == null) {
-                                        home.getActions()[i] = new MutablePair<>(action, null);
-                                    } else {
-                                        home.getActions()[i] = new MutablePair<>(action, home.getActions()[i].getValue());
-                                    }
-                                } else {
-                                    home.getActions()[i] = null;
-                                }
-                                home.saveConfig();
-                            })
-                            .setOnShowChange(isShow -> {
-                                if (isShow) {
-                                    for (Widget widget : widgets) {
-                                        if (widget instanceof SelectorWidget) {
-                                            ((SelectorWidget) widget).hide();
+                                    .setIsUp(i > 3)
+                                    .setHoverText(I18n
+                                            .format(doubleClick == 1 ? "terminal.settings.home.double_click" :
+                                                    "terminal.settings.home.click") +
+                                            (ctrl == 1 ? "+Ctrl" : "") + (shift == 1 ? "+Shift" : ""))
+                                    .setOnChanged(selected -> {
+                                        SystemCall action = SystemCall.getFromName(selected);
+                                        if (action != null) {
+                                            if (home.getActions()[i] == null) {
+                                                home.getActions()[i] = new MutablePair<>(action, null);
+                                            } else {
+                                                home.getActions()[i] = new MutablePair<>(action,
+                                                        home.getActions()[i].getValue());
+                                            }
+                                        } else {
+                                            home.getActions()[i] = null;
                                         }
-                                    }
-                                }
-                            })
-                            .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(), TerminalTheme.COLOR_B_2.getColor())
-                            .setBackground(TerminalTheme.COLOR_6));
+                                        home.saveConfig();
+                                    })
+                                    .setOnShowChange(isShow -> {
+                                        if (isShow) {
+                                            for (Widget widget : widgets) {
+                                                if (widget instanceof SelectorWidget) {
+                                                    ((SelectorWidget) widget).hide();
+                                                }
+                                            }
+                                        }
+                                    })
+                                    .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(),
+                                            TerminalTheme.COLOR_B_2.getColor())
+                                    .setBackground(TerminalTheme.COLOR_6));
 
                     this.addWidget(textFieldWidget);
                 }

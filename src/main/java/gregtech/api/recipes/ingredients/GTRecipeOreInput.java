@@ -3,10 +3,12 @@ package gregtech.api.recipes.ingredients;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 public class GTRecipeOreInput extends GTRecipeInput {
@@ -86,8 +88,9 @@ public class GTRecipeOreInput extends GTRecipeInput {
         return copy;
     }
 
-    //The items returned here are not updated after its first call, so they are not suitable for use while recipes are being processed and
-    //the OreDicts being modified.
+    // The items returned here are not updated after its first call, so they are not suitable for use while recipes are
+    // being processed and
+    // the OreDicts being modified.
     @Override
     public ItemStack[] getInputStacks() {
         if (this.inputStacks == null) {
@@ -157,7 +160,7 @@ public class GTRecipeOreInput extends GTRecipeInput {
 
     @Override
     public String toString() {
-        //noinspection StringConcatenationMissingWhitespace
+        // noinspection StringConcatenationMissingWhitespace
         return amount + "x" + OreDictionary.getOreName(ore);
     }
 }

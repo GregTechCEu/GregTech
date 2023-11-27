@@ -4,12 +4,14 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.common.pipelike.optical.OpticalPipeProperties;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 
 public class OpticalPipeNet extends PipeNet<OpticalPipeProperties> {
@@ -46,20 +48,18 @@ public class OpticalPipeNet extends PipeNet<OpticalPipeProperties> {
     }
 
     @Override
-    protected void transferNodeData(Map<BlockPos, Node<OpticalPipeProperties>> transferredNodes, PipeNet<OpticalPipeProperties> parentNet) {
+    protected void transferNodeData(Map<BlockPos, Node<OpticalPipeProperties>> transferredNodes,
+                                    PipeNet<OpticalPipeProperties> parentNet) {
         super.transferNodeData(transferredNodes, parentNet);
         NET_DATA.clear();
         ((OpticalPipeNet) parentNet).NET_DATA.clear();
     }
 
     @Override
-    protected void writeNodeData(OpticalPipeProperties nodeData, NBTTagCompound tagCompound) {
-
-    }
+    protected void writeNodeData(OpticalPipeProperties nodeData, NBTTagCompound tagCompound) {}
 
     @Override
     protected OpticalPipeProperties readNodeData(NBTTagCompound tagCompound) {
         return OpticalPipeProperties.INSTANCE;
     }
-
 }

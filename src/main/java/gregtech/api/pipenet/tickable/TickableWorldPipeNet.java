@@ -2,16 +2,19 @@ package gregtech.api.pipenet.tickable;
 
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
+
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType> & ITickable> extends WorldPipeNet<NodeDataType, T> {
+public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType> & ITickable>
+                                          extends WorldPipeNet<NodeDataType, T> {
 
     private final Map<T, List<ChunkPos>> loadedChunksByPipeNet = new HashMap<>();
     private final Set<T> tickingPipeNets = new HashSet<>();
@@ -33,7 +36,7 @@ public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeD
         if (getWorld().getTotalWorldTime() % getUpdateRate() == 0L) {
             tickingPipeNets.forEach(ITickable::update);
         }
-        if(removeLater.size() > 0) {
+        if (removeLater.size() > 0) {
             removeLater.forEach(tickingPipeNets::remove);
             removeLater.clear();
         }

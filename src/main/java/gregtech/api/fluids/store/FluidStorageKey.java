@@ -2,8 +2,10 @@ package gregtech.api.fluids.store;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.util.ResourceLocation;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -4,17 +4,21 @@ import gregtech.client.shader.PingPongBuffer;
 import gregtech.client.shader.Shaders;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
 @SideOnly(Side.CLIENT)
 public class BloomEffect {
-    private static Framebuffer[] BUFFERS_D;
-    private static Framebuffer[] BUFFERS_U;
+
+    private static Framebuffer[] downSampleFBO;
+    private static Framebuffer[] upSampleFBO;
+
     public static float strength = (float) ConfigHolder.client.shader.strength;
     public static float baseBrightness = (float) ConfigHolder.client.shader.baseBrightness;
     public static float highBrightnessThreshold = (float) ConfigHolder.client.shader.highBrightnessThreshold;
@@ -52,38 +56,38 @@ public class BloomEffect {
     }
 
     private static void cleanUP(int lastWidth, int lastHeight) {
-        if (BUFFERS_D == null || BUFFERS_D.length != ConfigHolder.client.shader.nMips) {
-            if (BUFFERS_D != null) {
-                for (int i = 0; i < BUFFERS_D.length; i++) {
-                    BUFFERS_D[i].deleteFramebuffer();
-                    BUFFERS_U[i].deleteFramebuffer();
+        if (downSampleFBO == null || downSampleFBO.length != ConfigHolder.client.shader.nMips) {
+            if (downSampleFBO != null) {
+                for (int i = 0; i < downSampleFBO.length; i++) {
+                    downSampleFBO[i].deleteFramebuffer();
+                    upSampleFBO[i].deleteFramebuffer();
                 }
             }
 
-            BUFFERS_D = new Framebuffer[ConfigHolder.client.shader.nMips];
-            BUFFERS_U = new Framebuffer[ConfigHolder.client.shader.nMips];
+            downSampleFBO = new Framebuffer[ConfigHolder.client.shader.nMips];
+            upSampleFBO = new Framebuffer[ConfigHolder.client.shader.nMips];
 
             int resX = lastWidth / 2;
             int resY = lastHeight / 2;
 
             for (int i = 0; i < ConfigHolder.client.shader.nMips; i++) {
-                BUFFERS_D[i] = new Framebuffer(resX, resY, false);
-                BUFFERS_U[i] = new Framebuffer(resX, resY, false);
-                BUFFERS_D[i].setFramebufferColor(0, 0, 0, 0);
-                BUFFERS_U[i].setFramebufferColor(0, 0, 0, 0);
-                BUFFERS_D[i].setFramebufferFilter(GL11.GL_LINEAR);
-                BUFFERS_U[i].setFramebufferFilter(GL11.GL_LINEAR);
+                downSampleFBO[i] = new Framebuffer(resX, resY, false);
+                upSampleFBO[i] = new Framebuffer(resX, resY, false);
+                downSampleFBO[i].setFramebufferColor(0, 0, 0, 0);
+                upSampleFBO[i].setFramebufferColor(0, 0, 0, 0);
+                downSampleFBO[i].setFramebufferFilter(GL11.GL_LINEAR);
+                upSampleFBO[i].setFramebufferFilter(GL11.GL_LINEAR);
                 resX /= 2;
                 resY /= 2;
             }
-        } else if (RenderUtil.updateFBOSize(BUFFERS_D[0], lastWidth / 2, lastHeight / 2)) {
+        } else if (RenderUtil.updateFBOSize(downSampleFBO[0], lastWidth / 2, lastHeight / 2)) {
             int resX = lastWidth / 2;
             int resY = lastHeight / 2;
             for (int i = 0; i < ConfigHolder.client.shader.nMips; i++) {
-                RenderUtil.updateFBOSize(BUFFERS_D[i], resX, resY);
-                RenderUtil.updateFBOSize(BUFFERS_U[i], resX, resY);
-                BUFFERS_D[i].setFramebufferFilter(GL11.GL_LINEAR);
-                BUFFERS_U[i].setFramebufferFilter(GL11.GL_LINEAR);
+                RenderUtil.updateFBOSize(downSampleFBO[i], resX, resY);
+                RenderUtil.updateFBOSize(upSampleFBO[i], resX, resY);
+                downSampleFBO[i].setFramebufferFilter(GL11.GL_LINEAR);
+                upSampleFBO[i].setFramebufferFilter(GL11.GL_LINEAR);
                 resX /= 2;
                 resY /= 2;
             }
@@ -101,16 +105,17 @@ public class BloomEffect {
     public static void renderUnity(Framebuffer highLightFBO, Framebuffer backgroundFBO) {
         cleanUP(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
 
-        renderDownSampling(highLightFBO, BUFFERS_D[0]);
-        for (int i = 0; i < BUFFERS_D.length - 1; i++) {
-            renderDownSampling(BUFFERS_D[i], BUFFERS_D[i + 1]);
+        renderDownSampling(highLightFBO, downSampleFBO[0]);
+        for (int i = 0; i < downSampleFBO.length - 1; i++) {
+            renderDownSampling(downSampleFBO[i], downSampleFBO[i + 1]);
         }
 
-        renderUpSampling(BUFFERS_D[BUFFERS_D.length - 1], BUFFERS_D[BUFFERS_D.length - 2], BUFFERS_U[BUFFERS_D.length - 2]);
-        for (int i = BUFFERS_U.length - 2; i > 0; i--) {
-            renderUpSampling(BUFFERS_U[i], BUFFERS_D[i - 1], BUFFERS_U[i-1]);
+        renderUpSampling(downSampleFBO[downSampleFBO.length - 1], downSampleFBO[downSampleFBO.length - 2],
+                upSampleFBO[downSampleFBO.length - 2]);
+        for (int i = upSampleFBO.length - 2; i > 0; i--) {
+            renderUpSampling(upSampleFBO[i], downSampleFBO[i - 1], upSampleFBO[i - 1]);
         }
-        renderUpSampling(BUFFERS_U[0], highLightFBO, PingPongBuffer.swap());
+        renderUpSampling(upSampleFBO[0], highLightFBO, PingPongBuffer.swap());
 
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE1);
         GlStateManager.bindTexture(0);
@@ -123,7 +128,8 @@ public class BloomEffect {
 
     private static void renderDownSampling(Framebuffer U, Framebuffer D) {
         U.bindFramebufferTexture();
-        Shaders.renderFullImageInFBO(D, Shaders.DOWN_SAMPLING, uniformCache -> uniformCache.glUniform2F("u_resolution2", U.framebufferWidth, U.framebufferHeight));
+        Shaders.renderFullImageInFBO(D, Shaders.DOWN_SAMPLING,
+                uniformCache -> uniformCache.glUniform2F("u_resolution2", U.framebufferWidth, U.framebufferHeight));
     }
 
     private static void renderUpSampling(Framebuffer U, Framebuffer D, Framebuffer T) {
@@ -146,10 +152,10 @@ public class BloomEffect {
         cleanUP(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
 
         // blur all mips
-        int[] kernelSizeArray = new int[]{3, 5, 7, 9, 11};
+        int[] kernelSizeArray = new int[] { 3, 5, 7, 9, 11 };
         highLightFBO.bindFramebufferTexture();
-        for (int i = 0; i < BUFFERS_D.length; i++) {
-            Framebuffer buffer_h = BUFFERS_D[i];
+        for (int i = 0; i < downSampleFBO.length; i++) {
+            Framebuffer buffer_h = downSampleFBO[i];
             int kernel = kernelSizeArray[i];
             Shaders.renderFullImageInFBO(buffer_h, Shaders.S_BLUR, uniformCache -> {
                 uniformCache.glUniform2F("texSize", buffer_h.framebufferWidth, buffer_h.framebufferHeight);
@@ -157,7 +163,7 @@ public class BloomEffect {
                 uniformCache.glUniform1I("kernel_radius", kernel);
             }).bindFramebufferTexture();
 
-            Framebuffer buffer_v = BUFFERS_U[i];
+            Framebuffer buffer_v = upSampleFBO[i];
             Shaders.renderFullImageInFBO(buffer_v, Shaders.S_BLUR, uniformCache -> {
                 uniformCache.glUniform2F("texSize", buffer_v.framebufferWidth, buffer_v.framebufferHeight);
                 uniformCache.glUniform2F("blurDir", 0, step);
@@ -166,13 +172,13 @@ public class BloomEffect {
         }
 
         // composite all mips
-        for (int i = 0; i < BUFFERS_D.length; i++) {
+        for (int i = 0; i < downSampleFBO.length; i++) {
             GlStateManager.setActiveTexture(GL13.GL_TEXTURE0 + i);
             GlStateManager.enableTexture2D();
-            BUFFERS_U[i].bindFramebufferTexture();
+            upSampleFBO[i].bindFramebufferTexture();
         }
 
-        Shaders.renderFullImageInFBO(BUFFERS_D[0], Shaders.COMPOSITE, uniformCache -> {
+        Shaders.renderFullImageInFBO(downSampleFBO[0], Shaders.COMPOSITE, uniformCache -> {
             uniformCache.glUniform1I("blurTexture1", 0);
             uniformCache.glUniform1I("blurTexture2", 1);
             uniformCache.glUniform1I("blurTexture3", 2);
@@ -182,12 +188,11 @@ public class BloomEffect {
             uniformCache.glUniform1F("bloomRadius", 1);
         });
 
-        for (int i = BUFFERS_D.length - 1; i >= 0; i--) {
+        for (int i = downSampleFBO.length - 1; i >= 0; i--) {
             GlStateManager.setActiveTexture(GL13.GL_TEXTURE0 + i);
             GlStateManager.bindTexture(0);
         }
 
-        blend(BUFFERS_D[0], backgroundFBO);
+        blend(downSampleFBO[0], backgroundFBO);
     }
-
 }

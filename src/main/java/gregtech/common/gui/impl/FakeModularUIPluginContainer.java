@@ -5,6 +5,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGuiContainer;
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class FakeModularUIPluginContainer extends FakeModularGuiContainer {
+
     protected int windowId;
     private final FakeGuiPluginBehavior behavior;
     public int syncId;
@@ -73,7 +75,7 @@ public class FakeModularUIPluginContainer extends FakeModularGuiContainer {
 
     @Override
     public void writeUpdateInfo(Widget widget, int updateId, Consumer<PacketBuffer> payloadWriter) {
-        if(behavior != null) {
+        if (behavior != null) {
             behavior.writePluginData(GregtechDataCodes.UPDATE_FAKE_GUI, buf -> {
                 buf.writeVarInt(windowId);
                 buf.writeVarInt(modularUI.guiWidgets.inverse().get(widget));

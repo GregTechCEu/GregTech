@@ -4,8 +4,7 @@ import net.minecraft.util.ITickable;
 
 public class TileEntityCableTickable extends TileEntityCable implements ITickable {
 
-    public TileEntityCableTickable() {
-    }
+    public TileEntityCableTickable() {}
 
     @Override
     public void update() {

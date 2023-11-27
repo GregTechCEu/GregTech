@@ -59,5 +59,4 @@ public interface IRecipePropertyStorage {
      * @return {@link Object} value on success; otherwise {@code null}
      */
     Object getRawRecipePropertyValue(String key);
-
 }

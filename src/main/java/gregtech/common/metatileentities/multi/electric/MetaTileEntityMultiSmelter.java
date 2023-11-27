@@ -11,6 +11,7 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -19,15 +20,16 @@ import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
@@ -50,6 +52,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                 .addCustom(tl -> {
                     if (isStructureFormed()) {
                         // Heating coil discount
@@ -111,7 +114,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         this.heatingCoilDiscount = 0;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -119,7 +122,9 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                 .aisle("XXX", "C#C", "XMX")
                 .aisle("XSX", "CCC", "XXX")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(9).or(autoAbilities(true, true, true, true, true, true, false)))
+                .where('X',
+                        states(getCasingState()).setMinGlobalLimited(9)
+                                .or(autoAbilities(true, true, true, true, true, true, false)))
                 .where('M', abilities(MultiblockAbility.MUFFLER_HATCH))
                 .where('C', heatingCoils())
                 .where('#', air())
@@ -142,7 +147,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.MULTI_FURNACE_OVERLAY;
@@ -171,7 +176,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     /**
-     * @param parallel the amount of parallel recipes
+     * @param parallel      the amount of parallel recipes
      * @param parallelLimit the maximum limit on parallel recipes
      * @return the un-overclocked duration for an amount of parallel recipes
      */
@@ -185,14 +190,14 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             super(tileEntity);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ParallelLogicType getParallelLogicType() {
             return ParallelLogicType.APPEND_ITEMS;
         }
 
         @Override
-        public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
+        public void applyParallelBonus(@NotNull RecipeBuilder<?> builder) {
             builder.EUt(getEUtForParallel(builder.getParallel(), heatingCoilDiscount))
                     .duration(getDurationForParallel(builder.getParallel(), getParallelLimit()));
         }

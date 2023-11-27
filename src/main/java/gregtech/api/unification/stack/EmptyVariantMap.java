@@ -1,6 +1,6 @@
 package gregtech.api.unification.stack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An unmodifiable {@link ItemVariantMap} instance with no elements.

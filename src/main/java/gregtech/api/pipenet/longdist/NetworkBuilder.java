@@ -1,8 +1,5 @@
 package gregtech.api.pipenet.longdist;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -11,6 +8,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +35,8 @@ public class NetworkBuilder extends Thread {
     private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
     private final ObjectOpenHashSet<Chunk> loadedChunks = new ObjectOpenHashSet<>();
 
-    public NetworkBuilder(LongDistanceNetwork.WorldData worldData, LongDistanceNetwork network, Collection<BlockPos> starts) {
+    public NetworkBuilder(LongDistanceNetwork.WorldData worldData, LongDistanceNetwork network,
+                          Collection<BlockPos> starts) {
         this.worldData = Objects.requireNonNull(worldData);
         this.originalNetwork = Objects.requireNonNull(network);
         this.network = network;
@@ -52,7 +54,8 @@ public class NetworkBuilder extends Thread {
             start = this.starts.remove(0);
             LongDistanceNetwork ldn = this.worldData.getNetwork(start);
             if (ldn == this.originalNetwork) {
-                // this starting point was caught during a previous iteration, so we don't need to create another network here
+                // this starting point was caught during a previous iteration, so we don't need to create another
+                // network here
                 continue;
             }
             // create a new network, since the current was already calculated

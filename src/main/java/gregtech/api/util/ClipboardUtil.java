@@ -2,6 +2,7 @@ package gregtech.api.util;
 
 import gregtech.api.GregTechAPI;
 import gregtech.core.network.packets.PacketClipboard;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.awt.*;

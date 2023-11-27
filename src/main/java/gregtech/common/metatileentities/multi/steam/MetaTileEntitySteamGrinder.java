@@ -14,6 +14,7 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -22,8 +23,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 import static gregtech.client.renderer.texture.Textures.BRONZE_PLATED_BRICKS;
@@ -69,7 +71,7 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.ROCK_BREAKER_OVERLAY;
@@ -86,7 +88,8 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.multiblock.steam_.duration_modifier"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.parallel", PARALLEL_LIMIT));

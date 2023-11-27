@@ -124,7 +124,8 @@ public enum RelativeDirection {
      *
      * @return Returns the new upwards facing.
      */
-    public static EnumFacing simulateAxisRotation(EnumFacing newFrontFacing, EnumFacing oldFrontFacing, EnumFacing upwardsFacing) {
+    public static EnumFacing simulateAxisRotation(EnumFacing newFrontFacing, EnumFacing oldFrontFacing,
+                                                  EnumFacing upwardsFacing) {
         if (newFrontFacing == oldFrontFacing) return upwardsFacing;
 
         EnumFacing.Axis newAxis = newFrontFacing.getAxis();
@@ -141,7 +142,8 @@ public enum RelativeDirection {
                 case EAST -> oldFrontFacing.rotateYCCW();
                 default -> oldFrontFacing.rotateY(); // WEST
             };
-            return newFrontFacing == EnumFacing.DOWN && upwardsFacing.getAxis() == Axis.Z ? newUpwardsFacing.getOpposite() : newUpwardsFacing;
+            return newFrontFacing == EnumFacing.DOWN && upwardsFacing.getAxis() == Axis.Z ?
+                    newUpwardsFacing.getOpposite() : newUpwardsFacing;
         } else if (newAxis != Axis.Y) {
             // going from vertical to horizontal axis
             EnumFacing newUpwardsFacing;
@@ -154,7 +156,8 @@ public enum RelativeDirection {
             } else { // rotateYCCW
                 newUpwardsFacing = EnumFacing.EAST;
             }
-            return oldFrontFacing == EnumFacing.DOWN && newUpwardsFacing.getAxis() == Axis.Z ? newUpwardsFacing.getOpposite() : newUpwardsFacing;
+            return oldFrontFacing == EnumFacing.DOWN && newUpwardsFacing.getAxis() == Axis.Z ?
+                    newUpwardsFacing.getOpposite() : newUpwardsFacing;
         } else {
             // was on vertical axis and still is. Must have flipped from up to down or vice versa
             return upwardsFacing.getOpposite();

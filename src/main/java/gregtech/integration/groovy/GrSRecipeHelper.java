@@ -1,12 +1,14 @@
 package gregtech.integration.groovy;
 
-import com.cleanroommc.groovyscript.helper.ingredient.IngredientHelper;
-import com.cleanroommc.groovyscript.helper.ingredient.NbtHelper;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.integration.RecipeCompatUtil;
+
 import net.minecraft.item.ItemStack;
+
+import com.cleanroommc.groovyscript.helper.ingredient.IngredientHelper;
+import com.cleanroommc.groovyscript.helper.ingredient.NbtHelper;
 
 public class GrSRecipeHelper {
 
@@ -47,7 +49,6 @@ public class GrSRecipeHelper {
         } else {
             builder.append("null");
         }
-
 
         builder.append(")");
         return builder.toString();

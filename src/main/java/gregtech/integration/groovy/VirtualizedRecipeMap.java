@@ -1,14 +1,16 @@
 package gregtech.integration.groovy;
 
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.recipes.RecipeMap;
+
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+
 import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.helper.SimpleObjectStream;
 import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
 import com.google.common.base.CaseFormat;
-import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.RecipeMap;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.Collections;

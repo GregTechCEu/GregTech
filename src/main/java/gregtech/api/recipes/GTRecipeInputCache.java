@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
+
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class GTRecipeInputCache {
      *
      * @param recipeInput ingredient instance to be deduplicated
      * @return Either previously cached instance, or {@code recipeInput} marked cached;
-     * or unmodified {@code recipeInput} instance if the cache is disabled
+     *         or unmodified {@code recipeInput} instance if the cache is disabled
      */
     public static GTRecipeInput deduplicate(GTRecipeInput recipeInput) {
         if (!isCacheEnabled() || recipeInput.isCached()) {

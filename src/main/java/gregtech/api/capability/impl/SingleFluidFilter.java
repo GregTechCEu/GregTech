@@ -1,9 +1,10 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IFilter;
+
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Basic filter with one fluid template. Can be either whitelist or blacklist.
@@ -13,12 +14,12 @@ public final class SingleFluidFilter implements IFilter<FluidStack> {
     private final FluidStack fluid;
     private final boolean blacklist;
 
-    public SingleFluidFilter(@Nonnull FluidStack fluid, boolean blacklist) {
+    public SingleFluidFilter(@NotNull FluidStack fluid, boolean blacklist) {
         this.fluid = fluid;
         this.blacklist = blacklist;
     }
 
-    @Nonnull
+    @NotNull
     public FluidStack getFluid() {
         return fluid;
     }
@@ -32,7 +33,7 @@ public final class SingleFluidFilter implements IFilter<FluidStack> {
     }
 
     @Override
-    public boolean test(@Nonnull FluidStack fluid) {
+    public boolean test(@NotNull FluidStack fluid) {
         return this.fluid.isFluidEqual(fluid) != this.blacklist;
     }
 

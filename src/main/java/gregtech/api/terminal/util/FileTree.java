@@ -7,7 +7,7 @@ import java.util.List;
 
 public class FileTree extends TreeNode<File, File> {
 
-    public FileTree(File dir){
+    public FileTree(File dir) {
         this(0, dir);
     }
 

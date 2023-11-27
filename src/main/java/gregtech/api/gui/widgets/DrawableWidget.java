@@ -33,23 +33,25 @@ public class DrawableWidget extends Widget {
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        if(backgroundDrawer != null)
+        if (backgroundDrawer != null)
             backgroundDrawer.draw(mouseX, mouseY, partialTicks, context, this);
     }
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
-        if(foregroundDrawer != null)
+        if (foregroundDrawer != null)
             foregroundDrawer.draw(mouseX, mouseY, this);
     }
 
     @FunctionalInterface
     public interface BackgroundDrawer {
+
         void draw(int mouseX, int mouseY, float partialTicks, IRenderContext context, Widget widget);
     }
 
     @FunctionalInterface
     public interface ForegroundDrawer {
+
         void draw(int mouseX, int mouseY, Widget widget);
     }
 }

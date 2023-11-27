@@ -4,7 +4,7 @@ import gregtech.api.pipenet.block.material.IMaterialPipeType;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.ore.OrePrefix;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
 
@@ -30,7 +30,8 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
         this(name, thickness, capacityMultiplier, orePrefix, opaque, 1);
     }
 
-    FluidPipeType(String name, float thickness, int capacityMultiplier, OrePrefix orePrefix, boolean opaque, int channels) {
+    FluidPipeType(String name, float thickness, int capacityMultiplier, OrePrefix orePrefix, boolean opaque,
+                  int channels) {
         this.name = name;
         this.thickness = thickness;
         this.capacityMultiplier = capacityMultiplier;
@@ -39,7 +40,7 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
         this.channels = channels;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return name;

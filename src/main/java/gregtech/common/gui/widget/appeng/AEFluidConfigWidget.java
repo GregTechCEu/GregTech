@@ -1,11 +1,13 @@
 package gregtech.common.gui.widget.appeng;
 
-import appeng.api.storage.data.IAEFluidStack;
 import gregtech.common.gui.widget.appeng.slot.AEFluidConfigSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
+
 import net.minecraft.network.PacketBuffer;
+
+import appeng.api.storage.data.IAEFluidStack;
 
 /**
  * @Author GlodBlock
@@ -24,7 +26,7 @@ public class AEFluidConfigWidget extends AEConfigWidget<IAEFluidStack> {
         int line;
         this.displayList = new IConfigurableSlot[this.config.length];
         this.cached = new IConfigurableSlot[this.config.length];
-        for (int index = 0; index < this.config.length; index ++) {
+        for (int index = 0; index < this.config.length; index++) {
             this.displayList[index] = new MetaTileEntityMEInputHatch.ExportOnlyAEFluid();
             this.cached[index] = new MetaTileEntityMEInputHatch.ExportOnlyAEFluid();
             line = index / 8;
@@ -37,7 +39,7 @@ public class AEFluidConfigWidget extends AEConfigWidget<IAEFluidStack> {
         super.readUpdateInfo(id, buffer);
         if (id == UPDATE_ID) {
             int size = buffer.readVarInt();
-            for (int i = 0; i < size; i ++) {
+            for (int i = 0; i < size; i++) {
                 int index = buffer.readVarInt();
                 IConfigurableSlot<IAEFluidStack> slot = this.displayList[index];
                 if (buffer.readBoolean()) {

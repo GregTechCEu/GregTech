@@ -6,6 +6,7 @@ import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -41,7 +42,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         FluidPipeNet currentPipeNet = this.currentPipeNet.get();
         if (currentPipeNet != null && currentPipeNet.isValid() &&
                 currentPipeNet.containsNode(getPipePos()))
-            return currentPipeNet; //if current net is valid and does contain position, return it
+            return currentPipeNet; // if current net is valid and does contain position, return it
         WorldFluidPipeNet worldFluidPipeNet = (WorldFluidPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
         currentPipeNet = worldFluidPipeNet.getNetFromPos(getPipePos());
         if (currentPipeNet != null) {
@@ -62,7 +63,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         }
     }
 
-    public static void spawnParticles(World worldIn, BlockPos pos, EnumFacing direction, EnumParticleTypes particleType, int particleCount) {
+    public static void spawnParticles(World worldIn, BlockPos pos, EnumFacing direction, EnumParticleTypes particleType,
+                                      int particleCount) {
         if (worldIn instanceof WorldServer) {
             ((WorldServer) worldIn).spawnParticle(particleType,
                     pos.getX() + 0.5,

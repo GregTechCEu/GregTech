@@ -1,9 +1,11 @@
 package gregtech.api.unification;
 
 import gregtech.api.unification.material.Material;
+
+import net.minecraftforge.fluids.Fluid;
+
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
-import net.minecraftforge.fluids.Fluid;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,24 +22,26 @@ import java.util.Objects;
 @ApiStatus.Experimental
 public final class FluidUnifier {
 
-    private static final Map<Fluid, Material> fluidToMaterial = new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
+    private static final Map<Fluid, Material> fluidToMaterial = new Object2ObjectOpenCustomHashMap<>(
+            new Hash.Strategy<>() {
 
-        @Override
-        public int hashCode(@Nullable Fluid o) {
-            return o == null ? 0 : o.getName().hashCode();
-        }
+                @Override
+                public int hashCode(@Nullable Fluid o) {
+                    return o == null ? 0 : o.getName().hashCode();
+                }
 
-        @Override
-        public boolean equals(@Nullable Fluid a, @Nullable Fluid b) {
-            return Objects.equals(a == null ? null : a.getName(), b == null ? null : b.getName());
-        }
-    });
+                @Override
+                public boolean equals(@Nullable Fluid a, @Nullable Fluid b) {
+                    return Objects.equals(a == null ? null : a.getName(), b == null ? null : b.getName());
+                }
+            });
 
     private FluidUnifier() {}
 
     /**
      * Register a material to associate with a fluid. Will overwrite existing associations.
-     * @param fluid the fluid
+     * 
+     * @param fluid    the fluid
      * @param material the material to associate
      */
     @ApiStatus.Experimental

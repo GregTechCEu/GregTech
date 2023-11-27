@@ -1,6 +1,7 @@
 package gregtech.client.renderer.handler;
 
 import gregtech.client.utils.RenderBufferHelper;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -11,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
@@ -18,7 +20,6 @@ public class BlockPosHighlightRenderer {
 
     private static BlockPos posHighLight;
     private static long hlEndTime;
-
 
     public static void renderBlockBoxHighLight(BlockPos blockpos, long durTimeMillis) {
         posHighLight = blockpos;
@@ -55,7 +56,8 @@ public class BlockPosHighlightRenderer {
 
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
-            RenderBufferHelper.renderCubeFace(buffer, posHighLight.getX(), posHighLight.getY(), posHighLight.getZ(), posHighLight.getX() + 1, posHighLight.getY() + 1, posHighLight.getZ() + 1, 1.0f, 0.0f, 0.0f, 0.8f);
+            RenderBufferHelper.renderCubeFace(buffer, posHighLight.getX(), posHighLight.getY(), posHighLight.getZ(),
+                    posHighLight.getX() + 1, posHighLight.getY() + 1, posHighLight.getZ() + 1, 1.0f, 0.0f, 0.0f, 0.8f);
 
             tessellator.draw();
 

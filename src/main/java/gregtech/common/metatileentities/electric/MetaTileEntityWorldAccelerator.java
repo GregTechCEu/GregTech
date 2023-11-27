@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.electric;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -16,9 +12,7 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -36,6 +30,14 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -59,7 +61,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
 
     // Variables for Random Tick mode optimization
     // limit = ((tier - min) / (max - min)) * 2^tier
-    private static final int[] SUCCESS_LIMITS = {1, 8, 27, 64, 125, 216, 343, 512};
+    private static final int[] SUCCESS_LIMITS = { 1, 8, 27, 64, 125, 216, 343, 512 };
     private final int successLimit;
     private BlockPos bottomLeftCorner;
 
@@ -86,13 +88,17 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.world_accelerator.description"));
-        tooltip.add(I18n.format("gregtech.machine.world_accelerator.power_usage", getRandomTickModeAmperage(), getTEModeAmperage()));
+        tooltip.add(I18n.format("gregtech.machine.world_accelerator.power_usage", getRandomTickModeAmperage(),
+                getTEModeAmperage()));
         tooltip.add(I18n.format("gregtech.machine.world_accelerator.acceleration", speed));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(),
+                GTValues.VNF[getTier()]));
+        tooltip.add(
+                I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.machine.world_accelerator.working_area"));
         tooltip.add(I18n.format("gregtech.machine.world_accelerator.working_area_tile"));
-        tooltip.add(I18n.format("gregtech.machine.world_accelerator.working_area_random", getTier() * 2 + 1, getTier() * 2 + 1));
+        tooltip.add(I18n.format("gregtech.machine.world_accelerator.working_area_random", getTier() * 2 + 1,
+                getTier() * 2 + 1));
     }
 
     @Override
@@ -211,9 +217,11 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (isTEMode()) {
-            Textures.WORLD_ACCELERATOR_TE_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive, isWorkingEnabled());
+            Textures.WORLD_ACCELERATOR_TE_OVERLAY.renderOrientedState(renderState, translation, pipeline,
+                    getFrontFacing(), isActive, isWorkingEnabled());
         } else {
-            Textures.WORLD_ACCELERATOR_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive, isWorkingEnabled());
+            Textures.WORLD_ACCELERATOR_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
+                    isActive, isWorkingEnabled());
         }
     }
 
@@ -228,14 +236,17 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     }
 
     @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                      CuboidRayTraceResult hitResult) {
         if (!getWorld().isRemote) {
             if (isTEMode()) {
                 setTEMode(false);
-                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.world_accelerator.mode_entity"), false);
+                playerIn.sendStatusMessage(
+                        new TextComponentTranslation("gregtech.machine.world_accelerator.mode_entity"), false);
             } else {
                 setTEMode(true);
-                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.world_accelerator.mode_tile"), false);
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.machine.world_accelerator.mode_tile"),
+                        false);
             }
         }
         return true;

@@ -1,6 +1,7 @@
 package gregtech.api.util;
 
 public class ValidationResult<T> {
+
     private final EnumValidationResult type;
     private final T result;
 

@@ -1,9 +1,9 @@
 package gregtech.core.network.packets;
 
-import codechicken.lib.vec.Vector3;
 import gregtech.api.block.ICustomParticleBlock;
 import gregtech.api.network.IClientExecutor;
 import gregtech.api.network.IPacket;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -13,6 +13,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.vec.Vector3;
 
 public class PacketBlockParticle implements IPacket, IClientExecutor {
 
@@ -51,6 +53,7 @@ public class PacketBlockParticle implements IPacket, IClientExecutor {
         World world = Minecraft.getMinecraft().world;
         IBlockState blockState = world.getBlockState(blockPos);
         ParticleManager particleManager = Minecraft.getMinecraft().effectRenderer;
-        ((ICustomParticleBlock) blockState.getBlock()).handleCustomParticle(world, blockPos, particleManager, entityPos, particlesAmount);
+        ((ICustomParticleBlock) blockState.getBlock()).handleCustomParticle(world, blockPos, particleManager, entityPos,
+                particlesAmount);
     }
 }

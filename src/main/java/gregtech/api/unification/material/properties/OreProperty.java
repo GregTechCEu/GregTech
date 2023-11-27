@@ -1,11 +1,13 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.unification.material.Material;
-import net.minecraft.util.math.MathHelper;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.minecraft.util.math.MathHelper;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,7 +20,7 @@ public class OreProperty implements IMaterialProperty {
      * <p>
      * Default: none, meaning only this property's Material.
      */
-    //@ZenProperty
+    // @ZenProperty
     private final List<Material> oreByProducts = new ArrayList<>();
 
     /**
@@ -26,7 +28,7 @@ public class OreProperty implements IMaterialProperty {
      * <p>
      * Default: 1 (no multiplier).
      */
-    //@ZenProperty
+    // @ZenProperty
     private int oreMultiplier;
 
     /**
@@ -34,7 +36,7 @@ public class OreProperty implements IMaterialProperty {
      * <p>
      * Default: 1 (no multiplier).
      */
-    //@ZenProperty
+    // @ZenProperty
     private int byProductMultiplier;
 
     /**
@@ -42,7 +44,7 @@ public class OreProperty implements IMaterialProperty {
      * <p>
      * Default: false.
      */
-    //@ZenProperty
+    // @ZenProperty
     private boolean emissive;
 
     /**
@@ -51,7 +53,7 @@ public class OreProperty implements IMaterialProperty {
      * Material will have a Dust Property.
      * Default: none.
      */
-    //@ZenProperty
+    // @ZenProperty
     @Nullable
     private Material directSmeltResult;
 
@@ -61,7 +63,7 @@ public class OreProperty implements IMaterialProperty {
      * Material will have a Fluid Property.
      * Default: none.
      */
-    //@ZenProperty
+    // @ZenProperty
     @Nullable
     private Material washedIn;
 
@@ -81,7 +83,7 @@ public class OreProperty implements IMaterialProperty {
      * Material will have a Dust Property.
      * Default: none.
      */
-    //@ZenProperty
+    // @ZenProperty
     private final List<Material> separatedInto = new ArrayList<>();
 
     public OreProperty(int oreMultiplier, int byProductMultiplier) {
@@ -163,7 +165,7 @@ public class OreProperty implements IMaterialProperty {
      *
      * @param materials the materials to use as byproducts
      */
-    public void setOreByProducts(@Nonnull Material... materials) {
+    public void setOreByProducts(@NotNull Material... materials) {
         setOreByProducts(Arrays.asList(materials));
     }
 
@@ -172,7 +174,7 @@ public class OreProperty implements IMaterialProperty {
      *
      * @param materials the materials to use as byproducts
      */
-    public void setOreByProducts(@Nonnull Collection<Material> materials) {
+    public void setOreByProducts(@NotNull Collection<Material> materials) {
         this.oreByProducts.clear();
         this.oreByProducts.addAll(materials);
     }
@@ -182,7 +184,7 @@ public class OreProperty implements IMaterialProperty {
      *
      * @param materials the materials to add as byproducts
      */
-    public void addOreByProducts(@Nonnull Material... materials) {
+    public void addOreByProducts(@NotNull Material... materials) {
         this.oreByProducts.addAll(Arrays.asList(materials));
     }
 
@@ -196,8 +198,8 @@ public class OreProperty implements IMaterialProperty {
         return this.oreByProducts.get(MathHelper.clamp(index, 0, this.oreByProducts.size() - 1));
     }
 
-    @Nonnull
-    public final Material getOreByProduct(int index, @Nonnull Material fallback) {
+    @NotNull
+    public final Material getOreByProduct(int index, @NotNull Material fallback) {
         Material material = getOreByProduct(index);
         return material != null ? material : fallback;
     }

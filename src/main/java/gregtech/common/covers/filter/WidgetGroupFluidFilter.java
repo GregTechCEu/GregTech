@@ -2,6 +2,7 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.util.Position;
+
 import net.minecraft.network.PacketBuffer;
 
 import java.util.function.Supplier;
@@ -12,7 +13,8 @@ public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
     private final Supplier<Boolean> showTipSupplier;
     private FluidFilter fluidFilter;
 
-    public WidgetGroupFluidFilter(int yPosition, Supplier<FluidFilter> fluidFilterSupplier, Supplier<Boolean> showTipSupplier) {
+    public WidgetGroupFluidFilter(int yPosition, Supplier<FluidFilter> fluidFilterSupplier,
+                                  Supplier<Boolean> showTipSupplier) {
         super(new Position(18 + 5, yPosition));
         this.fluidFilterSupplier = fluidFilterSupplier;
         this.showTipSupplier = showTipSupplier;

@@ -2,8 +2,8 @@ package gregtech.api.util.oreglob;
 
 import net.minecraft.util.text.TextFormatting;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Formatting function for OreGlob visualization.
@@ -27,5 +27,5 @@ public interface OreGlobTextFormatting {
     };
 
     @Nullable
-    TextFormatting getFormat(@Nonnull VisualizationHint hint);
+    TextFormatting getFormat(@NotNull VisualizationHint hint);
 }

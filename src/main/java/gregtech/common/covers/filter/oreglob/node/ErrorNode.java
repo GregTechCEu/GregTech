@@ -1,6 +1,6 @@
 package gregtech.common.covers.filter.oreglob.node;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 class ErrorNode extends OreGlobNode {
 
@@ -10,12 +10,12 @@ class ErrorNode extends OreGlobNode {
     }
 
     @Override
-    public boolean isStructurallyEqualTo(@Nonnull OreGlobNode node) { // removed inverted flag check
+    public boolean isStructurallyEqualTo(@NotNull OreGlobNode node) { // removed inverted flag check
         return this == node || node instanceof ErrorNode && isStructurallyEqualTo(this.getNext(), node.getNext());
     }
 
     @Override
-    public boolean isPropertyEqualTo(@Nonnull OreGlobNode node) {
+    public boolean isPropertyEqualTo(@NotNull OreGlobNode node) {
         return node instanceof ErrorNode;
     }
 

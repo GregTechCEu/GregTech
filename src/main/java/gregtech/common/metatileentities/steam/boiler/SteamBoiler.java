@@ -1,9 +1,5 @@
 package gregtech.common.metatileentities.steam.boiler;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FilteredFluidHandler;
@@ -27,6 +23,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,11 +41,16 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -113,7 +115,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+        IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
         renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isBurning(), true);
     }
@@ -214,7 +217,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                 if (fuelBurnTimeLeft == 0) {
                     this.fuelMaxBurnTime = 0;
                     this.timeBeforeCoolingDown = getCooldownInterval();
-                    //boiler has no fuel now, so queue burning state update
+                    // boiler has no fuel now, so queue burning state update
                     this.wasBurningAndNeedsUpdate = true;
                 }
             }
@@ -223,7 +226,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                 currentTemperature -= getCoolDownRate();
                 timeBeforeCoolingDown = getCooldownInterval();
             }
-        } else --timeBeforeCoolingDown;
+        } else--timeBeforeCoolingDown;
     }
 
     protected abstract int getBaseSteamOutput();
@@ -264,7 +267,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                         getFrontFacing().getZOffset() / 2.0, 0.1);
 
                 if (ConfigHolder.machines.machineSounds && !this.isMuffled()) {
-                    getWorld().playSound(null, x, y, z, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                    getWorld().playSound(null, x, y, z, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f,
+                            1.0f);
                 }
 
                 steamFluidTank.drain(4000, true);
@@ -336,9 +340,11 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                         .setBackgroundTexture(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure)))
 
                 .widget(new FluidContainerSlotWidget(containerInventory, 0, 43, 26, true)
-                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.IN_SLOT_OVERLAY_STEAM.get(isHighPressure)))
+                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(isHighPressure),
+                                GuiTextures.IN_SLOT_OVERLAY_STEAM.get(isHighPressure)))
                 .slot(containerInventory, 1, 43, 62, true, false,
-                        GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.OUT_SLOT_OVERLAY_STEAM.get(isHighPressure))
+                        GuiTextures.SLOT_STEAM.get(isHighPressure),
+                        GuiTextures.OUT_SLOT_OVERLAY_STEAM.get(isHighPressure))
                 .image(43, 44, 18, 18, GuiTextures.CANISTER_OVERLAY_STEAM.get(isHighPressure))
 
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT_STEAM.get(isHighPressure), 0);
@@ -369,10 +375,11 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
         clearInventory(itemBuffer, containerInventory);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
-        return Collections.singletonList(new TextComponentTranslation("gregtech.machine.steam_boiler.heat_amount", TextFormattingUtil.formatNumbers((int) (this.getTemperaturePercent() * 100))));
+        return Collections.singletonList(new TextComponentTranslation("gregtech.machine.steam_boiler.heat_amount",
+                TextFormattingUtil.formatNumbers((int) (this.getTemperaturePercent() * 100))));
     }
 
     @SideOnly(Side.CLIENT)
@@ -384,7 +391,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
             float z = pos.getZ() + 0.5F;
 
             if (GTValues.RNG.nextDouble() < 0.1) {
-                getWorld().playSound(x, pos.getY(), z + 0.5F, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+                getWorld().playSound(x, pos.getY(), z + 0.5F, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE,
+                        SoundCategory.BLOCKS, 1.0F, 1.0F, false);
             }
 
             final EnumFacing facing = getFrontFacing();
@@ -406,7 +414,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
 
     @SideOnly(Side.CLIENT)
     protected void randomDisplayTick(float x, float y, float z) {
-        getWorld().spawnParticle(isHighPressure ? EnumParticleTypes.SMOKE_LARGE : EnumParticleTypes.SMOKE_NORMAL, x, y, z, 0, 0, 0);
+        getWorld().spawnParticle(isHighPressure ? EnumParticleTypes.SMOKE_LARGE : EnumParticleTypes.SMOKE_NORMAL, x, y,
+                z, 0, 0, 0);
         getWorld().spawnParticle(EnumParticleTypes.FLAME, x, y, z, 0, 0, 0);
     }
 }

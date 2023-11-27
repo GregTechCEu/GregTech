@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IOpticalComputationHatch;
@@ -15,18 +12,24 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.List;
 
-public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IOpticalComputationHatch>, IOpticalComputationHatch {
+public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart implements
+                                            IMultiblockAbilityPart<IOpticalComputationHatch>, IOpticalComputationHatch {
 
     private final boolean isTransmitter;
 
@@ -46,7 +49,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public int requestCWUt(int cwut, boolean simulate, @Nonnull Collection<IOpticalComputationProvider> seen) {
+    public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
         var controller = getController();
         if (controller == null || !controller.isStructureFormed()) return 0;
@@ -67,7 +70,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public int getMaxCWUt(@Nonnull Collection<IOpticalComputationProvider> seen) {
+    public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
         var controller = getController();
         if (controller == null || !controller.isStructureFormed()) return 0;
@@ -88,7 +91,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public boolean canBridge(@Nonnull Collection<IOpticalComputationProvider> seen) {
+    public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
         var controller = getController();
         // return true here so that unlinked hatches don't cause problems in multis like the Network Switch
@@ -115,7 +118,8 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
         if (tileEntity == null) return null;
 
         if (tileEntity instanceof TileEntityOpticalPipe) {
-            return tileEntity.getCapability(GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER, getFrontFacing().getOpposite());
+            return tileEntity.getCapability(GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER,
+                    getFrontFacing().getOpposite());
         }
         return null;
     }
@@ -146,9 +150,8 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public MultiblockAbility<IOpticalComputationHatch> getAbility() {
-        return isTransmitter()
-                ? MultiblockAbility.COMPUTATION_DATA_TRANSMISSION
-                : MultiblockAbility.COMPUTATION_DATA_RECEPTION;
+        return isTransmitter() ? MultiblockAbility.COMPUTATION_DATA_TRANSMISSION :
+                MultiblockAbility.COMPUTATION_DATA_RECEPTION;
     }
 
     @Override

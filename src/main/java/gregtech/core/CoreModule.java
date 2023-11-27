@@ -54,6 +54,7 @@ import gregtech.core.sound.internal.SoundManager;
 import gregtech.core.unification.material.internal.MaterialRegistryManager;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -63,26 +64,28 @@ import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.relauncher.Side;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 
 import static gregtech.api.GregTechAPI.*;
 
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_CORE,
-        containerID = GTValues.MODID,
-        name = "GregTech Core",
-        description = "Core GregTech content. Disabling this disables the entire mod and all its addons.",
-        coreModule = true
-)
+                moduleID = GregTechModules.MODULE_CORE,
+                containerID = GTValues.MODID,
+                name = "GregTech Core",
+                description = "Core GregTech content. Disabling this disables the entire mod and all its addons.",
+                coreModule = true)
 public class CoreModule implements IGregTechModule {
 
     public static final Logger logger = LogManager.getLogger("GregTech Core");
 
-    @SidedProxy(modId = GTValues.MODID, clientSide = "gregtech.client.ClientProxy", serverSide = "gregtech.common.CommonProxy")
+    @SidedProxy(modId = GTValues.MODID,
+                clientSide = "gregtech.client.ClientProxy",
+                serverSide = "gregtech.common.CommonProxy")
     public static CommonProxy proxy;
 
     public CoreModule() {
@@ -92,7 +95,7 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.materialManager = MaterialRegistryManager.getInstance();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Logger getLogger() {
         return logger;
@@ -204,10 +207,12 @@ public class CoreModule implements IGregTechModule {
         proxy.onLoad();
         if (RecipeMap.isFoundInvalidRecipe()) {
             logger.fatal("Seems like invalid recipe was found.");
-            //crash if config setting is set to false, or we are in deobfuscated environment
+            // crash if config setting is set to false, or we are in deobfuscated environment
             if (!ConfigHolder.misc.ignoreErrorOrInvalidRecipes || !FMLForgePlugin.RUNTIME_DEOBF) {
-                logger.fatal("Loading cannot continue. Either fix or report invalid recipes, or enable ignoreErrorOrInvalidRecipes in the config as a temporary solution");
-                throw new LoaderException("Found at least one invalid recipe. Please read the log above for more details.");
+                logger.fatal(
+                        "Loading cannot continue. Either fix or report invalid recipes, or enable ignoreErrorOrInvalidRecipes in the config as a temporary solution");
+                throw new LoaderException(
+                        "Found at least one invalid recipe. Please read the log above for more details.");
             } else {
                 logger.fatal("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 logger.fatal("Ignoring invalid recipes and continuing loading");
@@ -273,7 +278,8 @@ public class CoreModule implements IGregTechModule {
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
             World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
             if (!world.isRemote) {
-                BedrockFluidVeinSaveData saveData = (BedrockFluidVeinSaveData) world.loadData(BedrockFluidVeinSaveData.class, BedrockFluidVeinSaveData.dataName);
+                BedrockFluidVeinSaveData saveData = (BedrockFluidVeinSaveData) world
+                        .loadData(BedrockFluidVeinSaveData.class, BedrockFluidVeinSaveData.dataName);
                 if (saveData == null) {
                     saveData = new BedrockFluidVeinSaveData(BedrockFluidVeinSaveData.dataName);
                     world.setData(BedrockFluidVeinSaveData.dataName, saveData);

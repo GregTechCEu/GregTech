@@ -7,34 +7,35 @@ import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
 import gregtech.tools.enchants.EnchantmentEnderDamage;
 import gregtech.tools.enchants.EnchantmentHardHammer;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_TOOLS,
-        containerID = GTValues.MODID,
-        name = "GregTech Tools",
-        description = "GregTech Tools Module. Cannot be disabled for now."
-)
+                moduleID = GregTechModules.MODULE_TOOLS,
+                containerID = GTValues.MODID,
+                name = "GregTech Tools",
+                description = "GregTech Tools Module. Cannot be disabled for now.")
 public class ToolsModule extends BaseGregTechModule {
 
     public static final Logger logger = LogManager.getLogger("GregTech Tools");
 
-    @Nonnull
+    @NotNull
     @Override
     public Logger getLogger() {
         return logger;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<Class<?>> getEventBusSubscribers() {
         return Collections.singletonList(ToolsModule.class);

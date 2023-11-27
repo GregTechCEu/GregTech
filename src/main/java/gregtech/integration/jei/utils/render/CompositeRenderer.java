@@ -1,19 +1,19 @@
 package gregtech.integration.jei.utils.render;
 
-import mcp.MethodsReturnNonnullByDefault;
-import mezz.jei.api.ingredients.IIngredientRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.util.ITooltipFlag;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import mcp.MethodsReturnNonnullByDefault;
+import mezz.jei.api.ingredients.IIngredientRenderer;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.LinkedList;
 import java.util.List;
 
-@ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class CompositeRenderer<T> implements IIngredientRenderer<T> {
+
     private final TooltipSupplier<T> tooltipSupplier;
     private final FontRendererSupplier<T> fontRendererSupplier;
     private final List<RenderNode<T>> steps;
@@ -54,6 +54,7 @@ public class CompositeRenderer<T> implements IIngredientRenderer<T> {
     }
 
     public static class Builder<T> {
+
         private final TooltipSupplier<T> tooltipSupplier;
         private final FontRendererSupplier<T> fontRendererSupplier;
         private final List<RenderNode<T>> steps = new LinkedList<>();
@@ -80,16 +81,19 @@ public class CompositeRenderer<T> implements IIngredientRenderer<T> {
 
     @FunctionalInterface
     public interface RenderNode<T> {
+
         void render(Minecraft minecraft, int xPosition, int yPosition, @Nullable T ingredient);
     }
 
     @FunctionalInterface
     public interface TooltipSupplier<T> {
+
         List<String> getTooltip(Minecraft minecraft, T ingredient, ITooltipFlag tooltipFlag);
     }
 
     @FunctionalInterface
     public interface FontRendererSupplier<T> {
+
         FontRenderer getFontRenderer(Minecraft minecraft, T ingredient);
     }
 }

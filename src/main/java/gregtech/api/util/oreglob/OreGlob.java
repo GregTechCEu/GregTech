@@ -1,10 +1,12 @@
 package gregtech.api.util.oreglob;
 
 import gregtech.api.unification.OreDictUnifier;
-import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.ApiStatus;
 
-import javax.annotation.Nonnull;
+import net.minecraft.item.ItemStack;
+
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -28,14 +30,14 @@ public abstract class OreGlob {
      * @return Compilation result
      * @throws IllegalStateException If compiler is not provided yet
      */
-    @Nonnull
-    public static OreGlobCompileResult compile(@Nonnull String expression) {
+    @NotNull
+    public static OreGlobCompileResult compile(@NotNull String expression) {
         if (compiler == null) throw new IllegalStateException("Compiler unavailable");
         return compiler.apply(expression);
     }
 
     @ApiStatus.Internal
-    public static void setCompiler(@Nonnull Function<String, OreGlobCompileResult> compiler) {
+    public static void setCompiler(@NotNull Function<String, OreGlobCompileResult> compiler) {
         OreGlob.compiler = compiler;
     }
 
@@ -46,8 +48,8 @@ public abstract class OreGlob {
      * @param <V>        Type of visualizer
      * @return Visualizer
      */
-    @Nonnull
-    public abstract <V extends OreGlobTextBuilder> V visualize(@Nonnull V visualizer);
+    @NotNull
+    public abstract <V extends OreGlobTextBuilder> V visualize(@NotNull V visualizer);
 
     /**
      * Tries to match the given input.
@@ -55,7 +57,7 @@ public abstract class OreGlob {
      * @param input String input
      * @return Whether this instance matches the input
      */
-    public abstract boolean matches(@Nonnull String input);
+    public abstract boolean matches(@NotNull String input);
 
     /**
      * Tries to match each ore dictionary entries associated with given item.
@@ -67,7 +69,7 @@ public abstract class OreGlob {
      * @param stack Item input
      * @return Whether this instance matches the input
      */
-    public final boolean matches(@Nonnull ItemStack stack) {
+    public final boolean matches(@NotNull ItemStack stack) {
         Set<String> oreDicts = OreDictUnifier.getOreDictionaryNames(stack);
         if (oreDicts.isEmpty()) {
             return matches("");
@@ -80,13 +82,13 @@ public abstract class OreGlob {
     }
 
     /**
-     * Visualize this instance with standard Minecraft text formatting. Two spaces ('  ') will
+     * Visualize this instance with standard Minecraft text formatting. Two spaces (' ') will
      * be used as indentation.
      *
      * @return Formatted visualization
      * @see OreGlob#toFormattedString(String)
      */
-    @Nonnull
+    @NotNull
     public final List<String> toFormattedString() {
         return visualize(new OreGlobTextBuilder(OreGlobTextFormatting.DEFAULT_FORMATTING)).getLines();
     }
@@ -97,8 +99,8 @@ public abstract class OreGlob {
      * @return Formatted visualization
      * @see OreGlob#toFormattedString()
      */
-    @Nonnull
-    public final List<String> toFormattedString(@Nonnull String indent) {
+    @NotNull
+    public final List<String> toFormattedString(@NotNull String indent) {
         return visualize(new OreGlobTextBuilder(OreGlobTextFormatting.DEFAULT_FORMATTING, indent)).getLines();
     }
 

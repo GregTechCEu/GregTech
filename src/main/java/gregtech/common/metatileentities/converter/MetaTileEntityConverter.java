@@ -1,10 +1,5 @@
 package gregtech.common.metatileentities.converter;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
@@ -16,6 +11,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
@@ -30,10 +26,16 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.SYNC_TILE_MODE;
@@ -62,7 +64,8 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     }
 
     @Override
-    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                     CuboidRayTraceResult hitResult) {
         if (getWorld().isRemote) {
             scheduleRenderUpdate();
             return true;
@@ -129,12 +132,14 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+        IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         Textures.VOLTAGE_CASINGS[getTier()].render(renderState, translation, colouredPipeline);
         if (converterTrait.isFeToEu()) {
             for (EnumFacing facing : EnumFacing.VALUES) {
                 if (facing == frontFacing)
-                    Textures.ENERGY_OUT.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+                    Textures.ENERGY_OUT.renderSided(facing, renderState, translation,
+                            PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
                 else
                     Textures.CONVERTER_FE_IN.renderSided(facing, renderState, translation, pipeline);
             }
@@ -143,7 +148,8 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
                 if (facing == frontFacing)
                     Textures.CONVERTER_FE_OUT.renderSided(facing, renderState, translation, pipeline);
                 else
-                    Textures.ENERGY_IN.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+                    Textures.ENERGY_IN.renderSided(facing, renderState, translation,
+                            PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
             }
         }
     }
@@ -190,8 +196,10 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
         long amps = converterTrait.getBaseAmps();
         tooltip.add(I18n.format("gregtech.machine.energy_converter.description"));
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_tool_usage"));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps, FeCompat.ratio(true)), amps, voltage, GTValues.VNF[getTier()]));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VNF[getTier()], FeCompat.toFe(voltage * amps, FeCompat.ratio(false))));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe",
+                FeCompat.toFe(voltage * amps, FeCompat.ratio(true)), amps, voltage, GTValues.VNF[getTier()]));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage,
+                GTValues.VNF[getTier()], FeCompat.toFe(voltage * amps, FeCompat.ratio(false))));
     }
 
     @Override

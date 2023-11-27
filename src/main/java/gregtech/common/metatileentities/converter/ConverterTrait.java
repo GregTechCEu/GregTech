@@ -7,6 +7,7 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -14,7 +15,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ConverterTrait extends MTETrait {
 
@@ -68,7 +69,7 @@ public class ConverterTrait extends MTETrait {
         return voltage;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return GregtechDataCodes.ENERGY_CONVERTER_TRAIT;
@@ -86,7 +87,7 @@ public class ConverterTrait extends MTETrait {
         return change;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
@@ -96,7 +97,7 @@ public class ConverterTrait extends MTETrait {
     }
 
     @Override
-    public void deserializeNBT(@Nonnull NBTTagCompound nbt) {
+    public void deserializeNBT(@NotNull NBTTagCompound nbt) {
         this.storedEU = nbt.getLong("StoredEU");
         this.feToEu = nbt.getBoolean("feToEu");
     }
@@ -122,7 +123,8 @@ public class ConverterTrait extends MTETrait {
             if (ampsToInsert == 0) return;
 
             // send out energy
-            energyInserted = container.acceptEnergyFromNetwork(metaTileEntity.getFrontFacing().getOpposite(), voltage, ampsToInsert) * voltage;
+            energyInserted = container.acceptEnergyFromNetwork(metaTileEntity.getFrontFacing().getOpposite(), voltage,
+                    ampsToInsert) * voltage;
         } else { // push out FE
             // Get the FE capability in front of us
             IEnergyStorage storage = getCapabilityAtFront(CapabilityEnergy.ENERGY);

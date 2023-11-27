@@ -159,7 +159,6 @@ public class GregtechDataCodes {
     public static final String TAG_KEY_FRAGILE = "Fragile";
     public static final String TAG_KEY_MUFFLED = "Muffled";
 
-
     // MTE Trait Names
 
     public static final String ABSTRACT_WORKABLE_TRAIT = "RecipeMapWorkable";

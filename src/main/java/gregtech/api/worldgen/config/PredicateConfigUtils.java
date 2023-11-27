@@ -1,15 +1,17 @@
 package gregtech.api.worldgen.config;
 
+import gregtech.api.unification.ore.StoneType;
+import gregtech.api.util.WorldBlockPredicate;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
+
 import com.google.common.base.Optional;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import gregtech.api.unification.ore.StoneType;
-import gregtech.api.util.WorldBlockPredicate;
-import net.minecraft.block.Block;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,13 +31,14 @@ public class PredicateConfigUtils {
                 String stringValue = valueElement.getAsString();
                 Optional<?> parsedValue = property.parseValue(stringValue);
                 if (!parsedValue.isPresent()) {
-                    throw new IllegalArgumentException("Couldn't parse property " + property.getName() + " value " + valueElement);
+                    throw new IllegalArgumentException(
+                            "Couldn't parse property " + property.getName() + " value " + valueElement);
                 }
                 // idk what this is
                 @SuppressWarnings("UnnecessaryLocalVariable")
                 IProperty propertyVar = property;
                 Comparable comparableVar = (Comparable) parsedValue.get();
-                //noinspection unchecked
+                // noinspection unchecked
                 blockState = blockState.withProperty(propertyVar, comparableVar);
             }
         }
@@ -114,7 +117,8 @@ public class PredicateConfigUtils {
                     }
                     Optional<?> parsedValue = property.parseValue(elementValue);
                     if (!parsedValue.isPresent()) {
-                        throw new IllegalArgumentException("Couldn't parse property " + property.getName() + " value " + valueElement);
+                        throw new IllegalArgumentException(
+                                "Couldn't parse property " + property.getName() + " value " + valueElement);
                     }
                     allValues.add(parsedValue.get());
                 }
@@ -130,7 +134,7 @@ public class PredicateConfigUtils {
         return blockState -> {
             for (IProperty<?> property : blockState.getPropertyKeys()) {
                 if (!allowedValues.containsKey(property))
-                    continue; //do not check unspecified properties
+                    continue; // do not check unspecified properties
                 Object propertyValue = blockState.getValue(property);
                 if (!allowedValues.get(property).contains(propertyValue))
                     return false;

@@ -8,8 +8,7 @@ import gregtech.api.util.ValidationResult;
 
 public class PrimitiveRecipeBuilder extends RecipeBuilder<PrimitiveRecipeBuilder> {
 
-    public PrimitiveRecipeBuilder() {
-    }
+    public PrimitiveRecipeBuilder() {}
 
     public PrimitiveRecipeBuilder(Recipe recipe, RecipeMap<PrimitiveRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);

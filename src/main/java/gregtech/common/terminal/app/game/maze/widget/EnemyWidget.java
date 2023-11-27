@@ -14,5 +14,4 @@ public class EnemyWidget extends PlayerWidget {
         this.setSelfPosition(new Position(app.getRenderX(posX), app.getRenderY(posY)));
         drawSolidRect(this.getPosition().x, this.getPosition().y, 10, 10, 0xFFFFAAAA);
     }
-
 }

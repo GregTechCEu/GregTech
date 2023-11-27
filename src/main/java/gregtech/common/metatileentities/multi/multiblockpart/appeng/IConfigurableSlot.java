@@ -16,5 +16,4 @@ public interface IConfigurableSlot<T> {
     void setStock(T val);
 
     IConfigurableSlot<T> copy();
-
 }

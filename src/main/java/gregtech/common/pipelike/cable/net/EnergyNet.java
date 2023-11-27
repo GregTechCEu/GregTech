@@ -4,10 +4,12 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.WireProperties;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.*;
 
@@ -66,7 +68,8 @@ public class EnergyNet extends PipeNet<WireProperties> {
     }
 
     @Override
-    protected void transferNodeData(Map<BlockPos, Node<WireProperties>> transferredNodes, PipeNet<WireProperties> parentNet) {
+    protected void transferNodeData(Map<BlockPos, Node<WireProperties>> transferredNodes,
+                                    PipeNet<WireProperties> parentNet) {
         super.transferNodeData(transferredNodes, parentNet);
         NET_DATA.clear();
         ((EnergyNet) parentNet).NET_DATA.clear();

@@ -10,6 +10,8 @@ import net.minecraft.block.state.IBlockState;
  * @Description:
  */
 public interface IMatcher {
+
     boolean match(final IBlockState state);
+
     int getColor();
 }

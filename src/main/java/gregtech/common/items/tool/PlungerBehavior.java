@@ -4,6 +4,7 @@ import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.VoidFluidHandlerItemStack;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,8 +20,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public class PlungerBehavior implements IToolBehavior {
@@ -30,7 +32,9 @@ public class PlungerBehavior implements IToolBehavior {
     protected PlungerBehavior() {/**/}
 
     @Override
-    public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
+    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                           @NotNull EnumFacing facing, float hitX, float hitY, float hitZ,
+                                           @NotNull EnumHand hand) {
         IFluidHandler fluidHandler = FluidUtil.getFluidHandler(world, pos, facing);
         if (fluidHandler == null) {
             return EnumActionResult.PASS;
@@ -50,6 +54,7 @@ public class PlungerBehavior implements IToolBehavior {
     @Override
     public ICapabilityProvider createProvider(ItemStack stack, @Nullable NBTTagCompound tag) {
         return new VoidFluidHandlerItemStack(stack) {
+
             @Override
             public int fill(FluidStack resource, boolean doFill) {
                 int result = super.fill(resource, doFill);
@@ -62,7 +67,8 @@ public class PlungerBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         tooltip.add(I18n.format("item.gt.tool.behavior.plunger"));
     }
 }

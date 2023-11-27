@@ -3,6 +3,7 @@ package gregtech.api.gui.widgets;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.network.PacketBuffer;
 
 import java.util.function.BooleanSupplier;

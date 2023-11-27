@@ -7,6 +7,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -116,4 +117,3 @@ public class ImageWidget extends Widget {
         }
     }
 }
-

@@ -7,6 +7,7 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -43,7 +44,7 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
                 metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
             }
 
-            //Prioritizes as many packets as available from the buffer
+            // Prioritizes as many packets as available from the buffer
             long internalAmps = Math.min(maxAmps, Math.max(0, getInternalStorage() / voltage));
 
             usedAmps = Math.min(usedAmps, maxAmps - internalAmps);
@@ -56,14 +57,17 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
             for (Object item : batteries) {
                 if (item instanceof IElectricItem) {
                     IElectricItem electricItem = (IElectricItem) item;
-                    energy -= electricItem.charge(Math.min(distributed, GTValues.V[electricItem.getTier()] * AMPS_PER_BATTERY), getTier(), true, false);
+                    energy -= electricItem.charge(
+                            Math.min(distributed, GTValues.V[electricItem.getTier()] * AMPS_PER_BATTERY), getTier(),
+                            true, false);
                 } else if (item instanceof IEnergyStorage) {
                     IEnergyStorage energyStorage = (IEnergyStorage) item;
-                    energy -= FeCompat.insertEu(energyStorage, Math.min(distributed, GTValues.V[getTier()] * AMPS_PER_BATTERY));
+                    energy -= FeCompat.insertEu(energyStorage,
+                            Math.min(distributed, GTValues.V[getTier()] * AMPS_PER_BATTERY));
                 }
             }
 
-            //Remove energy used and then transfer overflow energy into the internal buffer
+            // Remove energy used and then transfer overflow energy into the internal buffer
             setEnergyStored(getInternalStorage() - internalAmps * voltage + energy);
             return usedAmps;
         }

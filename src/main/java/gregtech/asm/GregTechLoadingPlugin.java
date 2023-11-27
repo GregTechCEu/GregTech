@@ -7,7 +7,8 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 
 @Name("GregTechLoadingPlugin")
@@ -15,9 +16,10 @@ import java.util.Map;
 @TransformerExclusions("gregtech.asm.")
 @SortingIndex(1001)
 public class GregTechLoadingPlugin implements IFMLLoadingPlugin {
+
     @Override
     public String[] getASMTransformerClass() {
-        return new String[]{"gregtech.asm.GregTechTransformer"};
+        return new String[] { "gregtech.asm.GregTechTransformer" };
     }
 
     @Override
@@ -32,8 +34,7 @@ public class GregTechLoadingPlugin implements IFMLLoadingPlugin {
     }
 
     @Override
-    public void injectData(Map<String, Object> data) {
-    }
+    public void injectData(Map<String, Object> data) {}
 
     @Override
     public String getAccessTransformerClass() {

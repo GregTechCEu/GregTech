@@ -5,20 +5,21 @@ import gregtech.api.modules.GregTechModule;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.hwyla.provider.*;
 import gregtech.modules.GregTechModules;
+
+import net.minecraft.item.ItemStack;
+
 import mcp.mobius.waila.api.IWailaPlugin;
 import mcp.mobius.waila.api.IWailaRegistrar;
 import mcp.mobius.waila.api.SpecialChars;
 import mcp.mobius.waila.api.WailaPlugin;
-import net.minecraft.item.ItemStack;
 
 @WailaPlugin
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_HWYLA,
-        containerID = GTValues.MODID,
-        modDependencies = GTValues.MODID_HWYLA,
-        name = "GregTech HWYLA Integration",
-        description = "HWYLA (WAILA) Integration Module"
-)
+                moduleID = GregTechModules.MODULE_HWYLA,
+                containerID = GTValues.MODID,
+                modDependencies = GTValues.MODID_HWYLA,
+                name = "GregTech HWYLA Integration",
+                description = "HWYLA (WAILA) Integration Module")
 public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
 
     @Override

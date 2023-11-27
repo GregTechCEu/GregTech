@@ -1,7 +1,8 @@
 package gregtech.api.worldgen.shape;
 
-import com.google.gson.JsonObject;
 import net.minecraft.util.math.Vec3i;
+
+import com.google.gson.JsonObject;
 
 import java.util.Random;
 

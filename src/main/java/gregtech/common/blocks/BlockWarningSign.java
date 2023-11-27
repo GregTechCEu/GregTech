@@ -3,11 +3,12 @@ package gregtech.common.blocks;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantBlock;
 import gregtech.api.items.toolitem.ToolClasses;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockWarningSign extends VariantBlock<BlockWarningSign.SignType> {
 
@@ -47,12 +48,10 @@ public class BlockWarningSign extends VariantBlock<BlockWarningSign.SignType> {
             this.name = name;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;
         }
-
     }
-
 }

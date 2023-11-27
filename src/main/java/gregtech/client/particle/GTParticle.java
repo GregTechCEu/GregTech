@@ -1,191 +1,124 @@
 package gregtech.client.particle;
 
-import net.minecraft.client.particle.Particle;
+import gregtech.client.renderer.IRenderSetup;
+import gregtech.client.utils.EffectRenderContext;
+
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * Created with IntelliJ IDEA.
- *
- * @Author: KilaBash
- * @Date: 2021/08/31
- * @Description:
+ * A custom particle implementation with framework for more advanced rendering capabilities.
+ * <p/>
+ * GTParticle instances are managed by {@link GTParticleManager}. GTParticle instances with same {@link IRenderSetup}s
+ * will be drawn together as a batch.
  */
 @SideOnly(Side.CLIENT)
-public abstract class GTParticle extends Particle {
-    protected int texturesCount = 1;
-    protected int squareRenderRange = -1;
-    protected boolean motionless = false;
-    protected Consumer<GTParticle> onUpdate;
+public abstract class GTParticle {
 
-    public GTParticle(World worldIn, double posXIn, double posYIn, double posZIn) {
-        super(worldIn, posXIn, posYIn, posZIn);
+    public double posX;
+    public double posY;
+    public double posZ;
+
+    private double renderRange = -1;
+    private double squaredRenderRange = -1;
+
+    private boolean expired;
+
+    protected GTParticle(double posX, double posY, double posZ) {
+        this.posX = posX;
+        this.posY = posY;
+        this.posZ = posZ;
     }
 
-    public GTParticle(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
-        super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+    public boolean shouldRender(@NotNull EffectRenderContext context) {
+        if (squaredRenderRange < 0) return true;
+        return context.renderViewEntity().getPositionEyes(context.partialTicks())
+                .squareDistanceTo(posX, posY, posZ) <= squaredRenderRange;
     }
 
-    @Override
-    public int getFXLayer() {
-        return shouldDisableDepth() ? 1 : 0;
+    public final boolean isAlive() {
+        return !expired;
     }
 
-    public boolean shouldRendered(Entity entityIn, float partialTicks) {
-        if (squareRenderRange < 0) return true;
-        return entityIn.getPositionEyes(partialTicks).squareDistanceTo(posX, posY, posZ) <= squareRenderRange;
+    public final boolean isExpired() {
+        return expired;
     }
 
-    /**
-     * Set the render range, over the range do not render.
-     * <P>
-     *     -1 -- always render.
-     * </P>
-     */
-    public void setRenderRange(int renderRange) {
-        this.squareRenderRange = renderRange * renderRange;
-    }
-
-    /**
-     * Particles can live forever now.
-     */
-    public void setImmortal() {
-        this.particleAge = -1;
+    public final void setExpired() {
+        if (this.expired) return;
+        this.expired = true;
+        onExpired();
     }
 
     /**
-     * It can stop motion. It always has a motion before {@link Particle#onUpdate()}
+     * @return {@code true} to render the particle with
+     *         {@link net.minecraft.client.renderer.GlStateManager#depthMask(boolean) depth mask} feature disabled; in
+     *         other
+     *         words, render the particle without modifying depth buffer.
      */
-    public void setMotionless(boolean motionless) {
-        this.motionless = motionless;
+    public boolean shouldDisableDepth() {
+        return false;
     }
 
     /**
-     * Set color blend of this particle.
+     * @return render range. If the distance between particle and render view entity exceeds this value, the particle
+     *         will not be rendered. If render range is negative value or {@code NaN}, then the check is disabled and
+     *         the
+     *         particle will be rendered regardless of the distance.
      */
-    public void setColor(int color) {
-        this.setRBGColorF((color >> 16 & 255) / 255.0F,
-                (color >> 8 & 255) / 255.0F,
-                (color & 255) / 255.0F);
-        this.setAlphaF((color >> 24 & 255) / 255.0F);
+    public final double getRenderRange() {
+        return this.renderRange;
     }
 
     /**
-     * Set scale of this particle.
+     * @return squared render range, or negative value if render distance check is disabled.
      */
-    public void setScale(float scale) {
-        this.particleScale = scale;
+    public final double getSquaredRenderRange() {
+        return this.squaredRenderRange;
     }
 
     /**
-     * Set Gravity of this particle.
+     * Sets the render range. If the distance between particle and render view entity exceeds this value, the particle
+     * will not be rendered. If render range is negative value or {@code NaN}, then the check is disabled and the
+     * particle will be rendered regardless of the distance.
+     *
+     * @param renderRange Render range
      */
-    public void setGravity(float gravity) {
-        this.particleGravity = gravity;
+    public final void setRenderRange(double renderRange) {
+        this.renderRange = renderRange;
+        if (renderRange >= 0) this.squaredRenderRange = renderRange * renderRange;
+        else this.squaredRenderRange = -1;
     }
 
     /**
-     * Set sub-texture coord.
+     * Update the particle. This method is called each tick.
      */
-    public void setTexturesIndex(int particleTextureIndexX, int particleTextureIndexY) {
-        this.particleTextureIndexX = particleTextureIndexX;
-        this.particleTextureIndexY = particleTextureIndexY;
-    }
+    public void onUpdate() {}
 
     /**
-     * How many sub-textures in the current texture. it always 16 in the {@link Particle}. but we allow the bigger or smaller texture in the GTParticle.
+     * Called once on expiration.
      */
-    public void setTexturesCount(int texturesCount) {
-        this.texturesCount = texturesCount;
-    }
+    protected void onExpired() {}
 
     /**
-     * Update each tick
+     * Render the particle. If this particle has non-null {@link #getRenderSetup()} associated, this method will be
+     * called between a {@link IRenderSetup#preDraw(BufferBuilder)} call and a
+     * {@link IRenderSetup#postDraw(BufferBuilder)} call.
+     *
+     * @param buffer  buffer builder
+     * @param context render context
      */
-    public void setOnUpdate(Consumer<GTParticle> onUpdate) {
-        this.onUpdate = onUpdate;
-    }
+    public void renderParticle(@NotNull BufferBuilder buffer, @NotNull EffectRenderContext context) {}
 
-    public void setParticleTextureIndex(int particleTextureIndex) {
-        this.particleTextureIndexX = particleTextureIndex % texturesCount;
-        this.particleTextureIndexY = particleTextureIndex / texturesCount;
-    }
-
-    public float getTexturesCount() {
-        return texturesCount;
-    }
-
-    public boolean isMotionless() {
-        return motionless;
-    }
-
-    public int getRenderRange() {
-        return squareRenderRange >= 0 ? -1 : (int) Math.sqrt(squareRenderRange);
-    }
-
-    @Override
-    public void onUpdate() {
-        if (this.onUpdate != null) {
-            onUpdate.accept(this);
-        }
-        if (this.particleAge >= 0 && this.particleAge++ >= this.particleMaxAge) {
-            this.setExpired();
-        }
-
-        if (!motionless) {
-            this.prevPosX = this.posX;
-            this.prevPosY = this.posY;
-            this.prevPosZ = this.posZ;
-
-            this.motionY -= 0.04D * (double)this.particleGravity;
-            this.move(this.motionX, this.motionY, this.motionZ);
-            this.motionX *= 0.9800000190734863D;
-            this.motionY *= 0.9800000190734863D;
-            this.motionZ *= 0.9800000190734863D;
-
-            if (this.onGround) {
-                this.motionX *= 0.699999988079071D;
-                this.motionZ *= 0.699999988079071D;
-            }
-        }
-    }
-
-    @Override
-    public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-        float minU = this.particleTextureIndexX * 1F / texturesCount;
-        float maxU = minU + 1F / texturesCount;//0.0624375F;
-        float minV = this.particleTextureIndexY * 1F / texturesCount;
-        float maxV = minV + 1F / texturesCount;//0.0624375F;
-        float scale = 0.1F * this.particleScale;
-
-        if (this.particleTexture != null) {
-            minU = this.particleTexture.getMinU();
-            maxU = this.particleTexture.getMaxU();
-            minV = this.particleTexture.getMinV();
-            maxV = this.particleTexture.getMaxV();
-        }
-
-        float renderX = (float) (this.prevPosX + (this.posX - this.prevPosX) * (double) partialTicks - interpPosX);
-        float renderY = (float) (this.prevPosY + (this.posY - this.prevPosY) * (double) partialTicks - interpPosY);
-        float renderZ = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * (double) partialTicks - interpPosZ);
-        int brightnessForRender = this.getBrightnessForRender(partialTicks);
-        int j = brightnessForRender >> 16 & 65535;
-        int k = brightnessForRender & 65535;
-        buffer.pos(renderX - rotationX * scale - rotationXY * scale, renderY - rotationZ * scale,  (renderZ - rotationYZ * scale - rotationXZ * scale)).tex(maxU, maxV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-        buffer.pos(renderX - rotationX * scale + rotationXY * scale, renderY + rotationZ * scale,  (renderZ - rotationYZ * scale + rotationXZ * scale)).tex(maxU, minV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-        buffer.pos(renderX + rotationX * scale + rotationXY * scale,  (renderY + rotationZ * scale),  (renderZ + rotationYZ * scale + rotationXZ * scale)).tex(minU, minV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-        buffer.pos(renderX + rotationX * scale - rotationXY * scale,  (renderY - rotationZ * scale),  (renderZ + rotationYZ * scale - rotationXZ * scale)).tex(minU, maxV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-    }
-
-    /***
-     * Do not create an instance here; use a static instance plz
+    /**
+     * @return Render setup for this particle, if exists
      */
-    public IGTParticleHandler getGLHandler() {
-        return IGTParticleHandler.DEFAULT_FX_HANDLER;
+    @Nullable
+    public IRenderSetup getRenderSetup() {
+        return null;
     }
 }

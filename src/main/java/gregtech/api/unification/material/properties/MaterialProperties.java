@@ -10,8 +10,7 @@ public class MaterialProperties {
 
     private static final Set<PropertyKey<?>> baseTypes = new HashSet<>(Arrays.asList(
             PropertyKey.FLUID, PropertyKey.DUST,
-            PropertyKey.INGOT, PropertyKey.GEM, PropertyKey.EMPTY
-    ));
+            PropertyKey.INGOT, PropertyKey.GEM, PropertyKey.EMPTY));
 
     @SuppressWarnings("unused")
     public static void addBaseType(PropertyKey<?> baseTypeKey) {
@@ -70,7 +69,8 @@ public class MaterialProperties {
                     GTLog.logger.debug("Creating empty placeholder Material {}", material);
                 }
                 propertyMap.put(PropertyKey.EMPTY, PropertyKey.EMPTY.constructDefault());
-            } else throw new IllegalArgumentException("Material must have at least one of: " + baseTypes + " specified!");
+            } else
+                throw new IllegalArgumentException("Material must have at least one of: " + baseTypes + " specified!");
         }
     }
 

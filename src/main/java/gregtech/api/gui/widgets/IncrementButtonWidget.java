@@ -8,6 +8,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
@@ -34,8 +35,8 @@ public class IncrementButtonWidget extends Widget {
     protected boolean isMouseHovered;
     protected float textScale = 1;
 
-
-    public IncrementButtonWidget(int x, int y, int width, int height, int increment, int incrementShift, int incrementCtrl, int incrementShiftCtrl, IntConsumer updater) {
+    public IncrementButtonWidget(int x, int y, int width, int height, int increment, int incrementShift,
+                                 int incrementCtrl, int incrementShiftCtrl, IntConsumer updater) {
         super(x, y, width, height);
         this.increment = increment;
         this.incrementShift = incrementShift;
@@ -81,7 +82,8 @@ public class IncrementButtonWidget extends Widget {
         Position position = getPosition();
         Size size = getSize();
         if (buttonTexture instanceof SizedTextureArea) {
-            ((SizedTextureArea) buttonTexture).drawHorizontalCutSubArea(position.x, position.y, size.width, size.height, 0.0, 1.0);
+            ((SizedTextureArea) buttonTexture).drawHorizontalCutSubArea(position.x, position.y, size.width, size.height,
+                    0.0, 1.0);
         } else {
             buttonTexture.drawSubArea(position.x, position.y, size.width, size.height, 0.0, 0.0, 1.0, 1.0);
         }

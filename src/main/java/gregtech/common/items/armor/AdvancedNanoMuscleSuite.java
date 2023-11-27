@@ -6,6 +6,7 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.KeyBind;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,14 +18,16 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
 import java.util.List;
 
 public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack {
-    //A replacement for checking the current world time, to get around the gamerule that stops it
+
+    // A replacement for checking the current world time, to get around the gamerule that stops it
     private long timer = 0L;
     private List<Pair<NonNullList<ItemStack>, List<Integer>>> inventoryIndexMap;
 
@@ -33,7 +36,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack item) {
+    public void onArmorTick(World world, EntityPlayer player, @NotNull ItemStack item) {
         IElectricItem cont = item.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (cont == null) {
             return;
@@ -88,7 +91,8 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
                     Iterator<Integer> inventoryIterator = inventoryMap.getValue().iterator();
                     while (inventoryIterator.hasNext()) {
                         int slot = inventoryIterator.next();
-                        IElectricItem chargable = inventoryMap.getKey().get(slot).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                        IElectricItem chargable = inventoryMap.getKey().get(slot)
+                                .getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
 
                         // Safety check the null, it should not actually happen. Also don't try and charge itself
                         if (chargable == null || chargable == cont) {
@@ -99,7 +103,8 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
                         long attemptedChargeAmount = chargable.getTransferLimit() * 10;
 
                         // Accounts for tick differences when charging items
-                        if (chargable.getCharge() < chargable.getMaxCharge() && cont.canUse(attemptedChargeAmount) && timer % 10 == 0) {
+                        if (chargable.getCharge() < chargable.getMaxCharge() && cont.canUse(attemptedChargeAmount) &&
+                                timer % 10 == 0) {
                             long delta = chargable.charge(attemptedChargeAmount, cont.getTier(), true, false);
                             if (delta > 0) {
                                 cont.discharge(delta, cont.getTier(), true, false, false);
@@ -134,7 +139,8 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
         String state;
         if (data.hasKey("canShare")) {
-            state = data.getBoolean("canShare") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled");
+            state = data.getBoolean("canShare") ? I18n.format("metaarmor.hud.status.enabled") :
+                    I18n.format("metaarmor.hud.status.disabled");
         } else {
             state = I18n.format("metaarmor.hud.status.disabled");
         }
@@ -151,13 +157,14 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
     }
 
     @Override
-    public ActionResult<ItemStack> onRightClick(World world, @Nonnull EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onRightClick(World world, @NotNull EntityPlayer player, EnumHand hand) {
         ItemStack armor = player.getHeldItem(hand);
 
         if (armor.getItem() instanceof ArmorMetaItem && player.isSneaking()) {
             NBTTagCompound data = GTUtility.getOrCreateNbtCompound(player.getHeldItem(hand));
             boolean canShare = data.hasKey("canShare") && data.getBoolean("canShare");
-            IElectricItem cont = player.getHeldItem(hand).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            IElectricItem cont = player.getHeldItem(hand).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM,
+                    null);
             if (cont == null) {
                 return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
             }
@@ -191,12 +198,14 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
         NBTTagCompound data = item.getTagCompound();
         if (data != null) {
             if (data.hasKey("canShare")) {
-                String status = data.getBoolean("canShare") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
+                String status = data.getBoolean("canShare") ? "metaarmor.hud.status.enabled" :
+                        "metaarmor.hud.status.disabled";
                 this.HUD.newString(I18n.format("mataarmor.hud.supply_mode", I18n.format(status)));
             }
 
             if (data.hasKey("hover")) {
-                String status = data.getBoolean("hover") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
+                String status = data.getBoolean("hover") ? "metaarmor.hud.status.enabled" :
+                        "metaarmor.hud.status.disabled";
                 this.HUD.newString(I18n.format("metaarmor.hud.hover_mode", I18n.format(status)));
             }
         }
@@ -210,7 +219,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
     }
 
     @Override
-    public boolean canUseEnergy(@Nonnull ItemStack stack, int amount) {
+    public boolean canUseEnergy(@NotNull ItemStack stack, int amount) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return false;
@@ -218,7 +227,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
     }
 
     @Override
-    public void drainEnergy(@Nonnull ItemStack stack, int amount) {
+    public void drainEnergy(@NotNull ItemStack stack, int amount) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return;
@@ -226,14 +235,14 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
     }
 
     @Override
-    public boolean hasEnergy(@Nonnull ItemStack stack) {
+    public boolean hasEnergy(@NotNull ItemStack stack) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return false;
         return container.getCharge() > 0;
     }
 
-    private static IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
+    private static IElectricItem getIElectricItem(@NotNull ItemStack stack) {
         return stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
     }
 

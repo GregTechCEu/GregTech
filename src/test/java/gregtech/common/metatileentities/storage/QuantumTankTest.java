@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.Bootstrap;
 import gregtech.api.GTValues;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -9,6 +10,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +26,7 @@ public class QuantumTankTest {
     private static FluidStack LAVA;
     private static ItemStack BUCKET_WATER;
     private static ItemStack BUCKET_LAVA;
+
     @BeforeAll
     public static void bootstrap() {
         Bootstrap.perform();
@@ -65,7 +68,8 @@ public class QuantumTankTest {
             FluidStack resource = WATER.copy();
             resource.amount = Integer.MAX_VALUE;
             int inserted = handler.fill(resource, true);
-            assertThat("Quantum Tank accepted too much fluid!", inserted == handler.getTankProperties()[0].getCapacity());
+            assertThat("Quantum Tank accepted too much fluid!",
+                    inserted == handler.getTankProperties()[0].getCapacity());
 
             quantumTank.setVoiding(true);
             inserted = handler.fill(resource, true);
@@ -100,7 +104,8 @@ public class QuantumTankTest {
         QuantumTankWrapper[] quantumTanks = new QuantumTankWrapper[10];
         for (int i = 0; i < 5; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
-            quantumTanks[i] = new QuantumTankWrapper(gregtechId("super_tank." + voltageName), i + 1, 4000000 * (int) Math.pow(2, i));
+            quantumTanks[i] = new QuantumTankWrapper(gregtechId("super_tank." + voltageName), i + 1,
+                    4000000 * (int) Math.pow(2, i));
         }
 
         for (int i = 5; i < quantumTanks.length; i++) {
@@ -141,14 +146,16 @@ public class QuantumTankTest {
                     if (currentFluid == null) {
                         // tank had fluid, but now is empty
                         updatePreviousFluid(null);
-                    } else if (previousFluid.getFluid().equals(currentFluid.getFluid()) && previousFluid.amount != currentFluid.amount) {
-                        // tank has fluid with changed amount
-                        previousFluid.amount = currentFluid.amount;
-                        writeCustomData(UPDATE_FLUID_AMOUNT, buf -> buf.writeInt(currentFluid.amount));
-                    } else if (!previousFluid.equals(currentFluid)) {
-                        // tank has a different fluid from before
-                        updatePreviousFluid(currentFluid);
-                    }
+                    } else if (previousFluid.getFluid().equals(currentFluid.getFluid()) &&
+                            previousFluid.amount != currentFluid.amount) {
+                                // tank has fluid with changed amount
+                                previousFluid.amount = currentFluid.amount;
+                                writeCustomData(UPDATE_FLUID_AMOUNT, buf -> buf.writeInt(currentFluid.amount));
+                            } else
+                        if (!previousFluid.equals(currentFluid)) {
+                            // tank has a different fluid from before
+                            updatePreviousFluid(currentFluid);
+                        }
                 }
             }
         }

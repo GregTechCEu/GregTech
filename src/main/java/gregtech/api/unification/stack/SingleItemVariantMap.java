@@ -1,6 +1,6 @@
 package gregtech.api.unification.stack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * {@link ItemVariantMap} implementation which holds one shared value for all

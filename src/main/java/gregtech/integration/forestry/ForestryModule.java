@@ -1,7 +1,5 @@
 package gregtech.integration.forestry;
 
-import forestry.api.core.ForestryAPI;
-import forestry.core.items.IColoredItem;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.StandardMetaItem;
@@ -24,6 +22,7 @@ import gregtech.integration.forestry.frames.GTItemFrame;
 import gregtech.integration.forestry.recipes.*;
 import gregtech.integration.forestry.tools.ScoopBehavior;
 import gregtech.modules.GregTechModules;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
@@ -37,17 +36,20 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
+
+import forestry.api.core.ForestryAPI;
+import forestry.core.items.IColoredItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_FR,
-        containerID = GTValues.MODID,
-        modDependencies = GTValues.MODID_FR,
-        name = "GregTech Forestry Integration",
-        description = "Forestry Integration Module")
+                moduleID = GregTechModules.MODULE_FR,
+                containerID = GTValues.MODID,
+                modDependencies = GTValues.MODID_FR,
+                name = "GregTech Forestry Integration",
+                description = "Forestry Integration Module")
 public class ForestryModule extends IntegrationSubmodule {
 
     private static MetaItem<?> forestryMetaItem;
@@ -102,7 +104,8 @@ public class ForestryModule extends IntegrationSubmodule {
                 FRAME_STABILIZING = new GTItemFrame(GTFrameType.STABILIZING);
                 FRAME_ARBORIST = new GTItemFrame(GTFrameType.ARBORIST);
             } else {
-                getLogger().warn("GregTech Frames are enabled, but Forestry Apiculture module is disabled. Skipping...");
+                getLogger()
+                        .warn("GregTech Frames are enabled, but Forestry Apiculture module is disabled. Skipping...");
             }
         }
 
@@ -216,7 +219,8 @@ public class ForestryModule extends IntegrationSubmodule {
             if (Loader.isModLoaded(GTValues.MODID_XU2)) {
                 ELECTRODE_ORCHID = forestryMetaItem.addItem(13, "electrode.orchid");
             }
-            if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_TR) || Loader.isModLoaded(GTValues.MODID_BINNIE)) {
+            if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_TR) ||
+                    Loader.isModLoaded(GTValues.MODID_BINNIE)) {
                 ELECTRODE_RUBBER = forestryMetaItem.addItem(14, "electrode.rubber");
             }
         }

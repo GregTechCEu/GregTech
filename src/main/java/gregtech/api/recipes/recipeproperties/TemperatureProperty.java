@@ -1,15 +1,18 @@
 package gregtech.api.recipes.recipeproperties;
 
 import gregtech.api.unification.material.Material;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import org.apache.commons.lang3.Validate;
 
-import javax.annotation.Nonnull;
+import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 import java.util.TreeMap;
 
 public class TemperatureProperty extends RecipeProperty<Integer> {
+
     public static final String KEY = "temperature";
 
     private static final TreeMap<Integer, Object> registeredCoilTypes = new TreeMap<>((x, y) -> y - x);
@@ -33,7 +36,7 @@ public class TemperatureProperty extends RecipeProperty<Integer> {
                 value, getMinTierForTemperature(castValue(value))), x, y, color);
     }
 
-    @Nonnull
+    @NotNull
     private String getMinTierForTemperature(Integer value) {
         String name = "";
         for (Map.Entry<Integer, Object> coil : registeredCoilTypes.entrySet()) {
@@ -65,5 +68,4 @@ public class TemperatureProperty extends RecipeProperty<Integer> {
             registeredCoilTypes.put(temperature, coilMaterial);
         }
     }
-
 }

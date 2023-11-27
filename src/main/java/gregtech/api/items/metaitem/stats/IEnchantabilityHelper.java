@@ -10,5 +10,4 @@ public interface IEnchantabilityHelper extends IItemComponent {
     int getItemEnchantability(ItemStack stack);
 
     boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment);
-
 }

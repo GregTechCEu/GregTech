@@ -1,6 +1,5 @@
 package gregtech.api.fluids;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.store.FluidStorageKey;
@@ -11,11 +10,14 @@ import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
-import io.github.drmanganese.topaddons.reference.Colors;
+
 import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.Loader;
+
+import com.google.common.base.Preconditions;
+import io.github.drmanganese.topaddons.reference.Colors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -137,6 +139,7 @@ public class FluidBuilder {
 
     /**
      * Converts a density value in g/cm^3 to an MC fluid density by comparison to air's density.
+     * 
      * @param density the density to convert
      * @return the MC integer density
      */
@@ -180,6 +183,7 @@ public class FluidBuilder {
 
     /**
      * Converts viscosity in Poise to MC viscosity
+     * 
      * @param viscosity the viscosity to convert
      * @return the converted value
      */
@@ -200,13 +204,14 @@ public class FluidBuilder {
      * @param attributes the attributes to add
      * @return this
      */
-    public @NotNull FluidBuilder attributes(@NotNull FluidAttribute @NotNull ... attributes) {
+    public @NotNull FluidBuilder attributes(@NotNull FluidAttribute @NotNull... attributes) {
         Collections.addAll(this.attributes, attributes);
         return this;
     }
 
     /**
      * Mark this fluid as having a custom still texture
+     * 
      * @return this
      */
     public @NotNull FluidBuilder customStill() {
@@ -217,6 +222,7 @@ public class FluidBuilder {
 
     /**
      * Mark this fluid as having a custom flowing texture
+     * 
      * @return this
      */
     public @NotNull FluidBuilder customFlow() {
@@ -226,7 +232,7 @@ public class FluidBuilder {
     }
 
     /**
-     * @param hasCustomStill if the fluid has a custom still texture
+     * @param hasCustomStill   if the fluid has a custom still texture
      * @param hasCustomFlowing if the fluid has a custom flowing texture
      * @return this
      */
@@ -310,7 +316,8 @@ public class FluidBuilder {
                 MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color), false);
                 block = new GTFluidBlock(fluid, materialLiquid, false, false, false);
             } else {
-                MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color), material.hasFlag(MaterialFlags.STICKY));
+                MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color),
+                        material.hasFlag(MaterialFlags.STICKY));
                 block = new GTFluidBlock(fluid, materialLiquid, material);
             }
             block.setRegistryName(modid, "fluid." + name);

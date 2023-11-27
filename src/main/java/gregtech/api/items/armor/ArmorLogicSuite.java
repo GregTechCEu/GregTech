@@ -1,11 +1,11 @@
 package gregtech.api.items.armor;
 
-
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.stats.IItemHUDProvider;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,7 +18,8 @@ import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public abstract class ArmorLogicSuite implements ISpecialArmorLogic, IItemHUDProvider {
@@ -39,9 +40,10 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic, IItemHUDPro
     public abstract void onArmorTick(World world, EntityPlayer player, ItemStack itemStack);
 
     @Override
-    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
+    public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source,
+                                         double damage, EntityEquipmentSlot equipmentSlot) {
         IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if(item == null) {
+        if (item == null) {
             return new ArmorProperties(0, 0.0, 0);
         }
         int damageLimit = Integer.MAX_VALUE;
@@ -64,6 +66,7 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic, IItemHUDPro
     @Override
     public void addToolComponents(ArmorMetaValueItem mvi) {
         mvi.addComponents(new ElectricStats(maxCapacity, tier, true, false) {
+
             @Override
             public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
                 return onRightClick(world, player, hand);
@@ -85,7 +88,8 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic, IItemHUDPro
     public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (player.getHeldItem(hand).getItem() instanceof ArmorMetaItem) {
             ItemStack armor = player.getHeldItem(hand);
-            if (armor.getItem() instanceof ArmorMetaItem && player.inventory.armorInventory.get(SLOT.getIndex()).isEmpty() && !player.isSneaking()) {
+            if (armor.getItem() instanceof ArmorMetaItem &&
+                    player.inventory.armorInventory.get(SLOT.getIndex()).isEmpty() && !player.isSneaking()) {
                 player.inventory.armorInventory.set(SLOT.getIndex(), armor.copy());
                 player.setHeldItem(hand, ItemStack.EMPTY);
                 player.playSound(new SoundEvent(new ResourceLocation("item.armor.equip_generic")), 1.0F, 1.0F);

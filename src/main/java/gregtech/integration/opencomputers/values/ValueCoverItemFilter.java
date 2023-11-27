@@ -4,10 +4,12 @@ import gregtech.api.cover.Cover;
 import gregtech.common.covers.CoverItemFilter;
 import gregtech.common.covers.ItemFilterMode;
 import gregtech.integration.opencomputers.InputValidator;
+
+import net.minecraft.util.EnumFacing;
+
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
-import net.minecraft.util.EnumFacing;
 
 public class ValueCoverItemFilter extends ValueCoverBehavior {
 
@@ -30,7 +32,7 @@ public class ValueCoverItemFilter extends ValueCoverBehavior {
 
         ItemFilterMode mode = InputValidator.getEnumArrayIndex(args, 0, ItemFilterMode.values());
         cover.setFilterMode(mode);
-        return new Object[]{};
+        return new Object[] {};
     }
 
     @Callback(doc = "function():number --  Gets filter mode. (0:FILTER_INSERT, 1:FILTER_EXTRACT, 2:FILTER_BOTH)")
@@ -40,6 +42,6 @@ public class ValueCoverItemFilter extends ValueCoverBehavior {
             return NULL_COVER;
         }
 
-        return new Object[]{cover.getFilterMode().ordinal()};
+        return new Object[] { cover.getFilterMode().ordinal() };
     }
 }

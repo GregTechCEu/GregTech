@@ -1,10 +1,12 @@
 package gregtech.api.unification.stack;
 
 import gregtech.api.GTValues;
+
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Set;
 
 /**
@@ -23,7 +25,7 @@ public interface ItemVariantMap<E> {
 
     /**
      * @return {@code true} if there's any nonnull value associated with some item
-     * metadata, excluding metadata value of {@link GTValues#W} {@code (32767)}.
+     *         metadata, excluding metadata value of {@link GTValues#W} {@code (32767)}.
      * @see #hasWildcardEntry()
      */
     boolean hasNonWildcardEntry();
@@ -31,7 +33,7 @@ public interface ItemVariantMap<E> {
     /**
      * @param meta item metadata
      * @return {@code true} if there's a nonnull value associated with given item
-     * metadata, {@code false} otherwise.
+     *         metadata, {@code false} otherwise.
      */
     boolean has(short meta);
 
@@ -42,7 +44,7 @@ public interface ItemVariantMap<E> {
      *
      * @param meta item metadata
      * @return value associated with given item metadata, or {@code null} if there's no
-     * values associated.
+     *         values associated.
      */
     @Nullable
     E get(short meta);
@@ -56,7 +58,7 @@ public interface ItemVariantMap<E> {
 
     /**
      * @return {@code true} if there's a nonnull value associated with item
-     * metadata {@link GTValues#W} {@code (32767)}.
+     *         metadata {@link GTValues#W} {@code (32767)}.
      * @see #hasNonWildcardEntry()
      */
     default boolean hasWildcardEntry() {
@@ -66,9 +68,9 @@ public interface ItemVariantMap<E> {
     /**
      * @param stack item stack
      * @return {@code true} if there's a nonnull value associated with item damage of
-     * the item, {@code false} otherwise.
+     *         the item, {@code false} otherwise.
      */
-    default boolean has(@Nonnull ItemStack stack) {
+    default boolean has(@NotNull ItemStack stack) {
         return has((short) stack.getItemDamage());
     }
 
@@ -79,10 +81,10 @@ public interface ItemVariantMap<E> {
      *
      * @param stack item stack
      * @return value associated with item damage of the item, or {@code null} if there's
-     * no values associated.
+     *         no values associated.
      */
     @Nullable
-    default E get(@Nonnull ItemStack stack) {
+    default E get(@NotNull ItemStack stack) {
         return get((short) stack.getItemDamage());
     }
 
@@ -94,8 +96,8 @@ public interface ItemVariantMap<E> {
      * @param <E> type of the element
      * @return an unmodifiable view of {@code map} with {@link Set} of elements as values.
      */
-    @Nonnull
-    static <E> ItemVariantMap<Set<E>> unmodifiableSetView(@Nonnull ItemVariantMap<? extends Set<E>> map) {
+    @NotNull
+    static <E> ItemVariantMap<Set<E>> unmodifiableSetView(@NotNull ItemVariantMap<? extends Set<E>> map) {
         return new UnmodifiableSetViewVariantMap<>(map);
     }
 
@@ -103,7 +105,7 @@ public interface ItemVariantMap<E> {
      * @param <E> type of the element
      * @return an unmodifiable instance of variant map with no entries.
      */
-    @Nonnull
+    @NotNull
     @SuppressWarnings("unchecked")
     static <E> ItemVariantMap<E> empty() {
         return (ItemVariantMap<E>) EmptyVariantMap.INSTANCE;
@@ -129,7 +131,7 @@ public interface ItemVariantMap<E> {
          * @param meta item metadata
          * @param e    new value, or {@code null} for entry removal
          * @return previous value associated with given item metadata, or {@code null} if
-         * there was no such value.
+         *         there was no such value.
          */
         @Nullable
         E put(short meta, @Nullable E e);
@@ -142,10 +144,10 @@ public interface ItemVariantMap<E> {
          * @param stack item stack
          * @param e     new value, or {@code null} for entry removal
          * @return previous value associated with given item metadata, or {@code null} if
-         * there was no such value.
+         *         there was no such value.
          */
         @Nullable
-        default E put(@Nonnull ItemStack stack, @Nullable E e) {
+        default E put(@NotNull ItemStack stack, @Nullable E e) {
             return put((short) stack.getItemDamage(), e);
         }
     }

@@ -1,7 +1,8 @@
 package gregtech.api.unification.material.event;
 
-import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.material.registry.IMaterialRegistryManager;
+import gregtech.api.unification.material.registry.MaterialRegistry;
+
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 
 /**

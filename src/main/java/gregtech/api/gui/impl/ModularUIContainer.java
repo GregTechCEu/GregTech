@@ -10,7 +10,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.PerTickIntCounter;
 import gregtech.core.network.packets.PacketUIClientAction;
 import gregtech.core.network.packets.PacketUIWidgetUpdate;
-import io.netty.buffer.Unpooled;
+
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,7 +19,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketSetSlot;
 
-import javax.annotation.Nonnull;
+import io.netty.buffer.Unpooled;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -46,11 +48,10 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
     }
 
     @Override
-    public void notifySizeChange() {
-    }
+    public void notifySizeChange() {}
 
-    //WARNING! WIDGET CHANGES SHOULD BE *STRICTLY* SYNCHRONIZED BETWEEN SERVER AND CLIENT,
-    //OTHERWISE ID MISMATCH CAN HAPPEN BETWEEN ASSIGNED SLOTS!
+    // WARNING! WIDGET CHANGES SHOULD BE *STRICTLY* SYNCHRONIZED BETWEEN SERVER AND CLIENT,
+    // OTHERWISE ID MISMATCH CAN HAPPEN BETWEEN ASSIGNED SLOTS!
     @Override
     public void notifyWidgetChange() {
         List<INativeWidget> nativeWidgets = modularUI.guiWidgets.values().stream()
@@ -63,7 +64,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
             for (INativeWidget removedWidget : removedWidgets) {
                 Slot slotHandle = removedWidget.getHandle();
                 this.slotMap.remove(slotHandle);
-                //replace removed slot with empty placeholder to avoid list index shift
+                // replace removed slot with empty placeholder to avoid list index shift
                 EmptySlotPlaceholder emptySlotPlaceholder = new EmptySlotPlaceholder();
                 emptySlotPlaceholder.slotNumber = slotHandle.slotNumber;
                 this.inventorySlots.set(slotHandle.slotNumber, emptySlotPlaceholder);
@@ -80,7 +81,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
             int currentIndex = 0;
             for (INativeWidget addedWidget : addedWidgets) {
                 Slot slotHandle = addedWidget.getHandle();
-                //add or replace empty slot in inventory
+                // add or replace empty slot in inventory
                 this.slotMap.put(slotHandle, addedWidget);
                 if (currentIndex < emptySlotIndexes.length) {
                     int slotIndex = emptySlotIndexes[currentIndex++];
@@ -101,13 +102,13 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
     }
 
     @Override
-    public void onContainerClosed(@Nonnull EntityPlayer playerIn) {
+    public void onContainerClosed(@NotNull EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
         modularUI.triggerCloseListeners();
     }
 
     @Override
-    public void addListener(@Nonnull IContainerListener listener) {
+    public void addListener(@NotNull IContainerListener listener) {
         super.addListener(listener);
         modularUI.guiWidgets.values().forEach(Widget::detectAndSendChanges);
     }
@@ -138,9 +139,9 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack slotClick(int slotId, int dragType, @Nonnull ClickType clickTypeIn, @Nonnull EntityPlayer player) {
+    public ItemStack slotClick(int slotId, int dragType, @NotNull ClickType clickTypeIn, @NotNull EntityPlayer player) {
         if (slotId >= 0 && slotId < inventorySlots.size()) {
             Slot slot = getSlot(slotId);
             ItemStack result = slotMap.get(slot).slotClick(dragType, clickTypeIn, player);
@@ -179,15 +180,15 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         return GTUtility.mergeItemStack(itemStack, inventorySlots, simulate);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack transferStackInSlot(@Nonnull EntityPlayer player, int index) {
+    public ItemStack transferStackInSlot(@NotNull EntityPlayer player, int index) {
         Slot slot = inventorySlots.get(index);
         if (!slot.canTakeStack(player)) {
             return ItemStack.EMPTY;
         }
         if (!slot.getHasStack()) {
-            //return empty if we can't transfer it
+            // return empty if we can't transfer it
             return ItemStack.EMPTY;
         }
         ItemStack stackInSlot = slot.getStack();
@@ -200,17 +201,17 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         if (stackToMerge.isEmpty() || slotMap.get(slot).canMergeSlot(stackToMerge)) {
             itemsMerged = stackInSlot.getCount() - stackToMerge.getCount();
         } else {
-            //if we can't have partial stack merge, we have to use all the stack
+            // if we can't have partial stack merge, we have to use all the stack
             itemsMerged = stackInSlot.getCount();
         }
         int itemsToExtract = itemsMerged;
         itemsMerged += transferredPerTick.get(player.world);
         if (itemsMerged > stackInSlot.getMaxStackSize()) {
-            //we can merge at most one stack at a time
+            // we can merge at most one stack at a time
             return ItemStack.EMPTY;
         }
         transferredPerTick.increment(player.world, itemsToExtract);
-        //otherwise, perform extraction and merge
+        // otherwise, perform extraction and merge
         ItemStack extractedStack = stackInSlot.splitStack(itemsToExtract);
         if (stackInSlot.isEmpty()) {
             slot.putStack(ItemStack.EMPTY);
@@ -230,12 +231,12 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
     }
 
     @Override
-    public boolean canMergeSlot(@Nonnull ItemStack stack, @Nonnull Slot slotIn) {
+    public boolean canMergeSlot(@NotNull ItemStack stack, @NotNull Slot slotIn) {
         return slotMap.get(slotIn).canMergeSlot(stack);
     }
 
     @Override
-    public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
+    public boolean canInteractWith(@NotNull EntityPlayer playerIn) {
         return playerIn == this.modularUI.entityPlayer && this.modularUI.holder.isValid();
     }
 
@@ -274,23 +275,22 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
             super(EMPTY_INVENTORY, 0, -100000, -100000);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack getStack() {
             return ItemStack.EMPTY;
         }
 
         @Override
-        public void putStack(@Nonnull ItemStack stack) {
-        }
+        public void putStack(@NotNull ItemStack stack) {}
 
         @Override
-        public boolean isItemValid(@Nonnull ItemStack stack) {
+        public boolean isItemValid(@NotNull ItemStack stack) {
             return false;
         }
 
         @Override
-        public boolean canTakeStack(@Nonnull EntityPlayer playerIn) {
+        public boolean canTakeStack(@NotNull EntityPlayer playerIn) {
             return false;
         }
 

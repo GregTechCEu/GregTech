@@ -1,6 +1,7 @@
 package gregtech.api.modules;
 
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.util.ResourceLocation;
 
 public interface IModuleManager {

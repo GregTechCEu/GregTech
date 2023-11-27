@@ -1,9 +1,5 @@
 package gregtech.api.recipes;
 
-import com.cleanroommc.groovyscript.api.GroovyLog;
-import com.cleanroommc.groovyscript.api.IIngredient;
-import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
-import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -29,6 +25,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.groovy.GroovyScriptModule;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -36,11 +33,15 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional;
+
+import com.cleanroommc.groovyscript.api.GroovyLog;
+import com.cleanroommc.groovyscript.api.IIngredient;
+import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
+import crafttweaker.CraftTweakerAPI;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -135,7 +136,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public boolean applyProperty(@Nonnull String key, @Nullable Object value) {
+    public boolean applyProperty(@NotNull String key, @Nullable Object value) {
         if (key.equals(CleanroomProperty.KEY)) {
             if (value instanceof CleanroomType) {
                 this.cleanroom((CleanroomType) value);
@@ -149,7 +150,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return false;
     }
 
-    public boolean applyProperty(@Nonnull RecipeProperty<?> property, @Nullable Object value) {
+    public boolean applyProperty(@NotNull RecipeProperty<?> property, @Nullable Object value) {
         if (value == null) {
             if (this.recipePropertyStorage != null) {
                 return this.recipePropertyStorage.remove(property);
@@ -285,7 +286,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputNBT(new GTRecipeItemInput(new ItemStack(item, count, meta)), matcher, condition);
     }
 
-    public R inputNBT(Item item, int count, @SuppressWarnings("unused") boolean wild, NBTMatcher matcher, NBTCondition condition) {
+    public R inputNBT(Item item, int count, @SuppressWarnings("unused") boolean wild, NBTMatcher matcher,
+                      NBTCondition condition) {
         return inputNBT(new GTRecipeItemInput(new ItemStack(item, count, GTValues.W)), matcher, condition);
     }
 
@@ -297,7 +299,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputNBT(new GTRecipeItemInput(new ItemStack(block, count)), matcher, condition);
     }
 
-    public R inputNBT(Block block, int count, @SuppressWarnings("unused") boolean wild, NBTMatcher matcher, NBTCondition condition) {
+    public R inputNBT(Block block, int count, @SuppressWarnings("unused") boolean wild, NBTMatcher matcher,
+                      NBTCondition condition) {
         return inputNBT(new GTRecipeItemInput(new ItemStack(block, count, GTValues.W)), matcher, condition);
     }
 
@@ -529,7 +532,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             return (R) this;
         }
         if (0 >= chance || chance > ChancedOutputLogic.getMaxChancedValue()) {
-            GTLog.logger.error("Chance cannot be less or equal to 0 or more than {}. Actual: {}.", ChancedOutputLogic.getMaxChancedValue(), chance);
+            GTLog.logger.error("Chance cannot be less or equal to 0 or more than {}. Actual: {}.",
+                    ChancedOutputLogic.getMaxChancedValue(), chance);
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
             return (R) this;
@@ -576,7 +580,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             return (R) this;
         }
         if (0 >= chance || chance > ChancedOutputLogic.getMaxChancedValue()) {
-            GTLog.logger.error("Chance cannot be less or equal to 0 or more than {}. Actual: {}.", ChancedOutputLogic.getMaxChancedValue(), chance);
+            GTLog.logger.error("Chance cannot be less or equal to 0 or more than {}. Actual: {}.",
+                    ChancedOutputLogic.getMaxChancedValue(), chance);
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
             return (R) this;
@@ -657,7 +662,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             int boost = entry.getChanceBoost();
 
             // Add individual chanced outputs per number of parallel operations performed, to mimic regular recipes.
-            // This is done instead of simply batching the chanced outputs by the number of parallel operations performed
+            // This is done instead of simply batching the chanced outputs by the number of parallel operations
+            // performed
             for (int i = 0; i < numberOfOperations; i++) {
                 this.chancedOutput(entry.getIngredient().copy(), chance, boost);
             }
@@ -667,7 +673,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             int boost = entry.getChanceBoost();
 
             // Add individual chanced outputs per number of parallel operations performed, to mimic regular recipes.
-            // This is done instead of simply batching the chanced outputs by the number of parallel operations performed
+            // This is done instead of simply batching the chanced outputs by the number of parallel operations
+            // performed
             for (int i = 0; i < numberOfOperations; i++) {
                 this.chancedFluidOutput(entry.getIngredient().copy(), chance, boost);
             }
@@ -736,13 +743,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             }
         });
 
-        recipe.getOutputs().forEach(itemStack ->
-                outputItems.add(copyItemStackWithCount(itemStack,
-                        itemStack.getCount() * numberOfOperations)));
+        recipe.getOutputs().forEach(itemStack -> outputItems.add(copyItemStackWithCount(itemStack,
+                itemStack.getCount() * numberOfOperations)));
 
-        recipe.getFluidOutputs().forEach(fluidStack ->
-                outputFluids.add(copyFluidStackWithAmount(fluidStack,
-                        fluidStack.amount * numberOfOperations)));
+        recipe.getFluidOutputs().forEach(fluidStack -> outputFluids.add(copyFluidStackWithAmount(fluidStack,
+                fluidStack.amount * numberOfOperations)));
     }
 
     public int getParallel() {
@@ -776,7 +781,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public R category(@Nonnull GTRecipeCategory category) {
+    public R category(@NotNull GTRecipeCategory category) {
         this.category = category;
         return (R) this;
     }
@@ -837,7 +842,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             } else if (category.getRecipeMap() != this.recipeMap) {
                 GTLog.logger.error("Cannot apply Category with incompatible RecipeMap", new IllegalArgumentException());
                 if (isCTRecipe) {
-                    CraftTweakerAPI.logError("Cannot apply Category with incompatible RecipeMap", new IllegalArgumentException());
+                    CraftTweakerAPI.logError("Cannot apply Category with incompatible RecipeMap",
+                            new IllegalArgumentException());
                 }
                 recipeStatus = EnumValidationResult.INVALID;
             }
@@ -861,12 +867,14 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         int maxFluidOutput = recipeMap.getMaxFluidOutputs();
         errorMsg.add(inputs.size() > maxInput, () -> getRequiredString(maxInput, inputs.size(), "item input"));
         errorMsg.add(outputs.size() > maxOutput, () -> getRequiredString(maxOutput, outputs.size(), "item output"));
-        errorMsg.add(fluidInputs.size() > maxFluidInput, () -> getRequiredString(maxFluidInput, fluidInputs.size(), "fluid input"));
-        errorMsg.add(fluidOutputs.size() > maxFluidOutput, () -> getRequiredString(maxFluidOutput, fluidOutputs.size(), "fluid output"));
+        errorMsg.add(fluidInputs.size() > maxFluidInput,
+                () -> getRequiredString(maxFluidInput, fluidInputs.size(), "fluid input"));
+        errorMsg.add(fluidOutputs.size() > maxFluidOutput,
+                () -> getRequiredString(maxFluidOutput, fluidOutputs.size(), "fluid output"));
     }
 
-    @Nonnull
-    protected static String getRequiredString(int max, int actual, @Nonnull String type) {
+    @NotNull
+    protected static String getRequiredString(int max, int actual, @NotNull String type) {
         if (max <= 0) {
             return "No " + type + "s allowed, but found " + actual;
         }
@@ -897,7 +905,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     ///////////////////
-    //    Getters    //
+    // Getters //
     ///////////////////
 
     public List<GTRecipeInput> getInputs() {
