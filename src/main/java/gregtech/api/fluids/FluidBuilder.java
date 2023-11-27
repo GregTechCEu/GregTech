@@ -9,6 +9,7 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.block.material.MaterialLiquid;
@@ -302,7 +303,7 @@ public class FluidBuilder {
         determineViscosity(material);
         fluid.setViscosity(viscosity);
 
-        GTFluidRegistration.INSTANCE.registerFluid(fluid, modid, hasBucket);
+        Fluid properFluid = GTFluidRegistration.INSTANCE.registerFluid(fluid, modid, hasBucket);
 
         if (material != null) {
             FluidUnifier.registerFluid(fluid, material);
@@ -311,17 +312,22 @@ public class FluidBuilder {
         FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createGTFluidTooltip(fluid));
 
         if (hasFluidBlock) {
-            GTFluidBlock block;
-            if (material == null) {
-                MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color), false);
-                block = new GTFluidBlock(fluid, materialLiquid, false, false, false);
+            if (fluid == properFluid) {
+                GTFluidBlock block;
+                if (material == null) {
+                    MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color), false);
+                    block = new GTFluidBlock(fluid, materialLiquid, false, false, false);
+                } else {
+                    MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color),
+                            material.hasFlag(MaterialFlags.STICKY));
+                    block = new GTFluidBlock(fluid, materialLiquid, material);
+                }
+                block.setRegistryName(modid, "fluid." + name);
+                GTFluidRegistration.INSTANCE.registerFluidBlock(block);
             } else {
-                MaterialLiquid materialLiquid = new GTFluidMaterial(GTUtility.getMapColor(color),
-                        material.hasFlag(MaterialFlags.STICKY));
-                block = new GTFluidBlock(fluid, materialLiquid, material);
+                GTLog.logger.warn("Skipping fluid block for fluid {} because another mod already owns this fluid!",
+                        fluid.getName());
             }
-            block.setRegistryName(modid, "fluid." + name);
-            GTFluidRegistration.INSTANCE.registerFluidBlock(block);
         }
 
         // register cross mod compat for colors
@@ -329,7 +335,7 @@ public class FluidBuilder {
             Colors.FLUID_NAME_COLOR_MAP.put(name, color);
         }
 
-        return fluid;
+        return properFluid;
     }
 
     private void determineName(@Nullable Material material, @Nullable FluidStorageKey key) {
