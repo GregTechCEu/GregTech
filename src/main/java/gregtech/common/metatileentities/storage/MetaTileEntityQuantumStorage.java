@@ -4,6 +4,7 @@ import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -13,6 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,7 +116,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             if (getWorld().getBlockState(getPos().offset(facing)).getBlock() == Blocks.AIR) continue;
             MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), getPos().offset(facing));
             IQuantumController candidate = null;
-            if (mte instanceof IQuantumStorage<?> storage) {
+            if (mte instanceof IQuantumStorage<?>storage) {
                 if (storage.isConnected()) {
                     IQuantumController controller = storage.getController();
                     if (controller == null || controller.getPos().equals(controllerPos)) continue;
@@ -181,7 +183,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip"));
     }
 }
