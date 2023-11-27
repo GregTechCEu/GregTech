@@ -1,5 +1,6 @@
 package gregtech.api.util;
 
+import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.GTFluid;
 import gregtech.api.unification.material.Material;
 
@@ -10,6 +11,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -82,19 +84,24 @@ public class FluidTooltipUtil {
         return getFluidTooltip(FluidRegistry.getFluid(fluidName));
     }
 
-    public static Supplier<List<String>> createGTFluidTooltip(GTFluid fluid) {
+    public static Supplier<List<String>> createGTFluidTooltip(@NotNull GTFluid fluid) {
+        Material material = fluid instanceof GTFluid.GTMaterialFluid matFluid ? matFluid.getMaterial() : null;
+        return createFluidTooltip(material, fluid, fluid.getState());
+    }
+
+    public static Supplier<List<String>> createFluidTooltip(@Nullable Material material, @NotNull Fluid fluid,
+                                                            @NotNull FluidState fluidState) {
         return () -> {
             List<String> tooltip = new ArrayList<>();
-            if (fluid instanceof GTFluid.GTMaterialFluid materialFluid) {
-                Material material = materialFluid.getMaterial();
-                if (!material.getChemicalFormula().isEmpty()) {
-                    tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
-                }
+            if (material != null && !material.getChemicalFormula().isEmpty()) {
+                tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
             }
 
             tooltip.add(I18n.format("gregtech.fluid.temperature", fluid.getTemperature()));
-            tooltip.add(I18n.format(fluid.getState().getTranslationKey()));
-            fluid.getAttributes().forEach(a -> a.appendFluidTooltips(tooltip));
+            tooltip.add(I18n.format(fluidState.getTranslationKey()));
+            if (fluid instanceof GTFluid gtFluid) {
+                gtFluid.getAttributes().forEach(a -> a.appendFluidTooltips(tooltip));
+            }
 
             if (fluid.getTemperature() < CRYOGENIC_FLUID_THRESHOLD) {
                 tooltip.add(I18n.format("gregtech.fluid.temperature.cryogenic"));
