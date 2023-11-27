@@ -1,21 +1,24 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDualHandler;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<IDualHandler> {
+
     public MetaTileEntityQuantumExtender(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
@@ -48,6 +51,7 @@ public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<
     protected boolean openGUIOnRightClick() {
         return false;
     }
+
     @Override
     public Type getType() {
         return Type.NONE;
@@ -63,5 +67,4 @@ public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.REMOVE_CONTROLLER) scheduleRenderUpdate();
     }
-
 }

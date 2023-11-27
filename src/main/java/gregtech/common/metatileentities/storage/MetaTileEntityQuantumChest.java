@@ -62,7 +62,8 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IItemHandler> implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity{
+public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IItemHandler>
+                                        implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
 
     private final int tier;
     protected final long maxStoredItems;
@@ -354,8 +355,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
         if (isConnected()) {
             // todo testing purposes
             builder.widget(new ImageWidget(116, 32, 20, 20, GuiTextures.INFO_ICON)
-                    .setTooltip("Connected to Quantum Controller: " + getControllerPos())
-            );
+                    .setTooltip("Connected to Quantum Controller: " + getControllerPos()));
         }
 
         return builder.build(getHolder(), entityPlayer);

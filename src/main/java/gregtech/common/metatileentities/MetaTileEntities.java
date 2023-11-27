@@ -981,11 +981,15 @@ public class MetaTileEntities {
         PUMP[3] = registerMetaTileEntity(1533, new MetaTileEntityPump(gregtechId("pump.ev"), 4));
 
         // Super / Quantum Chests, IDs 1559-1574, 1752, 1754, 1755
-        QUANTUM_STORAGE_CONTROLLER = registerMetaTileEntity(1559, new MetaTileEntityQuantumStorageController(gregtechId("quantum_storage_controller")));
-        QUANTUM_STORAGE_PROXY = registerMetaTileEntity(1754, new MetaTileEntityQuantumProxy(gregtechId("quantum_storage_proxy")));
-        QUANTUM_STORAGE_EXTENDER = registerMetaTileEntity(1755, new MetaTileEntityQuantumExtender(gregtechId("quantum_storage_extender")));
+        QUANTUM_STORAGE_CONTROLLER = registerMetaTileEntity(1559,
+                new MetaTileEntityQuantumStorageController(gregtechId("quantum_storage_controller")));
+        QUANTUM_STORAGE_PROXY = registerMetaTileEntity(1754,
+                new MetaTileEntityQuantumProxy(gregtechId("quantum_storage_proxy")));
+        QUANTUM_STORAGE_EXTENDER = registerMetaTileEntity(1755,
+                new MetaTileEntityQuantumExtender(gregtechId("quantum_storage_extender")));
 
-        QUANTUM_CHEST[10] = new MetaTileEntityQuantumChest(gregtechId("super_chest." + GTValues.VN[GTValues.ULV].toLowerCase()), 0, 1000000L);
+        QUANTUM_CHEST[10] = new MetaTileEntityQuantumChest(
+                gregtechId("super_chest." + GTValues.VN[GTValues.ULV].toLowerCase()), 0, 1000000L);
         registerMetaTileEntity(1752, QUANTUM_CHEST[10]);
         for (int i = 0; i < 5; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
@@ -1003,7 +1007,8 @@ public class MetaTileEntities {
 
         // Super / Quantum Tanks, IDs 1575-1589, 1753
 
-        QUANTUM_TANK[10] = new MetaTileEntityQuantumTank(gregtechId("super_tank." + GTValues.VN[GTValues.ULV].toLowerCase()), 0, 1000000);
+        QUANTUM_TANK[10] = new MetaTileEntityQuantumTank(
+                gregtechId("super_tank." + GTValues.VN[GTValues.ULV].toLowerCase()), 0, 1000000);
         registerMetaTileEntity(1753, QUANTUM_TANK[10]);
 
         for (int i = 0; i < 5; i++) {

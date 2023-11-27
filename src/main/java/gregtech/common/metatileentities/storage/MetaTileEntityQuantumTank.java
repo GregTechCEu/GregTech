@@ -370,15 +370,14 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                                 .shouldUseBaseBackground())
                 .widget(new ToggleButtonWidget(43, 64, 18, 18,
                         GuiTextures.BUTTON_FLUID_VOID, this::isVoiding, this::setVoiding)
-                        .setTooltipText("gregtech.gui.fluid_voiding.tooltip")
-                        .shouldUseBaseBackground());
+                                .setTooltipText("gregtech.gui.fluid_voiding.tooltip")
+                                .shouldUseBaseBackground());
         if (isConnected()) {
             // todo testing purposes
             builder.widget(new ImageWidget(116, 32, 20, 20, GuiTextures.INFO_ICON)
-                    .setTooltip("Connected to Quantum Controller " + getControllerPos())
-            );
+                    .setTooltip("Connected to Quantum Controller " + getControllerPos()));
         }
-                return builder.bindPlayerInventory(entityPlayer.inventory)
+        return builder.bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
     }
 

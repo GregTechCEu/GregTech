@@ -177,7 +177,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         @Override
         public IFluidTankProperties[] getTankProperties() {
             if (this.tankProperties == null) {
-                this.tankProperties = new IFluidTankProperties[]{new FluidTankPropertiesWrapper(fluidTank)};
+                this.tankProperties = new IFluidTankProperties[] { new FluidTankPropertiesWrapper(fluidTank) };
             }
             return this.tankProperties;
         }
