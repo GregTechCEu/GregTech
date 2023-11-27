@@ -1,6 +1,7 @@
 package gregtech.api.capability;
 
 import net.minecraft.util.math.BlockPos;
+
 import org.jetbrains.annotations.Nullable;
 
 public interface IQuantumStorage<T> {
@@ -23,6 +24,9 @@ public interface IQuantumStorage<T> {
     T getTypeValue();
 
     enum Type {
-        ITEM, FLUID, EXTENDER, NONE
+        ITEM,
+        FLUID,
+        EXTENDER,
+        NONE
     }
 }

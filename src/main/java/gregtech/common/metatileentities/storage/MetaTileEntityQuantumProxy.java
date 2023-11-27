@@ -1,14 +1,12 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDualHandler;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
@@ -17,6 +15,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDualHandler> {
@@ -37,7 +39,6 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
         } else {
             Textures.QUANTUM_PROXY.render(renderState, translation, pipeline);
         }
-
     }
 
     @Override

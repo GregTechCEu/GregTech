@@ -97,11 +97,14 @@ public class Textures {
             "casings/pipe/machine_casing_grate");
     public static final SimpleOverlayRenderer HIGH_POWER_CASING = new SimpleOverlayRenderer(
             "casings/computer/high_power_casing");
-    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_ACTIVE = new SimpleOverlayRenderer("casings/quantum/controller_active");
+    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_ACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/controller_active");
     public static final SimpleOverlayRenderer QUANTUM_PROXY = new SimpleOverlayRenderer("casings/quantum/proxy");
-    public static final SimpleOverlayRenderer QUANTUM_PROXY_ACTIVE = new SimpleOverlayRenderer("casings/quantum/proxy_active");
+    public static final SimpleOverlayRenderer QUANTUM_PROXY_ACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/proxy_active");
     public static final SimpleOverlayRenderer QUANTUM_EXTENDER = new SimpleOverlayRenderer("casings/quantum/extender");
-    public static final SimpleOverlayRenderer QUANTUM_EXTENDER_ACTIVE = new SimpleOverlayRenderer("casings/quantum/extender_active");
+    public static final SimpleOverlayRenderer QUANTUM_EXTENDER_ACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/extender_active");
 
     // Simple Sided Cube Renderers
     public static final SimpleSidedCubeRenderer STEAM_CASING_BRONZE = new SimpleSidedCubeRenderer(
