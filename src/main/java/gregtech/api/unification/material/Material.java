@@ -13,6 +13,7 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
@@ -35,6 +36,7 @@ import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenOperator;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 @ZenClass("mods.gregtech.material.Material")
@@ -457,6 +459,8 @@ public class Material implements Comparable<Material> {
         private final MaterialProperties properties;
         private final MaterialFlags flags;
 
+        private final List<Consumer<Material>> postProcessors = new ArrayList<>(1);
+
         /*
          * The temporary list of components for this Material.
          */
@@ -528,10 +532,11 @@ public class Material implements Comparable<Material> {
          *
          * @param fluid The existing liquid
          */
-        public Builder fluid(@NotNull Fluid fluid, @NotNull FluidStorageKey fluidType) {
+        public Builder fluid(@NotNull Fluid fluid, @NotNull FluidStorageKey key, @NotNull FluidState state) {
             properties.ensureSet(PropertyKey.FLUID);
             FluidProperty property = properties.getProperty(PropertyKey.FLUID);
-            property.getStorage().store(fluidType, fluid);
+            property.getStorage().store(key, fluid);
+            postProcessors.add(m -> FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createFluidTooltip(m, fluid, state)));
             return this;
         }
 
@@ -1071,7 +1076,9 @@ public class Material implements Comparable<Material> {
         public Material build() {
             materialInfo.componentList = ImmutableList.copyOf(composition);
             materialInfo.verifyInfo(properties, averageRGB);
-            return new Material(materialInfo, properties, flags);
+            Material m = new Material(materialInfo, properties, flags);
+            if (!postProcessors.isEmpty()) postProcessors.forEach(p -> p.accept(m));
+            return m;
         }
     }
 

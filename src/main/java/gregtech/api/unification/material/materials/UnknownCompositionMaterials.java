@@ -1,6 +1,7 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.fluids.FluidBuilder;
+import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
@@ -430,7 +431,7 @@ public class UnknownCompositionMaterials {
                 .build();
 
         Lava = new Material.Builder(1600, gregtechId("lava"))
-                .fluid(FluidRegistry.LAVA, FluidStorageKeys.LIQUID)
+                .fluid(FluidRegistry.LAVA, FluidStorageKeys.LIQUID, FluidState.LIQUID)
                 .color(0xFF4000)
                 .flags(GLOWING)
                 .build();
