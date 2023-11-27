@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IDualHandler;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
@@ -13,6 +10,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,11 +31,14 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
@@ -171,7 +172,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
             if (getWorld().getBlockState(pos).getBlock() == Blocks.AIR) continue;
             MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
-            if (!(mte instanceof IQuantumStorage<?> storage)) continue;
+            if (!(mte instanceof IQuantumStorage<?>storage)) continue;
 
             // connected to some other network already, ignore
             if (storage.isConnected() && !storage.getControllerPos().equals(getPos())) continue;
@@ -208,7 +209,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
                 storage = oldInstances.get(pos).get();
             } else {
                 MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
-                if (mte instanceof IQuantumStorage<?> quantumStorage) {
+                if (mte instanceof IQuantumStorage<?>quantumStorage) {
                     storage = quantumStorage;
                 }
             }
@@ -249,7 +250,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip"));
     }
 
@@ -266,8 +268,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         // IItemHandler saved values
         private ItemHandlerList itemHandlers;
 
-//        private int insertIndex = -1;
-//        private int extractIndex = -1;
+        // private int insertIndex = -1;
+        // private int extractIndex = -1;
 
         private void invalidate() {
             fluidTanks = new FluidTankList(false);
@@ -347,67 +349,71 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             return itemHandlers.getSlots();
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack getStackInSlot(int slot) {
             // make GTTransferUtils always think it can insert items
             return itemHandlers.getStackInSlot(slot);
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             return itemHandlers.insertItem(slot, stack, simulate);
 
-//            // check item handlers if the stack to insert matches a stack already in the item handler
-//            if (simulate) {
-//                ItemStack checkStack;
-//                boolean canInsert = false;
-//                for (int i = 0; i < getItemHandlers().getSlots(); i++) {
-//                    IItemHandler handler = getItemHandlers().get(i);
-//                    // try to get a stack in output slot
-//                    checkStack = handler.getStackInSlot(2);
-//
-//                    // if the check stack is empty, or equal to the incoming stack
-//                    if (checkStack.isItemEqual(stack) || checkStack.isEmpty()) {
-//                        canInsert = true;
-//                        this.insertIndex = i;
-//                        GTTransferUtils.insertItem(itemHandlers, stack, simulate) = handler.insertItem(1, GTTransferUtils.insertItem(itemHandlers, stack, simulate), true);
-//                        if (GTTransferUtils.insertItem(itemHandlers, stack, simulate).isEmpty() || GTTransferUtils.insertItem(itemHandlers, stack, simulate).getCount() < stack.getCount()) break;
-//                    }
-//                }
-//                if (!canInsert) this.insertIndex = -1;
-//            } else if (this.insertIndex != -1) {
-//                GTTransferUtils.insertItem(itemHandlers, stack, simulate) = getItemHandlers().get(this.insertIndex).insertItem(1, GTTransferUtils.insertItem(itemHandlers, stack, simulate), false);
-//            }
-//
-//            return GTTransferUtils.insertItem(itemHandlers, stack, simulate);
+            // // check item handlers if the stack to insert matches a stack already in the item handler
+            // if (simulate) {
+            // ItemStack checkStack;
+            // boolean canInsert = false;
+            // for (int i = 0; i < getItemHandlers().getSlots(); i++) {
+            // IItemHandler handler = getItemHandlers().get(i);
+            // // try to get a stack in output slot
+            // checkStack = handler.getStackInSlot(2);
+            //
+            // // if the check stack is empty, or equal to the incoming stack
+            // if (checkStack.isItemEqual(stack) || checkStack.isEmpty()) {
+            // canInsert = true;
+            // this.insertIndex = i;
+            // GTTransferUtils.insertItem(itemHandlers, stack, simulate) = handler.insertItem(1,
+            // GTTransferUtils.insertItem(itemHandlers, stack, simulate), true);
+            // if (GTTransferUtils.insertItem(itemHandlers, stack, simulate).isEmpty() ||
+            // GTTransferUtils.insertItem(itemHandlers, stack, simulate).getCount() < stack.getCount()) break;
+            // }
+            // }
+            // if (!canInsert) this.insertIndex = -1;
+            // } else if (this.insertIndex != -1) {
+            // GTTransferUtils.insertItem(itemHandlers, stack, simulate) =
+            // getItemHandlers().get(this.insertIndex).insertItem(1, GTTransferUtils.insertItem(itemHandlers, stack,
+            // simulate), false);
+            // }
+            //
+            // return GTTransferUtils.insertItem(itemHandlers, stack, simulate);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             return itemHandlers.extractItem(slot, amount, simulate);
 
-//            ItemStack extracted = ItemStack.EMPTY;
-//
-//            if (simulate){
-//                boolean canExtract = false;
-//                for (int i = 0; i < getItemHandlers().size(); i++) {
-//                    IItemHandler handler = getItemHandlers().get(i);
-//                    extracted = handler.extractItem(0, amount, true);
-//                    if (!extracted.isEmpty()){
-//                        canExtract = true;
-//                        this.extractIndex = i;
-//                        break;
-//                    }
-//                }
-//                if (!canExtract) this.extractIndex = -1;
-//            } else if (this.extractIndex != -1) {
-//                extracted = getItemHandlers().get(this.extractIndex).extractItem(0, amount, false);
-//            }
-//
-//            return extracted;
+            // ItemStack extracted = ItemStack.EMPTY;
+            //
+            // if (simulate){
+            // boolean canExtract = false;
+            // for (int i = 0; i < getItemHandlers().size(); i++) {
+            // IItemHandler handler = getItemHandlers().get(i);
+            // extracted = handler.extractItem(0, amount, true);
+            // if (!extracted.isEmpty()){
+            // canExtract = true;
+            // this.extractIndex = i;
+            // break;
+            // }
+            // }
+            // if (!canExtract) this.extractIndex = -1;
+            // } else if (this.extractIndex != -1) {
+            // extracted = getItemHandlers().get(this.extractIndex).extractItem(0, amount, false);
+            // }
+            //
+            // return extracted;
         }
 
         @Override
@@ -415,5 +421,4 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             return getItemHandlers().getSlotLimit(slot);
         }
     }
-
 }
