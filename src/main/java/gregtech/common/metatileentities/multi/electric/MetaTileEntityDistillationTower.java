@@ -29,10 +29,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.function.Function;
-
-import javax.annotation.Nonnull;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -116,7 +116,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.DISTILLATION_TOWER_OVERLAY;

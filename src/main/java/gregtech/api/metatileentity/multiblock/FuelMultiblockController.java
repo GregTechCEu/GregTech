@@ -18,10 +18,10 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public abstract class FuelMultiblockController extends RecipeMapMultiblockController {
 
@@ -75,7 +75,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();

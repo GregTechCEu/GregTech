@@ -9,13 +9,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
 
 public class MultiblockShapeInfo {
 
@@ -81,7 +81,7 @@ public class MultiblockShapeInfo {
                     "Supplier must supply either a MetaTileEntity or an IBlockState! Actual: " + part.getClass());
         }
 
-        @Nonnull
+        @NotNull
         private BlockInfo[][][] bakeArray() {
             final int maxZ = shape.size();
             final int maxY = shape.get(0).length;

@@ -16,10 +16,10 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.concurrent.Callable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.concurrent.Callable;
 
 @EventBusSubscriber
 public class GTWorldGenCapability {
@@ -86,13 +86,13 @@ public class GTWorldGenCapability {
         private final GTWorldGenCapability capabilityInstance = new GTWorldGenCapability();
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        public boolean hasCapability(@NotNull Capability<?> capability, @Nullable EnumFacing facing) {
             return capability == CAPABILITY;
         }
 
         @Nullable
         @Override
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        public <T> T getCapability(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
             if (capability == CAPABILITY) {
                 return CAPABILITY.cast(capabilityInstance);
             }

@@ -18,12 +18,12 @@ import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
@@ -282,7 +282,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPre(@Nonnull int[] values, @Nonnull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPre(@NotNull int[] values, @NotNull IRecipePropertyStorage storage) {
         super.modifyOverclockPre(values, storage);
 
         // apply maintenance bonuses
@@ -295,7 +295,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPost(int[] overclockResults, @NotNull IRecipePropertyStorage storage) {
         super.modifyOverclockPost(overclockResults, storage);
 
         // apply maintenance penalties
@@ -336,7 +336,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         return Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
     }
 
-    @Nonnull
+    @NotNull
     protected Tuple<Integer, Double> getMaintenanceValues() {
         MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ?
                 (MultiblockWithDisplayBase) metaTileEntity : null;
@@ -350,7 +350,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public boolean checkRecipe(@Nonnull Recipe recipe) {
+    public boolean checkRecipe(@NotNull Recipe recipe) {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         if (controller.checkRecipe(recipe, false)) {
             controller.checkRecipe(recipe, true);

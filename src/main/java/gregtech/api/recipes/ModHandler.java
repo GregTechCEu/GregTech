@@ -44,14 +44,13 @@ import crafttweaker.mc1120.furnace.MCFurnaceManager;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public final class ModHandler {
 
@@ -111,7 +110,7 @@ public final class ModHandler {
      * @param input  the unification entry to input
      * @param output the output of the recipe
      */
-    public static void addSmeltingRecipe(@Nonnull UnificationEntry input, @Nonnull ItemStack output) {
+    public static void addSmeltingRecipe(@NotNull UnificationEntry input, @NotNull ItemStack output) {
         addSmeltingRecipe(input, output, 0.0F);
     }
 
@@ -119,7 +118,7 @@ public final class ModHandler {
      * @param input  the input of the recipe
      * @param output the output of the recipe
      */
-    public static void addSmeltingRecipe(@Nonnull ItemStack input, @Nonnull ItemStack output) {
+    public static void addSmeltingRecipe(@NotNull ItemStack input, @NotNull ItemStack output) {
         addSmeltingRecipe(input, output, 0.0F);
     }
 
@@ -130,7 +129,7 @@ public final class ModHandler {
      * @param output     the output of the recipe
      * @param experience the experience of the recipe
      */
-    public static void addSmeltingRecipe(@Nonnull UnificationEntry input, @Nonnull ItemStack output, float experience) {
+    public static void addSmeltingRecipe(@NotNull UnificationEntry input, @NotNull ItemStack output, float experience) {
         for (ItemStack inputStack : OreDictUnifier.getAll(input)) {
             addSmeltingRecipe(inputStack, output, experience);
         }
@@ -143,7 +142,7 @@ public final class ModHandler {
      * @param output     the output of the recipe
      * @param experience the experience of the recipe
      */
-    public static void addSmeltingRecipe(@Nonnull ItemStack input, @Nonnull ItemStack output, float experience) {
+    public static void addSmeltingRecipe(@NotNull ItemStack input, @NotNull ItemStack output, float experience) {
         if (input.isEmpty() && setErroredInvalidRecipe("Furnace Recipe Input cannot be an empty ItemStack")) {
             return;
         }
@@ -168,8 +167,8 @@ public final class ModHandler {
      * @param input the input for the recipe
      * @return the output of the recipe
      */
-    @Nonnull
-    public static ItemStack getSmeltingOutput(@Nonnull ItemStack input) {
+    @NotNull
+    public static ItemStack getSmeltingOutput(@NotNull ItemStack input) {
         if (input.isEmpty()) return ItemStack.EMPTY;
         return OreDictUnifier.getUnificated(FurnaceRecipes.instance().getSmeltingResult(input));
     }
@@ -207,7 +206,7 @@ public final class ModHandler {
      * @param result  the output for the recipe
      * @param recipe  the contents of the recipe
      */
-    public static void addShapedRecipe(@Nonnull String regName, @Nonnull ItemStack result, @Nonnull Object... recipe) {
+    public static void addShapedRecipe(@NotNull String regName, @NotNull ItemStack result, @NotNull Object... recipe) {
         addShapedRecipe(false, regName, result, false, false, recipe);
     }
 
@@ -256,8 +255,8 @@ public final class ModHandler {
      * @param isMirrored          whether the recipe should be mirrored
      * @see ModHandler#addShapedRecipe(String, ItemStack, Object...)
      */
-    public static void addShapedRecipe(boolean withUnificationData, @Nonnull String regName, @Nonnull ItemStack result,
-                                       boolean isNBTClearing, boolean isMirrored, @Nonnull Object... recipe) {
+    public static void addShapedRecipe(boolean withUnificationData, @NotNull String regName, @NotNull ItemStack result,
+                                       boolean isNBTClearing, boolean isMirrored, @NotNull Object... recipe) {
         if (!validateRecipeWithOutput(regName, result, recipe)) return;
 
         addRecipe(regName, result, isNBTClearing, isMirrored, recipe);
@@ -302,16 +301,16 @@ public final class ModHandler {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private static boolean validateRecipeWithOutput(@Nonnull String regName, @Nonnull ItemStack result,
-                                                    @Nonnull Object... recipe) {
+    private static boolean validateRecipeWithOutput(@NotNull String regName, @NotNull ItemStack result,
+                                                    @NotNull Object... recipe) {
         if (result.isEmpty()) {
             if (setErroredInvalidRecipe("Recipe output cannot be an empty ItemStack. Recipe: " + regName)) return false;
         }
         return validateRecipe(regName, recipe);
     }
 
-    private static void addRecipe(@Nonnull String regName, @Nonnull ItemStack result, boolean isNBTClearing,
-                                  boolean isMirrored, @Nonnull Object... recipe) {
+    private static void addRecipe(@NotNull String regName, @NotNull ItemStack result, boolean isNBTClearing,
+                                  boolean isMirrored, @NotNull Object... recipe) {
         IRecipe shapedOreRecipe = new GTShapedOreRecipe(isNBTClearing, null, result.copy(),
                 finalizeShapedRecipeInput(recipe))
                         .setMirrored(isMirrored)
@@ -320,7 +319,7 @@ public final class ModHandler {
         registerRecipe(shapedOreRecipe);
     }
 
-    private static void registerRecipe(@Nonnull IRecipe recipe) {
+    private static void registerRecipe(@NotNull IRecipe recipe) {
         ForgeRegistries.RECIPES.register(recipe);
     }
 
@@ -363,8 +362,7 @@ public final class ModHandler {
      * @param recipe the recipe to finalize
      * @return the finalized recipe
      */
-    @Nonnull
-    public static Object[] finalizeShapedRecipeInput(Object... recipe) {
+    public static Object @NotNull [] finalizeShapedRecipeInput(Object... recipe) {
         for (byte i = 0; i < recipe.length; i++) {
             recipe[i] = finalizeIngredient(recipe[i]);
         }
@@ -390,8 +388,8 @@ public final class ModHandler {
      * @param ingredient the ingredient to finalize
      * @return the finalized ingredient
      */
-    @Nonnull
-    public static Object finalizeIngredient(@Nonnull Object ingredient) {
+    @NotNull
+    public static Object finalizeIngredient(@NotNull Object ingredient) {
         if (ingredient instanceof MetaItem.MetaValueItem metaValueItem) {
             ingredient = metaValueItem.getStackForm();
         } else if (ingredient instanceof Enum anEnum) {
@@ -422,7 +420,7 @@ public final class ModHandler {
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Nullable
-    public static ItemMaterialInfo getRecyclingIngredients(int outputCount, @Nonnull Object... recipe) {
+    public static ItemMaterialInfo getRecyclingIngredients(int outputCount, @NotNull Object... recipe) {
         return RecyclingHandler.getRecyclingIngredients(outputCount, recipe);
     }
 
@@ -433,8 +431,8 @@ public final class ModHandler {
      * @param result  the output of the recipe
      * @param recipe  the recipe to add
      */
-    public static void addShapelessRecipe(@Nonnull String regName, @Nonnull ItemStack result,
-                                          @Nonnull Object... recipe) {
+    public static void addShapelessRecipe(@NotNull String regName, @NotNull ItemStack result,
+                                          @NotNull Object... recipe) {
         addShapelessRecipe(regName, result, false, recipe);
     }
 
@@ -443,8 +441,8 @@ public final class ModHandler {
      *
      * @see ModHandler#addShapelessRecipe(String, ItemStack, boolean, Object...)
      */
-    public static void addShapelessNBTClearingRecipe(@Nonnull String regName, @Nonnull ItemStack result,
-                                                     @Nonnull Object... recipe) {
+    public static void addShapelessNBTClearingRecipe(@NotNull String regName, @NotNull ItemStack result,
+                                                     @NotNull Object... recipe) {
         addShapelessRecipe(regName, result, true, recipe);
     }
 
@@ -503,7 +501,7 @@ public final class ModHandler {
      * @return if a recipe was removed
      */
     @SuppressWarnings("unused")
-    public static boolean removeFurnaceSmelting(@Nonnull UnificationEntry input) {
+    public static boolean removeFurnaceSmelting(@NotNull UnificationEntry input) {
         boolean result = false;
         for (ItemStack inputStack : OreDictUnifier.getAll(input)) {
             result = result || removeFurnaceSmelting(inputStack);
@@ -517,7 +515,7 @@ public final class ModHandler {
      * @param input the input to remove by
      * @return if the recipe was removed
      */
-    public static boolean removeFurnaceSmelting(@Nonnull ItemStack input) {
+    public static boolean removeFurnaceSmelting(@NotNull ItemStack input) {
         if (input.isEmpty()) {
             if (setErroredInvalidRecipe("Cannot remove furnace recipe with empty input.")) return false;
         }
@@ -545,7 +543,7 @@ public final class ModHandler {
      * @return the amount of recipes removed
      */
     @SuppressWarnings("UnusedReturnValue")
-    public static int removeRecipeByOutput(@Nonnull ItemStack output) {
+    public static int removeRecipeByOutput(@NotNull ItemStack output) {
         int recipesRemoved = removeRecipeByOutput(
                 recipe -> ItemStack.areItemStacksEqual(recipe.getRecipeOutput(), output));
 
@@ -593,7 +591,7 @@ public final class ModHandler {
      *
      * @param location the ResourceLocation of the Recipe.
      */
-    public static void removeRecipeByName(@Nonnull ResourceLocation location) {
+    public static void removeRecipeByName(@NotNull ResourceLocation location) {
         if (ConfigHolder.misc.debug) {
             String recipeName = location.toString();
             if (ForgeRegistries.RECIPES.containsKey(location)) {
@@ -635,7 +633,7 @@ public final class ModHandler {
      * @param endTier    The ending tier index, inclusive.
      */
     @SuppressWarnings("unused")
-    public static void removeTieredRecipeByName(@Nonnull String recipeName, int startTier, int endTier) {
+    public static void removeTieredRecipeByName(@NotNull String recipeName, int startTier, int endTier) {
         for (int i = startTier; i <= endTier; i++) {
             removeRecipeByName(String.format("%s%s", recipeName, GTValues.VN[i].toLowerCase()));
         }
@@ -650,7 +648,7 @@ public final class ModHandler {
      * @param recipe the recipe to retrieve from. Must not contain null values.
      * @return a Pair of the recipe, and the output
      */
-    @Nonnull
+    @NotNull
     public static Pair<IRecipe, ItemStack> getRecipeOutput(@Nullable World world, @Nullable ItemStack... recipe) {
         if (recipe == null || recipe.length == 0) return ImmutablePair.of(null, ItemStack.EMPTY);
         if (world == null) world = DummyWorld.INSTANCE;
@@ -748,13 +746,13 @@ public final class ModHandler {
      * @return if recipe registration should continue
      * @throws IllegalArgumentException if a recipe was invalid and invalid recipes are not ignored
      */
-    public static boolean setErroredInvalidRecipe(@Nonnull String message) throws IllegalArgumentException {
+    public static boolean setErroredInvalidRecipe(@NotNull String message) throws IllegalArgumentException {
         hasInvalidRecipe = true;
         logInvalidRecipe(message);
         return ERROR_ON_INVALID_RECIPE;
     }
 
-    public static void logInvalidRecipe(@Nonnull String message) {
+    public static void logInvalidRecipe(@NotNull String message) {
         GTLog.logger.warn("Invalid Recipe Found", new IllegalArgumentException(message));
     }
 }

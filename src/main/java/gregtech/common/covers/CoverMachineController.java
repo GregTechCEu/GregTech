@@ -26,8 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 public class CoverMachineController extends CoverBase implements CoverWithUI {
 
     private int minRedstoneStrength;
@@ -261,7 +259,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
             this.side = side;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return localeName;

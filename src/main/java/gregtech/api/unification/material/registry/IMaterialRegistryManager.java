@@ -3,9 +3,9 @@ package gregtech.api.unification.material.registry;
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 
-import java.util.Collection;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.Collection;
 
 public interface IMaterialRegistryManager {
 
@@ -15,8 +15,8 @@ public interface IMaterialRegistryManager {
      * @param modid the mod id for the registry
      * @return the registry for the mod
      */
-    @Nonnull
-    MaterialRegistry createRegistry(@Nonnull String modid);
+    @NotNull
+    MaterialRegistry createRegistry(@NotNull String modid);
 
     /**
      * Get a mod's registry. Accessible during all phases.
@@ -24,8 +24,8 @@ public interface IMaterialRegistryManager {
      * @param modid the modid of the mod
      * @return the registry associated with the mod, or the GregTech registry if it does not have one
      */
-    @Nonnull
-    MaterialRegistry getRegistry(@Nonnull String modid);
+    @NotNull
+    MaterialRegistry getRegistry(@NotNull String modid);
 
     /**
      * Get a mod's registry. Accessible during all phases.
@@ -33,7 +33,7 @@ public interface IMaterialRegistryManager {
      * @param networkId the network ID of the registry
      * @return the registry associated with the network ID, or the GregTech registry if it does not have one
      */
-    @Nonnull
+    @NotNull
     MaterialRegistry getRegistry(int networkId);
 
     /**
@@ -46,7 +46,7 @@ public interface IMaterialRegistryManager {
      *
      * @return all the Material Registries
      */
-    @Nonnull
+    @NotNull
     Collection<MaterialRegistry> getRegistries();
 
     /**
@@ -58,7 +58,7 @@ public interface IMaterialRegistryManager {
      *
      * @return all registered materials.
      */
-    @Nonnull
+    @NotNull
     Collection<Material> getRegisteredMaterials();
 
     /**
@@ -79,7 +79,7 @@ public interface IMaterialRegistryManager {
      * @return the current phase in the material registration process
      * @see Phase
      */
-    @Nonnull
+    @NotNull
     Phase getPhase();
 
     default boolean canModifyMaterials() {

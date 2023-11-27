@@ -5,14 +5,14 @@ import gregtech.api.util.GTUtility;
 
 import net.minecraft.util.ResourceLocation;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
 public abstract class BaseGregTechModule implements IGregTechModule {
 
-    @Nonnull
+    @NotNull
     @Override
     public Set<ResourceLocation> getDependencyUids() {
         return Collections.singleton(GTUtility.gregtechId(GregTechModules.MODULE_CORE));

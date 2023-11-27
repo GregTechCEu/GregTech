@@ -16,13 +16,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
 public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingType> {
 
     public BlockSteamCasing() {
@@ -35,13 +33,14 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos,
-                                    EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World player, List<String> tooltip,
+                               @NotNull ITooltipFlag advanced) {
         int ordinal = getState(stack).ordinal();
         if (ordinal < 2) {
             tooltip.add(I18n.format("tile.steam_casing.bronze.tooltip"));
@@ -70,7 +69,7 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
         }
 
         @Override
-        @Nonnull
+        @NotNull
         public String getName() {
             return name;
         }

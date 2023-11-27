@@ -34,11 +34,10 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
                                        implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
@@ -66,7 +65,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    protected ModularUI createUI(@Nonnull EntityPlayer entityPlayer) {
+    protected ModularUI createUI(@NotNull EntityPlayer entityPlayer) {
         return ModularUI.defaultBuilder()
                 .label(6, 6, getMetaFullName())
                 .slot(inventory, 0, 79, 36, GuiTextures.SLOT, GuiTextures.TURBINE_OVERLAY)
@@ -139,7 +138,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<IRotorHolder> abilityList) {
+    public void registerAbilities(@NotNull List<IRotorHolder> abilityList) {
         abilityList.add(this);
     }
 
@@ -171,7 +170,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
         return true;
     }
 
-    private boolean onRotorHolderInteract(@Nonnull EntityPlayer player) {
+    private boolean onRotorHolderInteract(@NotNull EntityPlayer player) {
         if (player.isCreative()) return false;
 
         if (!getWorld().isRemote && isRotorSpinning) {
@@ -421,11 +420,11 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart
         }
 
         @Override
-        public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             return TurbineRotorBehavior.getInstanceFor(stack) != null && super.isItemValid(slot, stack);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             ItemStack itemStack = super.extractItem(slot, amount, simulate);

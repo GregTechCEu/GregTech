@@ -27,12 +27,11 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 
 import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
 
 public class SlotWidget extends Widget implements INativeWidget {
 
@@ -309,26 +308,26 @@ public class SlotWidget extends Widget implements INativeWidget {
         }
 
         @Override
-        public boolean isItemValid(@Nonnull ItemStack stack) {
+        public boolean isItemValid(@NotNull ItemStack stack) {
             return SlotWidget.this.canPutStack(stack) && super.isItemValid(stack);
         }
 
         @Override
-        public boolean canTakeStack(@Nonnull EntityPlayer playerIn) {
+        public boolean canTakeStack(@NotNull EntityPlayer playerIn) {
             return SlotWidget.this.canTakeStack(playerIn) && super.canTakeStack(playerIn);
         }
 
         @Override
-        public void putStack(@Nonnull ItemStack stack) {
+        public void putStack(@NotNull ItemStack stack) {
             super.putStack(stack);
             if (changeListener != null) {
                 changeListener.run();
             }
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public final ItemStack onTake(@Nonnull EntityPlayer thePlayer, @Nonnull ItemStack stack) {
+        public final ItemStack onTake(@NotNull EntityPlayer thePlayer, @NotNull ItemStack stack) {
             return onItemTake(thePlayer, super.onTake(thePlayer, stack), false);
         }
 
@@ -365,7 +364,7 @@ public class SlotWidget extends Widget implements INativeWidget {
         }
 
         @Override
-        public boolean isItemValid(@Nonnull ItemStack stack) {
+        public boolean isItemValid(@NotNull ItemStack stack) {
             return SlotWidget.this.canPutStack(stack) && super.isItemValid(stack);
         }
 
@@ -375,16 +374,16 @@ public class SlotWidget extends Widget implements INativeWidget {
         }
 
         @Override
-        public void putStack(@Nonnull ItemStack stack) {
+        public void putStack(@NotNull ItemStack stack) {
             super.putStack(stack);
             if (changeListener != null) {
                 changeListener.run();
             }
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public final ItemStack onTake(@Nonnull EntityPlayer thePlayer, @Nonnull ItemStack stack) {
+        public final ItemStack onTake(@NotNull EntityPlayer thePlayer, @NotNull ItemStack stack) {
             return onItemTake(thePlayer, super.onTake(thePlayer, stack), false);
         }
 

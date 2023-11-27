@@ -4,10 +4,10 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.core.CoreModule;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Collections;
-
-import javax.annotation.Nonnull;
 
 public class MaterialRegistryImpl extends MaterialRegistry {
 
@@ -19,7 +19,7 @@ public class MaterialRegistryImpl extends MaterialRegistry {
     private boolean isRegistryClosed = false;
     private Material fallbackMaterial = null;
 
-    protected MaterialRegistryImpl(@Nonnull String modid) {
+    protected MaterialRegistryImpl(@NotNull String modid) {
         super();
         this.modid = modid;
     }
@@ -30,7 +30,7 @@ public class MaterialRegistryImpl extends MaterialRegistry {
     }
 
     @Override
-    public void register(int id, @Nonnull String key, @Nonnull Material value) {
+    public void register(int id, @NotNull String key, @NotNull Material value) {
         if (isRegistryClosed) {
             CoreModule.logger.error(
                     "Materials cannot be registered in the PostMaterialEvent (or after)! Must be added in the MaterialEvent. Skipping material {}...",
@@ -40,18 +40,18 @@ public class MaterialRegistryImpl extends MaterialRegistry {
         super.register(id, key, value);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Collection<Material> getAllMaterials() {
         return Collections.unmodifiableCollection(this.registryObjects.values());
     }
 
     @Override
-    public void setFallbackMaterial(@Nonnull Material material) {
+    public void setFallbackMaterial(@NotNull Material material) {
         this.fallbackMaterial = material;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Material getFallbackMaterial() {
         if (this.fallbackMaterial == null) {
@@ -65,7 +65,7 @@ public class MaterialRegistryImpl extends MaterialRegistry {
         return this.networkId;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getModid() {
         return this.modid;

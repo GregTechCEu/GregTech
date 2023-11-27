@@ -8,8 +8,7 @@ import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
 
@@ -29,7 +28,7 @@ public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
     }
 
     @Override
-    public boolean applyProperty(@Nonnull String key, Object value) {
+    public boolean applyProperty(@NotNull String key, Object value) {
         if (key.equals(TemperatureProperty.KEY)) {
             this.blastFurnaceTemp(((Number) value).intValue());
             return true;

@@ -6,12 +6,11 @@ import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import net.minecraft.item.ItemStack;
 
 import mezz.jei.api.ISubtypeRegistry.ISubtypeInterpreter;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class MetaItemSubtypeHandler implements ISubtypeInterpreter {
 
-    @Nonnull
+    @NotNull
     @Override
     public String apply(ItemStack itemStack) {
         MetaItem<?> metaItem = (MetaItem<?>) itemStack.getItem();

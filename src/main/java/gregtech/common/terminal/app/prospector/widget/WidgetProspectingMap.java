@@ -38,6 +38,8 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 import java.io.IOException;
 import java.util.*;
@@ -45,8 +47,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
 
 public class WidgetProspectingMap extends Widget {
 
@@ -69,7 +69,7 @@ public class WidgetProspectingMap extends Widget {
     private int color;
 
     public WidgetProspectingMap(int xPosition, int yPosition, int chunkRadius, WidgetOreList widgetOreList,
-                                @Nonnull ProspectorMode mode, int scanTick) {
+                                @NotNull ProspectorMode mode, int scanTick) {
         super(new Position(xPosition, yPosition), new Size(16 * (chunkRadius * 2 - 1), 16 * (chunkRadius * 2 - 1)));
         this.chunkRadius = chunkRadius;
         this.mode = mode;
@@ -375,7 +375,7 @@ public class WidgetProspectingMap extends Widget {
         }
     }
 
-    @Nonnull
+    @NotNull
     private String createVeinName() {
         // remove the [] surrounding the array
         String s = hoveredNames.toString();
@@ -397,7 +397,7 @@ public class WidgetProspectingMap extends Widget {
     }
 
     @Optional.Method(modid = GTValues.MODID_VOXELMAP)
-    private boolean addVoxelMapWaypoint(@Nonnull BlockPos b) {
+    private boolean addVoxelMapWaypoint(@NotNull BlockPos b) {
         Color c = new Color(color);
         TreeSet<Integer> world = new TreeSet<>();
         world.add(Minecraft.getMinecraft().world.provider.getDimension());
@@ -426,7 +426,7 @@ public class WidgetProspectingMap extends Widget {
     }
 
     @Optional.Method(modid = GTValues.MODID_XAERO_MINIMAP)
-    private boolean addXaeroMapWaypoint(@Nonnull BlockPos b) {
+    private boolean addXaeroMapWaypoint(@NotNull BlockPos b) {
         int red = clampColor(color >> 16 & 0xFF);
         int green = clampColor(color >> 8 & 0xFF);
         int blue = clampColor(color & 0xFF);

@@ -20,11 +20,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack {
 
@@ -37,7 +36,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack item) {
+    public void onArmorTick(World world, EntityPlayer player, @NotNull ItemStack item) {
         IElectricItem cont = item.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (cont == null) {
             return;
@@ -158,7 +157,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
     }
 
     @Override
-    public ActionResult<ItemStack> onRightClick(World world, @Nonnull EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onRightClick(World world, @NotNull EntityPlayer player, EnumHand hand) {
         ItemStack armor = player.getHeldItem(hand);
 
         if (armor.getItem() instanceof ArmorMetaItem && player.isSneaking()) {
@@ -220,7 +219,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
     }
 
     @Override
-    public boolean canUseEnergy(@Nonnull ItemStack stack, int amount) {
+    public boolean canUseEnergy(@NotNull ItemStack stack, int amount) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return false;
@@ -228,7 +227,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
     }
 
     @Override
-    public void drainEnergy(@Nonnull ItemStack stack, int amount) {
+    public void drainEnergy(@NotNull ItemStack stack, int amount) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return;
@@ -236,14 +235,14 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
     }
 
     @Override
-    public boolean hasEnergy(@Nonnull ItemStack stack) {
+    public boolean hasEnergy(@NotNull ItemStack stack) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return false;
         return container.getCharge() > 0;
     }
 
-    private static IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
+    private static IElectricItem getIElectricItem(@NotNull ItemStack stack) {
         return stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
     }
 

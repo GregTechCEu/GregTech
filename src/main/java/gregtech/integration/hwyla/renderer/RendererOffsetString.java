@@ -8,10 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 /** Adapted from Jade 1.12.2, a HWYLA addon mod. */
-@ParametersAreNonnullByDefault
 public class RendererOffsetString implements IWailaTooltipRenderer {
 
     @NotNull

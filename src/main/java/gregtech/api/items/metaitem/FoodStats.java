@@ -9,9 +9,9 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 
-import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Simple {@link gregtech.api.items.metaitem.stats.IFoodBehavior} implementation

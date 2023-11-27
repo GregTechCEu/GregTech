@@ -2,7 +2,7 @@ package gregtech.common.covers;
 
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum TransferMode implements IStringSerializable {
 
@@ -18,7 +18,7 @@ public enum TransferMode implements IStringSerializable {
         this.maxStackSize = maxStackSize;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return localeName;

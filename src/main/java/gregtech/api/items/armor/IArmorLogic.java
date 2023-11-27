@@ -17,10 +17,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
-
-import javax.annotation.Nullable;
 
 /**
  * Defines abstract armor logic that can be added to ArmorMetaItem to control it

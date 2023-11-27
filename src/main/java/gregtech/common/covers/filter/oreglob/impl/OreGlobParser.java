@@ -5,10 +5,10 @@ import gregtech.api.util.oreglob.OreGlobCompileResult.Report;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNode;
 import gregtech.common.covers.filter.oreglob.node.OreGlobNodes;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 import static gregtech.common.covers.filter.oreglob.impl.OreGlobParser.TokenType.*;
 

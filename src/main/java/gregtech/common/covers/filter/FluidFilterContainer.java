@@ -12,10 +12,10 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.ItemStackHandler;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
 
 public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
 
@@ -27,7 +27,7 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
         this.filterInventory = new ItemStackHandler(1) {
 
             @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
                 return FilterTypeRegistry.getFluidFilterForStack(stack) != null;
             }
 

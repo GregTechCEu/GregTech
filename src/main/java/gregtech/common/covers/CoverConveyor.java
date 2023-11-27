@@ -50,8 +50,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
 public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, IControllable {
 
     public final int tier;
@@ -368,8 +366,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         }
     }
 
-    @Nonnull
-    protected Map<ItemStack, TypeItemInfo> countInventoryItemsByType(@Nonnull IItemHandler inventory) {
+    @NotNull
+    protected Map<ItemStack, TypeItemInfo> countInventoryItemsByType(@NotNull IItemHandler inventory) {
         Map<ItemStack, TypeItemInfo> result = new Object2ObjectOpenCustomHashMap<>(
                 ItemStackHashStrategy.comparingAllButCount());
         for (int srcIndex = 0; srcIndex < inventory.getSlots(); srcIndex++) {
@@ -395,8 +393,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         return result;
     }
 
-    @Nonnull
-    protected Map<Object, GroupItemInfo> countInventoryItemsByMatchSlot(@Nonnull IItemHandler inventory) {
+    @NotNull
+    protected Map<Object, GroupItemInfo> countInventoryItemsByMatchSlot(@NotNull IItemHandler inventory) {
         Map<Object, GroupItemInfo> result = new Object2ObjectOpenHashMap<>();
         for (int srcIndex = 0; srcIndex < inventory.getSlots(); srcIndex++) {
             ItemStack itemStack = inventory.getStackInSlot(srcIndex);
@@ -600,7 +598,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             this.localeName = localeName;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return localeName;
@@ -618,9 +616,9 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             super(delegate);
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             if (conveyorMode == ConveyorMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
                 return stack;
             }
@@ -631,7 +629,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             return super.insertItem(slot, stack, simulate);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (conveyorMode == ConveyorMode.IMPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {

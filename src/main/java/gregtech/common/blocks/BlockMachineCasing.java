@@ -16,14 +16,12 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import java.util.Locale;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Locale;
 
 import static gregtech.api.GTValues.VOLTAGE_NAMES;
 
-@ParametersAreNonnullByDefault
 public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineCasingType> {
 
     public BlockMachineCasing() {
@@ -37,12 +35,13 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull SpawnPlacementType type) {
         return false;
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+    public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         for (MachineCasingType variant : VALUES) {
             if (variant.ordinal() <= MachineCasingType.UHV.ordinal() || GregTechAPI.isHighTier()) {
                 list.add(getItemVariant(variant));
@@ -76,7 +75,7 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
         }
 
         @Override
-        @Nonnull
+        @NotNull
         public String getName() {
             return this.name;
         }

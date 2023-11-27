@@ -13,10 +13,9 @@ import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.fluids.util.AEFluidStack;
 import io.netty.buffer.ByteBuf;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
-
-import javax.annotation.Nonnull;
 
 /**
  * @Author GlodBlock
@@ -24,10 +23,10 @@ import javax.annotation.Nonnull;
  */
 public class WrappedFluidStack implements IAEFluidStack {
 
-    @Nonnull
+    @NotNull
     FluidStack delegate;
 
-    private WrappedFluidStack(@Nonnull FluidStack stack) {
+    private WrappedFluidStack(@NotNull FluidStack stack) {
         this.delegate = stack;
     }
 
@@ -53,7 +52,7 @@ public class WrappedFluidStack implements IAEFluidStack {
         return AEFluidStack.fromFluidStack(this.delegate);
     }
 
-    @Nonnull
+    @NotNull
     public FluidStack getDelegate() {
         return this.delegate;
     }

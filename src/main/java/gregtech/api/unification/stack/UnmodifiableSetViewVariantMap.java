@@ -1,10 +1,10 @@
 package gregtech.api.unification.stack;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Unmodifiable view of another {@link ItemVariantMap} with {@link Set} of elements as values.
@@ -16,7 +16,7 @@ final class UnmodifiableSetViewVariantMap<E> implements ItemVariantMap<Set<E>> {
 
     private final ItemVariantMap<? extends Set<E>> delegate;
 
-    UnmodifiableSetViewVariantMap(@Nonnull ItemVariantMap<? extends Set<E>> delegate) {
+    UnmodifiableSetViewVariantMap(@NotNull ItemVariantMap<? extends Set<E>> delegate) {
         this.delegate = delegate;
     }
 

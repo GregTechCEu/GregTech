@@ -4,10 +4,10 @@ import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * Collection of various information for rendering purposes.
@@ -26,7 +26,7 @@ public final class EffectRenderContext {
     private double cameraX;
     private double cameraY;
     private double cameraZ;
-    @Nonnull
+    @NotNull
     private Vec3d cameraViewDir = Vec3d.ZERO;
     private float rotationX;
     private float rotationZ;
@@ -34,8 +34,8 @@ public final class EffectRenderContext {
     private float rotationXY;
     private float rotationXZ;
 
-    @Nonnull
-    public EffectRenderContext update(@Nonnull Entity renderViewEntity, float partialTicks) {
+    @NotNull
+    public EffectRenderContext update(@NotNull Entity renderViewEntity, float partialTicks) {
         this.renderViewEntity = renderViewEntity;
         this.partialTicks = partialTicks;
 
@@ -59,7 +59,7 @@ public final class EffectRenderContext {
     /**
      * @return render view entity
      */
-    @Nonnull
+    @NotNull
     public Entity renderViewEntity() {
         return Objects.requireNonNull(renderViewEntity, "renderViewEntity not available yet");
     }
@@ -95,7 +95,7 @@ public final class EffectRenderContext {
     /**
      * @return view direction of the camera
      */
-    @Nonnull
+    @NotNull
     public Vec3d cameraViewDir() {
         return cameraViewDir;
     }

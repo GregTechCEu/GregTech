@@ -23,9 +23,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.ApiStatus;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Contains utilities for recipe compatibility with scripting mods
@@ -38,8 +37,8 @@ public final class RecipeCompatUtil {
      * @param recipe the recipe to retrieve from
      * @return the first output in a human-readable form
      */
-    @Nonnull
-    public static String getFirstOutputString(@Nonnull Recipe recipe) {
+    @NotNull
+    public static String getFirstOutputString(@NotNull Recipe recipe) {
         String output = "";
         if (!recipe.getOutputs().isEmpty()) {
             ItemStack item = recipe.getOutputs().get(0);
@@ -90,7 +89,7 @@ public final class RecipeCompatUtil {
         return null;
     }
 
-    @Nonnull
+    @NotNull
     public static TweakerType getPriorityTweaker() {
         if (GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS)) {
             return TweakerType.GROOVYSCRIPT;
@@ -109,7 +108,7 @@ public final class RecipeCompatUtil {
     @ApiStatus.ScheduledForRemoval(inVersion = "2.8")
     @Deprecated
     @Nullable
-    public static Material getMaterial(@Nonnull String name) {
+    public static Material getMaterial(@NotNull String name) {
         return GregTechAPI.materialManager.getMaterial(name);
     }
 

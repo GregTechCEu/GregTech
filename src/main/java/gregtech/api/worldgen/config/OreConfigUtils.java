@@ -18,14 +18,13 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
 
 public class OreConfigUtils {
 
@@ -58,7 +57,7 @@ public class OreConfigUtils {
         return getOreForMaterial(material);
     }
 
-    @Nonnull
+    @NotNull
     public static Map<StoneType, IBlockState> getOreForMaterial(Material material) {
         List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
                 .filter(ore -> ore.material == material)

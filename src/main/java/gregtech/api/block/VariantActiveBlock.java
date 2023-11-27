@@ -30,6 +30,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
+import org.jetbrains.annotations.NotNull;
 import team.chisel.ctm.client.state.CTMExtendedState;
 
 import java.util.EnumMap;
@@ -38,8 +39,6 @@ import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
 
 public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> {
 
@@ -91,19 +90,19 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         return false;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
     }
 
     @Override
-    public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
+    public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
         return layer == getRenderLayer() ||
                 layer == BloomEffectUtil.getEffectiveBloomLayer(isBloomEnabled(getState(state)));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return super.getStateFromMeta(meta).withProperty(ACTIVE_DEPRECATED, false);
@@ -118,7 +117,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
         return meta + state.getValue(VARIANT).ordinal();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
         Class<T> enumClass = getActualTypeParameter(getClass(), VariantActiveBlock.class, 0);
@@ -128,10 +127,10 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
                 new IUnlistedProperty[] { ACTIVE });
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IExtendedBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world,
-                                                @Nonnull BlockPos pos) {
+    public IExtendedBlockState getExtendedState(@NotNull IBlockState state, @NotNull IBlockAccess world,
+                                                @NotNull BlockPos pos) {
         IExtendedBlockState ext = ((IExtendedBlockState) state)
                 .withProperty(ACTIVE, Minecraft.getMinecraft().world != null &&
                         isBlockActive(Minecraft.getMinecraft().world.provider.getDimension(), pos));

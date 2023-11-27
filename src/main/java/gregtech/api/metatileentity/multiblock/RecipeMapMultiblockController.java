@@ -32,12 +32,11 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider,
                                                     ICleanroomReceiver, IDistinctBusController {
@@ -89,7 +88,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
      * Performs extra checks for validity of given recipe before multiblock
      * will start it's processing.
      */
-    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+    public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
         return true;
     }
 
@@ -260,7 +259,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         return recipeMap.getSound();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();

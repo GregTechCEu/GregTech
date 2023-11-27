@@ -2,7 +2,7 @@ package gregtech.common.covers;
 
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum DistributionMode implements IStringSerializable {
 
@@ -16,7 +16,7 @@ public enum DistributionMode implements IStringSerializable {
         this.localeName = localeName;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return localeName;

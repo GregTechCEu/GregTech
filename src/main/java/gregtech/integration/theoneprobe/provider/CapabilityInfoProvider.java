@@ -10,12 +10,11 @@ import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.IProbeInfoProvider;
 import mcjty.theoneprobe.api.ProbeMode;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class CapabilityInfoProvider<T> implements IProbeInfoProvider {
 
-    @Nonnull
+    @NotNull
     protected abstract Capability<T> getCapability();
 
     protected abstract void addProbeInfo(T capability, IProbeInfo probeInfo, EntityPlayer player, TileEntity tileEntity,
@@ -26,8 +25,8 @@ public abstract class CapabilityInfoProvider<T> implements IProbeInfoProvider {
     }
 
     @Override
-    public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull EntityPlayer player,
-                             @Nonnull World world, @Nonnull IBlockState blockState, @Nonnull IProbeHitData data) {
+    public void addProbeInfo(@NotNull ProbeMode mode, @NotNull IProbeInfo probeInfo, @NotNull EntityPlayer player,
+                             @NotNull World world, @NotNull IBlockState blockState, @NotNull IProbeHitData data) {
         if (blockState.getBlock().hasTileEntity(blockState)) {
             TileEntity tileEntity = world.getTileEntity(data.getPos());
             if (tileEntity == null) return;

@@ -12,12 +12,12 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class VirtualTankRegistry extends WorldSavedData {
 
@@ -166,7 +166,7 @@ public class VirtualTankRegistry extends WorldSavedData {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setTag("Private", new NBTTagCompound());

@@ -24,10 +24,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.List;
 
 public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
@@ -41,6 +41,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         setDefaultState(getState(CoilType.CUPRONICKEL));
     }
 
+    @NotNull
     @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.SOLID;
@@ -48,8 +49,8 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, List<String> lines,
-                               @Nonnull ITooltipFlag tooltipFlag) {
+    public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, List<String> lines,
+                               @NotNull ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
 
         // noinspection rawtypes, unchecked
@@ -76,8 +77,8 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
     }
 
     @Override
-    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos,
-                                    @Nonnull SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                    @NotNull SpawnPlacementType type) {
         return false;
     }
 
@@ -113,7 +114,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             this.material = material;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;
@@ -145,7 +146,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             return material;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String toString() {
             return getName();

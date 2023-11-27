@@ -25,10 +25,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-
-import javax.annotation.Nonnull;
 
 public class SteamLavaBoiler extends SteamBoiler {
 
@@ -38,7 +37,7 @@ public class SteamLavaBoiler extends SteamBoiler {
     private static final IFilter<FluidStack> FUEL_FILTER = new IFilter<>() {
 
         @Override
-        public boolean test(@Nonnull FluidStack fluidStack) {
+        public boolean test(@NotNull FluidStack fluidStack) {
             for (Fluid fluid : getBoilerFuelToConsumption().keySet()) {
                 if (CommonFluidFilters.matchesFluid(fluidStack, fluid)) return true;
             }
@@ -56,7 +55,7 @@ public class SteamLavaBoiler extends SteamBoiler {
         setBoilerFuelToConsumption(Materials.Creosote.getFluid(), 250);
     }
 
-    @Nonnull
+    @NotNull
     public static Object2IntMap<Fluid> getBoilerFuelToConsumption() {
         if (!initialized) {
             initialized = true;
@@ -65,7 +64,7 @@ public class SteamLavaBoiler extends SteamBoiler {
         return Object2IntMaps.unmodifiable(BOILER_FUEL_TO_CONSUMPTION);
     }
 
-    public static void setBoilerFuelToConsumption(@Nonnull Fluid fluid, int amount) {
+    public static void setBoilerFuelToConsumption(@NotNull Fluid fluid, int amount) {
         Objects.requireNonNull(fluid, "fluid == null");
         if (amount <= 0) throw new IllegalArgumentException("amount <= 0");
         BOILER_FUEL_TO_CONSUMPTION.put(fluid, amount);

@@ -4,12 +4,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-
-import javax.annotation.Nonnull;
 
 public abstract class ToolBuilder<T extends IGTTool> {
 
@@ -66,22 +65,22 @@ public abstract class ToolBuilder<T extends IGTTool> {
         return this;
     }
 
-    public ToolBuilder<T> oreDict(@Nonnull String oreDict) {
+    public ToolBuilder<T> oreDict(@NotNull String oreDict) {
         this.oreDict = oreDict;
         return this;
     }
 
-    public ToolBuilder<T> oreDict(@Nonnull Enum<?> oreDict) {
+    public ToolBuilder<T> oreDict(@NotNull Enum<?> oreDict) {
         this.oreDict = oreDict.name();
         return this;
     }
 
-    public ToolBuilder<T> secondaryOreDicts(@Nonnull Enum<?>... oreDicts) {
+    public ToolBuilder<T> secondaryOreDicts(@NotNull Enum<?>... oreDicts) {
         Arrays.stream(oreDicts).map(Enum::name).forEach(this.secondaryOreDicts::add);
         return this;
     }
 
-    public ToolBuilder<T> secondaryOreDicts(@Nonnull String... oreDicts) {
+    public ToolBuilder<T> secondaryOreDicts(@NotNull String... oreDicts) {
         this.secondaryOreDicts.addAll(Arrays.asList(oreDicts));
         return this;
     }

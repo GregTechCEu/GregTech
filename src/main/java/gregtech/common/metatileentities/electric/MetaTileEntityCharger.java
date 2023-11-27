@@ -22,10 +22,10 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.List;
 
 public class MetaTileEntityCharger extends TieredMetaTileEntity {
 
@@ -57,9 +57,9 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
                 MetaTileEntityCharger.this.markDirty();
             }
 
-            @Nonnull
+            @NotNull
             @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
                 IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
                 if ((electricItem != null && getTier() >= electricItem.getTier()) ||
                         (ConfigHolder.compat.energy.nativeEUToFE &&

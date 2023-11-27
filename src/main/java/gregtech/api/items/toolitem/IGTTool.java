@@ -68,6 +68,8 @@ import crazypants.enderio.api.tool.ITool;
 import forestry.api.arboriculture.IToolGrafter;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -75,9 +77,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.items.armor.IArmorLogic.ATTACK_DAMAGE_MODIFIER;
 import static gregtech.api.items.armor.IArmorLogic.ATTACK_SPEED_MODIFIER;
@@ -121,7 +120,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     @Nullable
     String getOreDictName();
 
-    @Nonnull
+    @NotNull
     List<String> getSecondaryOreDicts();
 
     @Nullable
@@ -514,8 +513,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 .anyMatch(behavior -> behavior.canDisableShield(stack, shield, entity, attacker));
     }
 
-    default boolean definition$doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull IBlockAccess world,
-                                                  @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+    default boolean definition$doesSneakBypassUse(@NotNull ItemStack stack, @NotNull IBlockAccess world,
+                                                  @NotNull BlockPos pos, @NotNull EntityPlayer player) {
         return getToolStats().doesSneakBypassUse();
     }
 
@@ -621,9 +620,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return new CombinedCapabilityProvider(providers);
     }
 
-    default EnumActionResult definition$onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world,
-                                                       @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX,
-                                                       float hitY, float hitZ, @Nonnull EnumHand hand) {
+    default EnumActionResult definition$onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world,
+                                                       @NotNull BlockPos pos, @NotNull EnumFacing facing, float hitX,
+                                                       float hitY, float hitZ, @NotNull EnumHand hand) {
         for (IToolBehavior behavior : getToolStats().getBehaviors()) {
             if (behavior.onItemUseFirst(player, world, pos, facing, hitX, hitY, hitZ, hand) ==
                     EnumActionResult.SUCCESS) {
@@ -663,7 +662,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return ActionResult.newResult(EnumActionResult.PASS, stack);
     }
 
-    default void definition$getSubItems(@Nonnull NonNullList<ItemStack> items) {
+    default void definition$getSubItems(@NotNull NonNullList<ItemStack> items) {
         if (getMarkerItem() != null) {
             items.add(getMarkerItem().get());
         } else if (isElectric()) {
@@ -676,8 +675,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // Client-side methods
 
     @SideOnly(Side.CLIENT)
-    default void definition$addInformation(@Nonnull ItemStack stack, @Nullable World world,
-                                           @Nonnull List<String> tooltip, ITooltipFlag flag) {
+    default void definition$addInformation(@NotNull ItemStack stack, @Nullable World world,
+                                           @NotNull List<String> tooltip, ITooltipFlag flag) {
         if (!(stack.getItem() instanceof IGTTool)) return;
         IGTTool tool = (IGTTool) stack.getItem();
 
@@ -798,7 +797,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
     }
 
-    default boolean definition$canApplyAtEnchantingTable(@Nonnull ItemStack stack, Enchantment enchantment) {
+    default boolean definition$canApplyAtEnchantingTable(@NotNull ItemStack stack, Enchantment enchantment) {
         if (stack.isEmpty()) return false;
 
         // special case enchants from other mods
@@ -1007,19 +1006,19 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // ITool
     @Override
-    default boolean canUse(@Nonnull EnumHand hand, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
+    default boolean canUse(@NotNull EnumHand hand, @NotNull EntityPlayer player, @NotNull BlockPos pos) {
         return get().getToolClasses(player.getHeldItem(hand)).contains(ToolClasses.WRENCH);
     }
 
     @Override
-    default void used(@Nonnull EnumHand hand, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
+    default void used(@NotNull EnumHand hand, @NotNull EntityPlayer player, @NotNull BlockPos pos) {
         damageItem(player.getHeldItem(hand), player);
         playSound(player);
     }
 
     // IHideFacades
     @Override
-    default boolean shouldHideFacades(@Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
+    default boolean shouldHideFacades(@NotNull ItemStack stack, @NotNull EntityPlayer player) {
         return get().getToolClasses(stack).contains(ToolClasses.WRENCH);
     }
 
@@ -1040,7 +1039,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // IOverlayRenderAware
     @Override
-    default void renderItemOverlayIntoGUI(@Nonnull ItemStack stack, int xPosition, int yPosition) {
+    default void renderItemOverlayIntoGUI(@NotNull ItemStack stack, int xPosition, int yPosition) {
         ToolChargeBarRenderer.renderBarsTool(this, stack, xPosition, yPosition);
     }
 }

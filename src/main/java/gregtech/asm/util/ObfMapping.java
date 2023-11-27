@@ -8,6 +8,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 import com.google.common.io.LineProcessor;
 import com.google.common.io.Resources;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -21,8 +22,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Nonnull;
 
 /**
  * @apiNote codechicken.asm.ObfMapping
@@ -354,7 +353,7 @@ public class ObfMapping extends Remapper {
         }
 
         @Override
-        public boolean processLine(@Nonnull String line) {
+        public boolean processLine(@NotNull String line) {
             int i = line.indexOf(',');
             String srg = line.substring(0, i);
             int i2 = i + 1;

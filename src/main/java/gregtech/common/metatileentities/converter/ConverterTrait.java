@@ -15,7 +15,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ConverterTrait extends MTETrait {
 
@@ -69,7 +69,7 @@ public class ConverterTrait extends MTETrait {
         return voltage;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return GregtechDataCodes.ENERGY_CONVERTER_TRAIT;
@@ -87,7 +87,7 @@ public class ConverterTrait extends MTETrait {
         return change;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
@@ -97,7 +97,7 @@ public class ConverterTrait extends MTETrait {
     }
 
     @Override
-    public void deserializeNBT(@Nonnull NBTTagCompound nbt) {
+    public void deserializeNBT(@NotNull NBTTagCompound nbt) {
         this.storedEU = nbt.getLong("StoredEU");
         this.feToEu = nbt.getBoolean("feToEu");
     }

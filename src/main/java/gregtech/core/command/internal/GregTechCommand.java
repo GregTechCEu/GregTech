@@ -13,33 +13,32 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.server.command.CommandTreeBase;
 
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 class GregTechCommand extends CommandTreeBase {
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "gregtech";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<String> getAliases() {
         return Lists.newArrayList("gt");
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getUsage(@Nonnull ICommandSender sender) {
+    public String getUsage(@NotNull ICommandSender sender) {
         return "gregtech.command.usage";
     }
 
     @Override
-    public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender,
+    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender,
                         String[] args) throws CommandException {
         if (args.length > 0) {
             if (args[0].equals("copy")) {

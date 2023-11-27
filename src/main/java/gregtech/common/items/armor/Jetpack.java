@@ -22,9 +22,9 @@ import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.List;
 
 public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
@@ -40,7 +40,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack stack) {
+    public void onArmorTick(World world, EntityPlayer player, @NotNull ItemStack stack) {
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
         byte toggleTimer = 0;
         boolean hover = false;
@@ -69,7 +69,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     }
 
     @Override
-    public boolean canUseEnergy(@Nonnull ItemStack stack, int amount) {
+    public boolean canUseEnergy(@NotNull ItemStack stack, int amount) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return false;
@@ -77,7 +77,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     }
 
     @Override
-    public void drainEnergy(@Nonnull ItemStack stack, int amount) {
+    public void drainEnergy(@NotNull ItemStack stack, int amount) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return;
@@ -85,14 +85,14 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     }
 
     @Override
-    public boolean hasEnergy(@Nonnull ItemStack stack) {
+    public boolean hasEnergy(@NotNull ItemStack stack) {
         IElectricItem container = getIElectricItem(stack);
         if (container == null)
             return false;
         return container.getCharge() > 0;
     }
 
-    private static IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
+    private static IElectricItem getIElectricItem(@NotNull ItemStack stack) {
         return stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
     }
 
@@ -102,7 +102,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     }
 
     @Override
-    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source,
+    public ArmorProperties getProperties(EntityLivingBase player, @NotNull ItemStack armor, DamageSource source,
                                          double damage, EntityEquipmentSlot equipmentSlot) {
         return new ArmorProperties(0, 0, 0);
     }

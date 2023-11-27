@@ -13,9 +13,9 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.List;
 
 public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
@@ -26,7 +26,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPre(@Nonnull int[] values, @Nonnull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPre(@NotNull int[] values, @NotNull IRecipePropertyStorage storage) {
         // apply maintenance bonuses
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
@@ -37,7 +37,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPost(int[] overclockResults, @Nonnull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPost(int[] overclockResults, @NotNull IRecipePropertyStorage storage) {
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
@@ -50,14 +50,14 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         overclockResults[0] = -overclockResults[0];
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ParallelLogicType getParallelLogicType() {
         return ParallelLogicType.MULTIPLY; // TODO APPEND_FLUIDS
     }
 
     @Override
-    protected boolean hasEnoughPower(@Nonnull int[] resultOverclock) {
+    protected boolean hasEnoughPower(@NotNull int[] resultOverclock) {
         // generators always have enough power to run recipes
         return true;
     }

@@ -31,11 +31,10 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityFisher extends TieredMetaTileEntity {
 
@@ -118,9 +117,9 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     protected IItemHandlerModifiable createImportItemHandler() {
         return new GTItemStackHandler(this, 1) {
 
-            @Nonnull
+            @NotNull
             @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
                 if (OreDictUnifier.hasOreDictionary(stack, "string")) {
                     return super.insertItem(slot, stack, simulate);
                 }

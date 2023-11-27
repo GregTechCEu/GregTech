@@ -30,11 +30,10 @@ import net.minecraftforge.items.ItemStackHandler;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblockPart implements IPassthroughHatch,
                                                 IMultiblockAbilityPart<IPassthroughHatch> {
@@ -159,11 +158,11 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     }
 
     @Override
-    public void registerAbilities(@Nonnull List<IPassthroughHatch> abilityList) {
+    public void registerAbilities(@NotNull List<IPassthroughHatch> abilityList) {
         abilityList.add(this);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Class<IItemHandlerModifiable> getPassthroughType() {
         return IItemHandlerModifiable.class;

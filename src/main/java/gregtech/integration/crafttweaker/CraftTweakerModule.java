@@ -19,11 +19,10 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import crafttweaker.CraftTweakerAPI;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_CT,
@@ -35,7 +34,7 @@ public class CraftTweakerModule extends IntegrationSubmodule {
 
     public static MetaOreDictItem CT_OREDICT_ITEM;
 
-    @Nonnull
+    @NotNull
     @Override
     public List<Class<?>> getEventBusSubscribers() {
         return Collections.singletonList(CraftTweakerModule.class);

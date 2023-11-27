@@ -20,11 +20,10 @@ import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import com.google.gson.JsonElement;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
-import javax.annotation.Nonnull;
 
 public class GTShapelessOreRecipe extends ShapelessOreRecipe {
 
@@ -32,7 +31,7 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
     public static Constructor<IngredientNBT> ingredientNBT = ReflectionHelper.findConstructor(IngredientNBT.class,
             ItemStack.class);
 
-    public GTShapelessOreRecipe(boolean isClearing, ResourceLocation group, @Nonnull ItemStack result,
+    public GTShapelessOreRecipe(boolean isClearing, ResourceLocation group, @NotNull ItemStack result,
                                 Object... recipe) {
         super(group, result);
         this.isClearing = isClearing;
@@ -90,7 +89,7 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
     }
 
     @Override
-    public @Nonnull NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
+    public @NotNull NonNullList<ItemStack> getRemainingItems(@NotNull InventoryCrafting inv) {
         if (isClearing) {
             return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         } else {

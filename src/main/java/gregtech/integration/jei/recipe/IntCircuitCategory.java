@@ -29,6 +29,7 @@ import mezz.jei.api.ingredients.IIngredientRenderer;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Iterator;
@@ -37,11 +38,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 @MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
 public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapper> {
 
     public static final String UID = GTValues.MODID + ":" + MetaItems.INTEGRATED_CIRCUIT.unlocalizedName;

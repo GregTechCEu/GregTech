@@ -15,25 +15,24 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-import javax.annotation.Nonnull;
-
 public class GTTransferUtils {
 
-    public static int transferFluids(@Nonnull IFluidHandler sourceHandler, @Nonnull IFluidHandler destHandler) {
+    public static int transferFluids(@NotNull IFluidHandler sourceHandler, @NotNull IFluidHandler destHandler) {
         return transferFluids(sourceHandler, destHandler, Integer.MAX_VALUE, fluidStack -> true);
     }
 
-    public static int transferFluids(@Nonnull IFluidHandler sourceHandler, @Nonnull IFluidHandler destHandler,
+    public static int transferFluids(@NotNull IFluidHandler sourceHandler, @NotNull IFluidHandler destHandler,
                                      int transferLimit) {
         return transferFluids(sourceHandler, destHandler, transferLimit, fluidStack -> true);
     }
 
-    public static int transferFluids(@Nonnull IFluidHandler sourceHandler, @Nonnull IFluidHandler destHandler,
-                                     int transferLimit, @Nonnull Predicate<FluidStack> fluidFilter) {
+    public static int transferFluids(@NotNull IFluidHandler sourceHandler, @NotNull IFluidHandler destHandler,
+                                     int transferLimit, @NotNull Predicate<FluidStack> fluidFilter) {
         int fluidLeftToTransfer = transferLimit;
 
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
@@ -65,8 +64,8 @@ public class GTTransferUtils {
         return transferLimit - fluidLeftToTransfer;
     }
 
-    public static boolean transferExactFluidStack(@Nonnull IFluidHandler sourceHandler,
-                                                  @Nonnull IFluidHandler destHandler, FluidStack fluidStack) {
+    public static boolean transferExactFluidStack(@NotNull IFluidHandler sourceHandler,
+                                                  @NotNull IFluidHandler destHandler, FluidStack fluidStack) {
         int amount = fluidStack.amount;
         FluidStack sourceFluid = sourceHandler.drain(fluidStack, false);
         if (sourceFluid == null || sourceFluid.amount != amount) {

@@ -1,6 +1,6 @@
 package gregtech.common.covers.filter.oreglob.node;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 class GroupNode extends OreGlobNode {
 
@@ -16,7 +16,7 @@ class GroupNode extends OreGlobNode {
     }
 
     @Override
-    public boolean isPropertyEqualTo(@Nonnull OreGlobNode node) {
+    public boolean isPropertyEqualTo(@NotNull OreGlobNode node) {
         return node instanceof GroupNode groupNode && this.node.isStructurallyEqualTo(groupNode.node);
     }
 

@@ -38,11 +38,10 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
 

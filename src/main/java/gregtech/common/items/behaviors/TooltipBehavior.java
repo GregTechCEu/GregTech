@@ -4,10 +4,10 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 
 import net.minecraft.item.ItemStack;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
 
 /**
  * Adds tooltips with multiple translation keys
@@ -19,12 +19,12 @@ public class TooltipBehavior implements IItemBehaviour {
     /**
      * @param tooltips a consumer adding translated tooltips to the tooltip list
      */
-    public TooltipBehavior(@Nonnull Consumer<List<String>> tooltips) {
+    public TooltipBehavior(@NotNull Consumer<List<String>> tooltips) {
         this.tooltips = tooltips;
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, @Nonnull List<String> lines) {
+    public void addInformation(ItemStack itemStack, @NotNull List<String> lines) {
         tooltips.accept(lines);
     }
 }

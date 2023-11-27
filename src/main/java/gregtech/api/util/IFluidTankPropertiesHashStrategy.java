@@ -3,14 +3,13 @@ package gregtech.api.util;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import it.unimi.dsi.fastutil.Hash;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
-
 public interface IFluidTankPropertiesHashStrategy extends Hash.Strategy<IFluidTankProperties> {
 
-    @Nonnull
+    @NotNull
     static IFluidTankPropertiesHashStrategy create() {
         return new IFluidTankPropertiesHashStrategy() {
 

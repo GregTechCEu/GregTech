@@ -57,15 +57,13 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.GTValues.V;
 
@@ -208,7 +206,7 @@ public class GTUtility {
      * @return Index of the nearest value lesser or equal than {@code value},
      *         or {@code -1} if there's no entry matching the condition
      */
-    public static int nearestLesserOrEqual(@Nonnull long[] array, long value) {
+    public static int nearestLesserOrEqual(@NotNull long[] array, long value) {
         int low = 0, high = array.length - 1;
         while (true) {
             int median = (low + high) / 2;
@@ -228,7 +226,7 @@ public class GTUtility {
      * @return Index of the nearest value lesser than {@code value},
      *         or {@code -1} if there's no entry matching the condition
      */
-    public static int nearestLesser(@Nonnull long[] array, long value) {
+    public static int nearestLesser(@NotNull long[] array, long value) {
         int low = 0, high = array.length - 1;
         while (true) {
             int median = (low + high) / 2;
@@ -458,8 +456,8 @@ public class GTUtility {
      * @param stack item stack for copying
      * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if the stack is empty
      */
-    @Nonnull
-    public static ItemStack copy(@Nonnull ItemStack stack) {
+    @NotNull
+    public static ItemStack copy(@NotNull ItemStack stack) {
         return stack.isEmpty() ? ItemStack.EMPTY : stack.copy();
     }
 
@@ -469,8 +467,8 @@ public class GTUtility {
      * @param stack item stack for copying
      * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if the stack is empty
      */
-    @Nonnull
-    public static ItemStack copy(int newCount, @Nonnull ItemStack stack) {
+    @NotNull
+    public static ItemStack copy(int newCount, @NotNull ItemStack stack) {
         if (stack.isEmpty()) return ItemStack.EMPTY;
         ItemStack copy = stack.copy();
         copy.setCount(newCount);
@@ -484,8 +482,8 @@ public class GTUtility {
      * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if all the candidates are empty
      * @throws IllegalArgumentException if {@code stacks} is empty
      */
-    @Nonnull
-    public static ItemStack copyFirst(@Nonnull ItemStack... stacks) {
+    @NotNull
+    public static ItemStack copyFirst(@NotNull ItemStack... stacks) {
         if (stacks.length == 0) {
             throw new IllegalArgumentException("Empty ItemStack candidates");
         }
@@ -504,8 +502,8 @@ public class GTUtility {
      * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if all the candidates are empty
      * @throws IllegalArgumentException if {@code stacks} is empty
      */
-    @Nonnull
-    public static ItemStack copyFirst(int newCount, @Nonnull ItemStack... stacks) {
+    @NotNull
+    public static ItemStack copyFirst(int newCount, @NotNull ItemStack... stacks) {
         if (stacks.length == 0) {
             throw new IllegalArgumentException("Empty ItemStack candidates");
         }
@@ -753,7 +751,7 @@ public class GTUtility {
      * @param blockState the blockstate to check
      * @return if the block is a snow layer or snow block
      */
-    public static boolean isBlockSnow(@Nonnull IBlockState blockState) {
+    public static boolean isBlockSnow(@NotNull IBlockState blockState) {
         return blockState.getBlock() == Blocks.SNOW_LAYER || blockState.getBlock() == Blocks.SNOW;
     }
 
@@ -763,7 +761,7 @@ public class GTUtility {
      *
      * @return true if the passed IBlockState was valid snow block
      */
-    public static boolean tryBreakSnow(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state,
+    public static boolean tryBreakSnow(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state,
                                        boolean playSound) {
         boolean success = false;
         if (state.getBlock() == Blocks.SNOW) {
@@ -799,8 +797,8 @@ public class GTUtility {
      * @param item item
      * @return all the sub-items of an item
      */
-    @Nonnull
-    public static Set<ItemStack> getAllSubItems(@Nonnull Item item) {
+    @NotNull
+    public static Set<ItemStack> getAllSubItems(@NotNull Item item) {
         NonNullList<ItemStack> subItems = NonNullList.create();
         for (CreativeTabs tab : item.getCreativeTabs()) {
             if (tab == null || tab == CreativeTabs.SEARCH) continue;
@@ -837,8 +835,8 @@ public class GTUtility {
      * @param path the path in the location
      * @return the new location
      */
-    @Nonnull
-    public static ResourceLocation gregtechId(@Nonnull String path) {
+    @NotNull
+    public static ResourceLocation gregtechId(@NotNull String path) {
         return new ResourceLocation(GTValues.MODID, path);
     }
 

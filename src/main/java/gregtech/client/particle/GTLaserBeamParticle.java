@@ -16,9 +16,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 
 import codechicken.lib.vec.Vector3;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GTLaserBeamParticle extends GTParticle {
 
@@ -35,7 +34,7 @@ public class GTLaserBeamParticle extends GTParticle {
     private float emit;
     private boolean doubleVertical;
 
-    public GTLaserBeamParticle(@Nullable MetaTileEntity mte, @Nonnull Vector3 startPos, @Nonnull Vector3 endPos) {
+    public GTLaserBeamParticle(@Nullable MetaTileEntity mte, @NotNull Vector3 startPos, @NotNull Vector3 endPos) {
         super(startPos.x, startPos.y, startPos.z);
         this.mte = mte;
         this.direction = endPos.copy().subtract(startPos);
@@ -43,7 +42,7 @@ public class GTLaserBeamParticle extends GTParticle {
     }
 
     @Override
-    public boolean shouldRender(@Nonnull EffectRenderContext context) {
+    public boolean shouldRender(@NotNull EffectRenderContext context) {
         double renderRange = getSquaredRenderRange();
         if (renderRange < 0) return true;
         Vec3d eyePos = context.renderViewEntity().getPositionEyes(context.partialTicks());
@@ -71,12 +70,12 @@ public class GTLaserBeamParticle extends GTParticle {
         return this;
     }
 
-    public GTLaserBeamParticle setStartPos(@Nonnull Vector3 startPos) {
+    public GTLaserBeamParticle setStartPos(@NotNull Vector3 startPos) {
         this.direction.add(posX, posY, posZ).subtract(startPos);
         return this;
     }
 
-    public GTLaserBeamParticle setEndPos(@Nonnull Vector3 endPos) {
+    public GTLaserBeamParticle setEndPos(@NotNull Vector3 endPos) {
         this.direction = endPos.copy().subtract(posX, posY, posZ);
         return this;
     }
@@ -138,7 +137,7 @@ public class GTLaserBeamParticle extends GTParticle {
     }
 
     @Override
-    public void renderParticle(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context) {
+    public void renderParticle(@NotNull BufferBuilder buffer, @NotNull EffectRenderContext context) {
         GlStateManager.translate(posX - context.cameraX(), posY - context.cameraY(), posZ - context.cameraZ());
 
         Vector3 cameraDirection = null;
@@ -204,7 +203,7 @@ public class GTLaserBeamParticle extends GTParticle {
         float lastBrightnessY;
 
         @Override
-        public void preDraw(@Nonnull BufferBuilder buffer) {
+        public void preDraw(@NotNull BufferBuilder buffer) {
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
             lastBrightnessX = OpenGlHelper.lastBrightnessX;
             lastBrightnessY = OpenGlHelper.lastBrightnessY;
@@ -214,7 +213,7 @@ public class GTLaserBeamParticle extends GTParticle {
         }
 
         @Override
-        public void postDraw(@Nonnull BufferBuilder buffer) {
+        public void postDraw(@NotNull BufferBuilder buffer) {
             GlStateManager.enableCull();
             GlStateManager.disableRescaleNormal();
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);

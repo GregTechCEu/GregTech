@@ -61,6 +61,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -68,9 +70,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.DoubleSupplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                                          implements IFastRenderMetaTileEntity, IBloomEffect {
@@ -91,7 +90,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         this.tier = tier;
         this.energyContainer = new EnergyContainerHandler(this, 0, 0, 0, 0, 0) {
 
-            @Nonnull
+            @NotNull
             @Override
             public String getName() {
                 return GregtechDataCodes.FUSION_REACTOR_ENERGY_CONTAINER_TRAIT;
@@ -105,7 +104,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         return new MetaTileEntityFusionReactor(metaTileEntityId, tier);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
@@ -229,7 +228,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         super.invalidateStructure();
         this.energyContainer = new EnergyContainerHandler(this, 0, 0, 0, 0, 0) {
 
-            @Nonnull
+            @NotNull
             @Override
             public String getName() {
                 return GregtechDataCodes.FUSION_REACTOR_ENERGY_CONTAINER_TRAIT;
@@ -250,7 +249,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         long euCapacity = calculateEnergyStorageFactor(energyInputs.size());
         this.energyContainer = new EnergyContainerHandler(this, euCapacity, GTValues.V[tier], 0, 0, 0) {
 
-            @Nonnull
+            @NotNull
             @Override
             public String getName() {
                 return GregtechDataCodes.FUSION_REACTOR_ENERGY_CONTAINER_TRAIT;
@@ -317,7 +316,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip,
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(
@@ -326,7 +325,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.FUSION_REACTOR_OVERLAY;
@@ -594,7 +593,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         }
 
         @Override
-        public boolean checkRecipe(@Nonnull Recipe recipe) {
+        public boolean checkRecipe(@NotNull Recipe recipe) {
             if (!super.checkRecipe(recipe))
                 return false;
 
@@ -618,7 +617,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
             return true;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public NBTTagCompound serializeNBT() {
             NBTTagCompound tag = super.serializeNBT();
@@ -627,7 +626,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         }
 
         @Override
-        public void deserializeNBT(@Nonnull NBTTagCompound compound) {
+        public void deserializeNBT(@NotNull NBTTagCompound compound) {
             super.deserializeNBT(compound);
             heat = compound.getLong("Heat");
         }
@@ -652,7 +651,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void renderBloomEffect(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context) {
+    public void renderBloomEffect(@NotNull BufferBuilder buffer, @NotNull EffectRenderContext context) {
         Integer c = color;
         if (c == null) return;
         int color = RenderUtil.interpolateColor(c, -1, Eases.QUAD_IN.getInterpolation(
@@ -676,7 +675,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean shouldRenderBloomEffect(@Nonnull EffectRenderContext context) {
+    public boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {
         return this.color != null;
     }
 
@@ -716,7 +715,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         float lastBrightnessY;
 
         @Override
-        public void preDraw(@Nonnull BufferBuilder buffer) {
+        public void preDraw(@NotNull BufferBuilder buffer) {
             BloomEffect.strength = (float) ConfigHolder.client.shader.fusionBloom.strength;
             BloomEffect.baseBrightness = (float) ConfigHolder.client.shader.fusionBloom.baseBrightness;
             BloomEffect.highBrightnessThreshold = (float) ConfigHolder.client.shader.fusionBloom.highBrightnessThreshold;
@@ -733,7 +732,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         }
 
         @Override
-        public void postDraw(@Nonnull BufferBuilder buffer) {
+        public void postDraw(@NotNull BufferBuilder buffer) {
             Tessellator.getInstance().draw();
 
             GlStateManager.enableTexture2D();

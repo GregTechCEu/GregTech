@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Handles the rendering when a player is submerged in a GT fluid block
@@ -46,7 +46,7 @@ public class FluidVisualHandler {
             .gregtechId("textures/blocks/fluids/submerged_fluid_overlay.png");
 
     @SubscribeEvent
-    public static void onFOVModifier(@Nonnull EntityViewRenderEvent.FOVModifier event) {
+    public static void onFOVModifier(@NotNull EntityViewRenderEvent.FOVModifier event) {
         if (event.getState().getBlock() instanceof GTFluidBlock &&
                 ((GTFluidBlock) event.getState().getBlock()).isSticky()) {
             event.setFOV(event.getFOV() * 60.0F / 70.0F);
@@ -54,7 +54,7 @@ public class FluidVisualHandler {
     }
 
     @SubscribeEvent
-    public static void onBlockOverlayRender(@Nonnull RenderBlockOverlayEvent event) {
+    public static void onBlockOverlayRender(@NotNull RenderBlockOverlayEvent event) {
         if (event.getOverlayType() != RenderBlockOverlayEvent.OverlayType.WATER) return;
 
         final EntityPlayer player = event.getPlayer();
@@ -99,7 +99,7 @@ public class FluidVisualHandler {
     }
 
     @SubscribeEvent
-    public static void onFogColor(@Nonnull EntityViewRenderEvent.FogColors event) {
+    public static void onFogColor(@NotNull EntityViewRenderEvent.FogColors event) {
         if (!(event.getState().getBlock() instanceof GTFluidBlock fluidBlock)) return;
 
         int color = fluidBlock.getFluid().getColor();
@@ -199,7 +199,7 @@ public class FluidVisualHandler {
     }
 
     @SubscribeEvent
-    public static void onFogDensity(@Nonnull EntityViewRenderEvent.FogDensity event) {
+    public static void onFogDensity(@NotNull EntityViewRenderEvent.FogDensity event) {
         if (!(event.getState().getBlock() instanceof GTFluidBlock)) return;
 
         final EntityRenderer renderer = event.getRenderer();

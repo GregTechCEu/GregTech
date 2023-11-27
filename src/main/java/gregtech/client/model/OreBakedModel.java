@@ -21,13 +21,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import javax.annotation.Nullable;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID, value = Side.CLIENT)
 public class OreBakedModel implements IBakedModel {
@@ -83,24 +83,27 @@ public class OreBakedModel implements IBakedModel {
         return false;
     }
 
+    @NotNull
     @Override
     public TextureAtlasSprite getParticleTexture() {
         return getBaseModel().getParticleTexture();
     }
 
+    @NotNull
     @Override
     public ItemOverrideList getOverrides() {
         return ItemOverrideList.NONE;
     }
 
     @SuppressWarnings("deprecation")
+    @NotNull
     @Override
     public ItemCameraTransforms getItemCameraTransforms() {
         return getBaseModel().getItemCameraTransforms();
     }
 
     @Override
-    public boolean isAmbientOcclusion(IBlockState state) {
+    public boolean isAmbientOcclusion(@NotNull IBlockState state) {
         return getBaseModel().isAmbientOcclusion(state);
     }
 

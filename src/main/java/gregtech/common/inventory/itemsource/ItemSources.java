@@ -10,10 +10,9 @@ import net.minecraft.world.World;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenCustomHashMap;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-
-import javax.annotation.Nullable;
 
 public class ItemSources implements IItemList {
 

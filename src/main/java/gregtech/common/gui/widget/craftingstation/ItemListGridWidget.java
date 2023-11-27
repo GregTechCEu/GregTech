@@ -15,11 +15,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
-
-import javax.annotation.Nullable;
 
 public class ItemListGridWidget extends ScrollableListWidget {
 

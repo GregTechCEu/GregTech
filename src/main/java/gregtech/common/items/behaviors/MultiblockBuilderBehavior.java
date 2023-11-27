@@ -22,9 +22,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.List;
 
 public class MultiblockBuilderBehavior implements IItemBehaviour {
 
@@ -66,7 +66,7 @@ public class MultiblockBuilderBehavior implements IItemBehaviour {
     }
 
     @Override
-    public void addPropertyOverride(@Nonnull Item item) {
+    public void addPropertyOverride(@NotNull Item item) {
         item.addPropertyOverride(GTUtility.gregtechId("auto_mode"),
                 (stack, world, entity) -> (entity != null && entity.isSneaking()) ? 1.0F : 0.0F);
     }

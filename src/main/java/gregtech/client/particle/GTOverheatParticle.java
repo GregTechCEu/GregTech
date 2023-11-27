@@ -21,12 +21,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Cuboid6;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * @author brachy84
@@ -156,7 +155,7 @@ public class GTOverheatParticle extends GTBloomParticle {
     protected float alpha = 0;
     protected int color = blackBodyColors[0];
 
-    public GTOverheatParticle(@Nonnull TileEntityCable tileEntity, int meltTemp, @Nonnull List<Cuboid6> pipeBoxes,
+    public GTOverheatParticle(@NotNull TileEntityCable tileEntity, int meltTemp, @NotNull List<Cuboid6> pipeBoxes,
                               boolean insulated) {
         super(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
         this.tileEntity = tileEntity;
@@ -166,7 +165,7 @@ public class GTOverheatParticle extends GTBloomParticle {
         this.insulated = insulated;
     }
 
-    public void updatePipeBoxes(@Nonnull List<Cuboid6> pipeBoxes) {
+    public void updatePipeBoxes(@NotNull List<Cuboid6> pipeBoxes) {
         this.pipeBoxes = pipeBoxes;
         for (Cuboid6 cuboid : this.pipeBoxes) {
             cuboid.expand(0.001);
@@ -231,7 +230,7 @@ public class GTOverheatParticle extends GTBloomParticle {
         return SETUP;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BloomType getBloomType() {
         ConfigHolder.HeatEffectBloom heatEffectBloom = ConfigHolder.client.shader.heatEffectBloom;
@@ -239,7 +238,7 @@ public class GTOverheatParticle extends GTBloomParticle {
     }
 
     @Override
-    public void renderBloomEffect(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context) {
+    public void renderBloomEffect(@NotNull BufferBuilder buffer, @NotNull EffectRenderContext context) {
         float red = ((color >> 16) & 0xFF) / 255f;
         float green = ((color >> 8) & 0xFF) / 255f;
         float blue = (color & 0xFF) / 255f;
@@ -251,7 +250,7 @@ public class GTOverheatParticle extends GTBloomParticle {
     }
 
     @Override
-    public boolean shouldRenderBloomEffect(@Nonnull EffectRenderContext context) {
+    public boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {
         return !this.insulated;
     }
 
@@ -262,7 +261,7 @@ public class GTOverheatParticle extends GTBloomParticle {
 
         @Override
         @SideOnly(Side.CLIENT)
-        public void preDraw(@Nonnull BufferBuilder buffer) {
+        public void preDraw(@NotNull BufferBuilder buffer) {
             BloomEffect.strength = (float) ConfigHolder.client.shader.heatEffectBloom.strength;
             BloomEffect.baseBrightness = (float) ConfigHolder.client.shader.heatEffectBloom.baseBrightness;
             BloomEffect.highBrightnessThreshold = (float) ConfigHolder.client.shader.heatEffectBloom.highBrightnessThreshold;
@@ -280,7 +279,7 @@ public class GTOverheatParticle extends GTBloomParticle {
 
         @Override
         @SideOnly(Side.CLIENT)
-        public void postDraw(@Nonnull BufferBuilder buffer) {
+        public void postDraw(@NotNull BufferBuilder buffer) {
             buffer.setTranslation(0, 0, 0);
             Tessellator.getInstance().draw();
             GlStateManager.enableTexture2D();

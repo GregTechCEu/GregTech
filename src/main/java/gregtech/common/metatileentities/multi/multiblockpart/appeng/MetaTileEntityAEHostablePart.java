@@ -30,12 +30,11 @@ import appeng.me.helpers.AENetworkProxy;
 import appeng.me.helpers.BaseActionSource;
 import appeng.me.helpers.IGridProxyable;
 import appeng.me.helpers.MachineSource;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.EnumSet;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * @Author GlodBlock
@@ -136,9 +135,9 @@ public abstract class MetaTileEntityAEHostablePart extends MetaTileEntityMultibl
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public AECableType getCableConnectionType(@Nonnull AEPartLocation part) {
+    public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
         if (part.getFacing() != this.frontFacing) {
             return AECableType.NONE;
         }

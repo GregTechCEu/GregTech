@@ -5,14 +5,13 @@ import gregtech.api.unification.material.Material;
 import net.minecraft.util.math.MathHelper;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class OreProperty implements IMaterialProperty {
 
@@ -166,7 +165,7 @@ public class OreProperty implements IMaterialProperty {
      *
      * @param materials the materials to use as byproducts
      */
-    public void setOreByProducts(@Nonnull Material... materials) {
+    public void setOreByProducts(@NotNull Material... materials) {
         setOreByProducts(Arrays.asList(materials));
     }
 
@@ -175,7 +174,7 @@ public class OreProperty implements IMaterialProperty {
      *
      * @param materials the materials to use as byproducts
      */
-    public void setOreByProducts(@Nonnull Collection<Material> materials) {
+    public void setOreByProducts(@NotNull Collection<Material> materials) {
         this.oreByProducts.clear();
         this.oreByProducts.addAll(materials);
     }
@@ -185,7 +184,7 @@ public class OreProperty implements IMaterialProperty {
      *
      * @param materials the materials to add as byproducts
      */
-    public void addOreByProducts(@Nonnull Material... materials) {
+    public void addOreByProducts(@NotNull Material... materials) {
         this.oreByProducts.addAll(Arrays.asList(materials));
     }
 
@@ -199,8 +198,8 @@ public class OreProperty implements IMaterialProperty {
         return this.oreByProducts.get(MathHelper.clamp(index, 0, this.oreByProducts.size() - 1));
     }
 
-    @Nonnull
-    public final Material getOreByProduct(int index, @Nonnull Material fallback) {
+    @NotNull
+    public final Material getOreByProduct(int index, @NotNull Material fallback) {
         Material material = getOreByProduct(index);
         return material != null ? material : fallback;
     }

@@ -40,12 +40,12 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.annotation.Nonnull;
 
 public class TricorderBehavior implements IItemBehaviour {
 
@@ -349,7 +349,7 @@ public class TricorderBehavior implements IItemBehaviour {
         return list;
     }
 
-    private boolean drainEnergy(@Nonnull ItemStack stack, long amount, boolean simulate) {
+    private boolean drainEnergy(@NotNull ItemStack stack, long amount, boolean simulate) {
         if (debugLevel > 2)
             return true;
 

@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
 public class IntCircuitRecipeWrapper implements IRecipeWrapper {
 
     public final boolean input;

@@ -39,12 +39,10 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.math.IntMath;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 import java.util.function.IntSupplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable {
 
@@ -367,7 +365,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
             this.localeName = localeName;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return localeName;
@@ -390,7 +388,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
             this.localeName = localeName;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return localeName;

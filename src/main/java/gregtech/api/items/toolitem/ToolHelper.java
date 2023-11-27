@@ -51,15 +51,14 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.GTValues.LV;
 import static gregtech.api.GTValues.V;
@@ -220,7 +219,7 @@ public final class ToolHelper {
      * @param stack  stack to be damaged
      * @param entity entity that has damaged this stack
      */
-    public static void damageItemWhenCrafting(@Nonnull ItemStack stack, @Nullable EntityLivingBase entity) {
+    public static void damageItemWhenCrafting(@NotNull ItemStack stack, @Nullable EntityLivingBase entity) {
         int damage = 2;
         if (stack.getItem() instanceof IGTTool) {
             damage = ((IGTTool) stack.getItem()).getToolStats().getToolDamagePerCraft(stack);
@@ -242,7 +241,7 @@ public final class ToolHelper {
      * @param stack  stack to be damaged
      * @param entity entity that has damaged this stack
      */
-    public static void damageItem(@Nonnull ItemStack stack, @Nullable EntityLivingBase entity) {
+    public static void damageItem(@NotNull ItemStack stack, @Nullable EntityLivingBase entity) {
         damageItem(stack, entity, 1);
     }
 
@@ -254,7 +253,7 @@ public final class ToolHelper {
      * @param entity entity that has damaged this stack
      * @param damage how much damage the stack will take
      */
-    public static void damageItem(@Nonnull ItemStack stack, @Nullable EntityLivingBase entity, int damage) {
+    public static void damageItem(@NotNull ItemStack stack, @Nullable EntityLivingBase entity, int damage) {
         if (!(stack.getItem() instanceof IGTTool)) {
             if (entity != null) stack.damageItem(damage, entity);
         } else {
@@ -319,7 +318,7 @@ public final class ToolHelper {
      * @param world  the world in which the click happened
      * @param hand   the hand holding the item
      */
-    public static void onActionDone(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull EnumHand hand) {
+    public static void onActionDone(@NotNull EntityPlayer player, @NotNull World world, @NotNull EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         IGTTool tool = (IGTTool) stack.getItem();
         ToolHelper.damageItem(stack, player);
@@ -597,7 +596,7 @@ public final class ToolHelper {
         return getHarvestableBlocks(stack, aoeDefiniton, player.world, player, rayTraceResult);
     }
 
-    public static RayTraceResult getPlayerDefaultRaytrace(@Nonnull EntityPlayer player) {
+    public static RayTraceResult getPlayerDefaultRaytrace(@NotNull EntityPlayer player) {
         Vec3d lookPos = player.getPositionEyes(1F);
         Vec3d rotation = player.getLook(1);
         Vec3d realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
@@ -759,8 +758,8 @@ public final class ToolHelper {
      * @param state the BlockState of the block
      * @return the silk touch drop
      */
-    @Nonnull
-    public static ItemStack getSilkTouchDrop(@Nonnull IBlockState state) {
+    @NotNull
+    public static ItemStack getSilkTouchDrop(@NotNull IBlockState state) {
         try {
             return (ItemStack) GET_SILK_TOUCH_DROP.invokeExact(state.getBlock(), state);
         } catch (Throwable ignored) {

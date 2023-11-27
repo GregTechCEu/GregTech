@@ -16,10 +16,10 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.List;
 
 public class RotateRailBehavior implements IToolBehavior {
 
@@ -27,11 +27,11 @@ public class RotateRailBehavior implements IToolBehavior {
 
     protected RotateRailBehavior() {/**/}
 
-    @Nonnull
+    @NotNull
     @Override
-    public EnumActionResult onItemUseFirst(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos,
-                                           @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ,
-                                           @Nonnull EnumHand hand) {
+    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                           @NotNull EnumFacing facing, float hitX, float hitY, float hitZ,
+                                           @NotNull EnumHand hand) {
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof BlockRailBase) {
             if (world.setBlockState(pos, state.withRotation(Rotation.CLOCKWISE_90))) {
@@ -43,8 +43,8 @@ public class RotateRailBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
-                               @Nonnull ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         tooltip.add(I18n.format("item.gt.tool.behavior.rail_rotation"));
     }
 }

@@ -41,11 +41,11 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
 
 public class TerminalRegistry {
 
@@ -191,8 +191,8 @@ public class TerminalRegistry {
         HW_REGISTER.put(name, hardware);
     }
 
-    public static void registerHardwareDemand(String name, boolean isDefaultApp, @Nonnull List<Hardware>[] hardware,
-                                              @Nonnull List<ItemStack>[] upgrade) {
+    public static void registerHardwareDemand(String name, boolean isDefaultApp, @NotNull List<Hardware>[] hardware,
+                                              @NotNull List<ItemStack>[] upgrade) {
         if (name != null && APP_REGISTER.containsKey(name)) {
             if (isDefaultApp) {
                 DEFAULT_APPS.add(name);

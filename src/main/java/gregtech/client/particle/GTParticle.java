@@ -7,8 +7,8 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A custom particle implementation with framework for more advanced rendering capabilities.
@@ -34,7 +34,7 @@ public abstract class GTParticle {
         this.posZ = posZ;
     }
 
-    public boolean shouldRender(@Nonnull EffectRenderContext context) {
+    public boolean shouldRender(@NotNull EffectRenderContext context) {
         if (squaredRenderRange < 0) return true;
         return context.renderViewEntity().getPositionEyes(context.partialTicks())
                 .squareDistanceTo(posX, posY, posZ) <= squaredRenderRange;
@@ -112,7 +112,7 @@ public abstract class GTParticle {
      * @param buffer  buffer builder
      * @param context render context
      */
-    public void renderParticle(@Nonnull BufferBuilder buffer, @Nonnull EffectRenderContext context) {}
+    public void renderParticle(@NotNull BufferBuilder buffer, @NotNull EffectRenderContext context) {}
 
     /**
      * @return Render setup for this particle, if exists

@@ -1,8 +1,7 @@
 package gregtech.api.unification.material.properties;
 
 import crafttweaker.CraftTweakerAPI;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlastProperty implements IMaterialProperty {
 
@@ -90,7 +89,7 @@ public class BlastProperty implements IMaterialProperty {
         return gasTier;
     }
 
-    public void setGasTier(@Nonnull GasTier tier) {
+    public void setGasTier(@NotNull GasTier tier) {
         this.gasTier = tier;
     }
 

@@ -23,12 +23,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import com.google.common.collect.ImmutableSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Used to allow a tool to hoe the ground, only if it cannot extend the {@link gregtech.api.items.toolitem.ItemGTHoe}
@@ -40,10 +39,10 @@ public class HoeGroundBehavior implements IToolBehavior {
 
     protected HoeGroundBehavior() {/**/}
 
-    @Nonnull
+    @NotNull
     @Override
-    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos,
-                                      @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY,
+    public EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                      @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY,
                                       float hitZ) {
         if (facing == EnumFacing.DOWN) return EnumActionResult.PASS;
 
@@ -121,7 +120,7 @@ public class HoeGroundBehavior implements IToolBehavior {
         return false;
     }
 
-    private static void tillGround(@Nonnull World world, EntityPlayer player, ItemStack stack, BlockPos pos,
+    private static void tillGround(@NotNull World world, EntityPlayer player, ItemStack stack, BlockPos pos,
                                    IBlockState state) {
         world.setBlockState(pos, state, 11);
         if (!player.isCreative()) {
@@ -130,8 +129,8 @@ public class HoeGroundBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip,
-                               @Nonnull ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         tooltip.add(I18n.format("item.gt.tool.behavior.ground_tilling"));
     }
 }

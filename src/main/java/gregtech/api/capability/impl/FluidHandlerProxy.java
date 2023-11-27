@@ -5,11 +5,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 public class FluidHandlerProxy implements IFluidHandler {
 

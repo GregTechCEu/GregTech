@@ -9,7 +9,7 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class EnchantmentHardHammer extends Enchantment {
 
@@ -36,14 +36,14 @@ public class EnchantmentHardHammer extends Enchantment {
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack) {
+    public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack) {
         return super.canApplyAtEnchantingTable(stack) &&
                 stack.getItem().getToolClasses(stack).contains(ToolClasses.PICKAXE) &&
                 !stack.getItem().getToolClasses(stack).contains(ToolClasses.HARD_HAMMER);
     }
 
     @Override
-    protected boolean canApplyTogether(@Nonnull Enchantment ench) {
+    protected boolean canApplyTogether(@NotNull Enchantment ench) {
         return super.canApplyTogether(ench) && ench != Enchantments.SILK_TOUCH && ench != Enchantments.FORTUNE;
     }
 }

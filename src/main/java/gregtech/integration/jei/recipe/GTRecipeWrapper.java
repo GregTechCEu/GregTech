@@ -37,13 +37,12 @@ import net.minecraftforge.fluids.FluidStack;
 
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
@@ -70,7 +69,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     @Override
-    public void getIngredients(@Nonnull IIngredients ingredients) {
+    public void getIngredients(@NotNull IIngredients ingredients) {
         // Inputs
         if (!sortedInputs.isEmpty()) {
             List<List<ItemStack>> list = new ArrayList<>();
@@ -196,7 +195,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         addIngredientTooltips(tooltip, notConsumed, input, ingredient, null);
     }
 
-    public void addIngredientTooltips(@Nonnull Collection<String> tooltip, boolean notConsumed, boolean input,
+    public void addIngredientTooltips(@NotNull Collection<String> tooltip, boolean notConsumed, boolean input,
                                       @Nullable Object ingredient, @Nullable Object ingredient2) {
         if (ingredient2 instanceof ChancedOutputLogic logic) {
             if (ingredient instanceof BoostableChanceEntry<?>entry) {
@@ -234,7 +233,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     @Override
-    public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+    public void drawInfo(@NotNull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
         var properties = recipe.getPropertyTypes();
         boolean drawTotalEU = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideTotalEU);
@@ -285,7 +284,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         List<String> tooltips = new ArrayList<>();

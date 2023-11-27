@@ -57,15 +57,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class ToolEventHandlers {
@@ -74,7 +73,7 @@ public class ToolEventHandlers {
      * Handles returning broken stacks for tools
      */
     @SubscribeEvent
-    public static void onPlayerDestroyItem(@Nonnull PlayerDestroyItemEvent event) {
+    public static void onPlayerDestroyItem(@NotNull PlayerDestroyItemEvent event) {
         ItemStack original = event.getOriginal();
         Item item = original.getItem();
         if (item instanceof IGTTool) {
@@ -109,7 +108,7 @@ public class ToolEventHandlers {
     }
 
     @SubscribeEvent
-    public static void onPlayerEntityInteract(@Nonnull PlayerInteractEvent.EntityInteract event) {
+    public static void onPlayerEntityInteract(@NotNull PlayerInteractEvent.EntityInteract event) {
         ItemStack itemStack = event.getItemStack();
         Item item = itemStack.getItem();
 
@@ -138,7 +137,7 @@ public class ToolEventHandlers {
      * Handles drop conversion when a hammer tool (or tool with hard hammer enchantment) is used
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onHarvestDrops(@Nonnull BlockEvent.HarvestDropsEvent event) {
+    public static void onHarvestDrops(@NotNull BlockEvent.HarvestDropsEvent event) {
         EntityPlayer player = event.getHarvester();
         if (player != null) {
             ItemStack stack = player.getHeldItemMainhand();
@@ -210,7 +209,7 @@ public class ToolEventHandlers {
      */
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public static void onDrawHighlightEvent(@Nonnull DrawBlockHighlightEvent event) {
+    public static void onDrawHighlightEvent(@NotNull DrawBlockHighlightEvent event) {
         // noinspection ConstantConditions
         if (event.getTarget().getBlockPos() == null) return;
 
@@ -302,7 +301,7 @@ public class ToolEventHandlers {
     }
 
     @SideOnly(Side.CLIENT)
-    private static boolean shouldRenderGridOverlays(@Nonnull IBlockState state, @Nullable TileEntity tile,
+    private static boolean shouldRenderGridOverlays(@NotNull IBlockState state, @Nullable TileEntity tile,
                                                     ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
         if (state.getBlock() instanceof BlockPipe<?, ?, ?>pipe) {
             if (isSneaking &&
@@ -366,7 +365,7 @@ public class ToolEventHandlers {
     private static float bColour;
 
     @SideOnly(Side.CLIENT)
-    private static boolean renderGridOverlays(@Nonnull EntityPlayer player, BlockPos pos, IBlockState state,
+    private static boolean renderGridOverlays(@NotNull EntityPlayer player, BlockPos pos, IBlockState state,
                                               EnumFacing facing, TileEntity tile, float partialTicks) {
         if (player.world.getWorldBorder().contains(pos)) {
             GlStateManager.enableBlend();
@@ -435,7 +434,7 @@ public class ToolEventHandlers {
     }
 
     @SideOnly(Side.CLIENT)
-    private static void drawGridOverlays(@Nonnull AxisAlignedBB box) {
+    private static void drawGridOverlays(@NotNull AxisAlignedBB box) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(3, DefaultVertexFormats.POSITION_COLOR);

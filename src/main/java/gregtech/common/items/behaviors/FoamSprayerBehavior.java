@@ -28,14 +28,13 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-
-import javax.annotation.Nullable;
 
 public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabilityManager, IItemBehaviour,
                                  ISubItemHandler {

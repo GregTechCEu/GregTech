@@ -60,12 +60,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
-
-import javax.annotation.Nullable;
 
 import static gregtech.api.util.RelativeDirection.*;
 

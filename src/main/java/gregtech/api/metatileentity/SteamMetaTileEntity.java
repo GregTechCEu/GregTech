@@ -35,11 +35,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
-
-import javax.annotation.Nullable;
 
 public abstract class SteamMetaTileEntity extends MetaTileEntity {
 

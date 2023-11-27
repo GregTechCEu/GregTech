@@ -9,9 +9,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
 import mezz.jei.plugins.vanilla.ingredients.item.ItemStackRenderer;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ItemStackTextRenderer extends ItemStackRenderer {
 
@@ -48,7 +47,7 @@ public class ItemStackTextRenderer extends ItemStackRenderer {
     }
 
     @Override
-    public void render(@Nonnull Minecraft minecraft, int xPosition, int yPosition, @Nullable ItemStack ingredient) {
+    public void render(@NotNull Minecraft minecraft, int xPosition, int yPosition, @Nullable ItemStack ingredient) {
         super.render(minecraft, xPosition, yPosition, ingredient);
 
         if (this.chanceBase >= 0) {

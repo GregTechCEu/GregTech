@@ -7,7 +7,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockGregPlanks extends VariantBlock<BlockGregPlanks.BlockType> {
 
@@ -32,7 +32,7 @@ public class BlockGregPlanks extends VariantBlock<BlockGregPlanks.BlockType> {
             this.name = name;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public String getName() {
             return this.name;

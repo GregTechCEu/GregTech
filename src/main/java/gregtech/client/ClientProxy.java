@@ -56,13 +56,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import codechicken.lib.texture.TextureUtils;
+import org.jetbrains.annotations.NotNull;
 import paulscode.sound.SoundSystemConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import javax.annotation.Nonnull;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -121,7 +120,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public static void addMaterialFormulaHandler(@Nonnull ItemTooltipEvent event) {
+    public static void addMaterialFormulaHandler(@NotNull ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
         if (itemStack.getItem() instanceof ItemBlock) {
             Block block = ((ItemBlock) itemStack.getItem()).getBlock();

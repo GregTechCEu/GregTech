@@ -26,10 +26,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 @SuppressWarnings("unused")
 public abstract class MultiMapMultiblockController extends RecipeMapMultiblockController

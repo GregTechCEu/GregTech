@@ -13,6 +13,7 @@ import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.zenscript.IBracketHandler;
+import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
 import stanhebben.zenscript.expression.ExpressionString;
@@ -21,8 +22,6 @@ import stanhebben.zenscript.symbols.IZenSymbol;
 import stanhebben.zenscript.type.natives.IJavaMethod;
 
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 @BracketHandler
 @ZenRegister

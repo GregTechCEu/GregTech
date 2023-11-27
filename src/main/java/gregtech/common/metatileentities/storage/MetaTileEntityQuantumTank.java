@@ -53,13 +53,12 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
@@ -682,7 +681,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
         }
 
         @Override
-        public boolean test(@Nonnull FluidStack fluidStack) {
+        public boolean test(@NotNull FluidStack fluidStack) {
             return !locked || lockedFluid == null || fluidStack.isFluidEqual(lockedFluid);
         }
 

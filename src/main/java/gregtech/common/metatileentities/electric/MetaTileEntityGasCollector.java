@@ -15,11 +15,10 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.util.ResourceLocation;
 
 import it.unimi.dsi.fastutil.ints.IntLists;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
 
 public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
 
@@ -40,7 +39,7 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
         return new GasCollectorRecipeLogic(this, recipeMap, () -> energyContainer);
     }
 
-    protected boolean checkRecipe(@Nonnull Recipe recipe) {
+    protected boolean checkRecipe(@NotNull Recipe recipe) {
         for (int dimension : recipe.getProperty(GasCollectorDimensionProperty.getInstance(), IntLists.EMPTY_LIST)) {
             if (dimension == this.getWorld().provider.getDimension()) {
                 return true;
@@ -57,7 +56,7 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
         }
 
         @Override
-        public boolean checkRecipe(@Nonnull Recipe recipe) {
+        public boolean checkRecipe(@NotNull Recipe recipe) {
             return ((MetaTileEntityGasCollector) metaTileEntity).checkRecipe(recipe) && super.checkRecipe(recipe);
         }
     }

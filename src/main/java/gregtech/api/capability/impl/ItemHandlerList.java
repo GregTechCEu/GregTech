@@ -6,10 +6,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-
-import javax.annotation.Nonnull;
 
 /**
  * Efficiently delegates calls into multiple item handlers
@@ -40,14 +39,14 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
         if (!(itemHandler instanceof IItemHandlerModifiable))
             throw new UnsupportedOperationException("Handler " + itemHandler + " does not support this method");
         ((IItemHandlerModifiable) itemHandler).setStackInSlot(slot - baseIndexOffset.get(itemHandler), stack);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack getStackInSlot(int slot) {
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
@@ -61,21 +60,21 @@ public class ItemHandlerList implements IItemHandlerModifiable {
         return itemHandler.getSlotLimit(slot - baseIndexOffset.get(itemHandler));
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
         return itemHandler.insertItem(slot - baseIndexOffset.get(itemHandler), stack, simulate);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
         return itemHandler.extractItem(slot - baseIndexOffset.get(itemHandler), amount, simulate);
     }
 
-    @Nonnull
+    @NotNull
     public Collection<IItemHandler> getBackingHandlers() {
         return Collections.unmodifiableCollection(handlerBySlotIndex.values());
     }

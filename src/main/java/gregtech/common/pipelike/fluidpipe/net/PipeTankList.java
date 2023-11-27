@@ -10,11 +10,11 @@ import net.minecraftforge.fluids.capability.FluidTankPropertiesWrapper;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.Iterator;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
 
@@ -122,7 +122,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Iterator<FluidTank> iterator() {
         return Arrays.stream(tanks).iterator();
     }
