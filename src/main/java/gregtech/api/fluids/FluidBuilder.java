@@ -306,10 +306,10 @@ public class FluidBuilder {
         Fluid properFluid = GTFluidRegistration.INSTANCE.registerFluid(fluid, modid, hasBucket);
 
         if (material != null) {
-            FluidUnifier.registerFluid(fluid, material);
+            FluidUnifier.registerFluid(properFluid, material);
         }
 
-        FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createGTFluidTooltip(fluid));
+        FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createFluidTooltip(material, properFluid, state));
 
         if (hasFluidBlock) {
             if (fluid == properFluid) {
