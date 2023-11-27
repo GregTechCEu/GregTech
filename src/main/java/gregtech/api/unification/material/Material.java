@@ -523,6 +523,19 @@ public class Material implements Comparable<Material> {
         }
 
         /**
+         * Assign an existing fluid to this material. Useful for things like Lava and Water where MC
+         * already has a fluid to use, or for cross-mod compatibility.
+         *
+         * @param fluid The existing liquid
+         */
+        public Builder fluid(@NotNull Fluid fluid, @NotNull FluidStorageKey fluidType) {
+            properties.ensureSet(PropertyKey.FLUID);
+            FluidProperty property = properties.getProperty(PropertyKey.FLUID);
+            property.getStorage().store(fluidType, fluid);
+            return this;
+        }
+
+        /**
          * Add a liquid for this material.
          * 
          * @see #fluid(FluidStorageKey, FluidState)
