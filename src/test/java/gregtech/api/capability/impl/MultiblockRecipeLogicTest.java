@@ -28,14 +28,13 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.google.common.collect.ImmutableList;
 import org.hamcrest.MatcherAssert;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nonnull;
 
 import static gregtech.api.util.GTUtility.gregtechId;
 import static org.hamcrest.CoreMatchers.*;
@@ -82,7 +81,7 @@ public class MultiblockRecipeLogicTest {
 
                     // function checks for the temperature of the recipe against the coils
                     @Override
-                    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+                    public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
                         return true;
                     }
 
@@ -328,7 +327,7 @@ public class MultiblockRecipeLogicTest {
 
                     // function checks for the temperature of the recipe against the coils
                     @Override
-                    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+                    public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
                         return true;
                     }
                 });
@@ -572,7 +571,7 @@ public class MultiblockRecipeLogicTest {
 
                     // function checks for the temperature of the recipe against the coils
                     @Override
-                    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+                    public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
                         return true;
                     }
 

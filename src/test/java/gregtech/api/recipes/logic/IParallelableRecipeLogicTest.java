@@ -38,8 +38,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import javax.annotation.Nonnull;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 
@@ -80,7 +78,7 @@ public class IParallelableRecipeLogicTest {
 
                     // function checks for the temperature of the recipe against the coils
                     @Override
-                    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+                    public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
                         return true;
                     }
 
@@ -536,7 +534,7 @@ public class IParallelableRecipeLogicTest {
                 return 32;
             }
 
-            @Nonnull
+            @NotNull
             @Override
             public MetaTileEntity getMetaTileEntity() {
                 return EBF;
@@ -611,7 +609,7 @@ public class IParallelableRecipeLogicTest {
                 return 32;
             }
 
-            @Nonnull
+            @NotNull
             @Override
             public MetaTileEntity getMetaTileEntity() {
                 return EBF;
@@ -676,7 +674,7 @@ public class IParallelableRecipeLogicTest {
                 return 32;
             }
 
-            @Nonnull
+            @NotNull
             @Override
             public MetaTileEntity getMetaTileEntity() {
                 return EBF;
@@ -743,7 +741,7 @@ public class IParallelableRecipeLogicTest {
                 return 32;
             }
 
-            @Nonnull
+            @NotNull
             @Override
             public MetaTileEntity getMetaTileEntity() {
                 return EBF;
@@ -801,8 +799,8 @@ public class IParallelableRecipeLogicTest {
             this(metaTileEntity, recipeMap, logicType, false);
         }
 
-        public ParallelableTestLogic(@Nonnull MetaTileEntity metaTileEntity, @Nonnull RecipeMap<?> recipeMap,
-                                     @Nonnull ParallelLogicType logicType, boolean enableBonusOverride) {
+        public ParallelableTestLogic(@NotNull MetaTileEntity metaTileEntity, @NotNull RecipeMap<?> recipeMap,
+                                     @NotNull ParallelLogicType logicType, boolean enableBonusOverride) {
             this.metaTileEntity = metaTileEntity;
             this.recipeMap = recipeMap;
             this.logicType = logicType;
@@ -836,7 +834,7 @@ public class IParallelableRecipeLogicTest {
         public void invalidateOutputs() {}
 
         @Override
-        public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
+        public void applyParallelBonus(@NotNull RecipeBuilder<?> builder) {
             if (enableBonusOverride) {
                 builder.EUt(1).duration(50);
             }

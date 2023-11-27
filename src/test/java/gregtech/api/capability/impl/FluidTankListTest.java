@@ -10,14 +10,13 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static net.minecraftforge.fluids.FluidRegistry.LAVA;
 import static net.minecraftforge.fluids.FluidRegistry.WATER;
@@ -404,7 +403,7 @@ public class FluidTankListTest {
             return this;
         }
 
-        FluidHandlerTester expectContents(@Nonnull FluidStack... optionalFluidStacks) {
+        FluidHandlerTester expectContents(@NotNull FluidStack... optionalFluidStacks) {
             if (optionalFluidStacks.length != this.tank.getTanks()) {
                 throw new IllegalArgumentException("Wrong number of fluids to compare; " +
                         "expected: " + this.tank.getTanks() + ", provided: " + optionalFluidStacks.length);
