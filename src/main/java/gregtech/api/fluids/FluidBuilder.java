@@ -275,7 +275,9 @@ public class FluidBuilder {
         }
 
         Fluid fluid = FluidRegistry.getFluid(name);
+        boolean needsRegistration = false;
         if (fluid == null) {
+            needsRegistration = true;
             if (material == null) {
                 fluid = new GTFluid(name, still, flowing, state);
             } else if (key != null) {
@@ -312,7 +314,12 @@ public class FluidBuilder {
         determineViscosity(material);
         fluid.setViscosity(viscosity);
 
-        GTFluidRegistration.INSTANCE.registerFluid(fluid, modid, hasBucket);
+        if (needsRegistration) {
+            GTFluidRegistration.INSTANCE.registerFluid(fluid, modid, hasBucket);
+        } else if (hasBucket) {
+            // In case it didn't have it before, but now it does
+            FluidRegistry.addBucketForFluid(fluid);
+        }
 
         if (material != null) {
             FluidUnifier.registerFluid(fluid, material);
