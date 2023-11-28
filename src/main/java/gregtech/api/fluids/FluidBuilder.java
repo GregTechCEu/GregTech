@@ -291,7 +291,8 @@ public class FluidBuilder {
         if (fluid instanceof GTFluid gtFluid) {
             attributes.forEach(gtFluid::addAttribute);
         } else {
-            GTLog.logger.warn("Unable to set Fluid Attributes for Fluid {}, as it is owned by another mod! Skipping...");
+            GTLog.logger
+                    .warn("Unable to set Fluid Attributes for Fluid {}, as it is owned by another mod! Skipping...");
         }
 
         determineTemperature(material);
@@ -340,7 +341,9 @@ public class FluidBuilder {
                 fluidBlock.setMaxScaledLight(fluid.getLuminosity());
                 fluidBlock.setTickRate(fluid.getViscosity() / 200);
             } else {
-                GTLog.logger.warn("Unable to set custom Fluid Block stats for Fluid {}, Fluid Block owned by other mod with unknown type!", fluid.getName());
+                GTLog.logger.warn(
+                        "Unable to set custom Fluid Block stats for Fluid {}, Fluid Block owned by other mod with unknown type!",
+                        fluid.getName());
             }
         }
 

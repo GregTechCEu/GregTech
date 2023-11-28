@@ -77,14 +77,14 @@ public class GTFluidRegistration {
      * @param generateBucket if a universal bucket entry should be generated
      */
     public void registerFluid(@NotNull Fluid fluid, @NotNull String modid, boolean generateBucket) {
+        FluidRegistry.registerFluid(fluid);
         if (fluid instanceof GTFluid) {
             // instanceof GTFluid means that this is a fresh fluid of our own
             // creation and not one which is being transformed by a Material.
             fluidSprites.add(fluid.getStill());
             fluidSprites.add(fluid.getFlowing());
+            fixFluidRegistryName(fluid, modid);
         }
-        FluidRegistry.registerFluid(fluid);
-        fixFluidRegistryName(fluid, modid);
         if (generateBucket) {
             FluidRegistry.addBucketForFluid(fluid);
         }
