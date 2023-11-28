@@ -11,6 +11,7 @@ import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.helper.Alias;
 import com.cleanroommc.groovyscript.helper.SimpleObjectStream;
 import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
+import com.google.common.base.CaseFormat;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +21,7 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
     private final RecipeMap<?> recipeMap;
 
     public VirtualizedRecipeMap(RecipeMap<?> recipeMap) {
-        super(Alias.generateOf(recipeMap.unlocalizedName));
+        super(Alias.generateOf(recipeMap.unlocalizedName, CaseFormat.LOWER_UNDERSCORE));
         this.recipeMap = recipeMap;
         GroovyScriptModule.getInstance().getVirtualizedRegistrar().addRegistry(this);
     }
