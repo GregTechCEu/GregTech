@@ -28,6 +28,18 @@ public class GroovyMaterialBuilderExpansion {
         return builder;
     }
 
+    public static Material.Builder gas(Material.Builder builder, int temp) {
+        return builder.gas(new FluidBuilder().temperature(temp));
+    }
+
+    public static Material.Builder liquid(Material.Builder builder, int temp) {
+        return builder.liquid(new FluidBuilder().temperature(temp));
+    }
+
+    public static Material.Builder plasma(Material.Builder builder, int temp) {
+        return builder.plasma(new FluidBuilder().temperature(temp));
+    }
+
     public static Material.Builder element(Material.Builder builder, String raw) {
         Element element = Elements.get(raw);
         if (GroovyScriptModule.validateNonNull(element,
