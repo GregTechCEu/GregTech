@@ -24,7 +24,7 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
     public VirtualizedRecipeMap(RecipeMap<?> recipeMap) {
         super(generateAliases(recipeMap.unlocalizedName));
         this.recipeMap = recipeMap;
-        GroovyScriptModule.getInstance().addRegistry(this);
+        GroovyScriptModule.getInstance().getVirtualizedRegistrar().addRegistry(this);
     }
 
     public static Collection<String> generateAliases(String name) {
