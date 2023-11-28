@@ -112,13 +112,13 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
-        return isActive() && !hasNotEnoughEnergy ? hpcaHandler.allocateCWUt(cwut, simulate) : 0;
+        return isActive() && isWorkingEnabled() && !hasNotEnoughEnergy ? hpcaHandler.allocateCWUt(cwut, simulate) : 0;
     }
 
     @Override
     public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
-        return isActive() ? hpcaHandler.getMaxCWUt() : 0;
+        return isActive() && isWorkingEnabled() ? hpcaHandler.getMaxCWUt() : 0;
     }
 
     @Override
