@@ -8,12 +8,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.groovyscript.api.GroovyLog;
+import com.cleanroommc.groovyscript.helper.Alias;
 import com.cleanroommc.groovyscript.helper.SimpleObjectStream;
 import com.cleanroommc.groovyscript.registry.VirtualizedRegistry;
-import com.google.common.base.CaseFormat;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,20 +20,9 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
     private final RecipeMap<?> recipeMap;
 
     public VirtualizedRecipeMap(RecipeMap<?> recipeMap) {
-        super(generateAliases(recipeMap.unlocalizedName));
+        super(Alias.generateOf(recipeMap.unlocalizedName));
         this.recipeMap = recipeMap;
         GroovyScriptModule.getInstance().getVirtualizedRegistrar().addRegistry(this);
-    }
-
-    public static Collection<String> generateAliases(String name) {
-        ArrayList<String> aliases = new ArrayList<>();
-        aliases.add(name);
-        aliases.add(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name));
-        if (name.split("_").length > 2) {
-            aliases.add(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name));
-        }
-
-        return aliases;
     }
 
     @Override
