@@ -80,7 +80,7 @@ public class GTFluidRegistration {
         boolean didExist = FluidRegistry.getFluid(fluid.getName()) != null;
         FluidRegistry.registerFluid(fluid);
         if (!didExist) {
-            // instanceof GTFluid means that this is a fresh fluid of our own
+            // If it didn't exist, that means that this is a fresh fluid of our own
             // creation and not one which is being transformed by a Material.
             fluidSprites.add(fluid.getStill());
             fluidSprites.add(fluid.getFlowing());
