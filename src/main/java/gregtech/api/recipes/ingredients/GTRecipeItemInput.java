@@ -1,11 +1,13 @@
 package gregtech.api.recipes.ingredients;
 
 import gregtech.api.GTValues;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,11 +20,11 @@ public class GTRecipeItemInput extends GTRecipeInput {
     private final List<ItemToMetaList> itemList = new ObjectArrayList<>();
 
     public GTRecipeItemInput(ItemStack stack) {
-        this(new ItemStack[]{stack}, stack.getCount());
+        this(new ItemStack[] { stack }, stack.getCount());
     }
 
     public GTRecipeItemInput(ItemStack stack, int amount) {
-        this(new ItemStack[]{stack}, amount);
+        this(new ItemStack[] { stack }, amount);
     }
 
     public GTRecipeItemInput(GTRecipeInput input) {
@@ -218,7 +220,8 @@ public class GTRecipeItemInput extends GTRecipeInput {
 
         if (this.inputStacks.length != other.inputStacks.length) return false;
         for (int i = 0; i < this.inputStacks.length; i++) {
-            if (!ItemStack.areItemsEqual(this.inputStacks[i], other.inputStacks[i]) || !ItemStack.areItemStackTagsEqual(this.inputStacks[i], other.inputStacks[i]))
+            if (!ItemStack.areItemsEqual(this.inputStacks[i], other.inputStacks[i]) ||
+                    !ItemStack.areItemStackTagsEqual(this.inputStacks[i], other.inputStacks[i]))
                 return false;
         }
         return true;

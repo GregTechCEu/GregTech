@@ -6,8 +6,7 @@ import gregtech.api.recipes.RecipeMap;
 
 public class SimpleRecipeBuilder extends RecipeBuilder<SimpleRecipeBuilder> {
 
-    public SimpleRecipeBuilder() {
-    }
+    public SimpleRecipeBuilder() {}
 
     public SimpleRecipeBuilder(Recipe recipe, RecipeMap<SimpleRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
@@ -21,5 +20,4 @@ public class SimpleRecipeBuilder extends RecipeBuilder<SimpleRecipeBuilder> {
     public SimpleRecipeBuilder copy() {
         return new SimpleRecipeBuilder(this);
     }
-
 }

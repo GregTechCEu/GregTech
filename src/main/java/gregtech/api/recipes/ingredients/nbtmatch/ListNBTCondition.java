@@ -1,6 +1,7 @@
 package gregtech.api.recipes.ingredients.nbtmatch;
 
 import gregtech.api.util.GTLog;
+
 import net.minecraft.nbt.NBTBase;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class ListNBTCondition extends NBTCondition {
 
     @Override
     public String toString() {
-        return nbtKey + " (type " + listTagType + ") :" +  value;
+        return nbtKey + " (type " + listTagType + ") :" + value;
     }
 
     @Override
@@ -45,5 +46,4 @@ public class ListNBTCondition extends NBTCondition {
         }
         return false;
     }
-
 }

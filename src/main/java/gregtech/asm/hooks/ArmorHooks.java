@@ -1,6 +1,7 @@
 package gregtech.asm.hooks;
 
 import gregtech.api.items.armor.IArmorItem;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
@@ -9,7 +10,8 @@ import net.minecraft.util.NonNullList;
 @SuppressWarnings("unused")
 public class ArmorHooks {
 
-    public static void damageArmor(float damage, EntityLivingBase entity, NonNullList<ItemStack> inventory, DamageSource damageSource) {
+    public static void damageArmor(float damage, EntityLivingBase entity, NonNullList<ItemStack> inventory,
+                                   DamageSource damageSource) {
         double armorDamage = Math.max(1.0F, damage / 4.0F);
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack itemStack = inventory.get(i);

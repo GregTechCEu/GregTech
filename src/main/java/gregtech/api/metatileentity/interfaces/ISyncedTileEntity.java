@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity.interfaces;
 
 import net.minecraft.network.PacketBuffer;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;

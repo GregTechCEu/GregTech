@@ -13,19 +13,20 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.IFluidTank;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
 
     private final IFluidTank steamFluidTank;
     private final boolean isHighPressure;
-    private final double conversionRate; //energy units per millibucket
+    private final double conversionRate; // energy units per millibucket
 
     private boolean needsVenting;
     private boolean ventingStuck;
     private EnumFacing ventingSide;
 
-    public RecipeLogicSteam(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, boolean isHighPressure, IFluidTank steamFluidTank, double conversionRate) {
+    public RecipeLogicSteam(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, boolean isHighPressure,
+                            IFluidTank steamFluidTank, double conversionRate) {
         super(tileEntity, recipeMap);
         this.steamFluidTank = steamFluidTank;
         this.conversionRate = conversionRate;
@@ -81,7 +82,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void receiveCustomData(int dataId, @Nonnull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.NEEDS_VENTING) {
             this.needsVenting = buf.readBoolean();
@@ -94,7 +95,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(getVentingSide().getIndex());
         buf.writeBoolean(needsVenting);
@@ -102,7 +103,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.ventingSide = EnumFacing.VALUES[buf.readByte()];
         this.needsVenting = buf.readBoolean();
@@ -113,7 +114,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     public void tryDoVenting() {
         if (GTUtility.tryVenting(metaTileEntity.getWorld(), metaTileEntity.getPos(), getVentingSide(),
                 this.isHighPressure ? 12 : 6, true,
-                ConfigHolder.machines.machineSounds && !this.metaTileEntity.isMuffled())) {
+                ConfigHolder.machines.machineSounds && !this.metaTileEntity.isMuffled()) ) {
             setNeedsVenting(false);
         } else {
             setVentingStuck(true);
@@ -131,7 +132,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public boolean checkRecipe(@Nonnull Recipe recipe) {
+    public boolean checkRecipe(@NotNull Recipe recipe) {
         return super.checkRecipe(recipe) && !this.needsVenting;
     }
 
@@ -142,11 +143,10 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
         tryDoVenting();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    protected int[] calculateOverclock(@Nonnull Recipe recipe) {
-
-        //EUt, Duration
+    protected int[] calculateOverclock(@NotNull Recipe recipe) {
+        // EUt, Duration
         int[] result = new int[2];
 
         result[0] = isHighPressure ? recipe.getEUt() * 2 : recipe.getEUt();
@@ -178,11 +178,11 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    protected long getMaxVoltage() {
+    public long getMaxVoltage() {
         return GTValues.V[GTValues.LV];
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = super.serializeNBT();
@@ -193,7 +193,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
+    public void deserializeNBT(@NotNull NBTTagCompound compound) {
         super.deserializeNBT(compound);
         this.ventingSide = EnumFacing.VALUES[compound.getInteger("VentingSide")];
         this.needsVenting = compound.getBoolean("NeedsVenting");

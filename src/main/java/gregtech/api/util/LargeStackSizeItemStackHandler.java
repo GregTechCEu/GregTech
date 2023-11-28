@@ -28,7 +28,7 @@ public class LargeStackSizeItemStackHandler extends ItemStackHandler {
             NBTTagCompound stackSizes = new NBTTagCompound();
             NBTTagList items = tagCompound.getTagList(ITEM_LIST_TAG_KEY, 10);
 
-            //save big stack size data
+            // save big stack size data
             for (int i = 0; i < stacks.size(); i++) {
                 ItemStack itemStack = stacks.get(i);
 
@@ -38,7 +38,7 @@ public class LargeStackSizeItemStackHandler extends ItemStackHandler {
             }
             tagCompound.setTag(BIG_STACK_SIZE_TAG_KEY, stackSizes);
 
-            //fix size overflow of existing item tags
+            // fix size overflow of existing item tags
             for (NBTBase itemBase : items) {
                 NBTTagCompound item = (NBTTagCompound) itemBase;
 

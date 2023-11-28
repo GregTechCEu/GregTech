@@ -11,12 +11,14 @@ import gregtech.common.pipelike.laser.LaserPipeType;
 import gregtech.common.pipelike.laser.net.LaserNetHandler;
 import gregtech.common.pipelike.laser.net.LaserPipeNet;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +26,7 @@ import java.lang.ref.WeakReference;
 import java.util.EnumMap;
 
 public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, LaserPipeProperties> {
+
     private final EnumMap<EnumFacing, LaserNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     // the LaserNetHandler can only be created on the server, so we have an empty placeholder for the client
     private final ILaserContainer clientCapability = new DefaultLaserContainer();
@@ -133,7 +136,8 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
 
             // check the same for the targeted pipe
             TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
-            if (tile instanceof IPipeTile<?,?> pipeTile && pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
+            if (tile instanceof IPipeTile<?, ?>pipeTile &&
+                    pipeTile.getPipeType().getClass() == this.getPipeType().getClass()) {
                 connections = pipeTile.getConnections();
                 connections &= ~(1 << side.getIndex());
                 connections &= ~(1 << side.getOpposite().getIndex());

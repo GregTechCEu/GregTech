@@ -7,16 +7,19 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
+
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.lwjgl.input.Mouse;
 
 public class WidgetScreenGrid extends Widget {
-    public int x,y;
+
+    public int x, y;
     public static final int width = 20;
     public static final int height = 20;
     MetaTileEntityMonitorScreen monitorScreen;
@@ -24,12 +27,13 @@ public class WidgetScreenGrid extends Widget {
 
     public WidgetScreenGrid(int xPosition, int yPosition, int x, int y) {
         super(new Position(xPosition + x * width, yPosition + y * height), new Size(width, height));
-        this.x = x; this.y = y;
+        this.x = x;
+        this.y = y;
     }
 
     public void setScreen(MetaTileEntityMonitorScreen monitorScreen) {
         this.monitorScreen = monitorScreen;
-        color = (monitorScreen != null && monitorScreen.isActive())? 0XFF4F66FF : 0XFF000000;
+        color = (monitorScreen != null && monitorScreen.isActive()) ? 0XFF4F66FF : 0XFF000000;
     }
 
     @SideOnly(Side.CLIENT)
@@ -39,19 +43,19 @@ public class WidgetScreenGrid extends Widget {
         int y = this.getPosition().y;
         int width = this.getSize().width;
         int height = this.getSize().height;
-        int color = (monitorScreen != null && monitorScreen.isActive())? monitorScreen.frameColor:this.color;
+        int color = (monitorScreen != null && monitorScreen.isActive()) ? monitorScreen.frameColor : this.color;
         Gui.drawRect(x + 1, y + 1, x + width - 2, y + height - 2, color);
-//        if (monitorScreen.scale > 1) {
-//            width = (int) (monitorScreen.scale * width);
-//            height = (int) (monitorScreen.scale * height);
-//            Gui.drawRect(x, y, x + width - 1, y + 1, color);
-//            Gui.drawRect(x, y + height - 1, x + width - 1, y + height, color);
-//            Gui.drawRect(x, y, x + 1, y + height, color);
-//            Gui.drawRect(x + width - 1, y, x + width, y + height, color);
-//        }
-//        if (this.isMouseOverElement(mouseX, mouseY)) {
-//            Gui.drawRect(x, y, x + width, y + height, 0x4B6C6C6C);
-//        }
+        // if (monitorScreen.scale > 1) {
+        // width = (int) (monitorScreen.scale * width);
+        // height = (int) (monitorScreen.scale * height);
+        // Gui.drawRect(x, y, x + width - 1, y + 1, color);
+        // Gui.drawRect(x, y + height - 1, x + width - 1, y + height, color);
+        // Gui.drawRect(x, y, x + 1, y + height, color);
+        // Gui.drawRect(x + width - 1, y, x + width, y + height, color);
+        // }
+        // if (this.isMouseOverElement(mouseX, mouseY)) {
+        // Gui.drawRect(x, y, x + width, y + height, 0x4B6C6C6C);
+        // }
     }
 
     @SideOnly(Side.CLIENT)
@@ -91,7 +95,8 @@ public class WidgetScreenGrid extends Widget {
         super.handleClientAction(id, buffer);
         if (id == 1) {
             if (monitorScreen != null) {
-                MetaTileEntityUIFactory.INSTANCE.openUI(monitorScreen.getHolder(), (EntityPlayerMP) this.gui.entityPlayer);
+                MetaTileEntityUIFactory.INSTANCE.openUI(monitorScreen.getHolder(),
+                        (EntityPlayerMP) this.gui.entityPlayer);
             }
         }
     }

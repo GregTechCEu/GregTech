@@ -11,7 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class BlockUtility {
@@ -54,7 +54,7 @@ public class BlockUtility {
             super(Material.AIR);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public NonNullList<ItemStack> captureDrops(boolean start) {
             return super.captureDrops(start);

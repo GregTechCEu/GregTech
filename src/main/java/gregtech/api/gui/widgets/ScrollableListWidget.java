@@ -6,8 +6,10 @@ import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.client.utils.RenderUtil;
-import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+
 import net.minecraft.util.math.MathHelper;
+
+import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 
 import java.awt.*;
 import java.util.List;
@@ -71,9 +73,9 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
-        //make sure mouse is not hovered on any element when outside of bounds,
-        //since foreground rendering is not scissored,
-        //because cut tooltips don't really look nice
+        // make sure mouse is not hovered on any element when outside of bounds,
+        // since foreground rendering is not scissored,
+        // because cut tooltips don't really look nice
         if (!isPositionInsideScissor(mouseX, mouseY)) {
             mouseX = Integer.MAX_VALUE;
             mouseY = Integer.MAX_VALUE;
@@ -83,7 +85,7 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        //make sure mouse is not hovered on any element when outside of bounds
+        // make sure mouse is not hovered on any element when outside of bounds
         if (!isPositionInsideScissor(mouseX, mouseY)) {
             mouseX = Integer.MAX_VALUE;
             mouseY = Integer.MAX_VALUE;
@@ -102,8 +104,8 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
         int scrollSliderY = Math.round(position.y + (size.height - scrollSliderHeight) * scrollPercent);
         GuiTextures.SLIDER_ICON.draw(scrollX + 1, scrollSliderY + 2, paneSize - 2, scrollSliderHeight);
 
-        RenderUtil.useScissor(position.x, position.y, size.width - paneSize, size.height, () ->
-            super.drawInBackground(finalMouseX, finalMouseY, partialTicks, context));
+        RenderUtil.useScissor(position.x, position.y, size.width - paneSize, size.height,
+                () -> super.drawInBackground(finalMouseX, finalMouseY, partialTicks, context));
     }
 
     @Override
@@ -194,7 +196,7 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
 
     @Override
     public List<Target<?>> getPhantomTargets(Object ingredient) {
-        //for phantom targets, show only ones who are fully inside scissor box to avoid visual glitches
+        // for phantom targets, show only ones who are fully inside scissor box to avoid visual glitches
         return super.getPhantomTargets(ingredient).stream()
                 .filter(it -> isBoxInsideScissor(it.getArea()))
                 .collect(Collectors.toList());

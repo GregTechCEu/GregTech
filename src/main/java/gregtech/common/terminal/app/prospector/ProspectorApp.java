@@ -1,8 +1,5 @@
 package gregtech.common.terminal.app.prospector;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Table;
-import com.google.common.collect.Tables;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.widgets.ImageWidget;
@@ -17,12 +14,17 @@ import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.ClickComponent;
 import gregtech.common.terminal.component.SearchComponent;
 import gregtech.core.network.packets.PacketProspecting;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
+import com.google.common.collect.Tables;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,6 +33,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class ProspectorApp extends AbstractApplication implements SearchComponent.IWidgetSearch<String> {
+
     private WidgetOreList widgetOreList;
     private WidgetProspectingMap widgetProspectingMap;
     private ColorRectTexture background;
@@ -38,7 +41,7 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
     private Table<Integer, Integer, PacketProspecting> persist;
     private final ProspectorMode mode;
 
-    public ProspectorApp(@Nonnull ProspectorMode mode) {
+    public ProspectorApp(@NotNull ProspectorMode mode) {
         super(mode.terminalName);
         this.mode = mode;
     }
@@ -60,10 +63,12 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
         if (isClient) {
             this.addWidget(new ImageWidget(0, 0, 333, offset, GuiTextures.UI_FRAME_SIDE_UP));
             this.addWidget(new ImageWidget(0, 232 - offset, 333, offset, GuiTextures.UI_FRAME_SIDE_DOWN));
-            this.widgetOreList = new WidgetOreList(32 * chunkRadius - 16, offset, 333 - 32 * chunkRadius + 16, 232 - 2 * offset);
+            this.widgetOreList = new WidgetOreList(32 * chunkRadius - 16, offset, 333 - 32 * chunkRadius + 16,
+                    232 - 2 * offset);
             this.addWidget(this.widgetOreList);
         }
-        this.widgetProspectingMap = new WidgetProspectingMap(0, offset + (7 - chunkRadius) * 16, chunkRadius, this.widgetOreList, mode, 1);
+        this.widgetProspectingMap = new WidgetProspectingMap(0, offset + (7 - chunkRadius) * 16, chunkRadius,
+                this.widgetOreList, mode, 1);
         if (isClient) {
             persist = Tables.newCustomTable(Maps.newHashMap(), Maps::newHashMap);
             widgetProspectingMap.setOnPacketReceived(packet -> persist.put(packet.chunkX, packet.chunkZ, packet));
@@ -76,11 +81,15 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
         });
         if (isClient) {
             loadPacketLocalConfig();
-            //Cardinal directions
-            this.addWidget(new LabelWidget(-2 + (16 * (chunkRadius * 2 - 1)) / 2, offset, "N", this::labelColor).setShadow(true));
-            this.addWidget(new LabelWidget(-2 + (16 * (chunkRadius * 2 - 1)) / 2, offset - 6 + 16 * (chunkRadius * 2 - 1), "S", this::labelColor).setShadow(true));
-            this.addWidget(new LabelWidget(0, offset - 3 + (16 * (chunkRadius * 2 - 1)) / 2, "W", this::labelColor).setShadow(true));
-            this.addWidget(new LabelWidget(-6 + 16 * (chunkRadius * 2 - 1), offset - 3 + (16 * (chunkRadius * 2 - 1)) / 2, "E", this::labelColor).setShadow(true));
+            // Cardinal directions
+            this.addWidget(new LabelWidget(-2 + (16 * (chunkRadius * 2 - 1)) / 2, offset, "N", this::labelColor)
+                    .setShadow(true));
+            this.addWidget(new LabelWidget(-2 + (16 * (chunkRadius * 2 - 1)) / 2,
+                    offset - 6 + 16 * (chunkRadius * 2 - 1), "S", this::labelColor).setShadow(true));
+            this.addWidget(new LabelWidget(0, offset - 3 + (16 * (chunkRadius * 2 - 1)) / 2, "W", this::labelColor)
+                    .setShadow(true));
+            this.addWidget(new LabelWidget(-6 + 16 * (chunkRadius * 2 - 1),
+                    offset - 3 + (16 * (chunkRadius * 2 - 1)) / 2, "E", this::labelColor).setShadow(true));
         }
         return this;
     }
@@ -100,7 +109,7 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
             } else {
                 posX += 1;
             }
-            //draw red horizontal line
+            // draw red horizontal line
             if (posZ % 16 > 7 || posZ % 16 == 0) {
                 posZ -= 1;
             } else {
@@ -114,7 +123,8 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
                 for (int j = playerChunkZ - chunkRadius; j <= playerChunkZ + chunkRadius; j++) {
                     NBTTagCompound nbt = null;
                     try {
-                        nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d/%d_%d.nbt", getRegistryName(), mode.ordinal(), i, j)));
+                        nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH,
+                                String.format("%s/%d/%d_%d.nbt", getRegistryName(), mode.ordinal(), i, j)));
                     } catch (IOException e) {
                         GTLog.logger.error("error while loading local nbt for {}", getRegistryName(), e);
                     }
@@ -135,7 +145,8 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
     @SideOnly(Side.CLIENT)
     protected void savePacketLocalConfig() {
         new Thread(() -> { // thread for better QoL
-            File folder = new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d", getRegistryName(), mode.ordinal()));
+            File folder = new File(TerminalRegistry.TERMINAL_PATH,
+                    String.format("%s/%d", getRegistryName(), mode.ordinal()));
             if (!folder.exists()) {
                 if (!folder.mkdirs()) return;
             }
@@ -144,7 +155,8 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
                     NBTTagCompound nbt = cell.getValue().writePacketData();
                     try {
                         if (!nbt.isEmpty()) {
-                            CompressedStreamTools.safeWrite(nbt, new File(folder, String.format("%d_%d.nbt", cell.getRowKey(), cell.getColumnKey())));
+                            CompressedStreamTools.safeWrite(nbt, new File(folder,
+                                    String.format("%d_%d.nbt", cell.getRowKey(), cell.getColumnKey())));
                         }
                     } catch (IOException e) {
                         GTLog.logger.error("error while saving local nbt for {}", getRegistryName(), e);
@@ -170,12 +182,13 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
 
     @Override
     public List<IMenuComponent> getMenuComponents() {
-        ClickComponent darkMode = new ClickComponent().setIcon(GuiTextures.ICON_VISIBLE).setHoverText("terminal.prospector.vis_mode").setClickConsumer(cd -> {
-            if (cd.isClient) {
-                widgetProspectingMap.setDarkMode(!widgetProspectingMap.getDarkMode());
-                background.setColor(this.widgetProspectingMap.getDarkMode() ? 0xA0000000 : 0xA0ffffff);
-            }
-        });
+        ClickComponent darkMode = new ClickComponent().setIcon(GuiTextures.ICON_VISIBLE)
+                .setHoverText("terminal.prospector.vis_mode").setClickConsumer(cd -> {
+                    if (cd.isClient) {
+                        widgetProspectingMap.setDarkMode(!widgetProspectingMap.getDarkMode());
+                        background.setColor(this.widgetProspectingMap.getDarkMode() ? 0xA0000000 : 0xA0ffffff);
+                    }
+                });
         return Arrays.asList(darkMode, new SearchComponent<>(this));
     }
 

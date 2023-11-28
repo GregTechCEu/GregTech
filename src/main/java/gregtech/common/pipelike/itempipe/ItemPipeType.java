@@ -4,10 +4,11 @@ import gregtech.api.pipenet.block.material.IMaterialPipeType;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.ore.OrePrefix;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
-    //TINY_OPAQUE("tiny", 0.25f, OrePrefix.pipeTinyItem, 0.25f, 2f),
+
+    // TINY_OPAQUE("tiny", 0.25f, OrePrefix.pipeTinyItem, 0.25f, 2f),
     SMALL("small", 0.375f, OrePrefix.pipeSmallItem, 0.5f, 1.5f),
     NORMAL("normal", 0.5f, OrePrefix.pipeNormalItem, 1f, 1f),
     LARGE("large", 0.75f, OrePrefix.pipeLargeItem, 2f, 0.75f),
@@ -52,7 +53,8 @@ public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
 
     @Override
     public ItemPipeProperties modifyProperties(ItemPipeProperties baseProperties) {
-        return new ItemPipeProperties((int) ((baseProperties.getPriority() * resistanceMultiplier) + 0.5), baseProperties.getTransferRate() * rateMultiplier);
+        return new ItemPipeProperties((int) ((baseProperties.getPriority() * resistanceMultiplier) + 0.5),
+                baseProperties.getTransferRate() * rateMultiplier);
     }
 
     public float getRateMultiplier() {
@@ -64,7 +66,7 @@ public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return name;

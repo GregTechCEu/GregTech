@@ -6,6 +6,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 public class ItemFluidContainer implements IItemContainerItemProvider {
+
     @Override
     public ItemStack getContainerItem(ItemStack itemStack) {
         IFluidHandlerItem handler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);

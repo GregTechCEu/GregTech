@@ -4,10 +4,12 @@ import gregtech.api.cover.Cover;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.CoverPump.PumpMode;
 import gregtech.integration.opencomputers.InputValidator;
+
+import net.minecraft.util.EnumFacing;
+
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
-import net.minecraft.util.EnumFacing;
 
 public class ValueCoverPump extends ValueCoverBehavior {
 
@@ -32,7 +34,7 @@ public class ValueCoverPump extends ValueCoverBehavior {
             return NULL_COVER;
         }
 
-        return new Object[]{cover.tier};
+        return new Object[] { cover.tier };
     }
 
     @Callback(doc = "function():number --  Returns transfer rate.")
@@ -42,7 +44,7 @@ public class ValueCoverPump extends ValueCoverBehavior {
             return NULL_COVER;
         }
 
-        return new Object[]{cover.getTransferRate()};
+        return new Object[] { cover.getTransferRate() };
     }
 
     @Callback(doc = "function(number) --  Sets transfer rate.")
@@ -54,7 +56,7 @@ public class ValueCoverPump extends ValueCoverBehavior {
 
         int transferRate = InputValidator.getInteger(args, 0, 0, cover.maxFluidTransferRate);
         cover.setTransferRate(transferRate);
-        return new Object[]{};
+        return new Object[] {};
     }
 
     @Callback(doc = "function(mode:number) --  Sets pump mode. (0:IMPORT, 1:EXPORT)")
@@ -66,7 +68,7 @@ public class ValueCoverPump extends ValueCoverBehavior {
 
         PumpMode mode = InputValidator.getEnumArrayIndex(args, 0, PumpMode.values());
         cover.setPumpMode(mode);
-        return new Object[]{};
+        return new Object[] {};
     }
 
     @Callback(doc = "function():number --  Gets pump mode. (0:IMPORT, 1:EXPORT)")
@@ -76,6 +78,6 @@ public class ValueCoverPump extends ValueCoverBehavior {
             return NULL_COVER;
         }
 
-        return new Object[]{cover.getPumpMode().ordinal()};
+        return new Object[] { cover.getPumpMode().ordinal() };
     }
 }

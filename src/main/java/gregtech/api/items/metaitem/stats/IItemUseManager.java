@@ -10,18 +10,15 @@ public interface IItemUseManager extends IItemComponent {
         return true;
     }
 
-    default void onItemUseStart(ItemStack stack, EntityPlayer player) {
-    }
+    default void onItemUseStart(ItemStack stack, EntityPlayer player) {}
 
     EnumAction getUseAction(ItemStack stack);
 
     int getMaxItemUseDuration(ItemStack stack);
 
-    default void onItemUsingTick(ItemStack stack, EntityPlayer player, int count) {
-    }
+    default void onItemUsingTick(ItemStack stack, EntityPlayer player, int count) {}
 
-    default void onPlayerStoppedItemUsing(ItemStack stack, EntityPlayer player, int timeLeft) {
-    }
+    default void onPlayerStoppedItemUsing(ItemStack stack, EntityPlayer player, int timeLeft) {}
 
     default ItemStack onItemUseFinish(ItemStack stack, EntityPlayer player) {
         return stack;

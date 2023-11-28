@@ -6,5 +6,4 @@ import net.minecraft.item.ItemStack;
 public interface IItemMaxStackSizeProvider extends IItemComponent {
 
     int getMaxStackSize(ItemStack itemStack, int defaultValue);
-
 }

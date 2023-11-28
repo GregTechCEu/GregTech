@@ -5,8 +5,9 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.terminal.util.TreeNode;
 import gregtech.api.util.Position;
-import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -19,6 +20,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class TreeListWidget<K, T> extends Widget {
+
     private static final int ITEM_HEIGHT = 11;
     protected int scrollOffset;
     protected List<TreeNode<K, T>> list;
@@ -94,7 +96,8 @@ public class TreeListWidget<K, T> extends Widget {
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         if (this.isMouseOverElement(mouseX, mouseY)) {
             int moveDelta = -MathHelper.clamp(wheelDelta, -1, 1) * 5;
-            this.scrollOffset = MathHelper.clamp(scrollOffset + moveDelta, 0, Math.max(list.size() * ITEM_HEIGHT - getSize().height, 0));
+            this.scrollOffset = MathHelper.clamp(scrollOffset + moveDelta, 0,
+                    Math.max(list.size() * ITEM_HEIGHT - getSize().height, 0));
             return true;
         }
         return false;
@@ -111,12 +114,12 @@ public class TreeListWidget<K, T> extends Widget {
         } else {
             drawGradientRect(x, y, width, height, 0x8f000000, 0x8f000000);
         }
-        RenderUtil.useScissor(x, y, width, height, ()->{
+        RenderUtil.useScissor(x, y, width, height, () -> {
             FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
             int minToRender = scrollOffset / ITEM_HEIGHT;
             int maxToRender = Math.min(list.size(), height / ITEM_HEIGHT + 2 + minToRender);
             for (int i = minToRender; i < maxToRender; i++) {
-                GlStateManager.color(1,1,1,1);
+                GlStateManager.color(1, 1, 1, 1);
                 TreeNode<K, T> node = list.get(i);
                 int sX = x + 10 * node.dimension;
                 int sY = y - scrollOffset + i * ITEM_HEIGHT;
@@ -128,9 +131,11 @@ public class TreeListWidget<K, T> extends Widget {
                         drawSolidRect(x, sY, width, ITEM_HEIGHT, 0xffff0000);
                     }
                     if (node.getContent() != null) {
-                        String nameS = contentNameSupplier == null ? null : contentNameSupplier.apply(node.getContent());
+                        String nameS = contentNameSupplier == null ? null :
+                                contentNameSupplier.apply(node.getContent());
                         name = nameS == null ? name : nameS;
-                        IGuiTexture icon = contentIconSupplier == null ? null : contentIconSupplier.apply(node.getContent());
+                        IGuiTexture icon = contentIconSupplier == null ? null :
+                                contentIconSupplier.apply(node.getContent());
                         if (icon != null) {
                             icon.draw(sX - 9, sY + 1, 8, 8);
                         }
@@ -157,11 +162,11 @@ public class TreeListWidget<K, T> extends Widget {
             }
         });
         GlStateManager.enableBlend();
-        GlStateManager.color(1,1,1,1);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     public TreeNode<K, T> jumpTo(List<K> path) {
-        list.removeIf(node->node.dimension != 1);
+        list.removeIf(node -> node.dimension != 1);
         this.selected = null;
         int dim = 1;
         int index = 0;
@@ -173,8 +178,8 @@ public class TreeListWidget<K, T> extends Widget {
                 node = list.get(i);
                 if (node.dimension != dim) {
                     return null;
-                } else if (node.getKey().equals(key)) { //expand
-                    if(!node.isLeaf() && path.size() > dim) {
+                } else if (node.getKey().equals(key)) { // expand
+                    if (!node.isLeaf() && path.size() > dim) {
                         for (int j = 0; j < node.getChildren().size(); j++) {
                             list.add(index + 1 + j, node.getChildren().get(j));
                         }
@@ -191,7 +196,8 @@ public class TreeListWidget<K, T> extends Widget {
         }
         if (flag) {
             this.selected = node;
-            this.scrollOffset = MathHelper.clamp(ITEM_HEIGHT * (index - 1), 0, Math.max(list.size() * ITEM_HEIGHT - getSize().height, 0));
+            this.scrollOffset = MathHelper.clamp(ITEM_HEIGHT * (index - 1), 0,
+                    Math.max(list.size() * ITEM_HEIGHT - getSize().height, 0));
             return this.selected;
         }
         return null;
@@ -206,17 +212,17 @@ public class TreeListWidget<K, T> extends Widget {
                 if (node.isLeaf()) {
                     if (node != this.selected) {
                         this.selected = node;
-                        if (onSelected != null){
+                        if (onSelected != null) {
                             onSelected.accept(node);
                         }
                     }
                 } else {
                     if (canSelectNode && this.selected != node) {
                         this.selected = node;
-                        if (onSelected != null){
+                        if (onSelected != null) {
                             onSelected.accept(node);
                         }
-                    } else if (node.getChildren().size() > 0 && list.contains(node.getChildren().get(0))){
+                    } else if (node.getChildren().size() > 0 && list.contains(node.getChildren().get(0))) {
                         removeNode(node);
                     } else {
                         for (int i = 0; i < node.getChildren().size(); i++) {
@@ -232,7 +238,7 @@ public class TreeListWidget<K, T> extends Widget {
     }
 
     private void removeNode(TreeNode<?, T> node) {
-        if(node.isLeaf()) return;
+        if (node.isLeaf()) return;
         for (TreeNode<?, T> child : node.getChildren()) {
             list.remove(child);
             removeNode(child);

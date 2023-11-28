@@ -1,9 +1,11 @@
 package gregtech.api.cover;
 
 import gregtech.api.GregTechAPI;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +63,8 @@ public final class CoverDefinition {
     @FunctionalInterface
     public interface CoverCreator {
 
-        @NotNull Cover create(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
-                              @NotNull EnumFacing attachedSide);
+        @NotNull
+        Cover create(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                     @NotNull EnumFacing attachedSide);
     }
 }

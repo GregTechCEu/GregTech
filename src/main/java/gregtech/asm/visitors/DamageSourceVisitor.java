@@ -1,6 +1,7 @@
 package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -28,7 +29,8 @@ public class DamageSourceVisitor implements Opcodes {
             if (m.name.equals(TARGET_METHOD_PLAYER.s_name) && m.desc.equals(TARGET_METHOD_PLAYER.s_desc)) {
                 InsnList insns = new InsnList();
                 insns.add(new VarInsnNode(ALOAD, 0));
-                insns.add(new MethodInsnNode(INVOKESTATIC, DAMAGE_SOURCE_OWNER, TARGET_NAME_PLAYER, TARGET_SIGNATURE_PLAYER, false));
+                insns.add(new MethodInsnNode(INVOKESTATIC, DAMAGE_SOURCE_OWNER, TARGET_NAME_PLAYER,
+                        TARGET_SIGNATURE_PLAYER, false));
                 insns.add(new InsnNode(ARETURN));
                 AbstractInsnNode first = m.instructions.getFirst();
                 m.instructions.insertBefore(first, insns);
@@ -39,7 +41,8 @@ public class DamageSourceVisitor implements Opcodes {
             if (m.name.equals(TARGET_METHOD_MOB.s_name) && m.desc.equals(TARGET_METHOD_MOB.s_desc)) {
                 InsnList insns = new InsnList();
                 insns.add(new VarInsnNode(ALOAD, 0));
-                insns.add(new MethodInsnNode(INVOKESTATIC, DAMAGE_SOURCE_OWNER, TARGET_NAME_MOB, TARGET_SIGNATURE_MOB, false));
+                insns.add(new MethodInsnNode(INVOKESTATIC, DAMAGE_SOURCE_OWNER, TARGET_NAME_MOB, TARGET_SIGNATURE_MOB,
+                        false));
                 insns.add(new InsnNode(ARETURN));
                 AbstractInsnNode first = m.instructions.getFirst();
                 m.instructions.insertBefore(first, insns);

@@ -22,7 +22,6 @@ public class NaquadahRecipes {
     // |> 0.25 Barium
 
     public static void init() {
-
         // FLUOROANTIMONIC ACID
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(60)
@@ -45,7 +44,6 @@ public class NaquadahRecipes {
                 .fluidOutputs(Hydrogen.getFluid(2000))
                 .buildAndRegister();
 
-
         // STARTING POINT
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LuV]).duration(600)
@@ -55,7 +53,6 @@ public class NaquadahRecipes {
                 .fluidOutputs(ImpureNaquadriaSolution.getFluid(2000))
                 .output(dust, TitaniumTrifluoride, 4)
                 .buildAndRegister();
-
 
         // ENRICHED NAQUADAH PROCESS
 
@@ -94,7 +91,6 @@ public class NaquadahRecipes {
                 .fluidOutputs(NaquadriaSolution.getFluid(150))
                 .buildAndRegister();
 
-
         // NAQUADRIA PROCESS
 
         CENTRIFUGE_RECIPES.recipeBuilder().EUt(VA[EV]).duration(400)
@@ -132,7 +128,6 @@ public class NaquadahRecipes {
                 .fluidOutputs(EnrichedNaquadahSolution.getFluid(150))
                 .buildAndRegister();
 
-
         // TRINIUM
 
         BLAST_RECIPES.recipeBuilder().duration(750).EUt(VA[LuV]).blastFurnaceTemp(Trinium.getBlastTemperature())
@@ -141,7 +136,6 @@ public class NaquadahRecipes {
                 .output(ingotHot, Trinium)
                 .output(dust, ZincSulfide, 2)
                 .buildAndRegister();
-
 
         // BYPRODUCT PROCESSING
 

@@ -1,13 +1,15 @@
 package gregtech.api.gui.resources;
 
-import com.google.gson.JsonObject;
 import net.minecraft.util.ResourceLocation;
+
+import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-public class ModifyGuiTexture implements IGuiTexture{
+public class ModifyGuiTexture implements IGuiTexture {
+
     public static List<String> TYPES = Arrays.asList("resource", "url", "text", "color", "file");
     private IGuiTexture texture;
 
@@ -74,7 +76,7 @@ public class ModifyGuiTexture implements IGuiTexture{
             if (((FileTexture) texture).file != null) {
                 config.addProperty("file", ((FileTexture) texture).file.getPath());
             } else {
-                config.addProperty("file", (String)null);
+                config.addProperty("file", (String) null);
             }
         } else {
             return null;
@@ -86,7 +88,8 @@ public class ModifyGuiTexture implements IGuiTexture{
         try {
             switch (config.get("type").getAsString()) {
                 case "resource":
-                    setTexture(new TextureArea(new ResourceLocation(config.get("resource").getAsString()), 0.0, 0.0, 1.0, 1.0));
+                    setTexture(new TextureArea(new ResourceLocation(config.get("resource").getAsString()), 0.0, 0.0,
+                            1.0, 1.0));
                 case "url":
                     setTexture(new URLTexture(config.get("url").getAsString()));
                 case "text":
@@ -96,7 +99,6 @@ public class ModifyGuiTexture implements IGuiTexture{
                 case "file":
                     setTexture(new FileTexture(new File(config.get("file").getAsString())));
             }
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
     }
 }

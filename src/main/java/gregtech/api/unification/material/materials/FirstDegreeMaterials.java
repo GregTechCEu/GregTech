@@ -2,12 +2,16 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
+import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttributes;
+import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
+
 import net.minecraft.init.Enchantments;
+import net.minecraftforge.fluids.FluidRegistry;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.Materials.*;
@@ -136,7 +140,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Charcoal = new Material.Builder(266, gregtechId("charcoal"))
-                .gem(1, 1600) //default charcoal burn time in vanilla
+                .gem(1, 1600) // default charcoal burn time in vanilla
                 .color(0x644646).iconSet(FINE)
                 .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE)
                 .components(Carbon, 1)
@@ -156,7 +160,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Water = new Material.Builder(269, gregtechId("water"))
-                .liquid(new FluidBuilder().temperature(300))
+                .fluid(FluidRegistry.WATER, FluidStorageKeys.LIQUID, FluidState.LIQUID)
                 .color(0x0000FF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
@@ -165,9 +169,10 @@ public class FirstDegreeMaterials {
         // FREE ID 270
 
         Coal = new Material.Builder(271, gregtechId("coal"))
-                .gem(1, 1600).ore(2, 1) //default coal burn time in vanilla
+                .gem(1, 1600).ore(2, 1) // default coal burn time in vanilla
                 .color(0x464646).iconSet(LIGNITE)
-                .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
+                .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
+                        DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
                 .build();
 
@@ -223,7 +228,8 @@ public class FirstDegreeMaterials {
         Emerald = new Material.Builder(278, gregtechId("emerald"))
                 .gem().ore(2, 1)
                 .color(0x50FF50).iconSet(EMERALD)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_LENS)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
+                        GENERATE_LENS)
                 .components(Beryllium, 3, Aluminium, 2, Silicon, 6, Oxygen, 18)
                 .build();
 
@@ -304,13 +310,14 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_SPRING)
                 .components(Iron, 1, Aluminium, 1, Chrome, 1)
                 .cableProperties(V[HV], 4, 3)
-                .blastTemp(1800, GasTier.LOW, VA[HV], 900)
+                .blast(b -> b.temp(1800, GasTier.LOW).blastStats(VA[HV], 900))
                 .build();
 
         Lazurite = new Material.Builder(289, gregtechId("lazurite"))
                 .gem(1).ore(6, 4)
                 .color(0x6478FF).iconSet(LAPIS)
-                .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_ROD, DECOMPOSITION_BY_ELECTROLYZING)
+                .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_ROD,
+                        DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Aluminium, 6, Silicon, 6, Calcium, 8, Sodium, 8)
                 .build();
 
@@ -349,7 +356,10 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_SPRING)
                 .components(Nickel, 4, Chrome, 1)
                 .cableProperties(V[EV], 4, 4)
-                .blastTemp(2700, GasTier.LOW, VA[HV], 1300)
+                .blast(b -> b
+                        .temp(2700, GasTier.LOW)
+                        .blastStats(VA[EV], 1000)
+                        .vacuumStats(VA[HV]))
                 .build();
 
         NiobiumNitride = new Material.Builder(295, gregtechId("niobium_nitride"))
@@ -358,7 +368,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .components(Niobium, 1, Nitrogen, 1)
                 .cableProperties(V[LuV], 1, 1)
-                .blastTemp(2846, GasTier.MID)
+                .blast(2846, GasTier.MID)
                 .build();
 
         NiobiumTitanium = new Material.Builder(296, gregtechId("niobium_titanium"))
@@ -370,7 +380,10 @@ public class FirstDegreeMaterials {
                 .components(Niobium, 1, Titanium, 1)
                 .fluidPipeProperties(5900, 175, true)
                 .cableProperties(V[LuV], 4, 2)
-                .blastTemp(4500, GasTier.HIGH, VA[HV], 1500)
+                .blast(b -> b
+                        .temp(4500, GasTier.HIGH)
+                        .blastStats(VA[HV], 1500)
+                        .vacuumStats(VA[HV], 200))
                 .build();
 
         Obsidian = new Material.Builder(297, gregtechId("obsidian"))
@@ -405,7 +418,7 @@ public class FirstDegreeMaterials {
                         .enchantment(Enchantments.SMITE, 3).build())
                 .rotorStats(13.0f, 2.0f, 196)
                 .itemPipeProperties(1024, 2)
-                .blastTemp(1700, GasTier.LOW, VA[MV], 1000)
+                .blast(b -> b.temp(1700, GasTier.LOW).blastStats(VA[MV], 1000))
                 .build();
 
         RoseGold = new Material.Builder(301, gregtechId("rose_gold"))
@@ -419,7 +432,7 @@ public class FirstDegreeMaterials {
                         .enchantment(Enchantments.FORTUNE, 2).build())
                 .rotorStats(14.0f, 2.0f, 152)
                 .itemPipeProperties(1024, 2)
-                .blastTemp(1600, GasTier.LOW, VA[MV], 1000)
+                .blast(b -> b.temp(1600, GasTier.LOW).blastStats(VA[MV], 1000))
                 .build();
 
         BlackBronze = new Material.Builder(302, gregtechId("black_bronze"))
@@ -430,7 +443,7 @@ public class FirstDegreeMaterials {
                 .components(Gold, 1, Silver, 1, Copper, 3)
                 .rotorStats(12.0f, 2.0f, 256)
                 .itemPipeProperties(1024, 2)
-                .blastTemp(2000, GasTier.LOW, VA[MV], 1000)
+                .blast(b -> b.temp(2000, GasTier.LOW).blastStats(VA[MV], 1000))
                 .build();
 
         BismuthBronze = new Material.Builder(303, gregtechId("bismuth_bronze"))
@@ -440,7 +453,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL)
                 .components(Bismuth, 1, Zinc, 1, Copper, 3)
                 .rotorStats(8.0f, 3.0f, 256)
-                .blastTemp(1100, GasTier.LOW, VA[MV], 1000)
+                .blast(b -> b.temp(1100, GasTier.LOW).blastStats(VA[MV], 1000))
                 .build();
 
         Biotite = new Material.Builder(304, gregtechId("biotite"))
@@ -486,7 +499,10 @@ public class FirstDegreeMaterials {
                 .colorAverage().iconSet(BRIGHT)
                 .flags(GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW, GENERATE_FRAME)
                 .components(Ruthenium, 2, Iridium, 1)
-                .blastTemp(4500, GasTier.HIGH, VA[EV], 1600)
+                .blast(b -> b
+                        .temp(4500, GasTier.HIGH)
+                        .blastStats(VA[EV], 1600)
+                        .vacuumStats(VA[HV], 300))
                 .build();
 
         Ruby = new Material.Builder(311, gregtechId("ruby"))
@@ -528,7 +544,8 @@ public class FirstDegreeMaterials {
         Sodalite = new Material.Builder(316, gregtechId("sodalite"))
                 .gem(1).ore(6, 4)
                 .color(0x1414FF).iconSet(LAPIS)
-                .flags(GENERATE_PLATE, GENERATE_ROD, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, DECOMPOSITION_BY_ELECTROLYZING)
+                .flags(GENERATE_PLATE, GENERATE_ROD, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE,
+                        DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Aluminium, 3, Silicon, 3, Sodium, 4, Chlorine, 1)
                 .build();
 
@@ -582,7 +599,7 @@ public class FirstDegreeMaterials {
                         .enchantability(14).build())
                 .rotorStats(7.0f, 4.0f, 480)
                 .fluidPipeProperties(2428, 75, true, true, true, false)
-                .blastTemp(1700, GasTier.LOW, VA[HV], 1100)
+                .blast(b -> b.temp(1700, GasTier.LOW).blastStats(VA[HV], 1100))
                 .build();
 
         Steel = new Material.Builder(324, gregtechId("steel"))
@@ -598,7 +615,7 @@ public class FirstDegreeMaterials {
                 .rotorStats(6.0f, 3.0f, 512)
                 .fluidPipeProperties(1855, 50, true)
                 .cableProperties(V[EV], 2, 2)
-                .blastTemp(1000, null, VA[MV], 800) // no gas tier for steel
+                .blast(b -> b.temp(1000).blastStats(VA[MV], 800)) // no gas tier for steel
                 .build();
 
         Stibnite = new Material.Builder(325, gregtechId("stibnite"))
@@ -650,7 +667,7 @@ public class FirstDegreeMaterials {
                         .attackSpeed(0.1F).enchantability(21).build())
                 .rotorStats(9.0f, 4.0f, 2048)
                 .itemPipeProperties(128, 16)
-                .blastTemp(2700, GasTier.MID, VA[HV], 1300)
+                .blast(b -> b.temp(2700, GasTier.MID).blastStats(VA[HV], 1300))
                 .build();
 
         Uraninite = new Material.Builder(332, gregtechId("uraninite"))
@@ -674,7 +691,10 @@ public class FirstDegreeMaterials {
                 .flags(STD_METAL, GENERATE_FOIL, GENERATE_SPRING, GENERATE_SPRING_SMALL)
                 .components(Vanadium, 3, Gallium, 1)
                 .cableProperties(V[ZPM], 4, 2)
-                .blastTemp(4500, GasTier.HIGH, VA[EV], 1200)
+                .blast(b -> b
+                        .temp(4500, GasTier.HIGH)
+                        .blastStats(VA[EV], 1200)
+                        .vacuumStats(VA[HV]))
                 .build();
 
         WroughtIron = new Material.Builder(335, gregtechId("wrought_iron"))
@@ -708,16 +728,21 @@ public class FirstDegreeMaterials {
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1799))
                 .color(0x504046).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_BOLT_SCREW)
+                .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL,
+                        GENERATE_BOLT_SCREW)
                 .components(Yttrium, 1, Barium, 2, Copper, 3, Oxygen, 7)
                 .cableProperties(V[UV], 4, 4)
-                .blastTemp(4500, GasTier.HIGH) // todo redo this EBF process
+                .blast(b -> b
+                        .temp(4500, GasTier.HIGH)
+                        .blastStats(VA[IV], 1000)
+                        .vacuumStats(VA[EV], 150))
                 .build();
 
         NetherQuartz = new Material.Builder(339, gregtechId("nether_quartz"))
                 .gem(1).ore(2, 1)
                 .color(0xE6D2D2).iconSet(QUARTZ)
-                .flags(GENERATE_PLATE, NO_SMELTING, CRYSTALLIZABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_PLATE, NO_SMELTING, CRYSTALLIZABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
+                        DISABLE_DECOMPOSITION)
                 .components(Silicon, 1, Oxygen, 2)
                 .build();
 
@@ -766,7 +791,10 @@ public class FirstDegreeMaterials {
                 .components(Iridium, 3, Osmium, 1)
                 .rotorStats(9.0f, 3.0f, 3152)
                 .itemPipeProperties(64, 32)
-                .blastTemp(4500, GasTier.HIGH, VA[LuV], 900)
+                .blast(b -> b
+                        .temp(4500, GasTier.HIGH)
+                        .blastStats(VA[LuV], 900)
+                        .vacuumStats(VA[EV], 200))
                 .build();
 
         LithiumChloride = new Material.Builder(345, gregtechId("lithium_chloride"))
@@ -803,7 +831,7 @@ public class FirstDegreeMaterials {
                 .color(0xA0A0A0)
                 .flags(STD_METAL, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Arsenic, 1, Gallium, 1)
-                .blastTemp(1200, GasTier.LOW, VA[MV], 1200)
+                .blast(b -> b.temp(1200, GasTier.LOW).blastStats(VA[MV], 1200))
                 .build();
 
         Potash = new Material.Builder(352, gregtechId("potash"))
@@ -1078,7 +1106,10 @@ public class FirstDegreeMaterials {
                         .enchantability(21).build())
                 .rotorStats(12.0f, 4.0f, 1280)
                 .fluidPipeProperties(3837, 200, true)
-                .blastTemp(3058, GasTier.MID, VA[HV], 1500)
+                .blast(b -> b
+                        .temp(3058, GasTier.MID)
+                        .blastStats(VA[EV], 1200)
+                        .vacuumStats(VA[HV]))
                 .build();
 
         CarbonDioxide = new Material.Builder(397, gregtechId("carbon_dioxide"))
@@ -1281,7 +1312,7 @@ public class FirstDegreeMaterials {
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Manganese, 1, Phosphorus, 1)
                 .cableProperties(GTValues.V[GTValues.LV], 2, 0, true, 78)
-                .blastTemp(1200, GasTier.LOW)
+                .blast(1200, GasTier.LOW)
                 .build();
 
         MagnesiumDiboride = new Material.Builder(425, gregtechId("magnesium_diboride"))
@@ -1291,7 +1322,10 @@ public class FirstDegreeMaterials {
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Magnesium, 1, Boron, 2)
                 .cableProperties(GTValues.V[GTValues.MV], 4, 0, true, 78)
-                .blastTemp(2500, GasTier.LOW, VA[HV], 1000)
+                .blast(b -> b
+                        .temp(2500, GasTier.LOW)
+                        .blastStats(VA[HV], 1000)
+                        .vacuumStats(VA[MV], 200))
                 .build();
 
         MercuryBariumCalciumCuprate = new Material.Builder(426, gregtechId("mercury_barium_calcium_cuprate"))
@@ -1301,7 +1335,10 @@ public class FirstDegreeMaterials {
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Mercury, 1, Barium, 2, Calcium, 2, Copper, 3, Oxygen, 8)
                 .cableProperties(GTValues.V[GTValues.HV], 4, 0, true, 78)
-                .blastTemp(3300, GasTier.LOW, VA[HV], 1500)
+                .blast(b -> b
+                        .temp(3300, GasTier.LOW)
+                        .blastStats(VA[HV], 1500)
+                        .vacuumStats(VA[HV]))
                 .build();
 
         UraniumTriplatinum = new Material.Builder(427, gregtechId("uranium_triplatinum"))
@@ -1311,7 +1348,10 @@ public class FirstDegreeMaterials {
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Uranium238, 1, Platinum, 3)
                 .cableProperties(GTValues.V[GTValues.EV], 6, 0, true, 30)
-                .blastTemp(4400, GasTier.MID, VA[EV], 1000)
+                .blast(b -> b
+                        .temp(4400, GasTier.MID)
+                        .blastStats(VA[EV], 1000)
+                        .vacuumStats(VA[EV], 200))
                 .build()
                 .setFormula("UPt3", true);
 
@@ -1322,7 +1362,10 @@ public class FirstDegreeMaterials {
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Samarium, 1, Iron, 1, Arsenic, 1, Oxygen, 1)
                 .cableProperties(GTValues.V[GTValues.IV], 6, 0, true, 30)
-                .blastTemp(5200, GasTier.MID, VA[EV], 1500)
+                .blast(b -> b
+                        .temp(5200, GasTier.MID)
+                        .blastStats(VA[EV], 1500)
+                        .vacuumStats(VA[IV], 200))
                 .build();
 
         IndiumTinBariumTitaniumCuprate = new Material.Builder(429, gregtechId("indium_tin_barium_titanium_cuprate"))
@@ -1332,7 +1375,10 @@ public class FirstDegreeMaterials {
                 .flags(DECOMPOSITION_BY_ELECTROLYZING, GENERATE_FINE_WIRE)
                 .components(Indium, 4, Tin, 2, Barium, 2, Titanium, 1, Copper, 7, Oxygen, 14)
                 .cableProperties(GTValues.V[GTValues.LuV], 8, 0, true, 5)
-                .blastTemp(6000, GasTier.HIGH, VA[IV], 1000)
+                .blast(b -> b
+                        .temp(6000, GasTier.HIGH)
+                        .blastStats(VA[IV], 1000)
+                        .vacuumStats(VA[LuV]))
                 .build();
 
         UraniumRhodiumDinaquadide = new Material.Builder(430, gregtechId("uranium_rhodium_dinaquadide"))
@@ -1342,29 +1388,40 @@ public class FirstDegreeMaterials {
                 .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
                 .components(Uranium238, 1, Rhodium, 1, Naquadah, 2)
                 .cableProperties(GTValues.V[GTValues.ZPM], 8, 0, true, 5)
-                .blastTemp(9000, GasTier.HIGH, VA[IV], 1500)
+                .blast(b -> b
+                        .temp(9000, GasTier.HIGH)
+                        .blastStats(VA[IV], 1500)
+                        .vacuumStats(VA[ZPM], 200))
                 .build()
                 .setFormula("URhNq2", true);
 
-        EnrichedNaquadahTriniumEuropiumDuranide = new Material.Builder(431, gregtechId("enriched_naquadah_trinium_europium_duranide"))
-                .ingot()
-                .liquid(new FluidBuilder().temperature(5930))
-                .color(0x7D9673).iconSet(METALLIC)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
-                .components(NaquadahEnriched, 4, Trinium, 3, Europium, 2, Duranium, 1)
-                .cableProperties(GTValues.V[GTValues.UV], 16, 0, true, 3)
-                .blastTemp(9900, GasTier.HIGH, VA[LuV], 1000)
-                .build();
+        EnrichedNaquadahTriniumEuropiumDuranide = new Material.Builder(431,
+                gregtechId("enriched_naquadah_trinium_europium_duranide"))
+                        .ingot()
+                        .liquid(new FluidBuilder().temperature(5930))
+                        .color(0x7D9673).iconSet(METALLIC)
+                        .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
+                        .components(NaquadahEnriched, 4, Trinium, 3, Europium, 2, Duranium, 1)
+                        .cableProperties(GTValues.V[GTValues.UV], 16, 0, true, 3)
+                        .blast(b -> b
+                                .temp(9900, GasTier.HIGH)
+                                .blastStats(VA[LuV], 1200)
+                                .vacuumStats(VA[UV], 200))
+                        .build();
 
-        RutheniumTriniumAmericiumNeutronate = new Material.Builder(432, gregtechId("ruthenium_trinium_americium_neutronate"))
-                .ingot()
-                .liquid(new FluidBuilder().temperature(23691))
-                .color(0xFFFFFF).iconSet(BRIGHT)
-                .flags(DECOMPOSITION_BY_ELECTROLYZING)
-                .components(Ruthenium, 1, Trinium, 2, Americium, 1, Neutronium, 2, Oxygen, 8)
-                .cableProperties(GTValues.V[GTValues.UHV], 24, 0, true, 3)
-                .blastTemp(10800, GasTier.HIGHER)
-                .build();
+        RutheniumTriniumAmericiumNeutronate = new Material.Builder(432,
+                gregtechId("ruthenium_trinium_americium_neutronate"))
+                        .ingot()
+                        .liquid(new FluidBuilder().temperature(23691))
+                        .color(0xFFFFFF).iconSet(BRIGHT)
+                        .flags(DECOMPOSITION_BY_ELECTROLYZING)
+                        .components(Ruthenium, 1, Trinium, 2, Americium, 1, Neutronium, 2, Oxygen, 8)
+                        .cableProperties(GTValues.V[GTValues.UHV], 24, 0, true, 3)
+                        .blast(b -> b
+                                .temp(10800, GasTier.HIGHER)
+                                .blastStats(VA[ZPM], 1000)
+                                .vacuumStats(VA[UHV], 200))
+                        .build();
 
         InertMetalMixture = new Material.Builder(433, gregtechId("inert_metal_mixture"))
                 .dust()
@@ -1483,5 +1540,17 @@ public class FirstDegreeMaterials {
                 .build();
 
         // FREE ID 450
+
+        RTMAlloy = new Material.Builder(451, gregtechId("rtm_alloy"))
+                .ingot().fluid()
+                .color(0x30306B).iconSet(SHINY)
+                .components(Ruthenium, 4, Tungsten, 2, Molybdenum, 1)
+                .flags(GENERATE_SPRING)
+                .cableProperties(V[EV], 6, 2)
+                .blast(b -> b
+                        .temp(3000, GasTier.MID)
+                        .blastStats(VA[EV], 1400)
+                        .vacuumStats(VA[HV], 250))
+                .build();
     }
 }

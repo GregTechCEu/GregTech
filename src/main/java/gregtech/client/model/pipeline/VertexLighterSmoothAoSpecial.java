@@ -1,11 +1,12 @@
 package gregtech.client.model.pipeline;
 
 import gregtech.client.shader.Shaders;
+
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.util.math.MathHelper;
 
-//This is a verbatim copy of VertexLighterSmoothAo except with a custom base class.
-//Ao Features are disabled when the shader is active.
+// This is a verbatim copy of VertexLighterSmoothAo except with a custom base class.
+// Ao Features are disabled when the shader is active.
 public class VertexLighterSmoothAoSpecial extends VertexLighterFlatSpecial {
 
     public VertexLighterSmoothAoSpecial(BlockColors colors) {
@@ -153,5 +154,4 @@ public class VertexLighterSmoothAoSpecial extends VertexLighterFlatSpecial {
         blockInfo.updateShift();
         blockInfo.updateLightMatrix();
     }
-
 }

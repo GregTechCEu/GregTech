@@ -1,9 +1,9 @@
 package gregtech.common.items.tool;
 
-import com.google.common.collect.ImmutableSet;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -19,8 +19,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.collect.ImmutableSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.Set;
 
@@ -30,9 +32,11 @@ public class GrassPathBehavior implements IToolBehavior {
 
     protected GrassPathBehavior() {/**/}
 
-    @Nonnull
+    @NotNull
     @Override
-    public EnumActionResult onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                      @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY,
+                                      float hitZ) {
         if (facing == EnumFacing.DOWN) return EnumActionResult.PASS;
 
         ItemStack stack = player.getHeldItem(hand);
@@ -63,7 +67,8 @@ public class GrassPathBehavior implements IToolBehavior {
         }
 
         if (pathed) {
-            world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ITEM_SHOVEL_FLATTEN, SoundCategory.PLAYERS, 1.0F, 1.0F);
+            world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ITEM_SHOVEL_FLATTEN,
+                    SoundCategory.PLAYERS, 1.0F, 1.0F);
             player.swingArm(hand);
             return EnumActionResult.SUCCESS;
         }
@@ -71,11 +76,14 @@ public class GrassPathBehavior implements IToolBehavior {
         return EnumActionResult.PASS;
     }
 
-    public static Set<BlockPos> getPathConvertibleBlocks(ItemStack stack, AoESymmetrical aoeDefinition, World world, EntityPlayer player, RayTraceResult rayTraceResult) {
-        return ToolHelper.iterateAoE(stack, aoeDefinition, world, player, rayTraceResult, GrassPathBehavior::isBlockPathConvertible);
+    public static Set<BlockPos> getPathConvertibleBlocks(ItemStack stack, AoESymmetrical aoeDefinition, World world,
+                                                         EntityPlayer player, RayTraceResult rayTraceResult) {
+        return ToolHelper.iterateAoE(stack, aoeDefinition, world, player, rayTraceResult,
+                GrassPathBehavior::isBlockPathConvertible);
     }
 
-    private static boolean isBlockPathConvertible(ItemStack stack, World world, EntityPlayer player, BlockPos pos, @Nullable BlockPos hitBlockPos) {
+    private static boolean isBlockPathConvertible(ItemStack stack, World world, EntityPlayer player, BlockPos pos,
+                                                  @Nullable BlockPos hitBlockPos) {
         if (world.isAirBlock(pos.up())) {
             Block block = world.getBlockState(pos).getBlock();
             return block == Blocks.GRASS || block == Blocks.DIRT; // native dirt to path
@@ -84,7 +92,8 @@ public class GrassPathBehavior implements IToolBehavior {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
+    public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flag) {
         tooltip.add(I18n.format("item.gt.tool.behavior.grass_path"));
     }
 }

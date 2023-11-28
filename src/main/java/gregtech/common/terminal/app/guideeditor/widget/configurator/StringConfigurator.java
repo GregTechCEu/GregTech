@@ -1,20 +1,23 @@
 package gregtech.common.terminal.app.guideeditor.widget.configurator;
 
-import com.google.gson.JsonObject;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.TextFieldWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 
-public class StringConfigurator extends ConfiguratorWidget<String>{
+import com.google.gson.JsonObject;
+
+public class StringConfigurator extends ConfiguratorWidget<String> {
+
     private TextFieldWidget textFieldWidget;
 
     public StringConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, String name) {
         super(group, config, name);
     }
 
-    public StringConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, String name, String defaultValue) {
+    public StringConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, String name,
+                              String defaultValue) {
         super(group, config, name, defaultValue);
     }
 
@@ -27,7 +30,7 @@ public class StringConfigurator extends ConfiguratorWidget<String>{
                 .setIcon(new TextTexture("terminal.guide_editor.update", -1)));
         textFieldWidget = new TextFieldWidget(0, 15, 76, 20, TerminalTheme.COLOR_B_2, null, null)
                 .setMaxStringLength(Integer.MAX_VALUE)
-                .setValidator(s->true);
+                .setValidator(s -> true);
         if (config.has(name) && config.get(name).isJsonPrimitive()) {
             textFieldWidget.setCurrentString(config.get(name).getAsString());
         }

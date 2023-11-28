@@ -1,8 +1,7 @@
 package gregtech.api.items.armor;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
+
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
@@ -16,7 +15,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.UUID;
 
 /**
@@ -29,8 +31,7 @@ public interface IArmorLogic {
     UUID ATTACK_DAMAGE_MODIFIER = UUID.fromString("CB3F55D3-645C-4F38-A144-9C13A33DB5CF");
     UUID ATTACK_SPEED_MODIFIER = UUID.fromString("FA233E1C-4180-4288-B05C-BCCE9785ACA3");
 
-    default void addToolComponents(ArmorMetaValueItem metaValueItem) {
-    }
+    default void addToolComponents(ArmorMetaValueItem metaValueItem) {}
 
     EntityEquipmentSlot getEquipmentSlot(ItemStack itemStack);
 
@@ -38,9 +39,8 @@ public interface IArmorLogic {
         return false;
     }
 
-    default void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {
-
-    }
+    default void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage,
+                             EntityEquipmentSlot equipmentSlot) {}
 
     default Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
         return ImmutableMultimap.of();
@@ -50,12 +50,11 @@ public interface IArmorLogic {
         return getEquipmentSlot(itemStack) == equipmentSlot;
     }
 
-    default void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
-    }
+    default void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {}
 
     @SideOnly(Side.CLIENT)
-    default void renderHelmetOverlay(ItemStack itemStack, EntityPlayer player, ScaledResolution resolution, float partialTicks) {
-    }
+    default void renderHelmetOverlay(ItemStack itemStack, EntityPlayer player, ScaledResolution resolution,
+                                     float partialTicks) {}
 
     default int getArmorLayersAmount(ItemStack itemStack) {
         return 1;
@@ -68,7 +67,8 @@ public interface IArmorLogic {
     String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type);
 
     @Nullable
-    default ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped defaultModel) {
+    default ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot,
+                                     ModelBiped defaultModel) {
         return null;
     }
 

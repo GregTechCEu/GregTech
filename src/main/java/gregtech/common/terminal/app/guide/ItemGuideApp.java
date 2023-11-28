@@ -1,13 +1,15 @@
 package gregtech.common.terminal.app.guide;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.common.items.MetaItems;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.Objects;
 
@@ -25,7 +27,8 @@ public class ItemGuideApp extends GuideApp<ItemGuideApp.GuideItem> {
     @Override
     protected String rawItemName(GuideItem item) {
         if (item.stack.getItem() instanceof MetaItem) {
-            MetaItem<?>.MetaValueItem metaValueItem = ((MetaItem<?>) item.stack.getItem()).getItem((short) item.stack.getMetadata());
+            MetaItem<?>.MetaValueItem metaValueItem = ((MetaItem<?>) item.stack.getItem())
+                    .getItem((short) item.stack.getMetadata());
             if (metaValueItem != null) return metaValueItem.unlocalizedName;
         }
         return item.stack.getTranslationKey();
@@ -42,6 +45,7 @@ public class ItemGuideApp extends GuideApp<ItemGuideApp.GuideItem> {
     }
 
     public static class GuideItem {
+
         public final ItemStack stack;
         public final String name;
 
@@ -75,7 +79,8 @@ public class ItemGuideApp extends GuideApp<ItemGuideApp.GuideItem> {
             if (json.has("metaitem")) {
                 String metaItemId = json.get("metaitem").getAsString();
                 for (MetaItem<?> metaItem : MetaItem.getMetaItems()) {
-                    MetaItem<?>.MetaValueItem metaValueItem = metaItem.getAllItems().stream().filter(m -> m.unlocalizedName.equals(metaItemId)).findFirst().orElse(null);
+                    MetaItem<?>.MetaValueItem metaValueItem = metaItem.getAllItems().stream()
+                            .filter(m -> m.unlocalizedName.equals(metaItemId)).findFirst().orElse(null);
                     if (metaValueItem != null) return new GuideItem(metaValueItem);
                 }
             }

@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
@@ -25,8 +22,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityDataBank;
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,11 +35,19 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 
-public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IDataAccessHatch>, IDataAccessHatch, IDataInfoProvider {
+public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart
+                                           implements IMultiblockAbilityPart<IDataAccessHatch>, IDataAccessHatch,
+                                           IDataInfoProvider {
 
     private final Set<Recipe> recipes;
     private final boolean isCreative;
@@ -64,18 +68,20 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     protected IItemHandlerModifiable createImportItemHandler() {
         if (isCreative) return super.createImportItemHandler();
         return new NotifiableItemStackHandler(this, getInventorySize(), getController(), false) {
+
             @Override
             public void onContentsChanged(int slot) {
                 super.onContentsChanged(slot);
                 rebuildData(getController() instanceof MetaTileEntityDataBank);
             }
 
-            @Nonnull
+            @NotNull
             @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
                 var controller = MetaTileEntityDataAccessHatch.this.getController();
                 boolean isDataBank = controller instanceof MetaTileEntityDataBank;
-                if (AssemblyLineManager.isStackDataItem(stack, isDataBank) && AssemblyLineManager.hasResearchTag(stack)) {
+                if (AssemblyLineManager.isStackDataItem(stack, isDataBank) &&
+                        AssemblyLineManager.hasResearchTag(stack)) {
                     return super.insertItem(slot, stack, simulate);
                 }
                 return stack;
@@ -107,7 +113,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
                 int index = y * rowSize + x;
                 builder.widget(new SlotWidget(isExportHatch ? exportItems : importItems, index,
                         88 - rowSize * 9 + x * 18, 18 + y * 18, true, !isExportHatch)
-                        .setBackgroundTexture(GuiTextures.SLOT));
+                                .setBackgroundTexture(GuiTextures.SLOT));
             }
         }
         return builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12)
@@ -131,7 +137,8 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
             String researchId = AssemblyLineManager.readResearchId(stack);
             boolean isValid = AssemblyLineManager.isStackDataItem(stack, isDataBank);
             if (researchId != null && isValid) {
-                Collection<Recipe> collection = ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES).getDataStickEntry(researchId);
+                Collection<Recipe> collection = ((IResearchRecipeMap) RecipeMaps.ASSEMBLY_LINE_RECIPES)
+                        .getDataStickEntry(researchId);
                 if (collection != null) {
                     recipes.addAll(collection);
                 }
@@ -140,7 +147,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public boolean isRecipeAvailable(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen) {
+    public boolean isRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
         seen.add(this);
         return recipes.contains(recipe);
     }
@@ -158,19 +165,19 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, world, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.1"));
         if (isCreative) {
-            tooltip.add(I18n.format("gregtech.creative_tooltip.1")
-                    + TooltipHelper.RAINBOW + I18n.format("gregtech.creative_tooltip.2")
-                    + I18n.format("gregtech.creative_tooltip.3"));
+            tooltip.add(I18n.format("gregtech.creative_tooltip.1") + TooltipHelper.RAINBOW +
+                    I18n.format("gregtech.creative_tooltip.2") + I18n.format("gregtech.creative_tooltip.3"));
         } else {
             tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.2", getInventorySize()));
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         if (recipes.isEmpty()) return Collections.emptyList();
@@ -183,7 +190,8 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
             ItemStack stack = recipe.getOutputs().get(0);
             if (!itemsAdded.contains(stack)) {
                 itemsAdded.add(stack);
-                list.add(new TextComponentTranslation("behavior.data_item.assemblyline.data", LocalizationUtils.format(stack.getTranslationKey())));
+                list.add(new TextComponentTranslation("behavior.data_item.assemblyline.data",
+                        LocalizationUtils.format(stack.getTranslationKey())));
             }
         }
         return list;

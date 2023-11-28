@@ -20,6 +20,7 @@ import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.core.sound.GTSoundEvents;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -30,8 +31,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,47 +72,46 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
         MultiblockShapeInfo.Builder baseBuilder = MultiblockShapeInfo.builder()
                 .where('S', MetaTileEntities.LARGE_CHEMICAL_REACTOR, EnumFacing.SOUTH)
                 .where('X', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING))
-                .where('P', MetaBlocks.BOILER_CASING.getState(BlockBoilerCasing.BoilerCasingType.POLYTETRAFLUOROETHYLENE_PIPE))
+                .where('P',
+                        MetaBlocks.BOILER_CASING
+                                .getState(BlockBoilerCasing.BoilerCasingType.POLYTETRAFLUOROETHYLENE_PIPE))
                 .where('C', MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL))
                 .where('I', MetaTileEntities.ITEM_IMPORT_BUS[3], EnumFacing.SOUTH)
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[3], EnumFacing.NORTH)
                 .where('O', MetaTileEntities.ITEM_EXPORT_BUS[3], EnumFacing.SOUTH)
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[3], EnumFacing.SOUTH)
                 .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[3], EnumFacing.SOUTH)
-                .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING), EnumFacing.SOUTH);
+                .where('M',
+                        () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
+                                MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING),
+                        EnumFacing.SOUTH);
         shapeInfo.add(baseBuilder.shallowCopy()
                 .aisle("XEX", "XCX", "XXX")
                 .aisle("XXX", "XPX", "XXX")
                 .aisle("IMO", "FSH", "XXX")
-                .build()
-        );
+                .build());
         shapeInfo.add(baseBuilder.shallowCopy()
                 .aisle("XEX", "XXX", "XXX")
                 .aisle("XXX", "XPX", "XCX")
                 .aisle("IMO", "FSH", "XXX")
-                .build()
-        );
+                .build());
         shapeInfo.add(baseBuilder.shallowCopy()
                 .aisle("XEX", "XXX", "XXX")
                 .aisle("XCX", "XPX", "XXX")
                 .aisle("IMO", "FSH", "XXX")
-                .build()
-        );
+                .build());
         shapeInfo.add(baseBuilder.shallowCopy()
                 .aisle("XEX", "XXX", "XXX")
                 .aisle("XXX", "CPX", "XXX")
                 .aisle("IMO", "FSH", "XXX")
-                .build()
-        );
+                .build());
         shapeInfo.add(baseBuilder.shallowCopy()
                 .aisle("XEX", "XXX", "XXX")
                 .aisle("XXX", "XPC", "XXX")
                 .aisle("IMO", "FSH", "XXX")
-                .build()
-        );
+                .build());
         return shapeInfo;
     }
-
 
     @SideOnly(Side.CLIENT)
     @Override
@@ -138,10 +139,9 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     }
 
     @SideOnly(Side.CLIENT)
-    @Nonnull
+    @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.LARGE_CHEMICAL_REACTOR_OVERLAY;
     }
-
 }

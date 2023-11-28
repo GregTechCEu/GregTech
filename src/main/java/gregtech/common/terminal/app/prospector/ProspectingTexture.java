@@ -4,6 +4,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.client.utils.RenderUtil;
 import gregtech.core.network.packets.PacketProspecting;
+
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -13,12 +14,12 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.HashMap;
-
 
 public class ProspectingTexture extends AbstractTexture {
 
@@ -40,10 +41,10 @@ public class ProspectingTexture extends AbstractTexture {
         this.radius = radius;
         this.mode = mode;
         if (this.mode == ProspectorMode.FLUID) {
-            //noinspection unchecked
+            // noinspection unchecked
             map = new HashMap[(radius * 2 - 1)][(radius * 2 - 1)];
         } else {
-            //noinspection unchecked
+            // noinspection unchecked
             map = new HashMap[(radius * 2 - 1) * 16][(radius * 2 - 1) * 16];
         }
     }
@@ -101,15 +102,17 @@ public class ProspectingTexture extends AbstractTexture {
 
         for (int i = 0; i < wh; i++) {
             for (int j = 0; j < wh; j++) {
-                HashMap<Byte, String> data = this.map[this.mode == ProspectorMode.ORE ? i : i / 16][this.mode == ProspectorMode.ORE ? j : j / 16];
+                HashMap<Byte, String> data = this.map[this.mode == ProspectorMode.ORE ? i : i / 16][this.mode ==
+                        ProspectorMode.ORE ? j : j / 16];
                 // draw bg
                 image.setRGB(i, j, ((data == null) ^ darkMode) ? Color.darkGray.getRGB() : Color.WHITE.getRGB());
-                //draw ore
+                // draw ore
                 if (this.mode == ProspectorMode.ORE && data != null) {
                     for (String orePrefix : data.values()) {
                         if (!selected.equals(SELECTED_ALL) && !selected.equals(orePrefix)) continue;
                         MaterialStack mterialStack = OreDictUnifier.getMaterial(OreDictUnifier.get(orePrefix));
-                        image.setRGB(i, j, mterialStack == null ? orePrefix.hashCode() : mterialStack.material.getMaterialRGB() | 0XFF000000);
+                        image.setRGB(i, j, mterialStack == null ? orePrefix.hashCode() :
+                                mterialStack.material.getMaterialRGB() | 0XFF000000);
                         break;
                     }
                 }
@@ -158,24 +161,24 @@ public class ProspectingTexture extends AbstractTexture {
                     if (this.map[cx][cz] != null && !this.map[cx][cz].isEmpty()) {
                         Fluid fluid = FluidRegistry.getFluid(this.map[cx][cz].get((byte) 1));
                         if (selected.equals(SELECTED_ALL) || selected.equals(fluid.getName())) {
-                            RenderUtil.drawFluidForGui(new FluidStack(fluid, 1), 1, x + cx * 16 + 1, y + cz * 16 + 1, 16, 16);
+                            RenderUtil.drawFluidForGui(new FluidStack(fluid, 1), 1, x + cx * 16 + 1, y + cz * 16 + 1,
+                                    16, 16);
                         }
                     }
                 }
             }
         }
-        //draw red vertical line
+        // draw red vertical line
         if (playerXGui % 16 > 7 || playerXGui % 16 == 0) {
             Gui.drawRect(x + playerXGui - 1, y, x + playerXGui, y + imageHeight, Color.RED.getRGB());
         } else {
             Gui.drawRect(x + playerXGui, y, x + playerXGui + 1, y + imageHeight, Color.RED.getRGB());
         }
-        //draw red horizontal line
+        // draw red horizontal line
         if (playerYGui % 16 > 7 || playerYGui % 16 == 0) {
             Gui.drawRect(x, y + playerYGui - 1, x + imageWidth, y + playerYGui, Color.RED.getRGB());
         } else {
             Gui.drawRect(x, y + playerYGui, x + imageWidth, y + playerYGui + 1, Color.RED.getRGB());
         }
     }
-
 }

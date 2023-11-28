@@ -9,5 +9,4 @@ public interface Task {
      * @return {@code true} if the task should be run again, otherwise {@code false}
      */
     boolean run();
-
 }

@@ -1,6 +1,5 @@
 package gregtech.api.items.toolitem;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,7 +11,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,8 @@ public final class TreeFellingListener {
         this.orderedBlocks = orderedBlocks;
     }
 
-    public static void start(@Nonnull IBlockState state, ItemStack tool, BlockPos start, @Nonnull EntityPlayerMP player) {
+    public static void start(@NotNull IBlockState state, ItemStack tool, BlockPos start,
+                             @NotNull EntityPlayerMP player) {
         World world = player.world;
         Block block = state.getBlock();
         BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
@@ -71,7 +73,7 @@ public final class TreeFellingListener {
     }
 
     @SubscribeEvent
-    public void onWorldTick(@Nonnull TickEvent.WorldTickEvent event) {
+    public void onWorldTick(@NotNull TickEvent.WorldTickEvent event) {
         if (event.phase == TickEvent.Phase.START && event.world == player.world && event.side == Side.SERVER) {
             if (orderedBlocks.isEmpty() || tool.isEmpty()) {
                 MinecraftForge.EVENT_BUS.unregister(this);

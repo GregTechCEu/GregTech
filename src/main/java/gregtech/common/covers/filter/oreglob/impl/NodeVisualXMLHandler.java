@@ -2,12 +2,14 @@ package gregtech.common.covers.filter.oreglob.impl;
 
 import gregtech.api.util.oreglob.OreGlobTextBuilder;
 import gregtech.api.util.oreglob.VisualizationHint;
+
 import net.minecraft.util.text.TextFormatting;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,7 @@ final class NodeVisualXMLHandler extends DefaultHandler {
     @Nullable
     private Formatting lastAppliedFormatting;
 
-    NodeVisualXMLHandler(@Nonnull OreGlobTextBuilder builder) {
+    NodeVisualXMLHandler(@NotNull OreGlobTextBuilder builder) {
         this.builder = builder;
     }
 
@@ -73,7 +75,7 @@ final class NodeVisualXMLHandler extends DefaultHandler {
         return this.formatStack.isEmpty() ? null : this.formatStack.get(this.formatStack.size() - 1);
     }
 
-    private void pushFormatting(@Nonnull VisualizationHint hint) {
+    private void pushFormatting(@NotNull VisualizationHint hint) {
         Formatting prev = getActiveFormatting();
 
         TextFormatting color = this.builder.getFormatting().getFormat(hint);
@@ -106,7 +108,7 @@ final class NodeVisualXMLHandler extends DefaultHandler {
         this.lastAppliedFormatting = formatting;
     }
 
-    private void appendXmlError(@Nonnull String text) {
+    private void appendXmlError(@NotNull String text) {
         pushFormatting(VisualizationHint.ERROR);
         applyFormatting();
         this.builder.getStringBuilder().append("** ").append(text).append(" **");
@@ -126,7 +128,7 @@ final class NodeVisualXMLHandler extends DefaultHandler {
             this.format = format;
         }
 
-        public void apply(@Nonnull StringBuilder stringBuilder) {
+        public void apply(@NotNull StringBuilder stringBuilder) {
             stringBuilder.append(format);
         }
 

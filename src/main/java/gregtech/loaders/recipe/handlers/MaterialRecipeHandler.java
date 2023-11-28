@@ -15,10 +15,12 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.loaders.recipe.CraftingComponent;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,8 +58,8 @@ public class MaterialRecipeHandler {
         for (int i = 0; i < GEM_ORDER.size(); i++) {
             OrePrefix gemPrefix = GEM_ORDER.get(i);
             OrePrefix prevGemPrefix = i == 0 ? null : GEM_ORDER.get(i - 1);
-            gemPrefix.addProcessingHandler(PropertyKey.GEM, (p, material, property) ->
-                    processGemConversion(p, prevGemPrefix, material));
+            gemPrefix.addProcessingHandler(PropertyKey.GEM,
+                    (p, material, property) -> processGemConversion(p, prevGemPrefix, material));
         }
     }
 
@@ -102,7 +104,8 @@ public class MaterialRecipeHandler {
             if (oreProperty != null) {
                 Material smeltingResult = oreProperty.getDirectSmeltResult();
                 if (smeltingResult != null) {
-                    ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat), OreDictUnifier.get(OrePrefix.ingot, smeltingResult));
+                    ModHandler.addSmeltingRecipe(OreDictUnifier.get(dustPrefix, mat),
+                            OreDictUnifier.get(OrePrefix.ingot, smeltingResult));
                 }
             }
 
@@ -196,11 +199,16 @@ public class MaterialRecipeHandler {
 
         // Add Vacuum Freezer recipe if required.
         if (ingotHot.doGenerateItem(material)) {
+            int vacuumEUt = property.getVacuumEUtOverride() != -1 ? property.getVacuumEUtOverride() : VA[MV];
+            int vacuumDuration = property.getVacuumDurationOverride() != -1 ? property.getVacuumDurationOverride() :
+                    (int) material.getMass() * 3;
+
             if (blastTemp < 5000) {
                 RecipeMaps.VACUUM_RECIPES.recipeBuilder()
                         .input(ingotHot, material)
                         .output(ingot, material)
-                        .duration((int) material.getMass() * 3)
+                        .duration(vacuumDuration)
+                        .EUt(vacuumEUt)
                         .buildAndRegister();
             } else {
                 RecipeMaps.VACUUM_RECIPES.recipeBuilder()
@@ -208,7 +216,8 @@ public class MaterialRecipeHandler {
                         .fluidInputs(Materials.Helium.getFluid(FluidStorageKeys.LIQUID, 500))
                         .output(ingot, material)
                         .fluidOutputs(Materials.Helium.getFluid(250))
-                        .duration((int) material.getMass() * 3)
+                        .duration(vacuumDuration)
+                        .EUt(vacuumEUt)
                         .buildAndRegister();
             }
         }
@@ -257,7 +266,8 @@ public class MaterialRecipeHandler {
     public static void processIngot(OrePrefix ingotPrefix, Material material, IngotProperty property) {
         if (material.hasFlag(MORTAR_GRINDABLE)) {
             ModHandler.addShapedRecipe(String.format("mortar_grind_%s", material),
-                    OreDictUnifier.get(OrePrefix.dust, material), "X", "m", 'X', new UnificationEntry(ingotPrefix, material));
+                    OreDictUnifier.get(OrePrefix.dust, material), "X", "m", 'X',
+                    new UnificationEntry(ingotPrefix, material));
         }
 
         if (material.hasFlag(GENERATE_ROD)) {
@@ -358,7 +368,6 @@ public class MaterialRecipeHandler {
                 }
             }
         }
-
     }
 
     public static void processGemConversion(OrePrefix gemPrefix, @Nullable OrePrefix prevPrefix, Material material) {
@@ -490,12 +499,14 @@ public class MaterialRecipeHandler {
             result.add(blockEntry);
         }
 
-        //do not allow hand crafting or uncrafting, extruding or alloy smelting of blacklisted blocks
+        // do not allow hand crafting or uncrafting, extruding or alloy smelting of blacklisted blocks
         if (!material.hasFlag(EXCLUDE_BLOCK_CRAFTING_RECIPES)) {
 
-            //do not allow hand crafting or uncrafting of blacklisted blocks
-            if (!material.hasFlag(EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES) && !ConfigHolder.recipes.disableManualCompression) {
-                ModHandler.addShapelessRecipe(String.format("block_compress_%s", material), blockStack, result.toArray());
+            // do not allow hand crafting or uncrafting of blacklisted blocks
+            if (!material.hasFlag(EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES) &&
+                    !ConfigHolder.recipes.disableManualCompression) {
+                ModHandler.addShapelessRecipe(String.format("block_compress_%s", material), blockStack,
+                        result.toArray());
 
                 ModHandler.addShapelessRecipe(String.format("block_decompress_%s", material),
                         GTUtility.copy((int) (materialAmount / M), OreDictUnifier.get(blockEntry)),

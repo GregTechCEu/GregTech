@@ -1,8 +1,9 @@
 package gregtech.api.util;
 
+import gregtech.api.worldgen.config.WorldGenRegistry;
+
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
-import gregtech.api.worldgen.config.WorldGenRegistry;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -10,8 +11,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
 import java.nio.file.*;
+import java.nio.file.FileSystem;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -20,12 +21,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileUtility {
+
     public static final JsonParser jsonParser = new JsonParser();
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final Pattern UNDERSCORE_REGEX = Pattern.compile("_");
 
-    private FileUtility() {
-    }
+    private FileUtility() {}
 
     public static String readInputStream(InputStream inputStream) throws IOException {
         byte[] streamData = IOUtils.toByteArray(inputStream);
@@ -73,7 +74,7 @@ public class FileUtility {
     public static boolean saveJson(File file, JsonElement element) {
         try {
             if (!file.getParentFile().isDirectory()) {
-                if (!file.getParentFile().mkdirs()){
+                if (!file.getParentFile().mkdirs()) {
                     GTLog.logger.error("Failed to create file dirs on path {}", file);
                 }
             }
@@ -87,7 +88,7 @@ public class FileUtility {
         return false;
     }
 
-    public static void extractJarFiles(String resource, File targetPath, boolean replace) { //terminal/guide
+    public static void extractJarFiles(String resource, File targetPath, boolean replace) { // terminal/guide
         FileSystem zipFileSystem = null;
         try {
             URL sampleUrl = WorldGenRegistry.class.getResource("/assets/gregtech/.gtassetsroot");
@@ -127,16 +128,13 @@ public class FileUtility {
             throw new RuntimeException(impossible);
         } catch (IOException exception) {
             GTLog.logger.error("error while extracting jar files: {} {}", resource, targetPath, exception);
-        }
-        finally {
+        } finally {
             if (zipFileSystem != null) {
-                //close zip file system to avoid issues
+                // close zip file system to avoid issues
                 IOUtils.closeQuietly(zipFileSystem);
             }
         }
-
     }
-
 
     /**
      * Takes a file path to a json file and trims the path down to the actual file name
@@ -149,17 +147,17 @@ public class FileUtility {
         // this method is passed deposit names, which need to be converted first
         name = slashToNativeSep(name);
 
-        //Remove the leading "folderName\"
+        // Remove the leading "folderName\"
         String[] tempName = name.split(Matcher.quoteReplacement(File.separator));
-        //Take the last entry in case of nested folders
+        // Take the last entry in case of nested folders
         String newName = tempName[tempName.length - 1];
-        //Remove the ".json"
+        // Remove the ".json"
         tempName = newName.split("\\.");
-        //Take the first entry
+        // Take the first entry
         newName = tempName[0];
-        //Replace all "_" with a space
+        // Replace all "_" with a space
         newName = UNDERSCORE_REGEX.matcher(newName).replaceAll(" ");
-        //Capitalize the first letter
+        // Capitalize the first letter
         newName = newName.substring(0, 1).toUpperCase() + newName.substring(1);
 
         return newName;

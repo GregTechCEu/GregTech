@@ -1,12 +1,14 @@
 package gregtech.api.cover;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.raytracer.RayTracer;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.raytracer.RayTracer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,12 +16,13 @@ public final class CoverRayTracer {
 
     private CoverRayTracer() {}
 
-    public static @Nullable EnumFacing rayTraceCoverableSide(@NotNull CoverableView coverableView, @NotNull EntityPlayer player) {
-
+    public static @Nullable EnumFacing rayTraceCoverableSide(@NotNull CoverableView coverableView,
+                                                             @NotNull EntityPlayer player) {
         // if the coverable view is from a blockpipe, use the proper raytrace method
-        RayTraceResult result = coverableView.getWorld().getBlockState(coverableView.getPos()).getBlock() instanceof BlockPipe<?,?,?> pipe ?
-                pipe.getServerCollisionRayTrace(player, coverableView.getPos(), coverableView.getWorld()) :
-                RayTracer.retraceBlock(coverableView.getWorld(), player, coverableView.getPos());
+        RayTraceResult result = coverableView.getWorld().getBlockState(coverableView.getPos())
+                .getBlock() instanceof BlockPipe<?, ?, ?>pipe ?
+                        pipe.getServerCollisionRayTrace(player, coverableView.getPos(), coverableView.getWorld()) :
+                        RayTracer.retraceBlock(coverableView.getWorld(), player, coverableView.getPos());
         if (result == null || result.typeOfHit != RayTraceResult.Type.BLOCK) {
             return null;
         }
@@ -37,9 +40,9 @@ public final class CoverRayTracer {
                 return pipeConnectionData.side;
             } else if (rayTraceResult.cuboid6.data instanceof PrimaryBoxData primaryBoxData) {
                 return primaryBoxData.usePlacementGrid ? determineGridSideHit(result) : result.sideHit;
-            } //unknown hit type, fall through
+            } // unknown hit type, fall through
         }
-        //normal collision ray trace, return side hit
+        // normal collision ray trace, return side hit
         return determineGridSideHit(result);
     }
 
@@ -47,8 +50,7 @@ public final class CoverRayTracer {
         return GTUtility.determineWrenchingSide(result.sideHit,
                 (float) (result.hitVec.x - result.getBlockPos().getX()),
                 (float) (result.hitVec.y - result.getBlockPos().getY()),
-                (float) (result.hitVec.z - result.getBlockPos().getZ())
-        );
+                (float) (result.hitVec.z - result.getBlockPos().getZ()));
     }
 
     public static class PrimaryBoxData {

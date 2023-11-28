@@ -2,6 +2,7 @@ package gregtech.api.terminal.hardware;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.IGuiTexture;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,7 +16,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @Date: 2021/08/27
  * @Description: Hardware
  */
-public abstract class Hardware  {
+public abstract class Hardware {
+
     protected HardwareProvider provider;
 
     public abstract String getRegistryName();
@@ -58,12 +60,13 @@ public abstract class Hardware  {
     /**
      * Check whether the terminal is in creative mode.
      */
-    public final boolean isCreative(){
+    public final boolean isCreative() {
         return provider != null && provider.isCreative();
     }
 
     /**
      * information added to tooltips
+     * 
      * @return null->nothing added.
      */
     @SideOnly(Side.CLIENT)
@@ -73,6 +76,7 @@ public abstract class Hardware  {
 
     /**
      * Create the hardware instance, NOTE!!! do not check nbt or anything here. Terminal has not been initialized here.
+     * 
      * @param itemStack terminal
      * @return instance
      */
@@ -80,12 +84,14 @@ public abstract class Hardware  {
 
     /**
      * Use the item to install this hardware.
+     * 
      * @return The NBT of the hardware is returned if the item is valid, otherwise NULL is returned
      */
     public abstract NBTTagCompound acceptItemStack(ItemStack itemStack);
 
     /**
      * Called when the hardware is removed and back to the player inventory.
+     * 
      * @param itemStack (original one)
      * @return result
      */

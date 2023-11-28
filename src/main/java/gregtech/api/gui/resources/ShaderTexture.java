@@ -1,35 +1,36 @@
 package gregtech.api.gui.resources;
 
-import codechicken.lib.render.shader.ShaderObject;
-import codechicken.lib.render.shader.ShaderProgram;
 import gregtech.api.gui.Widget;
 import gregtech.client.shader.Shaders;
 import gregtech.common.ConfigHolder;
+
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import codechicken.lib.render.shader.ShaderObject;
+import codechicken.lib.render.shader.ShaderProgram;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class ShaderTexture implements IGuiTexture{
+public class ShaderTexture implements IGuiTexture {
+
     @SideOnly(Side.CLIENT)
     private static final Map<String, ShaderTexture> PROGRAMS = new HashMap<>();
     @SideOnly(Side.CLIENT)
     private ShaderProgram program;
     @SideOnly(Side.CLIENT)
     private ShaderObject object;
-    private float resolution = (float)ConfigHolder.client.resolution;
+    private float resolution = (float) ConfigHolder.client.resolution;
 
-    public static void clear(){
+    public static void clear() {
         PROGRAMS.values().forEach(ShaderTexture::dispose);
         PROGRAMS.clear();
     }
 
-    private ShaderTexture() {
-
-    }
+    private ShaderTexture() {}
 
     public void dispose() {
         if (object != null) {
@@ -96,7 +97,7 @@ public class ShaderTexture implements IGuiTexture{
 
     public void draw(double x, double y, int width, int height, Consumer<ShaderProgram.UniformCache> uniformCache) {
         if (program != null) {
-            program.useShader(cache->{
+            program.useShader(cache -> {
                 cache.glUniform2F("u_resolution", width * resolution, height * resolution);
                 if (uniformCache != null) {
                     uniformCache.accept(cache);

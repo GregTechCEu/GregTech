@@ -9,7 +9,8 @@ public class FluidContainerSlotWidget extends SlotWidget {
 
     private final boolean requireFilledContainer;
 
-    public FluidContainerSlotWidget(IItemHandlerModifiable itemHandler, int slotIndex, int xPosition, int yPosition, boolean requireFilledContainer) {
+    public FluidContainerSlotWidget(IItemHandlerModifiable itemHandler, int slotIndex, int xPosition, int yPosition,
+                                    boolean requireFilledContainer) {
         super(itemHandler, slotIndex, xPosition, yPosition, true, true);
         this.requireFilledContainer = requireFilledContainer;
     }
@@ -17,6 +18,7 @@ public class FluidContainerSlotWidget extends SlotWidget {
     @Override
     public boolean canPutStack(ItemStack stack) {
         IFluidHandlerItem fluidHandlerItem = FluidUtil.getFluidHandler(stack);
-        return fluidHandlerItem != null && (!requireFilledContainer || fluidHandlerItem.getTankProperties()[0].getContents() != null);
+        return fluidHandlerItem != null &&
+                (!requireFilledContainer || fluidHandlerItem.getTankProperties()[0].getContents() != null);
     }
 }

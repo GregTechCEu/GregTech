@@ -6,9 +6,11 @@ import gregtech.api.util.Position;
 import gregtech.common.terminal.app.game.maze.MazeApp;
 
 public class PlayerWidget extends Widget {
+
     protected MazeApp app;
     public int posX;
     public int posY;
+
     public PlayerWidget(int posX, int posY, MazeApp app) {
         super(app.getRenderX(posX), app.getRenderY(posY), 10, 10);
         this.app = app;
@@ -26,7 +28,6 @@ public class PlayerWidget extends Widget {
         this.posX += deltaX;
         this.posY += deltaY;
     }
-
 
     public void setGridPosition(int posX, int posY) {
         this.posX = posX;

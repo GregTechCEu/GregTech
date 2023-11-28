@@ -1,22 +1,22 @@
 package gregtech.api.recipes.builders;
 
-import crafttweaker.CraftTweakerAPI;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.GasCollectorDimensionProperty;
+
+import crafttweaker.CraftTweakerAPI;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntLists;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeBuilder> {
 
-    public GasCollectorRecipeBuilder() {
-    }
+    public GasCollectorRecipeBuilder() {}
 
     public GasCollectorRecipeBuilder(Recipe recipe, RecipeMap<GasCollectorRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
@@ -32,24 +32,25 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
     }
 
     @Override
-    public boolean applyProperty(@Nonnull String key, Object value) {
+    public boolean applyProperty(@NotNull String key, Object value) {
         if (key.equals(GasCollectorDimensionProperty.KEY)) {
             if (value instanceof Integer) {
                 this.dimension((Integer) value);
-            } else if (value instanceof List && !((List<?>) value).isEmpty() && ((List<?>) value).get(0) instanceof Integer) {
-                IntList dimensionIDs = getDimensionIDs();
-                if (dimensionIDs == IntLists.EMPTY_LIST) {
-                    dimensionIDs = new IntArrayList();
-                    this.applyProperty(GasCollectorDimensionProperty.getInstance(), dimensionIDs);
-                }
-                dimensionIDs.addAll((List<Integer>) value);
-            } else {
-                if (isCTRecipe) {
-                    CraftTweakerAPI.logError("Dimension for Gas Collector needs to be a Integer");
-                    return false;
-                }
-                throw new IllegalArgumentException("Invalid Dimension Property Type!");
-            }
+            } else if (value instanceof List && !((List<?>) value).isEmpty() &&
+                    ((List<?>) value).get(0) instanceof Integer) {
+                        IntList dimensionIDs = getDimensionIDs();
+                        if (dimensionIDs == IntLists.EMPTY_LIST) {
+                            dimensionIDs = new IntArrayList();
+                            this.applyProperty(GasCollectorDimensionProperty.getInstance(), dimensionIDs);
+                        }
+                        dimensionIDs.addAll((List<Integer>) value);
+                    } else {
+                        if (isCTRecipe) {
+                            CraftTweakerAPI.logError("Dimension for Gas Collector needs to be a Integer");
+                            return false;
+                        }
+                        throw new IllegalArgumentException("Invalid Dimension Property Type!");
+                    }
             return true;
         }
         return super.applyProperty(key, value);

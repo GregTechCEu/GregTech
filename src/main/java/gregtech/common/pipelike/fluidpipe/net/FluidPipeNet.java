@@ -3,6 +3,7 @@ package gregtech.common.pipelike.fluidpipe.net;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
@@ -31,6 +32,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         boolean cryoProof = tagCompound.getBoolean("cryo_proof");
         boolean plasmaProof = tagCompound.getBoolean("plasma_proof");
         int channels = tagCompound.getInteger("channels");
-        return new FluidPipeProperties(maxTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof, channels);
+        return new FluidPipeProperties(maxTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof,
+                channels);
     }
 }

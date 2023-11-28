@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe.handlers;
 
-import com.google.common.collect.ImmutableMap;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
@@ -10,6 +9,8 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Map;
@@ -19,7 +20,7 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 
 public class WireCombiningHandler {
 
-    private static final OrePrefix[] WIRE_DOUBLING_ORDER = new OrePrefix[]{
+    private static final OrePrefix[] WIRE_DOUBLING_ORDER = new OrePrefix[] {
             wireGtSingle, wireGtDouble, wireGtQuadruple, wireGtOctal, wireGtHex
     };
 
@@ -28,11 +29,9 @@ public class WireCombiningHandler {
             cableGtDouble, wireGtDouble,
             cableGtQuadruple, wireGtQuadruple,
             cableGtOctal, wireGtOctal,
-            cableGtHex, wireGtHex
-    );
+            cableGtHex, wireGtHex);
 
     public static void register() {
-
         // Generate Wire Packer/Unpacker recipes TODO Move into generateWireCombining?
         wireGtSingle.addProcessingHandler(PropertyKey.WIRE, WireCombiningHandler::processWireCompression);
 

@@ -2,8 +2,10 @@ package gregtech.client.utils;
 
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -49,7 +51,8 @@ public class TooltipHelper {
             return null;
         }
         if (codes == null || codes.length <= 1) {
-            GTLog.logger.error("Could not create GT Format Code with codes {}, must have length greater than one!", Arrays.toString(codes));
+            GTLog.logger.error("Could not create GT Format Code with codes {}, must have length greater than one!",
+                    Arrays.toString(codes));
             return null;
         }
         GTFormatCode code = new GTFormatCode(rate, codes);

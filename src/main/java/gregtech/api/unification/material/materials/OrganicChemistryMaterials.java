@@ -10,6 +10,7 @@ import static gregtech.api.unification.material.info.MaterialIconSet.*;
 import static gregtech.api.util.GTUtility.gregtechId;
 
 public class OrganicChemistryMaterials {
+
     /**
      * ID RANGE: 1000-1068 (incl.)
      */
@@ -22,7 +23,6 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1, Silicon, 1)
                 .build()
                 .setFormula("Si(CH3)2O", true);
-
 
         Nitrobenzene = new Material.Builder(1001, gregtechId("nitrobenzene"))
                 .gas()
@@ -110,7 +110,7 @@ public class OrganicChemistryMaterials {
                 .build()
                 .setFormula("Si(CH3)2O", true);
 
-        Polyethylene = new Material.Builder(1012, gregtechId("plastic")) //todo add polyethylene oredicts
+        Polyethylene = new Material.Builder(1012, gregtechId("plastic")) // todo add polyethylene oredicts
                 .polymer(1)
                 .liquid(new FluidBuilder().temperature(408))
                 .color(0xC8C8C8)

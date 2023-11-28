@@ -36,7 +36,8 @@ public enum GTFrameType implements IBeeModifier {
     private final float floweringMod;
     private final float geneticDecayMod;
 
-    GTFrameType(String name, int maxDamage, float territory, float mutation, float lifespan, float production, float flowering, float geneticDecay) {
+    GTFrameType(String name, int maxDamage, float territory, float mutation, float lifespan, float production,
+                float flowering, float geneticDecay) {
         this.frameName = name;
         this.maxDamage = maxDamage;
         this.territoryMod = territory;

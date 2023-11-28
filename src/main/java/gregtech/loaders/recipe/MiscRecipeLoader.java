@@ -20,6 +20,7 @@ import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -33,11 +34,11 @@ import static gregtech.common.items.MetaItems.*;
 public class MiscRecipeLoader {
 
     public static void init() {
-
         // Basic Terminal Recipe
         ModHandler.addShapedRecipe(true, "basic_terminal", TERMINAL.getStackForm(),
-                "SGS", "PBP", "PWP", 'S', new UnificationEntry(screw, WroughtIron), 'G', OreDictUnifier.get("paneGlass"), 'B', new ItemStack(Items.BOOK),
-                                        'P', new UnificationEntry(plate, WroughtIron), 'W', new UnificationEntry(wireGtSingle, RedAlloy));
+                "SGS", "PBP", "PWP", 'S', new UnificationEntry(screw, WroughtIron), 'G',
+                OreDictUnifier.get("paneGlass"), 'B', new ItemStack(Items.BOOK),
+                'P', new UnificationEntry(plate, WroughtIron), 'W', new UnificationEntry(wireGtSingle, RedAlloy));
 
         // Multiblock Builder
         ModHandler.addShapedRecipe(true, "multiblock_builder", MULTIBLOCK_BUILDER.getStackForm(),
@@ -238,7 +239,8 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(1000).EUt(GTValues.VA[GTValues.LuV])
-                .inputNBT(((ArmorMetaItem<?>) QUANTUM_CHESTPLATE.getStackForm().getItem()).getItem(QUANTUM_CHESTPLATE.getStackForm()), NBTMatcher.ANY, NBTCondition.ANY)
+                .inputNBT(((ArmorMetaItem<?>) QUANTUM_CHESTPLATE.getStackForm().getItem())
+                        .getItem(QUANTUM_CHESTPLATE.getStackForm()), NBTMatcher.ANY, NBTCondition.ANY)
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
                 .input(wireFine, NiobiumTitanium, 64)
                 .input(wireGtQuadruple, Osmium, 6)
@@ -253,7 +255,6 @@ public class MiscRecipeLoader {
                 .outputs(QUANTUM_CHESTPLATE_ADVANCED.getStackForm())
                 .scannerResearch(GRAVITATION_ENGINE.getStackForm())
                 .buildAndRegister();
-
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(VA[HV])
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
@@ -375,25 +376,35 @@ public class MiscRecipeLoader {
                 .duration(40).EUt(6).buildAndRegister();
 
         // Dyed Lens Recipes
-        RecipeBuilder<?> builder = CHEMICAL_BATH_RECIPES.recipeBuilder().EUt(VA[HV]).duration(200).input(craftingLens, Glass);
+        RecipeBuilder<?> builder = CHEMICAL_BATH_RECIPES.recipeBuilder().EUt(VA[HV]).duration(200).input(craftingLens,
+                Glass);
         final int dyeAmount = 288;
 
-        builder.copy().fluidInputs(DyeWhite.getFluid(dyeAmount))    .output(lens, Glass)                      .buildAndRegister();
-        builder.copy().fluidInputs(DyeOrange.getFluid(dyeAmount))   .output(GLASS_LENSES.get(Color.Orange))   .buildAndRegister();
-        builder.copy().fluidInputs(DyeMagenta.getFluid(dyeAmount))  .output(GLASS_LENSES.get(Color.Magenta))  .buildAndRegister();
-        builder.copy().fluidInputs(DyeLightBlue.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.LightBlue)).buildAndRegister();
-        builder.copy().fluidInputs(DyeYellow.getFluid(dyeAmount))   .output(GLASS_LENSES.get(Color.Yellow))   .buildAndRegister();
-        builder.copy().fluidInputs(DyeLime.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Lime))     .buildAndRegister();
-        builder.copy().fluidInputs(DyePink.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Pink))     .buildAndRegister();
-        builder.copy().fluidInputs(DyeGray.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Gray))     .buildAndRegister();
-        builder.copy().fluidInputs(DyeLightGray.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.LightGray)).buildAndRegister();
-        builder.copy().fluidInputs(DyeCyan.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Cyan))     .buildAndRegister();
-        builder.copy().fluidInputs(DyePurple.getFluid(dyeAmount))   .output(GLASS_LENSES.get(Color.Purple))   .buildAndRegister();
-        builder.copy().fluidInputs(DyeBlue.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Blue))     .buildAndRegister();
-        builder.copy().fluidInputs(DyeBrown.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Brown))    .buildAndRegister();
-        builder.copy().fluidInputs(DyeGreen.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Green))    .buildAndRegister();
-        builder.copy().fluidInputs(DyeRed.getFluid(dyeAmount))      .output(GLASS_LENSES.get(Color.Red))      .buildAndRegister();
-        builder.copy().fluidInputs(DyeBlack.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Black))    .buildAndRegister();
+        builder.copy().fluidInputs(DyeWhite.getFluid(dyeAmount)).output(lens, Glass).buildAndRegister();
+        builder.copy().fluidInputs(DyeOrange.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Orange))
+                .buildAndRegister();
+        builder.copy().fluidInputs(DyeMagenta.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Magenta))
+                .buildAndRegister();
+        builder.copy().fluidInputs(DyeLightBlue.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.LightBlue))
+                .buildAndRegister();
+        builder.copy().fluidInputs(DyeYellow.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Yellow))
+                .buildAndRegister();
+        builder.copy().fluidInputs(DyeLime.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Lime)).buildAndRegister();
+        builder.copy().fluidInputs(DyePink.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Pink)).buildAndRegister();
+        builder.copy().fluidInputs(DyeGray.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Gray)).buildAndRegister();
+        builder.copy().fluidInputs(DyeLightGray.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.LightGray))
+                .buildAndRegister();
+        builder.copy().fluidInputs(DyeCyan.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Cyan)).buildAndRegister();
+        builder.copy().fluidInputs(DyePurple.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Purple))
+                .buildAndRegister();
+        builder.copy().fluidInputs(DyeBlue.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Blue)).buildAndRegister();
+        builder.copy().fluidInputs(DyeBrown.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Brown))
+                .buildAndRegister();
+        builder.copy().fluidInputs(DyeGreen.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Green))
+                .buildAndRegister();
+        builder.copy().fluidInputs(DyeRed.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Red)).buildAndRegister();
+        builder.copy().fluidInputs(DyeBlack.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Black))
+                .buildAndRegister();
 
         // NAN Certificate
         EXTRUDER_RECIPES.recipeBuilder()
@@ -411,26 +422,46 @@ public class MiscRecipeLoader {
                 .output(FERTILIZER, 4)
                 .duration(100).EUt(VA[LV]).buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite)       .input(dust, Sulfur)             .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite)       .input(dust, TricalciumPhosphate).fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite)       .input(dust, Phosphate)          .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite)       .input(dust, Ash, 3)       .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 1).duration(100).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite)       .input(dust, DarkAsh)            .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 1).duration(100).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium)       .input(dust, Sulfur)             .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium)       .input(dust, TricalciumPhosphate).fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium)       .input(dust, Phosphate)          .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium)       .input(dust, Ash, 3)       .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium)       .input(dust, DarkAsh)            .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite)       .input(dust, Sulfur)             .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite)       .input(dust, TricalciumPhosphate).fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite)       .input(dust, Phosphate)          .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite)       .input(dust, Ash, 3)       .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite)       .input(dust, DarkAsh)            .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Sulfur)             .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, TricalciumPhosphate).fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Phosphate)          .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Ash, 3)       .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, DarkAsh)            .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite).input(dust, Sulfur).fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite).input(dust, TricalciumPhosphate)
+                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite).input(dust, Phosphate).fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite).input(dust, Ash, 3).fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 1).duration(100).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite).input(dust, DarkAsh).fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 1).duration(100).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium).input(dust, Sulfur).fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium).input(dust, TricalciumPhosphate)
+                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium).input(dust, Phosphate).fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium).input(dust, Ash, 3).fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium).input(dust, DarkAsh).fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite).input(dust, Sulfur).fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite).input(dust, TricalciumPhosphate)
+                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite).input(dust, Phosphate).fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite).input(dust, Ash, 3).fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite).input(dust, DarkAsh).fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Sulfur)
+                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, TricalciumPhosphate)
+                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Phosphate)
+                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Ash, 3)
+                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, DarkAsh)
+                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(FERTILIZER)

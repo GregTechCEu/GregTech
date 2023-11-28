@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -15,7 +16,8 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Predicate;
 
 public class EnergyContainerHandler extends MTETrait implements IEnergyContainer {
@@ -39,7 +41,8 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
 
     protected long amps = 0;
 
-    public EnergyContainerHandler(MetaTileEntity tileEntity, long maxCapacity, long maxInputVoltage, long maxInputAmperage, long maxOutputVoltage, long maxOutputAmperage) {
+    public EnergyContainerHandler(MetaTileEntity tileEntity, long maxCapacity, long maxInputVoltage,
+                                  long maxInputAmperage, long maxOutputVoltage, long maxOutputAmperage) {
         super(tileEntity);
         this.maxCapacity = maxCapacity;
         this.maxInputVoltage = maxInputVoltage;
@@ -56,11 +59,13 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         this.sideOutputCondition = sideOutputCondition;
     }
 
-    public static EnergyContainerHandler emitterContainer(MetaTileEntity tileEntity, long maxCapacity, long maxOutputVoltage, long maxOutputAmperage) {
+    public static EnergyContainerHandler emitterContainer(MetaTileEntity tileEntity, long maxCapacity,
+                                                          long maxOutputVoltage, long maxOutputAmperage) {
         return new EnergyContainerHandler(tileEntity, maxCapacity, 0L, 0L, maxOutputVoltage, maxOutputAmperage);
     }
 
-    public static EnergyContainerHandler receiverContainer(MetaTileEntity tileEntity, long maxCapacity, long maxInputVoltage, long maxInputAmperage) {
+    public static EnergyContainerHandler receiverContainer(MetaTileEntity tileEntity, long maxCapacity,
+                                                           long maxInputVoltage, long maxInputAmperage) {
         return new EnergyContainerHandler(tileEntity, maxCapacity, maxInputVoltage, maxInputAmperage, 0L, 0L);
     }
 
@@ -74,7 +79,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         return lastEnergyOutputPerSec;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return GregtechDataCodes.ENERGY_CONTAINER_TRAIT;
@@ -88,7 +93,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
@@ -97,7 +102,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     }
 
     @Override
-    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
+    public void deserializeNBT(@NotNull NBTTagCompound compound) {
         this.energyStored = compound.getLong("EnergyStored");
         notifyEnergyListener(true);
     }
@@ -199,12 +204,15 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
             long amperesUsed = 0;
             for (EnumFacing side : EnumFacing.VALUES) {
                 if (!outputsEnergy(side)) continue;
-                TileEntity tileEntity = metaTileEntity.getWorld().getTileEntity(metaTileEntity.getPos().offset(side));
+                TileEntity tileEntity = metaTileEntity.getNeighbor(side);
                 EnumFacing oppositeSide = side.getOpposite();
-                if (tileEntity != null && tileEntity.hasCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, oppositeSide)) {
-                    IEnergyContainer energyContainer = tileEntity.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, oppositeSide);
+                if (tileEntity != null &&
+                        tileEntity.hasCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, oppositeSide)) {
+                    IEnergyContainer energyContainer = tileEntity
+                            .getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, oppositeSide);
                     if (energyContainer == null || !energyContainer.inputsEnergy(oppositeSide)) continue;
-                    amperesUsed += energyContainer.acceptEnergyFromNetwork(oppositeSide, outputVoltage, outputAmperes - amperesUsed);
+                    amperesUsed += energyContainer.acceptEnergyFromNetwork(oppositeSide, outputVoltage,
+                            outputAmperes - amperesUsed);
                     if (amperesUsed == outputAmperes) break;
                 }
             }
@@ -242,7 +250,8 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
 
     @Override
     public boolean inputsEnergy(EnumFacing side) {
-        return !outputsEnergy(side) && getInputVoltage() > 0 && (sideInputCondition == null || sideInputCondition.test(side));
+        return !outputsEnergy(side) && getInputVoltage() > 0 &&
+                (sideInputCondition == null || sideInputCondition.test(side));
     }
 
     @Override
@@ -253,7 +262,8 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     @Override
     public long changeEnergy(long energyToAdd) {
         long oldEnergyStored = getEnergyStored();
-        long newEnergyStored = (maxCapacity - oldEnergyStored < energyToAdd) ? maxCapacity : (oldEnergyStored + energyToAdd);
+        long newEnergyStored = (maxCapacity - oldEnergyStored < energyToAdd) ? maxCapacity :
+                (oldEnergyStored + energyToAdd);
         if (newEnergyStored < 0)
             newEnergyStored = 0;
         setEnergyStored(newEnergyStored);
@@ -281,6 +291,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     }
 
     public interface IEnergyChangeListener {
+
         void onEnergyChanged(IEnergyContainer container, boolean isInitialChange);
     }
 

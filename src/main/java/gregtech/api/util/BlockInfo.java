@@ -1,12 +1,13 @@
 package gregtech.api.util;
 
-import com.google.common.base.Preconditions;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import com.google.common.base.Preconditions;
 
 /**
  * BlockInfo represents immutable information for block in world

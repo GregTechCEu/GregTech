@@ -2,12 +2,7 @@ package gregtech.integration.jei.utils;
 
 import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.OreDepositDefinition;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntSortedSet;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
@@ -17,7 +12,14 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.Loader;
 
-import javax.annotation.Nullable;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntSortedSet;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +36,8 @@ import static gregtech.api.GTValues.MODID_AR;
 public class JEIResourceDepositCategoryUtils {
 
     /**
-     * Creates a list of biomes whose weight, as described by the passed Function, differs from the passed original weight
+     * Creates a list of biomes whose weight, as described by the passed Function, differs from the passed original
+     * weight
      * For use in the JEI Ore Spawn Page and JEI Fluid Spawn Page
      *
      * @param biomeFunction  A Function describing the modified weights of biomes
@@ -117,7 +120,7 @@ public class JEIResourceDepositCategoryUtils {
 
             fontRenderer.drawString(fullDimName, dimDisplayPosX, dimStartYPos, 0x111111);
 
-            //Increment the dimension name display position
+            // Increment the dimension name display position
             dimDisplayPosX = dimDisplayPosX + dimDisplayLength;
         }
     }

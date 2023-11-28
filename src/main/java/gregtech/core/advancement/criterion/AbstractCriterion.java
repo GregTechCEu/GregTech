@@ -1,15 +1,16 @@
 package gregtech.core.advancement.criterion;
 
 import gregtech.api.advancement.IAdvancementCriterion;
+
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractCriterion implements IAdvancementCriterion {
 
     private ResourceLocation id = new ResourceLocation("MISSING");
 
-    @Nonnull
+    @NotNull
     @Override
     public ResourceLocation getId() {
         return id;

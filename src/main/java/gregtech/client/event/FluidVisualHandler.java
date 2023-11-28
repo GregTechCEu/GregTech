@@ -3,6 +3,7 @@ package gregtech.client.event;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluidBlock;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -25,7 +26,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Handles the rendering when a player is submerged in a GT fluid block
@@ -41,10 +42,11 @@ import javax.annotation.Nonnull;
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = GTValues.MODID)
 public class FluidVisualHandler {
 
-    private static final ResourceLocation SUBMERGED_FLUID_OVERLAY = GTUtility.gregtechId("textures/blocks/fluids/submerged_fluid_overlay.png");
+    private static final ResourceLocation SUBMERGED_FLUID_OVERLAY = GTUtility
+            .gregtechId("textures/blocks/fluids/submerged_fluid_overlay.png");
 
     @SubscribeEvent
-    public static void onFOVModifier(@Nonnull EntityViewRenderEvent.FOVModifier event) {
+    public static void onFOVModifier(@NotNull EntityViewRenderEvent.FOVModifier event) {
         if (event.getState().getBlock() instanceof GTFluidBlock &&
                 ((GTFluidBlock) event.getState().getBlock()).isSticky()) {
             event.setFOV(event.getFOV() * 60.0F / 70.0F);
@@ -52,7 +54,7 @@ public class FluidVisualHandler {
     }
 
     @SubscribeEvent
-    public static void onBlockOverlayRender(@Nonnull RenderBlockOverlayEvent event) {
+    public static void onBlockOverlayRender(@NotNull RenderBlockOverlayEvent event) {
         if (event.getOverlayType() != RenderBlockOverlayEvent.OverlayType.WATER) return;
 
         final EntityPlayer player = event.getPlayer();
@@ -74,7 +76,8 @@ public class FluidVisualHandler {
             final float brightness = player.getBrightness();
             GlStateManager.color(brightness * r, brightness * g, brightness * b, 0.5F);
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                    GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
                     GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             GlStateManager.pushMatrix();
 
@@ -96,7 +99,7 @@ public class FluidVisualHandler {
     }
 
     @SubscribeEvent
-    public static void onFogColor(@Nonnull EntityViewRenderEvent.FogColors event) {
+    public static void onFogColor(@NotNull EntityViewRenderEvent.FogColors event) {
         if (!(event.getState().getBlock() instanceof GTFluidBlock fluidBlock)) return;
 
         int color = fluidBlock.getFluid().getColor();
@@ -129,7 +132,8 @@ public class FluidVisualHandler {
         r *= modifier;
         g *= modifier;
         b *= modifier;
-        double modifier2 = (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks) * entity.getEntityWorld().provider.getVoidFogYFactor();
+        double modifier2 = (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks) *
+                entity.getEntityWorld().provider.getVoidFogYFactor();
 
         if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPotionActive(MobEffects.BLINDNESS)) {
             PotionEffect blindness = ((EntityLivingBase) entity).getActivePotionEffect(MobEffects.BLINDNESS);
@@ -156,7 +160,8 @@ public class FluidVisualHandler {
         }
 
         if (renderer.bossColorModifier > 0.0F) {
-            float bossColor = renderer.bossColorModifierPrev + (renderer.bossColorModifier - renderer.bossColorModifierPrev) * partialTicks;
+            float bossColor = renderer.bossColorModifierPrev +
+                    (renderer.bossColorModifier - renderer.bossColorModifierPrev) * partialTicks;
             r = r * (1.0F - bossColor) + r * 0.7F * bossColor;
             g = g * (1.0F - bossColor) + g * 0.6F * bossColor;
             b = b * (1.0F - bossColor) + b * 0.6F * bossColor;
@@ -194,14 +199,15 @@ public class FluidVisualHandler {
     }
 
     @SubscribeEvent
-    public static void onFogDensity(@Nonnull EntityViewRenderEvent.FogDensity event) {
+    public static void onFogDensity(@NotNull EntityViewRenderEvent.FogDensity event) {
         if (!(event.getState().getBlock() instanceof GTFluidBlock)) return;
 
         final EntityRenderer renderer = event.getRenderer();
         final Entity entity = event.getEntity();
 
         // again the event is fired at a bad location...
-        if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPotionActive(MobEffects.BLINDNESS)) return;
+        if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPotionActive(MobEffects.BLINDNESS))
+            return;
         if (renderer.cloudFog) return;
 
         GlStateManager.setFog(GlStateManager.FogMode.EXP);

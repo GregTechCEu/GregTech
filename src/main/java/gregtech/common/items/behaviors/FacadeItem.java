@@ -1,11 +1,11 @@
 package gregtech.common.items.behaviors;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.items.metaitem.stats.IItemNameProvider;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.common.ConfigHolder;
 import gregtech.common.covers.facade.FacadeHelper;
+
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -14,6 +14,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants.NBT;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +48,8 @@ public class FacadeItem implements IItemNameProvider, ISubItemHandler {
     public String getItemSubType(ItemStack itemStack) {
         ItemStack facadeStack = getFacadeStack(itemStack);
         ResourceLocation registryName = Objects.requireNonNull(facadeStack.getItem().getRegistryName());
-        return String.format("%s:%s@%d", registryName.getNamespace(), registryName.getPath(), Items.FEATHER.getDamage(facadeStack));
+        return String.format("%s:%s@%d", registryName.getNamespace(), registryName.getPath(),
+                Items.FEATHER.getDamage(facadeStack));
     }
 
     public static void setFacadeStack(ItemStack itemStack, ItemStack facadeStack) {

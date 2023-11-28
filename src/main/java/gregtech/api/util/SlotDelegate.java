@@ -6,8 +6,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SlotDelegate extends Slot {
 
@@ -19,22 +19,22 @@ public class SlotDelegate extends Slot {
     }
 
     @Override
-    public void onSlotChange(@Nonnull ItemStack p_75220_1_, @Nonnull ItemStack p_75220_2_) {
+    public void onSlotChange(@NotNull ItemStack p_75220_1_, @NotNull ItemStack p_75220_2_) {
         this.delegate.onSlotChange(p_75220_1_, p_75220_2_);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack onTake(@Nonnull EntityPlayer thePlayer, @Nonnull ItemStack stack) {
+    public ItemStack onTake(@NotNull EntityPlayer thePlayer, @NotNull ItemStack stack) {
         return this.delegate.onTake(thePlayer, stack);
     }
 
     @Override
-    public boolean isItemValid(@Nonnull ItemStack stack) {
+    public boolean isItemValid(@NotNull ItemStack stack) {
         return this.delegate.isItemValid(stack);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack getStack() {
         return this.delegate.getStack();
@@ -46,7 +46,7 @@ public class SlotDelegate extends Slot {
     }
 
     @Override
-    public void putStack(@Nonnull ItemStack stack) {
+    public void putStack(@NotNull ItemStack stack) {
         this.delegate.putStack(stack);
     }
 
@@ -61,18 +61,18 @@ public class SlotDelegate extends Slot {
     }
 
     @Override
-    public int getItemStackLimit(@Nonnull ItemStack stack) {
+    public int getItemStackLimit(@NotNull ItemStack stack) {
         return this.delegate.getItemStackLimit(stack);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack decrStackSize(int amount) {
         return this.delegate.decrStackSize(amount);
     }
 
     @Override
-    public boolean canTakeStack(@Nonnull EntityPlayer playerIn) {
+    public boolean canTakeStack(@NotNull EntityPlayer playerIn) {
         return this.delegate.canTakeStack(playerIn);
     }
 
@@ -87,7 +87,7 @@ public class SlotDelegate extends Slot {
         return this.delegate.getBackgroundSprite();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ResourceLocation getBackgroundLocation() {
         return this.delegate.getBackgroundLocation();
@@ -100,7 +100,7 @@ public class SlotDelegate extends Slot {
     }
 
     @Override
-    public void setBackgroundLocation(@Nonnull ResourceLocation texture) {
+    public void setBackgroundLocation(@NotNull ResourceLocation texture) {
         this.delegate.setBackgroundLocation(texture);
     }
 

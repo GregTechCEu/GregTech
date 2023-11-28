@@ -2,13 +2,14 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IFilter;
 import gregtech.api.capability.IFilteredFluidContainer;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GTFluidHandlerItemStack extends FluidHandlerItemStack implements IFilteredFluidContainer {
 
@@ -25,7 +26,7 @@ public class GTFluidHandlerItemStack extends FluidHandlerItemStack implements IF
      * @param container The container itemStack, data is stored on it directly as NBT.
      * @param capacity  The maximum capacity of this fluid tank.
      */
-    public GTFluidHandlerItemStack(@Nonnull ItemStack container, int capacity) {
+    public GTFluidHandlerItemStack(@NotNull ItemStack container, int capacity) {
         super(container, capacity);
     }
 
@@ -35,7 +36,7 @@ public class GTFluidHandlerItemStack extends FluidHandlerItemStack implements IF
         return this.filter;
     }
 
-    @Nonnull
+    @NotNull
     public GTFluidHandlerItemStack setFilter(@Nullable IFilter<FluidStack> filter) {
         this.filter = filter;
         return this;
@@ -62,7 +63,7 @@ public class GTFluidHandlerItemStack extends FluidHandlerItemStack implements IF
     @Override
     public IFluidTankProperties[] getTankProperties() {
         if (properties == null) {
-            return properties = new IFluidTankProperties[]{new TankProperties()};
+            return properties = new IFluidTankProperties[] { new TankProperties() };
         }
         return properties;
     }

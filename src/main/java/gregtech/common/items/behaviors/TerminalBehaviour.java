@@ -13,6 +13,7 @@ import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.common.terminal.hardware.BatteryHardware;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -30,7 +31,8 @@ import java.util.List;
 public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubItemHandler {
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
+                                           float hitY, float hitZ, EnumHand hand) {
         if (player.isSneaking()) {
             ItemStack itemStack = player.getHeldItem(hand);
             itemStack.getOrCreateSubCompound("terminal").removeTag("_click");
@@ -63,7 +65,8 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
         if (entity.ticksExisted % 20 == 0 && tabletNBT.hasKey("_ar")) {
             if (entity instanceof EntityLivingBase) {
                 EntityLivingBase livingBase = (EntityLivingBase) entity;
-                if (!livingBase.getHeldItemMainhand().isItemEqual(itemStack) && !livingBase.getHeldItemOffhand().isItemEqual(itemStack)) {
+                if (!livingBase.getHeldItemMainhand().isItemEqual(itemStack) &&
+                        !livingBase.getHeldItemOffhand().isItemEqual(itemStack)) {
                     return;
                 }
             }
@@ -81,7 +84,8 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
                 }
             }
             if (cost > 0) {
-                IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM,
+                        null);
                 if (electricItem != null) {
                     long back = electricItem.discharge(cost, 999, true, false, false);
                     if (back != cost) {

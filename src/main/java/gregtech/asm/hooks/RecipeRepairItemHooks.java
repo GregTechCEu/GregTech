@@ -1,14 +1,16 @@
 package gregtech.asm.hooks;
 
-import com.google.common.collect.Lists;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolHelper;
+
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
+
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
@@ -77,7 +79,8 @@ public class RecipeRepairItemHooks {
             ItemStack first = list.get(0);
             ItemStack second = list.get(1);
 
-            if (first.getItem() == second.getItem() && first.getCount() == 1 && second.getCount() == 1 && first.getItem().isRepairable()) {
+            if (first.getItem() == second.getItem() && first.getCount() == 1 && second.getCount() == 1 &&
+                    first.getItem().isRepairable()) {
                 int j = first.getMaxDamage() - first.getItemDamage();
                 int k = first.getMaxDamage() - second.getItemDamage();
                 int l = j + k + first.getMaxDamage() * 5 / 100;

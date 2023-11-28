@@ -1,10 +1,12 @@
 package gregtech.asm.visitors;
 
 import gregtech.asm.util.ObfMapping;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 public class LittleTilesVisitor extends MethodVisitor implements Opcodes {
+
     public static final String TARGET_CLASS_NAME = "com/creativemd/littletiles/client/render/world/TileEntityRenderManager";
     public static final ObfMapping TARGET_METHOD = new ObfMapping(
             TARGET_CLASS_NAME,
@@ -26,11 +28,10 @@ public class LittleTilesVisitor extends MethodVisitor implements Opcodes {
     @Override
     public void visitInsn(int opcode) {
         if (opcode == RETURN) {
-            super.visitVarInsn(ALOAD,0);
+            super.visitVarInsn(ALOAD, 0);
             METHOD_LAYER_RENDER_BOX_CACHE_HOOKS.visitMethodInsn(this, INVOKESTATIC);
             FIELD_LAYER_RENDER_BOX_CACHE.visitFieldInsn(this, PUTFIELD);
         }
         super.visitInsn(opcode);
     }
-
 }

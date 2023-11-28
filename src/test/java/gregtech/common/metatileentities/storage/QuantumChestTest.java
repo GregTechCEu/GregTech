@@ -4,12 +4,14 @@ import gregtech.Bootstrap;
 import gregtech.api.GTValues;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.world.DummyWorld;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +23,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class QuantumChestTest {
+
     private static ItemStack GRAVEL;
     private static ItemStack SAND;
 
@@ -55,7 +58,8 @@ public class QuantumChestTest {
             insertItem(combinedInventory, GRAVEL.copy(), false);
             int expected = 64;
             stack = exportItems.getStackInSlot(0);
-            reason = String.format("Got %d in the export slot when it should be %d", exportItems.getStackInSlot(0).getCount(), expected);
+            reason = String.format("Got %d in the export slot when it should be %d",
+                    exportItems.getStackInSlot(0).getCount(), expected);
             assertThat(reason, stack.getCount(), is(expected));
 
             stack = insertItem(combinedInventory, GRAVEL.copy(), true);
@@ -64,7 +68,8 @@ public class QuantumChestTest {
 
             insertItem(combinedInventory, GRAVEL.copy(), false);
             stack = virtualInventory.getStackInSlot(0);
-            reason = String.format("Got %d in the virtualized inventory when it should be %d", stack.getCount(), expected);
+            reason = String.format("Got %d in the virtualized inventory when it should be %d", stack.getCount(),
+                    expected);
             assertThat(reason, stack.getCount(), is(expected));
 
             stack = importItems.insertItem(0, SAND.copy(), true);
@@ -76,7 +81,8 @@ public class QuantumChestTest {
             assertThat(reason, !stack.isEmpty() && stack.isItemEqual(SAND));
 
             stack = virtualInventory.getStackInSlot(0);
-            reason = String.format("Got %d in the virtualized inventory when it should be %d", stack.getCount(), expected);
+            reason = String.format("Got %d in the virtualized inventory when it should be %d", stack.getCount(),
+                    expected);
             assertThat(reason, stack.getCount(), is(expected));
         }
     }
@@ -91,12 +97,15 @@ public class QuantumChestTest {
 
             expected = 64;
             int exportCount = quantumChest.getExportItems().getStackInSlot(0).getCount();
-            String reason = String.format("The combined count using the chest's handler and the export slot got %d, should've been %d", exportCount, expected);
+            String reason = String.format(
+                    "The combined count using the chest's handler and the export slot got %d, should've been %d",
+                    exportCount, expected);
             assertThat(reason, exportCount, is(expected));
 
             expected = 192;
             int virtualizedAmount = itemInventory.getStackInSlot(0).getCount();
-            reason = String.format("The virtualized amount in the chest's handler got %d, should've been %d", exportCount, expected);
+            reason = String.format("The virtualized amount in the chest's handler got %d, should've been %d",
+                    exportCount, expected);
             assertThat(reason, virtualizedAmount, is(expected));
         }
     }
@@ -114,9 +123,9 @@ public class QuantumChestTest {
 
             insertItem(itemHandler, GRAVEL.copy(), false);
 
-
             String reason = "The virtualized stack is not the same as the export slot!";
-            boolean isEqual = ItemStack.areItemsEqual(export, quantumChest.virtualItemStack) && export.getMetadata() == quantumChest.virtualItemStack.getMetadata();
+            boolean isEqual = ItemStack.areItemsEqual(export, quantumChest.virtualItemStack) &&
+                    export.getMetadata() == quantumChest.virtualItemStack.getMetadata();
             assertThat(reason, isEqual, is(true));
         }
     }
@@ -186,9 +195,11 @@ public class QuantumChestTest {
             insertItem(quantumChest.getCombinedInventory(), stack, false);
 
             // UHV qchest stores exactly Integer.MAX_VALUE, so it will be 64 items less than expected
-            long transferred = quantumChest.getTier() == GTValues.UHV ? quantumChest.itemsStoredInside + 64 : quantumChest.itemsStoredInside;
+            long transferred = quantumChest.getTier() == GTValues.UHV ? quantumChest.itemsStoredInside + 64 :
+                    quantumChest.itemsStoredInside;
 
-            assertThat(String.format("%s voided %s too early!", quantumChest.getMetaFullName(), stack), transferred == quantumChest.maxStoredItems);
+            assertThat(String.format("%s voided %s too early!", quantumChest.getMetaFullName(), stack),
+                    transferred == quantumChest.maxStoredItems);
 
             quantumChest.setVoiding(true);
             ItemStack remainder = insertItem(quantumChest.getItemInventory(), stack, false);
@@ -209,7 +220,8 @@ public class QuantumChestTest {
             int extractedCount = testAllSlots(quantumChest.getExportItems(), true);
             int expected = 64;
 
-            String reason = String.format("Quantum chest failed to insert %d items into export slot, actually was %d!", expected, extractedCount);
+            String reason = String.format("Quantum chest failed to insert %d items into export slot, actually was %d!",
+                    expected, extractedCount);
             assertThat(reason, extractedCount, is(expected));
 
             quantumChest.getExportItems().extractItem(0, 64, false);
@@ -232,7 +244,8 @@ public class QuantumChestTest {
         QuantumChestWrapper[] quantumChests = new QuantumChestWrapper[10];
         for (int i = 0; i < 5; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
-            quantumChests[i] = new QuantumChestWrapper(gregtechId("super_chest." + voltageName), i + 1, 4000000L * (int) Math.pow(2, i));
+            quantumChests[i] = new QuantumChestWrapper(gregtechId("super_chest." + voltageName), i + 1,
+                    4000000L * (int) Math.pow(2, i));
         }
 
         for (int i = 5; i < quantumChests.length; i++) {
@@ -252,6 +265,7 @@ public class QuantumChestTest {
     }
 
     private static class QuantumChestWrapper extends MetaTileEntityQuantumChest {
+
         public QuantumChestWrapper(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
             super(metaTileEntityId, tier, maxStoredItems);
         }

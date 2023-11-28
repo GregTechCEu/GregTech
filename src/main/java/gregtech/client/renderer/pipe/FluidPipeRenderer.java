@@ -1,6 +1,5 @@
 package gregtech.client.renderer.pipe;
 
-import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -9,10 +8,13 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 
-import javax.annotation.Nullable;
+import codechicken.lib.vec.uv.IconTransformation;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.EnumMap;
 
 public class FluidPipeRenderer extends PipeRenderer {
@@ -41,13 +43,14 @@ public class FluidPipeRenderer extends PipeRenderer {
     }
 
     @Override
-    public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe, IPipeTile<?, ?> pipeTile, IPipeType<?> pipeType, @Nullable Material material) {
+    public void buildRenderer(PipeRenderContext renderContext, BlockPipe<?, ?, ?> blockPipe, IPipeTile<?, ?> pipeTile,
+                              IPipeType<?> pipeType, @Nullable Material material) {
         if (material == null || !(pipeType instanceof FluidPipeType)) {
             return;
         }
         if (ModHandler.isMaterialWood(material)) {
             TextureAtlasSprite sprite = pipeTexturesWood.get(pipeType);
-            if(sprite != null) {
+            if (sprite != null) {
                 renderContext.addOpenFaceRender(new IconTransformation(sprite));
             } else {
                 renderContext.addOpenFaceRender(new IconTransformation(pipeTextures.get(pipeType)));

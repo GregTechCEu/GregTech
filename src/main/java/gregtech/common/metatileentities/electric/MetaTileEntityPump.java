@@ -1,10 +1,5 @@
 package gregtech.common.metatileentities.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
@@ -17,6 +12,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -42,9 +38,15 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -81,7 +83,8 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        ColourMultiplier multiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
+        ColourMultiplier multiplier = new ColourMultiplier(
+                GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
         IVertexOperation[] coloredPipeline = ArrayUtils.add(pipeline, multiplier);
         for (EnumFacing renderSide : EnumFacing.HORIZONTALS) {
             if (renderSide == getFrontFacing()) {
@@ -148,8 +151,8 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY));
         tankDisplay.addWidget(new ToggleButtonWidget(7, 64, 18, 18,
                 GuiTextures.BUTTON_LOCK, this::isLocked, this::setLocked)
-                .setTooltipText("gregtech.gui.fluid_lock.tooltip")
-                .shouldUseBaseBackground());
+                        .setTooltipText("gregtech.gui.fluid_lock.tooltip")
+                        .shouldUseBaseBackground());
 
         TankWidget tankWidget = new PhantomTankWidget(exportFluids.getTankAt(0), 67, 41, 18, 18,
                 () -> this.lockedFluid,
@@ -227,13 +230,13 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                 // Always recheck next time
                 writeCustomData(PUMP_HEAD_LEVEL, b -> b.writeVarInt(pumpHeadY));
                 markDirty();
-                //schedule queue rebuild because we changed our position and no fluid is available
+                // schedule queue rebuild because we changed our position and no fluid is available
                 this.initializedQueue = false;
             }
 
             if (!initializedQueue || getOffsetTimer() % 6000 == 0 || isFirstTick()) {
                 this.initializedQueue = true;
-                //just add ourselves to check list and see how this will go
+                // just add ourselves to check list and see how this will go
                 this.blocksToCheck.add(selfPos);
             }
         }
@@ -263,7 +266,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
             for (EnumFacing facing : EnumFacing.VALUES) {
                 BlockPos offsetPos = checkPos.offset(facing);
                 if (offsetPos.distanceSq(pumpHeadPos) > maxPumpRange * maxPumpRange)
-                    continue; //do not add blocks outside bounds
+                    continue; // do not add blocks outside bounds
                 if (!fluidSourceBlocks.contains(offsetPos) &&
                         !blocksToCheck.contains(offsetPos)) {
                     this.blocksToCheck.add(offsetPos);
@@ -317,6 +320,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         }
         this.lockedFluid = null;
     }
+
     private Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
         return (list) -> {
             TextComponentTranslation translation = tankWidget.getFluidTextComponent();
@@ -359,7 +363,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         pushFluidsIntoNearbyHandlers(getFrontFacing());
         fillContainerFromInternalTank();
 
-        //do not do anything without enough energy supplied
+        // do not do anything without enough energy supplied
         if (energyContainer.getEnergyStored() < GTValues.V[getTier()] * 2) {
             return;
         }
@@ -397,11 +401,15 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         tooltip.add(I18n.format("gregtech.machine.pump.tooltip"));
         if (ConfigHolder.machines.doTerrainExplosion)
             tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.uses_per_op", GTValues.V[getTier()] * 2)
-                + TextFormatting.GRAY + ", " + I18n.format("gregtech.machine.pump.tooltip_buckets", getPumpingCycleLength()));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", exportFluids.getTankAt(0).getCapacity()));
+        tooltip.add(
+                I18n.format("gregtech.universal.tooltip.uses_per_op", GTValues.V[getTier()] * 2) + TextFormatting.GRAY +
+                        ", " + I18n.format("gregtech.machine.pump.tooltip_buckets", getPumpingCycleLength()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(),
+                GTValues.VNF[getTier()]));
+        tooltip.add(
+                I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity",
+                exportFluids.getTankAt(0).getCapacity()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.working_area", getMaxPumpRange(), getMaxPumpRange()));
     }
 

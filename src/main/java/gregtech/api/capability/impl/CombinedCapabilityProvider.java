@@ -4,8 +4,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public class CombinedCapabilityProvider implements ICapabilityProvider {
@@ -21,7 +22,7 @@ public class CombinedCapabilityProvider implements ICapabilityProvider {
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(@NotNull Capability<?> capability, @Nullable EnumFacing facing) {
         for (ICapabilityProvider provider : providers) {
             if (provider.hasCapability(capability, facing)) {
                 return true;
@@ -32,7 +33,7 @@ public class CombinedCapabilityProvider implements ICapabilityProvider {
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
         for (ICapabilityProvider provider : providers) {
             T cap = provider.getCapability(capability, facing);
             if (cap != null) {

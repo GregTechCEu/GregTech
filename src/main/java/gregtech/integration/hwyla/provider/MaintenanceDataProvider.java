@@ -8,14 +8,16 @@ import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.items.ToolItems;
 import gregtech.integration.hwyla.HWYLAModule;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import mcp.mobius.waila.api.IWailaRegistrar;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.Capability;
+
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import mcp.mobius.waila.api.IWailaRegistrar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -54,7 +56,8 @@ public class MaintenanceDataProvider extends CapabilityDataProvider<IMaintenance
 
     @NotNull
     @Override
-    public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+    public List<String> getWailaBody(ItemStack itemStack, List<String> tooltip, IWailaDataAccessor accessor,
+                                     IWailaConfigHandler config) {
         if (!config.getConfig("gregtech.maintenance") || accessor.getTileEntity() == null) {
             return tooltip;
         }
@@ -62,7 +65,8 @@ public class MaintenanceDataProvider extends CapabilityDataProvider<IMaintenance
         if (accessor.getNBTData().hasKey("gregtech.IMaintenance")) {
             NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gregtech.IMaintenance");
 
-            IMultiblockController controller = accessor.getTileEntity().getCapability(GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER, null);
+            IMultiblockController controller = accessor.getTileEntity()
+                    .getCapability(GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER, null);
             if (controller == null || !controller.isStructureFormed()) {
                 return tooltip;
             }

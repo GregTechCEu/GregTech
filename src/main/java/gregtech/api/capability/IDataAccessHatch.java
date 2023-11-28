@@ -2,7 +2,8 @@ package gregtech.api.capability;
 
 import gregtech.api.recipes.Recipe;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -15,7 +16,7 @@ public interface IDataAccessHatch {
      * @param recipe the recipe to check
      * @return if the recipe is available for use
      */
-    default boolean isRecipeAvailable(@Nonnull Recipe recipe) {
+    default boolean isRecipeAvailable(@NotNull Recipe recipe) {
         Collection<IDataAccessHatch> list = new ArrayList<>();
         list.add(this);
         return isRecipeAvailable(recipe, list);
@@ -26,7 +27,7 @@ public interface IDataAccessHatch {
      * @param seen   the hatches already checked
      * @return if the recipe is available for use
      */
-    boolean isRecipeAvailable(@Nonnull Recipe recipe, @Nonnull Collection<IDataAccessHatch> seen);
+    boolean isRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen);
 
     /**
      * @return true if this Data Access Hatch is creative or not

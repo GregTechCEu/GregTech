@@ -1,17 +1,19 @@
 package gregtech.api.gui.widgets;
 
-import com.google.common.collect.Lists;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.client.utils.TooltipHelper;
-import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import com.google.common.collect.Lists;
+import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Mouse;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Collections;
@@ -35,8 +37,7 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
         if (isMouseOverElement(mouseX, mouseY) && gui != null) {
             if (button == 1 && clearSlotOnRightClick && !slotReference.getStack().isEmpty()) {
                 slotReference.putStack(ItemStack.EMPTY);
-                writeClientAction(2, buf -> {
-                });
+                writeClientAction(2, buf -> {});
             } else {
                 gui.getModularUIGui().superMouseClicked(mouseX, mouseY, button);
             }
@@ -81,14 +82,15 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
         }
         Rectangle rectangle = toRectangleBox();
         return Lists.newArrayList(new Target<Object>() {
-            @Nonnull
+
+            @NotNull
             @Override
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(@Nonnull Object ingredient) {
+            public void accept(@NotNull Object ingredient) {
                 if (ingredient instanceof ItemStack) {
                     int mouseButton = Mouse.getEventButton();
                     boolean shiftDown = TooltipHelper.isShiftDown();

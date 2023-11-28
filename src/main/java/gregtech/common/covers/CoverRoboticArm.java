@@ -1,9 +1,5 @@
 package gregtech.common.covers;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.gui.GuiTextures;
@@ -13,6 +9,7 @@ import gregtech.api.gui.widgets.*;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.SmartItemFilter;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,6 +17,11 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.IItemHandler;
+
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -38,7 +40,8 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
+    public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
+                            Cuboid6 plateBox, BlockRenderLayer layer) {
         if (conveyorMode == ConveyorMode.EXPORT) {
             Textures.ARM_OVERLAY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         } else {
@@ -48,10 +51,12 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     protected int doTransferItems(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
-        if (conveyorMode == ConveyorMode.EXPORT && itemHandler instanceof ItemNetHandler && transferMode == TransferMode.KEEP_EXACT) {
+        if (conveyorMode == ConveyorMode.EXPORT && itemHandler instanceof ItemNetHandler &&
+                transferMode == TransferMode.KEEP_EXACT) {
             return 0;
         }
-        if (conveyorMode == ConveyorMode.IMPORT && myItemHandler instanceof ItemNetHandler && transferMode == TransferMode.KEEP_EXACT) {
+        if (conveyorMode == ConveyorMode.IMPORT && myItemHandler instanceof ItemNetHandler &&
+                transferMode == TransferMode.KEEP_EXACT) {
             return 0;
         }
         return switch (transferMode) {
@@ -99,19 +104,21 @@ public class CoverRoboticArm extends CoverConveyor {
                 notEnoughTransferRate = true;
             }
         }
-        //if we didn't transfer anything because of too small transfer rate, buffer it
+        // if we didn't transfer anything because of too small transfer rate, buffer it
         if (itemsTransferred == 0 && notEnoughTransferRate) {
             itemsTransferBuffered += maxTransferAmount;
         } else {
-            //otherwise, if transfer succeed, empty transfer buffer value
+            // otherwise, if transfer succeed, empty transfer buffer value
             itemsTransferBuffered = 0;
         }
         return Math.min(itemsTransferred, maxTransferAmount);
     }
 
     protected int doKeepExact(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
-        Map<Object, GroupItemInfo> currentItemAmount = doCountDestinationInventoryItemsByMatchIndex(itemHandler, myItemHandler);
-        Map<Object, GroupItemInfo> sourceItemAmounts = doCountDestinationInventoryItemsByMatchIndex(myItemHandler, itemHandler);
+        Map<Object, GroupItemInfo> currentItemAmount = doCountDestinationInventoryItemsByMatchIndex(itemHandler,
+                myItemHandler);
+        Map<Object, GroupItemInfo> sourceItemAmounts = doCountDestinationInventoryItemsByMatchIndex(myItemHandler,
+                itemHandler);
         Iterator<Object> iterator = sourceItemAmounts.keySet().iterator();
         while (iterator.hasNext()) {
             Object filterSlotIndex = iterator.next();
@@ -182,28 +189,31 @@ public class CoverRoboticArm extends CoverConveyor {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new CycleButtonWidget(91, 45, 75, 20,
                 TransferMode.class, this::getTransferMode, this::setTransferMode)
-                .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
+                        .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
 
         ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
         stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
 
-        stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, itemFilterContainer::adjustTransferStackSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512, itemFilterContainer::adjustTransferStackSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
+        stackSizeGroup.addWidget(
+                new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, itemFilterContainer::adjustTransferStackSize)
+                        .setDefaultTooltip()
+                        .setTextScale(0.7f)
+                        .setShouldClientCallback(false));
+        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512,
+                itemFilterContainer::adjustTransferStackSize)
+                        .setDefaultTooltip()
+                        .setTextScale(0.7f)
+                        .setShouldClientCallback(false));
 
-        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20, () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
+        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20,
+                () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
                     if (val != null && !val.isEmpty())
-                        itemFilterContainer.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
+                        itemFilterContainer.setTransferStackSize(
+                                MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
                 })
                         .setNumbersOnly(1, transferMode.maxStackSize)
                         .setMaxLength(4)
-                        .setScale(0.9f)
-        );
+                        .setScale(0.9f));
 
         primaryGroup.addWidget(stackSizeGroup);
 
@@ -221,5 +231,4 @@ public class CoverRoboticArm extends CoverConveyor {
         super.readFromNBT(tagCompound);
         this.transferMode = TransferMode.values()[tagCompound.getInteger("TransferMode")];
     }
-
 }

@@ -20,7 +20,8 @@ public class SmallDigitsTest {
 
     @Test
     public void testNested() {
-        MatcherAssert.assertThat(SmallDigits.toSmallDownNumbers("(CuAu4)(ZnCu3)Fe2(Ni(AuAgCu3)Fe3)4"), is("(CuAu₄)(ZnCu₃)Fe₂(Ni(AuAgCu₃)Fe₃)₄"));
+        MatcherAssert.assertThat(SmallDigits.toSmallDownNumbers("(CuAu4)(ZnCu3)Fe2(Ni(AuAgCu3)Fe3)4"),
+                is("(CuAu₄)(ZnCu₃)Fe₂(Ni(AuAgCu₃)Fe₃)₄"));
     }
 
     @Test

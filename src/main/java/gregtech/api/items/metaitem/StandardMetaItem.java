@@ -14,5 +14,4 @@ public class StandardMetaItem extends MetaItem<MetaItem<?>.MetaValueItem> {
     protected MetaValueItem constructMetaValueItem(short metaValue, String unlocalizedName) {
         return new MetaValueItem(metaValue, unlocalizedName);
     }
-
 }

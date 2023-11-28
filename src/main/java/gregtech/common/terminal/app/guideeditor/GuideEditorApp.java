@@ -33,21 +33,24 @@ public class GuideEditorApp extends AbstractApplication {
 
     @Override
     public List<IMenuComponent> getMenuComponents() {
-        ClickComponent newPage = new ClickComponent().setIcon(GuiTextures.ICON_NEW_PAGE).setHoverText("terminal.component.new_page").setClickConsumer(cd->{
-            if (configEditor != null) {
-                configEditor.newPage();
-            }
-        });
-        ClickComponent importPage = new ClickComponent().setIcon(GuiTextures.ICON_LOAD).setHoverText("terminal.component.load_file").setClickConsumer(cd->{
-            if (configEditor != null) {
-                configEditor.loadJson();
-            }
-        });
-        ClickComponent exportPage = new ClickComponent().setIcon(GuiTextures.ICON_SAVE).setHoverText("terminal.component.save_file").setClickConsumer(cd->{
-            if (configEditor != null) {
-                configEditor.saveJson();
-            }
-        });
+        ClickComponent newPage = new ClickComponent().setIcon(GuiTextures.ICON_NEW_PAGE)
+                .setHoverText("terminal.component.new_page").setClickConsumer(cd -> {
+                    if (configEditor != null) {
+                        configEditor.newPage();
+                    }
+                });
+        ClickComponent importPage = new ClickComponent().setIcon(GuiTextures.ICON_LOAD)
+                .setHoverText("terminal.component.load_file").setClickConsumer(cd -> {
+                    if (configEditor != null) {
+                        configEditor.loadJson();
+                    }
+                });
+        ClickComponent exportPage = new ClickComponent().setIcon(GuiTextures.ICON_SAVE)
+                .setHoverText("terminal.component.save_file").setClickConsumer(cd -> {
+                    if (configEditor != null) {
+                        configEditor.saveJson();
+                    }
+                });
         return Arrays.asList(newPage, importPage, exportPage);
     }
 
@@ -55,5 +58,4 @@ public class GuideEditorApp extends AbstractApplication {
     public boolean isClientSideApp() {
         return true;
     }
-
 }

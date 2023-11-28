@@ -5,12 +5,14 @@ import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import gregtech.core.network.NetworkUtils;
+
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 public class PacketClipboardNBTUpdate implements IPacket, IServerExecutor {
+
     private int dimension;
     private BlockPos pos;
     private int id;
@@ -46,11 +48,12 @@ public class PacketClipboardNBTUpdate implements IPacket, IServerExecutor {
     @Override
     public void executeServer(NetHandlerPlayServer handler) {
         TileEntity te = NetworkUtils.getTileEntityServer(dimension, pos);
-        if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
+        if (te instanceof IGregTechTileEntity &&
+                ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
             try {
-                ((MetaTileEntityClipboard) ((IGregTechTileEntity) te).getMetaTileEntity()).setClipboardNBT(updateData.readCompoundTag());
-            } catch (Exception ignored) {
-            }
+                ((MetaTileEntityClipboard) ((IGregTechTileEntity) te).getMetaTileEntity())
+                        .setClipboardNBT(updateData.readCompoundTag());
+            } catch (Exception ignored) {}
         }
     }
 }

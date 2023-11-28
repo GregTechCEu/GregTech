@@ -1,6 +1,7 @@
 package gregtech.api.items.toolitem;
 
 public class EnchantmentLevel {
+
     private double level;
     private double levelGrowth;
 

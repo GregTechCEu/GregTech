@@ -2,16 +2,18 @@ package gregtech.integration.jei.utils.render;
 
 import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
-import mezz.jei.plugins.vanilla.ingredients.item.ItemStackRenderer;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import mezz.jei.plugins.vanilla.ingredients.item.ItemStackRenderer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ItemStackTextRenderer extends ItemStackRenderer {
+
     private final int chanceBase;
     private final int chanceBoost;
     private final ChancedOutputLogic chanceLogic;
@@ -45,7 +47,7 @@ public class ItemStackTextRenderer extends ItemStackRenderer {
     }
 
     @Override
-    public void render(@Nonnull Minecraft minecraft, int xPosition, int yPosition, @Nullable ItemStack ingredient) {
+    public void render(@NotNull Minecraft minecraft, int xPosition, int yPosition, @Nullable ItemStack ingredient) {
         super.render(minecraft, xPosition, yPosition, ingredient);
 
         if (this.chanceBase >= 0) {
@@ -56,14 +58,16 @@ public class ItemStackTextRenderer extends ItemStackRenderer {
             GlStateManager.translate(0, 0, 160);
 
             String s = (this.chanceBase / 100) + "%";
-            if (this.chanceLogic != null && this.chanceLogic != ChancedOutputLogic.NONE && this.chanceLogic != ChancedOutputLogic.OR) {
+            if (this.chanceLogic != null && this.chanceLogic != ChancedOutputLogic.NONE &&
+                    this.chanceLogic != ChancedOutputLogic.OR) {
                 s += "*";
             } else if (this.chanceBoost > 0) {
                 s += "+";
             }
 
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-            fontRenderer.drawStringWithShadow(s, (xPosition + 6) * 2 - fontRenderer.getStringWidth(s) + 19, (yPosition + 1) * 2, 0xFFFF00);
+            fontRenderer.drawStringWithShadow(s, (xPosition + 6) * 2 - fontRenderer.getStringWidth(s) + 19,
+                    (yPosition + 1) * 2, 0xFFFF00);
 
             GlStateManager.popMatrix();
             GlStateManager.enableBlend();
@@ -75,7 +79,8 @@ public class ItemStackTextRenderer extends ItemStackRenderer {
             GlStateManager.translate(0, 0, 160);
 
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-            fontRenderer.drawStringWithShadow("NC", (xPosition + 6) * 2 - fontRenderer.getStringWidth("NC") + 19, (yPosition + 1) * 2, 0xFFFF00);
+            fontRenderer.drawStringWithShadow("NC", (xPosition + 6) * 2 - fontRenderer.getStringWidth("NC") + 19,
+                    (yPosition + 1) * 2, 0xFFFF00);
 
             GlStateManager.popMatrix();
             GlStateManager.enableBlend();

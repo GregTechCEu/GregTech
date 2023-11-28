@@ -1,10 +1,5 @@
 package gregtech.common.covers.detector;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
@@ -14,6 +9,7 @@ import gregtech.api.gui.widgets.*;
 import gregtech.api.util.RedstoneUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,6 +22,12 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 
 public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements CoverWithUI {
@@ -41,13 +43,15 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
 
     protected FluidFilterContainer fluidFilter;
 
-    public CoverDetectorFluidAdvanced(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView, @NotNull EnumFacing attachedSide) {
+    public CoverDetectorFluidAdvanced(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
+                                      @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
         this.fluidFilter = new FluidFilterContainer(this);
     }
 
     @Override
-    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull CuboidRayTraceResult hitResult) {
+    public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
+                                                        @NotNull CuboidRayTraceResult hitResult) {
         if (!getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
@@ -55,7 +59,8 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     }
 
     @Override
-    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation, IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
+    public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
+                            IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.DETECTOR_FLUID_ADVANCED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
     }
 
@@ -69,31 +74,30 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         group.addWidget(new ImageWidget(98 - 4, (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
         group.addWidget(new TextFieldWidget2(98, 5 + (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMinValue, this::setMinValue)
-                .setMaxLength(10)
-                .setAllowedChars(TextFieldWidget2.WHOLE_NUMS)
-                .setPostFix("L")
-        );
+                        .setMaxLength(10)
+                        .setAllowedChars(TextFieldWidget2.WHOLE_NUMS)
+                        .setPostFix("L"));
 
         // set max fluid amount
         group.addWidget(new LabelWidget(10, 5 + 2 * (SIZE + PADDING), "cover.advanced_fluid_detector.max"));
         group.addWidget(new ImageWidget(98 - 4, 2 * (SIZE + PADDING), 4 * SIZE, SIZE, GuiTextures.DISPLAY));
         group.addWidget(new TextFieldWidget2(98, 5 + 2 * (SIZE + PADDING), 4 * SIZE, SIZE,
                 this::getMaxValue, this::setMaxValue)
-                .setMaxLength(10)
-                .setAllowedChars(TextFieldWidget2.WHOLE_NUMS)
-                .setPostFix("L")
-        );
+                        .setMaxLength(10)
+                        .setAllowedChars(TextFieldWidget2.WHOLE_NUMS)
+                        .setPostFix("L"));
 
         // invert logic button
-//        group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING), "cover.generic.advanced_detector.invert_label"));
-        group.addWidget(new CycleButtonWidget(10, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
-                "cover.machine_controller.normal", "cover.machine_controller.inverted")
-                .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip")
-        );
-        group.addWidget(new CycleButtonWidget(94, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
-                "cover.generic.advanced_detector.continuous", "cover.generic.advanced_detector.latched")
-                .setTooltipHoverString("cover.generic.advanced_detector.latch_tooltip")
-        );
+        // group.addWidget(new LabelWidget(10, 5 + 3 * (SIZE + PADDING),
+        // "cover.generic.advanced_detector.invert_label"));
+        group.addWidget(
+                new CycleButtonWidget(10, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
+                        "cover.machine_controller.normal", "cover.machine_controller.inverted")
+                                .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip"));
+        group.addWidget(
+                new CycleButtonWidget(94, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isLatched, this::setLatched,
+                        "cover.generic.advanced_detector.continuous", "cover.generic.advanced_detector.latched")
+                                .setTooltipHoverString("cover.generic.advanced_detector.latch_tooltip"));
 
         this.fluidFilter.initUI(5 + 4 * (SIZE + PADDING), group::addWidget);
 
@@ -131,7 +135,8 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
     public void update() {
         if (getOffsetTimer() % 20 != 0) return;
 
-        IFluidHandler fluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+        IFluidHandler fluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                null);
         if (fluidHandler == null) return;
 
         IFluidTankProperties[] tankProperties = fluidHandler.getTankProperties();
@@ -145,7 +150,8 @@ public class CoverDetectorFluidAdvanced extends CoverDetectorFluid implements Co
         }
 
         if (isLatched) {
-            outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(storedFluid, max, min, isInverted(), outputAmount);
+            outputAmount = RedstoneUtil.computeLatchedRedstoneBetweenValues(storedFluid, max, min, isInverted(),
+                    outputAmount);
         } else {
             outputAmount = RedstoneUtil.computeRedstoneBetweenValues(storedFluid, max, min, isInverted());
         }

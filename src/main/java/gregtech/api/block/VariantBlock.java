@@ -2,6 +2,7 @@ package gregtech.api.block;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.util.LocalizationUtils;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -19,8 +20,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -37,7 +39,8 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
             for (T t : VALUES) {
                 IStateHarvestLevel stateHarvestLevel = (IStateHarvestLevel) t;
                 IBlockState state = getState(t);
-                setHarvestLevel(stateHarvestLevel.getHarvestTool(state), stateHarvestLevel.getHarvestLevel(state), state);
+                setHarvestLevel(stateHarvestLevel.getHarvestTool(state), stateHarvestLevel.getHarvestLevel(state),
+                        state);
             }
         }
         setCreativeTab(GregTechAPI.TAB_GREGTECH);
@@ -45,7 +48,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     }
 
     @Override
-    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
+    public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> list) {
         for (T variant : VALUES) {
             list.add(getItemVariant(variant));
         }
@@ -71,7 +74,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
         return new ItemStack(this, amount, variant.ordinal());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState() {
         Class<T> enumClass = getActualTypeParameter(getClass(), VariantBlock.class, 0);
@@ -82,23 +85,24 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World player, List<String> tooltip, @Nonnull ITooltipFlag advanced) {
-        //tier less tooltip like: tile.turbine_casing.tooltip
+    public void addInformation(@NotNull ItemStack stack, @Nullable World player, List<String> tooltip,
+                               @NotNull ITooltipFlag advanced) {
+        // tier less tooltip like: tile.turbine_casing.tooltip
         String unlocalizedVariantTooltip = getTranslationKey() + ".tooltip";
         if (I18n.hasKey(unlocalizedVariantTooltip))
             Collections.addAll(tooltip, LocalizationUtils.formatLines(unlocalizedVariantTooltip));
-        //item specific tooltip: tile.turbine_casing.bronze_gearbox.tooltip
+        // item specific tooltip: tile.turbine_casing.bronze_gearbox.tooltip
         String unlocalizedTooltip = stack.getTranslationKey() + ".tooltip";
         if (I18n.hasKey(unlocalizedTooltip))
             Collections.addAll(tooltip, LocalizationUtils.formatLines(unlocalizedTooltip));
     }
 
     @Override
-    public int damageDropped(@Nonnull IBlockState state) {
+    public int damageDropped(@NotNull IBlockState state) {
         return getMetaFromState(state);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
@@ -111,13 +115,14 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     }
 
     @Override
-    public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Entity entityIn) {
+    public void onEntityWalk(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull Entity entityIn) {
         // Short circuit if there is no bonus speed
         if (getWalkingSpeedBonus() == 1.0D) {
             return;
         }
 
-        IBlockState below = entityIn.getEntityWorld().getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
+        IBlockState below = entityIn.getEntityWorld()
+                .getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
         if (checkApplicableBlocks(below)) {
             if (bonusSpeedCondition(entityIn)) {
                 entityIn.motionX *= getWalkingSpeedBonus();
@@ -126,9 +131,10 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
         }
     }
 
-    //magic is here
+    // magic is here
     @SuppressWarnings("unchecked")
-    protected static <T, R> Class<T> getActualTypeParameter(Class<? extends R> thisClass, Class<R> declaringClass, int index) {
+    protected static <T, R> Class<T> getActualTypeParameter(Class<? extends R> thisClass, Class<R> declaringClass,
+                                                            int index) {
         Type type = thisClass.getGenericSuperclass();
 
         while (!(type instanceof ParameterizedType) || ((ParameterizedType) type).getRawType() != declaringClass) {

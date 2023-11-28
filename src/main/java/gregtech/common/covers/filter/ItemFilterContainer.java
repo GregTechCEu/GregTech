@@ -5,13 +5,15 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.util.IDirtyNotifiable;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Consumer;
 
 public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
@@ -25,8 +27,9 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         this.filterWrapper = new ItemFilterWrapper(dirtyNotifiable);
         this.filterWrapper.setOnFilterInstanceChange(this::onFilterInstanceChange);
         this.filterInventory = new ItemStackHandler(1) {
+
             @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+            public boolean isItemValid(int slot, @NotNull ItemStack stack) {
                 return FilterTypeRegistry.getItemFilterForStack(stack) != null;
             }
 
@@ -100,9 +103,9 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
             }
         } else if (currentItemFilter == null ||
                 newItemFilter.getClass() != currentItemFilter.getClass()) {
-            filterWrapper.setItemFilter(newItemFilter);
-            if (notify) filterWrapper.onFilterInstanceChange();
-        }
+                    filterWrapper.setItemFilter(newItemFilter);
+                    if (notify) filterWrapper.onFilterInstanceChange();
+                }
     }
 
     public void setMaxStackSize(int maxStackSizeLimit) {
@@ -159,5 +162,4 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
             this.filterWrapper.getItemFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
         }
     }
-
 }

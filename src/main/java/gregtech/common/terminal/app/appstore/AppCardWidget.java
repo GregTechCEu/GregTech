@@ -4,17 +4,18 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.*;
 import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
-import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
+import gregtech.client.shader.Shaders;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.items.behaviors.TerminalBehaviour;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.network.PacketBuffer;
@@ -25,6 +26,7 @@ import java.awt.*;
 import java.util.List;
 
 public class AppCardWidget extends AnimaWidgetGroup {
+
     private final AbstractApplication application;
     private final AppStoreApp store;
     @SideOnly(Side.CLIENT)
@@ -39,12 +41,12 @@ public class AppCardWidget extends AnimaWidgetGroup {
     private int alpha;
 
     public AppCardWidget(int x, int y, AbstractApplication application, AppStoreApp store) {
-        super(x, y , 100, 100);
+        super(x, y, 100, 100);
         this.application = application;
         this.store = store;
         TerminalOSWidget os = store.getOs();
         if (os.isRemote()) {
-            this.addWidget(new CircleButtonWidget(15,17)
+            this.addWidget(new CircleButtonWidget(15, 17)
                     .setColors(TerminalTheme.COLOR_B_2.getColor(),
                             application.getThemeColor(),
                             TerminalTheme.COLOR_B_2.getColor())
@@ -56,7 +58,9 @@ public class AppCardWidget extends AnimaWidgetGroup {
             offset = Math.abs(GTValues.RNG.nextInt()) % 200;
             banner = application.getBanner();
             if (os.installedApps.contains(application)) {
-                if (TerminalBehaviour.isCreative(os.itemStack) || application.getMaxTier() == Math.min(os.tabletNBT.getCompoundTag(application.getRegistryName()).getInteger("_tier"), application.getMaxTier())) {
+                if (TerminalBehaviour.isCreative(os.itemStack) || application.getMaxTier() ==
+                        Math.min(os.tabletNBT.getCompoundTag(application.getRegistryName()).getInteger("_tier"),
+                                application.getMaxTier())) {
                     updateState(0);
                 } else {
                     updateState(1);
@@ -82,7 +86,8 @@ public class AppCardWidget extends AnimaWidgetGroup {
             removeWidget(stateWidget);
             removeWidget(bgWidget);
         }
-        stateWidget = new ImageWidget(15, 85, 70, 15, new TextTexture(text, -1).setWidth(70).setDropShadow(true).setType(TextTexture.TextType.HIDE));
+        stateWidget = new ImageWidget(15, 85, 70, 15,
+                new TextTexture(text, -1).setWidth(70).setDropShadow(true).setType(TextTexture.TextType.HIDE));
         bgWidget = new ImageWidget(15, 85, 70, 13, new ColorRectTexture(bg));
         this.addWidget(bgWidget);
         this.addWidget(stateWidget);
@@ -119,14 +124,15 @@ public class AppCardWidget extends AnimaWidgetGroup {
         int y = getPosition().y;
         int width = getSize().width;
         int height = getSize().height;
-        if (isMouseOverElement(mouseX, mouseY) && store.getOs().desktop.widgets.stream().noneMatch(app->app instanceof  TerminalDialogWidget)) {
+        if (isMouseOverElement(mouseX, mouseY) &&
+                store.getOs().desktop.widgets.stream().noneMatch(app -> app instanceof TerminalDialogWidget)) {
             int dur = 7;
             int maxAlpha = 100; // 0-255!!!!!
             float partialTicks = Minecraft.getMinecraft().getRenderPartialTicks();
             if (alpha != maxAlpha && interpolator == null) {
-                interpolator = new Interpolator(0, maxAlpha, dur, Eases.EaseLinear,
-                        value-> alpha = value.intValue(),
-                        value-> interpolator = null);
+                interpolator = new Interpolator(0, maxAlpha, dur, Eases.LINEAR,
+                        value -> alpha = value.intValue(),
+                        value -> interpolator = null);
                 interpolator.start();
             }
             // smooth
@@ -134,17 +140,19 @@ public class AppCardWidget extends AnimaWidgetGroup {
             if (alpha == maxAlpha) {
                 color = TerminalTheme.COLOR_B_2.getColor() & 0x00ffffff | ((alpha) << 24);
             } else {
-                color = TerminalTheme.COLOR_B_2.getColor() & 0x00ffffff | ((alpha + (int) (maxAlpha * partialTicks / dur)) << 24);
+                color = TerminalTheme.COLOR_B_2.getColor() & 0x00ffffff |
+                        ((alpha + (int) (maxAlpha * partialTicks / dur)) << 24);
             }
             int finalColor = color;
-            RenderUtil.useScissor(store.getPosition().x, store.getPosition().y, store.getSize().width, store.getSize().height, ()->{
-                drawSolidRect(0, 0, gui.getScreenWidth(), y, finalColor);
-                drawSolidRect(0, y + height, gui.getScreenWidth(), gui.getScreenHeight(), finalColor);
-                drawSolidRect(0, y, x, height, finalColor);
-                drawSolidRect(x + width, y, gui.getScreenWidth(), height, finalColor);
+            RenderUtil.useScissor(store.getPosition().x, store.getPosition().y, store.getSize().width,
+                    store.getSize().height, () -> {
+                        drawSolidRect(0, 0, gui.getScreenWidth(), y, finalColor);
+                        drawSolidRect(0, y + height, gui.getScreenWidth(), gui.getScreenHeight(), finalColor);
+                        drawSolidRect(0, y, x, height, finalColor);
+                        drawSolidRect(x + width, y, gui.getScreenWidth(), height, finalColor);
 
-                drawBorder(x, y, width, height, application.getThemeColor(), -1);
-            });
+                        drawBorder(x, y, width, height, application.getThemeColor(), -1);
+                    });
         } else {
             alpha = 0;
         }
@@ -166,7 +174,8 @@ public class AppCardWidget extends AnimaWidgetGroup {
                 float time = offset + (gui.entityPlayer.ticksExisted + partialTicks) / 20f;
                 ShaderTexture.createShader("banner.frag").draw(x, y, width, 34, uniformCache -> {
                     uniformCache.glUniform1F("u_time", time);
-                    uniformCache.glUniform3F("b_color", color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f);
+                    uniformCache.glUniform3F("b_color", color.getRed() / 255f, color.getGreen() / 255f,
+                            color.getBlue() / 255f);
                 });
             } else {
                 drawSolidRect(x, y, width, 34, color.getRGB());

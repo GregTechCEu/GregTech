@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -18,6 +15,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -30,10 +28,15 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 
-import javax.annotation.Nullable;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
-public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank>, IControllable {
+public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotifiablePart
+                                           implements IMultiblockAbilityPart<IFluidTank>, IControllable {
 
     private static final int BASE_TANK_SIZE = 8000;
 
@@ -44,7 +47,8 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     private final FluidTankList fluidTankList;
     private boolean workingEnabled;
 
-    public MetaTileEntityMultiFluidHatch(ResourceLocation metaTileEntityId, int tier, int numSlots, boolean isExportHatch) {
+    public MetaTileEntityMultiFluidHatch(ResourceLocation metaTileEntityId, int tier, int numSlots,
+                                         boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
         this.workingEnabled = true;
         this.numSlots = numSlots;
@@ -144,7 +148,8 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format(isExportHatch ? "gregtech.machine.fluid_hatch.export.tooltip" : "gregtech.machine.fluid_hatch.import.tooltip"));
+        tooltip.add(I18n.format(isExportHatch ? "gregtech.machine.fluid_hatch.export.tooltip" :
+                "gregtech.machine.fluid_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", numSlots, tankSize));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
@@ -180,16 +185,17 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(numSlots);
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                        18 + 18 * rowSize + 94)
+                18 + 18 * rowSize + 94)
                 .label(10, 5, getMetaFullName());
 
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
-                builder.widget(new TankWidget(fluidTankList.getTankAt(index), 89 - rowSize * 9 + x * 18, 18 + y * 18, 18, 18)
-                        .setBackgroundTexture(GuiTextures.FLUID_SLOT)
-                        .setContainerClicking(true, !isExportHatch)
-                        .setAlwaysShowFull(true));
+                builder.widget(
+                        new TankWidget(fluidTankList.getTankAt(index), 89 - rowSize * 9 + x * 18, 18 + y * 18, 18, 18)
+                                .setBackgroundTexture(GuiTextures.FLUID_SLOT)
+                                .setContainerClicking(true, !isExportHatch)
+                                .setAlwaysShowFull(true));
             }
         }
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);

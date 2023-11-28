@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,8 +22,9 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public class MetaTileEntityCharger extends TieredMetaTileEntity {
@@ -49,17 +51,19 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         return new ItemStackHandler(inventorySize) {
+
             @Override
             protected void onContentsChanged(int slot) {
                 MetaTileEntityCharger.this.markDirty();
             }
 
-            @Nonnull
+            @NotNull
             @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+            public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
                 IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
                 if ((electricItem != null && getTier() >= electricItem.getTier()) ||
-                        (ConfigHolder.compat.energy.nativeEUToFE && stack.hasCapability(CapabilityEnergy.ENERGY, null))) {
+                        (ConfigHolder.compat.energy.nativeEUToFE &&
+                                stack.hasCapability(CapabilityEnergy.ENERGY, null))) {
                     return super.insertItem(slot, stack, simulate);
                 }
                 return stack;
@@ -98,7 +102,8 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(),
+                GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
     }

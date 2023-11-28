@@ -1,4 +1,5 @@
 package gregtech.api.util;
+
 /**
  * A subclass of java.util.random that implements the Xorshift random number
  * generator
@@ -18,10 +19,10 @@ package gregtech.api.util;
  * http://demesos.blogspot.com/2011/09/pseudo-random-number-generators.html
  *
  * @author Wilfried Elmenreich University of Klagenfurt/Lakeside Labs
- * http://www.elmenreich.tk
- * <p>
- * This code is released under the GNU Lesser General Public License Version 3
- * http://www.gnu.org/licenses/lgpl-3.0.txt
+ *         http://www.elmenreich.tk
+ *         <p>
+ *         This code is released under the GNU Lesser General Public License Version 3
+ *         http://www.gnu.org/licenses/lgpl-3.0.txt
  */
 
 import java.util.Random;
@@ -36,12 +37,12 @@ public class XSTR extends Random {
 
     private static final long serialVersionUID = 6208727693524452904L;
     private long seed;
-    private static final double DOUBLE_UNIT = 0x1.0p-53;  // 1.0  / (1L << 53)
+    private static final double DOUBLE_UNIT = 0x1.0p-53;  // 1.0 / (1L << 53)
     private static final float FLOAT_UNIT = 0x1.0p-24f; // 1.0f / (1 << 24)
 
     /*
-     MODIFIED BY: Robotia
-     Modification: Implemented Random class seed generator
+     * MODIFIED BY: Robotia
+     * Modification: Implemented Random class seed generator
      */
 
     /**
@@ -53,13 +54,12 @@ public class XSTR extends Random {
         this(seedUniquifier() ^ System.nanoTime());
     }
 
-    private static final AtomicLong seedUniquifier
-            = new AtomicLong(8682522807148012L);
+    private static final AtomicLong seedUniquifier = new AtomicLong(8682522807148012L);
 
     private static long seedUniquifier() {
         // L'Ecuyer, "Tables of Linear Congruential Generators of
         // Different Sizes and Good Lattice Structure", 1999
-        for (; ; ) {
+        for (;;) {
             long current = seedUniquifier.get();
             long next = current * 181783497276652981L;
             if (seedUniquifier.compareAndSet(current, next)) {
@@ -160,7 +160,9 @@ public class XSTR extends Random {
      * produced with (approximately) equal probability. The method
      * {@code nextInt(int bound)} is implemented by class {@code Random} as if
      * by:
-     * <pre> {@code
+     * 
+     * <pre>
+     *  {@code
      * public int nextInt(int bound) {
      *   if (bound <= 0)
      *     throw new IllegalArgumentException("bound must be positive");
@@ -174,9 +176,11 @@ public class XSTR extends Random {
      *       val = bits % bound;
      *   } while (bits - val + (bound-1) < 0);
      *   return val;
-     * }}</pre>
+     * }}
+     * </pre>
      *
-     * <p>The hedge "approx
+     * <p>
+     * The hedge "approx
      * imately" is used in the foregoing description only because the next
      * method is only approximately an unbiased source of independently chosen
      * bits. If it were a perfect source of randomly chosen bits, then the
@@ -201,8 +205,8 @@ public class XSTR extends Random {
      *
      * @param bound the upper bound (exclusive). Must be positive.
      * @return the next pseudorandom, uniformly distributed {@code int} value
-     * between zero (inclusive) and {@code bound} (exclusive) from this random
-     * number generator's sequence
+     *         between zero (inclusive) and {@code bound} (exclusive) from this random
+     *         number generator's sequence
      * @throws IllegalArgumentException if bound is not positive
      * @since 1.2
      */
@@ -229,10 +233,9 @@ public class XSTR extends Random {
     }
 
     public void nextBytes(byte[] bytes_arr) {
-        for (int iba = 0, lenba = bytes_arr.length; iba < lenba; )
+        for (int iba = 0, lenba = bytes_arr.length; iba < lenba;)
             for (int rndba = nextInt(),
-                 nba = Math.min(lenba - iba, Integer.SIZE / Byte.SIZE);
-                 nba-- > 0; rndba >>= Byte.SIZE)
+                    nba = Math.min(lenba - iba, Integer.SIZE / Byte.SIZE); nba-- > 0; rndba >>= Byte.SIZE)
                 bytes_arr[iba++] = (byte) rndba;
     }
 }

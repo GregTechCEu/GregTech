@@ -1,16 +1,18 @@
 package gregtech.core.advancement.internal;
 
-import com.google.common.collect.Maps;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
 import gregtech.api.advancement.IAdvancementCriterion;
 import gregtech.api.advancement.IAdvancementTrigger;
 import gregtech.api.util.GTUtility;
+
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.Maps;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 
 public class AdvancementTrigger<T extends IAdvancementCriterion> implements IAdvancementTrigger<T> {
@@ -19,19 +21,19 @@ public class AdvancementTrigger<T extends IAdvancementCriterion> implements IAdv
     private final T criterion;
     private final Map<PlayerAdvancements, AdvancementListeners<T>> listeners = Maps.newHashMap();
 
-    public AdvancementTrigger(String name, @Nonnull T criterion) {
+    public AdvancementTrigger(String name, @NotNull T criterion) {
         this.id = GTUtility.gregtechId(name);
         this.criterion = criterion;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ResourceLocation getId() {
         return id;
     }
 
     @Override
-    public void addListener(@Nonnull PlayerAdvancements playerAdvancementsIn, @Nonnull Listener<T> listener) {
+    public void addListener(@NotNull PlayerAdvancements playerAdvancementsIn, @NotNull Listener<T> listener) {
         AdvancementListeners<T> gtListener = listeners.get(playerAdvancementsIn);
 
         if (gtListener == null) {
@@ -43,7 +45,7 @@ public class AdvancementTrigger<T extends IAdvancementCriterion> implements IAdv
     }
 
     @Override
-    public void removeListener(@Nonnull PlayerAdvancements playerAdvancementsIn, @Nonnull Listener<T> listener) {
+    public void removeListener(@NotNull PlayerAdvancements playerAdvancementsIn, @NotNull Listener<T> listener) {
         AdvancementListeners<T> gtListener = listeners.get(playerAdvancementsIn);
 
         if (gtListener != null) {
@@ -56,13 +58,13 @@ public class AdvancementTrigger<T extends IAdvancementCriterion> implements IAdv
     }
 
     @Override
-    public void removeAllListeners(@Nonnull PlayerAdvancements playerAdvancementsIn) {
+    public void removeAllListeners(@NotNull PlayerAdvancements playerAdvancementsIn) {
         listeners.remove(playerAdvancementsIn);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public T deserializeInstance(@Nonnull JsonObject json, @Nonnull JsonDeserializationContext context) {
+    public T deserializeInstance(@NotNull JsonObject json, @NotNull JsonDeserializationContext context) {
         return criterion;
     }
 

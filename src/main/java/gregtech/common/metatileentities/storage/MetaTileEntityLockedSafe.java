@@ -1,12 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.raytracer.IndexedCuboid6;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -27,6 +20,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.worldgen.LootTableHelper;
 import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.CraftingComponent.Component;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -43,10 +37,17 @@ import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.oredict.OreDictionary;
+
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.raytracer.IndexedCuboid6;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Random;
 import java.util.function.DoubleSupplier;
@@ -58,7 +59,8 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
 
     private static final int MAX_UNLOCK_PROGRESS = 100;
     private static Component[] ALLOWED_COMPONENTS;
-    private static final IndexedCuboid6 COLLISION_BOX = new IndexedCuboid6(null, new Cuboid6(3 / 16.0, 0 / 16.0, 3 / 16.0, 13 / 16.0, 14 / 16.0, 13 / 16.0));
+    private static final IndexedCuboid6 COLLISION_BOX = new IndexedCuboid6(null,
+            new Cuboid6(3 / 16.0, 0 / 16.0, 3 / 16.0, 13 / 16.0, 14 / 16.0, 13 / 16.0));
 
     private int unlockProgress = -1;
     private int unlockComponentTier = 1;
@@ -67,9 +69,10 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     private long unlockComponentsSeed = 0L;
     private final ItemStackHandler unlockComponents = new GTItemStackHandler(this, 2);
     private final ItemStackHandler unlockInventory = new GTItemStackHandler(this, 2) {
-        @Nonnull
+
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             int maxStackSize = canPutUnlockItemInSlot(slot, stack);
             if (maxStackSize == 0) return stack;
             int maxAmount = Math.min(maxStackSize, stack.getCount());
@@ -115,7 +118,8 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                CuboidRayTraceResult hitResult) {
         generateUnlockComponents();
         return super.onRightClick(playerIn, hand, facing, hitResult);
     }
@@ -150,7 +154,8 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
         GTRecipeInput[] unlockComponents = getUnlockComponents();
         for (int i = 0; i < Math.min(this.unlockComponents.getSlots(), unlockComponents.length); i++) {
             if (unlockComponents[i].isOreDict()) {
-                this.unlockComponents.setStackInSlot(i, OreDictionary.getOres(OreDictionary.getOreName(unlockComponents[i].getOreDict())).get(0));
+                this.unlockComponents.setStackInSlot(i,
+                        OreDictionary.getOres(OreDictionary.getOreName(unlockComponents[i].getOreDict())).get(0));
             } else {
                 this.unlockComponents.setStackInSlot(i, (unlockComponents[i].getInputStacks()[0]));
             }
@@ -159,12 +164,14 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
 
     private GTRecipeInput[] getUnlockComponents() {
         if (ALLOWED_COMPONENTS == null)
-            ALLOWED_COMPONENTS = new Component[]{CraftingComponent.PUMP, CraftingComponent.CONVEYOR, CraftingComponent.EMITTER, CraftingComponent.SENSOR};
+            ALLOWED_COMPONENTS = new Component[] { CraftingComponent.PUMP, CraftingComponent.CONVEYOR,
+                    CraftingComponent.EMITTER, CraftingComponent.SENSOR };
 
         Random random = new Random(unlockComponentsSeed);
-        return new GTRecipeInput[]{
+        return new GTRecipeInput[] {
                 new GTRecipeOreInput(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier).toString()),
-                new GTRecipeItemInput((ItemStack) ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)].getIngredient(unlockComponentTier)),
+                new GTRecipeItemInput((ItemStack) ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)]
+                        .getIngredient(unlockComponentTier)),
         };
     }
 
@@ -341,16 +348,17 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     @Override
-    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-    }
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {}
 
     @Override
     public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
-        ColourMultiplier colourMultiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(GTValues.VC[unlockComponentTier]));
+        ColourMultiplier colourMultiplier = new ColourMultiplier(
+                GTUtility.convertRGBtoOpaqueRGBA_CL(GTValues.VC[unlockComponentTier]));
         float angle = prevDoorAngle + (doorAngle - prevDoorAngle) * partialTicks;
         angle = 1.0f - (1.0f - angle) * (1.0f - angle) * (1.0f - angle);
         float resultDoorAngle = angle * 120.0f;
-        Textures.SAFE.render(renderState, translation, new IVertexOperation[]{colourMultiplier}, getFrontFacing(), resultDoorAngle);
+        Textures.SAFE.render(renderState, translation, new IVertexOperation[] { colourMultiplier }, getFrontFacing(),
+                resultDoorAngle);
     }
 
     @Override
@@ -386,8 +394,10 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
         lockedGroup.addWidget(new LabelWidget(5, 20, "gregtech.machine.locked_safe.malfunctioning"));
         lockedGroup.addWidget(new LabelWidget(5, 30, "gregtech.machine.locked_safe.requirements"));
 
-        lockedGroup.addWidget(new SlotWidget(unlockInventory, 0, 70, 40, false, true).setBackgroundTexture(GuiTextures.SLOT));
-        lockedGroup.addWidget(new SlotWidget(unlockInventory, 1, 70 + 18, 40, false, true).setBackgroundTexture(GuiTextures.SLOT));
+        lockedGroup.addWidget(
+                new SlotWidget(unlockInventory, 0, 70, 40, false, true).setBackgroundTexture(GuiTextures.SLOT));
+        lockedGroup.addWidget(
+                new SlotWidget(unlockInventory, 1, 70 + 18, 40, false, true).setBackgroundTexture(GuiTextures.SLOT));
 
         lockedGroup.addWidget(new SlotWidget(unlockComponents, 0, 70, 58, false, false));
         lockedGroup.addWidget(new SlotWidget(unlockComponents, 1, 70 + 18, 58, false, false));
@@ -411,7 +421,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     @Override
-    public boolean canRenderMachineGrid(@Nonnull ItemStack mainHandStack, @Nonnull ItemStack offHandStack) {
+    public boolean canRenderMachineGrid(@NotNull ItemStack mainHandStack, @NotNull ItemStack offHandStack) {
         return false;
     }
 

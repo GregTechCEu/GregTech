@@ -1,8 +1,10 @@
 package gregtech.api.worldgen.shape;
 
-import com.google.gson.JsonObject;
 import gregtech.api.worldgen.config.OreConfigUtils;
+
 import net.minecraft.util.math.Vec3i;
+
+import com.google.gson.JsonObject;
 
 import java.util.Random;
 
@@ -17,8 +19,7 @@ public class PlateGenerator extends ShapeGenerator {
     private float floorSharpness;
     private float roofSharpness;
 
-    public PlateGenerator() {
-    }
+    public PlateGenerator() {}
 
     @Override
     public void loadFromConfig(JsonObject object) {

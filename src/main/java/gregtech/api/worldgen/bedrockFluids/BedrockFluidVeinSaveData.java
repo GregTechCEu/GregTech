@@ -1,13 +1,15 @@
 package gregtech.api.worldgen.bedrockFluids;
 
 import gregtech.api.GTValues;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 
 public class BedrockFluidVeinSaveData extends WorldSavedData {
@@ -27,7 +29,8 @@ public class BedrockFluidVeinSaveData extends WorldSavedData {
             NBTTagCompound tag = veinList.getCompoundTagAt(i);
             ChunkPosDimension coords = ChunkPosDimension.readFromNBT(tag);
             if (coords != null) {
-                BedrockFluidVeinHandler.FluidVeinWorldEntry info = BedrockFluidVeinHandler.FluidVeinWorldEntry.readFromNBT(tag.getCompoundTag("info"));
+                BedrockFluidVeinHandler.FluidVeinWorldEntry info = BedrockFluidVeinHandler.FluidVeinWorldEntry
+                        .readFromNBT(tag.getCompoundTag("info"));
                 BedrockFluidVeinHandler.veinCache.put(coords, info);
             }
         }
@@ -44,10 +47,10 @@ public class BedrockFluidVeinSaveData extends WorldSavedData {
     }
 
     @Override
-    public @Nonnull
-    NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
+    public @NotNull NBTTagCompound writeToNBT(@NotNull NBTTagCompound nbt) {
         NBTTagList oilList = new NBTTagList();
-        for (Map.Entry<ChunkPosDimension, BedrockFluidVeinHandler.FluidVeinWorldEntry> e : BedrockFluidVeinHandler.veinCache.entrySet()) {
+        for (Map.Entry<ChunkPosDimension, BedrockFluidVeinHandler.FluidVeinWorldEntry> e : BedrockFluidVeinHandler.veinCache
+                .entrySet()) {
             if (e.getKey() != null && e.getValue() != null) {
                 NBTTagCompound tag = e.getKey().writeToNBT();
                 tag.setTag("info", e.getValue().writeToNBT());
@@ -59,7 +62,6 @@ public class BedrockFluidVeinSaveData extends WorldSavedData {
 
         return nbt;
     }
-
 
     public static void setDirty() {
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && INSTANCE != null)

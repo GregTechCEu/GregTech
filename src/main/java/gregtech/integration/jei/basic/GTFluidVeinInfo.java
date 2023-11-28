@@ -3,13 +3,15 @@ package gregtech.integration.jei.basic;
 import gregtech.api.util.FileUtility;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import gregtech.integration.jei.utils.JEIResourceDepositCategoryUtils;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.ingredients.VanillaTypes;
-import mezz.jei.api.recipe.IRecipeWrapper;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
+import mezz.jei.api.recipe.IRecipeWrapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,10 +35,9 @@ public class GTFluidVeinInfo implements IRecipeWrapper {
     private final List<List<ItemStack>> bucketList = new ArrayList<>();
 
     public GTFluidVeinInfo(BedrockFluidDepositDefinition definition) {
-
         this.definition = definition;
 
-        //Get the Name and trim unneeded information
+        // Get the Name and trim unneeded information
         this.name = definition.getAssignedName();
         if (this.name == null) {
             this.name = FileUtility.trimFileName(definition.getDepositName());
@@ -61,7 +62,6 @@ public class GTFluidVeinInfo implements IRecipeWrapper {
         fluidList.add(fluidList2);
 
         this.biomeFunction = definition.getBiomeWeightModifier();
-
     }
 
     @Override
@@ -119,5 +119,4 @@ public class GTFluidVeinInfo implements IRecipeWrapper {
     public FluidStack getFluid() {
         return fluid;
     }
-
 }

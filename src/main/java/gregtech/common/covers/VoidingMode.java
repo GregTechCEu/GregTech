@@ -2,9 +2,10 @@ package gregtech.common.covers;
 
 import net.minecraft.util.IStringSerializable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum VoidingMode implements IStringSerializable {
+
     VOID_ANY("cover.voiding.voiding_mode.void_any", 1),
     VOID_OVERFLOW("cover.voiding.voiding_mode.void_overflow", 1024);
 
@@ -16,8 +17,7 @@ public enum VoidingMode implements IStringSerializable {
         this.maxStackSize = maxStackSize;
     }
 
-
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return localeName;

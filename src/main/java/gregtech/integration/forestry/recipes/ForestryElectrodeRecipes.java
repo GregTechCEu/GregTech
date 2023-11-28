@@ -1,5 +1,15 @@
 package gregtech.integration.forestry.recipes;
 
+import gregtech.api.GTValues;
+import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.integration.forestry.ForestryModule;
+
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
+
 import forestry.api.recipes.RecipeManagers;
 import forestry.core.ModuleCore;
 import forestry.core.fluids.Fluids;
@@ -8,14 +18,6 @@ import forestry.core.items.ItemElectronTube;
 import forestry.factory.MachineUIDs;
 import forestry.factory.ModuleFactory;
 import forestry.factory.recipes.FabricatorRecipeManager;
-import gregtech.api.GTValues;
-import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.integration.forestry.ForestryModule;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
 
 import static gregtech.api.recipes.RecipeMaps.CIRCUIT_ASSEMBLER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.FORMING_PRESS_RECIPES;
@@ -189,7 +191,8 @@ public class ForestryElectrodeRecipes {
         }
 
         // todo mixin forestry to allow this tube always, since we have rubber (once mixin port is done)
-        if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_TR) || Loader.isModLoaded(GTValues.MODID_BINNIE)) {
+        if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_TR) ||
+                Loader.isModLoaded(GTValues.MODID_BINNIE)) {
             CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
                     .input(ForestryModule.ELECTRODE_RUBBER)
                     .fluidInputs(Glass.getFluid(100))

@@ -1,6 +1,7 @@
 package gregtech.api.fluids.attribute;
 
 import net.minecraft.util.ResourceLocation;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -13,7 +14,8 @@ public final class FluidAttribute {
     private final Consumer<List<String>> containerTooltip;
     private final int hashCode;
 
-    public FluidAttribute(@NotNull ResourceLocation resourceLocation, @NotNull Consumer<List<@NotNull String>> fluidTooltip,
+    public FluidAttribute(@NotNull ResourceLocation resourceLocation,
+                          @NotNull Consumer<List<@NotNull String>> fluidTooltip,
                           @NotNull Consumer<List<@NotNull String>> containerTooltip) {
         this.resourceLocation = resourceLocation;
         this.fluidTooltip = fluidTooltip;

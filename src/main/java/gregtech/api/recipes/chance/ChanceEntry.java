@@ -12,7 +12,8 @@ public interface ChanceEntry<T> {
     /**
      * @return the ingredient
      */
-    @NotNull T getIngredient();
+    @NotNull
+    T getIngredient();
 
     /**
      * @return the chance of operating with the ingredient
@@ -22,5 +23,6 @@ public interface ChanceEntry<T> {
     /**
      * @return a copy of the chance entry
      */
-    @NotNull ChanceEntry<T> copy();
+    @NotNull
+    ChanceEntry<T> copy();
 }
