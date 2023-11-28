@@ -2696,7 +2696,7 @@ tile.long_distance_fluid_pipeline.name=長距離液体パイプ
 # Creative tabs
 itemGroup.gregtech.main=GregTech
 itemGroup.gregtech.machines=GregTech - 機械
-itemGroup.gregtech.cables=GregTecg - ケーブル
+itemGroup.gregtech.cables=GregTech - ケーブル
 itemGroup.gregtech.pipes=GregTech - パイプ
 itemGroup.gregtech.tools=GregTech - 道具
 itemGroup.gregtech.materials=GregTech - マテリアル
